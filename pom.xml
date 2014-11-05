@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github</groupId>
 	<artifactId>Data4All</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<packaging>apk</packaging>
 	<name>Data4All</name>
 
@@ -39,11 +39,12 @@
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
+				<version>3.6.0</version>
 				<configuration>
 					<sdk>
 						<platform>16</platform>
 					</sdk>
-									</configuration>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
