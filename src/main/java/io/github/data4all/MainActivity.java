@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -24,6 +26,15 @@ public class MainActivity extends Activity {
 	// Inflate the menu; this adds items to the action bar if it is present.
 	getMenuInflater().inflate(io.github.data4all.R.menu.main, menu);
 	return true;
+    }
+    
+    /** Called when user clicks help button */
+    public void showHelpToast(View view){
+    	Toast toast;
+    	toast = Toast.makeText(getApplicationContext(), "Default help text.", Toast.LENGTH_SHORT);
+    	if(toast!=null){
+    		toast.show();
+    	}
     }
 
 }
