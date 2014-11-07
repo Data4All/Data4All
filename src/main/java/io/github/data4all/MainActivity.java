@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -25,7 +26,6 @@ public class MainActivity extends Activity {
         
         Button b = (Button) findViewById(R.id.buttonCamera);
         b.setOnClickListener(new OnClickListener() {
-            @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, MakePhotoActivity.class));
             }
@@ -38,6 +38,16 @@ public class MainActivity extends Activity {
 	// Inflate the menu; this adds items to the action bar if it is present.
 	getMenuInflater().inflate(io.github.data4all.R.menu.main, menu);
 	return true;
+    }
+    
+    /** Called when user clicks the help button. */
+    public void showHelpToast(View view){
+    	Toast toast;
+    	toast = Toast.makeText(getApplicationContext(), "Default help text.", Toast.LENGTH_SHORT);
+    	
+    	if(toast != null){
+    		toast.show();
+    	}
     }
 
 }
