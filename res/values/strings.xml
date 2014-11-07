@@ -4,10 +4,7 @@
     <string name="app_name">Data4All</string>
     <string name="hello">Hello Data4All!</string>
     <string name="action_settings">Settings</string>
-    <string name="help_button">Help</string>
-    <string name="login_button">Login to OSM</string>
-    <string name="editor_button">Go to Editor</string>
-    <string name="map_button">Show Map</string>
-    <string name="settings_button">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="camera">Camera</string>
 
 </resources>

@@ -53,4 +53,13 @@
         android:layout_marginBottom="16dp"
         android:text="@string/settings_button" />
 
+    <Button
+        android:id="@+id/buttonCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="22dp"
+        android:text="@string/camera" />
+
 </RelativeLayout>
