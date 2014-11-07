@@ -1,7 +1,5 @@
 package io.github.data4all;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,7 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+
 public class MakePhotoActivity extends Activity {
     private final static String DEBUG_TAG = "MakePhotoActivity";
     private Camera camera;
