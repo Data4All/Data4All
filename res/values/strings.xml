@@ -6,6 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="help_button">Help</string>
+    <string name="login_button">Login</string>
+    <string name="map_button">Map</string>
+    <string name="editor_button">Editor</string>
+    <string name="settings_button">Settings</string>
     <string name="camera">Camera</string>
 
 </resources>
