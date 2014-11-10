@@ -12,6 +12,15 @@ public class Node extends OsmObject {
 	private double latitude;
 	private double longitude;
 	
+	public Node() {
+		
+	}
+	
+	public Node(double lat, double lon) {
+		this.latitude = lat;
+		this.longitude = lon;
+	}
+	
 	public double getLatitude() {
 		return latitude;
 	}

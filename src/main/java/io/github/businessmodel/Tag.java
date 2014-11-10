@@ -16,6 +16,15 @@ public class Tag {
 	private String key; 
 	private String value;
 	
+	public Tag() {
+		
+	}
+	
+	public Tag(String k, String v) {
+		this.key = k;
+		this.value = v; 
+	}
+	
 	public String getKey() {
 		return key;
 	}

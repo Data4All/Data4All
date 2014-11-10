@@ -12,6 +12,14 @@ import java.util.ArrayList;
 public class Way extends OsmObject {
 	
 	private ArrayList<Node> nds;
+	
+	public Way() {
+		
+	}
+	
+	public Way(ArrayList<Node> nodes) {
+		this.nds = nodes; 
+	}
 
 	public ArrayList<Node> getNds() {
 		return nds;

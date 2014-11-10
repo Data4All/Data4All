@@ -8,7 +8,7 @@ import java.util.Date;
  * @author Felix Kirchgeorg
  *
  */
-public class OsmObject {
+public abstract class OsmObject {
 	
 	private int id;
 	private String user;

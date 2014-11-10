@@ -12,7 +12,15 @@ import java.util.ArrayList;
 public class Relation extends OsmObject {
 	
 	private ArrayList<Member> members;
+	
+	public Relation() {
 		
+	}
+	
+	public Relation(ArrayList<Member> mbs) {
+		this.members = mbs; 
+	}
+	
 	public ArrayList<Member> getMembers() {
 		return members;
 	}
