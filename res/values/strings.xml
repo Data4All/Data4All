@@ -11,5 +11,6 @@
     <string name="editor_button">Editor</string>
     <string name="settings_button">Settings</string>
     <string name="camera">Camera</string>
+    <string name="speechRecognition">Speech Recognition</string>
 
 </resources>
