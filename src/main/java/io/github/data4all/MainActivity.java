@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
         Button b = (Button) findViewById(R.id.buttonCamera);
         b.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MakePhotoActivity.class));
+                startActivity(new Intent(MainActivity.this, CameraActivity.class));
             }
         });
     }
