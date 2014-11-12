@@ -30,6 +30,13 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(MainActivity.this, MakePhotoActivity.class));
             }
         });
+        
+        Button c = (Button) findViewById(R.id.button4);
+        c.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MapActivity.class));
+            }
+        });
     }
 
 
