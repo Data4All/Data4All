@@ -36,7 +36,7 @@
         android:text="@string/map_button" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/buttonEditor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button4"

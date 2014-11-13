@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MakePhotoActivity" />
+        <activity android:name=".EditorActivity" />
     </application>
 
 </manifest>

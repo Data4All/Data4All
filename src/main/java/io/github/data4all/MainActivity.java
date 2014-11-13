@@ -16,10 +16,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnClickListener{
 
 	protected static final int REQUEST_CODE = 1234;
 	Button speech;
+	Button camera;
+	Button editor;
 	ArrayList<String> matches_text;
 	Dialog match_text_dialog;
     /**
@@ -33,27 +35,30 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        
-        Button b = (Button) findViewById(R.id.buttonCamera);
-        b.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MakePhotoActivity.class));
-            }
-        });
-        
+        camera = (Button) findViewById(R.id.buttonCamera);
+        camera.setOnClickListener(this);
+        editor = (Button) findViewById(R.id.buttonEditor);
+        editor.setOnClickListener(this);        
         speech = (Button) findViewById(R.id.button6);
-        speech.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {           
-                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                    startActivityForResult(intent, REQUEST_CODE);
-                
-            }
-        });
+        speech.setOnClickListener(this);   
+
      
     }
 
+    public void onClick(View v) {
+    	if(v == camera){
+            startActivity(new Intent(MainActivity.this, MakePhotoActivity.class));
+    	}
+    	else if(v == editor){
+            startActivity(new Intent(MainActivity.this, EditorActivity.class));
+    	}
+    	else if(v == speech){
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            startActivityForResult(intent, REQUEST_CODE);
+    	}
+    }
 
 	
     @Override
