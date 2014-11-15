@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements OnClickListener{
 
     public void onClick(View v) {
     	if(v == camera){
-            startActivity(new Intent(MainActivity.this, MakePhotoActivity.class));
+            startActivity(new Intent(MainActivity.this, CameraActivity.class));
     	}
     	else if(v == editor){
             startActivity(new Intent(MainActivity.this, EditorActivity.class));
