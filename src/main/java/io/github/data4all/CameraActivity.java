@@ -32,6 +32,8 @@ public class CameraActivity extends Activity {
     /**
      * Called when the activity is first created.
      * 
+     * Shopping successfull
+     * 
      * @param savedInstanceState
      *            If the activity is being re-initialized after previously being
      *            shut down then this Bundle contains the data it most recently
