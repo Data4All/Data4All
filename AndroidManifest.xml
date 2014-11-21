@@ -26,6 +26,7 @@
         </activity>
         <activity android:name=".CameraActivity" />
         <activity android:name=".EditorActivity" />
+        <activity android:name=".MapActivity" />
     </application>
 
 </manifest>
