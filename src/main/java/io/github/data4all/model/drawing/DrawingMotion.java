@@ -20,6 +20,9 @@ public class DrawingMotion {
 	 */
 	public static final float POINT_TOLERANCE = 5f;
 
+	/**
+	 * List of all added Points
+	 */
 	private List<PointF> points = new ArrayList<PointF>();
 
 	/**
