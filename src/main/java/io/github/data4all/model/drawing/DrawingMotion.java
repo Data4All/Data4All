@@ -3,8 +3,6 @@ package io.github.data4all.model.drawing;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.PointF;
-
 /**
  * The DrawingMotion stores the path of a motion and provides methods to
  * determine the behavior to the motion<br/>
@@ -45,7 +43,7 @@ public class DrawingMotion {
 	/**
 	 * List of all added Points
 	 */
-	private List<PointF> points = new ArrayList<PointF>();
+	private List<Point> points = new ArrayList<Point>();
 
 	/**
 	 * Adds a Point to the DrawingMotion
@@ -56,7 +54,7 @@ public class DrawingMotion {
 	 *            the y value of the point
 	 */
 	public void addPoint(float x, float y) {
-		points.add(new PointF(x, y));
+		points.add(new Point(x, y));
 	}
 
 	/**
@@ -91,7 +89,7 @@ public class DrawingMotion {
 		if (getPathSize() == 0) {
 			return false;
 		}
-		for (PointF p : points) {
+		for (Point p : points) {
 			if (delta(getStart(), p) > POINT_TOLERANCE) {
 				return false;
 			}
@@ -106,7 +104,7 @@ public class DrawingMotion {
 	 * @return the first point of the motion or null if there is no point in the
 	 *         motion
 	 */
-	public PointF getStart() {
+	public Point getStart() {
 		return points.isEmpty() ? null : points.get(0);
 	}
 
@@ -117,7 +115,7 @@ public class DrawingMotion {
 	 * @return the last point of the motion or null if there is no point in the
 	 *         motion
 	 */
-	public PointF getEnd() {
+	public Point getEnd() {
 		return points.isEmpty() ? null : points.get(points.size() - 1);
 	}
 
@@ -135,27 +133,24 @@ public class DrawingMotion {
 	 * 
 	 * @return a copy of the points in this DrawingMotion
 	 */
-	public List<PointF> getPoints() {
-		List<PointF> result = new ArrayList<PointF>(points.size());
-		for (PointF p : points) {
-			result.add(new PointF(p.x, p.y));
-		}
-		return result;
+	public List<Point> getPoints() {
+		return new ArrayList<Point>(points);
 	}
 
 	/**
 	 * Returns a copy of the point at the given index
 	 * 
+	 * @throws IndexOutOfBoundsException
+	 *             if the given index is out of the bounds
+	 * 
 	 * @return a copy of the point at the given index
 	 */
-	public PointF getPoint(int index) {
+	public Point getPoint(int index) {
 		if (index < 0 || index >= points.size()) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
 					+ points.size());
 		} else {
-			PointF f = points.get(index);
-			// f will never be null at this point
-			return new PointF(f.x, f.y);
+			return points.get(index);
 		}
 	}
 
@@ -168,8 +163,8 @@ public class DrawingMotion {
 	 *            the second point
 	 * @return the euclidean distance between point a and point b
 	 */
-	private static float delta(PointF a, PointF b) {
-		return (float) Math.sqrt(Math.pow(a.x - b.x, 2)
-				+ Math.pow(a.y - b.y, 2));
+	private static float delta(Point a, Point b) {
+		return (float) Math.sqrt(Math.pow(a.getX() - b.getX(), 2)
+				+ Math.pow(a.getY() - b.getY(), 2));
 	}
 }
