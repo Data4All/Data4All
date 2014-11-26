@@ -66,9 +66,8 @@ public class DrawingMotion {
 		if (getPathSize() == 0) {
 			return false;
 		}
-		float startLength = getStart().length();
 		for (PointF p : points) {
-			if (Math.abs(startLength - p.length()) > POINT_TOLERANCE) {
+			if (delta(getStart(), p) > POINT_TOLERANCE) {
 				return false;
 			}
 		}
@@ -104,5 +103,19 @@ public class DrawingMotion {
 	 */
 	public int getPathSize() {
 		return points.size();
+	}
+
+	/**
+	 * Calculates the euclidean distance between point a and point b
+	 * 
+	 * @param a
+	 *            the first point
+	 * @param b
+	 *            the second point
+	 * @return the euclidean distance between point a and point b
+	 */
+	private static float delta(PointF a, PointF b) {
+		return (float) Math.sqrt(Math.pow(a.x - b.x, 2)
+				+ Math.pow(a.y - b.y, 2));
 	}
 }
