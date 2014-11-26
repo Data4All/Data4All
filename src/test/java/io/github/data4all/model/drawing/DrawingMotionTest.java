@@ -49,15 +49,18 @@ public class DrawingMotionTest {
 	// Tests for addPoint
 
 	@Test
-	public void addPoint_() {
-
+	public void addPoint_addingPoints_sizeIncreasesCorrect() {
+		for(int i = 1; i < 20; i++) {
+			drawingMotion.addPoint(0, 0);
+			assertEquals(i, drawingMotion.getPathSize());
+		}
 	}
 
 	// Tests for isPath
 
 	@Test
 	public void isPath_noEntries_resultIsFalse() {
-		assertEquals(drawingMotion.isPath(), false);
+		assertEquals(false, drawingMotion.isPath());
 	}
 
 	@Test
@@ -68,7 +71,7 @@ public class DrawingMotionTest {
 		drawingMotion.addPoint(0, DrawingMotion.POINT_TOLERANCE);
 		drawingMotion.addPoint(0, -DrawingMotion.POINT_TOLERANCE);
 
-		assertEquals(drawingMotion.isPath(), false);
+		assertEquals(false, drawingMotion.isPath());
 	}
 
 	@Test
@@ -79,14 +82,14 @@ public class DrawingMotionTest {
 		drawingMotion.addPoint(0, Math.nextUp(DrawingMotion.POINT_TOLERANCE));
 		drawingMotion.addPoint(0, -Math.nextUp(DrawingMotion.POINT_TOLERANCE));
 
-		assertEquals(drawingMotion.isPath(), true);
+		assertEquals(true, drawingMotion.isPath());
 	}
 
 	// Tests for isPoint
 
 	@Test
 	public void isPoint_noEntries_resultIsFalse() {
-		assertEquals(drawingMotion.isPoint(), false);
+		assertEquals(false, drawingMotion.isPoint());
 	}
 
 	@Test
@@ -97,7 +100,7 @@ public class DrawingMotionTest {
 		drawingMotion.addPoint(0, DrawingMotion.POINT_TOLERANCE);
 		drawingMotion.addPoint(0, -DrawingMotion.POINT_TOLERANCE);
 
-		assertEquals(drawingMotion.isPoint(), true);
+		assertEquals(true, drawingMotion.isPoint());
 	}
 
 	@Test
@@ -108,35 +111,35 @@ public class DrawingMotionTest {
 		drawingMotion.addPoint(0, Math.nextUp(DrawingMotion.POINT_TOLERANCE));
 		drawingMotion.addPoint(0, -Math.nextUp(DrawingMotion.POINT_TOLERANCE));
 
-		assertEquals(drawingMotion.isPoint(), false);
+		assertEquals(false, drawingMotion.isPoint());
 	}
 
 	// Tests for getStart
 
 	@Test
 	public void getStart_noEntries_resultIsNull() {
-		assertEquals(drawingMotion.getStart(), null);
+		assertEquals(null, drawingMotion.getStart());
 	}
 
 	@Test
 	public void getStart_someEntries_resultIsCorrect() {
 		drawingMotion.addPoint(-1, -1);
 		addPoints(10);
-		assertEquals(drawingMotion.getStart().equals(-1, -1), true);
+		assertEquals(true, drawingMotion.getStart().equals(-1, -1));
 	}
 
 	// Tests for getEnd
 
 	@Test
 	public void getEnd_noEntries_resultIsNull() {
-		assertEquals(drawingMotion.getEnd(), null);
+		assertEquals(null, drawingMotion.getEnd());
 	}
 
 	@Test
 	public void getEnd_someEntries_resultIsCorrect() {
 		addPoints(10);
 		drawingMotion.addPoint(-1, -1);
-		assertEquals(drawingMotion.getEnd().equals(-1, -1), true);
+		assertEquals(true, drawingMotion.getEnd().equals(-1, -1));
 	}
 
 	@Test
@@ -149,24 +152,24 @@ public class DrawingMotionTest {
 
 	@Test
 	public void getPathSize_noEntries_sizeIsZero() {
-		assertEquals(drawingMotion.getPathSize(), 0);
+		assertEquals(0, drawingMotion.getPathSize());
 	}
 
 	@Test
 	public void getPathSize_someEntries_sizeIsCorrect() {
 		addPoints(10);
-		assertEquals(drawingMotion.getPathSize(), 10);
+		assertEquals(10, drawingMotion.getPathSize());
 
 		// Add some more points ... just to be on the safe side ...
 		addPoints(10);
-		assertEquals(drawingMotion.getPathSize(), 20);
+		assertEquals(20, drawingMotion.getPathSize());
 	}
 
 	// Tests for getPoints
 
 	@Test
 	public void getPoints_noEntries_resultIsEmpty() {
-		assertEquals(drawingMotion.getPoints().isEmpty(), true);
+		assertEquals(true, drawingMotion.getPoints().isEmpty());
 	}
 
 	@Test
@@ -175,8 +178,8 @@ public class DrawingMotionTest {
 		List<Point> points = drawingMotion.getPoints();
 		for (int i = 0; i < 10; i++) {
 			Point point = points.get(i);
-			assertEquals(point.getX(), 2 * i, ASSERT_FLOAT_DELTA);
-			assertEquals(point.getY(), 2 * i + 1, ASSERT_FLOAT_DELTA);
+			assertEquals(2 * i, point.getX(), ASSERT_FLOAT_DELTA);
+			assertEquals(2 * i + 1, point.getY(), ASSERT_FLOAT_DELTA);
 		}
 	}
 
@@ -204,8 +207,8 @@ public class DrawingMotionTest {
 		addPoints(10);
 		for (int i = 0; i < 10; i++) {
 			Point point = drawingMotion.getPoint(i);
-			assertEquals(point.getX(), 2 * i, ASSERT_FLOAT_DELTA);
-			assertEquals(point.getY(), 2 * i + 1, ASSERT_FLOAT_DELTA);
+			assertEquals(2 * i, point.getX(), ASSERT_FLOAT_DELTA);
+			assertEquals(2 * i + 1, point.getY(), ASSERT_FLOAT_DELTA);
 		}
 	}
 }
