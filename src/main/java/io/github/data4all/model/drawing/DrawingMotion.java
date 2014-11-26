@@ -46,11 +46,7 @@ public class DrawingMotion {
 	 * @see DrawingMotion#POINT_TOLERANCE
 	 */
 	public boolean isPath() {
-		if (getPathSize() == 0) {
-			return false;
-		} else {
-			return !isPoint();
-		}
+		return !(getPathSize() == 0) && !isPoint();
 	}
 
 	/**
@@ -87,11 +83,7 @@ public class DrawingMotion {
 	 *         motion
 	 */
 	public PointF getStart() {
-		if (points.isEmpty()) {
-			return null;
-		} else {
-			return points.get(0);
-		}
+		return points.isEmpty() ? null : points.get(0);
 	}
 
 	/**
@@ -102,11 +94,7 @@ public class DrawingMotion {
 	 *         motion
 	 */
 	public PointF getEnd() {
-		if (points.isEmpty()) {
-			return null;
-		} else {
-			return points.get(points.size() - 1);
-		}
+		return points.isEmpty() ? null : points.get(points.size() - 1);
 	}
 
 	/**
