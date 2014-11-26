@@ -109,6 +109,35 @@ public class DrawingMotion {
 	}
 
 	/**
+	 * Returns a copy of the points in this DrawingMotion
+	 * 
+	 * @return a copy of the points in this DrawingMotion
+	 */
+	public List<PointF> getPoints() {
+		List<PointF> result = new ArrayList<PointF>(points.size());
+		for (PointF p : points) {
+			result.add(new PointF(p.x, p.y));
+		}
+		return result;
+	}
+
+	/**
+	 * Returns a copy of the point at the given index
+	 * 
+	 * @return a copy of the point at the given index
+	 */
+	public PointF getPoint(int index) {
+		if (index < 0 || index >= points.size()) {
+			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
+					+ points.size());
+		} else {
+			PointF f = points.get(index);
+			// f will never be null at this point
+			return new PointF(f.x, f.y);
+		}
+	}
+
+	/**
 	 * Calculates the euclidean distance between point a and point b
 	 * 
 	 * @param a
