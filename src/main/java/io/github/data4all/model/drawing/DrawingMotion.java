@@ -12,6 +12,28 @@ import android.graphics.PointF;
  * It is used by the painting component to store the user input<br/>
  * Also its used by the MotionInterpreters to interpret the user input
  * 
+ * An activity can easily implement the usage of DrawingMotion by overwriting
+ * the onTouchEvent-method as following:
+ * 
+ * <pre>
+ *  {@code
+ * public boolean onTouchEvent(MotionEvent event) {
+ *     int action = event.getAction();
+ *     if (action == MotionEvent.ACTION_DOWN) {
+ *         currentMotion = new DrawingMotion();
+ *         currentMotion.addPoint(event.getX(), event.getY());
+ *         return true;
+ *     } else if (action == MotionEvent.ACTION_MOVE) {
+ *         currentMotion.addPoint(event.getX(), event.getY());
+ *         return true;
+ *     } else if (action == MotionEvent.ACTION_UP) {
+ *         // Do something with the finished motion
+ *         return true;
+ *     }
+ *     return false;
+ * }
+ * </pre>
+ * 
  * @author tbrose
  */
 public class DrawingMotion {
