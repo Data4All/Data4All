@@ -18,7 +18,7 @@ public class DrawingMotion {
 	/**
 	 * The default tolerance for a Point
 	 */
-	public static final int POINT_TOLERANCE = 5;
+	public static final float POINT_TOLERANCE = 5f;
 
 	private List<PointF> points = new ArrayList<PointF>();
 
