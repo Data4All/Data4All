@@ -31,6 +31,6 @@ public class Point {
 	}
 
 	public boolean equals(float x, float y) {
-		return this.x == y && this.y == y;
+		return this.x == x && this.y == y;
 	}
 }
