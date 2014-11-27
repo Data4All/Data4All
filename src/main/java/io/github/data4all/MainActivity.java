@@ -1,7 +1,9 @@
 package io.github.data4all;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -81,17 +83,20 @@ public class MainActivity extends Activity {
 	 
 	 private void matchesTag(){
 		List<String> list = new ArrayList<String>();
-		List<String> copyData = new ArrayList<String>();
-		list.add("Hallo");
+		Map<String, String> tagData = new HashMap<String, String>();
+		list.add("primary");
 		list.add("motorway");
+		list.add("secondary");
 		for (String tag : list) {
 			for (String matches : matchesText) {
-				if(tag.equals(matches)){
-					copyData.add(tag);
+				if(tag.equalsIgnoreCase(matches)){
+					tagData.put("highway",tag);
 				}
 			}
+			matchesText.clear();
+			matchesText.add("highway = " +tagData.get("highway")); 
 		}	
-			matchesText = (ArrayList<String>) copyData;
+			
 			
 	 }
 }
