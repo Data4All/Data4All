@@ -4,5 +4,7 @@
     <string name="app_name">Data4All</string>
     <string name="hello">Hello Data4All!</string>
     <string name="action_settings">Settings</string>
+    <string name="speechRecognition">Start </string>
+    <string name="selectTag">Select Matching Tag</string>
 
 </resources>
