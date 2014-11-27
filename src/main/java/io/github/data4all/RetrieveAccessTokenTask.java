@@ -1,5 +1,7 @@
 package io.github.data4all;
 
+import java.util.Calendar;
+
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -53,6 +55,8 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
             final Editor edit = prefs.edit();
             edit.putString(OAuth.OAUTH_TOKEN, consumer.getToken());
             edit.putString(OAuth.OAUTH_TOKEN_SECRET, consumer.getTokenSecret());
+            //To calculate expiring date
+            edit.putLong("ACCESS_DATE", Calendar.getInstance().getTimeInMillis());       
             edit.commit();
 
             String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
