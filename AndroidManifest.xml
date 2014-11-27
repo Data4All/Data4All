@@ -23,8 +23,8 @@
             </intent-filter>
         </activity>
         <service
-        android:name="services.GPStracker"
-        android:label="GPS Tracker" >
+        android:name="services.GPSservice"
+        android:label="GPS Service" >
     </service>
     </application>
 
