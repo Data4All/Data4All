@@ -7,30 +7,35 @@ package io.github.data4all.model.drawing;
  * @author tbrose
  */
 public class Point {
-	private final float x;
-	private final float y;
+    private final float x;
+    private final float y;
 
-	public Point(float x, float y) {
-		this.x = x;
-		this.y = y;
-	}
+    public Point(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
 
-	public float getX() {
-		return x;
-	}
+    public float getX() {
+        return x;
+    }
 
-	public float getY() {
-		return y;
-	}
+    public float getY() {
+        return y;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		return (o == this)
-				|| ((o instanceof Point) && x == ((Point) o).getX() && y == ((Point) o)
-						.getY());
-	}
+    @Override
+    public int hashCode() {
+        return Float.valueOf(x).hashCode() + Float.valueOf(y).hashCode();
+    }
 
-	public boolean equals(float x, float y) {
-		return this.x == x && this.y == y;
-	}
+    @Override
+    public boolean equals(Object o) {
+        return (o == this)
+                || ((o instanceof Point) && x == ((Point) o).getX() && y == ((Point) o)
+                        .getY());
+    }
+
+    public boolean equalsTo(float x, float y) {
+        return this.x == x && this.y == y;
+    }
 }

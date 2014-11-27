@@ -17,22 +17,22 @@ import android.graphics.Canvas;
  *            interpreter
  */
 public interface MotionInterpreter<T> {
-	/**
-	 * Interprets the given motions and draws the result on the given canvas
-	 * 
-	 * @param canvas
-	 *            the canvas on which the interpreted motions will be drawn
-	 * @param drawingMotions
-	 *            the motions to interpret
-	 */
-	void draw(Canvas canvas, List<DrawingMotion> drawingMotions);
+    /**
+     * Interprets the given motions and draws the result on the given canvas
+     * 
+     * @param canvas
+     *            the canvas on which the interpreted motions will be drawn
+     * @param drawingMotions
+     *            the motions to interpret
+     */
+    void draw(Canvas canvas, List<DrawingMotion> drawingMotions);
 
-	/**
-	 * Interprets the given motions and creates an Object of Type T which
-	 * represents the content of the interpreted motions
-	 * 
-	 * @param drawingMotions
-	 *            the motions to interpret
-	 */
-	T create(List<DrawingMotion> drawingMotions);
+    /**
+     * Interprets the given motions and creates an Object of Type T which
+     * represents the content of the interpreted motions
+     * 
+     * @param drawingMotions
+     *            the motions to interpret
+     */
+    T create(List<DrawingMotion> drawingMotions);
 }
