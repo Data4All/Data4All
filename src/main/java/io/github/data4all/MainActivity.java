@@ -1,10 +1,9 @@
 package io.github.data4all;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 
-public class MainActivity extends Activity {	
+public class MainActivity extends CustomMenuActivity {	
 
 	/**
 	 * Called when the activity is first created.
