@@ -154,17 +154,16 @@ public class DrawingMotion {
 		}
 	}
 
-	/**
-	 * Calculates the euclidean distance between point a and point b
-	 * 
-	 * @param a
-	 *            the first point
-	 * @param b
-	 *            the second point
-	 * @return the euclidean distance between point a and point b
-	 */
-	private static float delta(Point a, Point b) {
-		return (float) Math.sqrt(Math.pow(a.getX() - b.getX(), 2)
-				+ Math.pow(a.getY() - b.getY(), 2));
-	}
+    /**
+     * Calculates the euclidean distance between point a and point b
+     * 
+     * @param a
+     *            the first point
+     * @param b
+     *            the second point
+     * @return the euclidean distance between point a and point b
+     */
+    private static float delta(Point a, Point b) {
+        return (float) Math.hypot(a.getX() - b.getX(), a.getY() - b.getY());
+    }
 }
