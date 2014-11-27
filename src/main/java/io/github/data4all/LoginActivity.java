@@ -66,4 +66,13 @@ public class LoginActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+//    public boolean isTokenExpired(SharedPreferences sp) {
+//        if (sp.contains(OAuth.OAUTH_TOKEN)
+//                && sp.contains(OAuth.OAUTH_TOKEN_SECRET)) {
+//            // TODO
+//        }
+//
+//        return false;
+//    }
 }
