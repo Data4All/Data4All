@@ -87,16 +87,19 @@ public class MainActivity extends Activity {
 		list.add("primary");
 		list.add("motorway");
 		list.add("secondary");
-		for (String tag : list) {
-			for (String matches : matchesText) {
-				if(tag.equalsIgnoreCase(matches)){
-					tagData.put("highway",tag);
+		System.out.println(matchesText);
+		for (int i = 0; i < list.size(); i++) {
+			for (int j = 0 ; j < matchesText.size() ; j++) {
+				System.out.println(list.get(i) + matchesText.get(j));
+				if(list.get(i).equals(matchesText.get(j))){
+					tagData.put("highway",list.get(i));
+					System.out.println("true");
 				}
 			}
-			matchesText.clear();
-			matchesText.add("highway = " +tagData.get("highway")); 
+	
 		}	
-			
+		matchesText.clear();
+		matchesText.add("highway = " + tagData.get("highway")); 
 			
 	 }
 }
