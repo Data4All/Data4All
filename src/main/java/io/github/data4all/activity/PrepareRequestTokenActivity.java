@@ -1,6 +1,11 @@
-package io.github.data4all;
+package io.github.data4all.activity;
+
+import io.github.data4all.Constants;
+import io.github.data4all.OAuthRequestTokenTask;
+import io.github.data4all.RetrieveAccessTokenTask;
 
 import java.net.URLEncoder;
+
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
