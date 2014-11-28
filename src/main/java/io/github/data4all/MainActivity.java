@@ -29,15 +29,19 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		 button_sensor = (Button) findViewById(R.id.buttonSensor);
-	     button_sensor.setOnClickListener((OnClickListener) this);   
-
+	     button_sensor.setOnClickListener(new OnClickListener() 
+	        {            
+	            @Override
+	            public void onClick(View v) 
+	            {
+	         	        if(v == button_sensor){
+	         	           startActivity(new Intent(MainActivity.this, LageSensor.class));
+	         	                     
+	            }
+	        }; 
+	    });
 	}
 	
-	 public void onClick(View v) {
-	        if(v == button_sensor){
-	           startActivity(new Intent(MainActivity.this, LageSensor.class));
-	        }
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
