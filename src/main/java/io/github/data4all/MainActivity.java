@@ -1,10 +1,13 @@
 package io.github.data4all;
 
+import io.github.data4all.activity.CameraActivity;
+import io.github.data4all.activity.ShowPictureActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends Activity {	
 	
@@ -44,4 +47,8 @@ public class MainActivity extends Activity {
 	        }
 	        return super.onOptionsItemSelected(item);
 	    }
+	 public void onClickButton (View view) {
+		    Intent intent = new Intent (this, CameraActivity.class);
+		    startActivity(intent);
+		}
 }

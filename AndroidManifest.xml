@@ -30,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ShowPictureActivity" />
+        <activity android:name="io.github.data4all.activity.ShowPictureActivity" />
          <activity android:name="io.github.data4all.activity.CameraActivity" />
     </application>
 

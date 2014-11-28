@@ -1,4 +1,8 @@
-package io.github.data4all;
+package io.github.data4all.activity;
+
+import io.github.data4all.R;
+import io.github.data4all.R.id;
+import io.github.data4all.R.layout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +35,10 @@ public class ShowPictureActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_picture);
+		if(getIntent().hasExtra("file_path")){
+			Log.d("Status:", "intent is there");
+			setBackground(Uri.fromFile((File) getIntent().getExtras().get("file_path")));
+		}
 		((Button) findViewById(R.id.btnGallary))
 				.setOnClickListener(new OnClickListener() {
 					@Override
@@ -53,24 +61,28 @@ public class ShowPictureActivity extends Activity {
 			if (data != null && resultCode == RESULT_OK) {
 
 				Uri selectedImage = data.getData();
-				Resources res = getResources();
-		        Bitmap bitmap;
-				try {
-					bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-					BitmapDrawable bd = new BitmapDrawable(res, bitmap);
-			        View view = findViewById(R.id.LinearLayout);
-			        view.setBackground(bd);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				setBackground(selectedImage);
 		        
 			} else {
 				Log.d("Status:", "Photopicker canceled");
 			}
+		}
+	}
+	
+	private void setBackground(Uri selectedImage) {
+		Resources res = getResources();
+        Bitmap bitmap;
+		try {
+			bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+			BitmapDrawable bd = new BitmapDrawable(res, bitmap);
+	        View view = findViewById(R.id.LinearLayout);
+	        view.setBackground(bd);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
