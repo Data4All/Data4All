@@ -5,5 +5,9 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
+    
+    <item
+        android:id="@+id/ShowPicture"
+        android:title="@string/action_ShowPicture"/>
 
 </menu>

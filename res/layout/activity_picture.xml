@@ -4,15 +4,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <ImageView
-        android:id="@+id/imgView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"></ImageView>
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/ivImage"
+        android:background="@drawable/android"    
+        >
+    </ImageView>
+    
     <Button
-        android:id="@+id/buttonLoadPicture"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="Load Picture"
-        android:layout_gravity="center"></Button>
+        android:text="Click To Open Gallary"
+        android:id="@+id/btnGallary"
+        android:layout_height="wrap_content">
+    </Button>
 </LinearLayout>
