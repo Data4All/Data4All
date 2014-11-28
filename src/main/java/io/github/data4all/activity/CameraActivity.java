@@ -1,8 +1,10 @@
-package io.github.data4all;
+package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.CaptureShutterListener;
-import io.github.data4all.CaptureCameraSurfaceView;
+import io.github.data4all.R.id;
+import io.github.data4all.R.layout;
+import io.github.data4all.listener.CaptureShutterListener;
+import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -32,7 +34,7 @@ public class CameraActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		// Inflate the UI layout
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_camera);
 
 		// Initialize the UI components
 		initUIComponents();

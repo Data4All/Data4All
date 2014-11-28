@@ -1,5 +1,8 @@
-package io.github.data4all;
+package io.github.data4all.activity;
 
+import io.github.data4all.R;
+import io.github.data4all.R.layout;
+import io.github.data4all.R.menu;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

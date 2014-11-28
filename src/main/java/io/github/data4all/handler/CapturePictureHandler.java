@@ -1,8 +1,11 @@
-package io.github.data4all;
+package io.github.data4all.handler;
+
+import io.github.data4all.activity.CameraActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.media.ExifInterface;
@@ -24,8 +27,6 @@ public class CapturePictureHandler implements PictureCallback {
     private File photoFile;
     private ExifInterface exif;
 
-    private static final String TAG = CapturePictureHandler.class
-            .getSimpleName();
 
     public CapturePictureHandler() {
     }
@@ -39,7 +40,7 @@ public class CapturePictureHandler implements PictureCallback {
      * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[], android.hardware.Camera)
      */
     public void onPictureTaken(byte[] raw, Camera camera) {
-        Log.d(TAG, "Save the Picture");
+        Log.d(getClass().getSimpleName(), "Save the Picture");
 
         // Create a File Reference of Photo File
         // Image Type is JPEG
@@ -96,7 +97,7 @@ public class CapturePictureHandler implements PictureCallback {
             if (photoFile.exists())
                 photoFile.delete();
             try {
-                Log.d(TAG, "Picturepath:" + photoFile);
+                Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
                 FileOutputStream fos = new FileOutputStream(photoFile.getPath());
                 fos.write(photoData[0]);
@@ -104,7 +105,7 @@ public class CapturePictureHandler implements PictureCallback {
                 fos.close();
 
             } catch (IOException ex) {
-                Log.d(TAG, ex.getMessage());
+                Log.d(getClass().getSimpleName(), ex.getMessage());
                 return ex.getMessage();
             }
 
@@ -113,7 +114,7 @@ public class CapturePictureHandler implements PictureCallback {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d(TAG, "########### onPostExecute");
+            Log.d(getClass().getSimpleName(), "########### onPostExecute");
             if (result.equals("successful")) {
                 Toast.makeText(context, "Picture successfully saved",
                         Toast.LENGTH_SHORT).show();

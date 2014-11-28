@@ -1,4 +1,4 @@
-package io.github.data4all;
+package io.github.data4all.view;
 
 import java.io.IOException;
 import java.util.List;

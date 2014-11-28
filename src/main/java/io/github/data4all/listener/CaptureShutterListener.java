@@ -1,6 +1,7 @@
-package io.github.data4all;
+package io.github.data4all.listener;
 
-import io.github.data4all.CameraActivity;
+import io.github.data4all.activity.CameraActivity;
+import io.github.data4all.handler.CapturePictureHandler;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
