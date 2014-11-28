@@ -1,11 +1,13 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.activity.CameraActivity;
+import io.github.data4all.activity.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.media.ExifInterface;
@@ -85,6 +87,10 @@ public class CapturePictureHandler implements PictureCallback {
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
 
+
+//        Intent intent = new Intent(context, ShowPictureActivity.class);
+//        intent.putExtra("file_path", photoFile);
+//        context.startActivity(intent);
     }
 
     /*
@@ -118,7 +124,7 @@ public class CapturePictureHandler implements PictureCallback {
             if (result.equals("successful")) {
                 Toast.makeText(context, "Picture successfully saved",
                         Toast.LENGTH_SHORT).show();
-
+                
             } else {
                 Toast.makeText(context, "Failed on taking picture",
                         Toast.LENGTH_SHORT).show();

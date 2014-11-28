@@ -37,14 +37,14 @@ public class CaptureShutterListener implements OnClickListener {
     private ShutterCallback shutterCallback = new ShutterCallback() {
 
         public void onShutter() {
-            Log.i(TAG, "make a sound to notify the picture taken.");
+            Log.i(getClass().getSimpleName(), "make a sound to notify the picture taken.");
         }
     };
 
     private PictureCallback pictureCallback = new PictureCallback() {
 
         public void onPictureTaken(byte[] raw, Camera camera) {
-            Log.i(TAG, "compress jpeg");
+            Log.i(getClass().getSimpleName(), "compress jpeg");
         }
     };
 
