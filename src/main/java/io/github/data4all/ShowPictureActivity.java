@@ -1,12 +1,17 @@
 package io.github.data4all;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +26,7 @@ import android.view.View.OnClickListener;
 public class ShowPictureActivity extends Activity {
 	Button button;
 	ImageView image;
-	Bitmap bmp;
+	LinearLayout layout;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,27 +49,25 @@ public class ShowPictureActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
 		if (requestCode == 1) {
 			if (data != null && resultCode == RESULT_OK) {
 
 				Uri selectedImage = data.getData();
-
-				String[] filePathColumn = { MediaStore.Images.Media.DATA };
-				Cursor cursor = getContentResolver().query(selectedImage,
-						filePathColumn, null, null, null);
-				cursor.moveToFirst();
-				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-				String filePath = cursor.getString(columnIndex);
-				cursor.close();
-
-				if (bmp != null && !bmp.isRecycled()) {
-					bmp = null;
+				Resources res = getResources();
+		        Bitmap bitmap;
+				try {
+					bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+					BitmapDrawable bd = new BitmapDrawable(res, bitmap);
+			        View view = findViewById(R.id.LinearLayout);
+			        view.setBackground(bd);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-
-				bmp = BitmapFactory.decodeFile(filePath);
-				image.setBackgroundResource(0);
-				image.setImageBitmap(bmp);
+		        
 			} else {
 				Log.d("Status:", "Photopicker canceled");
 			}
