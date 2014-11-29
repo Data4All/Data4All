@@ -1,4 +1,4 @@
-package io.github.data4all;
+package io.github.data4all.activity;
 
 import org.junit.Test;
 
