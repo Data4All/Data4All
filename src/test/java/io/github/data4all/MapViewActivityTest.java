@@ -2,7 +2,7 @@ package io.github.data4all;
 
 import org.junit.Test;
 
-public class MainActivityTest {
+public class MapViewActivityTest {
 
 	@Test
 	public void testcaseForJenkins() {
