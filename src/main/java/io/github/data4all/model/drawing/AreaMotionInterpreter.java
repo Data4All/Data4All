@@ -1,15 +1,10 @@
-/**
- * 
- */
 package io.github.data4all.model.drawing;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.util.Log;
 
 /**
@@ -21,19 +16,39 @@ import android.util.Log;
  * @see MotionInterpreter
  */
 public class AreaMotionInterpreter implements MotionInterpreter<Void> {
+    /**
+     * The log-tag for this class
+     */
+    private static final String TAG = AreaMotionInterpreter.class
+            .getSimpleName();
 
+    /**
+     * The maximum angle-variation where a point is reduced
+     */
+    private static final int ANGLE_VARIATION = 25;
+
+    /**
+     * The maximum combine-variation where points were combined
+     */
+    private static final int COMBINE_VARIATION = 25;
+
+    /**
+     * The paint to draw the points with
+     */
     private final Paint pointPaint = new Paint();
+
+    /**
+     * The paint to draw the path with
+     */
     private final Paint pathPaint = new Paint();
-    private final Paint areaPaint = new Paint();
-    private static final int POINT_RADIUS = 5;
 
     public AreaMotionInterpreter() {
-        pointPaint.setColor(0xFF0E0EEF);
-        pathPaint.setColor(0xFFAECEEF);
-        areaPaint.setColor(0xFFBEEEEF);
+        // Draw dark blue points
+        pointPaint.setColor(POINT_COLOR);
 
-        areaPaint.setColor(Color.BLUE);
-        areaPaint.setStyle(Style.FILL);
+        // Draw semi-thick light blue lines
+        pathPaint.setColor(PATH_COLOR);
+        pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
     }
 
     /*
@@ -49,79 +64,71 @@ public class AreaMotionInterpreter implements MotionInterpreter<Void> {
         // Calculate all way points of the area
         for (DrawingMotion motion : drawingMotions) {
             if (motion.getPathSize() != 0 && motion.isPoint()) {
+                // for dots calculate the average of the given points
                 areaPoints.add(average(motion));
             } else {
                 areaPoints.addAll(motion.getPoints());
             }
         }
 
-        // Draw the Points
-        Log.d(getClass().getSimpleName(), "Drawing all Points");
-        Point previous = null;
-        // for (Point p : areaPoints) {
-        // if (previous != null) {
-        // canvas.drawLine(previous.getX(), previous.getY(), p.getX(),
-        // p.getY(), pathPaint);
-        // }
-        // previous = p;
-        // canvas.drawCircle(p.getX(), p.getY(), POINT_RADIUS, pointPaint);
-        // }
-        // if (previous != null) {
-        // canvas.drawLine(previous.getX(), previous.getY(), areaPoints.get(0)
-        // .getX(), areaPoints.get(0).getY(), pathPaint);
-        // }
-        //
-        //
-        // previous = null;
+        // reduce the polygon
         areaPoints = reduce(areaPoints);
-        for (Point p : areaPoints) {
-            if (previous != null) {
-                canvas.drawLine(previous.getX(), previous.getY(), p.getX(),
-                        p.getY(), pathPaint);
-            }
-            previous = p;
-            canvas.drawCircle(p.getX(), p.getY(), POINT_RADIUS, pointPaint);
+        Log.d(TAG, "Drawing " + areaPoints.size() + " Points");
+
+        // first draw all lines
+        for (int i = 0; i < areaPoints.size(); i++) {
+            // The next point in the polygon
+            Point b = areaPoints.get((i + 1) % areaPoints.size());
+            Point a = areaPoints.get(i);
+
+            canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(), pathPaint);
         }
-        if (previous != null) {
-            canvas.drawLine(previous.getX(), previous.getY(), areaPoints.get(0)
-                    .getX(), areaPoints.get(0).getY(), pathPaint);
+
+        // afterwards draw the points
+        for (Point p : areaPoints) {
+            canvas.drawCircle(p.getX(), p.getY(), POINT_RADIUS, pointPaint);
         }
     }
 
     /**
+     * First reduces the points of the polygon by removing points where the
+     * angel between the previous and the next point is nearly 180 degrees (25
+     * degree tolerance).<br/>
+     * After this procedure the edge-points are
+     * {@link AreaMotionInterpreter#combine(List) combined} and returned.
      * 
      * @param polygon
-     * @return
+     *            the polygon of the area
+     * @return a reduced polygon which approximates the input polygon with a
+     *         minimum of points
      */
     private static List<Point> reduce(List<Point> polygon) {
+        // We need at least three points to reduce the polygon
         if (polygon.size() >= 3) {
             List<Point> newPolygon = new ArrayList<Point>();
+            // The first point of the polygon wont be reduced
             newPolygon.add(polygon.get(0));
 
-            for (int i = 0; i < polygon.size() - 2; i++) {
-                double alpha = getBeta(newPolygon.get(newPolygon.size() - 1),
-                        polygon.get(i + 1), polygon.get(i + 2));
-                Log.d(AreaMotionInterpreter.class.getSimpleName(),
-                        "Errechneter Winkel: " + Math.toDegrees(alpha));
-                if (Math.abs(Math.toDegrees(alpha) - 180) >= 25
-                        || Math.abs(Math.toDegrees(alpha) - 180) <= -25) {
+            for (int i = 0; i < polygon.size() - 1; i++) {
+                // Get the previous, current and next Point in the polygon
+                // The previous point is the last point added to the reduced
+                // polygon for better circle detection
+                Point a = newPolygon.get(newPolygon.size() - 1);
+                Point b = polygon.get(i + 1);
+                Point c = polygon.get((i + 2) % polygon.size());
+
+                double alpha = getBeta(a, b, c);
+                Log.d(TAG, "point " + (i + 1) + ": " + Math.toDegrees(alpha)
+                        + "degree");
+                double variation = Math.abs(Math.toDegrees(alpha) - 180);
+                if (variation >= ANGLE_VARIATION) {
                     newPolygon.add(polygon.get(i + 1));
+                } else if (i == polygon.size() - 2 && newPolygon.size() < 2) {
+                    // If we reduced the polygon to a line we need so keep the
+                    // end-point of the line
+                    newPolygon.add(b);
                 }
             }
-
-            if (newPolygon.size() > 1) {
-                double alpha = getBeta(newPolygon.get(newPolygon.size() - 1),
-                        polygon.get(polygon.size() - 1), newPolygon.get(0));
-                Log.d(AreaMotionInterpreter.class.getSimpleName(),
-                        "Errechneter Winkel: " + Math.toDegrees(alpha));
-                if (Math.abs(Math.toDegrees(alpha) - 180) >= 25
-                        || Math.abs(Math.toDegrees(alpha) - 180) <= -25) {
-                    newPolygon.add(polygon.get(polygon.size() - 1));
-                }
-            } else {
-                newPolygon.add(polygon.get(polygon.size() - 1));
-            }
-
             return combine(newPolygon);
         } else {
             return polygon;
@@ -129,48 +136,73 @@ public class AreaMotionInterpreter implements MotionInterpreter<Void> {
     }
 
     /**
-     * @param newPolygon
-     * @return
+     * Combines the edge-points of the given polygon so that points which are
+     * relatively close to each other are combined into one single point
+     * 
+     * @param polygon
+     *            the polygon of the area
+     * @return a reduced polygon which approximates the input polygon with a
+     *         minimum of points
      */
     private static List<Point> combine(List<Point> polygon) {
-        List<Point> newPolygon = new ArrayList<Point>();
+        // A polygon with less than two points has no need to be combined
+        if (polygon.size() > 1) {
+            List<Point> newPolygon = new ArrayList<Point>();
 
-        Point mid = null;
-        int count = 0;
+            // Start at the first point with the combination
+            Point mid = polygon.get(0);
+            int count = 1;
 
-        for (Point p : polygon) {
-            if (mid == null) {
-                Log.d(AreaMotionInterpreter.class.getSimpleName(),
-                        "First Point");
-                mid = p;
-                count = 1;
-            } else if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY()) <= 25) {
-                Log.d(AreaMotionInterpreter.class.getSimpleName(), "Extend Mid");
-                mid = new Point((mid.getX() * count + p.getX()) / (count + 1),
-                        (mid.getY() * count + p.getY()) / (count + 1));
-                count++;
-            } else {
-                Log.d(AreaMotionInterpreter.class.getSimpleName(), "Add mid");
-                newPolygon.add(mid);
-                mid = p;
-                count = 1;
+            for (int i = 1; i < polygon.size(); i++) {
+                Point p = polygon.get(i);
+
+                if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY()) <= COMBINE_VARIATION) {
+                    // The point is in range of the current mid, add him to the
+                    // combined point
+                    float midSumX = mid.getX() * count + p.getX();
+                    float midSumY = mid.getY() * count + p.getY();
+                    count++;
+                    mid = new Point(midSumX / count, midSumY / count);
+                } else {
+                    // The point is to far away, add the 'old' combined point
+                    // and start a new combination at this point
+                    newPolygon.add(mid);
+                    mid = p;
+                    count = 1;
+                }
             }
-        }
 
-        if (newPolygon.size() > 0) {
-            mid = newPolygon.get(0);
-            Point lastPoint = polygon.get(polygon.size() - 1);
+            // If the last point is not in range of the first point add him to
+            // the combined polygon
+            if (newPolygon.size() > 0) {
+                mid = newPolygon.get(0);
+                Point lastPoint = polygon.get(polygon.size() - 1);
 
-            if (Math.hypot(mid.getX() - lastPoint.getX(), mid.getY()
-                    - lastPoint.getY()) > 25) {
-                newPolygon.add(lastPoint);
+                if (Math.hypot(mid.getX() - lastPoint.getX(), mid.getY()
+                        - lastPoint.getY()) > COMBINE_VARIATION) {
+                    newPolygon.add(lastPoint);
+                }
             }
-        }
 
-        return newPolygon;
+            return newPolygon;
+        } else {
+            return polygon;
+        }
     }
 
+    /**
+     * Calculates the angle in Point b for the two lines (a,b) and (b,c)
+     * 
+     * @param a
+     *            The first Point
+     * @param b
+     *            The second Point
+     * @param c
+     *            The third Point
+     * @return The angle in Point b
+     */
     private static double getBeta(Point a, Point b, Point c) {
+        // Calculate the two vectors
         Point x = new Point(a.getX() - b.getX(), a.getY() - b.getY());
         Point y = new Point(c.getX() - b.getX(), c.getY() - b.getY());
 
@@ -179,6 +211,13 @@ public class AreaMotionInterpreter implements MotionInterpreter<Void> {
                         y.getY())));
     }
 
+    /**
+     * Calculates the average point over all points in the given motion
+     * 
+     * @param motion
+     *            The motion to calculate the average point from
+     * @return The average point over all points in the motion
+     */
     private static Point average(DrawingMotion motion) {
         if (motion.getPathSize() == 0) {
             return null;
