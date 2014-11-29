@@ -1,5 +1,7 @@
 package io.github.data4all.activity;
 
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -22,6 +24,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 	private final int DEFAULT_ZOOM_LEVEL = 18;
 	private final int MINIMAL_ZOOM_LEVEL = 10;
 	private final int MAXIMAL_ZOOM_LEVEL = 20;
+	private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
 	/**
 	 * Called when the activity is first created.
@@ -38,10 +41,15 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.osm_map_view);
 		mapView = (MapView) this.findViewById(R.id.mapview);
 
-		// Activate default Zoom
+		// Set Maptilesource
+		Log.i(TAG,"Set Maptilesource to " + DEFAULT_TILESOURCE.name());
+		mapView.setTileSource(DEFAULT_TILESOURCE);
+		
+		// Activate Zoom
 		Log.i(TAG,"Activate Zoom Controls");
 		mapView.setBuiltInZoomControls(true);
 		
+		// Activate Multi Touch Control
 		Log.i(TAG,"Activate Multi Touch Controls");
 		mapView.setMultiTouchControls(true);
 
