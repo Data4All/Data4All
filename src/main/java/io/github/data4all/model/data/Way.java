@@ -14,7 +14,7 @@ import android.util.Log;
 public class Way extends OsmElement {
 
 	/**
-	 * List of nodes of a way (waypoints).
+	 * List of nodes to define a way (waypoints).
 	 */
 	private final List<Node> nodes;
 	
@@ -42,7 +42,7 @@ public class Way extends OsmElement {
 			Log.i("Way", "addNode attempt to add same node");
 			return;
 		} 
-		if(nodes.size() == MAX_WAY_NODES) {
+		if(nodes.size() >= MAX_WAY_NODES) {
 			Log.i("Way", "addNode attempt to add more than 2000 nodes");
 			return;
 		}
@@ -85,7 +85,7 @@ public class Way extends OsmElement {
 	 * @param newNodes a list of new nodes
 	 * @param atBeginning if true, nodes are prepended, otherwise, they are appended
 	 */
-	void addNodes(List<Node> newNodes, boolean atBeginning) {
+	public void addNodes(List<Node> newNodes, boolean atBeginning) {
 		if (atBeginning) {
 			if ((nodes.size() > 0) && nodes.get(0) == newNodes.get(newNodes.size()-1)) { // user error
 				Log.i("Way", "addNodes attempt to add same node");
@@ -111,14 +111,28 @@ public class Way extends OsmElement {
 		}
 	}	
 	
+	/**
+	 * Returns all nodes which belong to the way.
+	 * @return
+	 */
 	public List<Node> getNodes() {
 		return nodes;
 	}
 	
+	/**
+	 * Returns true if the node is part of the way.
+	 * @param node
+	 * @return
+	 */
 	public boolean hasNode(final Node node) {
 		return nodes.contains(node);
 	}
 
+	/**
+	 * Returns true if the given way contains common nodes with the this way object.
+	 * @param way
+	 * @return
+	 */
 	public boolean hasCommonNode(final Way way) {
 		for (Node n : this.nodes) {
 			if (way.hasNode(n)) {
@@ -128,6 +142,10 @@ public class Way extends OsmElement {
  		return false;
 	}
 	
+	/**
+	 * Removes a node from the way. 
+	 * @param node
+	 */
 	public void removeNode(final Node node) {
 		int index = nodes.lastIndexOf(node);
 		if (index > 0 && index < (nodes.size()-1)) { // not the first or last node 
@@ -170,10 +188,18 @@ public class Way extends OsmElement {
 		return getFirstNode() == node || getLastNode() == node;
 	}
 	
+	/**
+	 * Returns the first node of this way.
+	 * @return
+	 */
 	public Node getFirstNode() {
 		return nodes.get(0);
 	}
 
+	/**
+	 * Returns the last node of this way.
+	 * @return
+	 */
 	public Node getLastNode() {
 		return nodes.get(nodes.size() - 1);
 	}

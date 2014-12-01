@@ -11,14 +11,19 @@ import java.util.Map;
  * @author fkirchge
  *
  */
-
 public class Tags {
 
+	/**
+	 * Tags with undefined user input. 
+	 */
 	public static String[] unclassifiedTags = (
 			"addr:housenumber,addr:street,addr:postcode,addr:city,addr:country, addr:full,"
 					+ "contact:phone,contact:fax,contact:website,contact:email"
 			).split(",");
 
+	/**
+	 * Tags with predefined values.
+	 */
 	public static Map<String, String> classifiedTags = new HashMap<String, String>() {
 		{
 			put("highway", "motorway,residential,service,track,footway,road,path");
@@ -35,4 +40,19 @@ public class Tags {
 		};
 	};
 	
+	/**
+	 * Returns all unclassified tags 
+	 * @return
+	 */
+	public static String[] getUnclassifiedTags() {
+		return unclassifiedTags;
+	}
+	
+	/**
+	 * Returns all classified tags
+	 * @return
+	 */
+	public static Map<String, String> getClassifiedTags() {
+		return classifiedTags;
+	}
 }

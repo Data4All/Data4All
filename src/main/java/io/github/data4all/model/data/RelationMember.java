@@ -8,13 +8,19 @@ package io.github.data4all.model.data;
  */
 public class RelationMember {
 
-	/** type can be node/way */
+	/** 
+	 * type can be node/way or relation
+	 */
 	private String type = null;
 	
-	/** id of the reference element */ 
+	/** 
+	 * id of the reference element 
+	 */ 
 	private long ref;
 	
-	/** optional textual field describing the function of a member of the relation **/
+	/** 
+	 * optional textual field describing the function of a member of the relation 
+	 */
 	private String role = null;
 	
 	/** reference element **/ 

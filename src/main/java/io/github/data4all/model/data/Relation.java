@@ -8,27 +8,50 @@ import android.util.Log;
 
 /**
  * Relation represents an OSM relation element which essentially is a collection of other OSM elements.
+ * A relation consists of one or more tags and also an ordered list of one or more nodes, 
+ * ways and/or relations as members which is used to define logical or geographic relationships between other elements.
  * 
  * @author simon, fkirchge
  *
  */
 public class Relation extends OsmElement {
 
+	/**
+	 * List of all member of the relation. 
+	 */
 	protected final ArrayList<RelationMember> members;
 
+	/**
+	 * Default constructor
+	 * @param osmId
+	 * @param osmVersion
+	 */
 	Relation(final long osmId, final long osmVersion) {
 		super(osmId, osmVersion);
 		members = new ArrayList<RelationMember>();
 	}
 
+	/**
+	 * Adds a new member to the relation. 
+	 * @param member
+	 */
 	public void addMember(final RelationMember member) {
 		members.add(member);
 	}
 
+	/**
+	 * Returns all member of the relation.
+	 * @return
+	 */
 	public List<RelationMember> getMembers() {
 		return members;
 	}
 	
+	/**
+	 * Returns the relation memeber of the osm element. 
+	 * @param e
+	 * @return
+	 */
 	public RelationMember getMember(OsmElement e) {
 		for (int i = 0; i < members.size(); i++) {
 			RelationMember member = members.get(i);
@@ -39,6 +62,12 @@ public class Relation extends OsmElement {
 		return null;
 	}
 	
+	/**
+	 * Returns the relation member which matchs with the type and the id. 
+	 * @param type
+	 * @param id
+	 * @return
+	 */
 	public RelationMember getMember(String type, long id) {
 		for (int i = 0; i < members.size(); i++) {
 			RelationMember member = members.get(i);
@@ -49,6 +78,11 @@ public class Relation extends OsmElement {
 		return null;
 	}
 
+	/**
+	 * Returns the position of a relation member in the list of members.
+	 * @param e
+	 * @return
+	 */
 	public int getPosition(RelationMember e) {
 		return members.indexOf(e);
 	}
@@ -61,16 +95,30 @@ public class Relation extends OsmElement {
 		return members.iterator();
 	}
 	
+	/**
+	 * Check if the given member belongs to the relation.
+	 * @param member
+	 * @return
+	 */
 	public boolean hasMember(final RelationMember member) {
 		return members.contains(member);
 	}
 
+	/**
+	 * Removes a member from the relation. 
+	 * @param member
+	 */
 	public void removeMember(final RelationMember member) {
 		while (members.remove(member)) {
 			;
 		}
 	}
 
+	/**
+	 * Append a new member at the begin or at the end of the relation member list. 
+	 * @param refMember
+	 * @param newMember
+	 */
 	public void appendMember(final RelationMember refMember, final RelationMember newMember) {
 		if (members.get(0) == refMember) {
 			members.add(0, newMember);
@@ -79,10 +127,20 @@ public class Relation extends OsmElement {
 		}
 	}
 
+	/**
+	 * Inserts a new relation member after the reference member.
+	 * @param memberBefore
+	 * @param newMember
+	 */
 	public void addMemberAfter(final RelationMember memberBefore, final RelationMember newMember) {
 		members.add(members.indexOf(memberBefore) + 1, newMember);
 	}
 	
+	/**
+	 * Adds a new relation member to a given position.
+	 * @param pos
+	 * @param newMember
+	 */
 	public void addMember(int pos, final RelationMember newMember) {
 		if (pos < 0 || pos > members.size()) {
 			pos = members.size(); // append
@@ -104,6 +162,11 @@ public class Relation extends OsmElement {
 		}
 	}
 	
+	/**
+	 * Returns a list of member with the current role.
+	 * @param role
+	 * @return
+	 */
 	public ArrayList <RelationMember> getMembersWithRole(String role) {
 		ArrayList <RelationMember> rl = new ArrayList<RelationMember>();
 		for (RelationMember rm : members) {
@@ -128,7 +191,7 @@ public class Relation extends OsmElement {
 	}
 
 	/**
-	 * return a list of the downloaded elements
+	 * Return a list of the downloaded elements
 	 * @return
 	 */
 	public ArrayList<OsmElement> getMemberElements() {

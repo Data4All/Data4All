@@ -7,15 +7,29 @@ package io.github.data4all.model.data;
  */
 public class User {
 	
+	/**
+	 * User details for the login procedure
+	 */
 	private String username;
 	private String oauthToken; 
 	private boolean isLoggedIn; 
 	
+	/**
+	 * Default constructor
+	 * @param username
+	 * @param loginToken
+	 */
 	public User(String username, String loginToken) {
 		this.username = username;
 		this.oauthToken = loginToken;
 	}
 	
+	/**
+	 * Default constructor 
+	 * @param username
+	 * @param loginToken
+	 * @param status
+	 */
 	public User(String username, String loginToken, boolean status) {
 		this.username = username;
 		this.oauthToken = loginToken;

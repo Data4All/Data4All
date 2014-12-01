@@ -2,24 +2,42 @@ package io.github.data4all.model.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * Superclass for node, way and relation objects, contains the osm id and osm version.
+ * Superclass for node, way and relation objects, containing attributes osm id and osm version.
+ * All parent relations and tags of the object are stored in a list.
+ * 
  * @author fkirchge
  *
  */
 public abstract class OsmElement {
 
+	/**
+	 * osmId: Used for identifying the object. 
+	 * osmVersion: edit version of the object.
+	 */
 	private long osmId;
 	private long osmVersion;
 	
-	private ArrayList<Relation> parentRelations;
+	/**
+	 * Stores a list of parent relations to which the osm object belongs. 
+	 */
+	private List<Relation> parentRelations;
 
+	/**
+	 * Sorted list of tags (key value pair) for the osm object. 
+	 */
 	private SortedMap<String, String> tags;
 	
+	/**
+	 * Default constructor
+	 * @param osmId id to identify the osm object
+	 * @param osmVersion edit version of the osm object
+	 */
 	OsmElement(final long osmId, final long osmVersion) {
 		this.setOsmId(osmId);
 		this.setOsmVersion(osmVersion);
@@ -43,6 +61,10 @@ public abstract class OsmElement {
 		this.osmVersion = osmVersion;
 	}
 
+	/**
+	 * Returns all tags which belong to the osm object.
+	 * @return
+	 */
 	public SortedMap<String, String> getTags() {
 		return Collections.unmodifiableSortedMap(tags);
 	}
@@ -61,6 +83,11 @@ public abstract class OsmElement {
 		return false;
 	}	
 	
+	/**
+	 * Adds a new tag or updates an existing tag of the element
+	 * @param key
+	 * @param value
+	 */
 	public void addOrUpdateTag(final String key, final String value) {
 		this.tags.put(key, value);
 	}
@@ -160,10 +187,18 @@ public abstract class OsmElement {
 		}
 	}
 	
-	public ArrayList<Relation> getParentRelations() {
+	/**
+	 * Returns the list of parent relations.
+	 * @return
+	 */
+	public List<Relation> getParentRelations() {
 		return parentRelations;
 	}
 	
+	/**
+	 * Returns true if the object has parent relations.
+	 * @return
+	 */
 	public boolean hasParentRelations() {
 		return (parentRelations != null) && (parentRelations.size() > 0);
 	}
@@ -171,6 +206,7 @@ public abstract class OsmElement {
 	/**
 	 * Remove reference to parent relation
 	 * does not check for id
+	 * @param relation
 	 */
 	public void removeParentRelation(Relation relation) {
 		if (parentRelations != null) {
@@ -179,12 +215,13 @@ public abstract class OsmElement {
 	}
 	
 	/**
-	 * Remove reference to parent relation
+	 * Remove reference to parent relation, checking the id
+	 * @param osmId
 	 */
 	public void removeParentRelation(long osmId) {
 		if (parentRelations != null) {
-			ArrayList<Relation> tempRelList = new ArrayList<Relation>(parentRelations);
-			for (Relation r:tempRelList) {
+			List<Relation> tempRelList = new ArrayList<Relation>(parentRelations);
+			for (Relation r : tempRelList) {
 				if (osmId == r.getOsmId())
 					parentRelations.remove(r);
 			}
