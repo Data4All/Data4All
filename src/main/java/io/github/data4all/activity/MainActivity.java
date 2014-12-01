@@ -1,6 +1,7 @@
-package io.github.data4all;
+package io.github.data4all.activity;
 
-import services.GPSservice;
+import io.github.data4all.R;
+import io.github.data4all.service.GPSservice;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

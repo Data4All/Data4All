@@ -1,4 +1,4 @@
-package services;
+package io.github.data4all.service;
 
 import android.app.Service;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,10 +35,16 @@ public class GPSservice extends Service implements LocationListener {
      * LocationManager
      */
     private LocationManager lmgr;
+    
+    private WakeLock wakeLock;
 
     @Override
     public void onCreate() {
-
+        //wakelock, so the cpu is never shut down and is able to track at all time
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+       wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+            "MyWakelockTag");
+    wakeLock.acquire();
     }
     
   
@@ -57,7 +65,8 @@ public class GPSservice extends Service implements LocationListener {
 
     @Override
     public void onDestroy() {
-
+        
+        wakeLock.release();
         Toast.makeText(this, "gps service destroyed", Toast.LENGTH_SHORT)
                 .show();
     }
