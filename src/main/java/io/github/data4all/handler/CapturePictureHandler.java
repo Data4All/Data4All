@@ -64,23 +64,25 @@ public class CapturePictureHandler implements PictureCallback {
         photoFile = new File(Environment.getExternalStorageDirectory()
                 + "/Data4all", System.currentTimeMillis() + ".jpeg");
 
-        final String GPS_LONGITUDE = "gps_longitude";
-        final String GPS_LATITUDE = "gps_latitude";
-        final String GPS_LONGITUDE_REF = "W";
-        final String GPS_LATITUDE_REF = "N";
+        // Get the location in degrees TODO call real Method for data
+        double latitude = 37.715183;
+        double longitude = -117.260489;
 
-        // Write GPS tags into the EXIF of the picture
         try {
+            // Write GPS tags into the EXIF of the picture
             exif = new ExifInterface(photoFile.getPath());
-            //exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPS_LATITUDE);
-            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPS_LONGITUDE);
+            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, convert(latitude));
+            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE,
+                    convert(longitude));
+            // Set the Latitude reference (west or east)
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF,
-                    GPS_LONGITUDE_REF); //"N" or "S"
-            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF,
-                    GPS_LATITUDE_REF); //"W" or "O"
-            //Set the position and tilt data to the UserComment Tag
+                    latitude < 0.0d ? "S" : "N");
+            // Set the Longitude reference (north or south)
+            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF,
+                    longitude < 0.0d ? "W" : "E");
+
+            // Set the position and tilt data to the UserComment Tag TODO call real method for data
             exif.setAttribute("UserComment", "Tilt and position data");
-            
 
             exif.saveAttributes();
         } catch (IOException e) {
@@ -88,22 +90,15 @@ public class CapturePictureHandler implements PictureCallback {
         }
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
-        
+
+        /*Passes the filepath to the ShowPictureActivity */
         // Intent intent = new Intent(context, ShowPictureActivity.class);
         // intent.putExtra("file_path", photoFile);
         // context.startActivity(intent);
-        
-        //Test for returning metadata
-        ExifInterface testexif;
-        try {
-            testexif = new ExifInterface(photoFile.getPath());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        String test = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-        String test2 = "test";
-        Log.i(getClass().getSimpleName(), test);
+
+        //A method to log the saved metadata of the taken picture TODO remove
+        showReturnedMetadata();
+
     }
 
     /*
@@ -144,6 +139,102 @@ public class CapturePictureHandler implements PictureCallback {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /**
+     * convert the given latitude and longitude from degrees into DMS (degree
+     * minute second) format. For example -79.948862 becomes
+     * 79/1,56/1,55903/1000
+     * 
+     * @param deg the given latitude or longitude in degrees
+     * @return the given latitude or longitude in DMS
+     */
+    private static final String convert(double deg) {
+        StringBuilder sb = new StringBuilder(20);
+        deg = Math.abs(deg);
+        int degree = (int) deg;
+        deg *= 60;
+        deg -= (degree * 60.0d);
+        int minute = (int) deg;
+        deg *= 60;
+        deg -= (minute * 60.0d);
+        int second = (int) (deg * 1000.0d);
+
+        sb.setLength(0);
+        sb.append(degree);
+        sb.append("/1,");
+        sb.append(minute);
+        sb.append("/1,");
+        sb.append(second);
+        sb.append("/1000,");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the latitude or latitude from DMS into degrees
+     * 
+     * @param stringDMS the given latitude or longitude in DMS
+     * @return the given latitude or longitude in degrees
+     */
+    private Float convertToDegree(String stringDMS) {
+        Float result = null;
+        String[] DMS = stringDMS.split(",", 3);
+
+        String[] stringD = DMS[0].split("/", 2);
+        Double D0 = new Double(stringD[0]);
+        Double D1 = new Double(stringD[1]);
+        Double FloatD = D0 / D1;
+
+        String[] stringM = DMS[1].split("/", 2);
+        Double M0 = new Double(stringM[0]);
+        Double M1 = new Double(stringM[1]);
+        Double FloatM = M0 / M1;
+
+        String[] stringS = DMS[2].split("/", 2);
+        Double S0 = new Double(stringS[0]);
+        Double S1 = new Double(stringS[1].substring(0, stringS[1].length() - 1));
+        Double FloatS = S0 / S1;
+
+        result = new Float(FloatD + (FloatM / 60) + (FloatS / 3600));
+
+        return result;
+    }
+
+    /**
+     * Just for developing
+     * TODO remove
+     * 
+     * Show a log with the returned metadata saved to the picture
+     * 
+     */
+    private void showReturnedMetadata() {
+
+        String attrLATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+        String attrLATITUDE_REF = exif
+                .getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+        String attrLONGITUDE = exif
+                .getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+        String attrLONGITUDE_REF = exif
+                .getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+
+        double latitudeReturn;
+        double longitudeReturn;
+        if (attrLATITUDE_REF.equals("N")) {
+            latitudeReturn = convertToDegree(attrLATITUDE);
+        } else {
+            latitudeReturn = 0 - convertToDegree(attrLATITUDE);
+        }
+
+        if (attrLONGITUDE_REF.equals("E")) {
+            longitudeReturn = convertToDegree(attrLONGITUDE);
+        } else {
+            longitudeReturn = 0 - convertToDegree(attrLONGITUDE);
+        }
+        
+        Log.i(getClass().getSimpleName(), exif.getAttribute("UserComment"));
+
+        Log.i(getClass().getSimpleName(), "Latitude: " + latitudeReturn);
+        Log.i(getClass().getSimpleName(), "Longitude: " + longitudeReturn);
     }
 
 }
