@@ -1,37 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:weightSum="100" >
-
-    <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="85"
-        android:background="#EE000000" >
+    android:weightSum="100" >s
 
         <io.github.data4all.view.CaptureCameraSurfaceView
             android:id="@+id/cameraPreview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/btnPanel"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="15"
-        android:baselineAligned="false"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:weightSum="100" >
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+        </io.github.data4all.view.CaptureCameraSurfaceView>
 
         <ImageButton
             android:id="@+id/btnTrigger"
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_width="81dp"
+            android:layout_height="74dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
 
-</LinearLayout>
+</RelativeLayout>

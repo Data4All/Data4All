@@ -17,8 +17,6 @@ import android.view.View.OnClickListener;
  */
 public class CaptureShutterListener implements OnClickListener {
 
-    private static final String TAG = CaptureShutterListener.class
-            .getSimpleName();
     // Camera Object
     private Camera camera;
 

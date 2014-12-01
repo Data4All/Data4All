@@ -1,7 +1,6 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.activity.CameraActivity;
-import io.github.data4all.activity.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +28,6 @@ public class CapturePictureHandler implements PictureCallback {
     private File photoFile;
     private ExifInterface exif;
 
-
     public CapturePictureHandler() {
     }
 
@@ -39,7 +37,9 @@ public class CapturePictureHandler implements PictureCallback {
 
     /*
      * (non-Javadoc)
-     * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[], android.hardware.Camera)
+     * 
+     * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
+     * android.hardware.Camera)
      */
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
@@ -55,10 +55,9 @@ public class CapturePictureHandler implements PictureCallback {
         // Create a new folder on the internal storage named Data4all
         File folder = new File(Environment.getExternalStorageDirectory()
                 + "/Data4all");
-        if (!folder.exists()) {
-            if (folder.mkdirs())
-                Toast.makeText(context, "New Folder Created",
-                        Toast.LENGTH_SHORT).show();
+        if (!folder.exists() && folder.mkdirs()) {
+            Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
+                    .show();
         }
 
         // Save the picture to the folder Data4all in the internal storage
@@ -67,18 +66,21 @@ public class CapturePictureHandler implements PictureCallback {
 
         final String GPS_LONGITUDE = "gps_longitude";
         final String GPS_LATITUDE = "gps_latitude";
-        final String GPS_LONGITUDE_REF = "gps_longitude_ref";
-        final String GPS_LATITUDE_REF = "gps_latitude_ref";
+        final String GPS_LONGITUDE_REF = "W";
+        final String GPS_LATITUDE_REF = "N";
 
         // Write GPS tags into the EXIF of the picture
         try {
             exif = new ExifInterface(photoFile.getPath());
-            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPS_LATITUDE);
+            //exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPS_LATITUDE);
             exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPS_LONGITUDE);
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF,
-                    GPS_LONGITUDE_REF);
+                    GPS_LONGITUDE_REF); //"N" or "S"
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF,
-                    GPS_LATITUDE_REF);
+                    GPS_LATITUDE_REF); //"W" or "O"
+            //Set the position and tilt data to the UserComment Tag
+            exif.setAttribute("UserComment", "Tilt and position data");
+            
 
             exif.saveAttributes();
         } catch (IOException e) {
@@ -86,11 +88,22 @@ public class CapturePictureHandler implements PictureCallback {
         }
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
-
-
-//        Intent intent = new Intent(context, ShowPictureActivity.class);
-//        intent.putExtra("file_path", photoFile);
-//        context.startActivity(intent);
+        
+        // Intent intent = new Intent(context, ShowPictureActivity.class);
+        // intent.putExtra("file_path", photoFile);
+        // context.startActivity(intent);
+        
+        //Test for returning metadata
+        ExifInterface testexif;
+        try {
+            testexif = new ExifInterface(photoFile.getPath());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String test = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+        String test2 = "test";
+        Log.i(getClass().getSimpleName(), test);
     }
 
     /*
@@ -100,8 +113,9 @@ public class CapturePictureHandler implements PictureCallback {
         @Override
         protected String doInBackground(byte[]... photoData) {
             // Delete the picture while detecting existed one
-            if (photoFile.exists())
+            if (photoFile.exists()) {
                 photoFile.delete();
+            }
             try {
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
@@ -124,7 +138,7 @@ public class CapturePictureHandler implements PictureCallback {
             if (result.equals("successful")) {
                 Toast.makeText(context, "Picture successfully saved",
                         Toast.LENGTH_SHORT).show();
-                
+
             } else {
                 Toast.makeText(context, "Failed on taking picture",
                         Toast.LENGTH_SHORT).show();
