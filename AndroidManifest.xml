@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="18" /> <!-- changed for robolectric from 21 to 18-->    
 
     <application
         android:allowBackup="true"
