@@ -20,10 +20,17 @@ import android.widget.ListView;
 
 public class MainActivity extends Activity {	
 
-	
+	private SpeechRecognition speechRecognition;
 	private Button start;
 	private Dialog matchText;
 	private List<String> matchesText;
+	public List<String> getMatchesText() {
+		return matchesText;
+	}
+
+	public void setMatchesText(String string) {
+		matchesText.add(string);
+	}
 	private ListView textList;
 	private static final int REQUEST_CODE = 1234;
 	/**
@@ -65,9 +72,10 @@ public class MainActivity extends Activity {
 		     textList = (ListView)matchText.findViewById(R.id.list);
 		     matchesText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 		     System.out.println(matchesText);
-		     splitStrings();
+		     speechRecognition = new SpeechRecognition(); 
+		     speechRecognition.splitStrings(matchesText);
 		     System.out.println(matchesText);
-		     speechToTag();
+		     speechRecognition.speechToTag(matchesText);
 		     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, matchesText);
 		     textList.setAdapter(adapter);
 		     textList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,6 +90,8 @@ public class MainActivity extends Activity {
 	     super.onActivityResult(requestCode, resultCode, data);
 	    }
 	 
+	 
+	 /**
 	 private void speechToTag(){
 		List<String> list = new ArrayList<String>();
 		Map<String, String> tagData = new HashMap<String, String>();
@@ -101,7 +111,7 @@ public class MainActivity extends Activity {
 			
 	 }
 	 // Split the Strings and 
-	 public void splitStrings(){
+	 private void splitStrings(){
 		 for (int j = 0; j < matchesText.size(); j++) {
 			String[] split;
 			split = matchesText.get(j).split(" ");
@@ -111,6 +121,6 @@ public class MainActivity extends Activity {
 					}
 				}
 		}
-	 }
+	 }*/
 }	 
 
