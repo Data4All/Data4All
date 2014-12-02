@@ -1,10 +1,16 @@
 package io.github.data4all;
 
+import io.github.data4all.activity.CameraActivity;
+import io.github.data4all.activity.ShowPictureActivity;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends Activity {	
+	
 
 	/**
 	 * Called when the activity is first created.
@@ -19,7 +25,8 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-	}
+		
+}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -27,4 +34,21 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	 @Override
+	    public boolean onOptionsItemSelected(MenuItem item) {
+	        switch (item.getItemId()) {
+	        case R.id.ShowPicture:
+	            Intent intent = new Intent(this, ShowPictureActivity.class);
+	            startActivity(intent);
+	            return true;
+	        default:
+	            break;
+	        }
+	        return super.onOptionsItemSelected(item);
+	    }
+	 public void onClickButton (View view) {
+		    Intent intent = new Intent (this, CameraActivity.class);
+		    startActivity(intent);
+		}
 }
