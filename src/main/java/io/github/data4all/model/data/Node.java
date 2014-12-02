@@ -21,7 +21,7 @@ public class Node extends OsmElement implements GeoPoint {
 	 * @param lat Latitude is a decimal number between -90.0 and 90.0.
 	 * @param lon Longitude is a decimal number between -180.0 and 180.0.
 	 */
-	Node(final long osmId, final long osmVersion, final double lat, final double lon) {
+	public Node(final long osmId, final long osmVersion, final double lat, final double lon) {
 		super(osmId, osmVersion);
 		this.lat = lat;
 		this.lon = lon;

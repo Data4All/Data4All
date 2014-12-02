@@ -39,11 +39,11 @@ public class Way extends OsmElement {
 	 */
 	public void addNode(final Node node) {
 		if ((nodes.size() > 0) && (nodes.get(nodes.size() - 1) == node)) {
-			Log.i("Way", "addNode attempt to add same node");
+			Log.i(getClass().getSimpleName(), "addNode attempt to add same node");
 			return;
 		} 
 		if(nodes.size() >= MAX_WAY_NODES) {
-			Log.i("Way", "addNode attempt to add more than 2000 nodes");
+			Log.i(getClass().getSimpleName(), "addNode attempt to add more than 2000 nodes");
 			return;
 		}
 		nodes.add(node);
@@ -56,7 +56,7 @@ public class Way extends OsmElement {
 	 */
 	public void appendNode(final Node refNode, final Node newNode) {
 		if (refNode == newNode) { // user error
-			Log.i("Way", "appendNode attempt to add same node");
+			Log.i(getClass().getSimpleName(), "appendNode attempt to add same node");
 			return;
 		}
 		if (nodes.get(0) == refNode) {
@@ -73,7 +73,7 @@ public class Way extends OsmElement {
 	 */
 	public void addNodeAfter(final Node nodeBefore, final Node newNode) {
 		if (nodeBefore == newNode) { // user error
-			Log.i("Way", "addNodeAfter attempt to add same node");
+			Log.i(getClass().getSimpleName(), "addNodeAfter attempt to add same node");
 			return;
 		}
 		nodes.add(nodes.indexOf(nodeBefore) + 1, newNode);
@@ -88,9 +88,9 @@ public class Way extends OsmElement {
 	public void addNodes(List<Node> newNodes, boolean atBeginning) {
 		if (atBeginning) {
 			if ((nodes.size() > 0) && nodes.get(0) == newNodes.get(newNodes.size()-1)) { // user error
-				Log.i("Way", "addNodes attempt to add same node");
+				Log.i(getClass().getSimpleName(), "addNodes attempt to add same node");
 				if (newNodes.size() > 1) {
-					Log.i("Way", "retrying addNodes");
+					Log.i(getClass().getSimpleName(), "retrying addNodes");
 					newNodes.remove(newNodes.size()-1);
 					addNodes(newNodes, atBeginning);
 				}
@@ -99,9 +99,9 @@ public class Way extends OsmElement {
 			nodes.addAll(0, newNodes);
 		} else {
 			if ((nodes.size() > 0) && newNodes.get(0) == nodes.get(nodes.size()-1)) { // user error
-				Log.i("Way", "addNodes attempt to add same node");
+				Log.i(getClass().getSimpleName(), "addNodes attempt to add same node");
 				if (newNodes.size() > 1) {
-					Log.i("Way", "retrying addNodes");
+					Log.i(getClass().getSimpleName(), "retrying addNodes");
 					newNodes.remove(0);
 					addNodes(newNodes, atBeginning);
 				}
@@ -151,7 +151,7 @@ public class Way extends OsmElement {
 		if (index > 0 && index < (nodes.size()-1)) { // not the first or last node 
 			if (nodes.get(index-1) == nodes.get(index+1)) {
 				nodes.remove(index-1);
-				Log.i("Way", "removeNode removed duplicate node");
+				Log.i(getClass().getSimpleName(), "removeNode removed duplicate node");
 			}
 		}
 		while (nodes.remove(node)) {

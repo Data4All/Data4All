@@ -19,14 +19,14 @@ public class Relation extends OsmElement {
 	/**
 	 * List of all member of the relation. 
 	 */
-	protected final ArrayList<RelationMember> members;
+	private final ArrayList<RelationMember> members;
 
 	/**
 	 * Default constructor
 	 * @param osmId
 	 * @param osmVersion
 	 */
-	Relation(final long osmId, final long osmVersion) {
+	public Relation(final long osmId, final long osmVersion) {
 		super(osmId, osmVersion);
 		members = new ArrayList<RelationMember>();
 	}
@@ -170,7 +170,7 @@ public class Relation extends OsmElement {
 	public ArrayList <RelationMember> getMembersWithRole(String role) {
 		ArrayList <RelationMember> rl = new ArrayList<RelationMember>();
 		for (RelationMember rm : members) {
-			Log.d("Relation", "getMembersWithRole " + rm.getRole());
+			Log.d(getClass().getSimpleName(), "getMembersWithRole " + rm.getRole());
 			if (role.equals(rm.getRole())) {
 				rl.add(rm);
 			}

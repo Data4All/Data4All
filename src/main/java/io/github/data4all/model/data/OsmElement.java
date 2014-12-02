@@ -38,10 +38,10 @@ public abstract class OsmElement {
 	 * @param osmId id to identify the osm object
 	 * @param osmVersion edit version of the osm object
 	 */
-	OsmElement(final long osmId, final long osmVersion) {
+	public OsmElement(final long osmId, final long osmVersion) {
 		this.setOsmId(osmId);
 		this.setOsmVersion(osmVersion);
-		this.setTags(new TreeMap<String, String>());
+		this.tags = new TreeMap<String, String>();
 		this.parentRelations = null;
 	}
 
@@ -68,7 +68,7 @@ public abstract class OsmElement {
 	public SortedMap<String, String> getTags() {
 		return Collections.unmodifiableSortedMap(tags);
 	}
-	
+
 	/**
 	 * Set the tags of the element, replacing all existing tags.
 	 * @param tags New tags to replace existing tags.
@@ -79,7 +79,7 @@ public abstract class OsmElement {
 			this.tags.clear();
 			addTags(tags);
 			return true;
-		}
+		} 
 		return false;
 	}	
 	
