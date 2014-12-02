@@ -32,7 +32,38 @@ public class SpeechRecognitionTest {
 		list1.add("my");
 		list1.add("Name");
 		speech.splitStrings(list);
-		assertEquals(list, list1);
+		assertTrue(list.equals(list1));
 	}
+	
+	@Test
+	public void splitStringsWrongOrderTest() {
+		List<String> list1 = new ArrayList<String>();
+		list1.add("Hello my Name");
+		list1.add("Hello");
+		list1.add("Name");
+		list1.add("my");
+		speech.splitStrings(list);
+		assertFalse(list.equals(list1));
+	}
+	
+	@Test
+	public void splitStringsWrongStringsTest() {
+		List<String> list1 = new ArrayList<String>();
+		list1.add("Hello my Name");
+		list1.add("Hell");
+		list1.add("my");
+		list1.add("Name");
+		speech.splitStrings(list);
+		assertFalse(list.equals(list1));
+	}
+	
+	@Test
+	public void splitStringsEmptyListTest() {
+		List<String> list1 = new ArrayList<String>();
+		List<String> list2 = new ArrayList<String>();
+		speech.splitStrings(list1);
+		assertTrue(list1.equals(list2));
+	}
+	
 
 }
