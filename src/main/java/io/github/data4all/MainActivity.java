@@ -21,10 +21,10 @@ import android.widget.ListView;
 public class MainActivity extends Activity {	
 
 	
-	Button start;
-	Dialog matchText;
-	List<String> matchesText;
-	ListView textList;
+	private Button start;
+	private Dialog matchText;
+	private List<String> matchesText;
+	private ListView textList;
 	private static final int REQUEST_CODE = 1234;
 	/**
 	 * Called when the activity is first created.
@@ -43,8 +43,7 @@ public class MainActivity extends Activity {
 		start.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-		        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		        startActivityForResult(intent, REQUEST_CODE);
 			}
 		});
@@ -65,15 +64,17 @@ public class MainActivity extends Activity {
 		     matchText.setTitle(R.string.selectTag);
 		     textList = (ListView)matchText.findViewById(R.id.list);
 		     matchesText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-		     matchesTag();
+		     System.out.println(matchesText);
+		     splitStrings();
+		     System.out.println(matchesText);
+		     speechToTag();
 		     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, matchesText);
 		     textList.setAdapter(adapter);
 		     textList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		    	 @Override
 		    	 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		    		 start.setText(matchesText.get(0));   		 
-		    		 matchText.hide();
-		    		
+		    		 matchText.hide();    		
 	     }
 	 });
 		     matchText.show();
@@ -81,25 +82,35 @@ public class MainActivity extends Activity {
 	     super.onActivityResult(requestCode, resultCode, data);
 	    }
 	 
-	 private void matchesTag(){
+	 private void speechToTag(){
 		List<String> list = new ArrayList<String>();
 		Map<String, String> tagData = new HashMap<String, String>();
 		list.add("primary");
 		list.add("motorway");
 		list.add("secondary");
-		System.out.println(matchesText);
 		for (int i = 0; i < list.size(); i++) {
-			for (int j = 0 ; j < matchesText.size() ; j++) {
-				System.out.println(list.get(i) + matchesText.get(j));
+			for (int j = 0 ; j < matchesText.size() ; j++) {				
 				if(list.get(i).equals(matchesText.get(j))){
 					tagData.put("highway",list.get(i));
-					System.out.println("true");
 				}
 			}
 	
 		}	
-		matchesText.clear();
-		matchesText.add("highway = " + tagData.get("highway")); 
+			matchesText.clear();
+			matchesText.add("highway = " + tagData.get("highway")); 
 			
 	 }
-}
+	 // Split the Strings and 
+	 public void splitStrings(){
+		 for (int j = 0; j < matchesText.size(); j++) {
+			String[] split;
+			split = matchesText.get(j).split(" ");
+				for (int i = 0; i < split.length; i++) {
+					if(!matchesText.contains(split[i])){
+						matchesText.add(split[i]);
+					}
+				}
+		}
+	 }
+}	 
+
