@@ -1,5 +1,7 @@
 package io.github.data4all.service;
 
+import java.util.ArrayList;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
+    
+    public static ArrayList<String> track = new ArrayList<String>();
 
     private static final String TAG = "GPStracker";
     /**
@@ -82,7 +86,10 @@ public class GPSservice extends Service implements LocationListener {
         double lon = location.getLongitude();
 
         Log.d(TAG, "lat=" + lat + " lon=" + lon);
-
+        
+        track.add("lat=" + lat + " lon=" + lon);
+        
+        
         lastLocation = location;
 
     }
