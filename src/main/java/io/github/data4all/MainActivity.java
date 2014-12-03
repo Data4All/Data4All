@@ -1,6 +1,6 @@
 package io.github.data4all;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
 	private Button start;
 	private Dialog matchText;
 	private List<String> matchesText;
+	Map<String, String> map;
 	public List<String> getMatchesText() {
 		return matchesText;
 	}
@@ -75,16 +76,16 @@ public class MainActivity extends Activity {
 		     speechRecognition = new SpeechRecognition(); 
 		     speechRecognition.splitStrings(matchesText);
 		     System.out.println(matchesText);
-		     speechRecognition.speechToTag(matchesText);
+		     map = speechRecognition.speechToTag(matchesText);
 		     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, matchesText);
 		     textList.setAdapter(adapter);
 		     textList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		    	 @Override
 		    	 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		    		 start.setText(matchesText.get(0));   		 
+		    		 start.setText(map.get("highway"));   		 
 		    		 matchText.hide();    		
 	     }
-	 });
+		     });
 		     matchText.show();
 	     }
 	     super.onActivityResult(requestCode, resultCode, data);

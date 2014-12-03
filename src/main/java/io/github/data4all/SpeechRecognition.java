@@ -1,29 +1,36 @@
 package io.github.data4all;
 
+import io.github.data4all.model.data.Tags;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class SpeechRecognition {
 
-	 public void speechToTag(List<String> matchesText){
-			List<String> list = new ArrayList<String>();
+	private Tags tags;
+	 public Map<String, String> speechToTag(List<String> matchesText){
+			Map<String, String> map = new HashMap <String, String>();
 			Map<String, String> tagData = new HashMap<String, String>();
-			list.add("primary");
-			list.add("motorway");
-			list.add("secondary");
-			for (int i = 0; i < list.size(); i++) {
-				for (int j = 0 ; j < matchesText.size() ; j++) {				
-					if(list.get(i).equals(matchesText.get(j))){
-						tagData.put("highway",list.get(i));
+			tags = new Tags();
+			tagData = tags.getClassifiedTags();
+			Iterator<String> keySetIterator = tagData.keySet().iterator();
+			while(keySetIterator.hasNext()){
+				String key = keySetIterator.next();
+				String [] split;
+				split = tagData.get(key).split(",");
+				for (int i = 0; i < matchesText.size(); i++) {
+					for (int j = 0; j < split.length; j++) {
+						if(matchesText.get(i).equalsIgnoreCase(split[j])){
+							map.put(key, split[j]);
+							break;
+						}
 					}
 				}
-		
-			}	
-				matchesText.clear();
-				matchesText.add("highway = " + tagData.get("highway")); 
-				
+			}
+			return map;
 		 }
 	
 	 public void splitStrings(List<String> matchesText){

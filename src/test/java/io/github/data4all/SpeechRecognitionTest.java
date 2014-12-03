@@ -3,7 +3,9 @@ package io.github.data4all;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -64,6 +66,18 @@ public class SpeechRecognitionTest {
 		speech.splitStrings(list1);
 		assertTrue(list1.equals(list2));
 	}
+	
+	@Test
+	public void speechToTagTest() {
+		List<String> list1 = new ArrayList<String>();
+		Map<String, String> map = new HashMap<String, String>();
+		list1.add("Motorway");
+		map.put("highway", "motorway");
+		assertEquals(speech.speechToTag(list1), map);
+
+	}
+	
+	
 	
 
 }
