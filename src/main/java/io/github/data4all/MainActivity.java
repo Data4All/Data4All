@@ -31,11 +31,11 @@ public class MainActivity extends Activity {
 		 button_sensor = (Button) findViewById(R.id.buttonSensor);
 	     button_sensor.setOnClickListener(new OnClickListener() 
 	        {            
-	            @Override
+//	            @Override
 	            public void onClick(View v) 
 	            {
 	         	        if(v == button_sensor){
-	         	           startActivity(new Intent(MainActivity.this, LageSensor.class));
+	         	           startActivity(new Intent(MainActivity.this, ActivitySensor.class));
 	         	                     
 	            }
 	        }; 
