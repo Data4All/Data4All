@@ -18,22 +18,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-
+/**
+ * 
+ * @author Maurice Boyke
+ *
+ */
 public class MainActivity extends Activity {	
 
-	private SpeechRecognition speechRecognition;
-	private Button start;
-	private Dialog matchText;
-	private List<String> matchesText;
-	Map<String, String> map;
-	public List<String> getMatchesText() {
-		return matchesText;
-	}
 
-	public void setMatchesText(String string) {
-		matchesText.add(string);
-	}
-	private ListView textList;
 	private static final int REQUEST_CODE = 1234;
 	/**
 	 * Called when the activity is first created.
@@ -48,7 +40,7 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		start = (Button) findViewById(R.id.speech);
+		Button start = (Button) findViewById(R.id.speech);
 		start.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -64,16 +56,16 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	 @Override
 	 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	     if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-		     matchText = new Dialog(MainActivity.this);
-		       textList = (ListView)findViewById(R.id.listView1);
-		     matchesText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-		     speechRecognition = new SpeechRecognition(); 
+		     new Dialog(MainActivity.this);
+		     ListView textList = (ListView)findViewById(R.id.listView1);
+		     List<String> matchesText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+		     SpeechRecognition speechRecognition = new SpeechRecognition(); 
 		     speechRecognition.splitStrings(matchesText);
-		     map = speechRecognition.speechToTag(matchesText);
+		     Map<String, String> map = speechRecognition.speechToTag(matchesText);
 		     matchesText.clear();
 		     Iterator<String> keySetIterator = map.keySet().iterator();
 		     while(keySetIterator.hasNext()){

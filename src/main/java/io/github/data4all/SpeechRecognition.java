@@ -8,13 +8,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * @author Maurice Boyke
+ *
+ */
 public class SpeechRecognition {
 
-	private Tags tags;
+	/**
+	 * 
+	 * @param matchesText is a Array List from the results of the SpeechRecognition
+	 * @return The HashMap of the matching Tags
+	 */
 	 public Map<String, String> speechToTag(List<String> matchesText){
 			Map<String, String> map = new HashMap <String, String>();
 			Map<String, String> tagData = new HashMap<String, String>();
-			tags = new Tags();
+			Tags tags = new Tags();
 			tagData = tags.getClassifiedTags();
 			Iterator<String> keySetIterator = tagData.keySet().iterator();
 			while(keySetIterator.hasNext()){
@@ -32,6 +41,11 @@ public class SpeechRecognition {
 			}
 			return map;
 		 }
+	 
+	 /**
+	  * splitString splits all the Strings and adds them to the ArrayList
+	  * @param matchesText is a Array List from the results of the SpeechRecognition 
+	  */
 	
 	 public void splitStrings(List<String> matchesText){
 		 for (int j = 0; j < matchesText.size(); j++) {
