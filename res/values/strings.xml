@@ -4,9 +4,14 @@
     <string name="app_name">Data4All</string>
     <string name="hello">Hello Data4All!</string>
     <string name="action_settings">Settings</string>
-    <string name="sensor_button">Lage Sensor</string><string name="X">X_axis</string>
-    <string name="Y">Y_axis</string>
-    <string name="Z">Z_axis</string>
+    <string name="sensor_button">Sensor</string>
+    <string name="X"> Accelerometer X</string>
+    <string name="Y"> Accelerometer Y</string>
+    <string name="Z"> Accelerometer Z</string>
     
+    
+    <string name="x"> Gyroscope x</string>
+    <string name="y"> Gyroscope y</string>
+    <string name="z"> Gyroscope z</string>
 
 </resources>
