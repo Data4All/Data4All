@@ -30,6 +30,33 @@
 		android:text="@string/Z"
 	/>
 	</TableRow>
+	
+	<TableRow>
+	<TextView 
+		android:id="@+id/x"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/x"
+	/>
+	</TableRow>
+	
+	<TableRow>
+	<TextView 
+		android:id="@+id/y"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/y"
+	/>
+	</TableRow>
+	
+	<TableRow>
+	<TextView 
+		android:id="@+id/z"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/z"
+	/>
+	</TableRow>
 		
 </TableLayout>
 
