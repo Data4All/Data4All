@@ -86,7 +86,7 @@ private SensorManager sManager;
 	
 	/*
 	 * When this Activity isn't visible anymore
-	 * it is important to unregister the SensorListener in The Activity
+	 * then it is important to unregister the SensorListener in The Activity
 	 * 
 	 */
 	@Override
