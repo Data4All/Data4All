@@ -19,9 +19,7 @@ import android.widget.ImageButton;
 
 public class CameraActivity extends Activity {
     
-    private static final String TAG = CameraActivity.class.getSimpleName();
-
-	// Camera Preview View
+    // Camera Preview View
 	private CaptureCameraSurfaceView cameraPreview;
 	// Camera Object
 	private Camera mCamera;
@@ -63,7 +61,7 @@ public class CameraActivity extends Activity {
 		// Open the camera
 		try {
 		    mCamera = Camera.open();
-		    Log.d(TAG, "CameraInstance:" + mCamera);
+		    Log.d(getClass().getSimpleName(), "CameraInstance:" + mCamera);
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
