@@ -36,13 +36,13 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
     public CaptureCameraSurfaceView(Context context) {
         super(context);
-        this.context = context;
+        CaptureCameraSurfaceView.context = context;
         init(context);
     }
 
     public CaptureCameraSurfaceView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.context = context;
+        CaptureCameraSurfaceView.context = context;
         init(context);
 
     }
@@ -50,7 +50,7 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
     public CaptureCameraSurfaceView(Context context, AttributeSet attrs,
             int defStyle) {
         super(context, attrs, defStyle);
-        this.context = context;
+        CaptureCameraSurfaceView.context = context;
         init(context);
     }
 

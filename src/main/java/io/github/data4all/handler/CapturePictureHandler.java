@@ -5,7 +5,6 @@ import io.github.data4all.activity.CameraActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -48,7 +47,7 @@ public class CapturePictureHandler implements PictureCallback {
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
 
-        //Call the method where the file is created
+        // Call the method where the file is created
         createFile();
 
         // Start a thread to save the Raw Image in JPEG into SDCard
@@ -74,9 +73,6 @@ public class CapturePictureHandler implements PictureCallback {
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
                 FileOutputStream fos = new FileOutputStream(photoFile.getPath());
-                
-                //How big is fos here and after the picture is written to it for testing
-                
                 fos.write(photoData[0]);
                 fos.flush();
                 fos.close();
@@ -85,9 +81,10 @@ public class CapturePictureHandler implements PictureCallback {
                 Log.d(getClass().getSimpleName(), ex.getMessage());
                 return ex.getMessage();
             }
-            
-            //Call the method where the extra data are written to the exif of the photofile
-            writeExifToFile();
+
+            // Call the method where the extra data is written to the exif of
+            // the photofile
+            writeExifToFile(photoFile.getPath());
 
             return "successful";
         }
@@ -138,9 +135,10 @@ public class CapturePictureHandler implements PictureCallback {
     }
 
     /*
-     * Write the metadata like GPS and tilt and position data to the EXIF of the photofile.
+     * Write the metadata like GPS and tilt and position data to the EXIF of the
+     * photofile.
      */
-    private void writeExifToFile() {
+    private void writeExifToFile(String filepath) {
         // Get the location in degrees TODO call real Method for data
         double latitude = 37.715183;
         double longitude = -117.260489;
@@ -149,9 +147,10 @@ public class CapturePictureHandler implements PictureCallback {
 
         try {
             // Write GPS tags into the EXIF of the picture
-            exif = new ExifInterface(photoFile.getPath());
-            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, convert(latitude));
-            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, convert(longitude));
+            exif = new ExifInterface(filepath);
+            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, convertToDMS(latitude));
+            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE,
+                    convertToDMS(longitude));
             // Set the Latitude reference (west or east)
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, latitudeRef);
             // Set the Longitude reference (north or south)
@@ -177,7 +176,7 @@ public class CapturePictureHandler implements PictureCallback {
      *            the given latitude or longitude in degrees
      * @return the given latitude or longitude in DMS
      */
-    private static final String convert(double deg) {
+    private String convertToDMS(double deg) {
         StringBuilder sb = new StringBuilder(20);
         deg = Math.abs(deg);
         int degree = (int) deg;
@@ -205,8 +204,8 @@ public class CapturePictureHandler implements PictureCallback {
      *            the given latitude or longitude in DMS
      * @return the given latitude or longitude in degrees
      */
-    private Float convertToDegree(String stringDMS) {
-        Float result = null;
+    private Double convertToDegree(String stringDMS) {
+        Double result = null;
         String[] DMS = stringDMS.split(",", 3);
 
         String[] stringD = DMS[0].split("/", 2);
@@ -224,7 +223,7 @@ public class CapturePictureHandler implements PictureCallback {
         Double S1 = new Double(stringS[1].substring(0, stringS[1].length() - 1));
         Double FloatS = S0 / S1;
 
-        result = new Float(FloatD + (FloatM / 60) + (FloatS / 3600));
+        result = new Double(FloatD + (FloatM / 60) + (FloatS / 3600));
 
         return result;
     }
