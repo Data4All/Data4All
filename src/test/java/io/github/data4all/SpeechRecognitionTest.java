@@ -71,12 +71,47 @@ public class SpeechRecognitionTest {
 	public void speechToTagTest() {
 		List<String> list1 = new ArrayList<String>();
 		Map<String, String> map = new HashMap<String, String>();
+		list1.add("adsf");	
 		list1.add("Motorway");
+		list1.add("hotel");
 		map.put("highway", "motorway");
-		assertEquals(speech.speechToTag(list1), map);
-
+		map.put("building", "hotel");
+		assertEquals(map, speech.speechToTag(list1));
 	}
 	
+	@Test
+	public void speechToTagSimpleTest() {
+		List<String> list1 = new ArrayList<String>();
+		Map<String, String> map = new HashMap<String, String>();
+		list1.add("motorway");
+		map.put("highway", "motorway");
+		assertEquals( map, speech.speechToTag(list1));
+	}
+
+
+	@Test
+	public void speechToTagSimpleUpperCaseTest() {
+		List<String> list1 = new ArrayList<String>();
+		Map<String, String> map = new HashMap<String, String>();
+		list1.add("Motorway");
+		map.put("highway", "motorway");
+		assertEquals( map, speech.speechToTag(list1));
+	}
+	
+
+	@Test
+	public void speechToTagTwoKeysTest() {
+		List<String> list1 = new ArrayList<String>();
+		Map<String, String> map = new HashMap<String, String>();
+		list1.add("motorway");
+		list1.add("road");
+		list1.add("footway");
+		map.put("highway", "motorway");
+		assertEquals( map, speech.speechToTag(list1));
+	}
+	
+
+
 	
 	
 

@@ -2,6 +2,7 @@ package io.github.data4all;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -68,60 +69,22 @@ public class MainActivity extends Activity {
 	 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	     if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
 		     matchText = new Dialog(MainActivity.this);
-		     matchText.setContentView(R.layout.dialog_matches);
-		     matchText.setTitle(R.string.selectTag);
-		     textList = (ListView)matchText.findViewById(R.id.list);
+		       textList = (ListView)findViewById(R.id.listView1);
 		     matchesText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-		     System.out.println(matchesText);
 		     speechRecognition = new SpeechRecognition(); 
 		     speechRecognition.splitStrings(matchesText);
-		     System.out.println(matchesText);
 		     map = speechRecognition.speechToTag(matchesText);
+		     matchesText.clear();
+		     Iterator<String> keySetIterator = map.keySet().iterator();
+		     while(keySetIterator.hasNext()){
+					String key = keySetIterator.next();
+					matchesText.add(key + "=" + map.get(key));
+		     }
 		     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, matchesText);
-		     textList.setAdapter(adapter);
-		     textList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-		    	 @Override
-		    	 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		    		 start.setText(map.get("highway"));   		 
-		    		 matchText.hide();    		
-	     }
-		     });
-		     matchText.show();
+		     textList.setAdapter(adapter);    		
 	     }
 	     super.onActivityResult(requestCode, resultCode, data);
 	    }
 	 
-	 
-	 /**
-	 private void speechToTag(){
-		List<String> list = new ArrayList<String>();
-		Map<String, String> tagData = new HashMap<String, String>();
-		list.add("primary");
-		list.add("motorway");
-		list.add("secondary");
-		for (int i = 0; i < list.size(); i++) {
-			for (int j = 0 ; j < matchesText.size() ; j++) {				
-				if(list.get(i).equals(matchesText.get(j))){
-					tagData.put("highway",list.get(i));
-				}
-			}
-	
-		}	
-			matchesText.clear();
-			matchesText.add("highway = " + tagData.get("highway")); 
-			
-	 }
-	 // Split the Strings and 
-	 private void splitStrings(){
-		 for (int j = 0; j < matchesText.size(); j++) {
-			String[] split;
-			split = matchesText.get(j).split(" ");
-				for (int i = 0; i < split.length; i++) {
-					if(!matchesText.contains(split[i])){
-						matchesText.add(split[i]);
-					}
-				}
-		}
-	 }*/
-}	 
+	 }	 
 

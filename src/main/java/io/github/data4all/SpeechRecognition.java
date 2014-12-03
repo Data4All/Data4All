@@ -23,7 +23,7 @@ public class SpeechRecognition {
 				split = tagData.get(key).split(",");
 				for (int i = 0; i < matchesText.size(); i++) {
 					for (int j = 0; j < split.length; j++) {
-						if(matchesText.get(i).equalsIgnoreCase(split[j])){
+						if(matchesText.get(i).equalsIgnoreCase(split[j]) && map.get(key) == null){
 							map.put(key, split[j]);
 							break;
 						}
@@ -43,5 +43,6 @@ public class SpeechRecognition {
 					}
 				}
 		}
+
 }
 }
