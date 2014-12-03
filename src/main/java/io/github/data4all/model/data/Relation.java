@@ -48,9 +48,9 @@ public class Relation extends OsmElement {
 	}
 	
 	/**
-	 * Returns the relation memeber of the osm element. 
+	 * Returns the relation member of the osm element. 
 	 * @param e
-	 * @return
+	 * @return relation member
 	 */
 	public RelationMember getMember(OsmElement e) {
 		for (int i = 0; i < members.size(); i++) {
@@ -63,10 +63,10 @@ public class Relation extends OsmElement {
 	}
 	
 	/**
-	 * Returns the relation member which matchs with the type and the id. 
+	 * Returns the relation member which matches with the type and the id. 
 	 * @param type
 	 * @param id
-	 * @return
+	 * @return relation member
 	 */
 	public RelationMember getMember(String type, long id) {
 		for (int i = 0; i < members.size(); i++) {
@@ -81,14 +81,14 @@ public class Relation extends OsmElement {
 	/**
 	 * Returns the position of a relation member in the list of members.
 	 * @param e
-	 * @return
+	 * @return position
 	 */
 	public int getPosition(RelationMember e) {
 		return members.indexOf(e);
 	}
 	
 	/**
-	 * 
+	 * Returns a iterator for the relation member.
 	 * @return list of members allowing {@link Iterator#remove()}.
 	 */
 	public Iterator<RelationMember> getRemovableMembers() {
@@ -164,13 +164,13 @@ public class Relation extends OsmElement {
 	
 	/**
 	 * Returns a list of member with the current role.
-	 * @param role
-	 * @return
+	 * @param role the name of the role
+	 * @return list of relation member
 	 */
 	public ArrayList <RelationMember> getMembersWithRole(String role) {
 		ArrayList <RelationMember> rl = new ArrayList<RelationMember>();
 		for (RelationMember rm : members) {
-			Log.d(getClass().getSimpleName(), "getMembersWithRole " + rm.getRole());
+			//Log.d(getClass().getSimpleName(), "getMembersWithRole " + rm.getRole()); weird nullpointer
 			if (role.equals(rm.getRole())) {
 				rl.add(rm);
 			}
@@ -191,13 +191,14 @@ public class Relation extends OsmElement {
 	}
 
 	/**
-	 * Return a list of the downloaded elements
-	 * @return
+	 * Return a list of the downloaded elements.
+	 * Return a list of relation member object which have an osm element reference (getElement() != null). 
+	 * @return list of osm elements 
 	 */
 	public ArrayList<OsmElement> getMemberElements() {
 		ArrayList<OsmElement> result = new ArrayList<OsmElement>();
-		for (RelationMember rm:getMembers()) {
-			if (rm.getElement()!=null)
+		for (RelationMember rm : getMembers()) {
+			if (rm.getElement() != null)
 				result.add(rm.getElement());
 		}
 		return result;

@@ -175,7 +175,7 @@ public abstract class OsmElement {
 	/**
 	 * Add all parent relations, avoids dups
 	 */
-	public void addParentRelations(ArrayList<Relation> relations) {
+	public void addParentRelations(List<Relation> relations) {
 		if (parentRelations == null) {
 			parentRelations = new ArrayList<Relation>();
 		}

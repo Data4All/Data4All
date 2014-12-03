@@ -113,7 +113,7 @@ public class Way extends OsmElement {
 	
 	/**
 	 * Returns all nodes which belong to the way.
-	 * @return
+	 * @return list of nodes
 	 */
 	public List<Node> getNodes() {
 		return nodes;
@@ -122,7 +122,7 @@ public class Way extends OsmElement {
 	/**
 	 * Returns true if the node is part of the way.
 	 * @param node
-	 * @return
+	 * @return true/false
 	 */
 	public boolean hasNode(final Node node) {
 		return nodes.contains(node);
@@ -131,7 +131,7 @@ public class Way extends OsmElement {
 	/**
 	 * Returns true if the given way contains common nodes with the this way object.
 	 * @param way
-	 * @return
+	 * @return true/false
 	 */
 	public boolean hasCommonNode(final Way way) {
 		for (Node n : this.nodes) {
@@ -173,7 +173,7 @@ public class Way extends OsmElement {
 	
 	/**
 	 * return true if first == last node, will not work for broken geometries
-	 * @return
+	 * @return true/false
 	 */
 	public boolean isClosed() {
 		return nodes.get(0).equals(nodes.get(nodes.size() - 1));
@@ -182,7 +182,7 @@ public class Way extends OsmElement {
 	/**
 	 * Checks if a node is an end node of the way (i.e. either the first or the last one)
 	 * @param node a node to check
-	 * @return 
+	 * @return true/false
 	 */
 	public boolean isEndNode(final Node node) {
 		return getFirstNode() == node || getLastNode() == node;
@@ -190,7 +190,7 @@ public class Way extends OsmElement {
 	
 	/**
 	 * Returns the first node of this way.
-	 * @return
+	 * @return node
 	 */
 	public Node getFirstNode() {
 		return nodes.get(0);
@@ -198,7 +198,7 @@ public class Way extends OsmElement {
 
 	/**
 	 * Returns the last node of this way.
-	 * @return
+	 * @return node
 	 */
 	public Node getLastNode() {
 		return nodes.get(nodes.size() - 1);
@@ -206,7 +206,7 @@ public class Way extends OsmElement {
 
 	/** 
 	 * return the number of nodes in the is way
-	 * @return
+	 * @return int
 	 */
 	public int length() {
 		return nodes.size();

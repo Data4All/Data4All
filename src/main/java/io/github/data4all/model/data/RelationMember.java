@@ -23,26 +23,29 @@ public class RelationMember {
 	 */
 	private String role = null;
 	
-	/** reference element **/ 
-	OsmElement element = null;
+	/**
+	 *  reference element 
+	 */ 
+	private OsmElement element = null;
 	
 	/**
+	 * Default constructor
 	 * Constructor for members that have not been downloaded
 	 */
-	public RelationMember(final String t, final long id, final String r)
+	public RelationMember(final String type, final long refId, final String role)
 	{
-		type = t;
-		ref = id;
-		role = r;
+		this.type = type;
+		this.ref = refId;
+		this.role = role;
 	}
 	
 	/**
 	 * Constructor for members that have been downloaded
 	 */
-	public RelationMember(final String r, final OsmElement e)
+	public RelationMember(final String role, final OsmElement element)
 	{
-		role = r;
-		element = e;
+		this.role = role;
+		this.element = element;
 	}
 	
 	/**
@@ -89,7 +92,7 @@ public class RelationMember {
 	 * @param e
 	 */
 	public void setElement(final OsmElement e) {
-		element=e;
+		this.element = e;
 	}
 	
 }
