@@ -32,4 +32,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
+	@Override
+	public void onDestroy(){
+	    stopService(new Intent(this, GPSservice.class));
+	    super.onDestroy();
+	}
 }

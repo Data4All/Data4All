@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
     
-    public static ArrayList<String> track = new ArrayList<String>();
+    public static ArrayList<String> history = new ArrayList<String>();
 
     private static final String TAG = "GPStracker";
     /**
@@ -49,6 +49,15 @@ public class GPSservice extends Service implements LocationListener {
        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
             "MyWakelockTag");
     wakeLock.acquire();
+    
+    
+    lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 
+            5000, // minimum of time                                                                     
+            0, this); // minimum of meters
+    lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 
+            5000,                                                                  
+            0, this);
     }
     
   
@@ -56,14 +65,9 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
+        
 
-        lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 
-                5000, // location will be fetched every 5 sec                                                                     
-                0, this); // is 0meters for testingpurpose. should be greater than 0
-
-        // We want this service to continue running until it is explicitly
-        // stopped, so return sticky.
+    
         return START_STICKY;
     }
 
@@ -71,8 +75,7 @@ public class GPSservice extends Service implements LocationListener {
     public void onDestroy() {
         
         wakeLock.release();
-        Toast.makeText(this, "gps service destroyed", Toast.LENGTH_SHORT)
-                .show();
+        
     }
 
     public void onLocationChanged(Location location) {
@@ -80,15 +83,20 @@ public class GPSservice extends Service implements LocationListener {
         isGpsEnabled = true;
 
      
-        // TODO this is the place where the location info should be processed.
-
         double lat = location.getLatitude();
         double lon = location.getLongitude();
-
-        Log.d(TAG, "lat=" + lat + " lon=" + lon);
+      
         
-        track.add("lat=" + lat + " lon=" + lon);
+        //timestamp
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
         
+        //add
+        history.add("time:"+ ts + " lat=" + lat + " lon=" + lon);
+        
+        
+        Log.d(TAG, "time:"+ ts + " lat=" + lat + " lon=" + lon);
+        Log.d(TAG, "Points in GPS history: " + history.size());
         
         lastLocation = location;
 
