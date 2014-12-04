@@ -17,5 +17,11 @@
     <string name="z"> Gyroscope z</string>
     
     <string name="action_ShowPicture">Show Picture</string>
+    
+    <string name="action_camera">Camera</string>
+    <string name="action_map">Map</string>
+    <string name="action_help">Help</string>
+    <string name="title_activity_custom_menu">CustomMenuActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
