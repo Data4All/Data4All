@@ -11,7 +11,7 @@ import org.junit.Test;
 
 /**
  * Testing the main functionality of the relation and relation member objects.
- * Inherited methods from OsmElement class already tested in NodeTest.java.
+ * Inherited methods from OsmElement already tested in NodeTest.java.
  * @author fkirchge
  *
  */

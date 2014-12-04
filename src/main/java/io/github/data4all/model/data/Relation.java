@@ -170,7 +170,7 @@ public class Relation extends OsmElement {
 	public ArrayList <RelationMember> getMembersWithRole(String role) {
 		ArrayList <RelationMember> rl = new ArrayList<RelationMember>();
 		for (RelationMember rm : members) {
-			//Log.d(getClass().getSimpleName(), "getMembersWithRole " + rm.getRole()); weird nullpointer
+			//Log.d(getClass().getSimpleName(), "getMembersWithRole " + rm.getRole()); 
 			if (role.equals(rm.getRole())) {
 				rl.add(rm);
 			}

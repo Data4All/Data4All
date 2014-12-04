@@ -43,7 +43,7 @@ public class Way extends OsmElement {
 			return;
 		} 
 		if(nodes.size() >= MAX_WAY_NODES) {
-			Log.i(getClass().getSimpleName(), "addNode attempt to add more than 2000 nodes");
+			Log.d(getClass().getSimpleName(), "addNode attempt to add more than 2000 nodes");
 			return;
 		}
 		nodes.add(node);
