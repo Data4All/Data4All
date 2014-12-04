@@ -4,5 +4,14 @@
     <string name="app_name">Data4All</string>
     <string name="hello">Hallo Data4All!</string>
     <string name="action_settings">Einstellungen</string>
+    
+    <string name="X"> Accelerometer X</string>
+    <string name="Y"> Accelerometer Y</string>
+    <string name="Z"> Accelerometer Z</string>
+    
+    
+    <string name="x"> Gyroskop x</string>
+    <string name="y"> Gyroskop y</string>
+    <string name="z"> Gyroskop z</string>
 
 </resources>
