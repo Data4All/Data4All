@@ -23,5 +23,11 @@
     <string name="action_help">Hilfe</string>
     <string name="title_activity_custom_menu">CustomMenuActivity</string>
     <string name="hello_world">Hallo Welt!</string>
+    
+    <string name="return_to_position">Meine Position</string>
+    <string name="to_camera">Kamera</string>
+    <string name="switch_to_satellite">Satellitenkarte</string>
+    <string name="upload_data">Hochladen</string>
+    <string name="poi">POI</string>
 
 </resources>
