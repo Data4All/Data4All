@@ -93,7 +93,6 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
         addView(mSurfaceView);
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
-        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
     }
 
