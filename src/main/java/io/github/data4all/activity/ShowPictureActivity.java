@@ -41,7 +41,6 @@ public class ShowPictureActivity extends Activity {
 		}
 		((Button) findViewById(R.id.btnGallary))
 				.setOnClickListener(new OnClickListener() {
-					@Override
 					public void onClick(View arg0) {
 						openGallery();
 					}

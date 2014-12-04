@@ -136,7 +136,6 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
     }
 
-    @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
         try {
@@ -179,7 +178,6 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
     }
 
-    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
             int height) {
 
@@ -218,7 +216,6 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
     }
 
-    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
 
         if (mCamera != null) {
