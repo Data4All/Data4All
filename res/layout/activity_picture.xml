@@ -18,4 +18,42 @@
         android:id="@+id/btnGallary"
         android:layout_height="wrap_content">
     </Button>
+	<LinearLayout 
+    	android:id="@+id/ButtonDrawMenu"
+    	android:orientation="horizontal"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent">    
+    	<Button
+        	android:layout_width="wrap_content"
+        	android:text="Punkt"
+        	android:id="@+id/btnDrawPoint"
+        	android:layout_height="wrap_content"
+        	android:onClick="onClickPoint">
+    	</Button>
+    
+    	<Button
+        	android:layout_width="wrap_content"
+        	android:text="Weg"
+        	android:id="@+id/btnDrawPath"
+        	android:layout_height="wrap_content"
+        	android:onClick="onClickPath">
+    	</Button>
+    
+    	<Button
+        	android:layout_width="wrap_content"
+       		android:text="Fläche"
+        	android:id="@+id/btnDrawArea"
+    	    android:layout_height="wrap_content"
+    	    android:onClick="onClickArea">
+	    </Button>
+    
+    	<Button
+        	android:layout_width="wrap_content"
+        	android:text="Gebäude"
+        	android:id="@+id/btnDrawBuilding"
+        	android:layout_height="wrap_content"
+        	android:onClick="onClickBuilding">
+    	</Button>
+	</LinearLayout>
+    
 </LinearLayout>

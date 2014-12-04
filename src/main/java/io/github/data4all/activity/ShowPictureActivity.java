@@ -1,5 +1,6 @@
 package io.github.data4all.activity;
 
+import io.github.data4all.MainActivity;
 import io.github.data4all.R;
 import io.github.data4all.R.id;
 import io.github.data4all.R.layout;
@@ -52,7 +53,29 @@ public class ShowPictureActivity extends Activity {
 		photoPickerIntent.setType("image/*");
 		startActivityForResult(photoPickerIntent, 1);
 	}
-
+	
+	public void onClickPoint(View view) {
+	     Intent intent = new Intent(this,MainActivity.class);
+	     if(getIntent().hasExtra("file_path")){
+				Log.d("Status:", "intent is there");
+				//intent.putExtra("file_path", (String) getIntent().getExtras().get("file_path"));
+				startActivity(intent);
+	     } else{
+	    	 // TODO: nachricht an nutzer falls kein file_path vorhanden
+	     }
+	}
+	
+	public void onClickPath(View view) {
+	     // Kabloey
+	}
+	
+	public void onClickArea(View view) {
+	     // Kabloey
+	}
+	
+	public void onClickBuilding(View view) {
+	     // Kabloey
+	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
