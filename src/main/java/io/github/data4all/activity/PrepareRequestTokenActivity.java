@@ -1,8 +1,8 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.Constants;
-import io.github.data4all.OAuthRequestTokenTask;
-import io.github.data4all.RetrieveAccessTokenTask;
+import io.github.data4all.task.OAuthRequestTokenTask;
+import io.github.data4all.task.RetrieveAccessTokenTask;
 
 import java.net.URLEncoder;
 

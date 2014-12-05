@@ -42,7 +42,5 @@ public class MainActivity extends Activity {
             break;
         }
         return super.onOptionsItemSelected(item);
-    }
-    
-    
+    }    
 }

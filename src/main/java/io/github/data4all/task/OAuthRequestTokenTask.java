@@ -1,5 +1,6 @@
-package io.github.data4all;
+package io.github.data4all.task;
 
+import io.github.data4all.Constants;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import android.content.Context;

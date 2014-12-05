@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,10 +17,16 @@ import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 
+    final String TAG = getClass().getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Log.d(TAG,
+                "SharedPreferences:"
+                        + PreferenceManager.getDefaultSharedPreferences(
+                                getBaseContext()).getAll());
 
         Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -36,19 +42,16 @@ public class LoginActivity extends Activity {
                 if (!sharedPrefs.contains(OAuth.OAUTH_TOKEN)
                         && !sharedPrefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
 
-                    if (checkBox.isChecked()) {
-                        startActivity(new Intent().setClass(v.getContext(),
-                                PrepareRequestTokenActivity.class));
-                    } else {
-                        // TODO By closing the app, token should removed
-                        startActivity(new Intent().setClass(v.getContext(),
-                                PrepareRequestTokenActivity.class));
-                    }
+                    setTemporaryField(!checkBox.isChecked());
+                    startActivity(new Intent().setClass(v.getContext(),
+                            PrepareRequestTokenActivity.class));
                 } else {
-                    Toast.makeText(getApplicationContext(),
-                            R.string.alreadyLoggedIn, Toast.LENGTH_SHORT).show();
-                }
 
+                    Toast.makeText(getApplicationContext(),
+                            R.string.alreadyLoggedIn, Toast.LENGTH_SHORT)
+                            .show();
+
+                }
             }
         });
 
@@ -57,17 +60,7 @@ public class LoginActivity extends Activity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                SharedPreferences sharedPrefs = PreferenceManager
-                        .getDefaultSharedPreferences(getBaseContext());
-
-                if (sharedPrefs.contains(OAuth.OAUTH_TOKEN)
-                        && sharedPrefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
-
-                    Editor ed = sharedPrefs.edit();
-                    ed.remove(OAuth.OAUTH_TOKEN);
-                    ed.remove(OAuth.OAUTH_TOKEN_SECRET);
-                    ed.commit();
-                }
+                deleteTokenFromSharedPreferences();
 
             }
         });
@@ -81,15 +74,45 @@ public class LoginActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+    protected void onDestroy() {
+        super.onDestroy();
+        // Delete OAuthToken when onDestroy() is called
+        if (isTokenTemporary()) {
+            deleteTokenFromSharedPreferences();
         }
-        return super.onOptionsItemSelected(item);
+
+    }
+
+    private void deleteTokenFromSharedPreferences() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getBaseContext());
+
+        if (sharedPrefs.contains(OAuth.OAUTH_TOKEN)
+                && sharedPrefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
+
+            Editor ed = sharedPrefs.edit();
+            ed.remove(OAuth.OAUTH_TOKEN);
+            ed.remove(OAuth.OAUTH_TOKEN_SECRET);
+            ed.remove("IS_TEMPORARY");
+            ed.commit();
+        }
+        Log.i(TAG, "SharedPreferences:" + sharedPrefs.getAll());
+    }
+
+    private boolean isTokenTemporary() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getBaseContext());
+        return sharedPrefs.getBoolean("IS_TEMPORARY", false);
+    }
+
+    private void setTemporaryField(boolean b) {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getBaseContext());
+        Editor ed = sharedPrefs.edit();
+        ed.putBoolean("IS_TEMPORARY", b);
+        ed.commit();
+        Log.i(TAG, "SharedPreferences:" + sharedPrefs.getAll());
+
     }
 
 }
