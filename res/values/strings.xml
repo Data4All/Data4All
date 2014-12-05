@@ -8,5 +8,6 @@
     <string name="selectTag">Select Matching Tag</string>
     <string name="title_activity_tag">TagActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="tag">Start Tagging</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package io.github.data4all;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -27,6 +29,9 @@ public class MainActivity extends Activity {
 
 
 	private static final int REQUEST_CODE = 1234;
+	final Context context = this;
+	private ArrayList<String> keys;
+	private String key;
 	/**
 	 * Called when the activity is first created.
 	 * 
@@ -46,6 +51,49 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		        startActivityForResult(intent, REQUEST_CODE);
+			}
+		});
+		Button startTagging = (Button) findViewById(R.id.startTagging);
+		startTagging.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				final Dialog dialog = new Dialog(MainActivity.this);
+				dialog.setContentView(R.layout.dialog_matches);
+				dialog.setTitle("Select Tag");
+				final Tagging tagging = new Tagging();
+				final ListView keyList = (ListView)dialog.findViewById(R.id.list);
+				keys = (ArrayList<String>) tagging.getKeys();
+				System.out.println("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+				System.out.println(keys);
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, keys);
+				keyList.setAdapter(adapter);  
+				keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				     @Override
+				     public void onItemClick(AdapterView<?> parent, View view,
+				                             int position, long id) {
+				       key = keys.get(position);
+				       keys = (ArrayList<String>) tagging.getValues(key);
+				       ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, keys);
+						keyList.setAdapter(adapter); 
+						keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+						     @Override
+						     public void onItemClick(AdapterView<?> parent, View view,
+						                             int position, long id) {
+						    	 
+						    	 String value = keys.get(position);
+						    	 List<String> endList = new ArrayList<String>();
+						    	 endList.add(key +" = " + value);
+						    	 
+						    	 ListView textList = (ListView)findViewById(R.id.listView1);
+							     ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, endList);
+							     textList.setAdapter(adapter);  
+						       dialog.hide();
+						     }
+						 });
+						
+				     }
+				 });
+				dialog.show();
 			}
 		});
 	}
