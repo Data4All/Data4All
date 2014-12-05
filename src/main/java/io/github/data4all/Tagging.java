@@ -9,8 +9,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @author Maurice Boyke
+ *
+ */
 public class Tagging {
-	
+	/**
+	 * 
+	 * @return the Keys of Tags
+	 */
 	public List<String> getKeys(){
 		List<String> list = new ArrayList<String>();
 		Tags tags = new Tags();
@@ -23,7 +31,11 @@ public class Tagging {
 		}
 		return list;
 	}
-	
+	/**
+	 * 
+	 * @param key the Key of the Hashmap
+	 * @return the Values of the Key
+	 */
 	public List<String> getValues(String key){
 		Tags tags = new Tags();
 		Map<String, String> map = new HashMap <String, String>();
@@ -33,7 +45,12 @@ public class Tagging {
 		List<String> list= new ArrayList<String>(Arrays.asList(split));
 		return list;
 	}
-	
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return a HashMap with the Keys and Values
+	 */
 	public Map<String, String> hashMapTag(String key, String value){
 		Map<String, String> map = new HashMap <String, String>();
 		map.put(key, value);

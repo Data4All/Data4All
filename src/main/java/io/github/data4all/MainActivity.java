@@ -87,6 +87,8 @@ public class MainActivity extends Activity {
 						    	 ListView textList = (ListView)findViewById(R.id.listView1);
 							     ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, endList);
 							     textList.setAdapter(adapter);  
+							     Map <String, String> map = new HashMap<String, String>();
+							     map = tagging.hashMapTag(key, value);
 						       dialog.hide();
 						     }
 						 });
