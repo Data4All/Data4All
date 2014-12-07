@@ -92,7 +92,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 	    	case R.id.return_to_actual_Position:
-	    		if(myLocationOverlay.isMyLocationEnabled()){
+	    		if(myLocationOverlay.isMyLocationEnabled() && myLocationOverlay.getMyLocation()!=null){
 	    			Log.i(TAG,"Set Mapcenter to" + myLocationOverlay.getMyLocation().toString());
 	    			mapController.setCenter(myLocationOverlay.getMyLocation());
 	    			mapView.postInvalidate();
