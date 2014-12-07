@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <Button
+        android:id="@+id/return_to_actual_Position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/return_to_position"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/switch_to_satellite_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/switch_to_satellite"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/upload_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/upload_data"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/new_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/poi"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/to_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/new_point"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="46dp"
+        android:text="@string/to_camera"
+        android:textSize="12sp" />
+
+</RelativeLayout>

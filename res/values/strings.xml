@@ -4,5 +4,10 @@
     <string name="app_name">Data4All</string>
     <string name="hello">Hello Data4All!</string>
     <string name="action_settings">Settings</string>
+    <string name="return_to_position">My Position</string>
+    <string name="to_camera">Camera</string>
+    <string name="switch_to_satellite">Satellite Map</string>
+    <string name="upload_data">Upload</string>
+    <string name="poi">POI</string>
 
 </resources>
