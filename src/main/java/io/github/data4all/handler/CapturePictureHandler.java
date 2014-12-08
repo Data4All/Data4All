@@ -1,10 +1,12 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.activity.CameraActivity;
+import io.github.data4all.util.GeoDataConverter;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -23,19 +25,30 @@ import android.widget.Toast;
  */
 public class CapturePictureHandler implements PictureCallback {
 
-    private CameraActivity context;
+    // Actual Activity for the context
+    private CameraActivity contextActivity;
+    // An instance of the GeoDataConverter for converting latitude and longitude
+    private GeoDataConverter geoDataConverter;
+    // The file into which the picture is saved
     private File photoFile;
+    // An ExifInterface for the exif data of a file
     private ExifInterface exif;
 
-    private String directory = "/Data4all";
-    private String fileformat = ".jpeg";
-    private String filepath = "file_path";
+    // The directory where the pictures are saved into
+    private final String directory = "/Data4all";
+    // The fileformat of the saved picture
+    private final String fileformat = ".jpeg";
+    // The name of the extra info for the filepath in the intent for the new
+    // activity
+    private final String filepath = "file_path";
 
     public CapturePictureHandler() {
+        geoDataConverter = new GeoDataConverter();
     }
 
     public CapturePictureHandler(CameraActivity context) {
-        this.context = context;
+        this.contextActivity = context;
+        geoDataConverter = new GeoDataConverter();
     }
 
     /*
@@ -47,16 +60,8 @@ public class CapturePictureHandler implements PictureCallback {
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
 
-        // Call the method where the file is created
-        createFile();
-
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
-
-        /* Passes the filepath to the ShowPictureActivity */
-        // Intent intent = new Intent(context, ShowPictureActivity.class);
-        // intent.putExtra(filepath, photoFile);
-        // context.startActivity(intent);
     }
 
     /*
@@ -65,11 +70,10 @@ public class CapturePictureHandler implements PictureCallback {
     class SavePhotoTask extends AsyncTask<byte[], String, String> {
         @Override
         protected String doInBackground(byte[]... photoData) {
-            // Delete the picture while detecting existed one
-            if (photoFile.exists()) {
-                photoFile.delete();
-            }
             try {
+                // Call the method where the file is created
+                photoFile = createFile();
+
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
                 FileOutputStream fos = new FileOutputStream(photoFile.getPath());
@@ -93,25 +97,30 @@ public class CapturePictureHandler implements PictureCallback {
         protected void onPostExecute(String result) {
             Log.d(getClass().getSimpleName(), "########### onPostExecute");
             if (result.equals("successful")) {
-                Toast.makeText(context, "Picture successfully saved",
+                Toast.makeText(contextActivity, "Picture successfully saved",
                         Toast.LENGTH_SHORT).show();
 
-                // A method to log the saved metadata of the taken picture TODO
-                // remove
+                // A method to log the saved metadata of the taken picture
+                // TODO remove
                 showReturnedMetadata();
 
+                /* Passes the filepath to the ShowPictureActivity */
+//                Intent intent = new Intent(context, ShowPictureActivity.class);
+//                intent.putExtra(filepath, photoFile);
+//                context.startActivity(intent);
+
             } else {
-                Toast.makeText(context, "Failed on taking picture",
+                Toast.makeText(contextActivity, "Failed on taking picture",
                         Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    /**
+    /*
      * Create a directory Data4all if necessary and create a file for the
      * picture
      */
-    private void createFile() {
+    private File createFile() {
         // Create a File Reference of Photo File
         // Image Type is JPEG
 
@@ -125,13 +134,13 @@ public class CapturePictureHandler implements PictureCallback {
         File folder = new File(Environment.getExternalStorageDirectory()
                 + directory);
         if (!folder.exists() && folder.mkdirs()) {
-            Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
+            Toast.makeText(contextActivity, "New Folder Created", Toast.LENGTH_SHORT)
                     .show();
         }
 
         // Save the picture to the folder in the internal storage
-        photoFile = new File(Environment.getExternalStorageDirectory()
-                + directory, System.currentTimeMillis() + fileformat);
+        return new File(Environment.getExternalStorageDirectory() + directory,
+                System.currentTimeMillis() + fileformat);
     }
 
     /*
@@ -149,9 +158,9 @@ public class CapturePictureHandler implements PictureCallback {
             // Write GPS tags into the EXIF of the picture
             exif = new ExifInterface(filepath);
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE,
-                    convertToDMS(latitude));
+                    geoDataConverter.convertToDMS(latitude));
             exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE,
-                    convertToDMS(longitude));
+                    geoDataConverter.convertToDMS(longitude));
             // Set the Latitude reference (west or east)
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, latitudeRef);
             // Set the Longitude reference (north or south)
@@ -168,74 +177,11 @@ public class CapturePictureHandler implements PictureCallback {
 
     }
 
-    /**
-     * convert the given latitude and longitude from degrees into DMS (degree
-     * minute second) format. For example -79.948862 becomes
-     * 79/1,56/1,55903/1000
-     * 
-     * @param deg
-     *            the given latitude or longitude in degrees
-     * @return the given latitude or longitude in DMS
-     */
-    private String convertToDMS(double deg) {
-        StringBuilder sb = new StringBuilder(20);
-        deg = Math.abs(deg);
-        int degree = (int) deg;
-        deg *= 60;
-        deg -= (degree * 60.0d);
-        int minute = (int) deg;
-        deg *= 60;
-        deg -= (minute * 60.0d);
-        int second = (int) (deg * 1000.0d);
-
-        sb.setLength(0);
-        sb.append(degree);
-        sb.append("/1,");
-        sb.append(minute);
-        sb.append("/1,");
-        sb.append(second);
-        sb.append("/1000");
-        return sb.toString();
-    }
-
-    /**
-     * Convert the latitude or latitude from DMS into degrees
-     * 
-     * @param stringDMS
-     *            the given latitude or longitude in DMS
-     * @return the given latitude or longitude in degrees
-     */
-    private Double convertToDegree(String stringDMS) {
-        Double result = null;
-        String[] DMS = stringDMS.split(",", 3);
-
-        // Get the degree value
-        String[] stringD = DMS[0].split("/", 2);
-        Double D0 = new Double(stringD[0]);
-        Double D1 = new Double(stringD[1]);
-        Double FloatD = D0 / D1;
-        // Get the minute value
-        String[] stringM = DMS[1].split("/", 2);
-        Double M0 = new Double(stringM[0]);
-        Double M1 = new Double(stringM[1]);
-        Double FloatM = M0 / M1;
-        // Get the second value
-        String[] stringS = DMS[2].split("/", 2);
-        Double S0 = new Double(stringS[0]);
-        Double S1 = new Double(stringS[1].substring(0, stringS[1].length()));
-        Double FloatS = S0 / S1;
-
-        result = new Double(FloatD + (FloatM / 60) + (FloatS / 3600));
-
-        return result;
-    }
-
-    /**
+    /*
      * Just for developing to show how to get the metadata TODO remove later
      * 
      * An example, how to receive the metadata of the picture Show a log with
      * the returned metadata saved to the picture
-     * 
      */
     private void showReturnedMetadata() {
 
@@ -256,20 +202,24 @@ public class CapturePictureHandler implements PictureCallback {
                 .getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
         if (attrLATITUDE == null || attrLONGITUDE == null
                 || attrLONGITUDE_REF == null || attrLATITUDE_REF == null) {
-            Log.w(getClass().getSimpleName(), "No geotag in the exif of the imagefile");
+            Log.w(getClass().getSimpleName(),
+                    "No geotag in the exif of the imagefile");
         } else {
             double latitudeReturn;
             double longitudeReturn;
             if (attrLATITUDE_REF.equals("N")) {
-                latitudeReturn = convertToDegree(attrLATITUDE);
+                latitudeReturn = geoDataConverter.convertToDegree(attrLATITUDE);
             } else {
-                latitudeReturn = 0 - convertToDegree(attrLATITUDE);
+                latitudeReturn = 0 - geoDataConverter
+                        .convertToDegree(attrLATITUDE);
             }
 
             if (attrLONGITUDE_REF.equals("E")) {
-                longitudeReturn = convertToDegree(attrLONGITUDE);
+                longitudeReturn = geoDataConverter
+                        .convertToDegree(attrLONGITUDE);
             } else {
-                longitudeReturn = 0 - convertToDegree(attrLONGITUDE);
+                longitudeReturn = 0 - geoDataConverter
+                        .convertToDegree(attrLONGITUDE);
             }
 
             Log.i(getClass().getSimpleName(), exif.getAttribute("UserComment"));
