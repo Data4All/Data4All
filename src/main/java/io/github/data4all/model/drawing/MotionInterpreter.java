@@ -3,6 +3,7 @@ package io.github.data4all.model.drawing;
 import java.util.List;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 
 /**
  * A MotionInterpreter uses a list of {@link DrawingMotion DrawingMotions} to
@@ -17,6 +18,11 @@ import android.graphics.Canvas;
  *            interpreter
  */
 public interface MotionInterpreter<T> {
+    public static final int POINT_COLOR = Color.BLUE;
+    public static final int POINT_RADIUS = 10;
+    public static final int PATH_COLOR = 0xFFBEEEEF;
+    public static final float PATH_STROKE_WIDTH = 5f;
+    
     /**
      * Interprets the given motions and draws the result on the given canvas
      * 
