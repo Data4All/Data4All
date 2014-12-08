@@ -9,5 +9,10 @@
     <string name="switch_to_satellite">Satellite Map</string>
     <string name="upload_data">Upload</string>
     <string name="poi">POI</string>
+    <string name="action_camera">Camera</string>
+    <string name="action_map">Map</string>
+    <string name="action_help">Help</string>
+    <string name="title_activity_custom_menu">CustomMenuActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
