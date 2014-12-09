@@ -23,7 +23,7 @@ import android.widget.ListView;
  * @author Maurice Boyke
  *
  */
-public class MainActivity extends Activity {	
+public class TagActivity extends Activity {	
 
 
 	private static final int REQUEST_CODE = 1234;
@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_tag);
 		Button start = (Button) findViewById(R.id.speech);
 		start.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
 	 @Override
 	 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	     if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-		     new Dialog(MainActivity.this);
+		     new Dialog(TagActivity.this);
 		     ListView textList = (ListView)findViewById(R.id.listView1);
 		     List<String> matchesText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 		     SpeechRecognition speechRecognition = new SpeechRecognition(); 
