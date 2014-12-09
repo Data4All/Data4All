@@ -109,9 +109,6 @@ public class GPSservice extends Service implements LocationListener {
 
     public void onProviderEnabled(String provider) {
         isGpsEnabled = true;
-        Toast.makeText(getBaseContext(), "Gps turned on ", Toast.LENGTH_LONG)
-                .show();
-
     }
 
     public void onProviderDisabled(String provider) {
