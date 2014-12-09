@@ -56,4 +56,36 @@ public class Tagging {
 		map.put(key, value);
 		return map;
 	}
+	
+	
+	public Map<String, String> addressToTag(List<String> addressTags, Map<String, String> map){
+		Tags tags = new Tags();
+		String [] tag;
+		tag = tags.getAddressTags();
+		for (int i = 0; i < tag.length; i++) {
+			if(!addressTags.get(i).equals("")){
+				map.put(tag[i], addressTags.get(i));
+			}
+		}
+		return map;
+		
+	}
+	
+	
+	public Map<String, String> contactToTag(List<String> contactTags, Map<String, String> map){
+		Tags tags = new Tags();
+		String [] tag;
+		tag = tags.getContactTags();
+		for (int i = 0; i < tag.length; i++) {
+			if(!contactTags.get(i).equals("")){
+				map.put(tag[i], contactTags.get(i));
+			}
+		}
+		return map;
+		
+	}
+	
+	
+	
+	
 }

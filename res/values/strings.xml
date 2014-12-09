@@ -9,5 +9,16 @@
     <string name="title_activity_tag">TagActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="tag">Start Tagging</string>
+    <string name="houseNumber">house number</string>
+    <string name="street">street</string>
+    <string name="postCode">postcode</string>
+    <string name="city">city</string>
+    <string name="country">country</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="phone">phone</string>
+    <string name="fax">fax</string>
+    <string name="website">website</string>
+    <string name="email">email</string>
 
 </resources>

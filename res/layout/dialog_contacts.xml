@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContacts"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/editPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/phone"
+        android:inputType="phone" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/editFax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/fax"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/editWebsite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/website"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress" />
+
+    <Button
+        android:id="@+id/buttonFinish1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/finish" />
+
+</LinearLayout>

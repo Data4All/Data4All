@@ -17,10 +17,22 @@ public class Tags {
 	 * Tags with undefined user input. 
 	 */
 	public static String[] unclassifiedTags = (
-			"addr:housenumber,addr:street,addr:postcode,addr:city,addr:country, addr:full,"
+			"addr:housenumber,addr:street,addr:postcode,addr:city,addr:country,"
 					+ "contact:phone,contact:fax,contact:website,contact:email"
 			).split(",");
 
+	/**
+	 * Tags with address values
+	 */
+	
+	public static String[] addressTags = ("addr:street,addr:housenumber,addr:postcode,addr:city,addr:country").split(",");
+	
+	
+	/**
+	 * Tags with contact values
+	 */
+	public static String[] contactTags =  ("contact:phone,contact:fax,contact:website,contact:email").split(",");
+	
 	/**
 	 * Tags with predefined values.
 	 */
@@ -55,4 +67,21 @@ public class Tags {
 	public static Map<String, String> getClassifiedTags() {
 		return classifiedTags;
 	}
+	
+	/**
+	 * Returns all address tags 
+	 * @return
+	 */
+	public static String[] getAddressTags() {
+		return addressTags;
+	}
+	
+	/**
+	 * Returns all contact tags 
+	 * @return
+	 */
+	public static String[] getContactTags() {
+		return contactTags;
+	}
+	
 }
