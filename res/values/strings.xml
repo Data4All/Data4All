@@ -21,5 +21,7 @@
     <string name="x"> Gyroscope x</string>
     <string name="y"> Gyroscope y</string>
     <string name="z"> Gyroscope z</string>
+    <string name="speechRecognition">Start </string>
+    <string name="selectTag">Select Matching Tag</string>
 
 </resources>
