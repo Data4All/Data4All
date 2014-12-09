@@ -1,6 +1,7 @@
 package io.github.data4all.activity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import io.github.data4all.R;
 
 import org.junit.Before;

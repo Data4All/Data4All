@@ -1,11 +1,12 @@
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.logger.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 /**
  * This AreaMotionInterpreter is a MotionInterpreter for Areas<br/>

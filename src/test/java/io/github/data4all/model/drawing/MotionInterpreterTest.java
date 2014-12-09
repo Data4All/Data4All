@@ -1,8 +1,8 @@
 package io.github.data4all.model.drawing;
 
 import static org.mockito.Matchers.anyFloat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 import org.mockito.verification.VerificationMode;

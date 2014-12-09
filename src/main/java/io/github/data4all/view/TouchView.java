@@ -3,6 +3,7 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.drawing.DrawingMotion;
 import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
@@ -13,7 +14,6 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -38,7 +38,7 @@ public class TouchView extends View {
     public TouchView(Context context) {
         super(context);
     }
-    
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
