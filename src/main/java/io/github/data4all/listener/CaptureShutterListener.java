@@ -25,9 +25,9 @@ public class CaptureShutterListener implements OnClickListener {
     }
 
     public void onClick(View v) {
-        //Get the actual context
+        // Get the actual context
         CameraActivity myContext = (CameraActivity) v.getContext();
-        //Take a picture with the handled data
+        // Take a picture with the handled data
         camera.takePicture(shutterCallback, pictureCallback,
                 new CapturePictureHandler(myContext));
     }
@@ -35,7 +35,8 @@ public class CaptureShutterListener implements OnClickListener {
     private ShutterCallback shutterCallback = new ShutterCallback() {
 
         public void onShutter() {
-            Log.i(getClass().getSimpleName(), "make a sound to notify the picture taken.");
+            Log.i(getClass().getSimpleName(),
+                    "make a sound to notify the picture taken.");
         }
     };
 

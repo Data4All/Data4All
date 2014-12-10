@@ -2,7 +2,6 @@ package io.github.data4all.handler;
 
 import io.github.data4all.activity.CameraActivity;
 import io.github.data4all.activity.ShowPictureActivity;
-import io.github.data4all.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,11 +54,6 @@ public class CapturePictureHandler implements PictureCallback {
 
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
-
-        /* Passes the filepath to the ShowPictureActivity */
-        // Intent intent = new Intent(context, ShowPictureActivity.class);
-        // intent.putExtra(filepath, photoFile);
-        // context.startActivity(intent);
     }
 
     /*
@@ -102,6 +96,11 @@ public class CapturePictureHandler implements PictureCallback {
                 // A method to log the saved metadata of the taken picture TODO
                 // remove
                 showReturnedMetadata();
+
+                /* Passes the filepath to the ShowPictureActivity */
+                Intent intent = new Intent(context, ShowPictureActivity.class);
+                intent.putExtra(filepath, photoFile);
+                context.startActivity(intent);
 
             } else {
                 Toast.makeText(context, "Failed on taking picture",
@@ -259,7 +258,8 @@ public class CapturePictureHandler implements PictureCallback {
                 .getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
         if (attrLATITUDE == null || attrLONGITUDE == null
                 || attrLONGITUDE_REF == null || attrLATITUDE_REF == null) {
-            Log.w(getClass().getSimpleName(), "No geotag in the exif of the imagefile");
+            Log.w(getClass().getSimpleName(),
+                    "No geotag in the exif of the imagefile");
         } else {
             double latitudeReturn;
             double longitudeReturn;

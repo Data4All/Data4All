@@ -16,93 +16,92 @@ import android.widget.ImageButton;
  */
 
 public class CameraActivity extends Activity {
-    
+
     // Camera Preview View
-	private CaptureCameraSurfaceView cameraPreview;
-	// Camera Object
-	private Camera mCamera;
-	// Camera Trigger Button View Component
-	private ImageButton btnTrigger;
+    private CaptureCameraSurfaceView cameraPreview;
+    // Camera Object
+    private Camera mCamera;
+    // Camera Trigger Button View Component
+    private ImageButton btnTrigger;
 
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		// Inflate the UI layout
-		setContentView(R.layout.activity_camera);
+        // Inflate the UI layout
+        setContentView(R.layout.activity_camera);
 
-		// Initialize the UI components
-		initUIComponents();
-	}
+        // Initialize the UI components
+        initUIComponents();
+    }
 
-	/*
-	 * Called when the Activity is no longer visible at all.
-	 */
-	@Override
-	public void onStop() {
-		super.onStop();
-	}
+    /*
+     * Called when the Activity is no longer visible at all.
+     */
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
-	/*
-	 * Called when the Activity is restarted, even before it becomes visible.
-	 */
-	@Override
-	public void onStart() {
-		super.onStart();
-}
+    /*
+     * Called when the Activity is restarted, even before it becomes visible.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
-	@Override
+    @Override
     public void onResume() {
-		super.onResume();
-		
-		// Open the camera
-		try {
-		    mCamera = Camera.open();
-		    Log.d(getClass().getSimpleName(), "CameraInstance:" + mCamera);
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
+        super.onResume();
 
-		// Calculate the camera previews
-		cameraPreview.setCamera(mCamera);
-		mCamera.startPreview();
+        // Open the camera
+        try {
+            mCamera = Camera.open();
+            Log.d(getClass().getSimpleName(), "CameraInstance:" + mCamera);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		// Assign the camera trigger listener here, instead of being in
-		// onCreated method.
-		// we leave the camera initialize here
-		btnTrigger.setOnClickListener(new CaptureShutterListener(mCamera));
-	}
+        // Calculate the camera previews
+        cameraPreview.setCamera(mCamera);
+        mCamera.startPreview();
 
-	@Override
-	protected void onPause() {
-		super.onPause();
+        // Assign the camera trigger listener here, instead of being in
+        // onCreated method.
+        // we leave the camera initialize here
+        btnTrigger.setOnClickListener(new CaptureShutterListener(mCamera));
+    }
 
-		// Release the current camera
-		if (mCamera != null) {
-			cameraPreview.setCamera(null);
-			mCamera.release();
-			mCamera = null;
-		}
-		btnTrigger.setOnClickListener(null);
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-	/*
-	 * Set the trigger clickable if necessary
-	 */
-	public void setCameraShutter(boolean flag) {
-		if (btnTrigger != null)
-			btnTrigger.setClickable(flag);
-	}
+        // Release the current camera
+        if (mCamera != null) {
+            cameraPreview.setCamera(null);
+            mCamera.release();
+            mCamera = null;
+        }
+        btnTrigger.setOnClickListener(null);
+    }
 
-	/*
-	 * Initialize the UI Components (trigger and cameraPreview)
-	 */
-	private void initUIComponents() {
-		// Retrieve the ImageButton of Camera Trigger
-		btnTrigger = (ImageButton) findViewById(R.id.btnTrigger);
+    /*
+     * Set the trigger clickable if necessary
+     */
+    public void setCameraShutter(boolean flag) {
+        if (btnTrigger != null)
+            btnTrigger.setClickable(flag);
+    }
 
-		// Retrieve the Camera Preview Component
-		cameraPreview = (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
-	}
+    /*
+     * Initialize the UI Components (trigger and cameraPreview)
+     */
+    private void initUIComponents() {
+        // Retrieve the ImageButton of Camera Trigger
+        btnTrigger = (ImageButton) findViewById(R.id.btnTrigger);
+
+        // Retrieve the Camera Preview Component
+        cameraPreview = (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
+    }
 }

@@ -5,7 +5,6 @@ package io.github.data4all.handler;
 
 import static org.junit.Assert.assertEquals;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

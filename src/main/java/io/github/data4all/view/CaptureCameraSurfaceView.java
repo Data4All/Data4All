@@ -17,7 +17,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 /**
- * The View for the Camera Preview. Is a Surface and sets the layout e.g. rotation
+ * The View for the Camera Preview. Is a Surface and sets the layout e.g.
+ * rotation
  * 
  * @author sbollen
  *
@@ -179,7 +180,8 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
             }
         } catch (IOException ex) {
-            Log.e(getClass().getSimpleName(), "IOException caused by setPreviewDisplay()", ex);
+            Log.e(getClass().getSimpleName(),
+                    "IOException caused by setPreviewDisplay()", ex);
         }
     }
 
