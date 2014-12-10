@@ -12,7 +12,7 @@ package io.github.data4all.util;
  */
 public class GeoDataConverter {
 
-    //Constructor
+    // Constructor
     public GeoDataConverter() {
     }
 

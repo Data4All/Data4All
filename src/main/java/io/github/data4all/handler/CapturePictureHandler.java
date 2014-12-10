@@ -1,12 +1,13 @@
 package io.github.data4all.handler;
 
-import io.github.data4all.activity.CameraActivity;
+import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.util.GeoDataConverter;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -26,7 +27,7 @@ import android.widget.Toast;
 public class CapturePictureHandler implements PictureCallback {
 
     // Actual Activity for the context
-    private CameraActivity contextActivity;
+    private Context context;
     // An instance of the GeoDataConverter for converting latitude and longitude
     private GeoDataConverter geoDataConverter;
     // The file into which the picture is saved
@@ -46,8 +47,8 @@ public class CapturePictureHandler implements PictureCallback {
         geoDataConverter = new GeoDataConverter();
     }
 
-    public CapturePictureHandler(CameraActivity context) {
-        this.contextActivity = context;
+    public CapturePictureHandler(Context context) {
+        this.context = context;
         geoDataConverter = new GeoDataConverter();
     }
 
@@ -97,7 +98,7 @@ public class CapturePictureHandler implements PictureCallback {
         protected void onPostExecute(String result) {
             Log.d(getClass().getSimpleName(), "########### onPostExecute");
             if (result.equals("successful")) {
-                Toast.makeText(contextActivity, "Picture successfully saved",
+                Toast.makeText(context, "Picture successfully saved",
                         Toast.LENGTH_SHORT).show();
 
                 // A method to log the saved metadata of the taken picture
@@ -110,7 +111,7 @@ public class CapturePictureHandler implements PictureCallback {
                 context.startActivity(intent);
 
             } else {
-                Toast.makeText(contextActivity, "Failed on taking picture",
+                Toast.makeText(context, "Failed on taking picture",
                         Toast.LENGTH_SHORT).show();
             }
         }
@@ -134,7 +135,7 @@ public class CapturePictureHandler implements PictureCallback {
         File folder = new File(Environment.getExternalStorageDirectory()
                 + directory);
         if (!folder.exists() && folder.mkdirs()) {
-            Toast.makeText(contextActivity, "New Folder Created", Toast.LENGTH_SHORT)
+            Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
                     .show();
         }
 
