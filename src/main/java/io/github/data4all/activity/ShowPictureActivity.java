@@ -96,7 +96,7 @@ public class ShowPictureActivity extends Activity {
             bitmap = MediaStore.Images.Media.getBitmap(
                     this.getContentResolver(), selectedImage);
             BitmapDrawable bd = new BitmapDrawable(res, bitmap);
-            View view = findViewById(R.id.LinearLayout);
+            View view = findViewById(R.id.main_layout);
             view.setBackground(bd);
         } catch (FileNotFoundException e) {
             Log.e(this.getClass().toString(), "ERROR, no file found");
