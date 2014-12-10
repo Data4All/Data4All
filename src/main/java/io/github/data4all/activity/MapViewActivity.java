@@ -10,6 +10,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -104,6 +105,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
         case R.id.switch_to_satellite_map:
             break;
         case R.id.to_camera:
+            startActivity(new Intent(this, CameraActivity.class));
             break;
         case R.id.new_point:
             break;
