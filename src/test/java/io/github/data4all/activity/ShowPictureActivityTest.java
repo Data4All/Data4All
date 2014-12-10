@@ -1,4 +1,4 @@
-package io.github.data4all;
+package io.github.data4all.activity;
 
 import static org.junit.Assert.assertNotNull;
 import io.github.data4all.activity.ShowPictureActivity;

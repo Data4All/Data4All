@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivitySensor" />
+        <activity android:name="io.github.data4all.activity.SensorActivity" />
         <activity android:name="io.github.data4all.activity.ShowPictureActivity" />
         <activity android:name="io.github.data4all.activity.CameraActivity" />
     </application>
