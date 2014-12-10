@@ -98,8 +98,8 @@ public class CapturePictureHandler implements PictureCallback {
         protected void onPostExecute(String result) {
             Log.d(getClass().getSimpleName(), "########### onPostExecute");
             if (result.equals("successful")) {
-                Toast.makeText(context, "Picture successfully saved",
-                        Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Picture successfully saved",
+                //        Toast.LENGTH_SHORT).show();
 
                 // A method to log the saved metadata of the taken picture
                 // TODO remove
