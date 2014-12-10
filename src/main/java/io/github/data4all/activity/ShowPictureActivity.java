@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -34,6 +35,51 @@ public class ShowPictureActivity extends Activity {
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
 
+        }
+    }
+
+    private void openGallery() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, 1);
+    }
+
+    public void onClickPoint(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        if (getIntent().hasExtra("file_path")) {
+            Log.d("Status:", "intent is there");
+            // intent.putExtra("file_path", (String)
+            // getIntent().getExtras().get("file_path"));
+            startActivity(intent);
+        } else {
+            // TODO: nachricht an nutzer falls kein file_path vorhanden
+        }
+    }
+
+    public void onClickPath(View view) {
+        // Kabloey
+    }
+
+    public void onClickArea(View view) {
+        // Kabloey
+    }
+
+    public void onClickBuilding(View view) {
+        // Kabloey
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (data != null && resultCode == RESULT_OK) {
+
+                Uri selectedImage = data.getData();
+                setBackground(selectedImage);
+
+            } else {
+                Log.d("Status:", "Photopicker canceled");
+            }
         }
     }
 
