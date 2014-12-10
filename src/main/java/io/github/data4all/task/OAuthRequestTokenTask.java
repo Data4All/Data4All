@@ -25,8 +25,8 @@ import android.util.Log;
  */
 public class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
 
-    final String          TAG = getClass().getName();
-    private Context       context;
+    final String TAG = getClass().getName();
+    private Context context;
     private OAuthProvider provider;
     private OAuthConsumer consumer;
 

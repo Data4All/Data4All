@@ -36,7 +36,7 @@ import android.util.Log;
  */
 public class PrepareRequestTokenActivity extends Activity {
 
-    final String          TAG = getClass().getName();
+    final String TAG = getClass().getName();
 
     private OAuthConsumer consumer;
     private OAuthProvider provider;

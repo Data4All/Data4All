@@ -16,7 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
-    
+
     public static ArrayList<String> history = new ArrayList<String>();
 
     private static final String TAG = "GPStracker";
@@ -39,65 +39,58 @@ public class GPSservice extends Service implements LocationListener {
      * LocationManager
      */
     private LocationManager lmgr;
-    
+
     private WakeLock wakeLock;
 
     @Override
     public void onCreate() {
-        //wakelock, so the cpu is never shut down and is able to track at all time
+        // wakelock, so the cpu is never shut down and is able to track at all
+        // time
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-       wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-            "MyWakelockTag");
-    wakeLock.acquire();
-    
-    
-    lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 
-            5000, // minimum of time                                                                     
-            0, this); // minimum of meters
-    lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 
-            5000,                                                                  
-            0, this);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
+        wakeLock.acquire();
+
+        lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, // minimum
+                                                                        // of
+                                                                        // time
+                0, this); // minimum of meters
+        lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
+                this);
     }
-    
-  
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
-        
 
-    
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        
+
         wakeLock.release();
-        
+
     }
 
     public void onLocationChanged(Location location) {
         // We're receiving location, so GPS is enabled
         isGpsEnabled = true;
 
-     
         double lat = location.getLatitude();
         double lon = location.getLongitude();
-      
-        
-        //timestamp
-        Long tsLong = System.currentTimeMillis()/1000;
+
+        // timestamp
+        Long tsLong = System.currentTimeMillis() / 1000;
         String ts = tsLong.toString();
-        
-        //add
-        history.add("time:"+ ts + " lat=" + lat + " lon=" + lon);
-        
-        
-        Log.d(TAG, "time:"+ ts + " lat=" + lat + " lon=" + lon);
+
+        // add
+        history.add("time:" + ts + " lat=" + lat + " lon=" + lon);
+
+        Log.d(TAG, "time:" + ts + " lat=" + lat + " lon=" + lon);
         Log.d(TAG, "Points in GPS history: " + history.size());
-        
+
         lastLocation = location;
 
     }
@@ -118,13 +111,10 @@ public class GPSservice extends Service implements LocationListener {
                 .show();
     }
 
-
-
     @Override
     public IBinder onBind(Intent arg0) {
         // TODO Auto-generated method stub
         return null;
     }
-
 
 }

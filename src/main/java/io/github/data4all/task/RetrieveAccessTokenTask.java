@@ -1,6 +1,6 @@
 package io.github.data4all.task;
 
-import io.github.data4all.activity.MainActivity;
+import io.github.data4all.activity.MapViewActivity;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -22,11 +22,11 @@ import android.util.Log;
 
 public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
 
-    final String              TAG = getClass().getName();
+    final String TAG = getClass().getName();
 
-    private Context           context;
-    private OAuthProvider     provider;
-    private OAuthConsumer     consumer;
+    private Context context;
+    private OAuthProvider provider;
+    private OAuthConsumer consumer;
     private SharedPreferences prefs;
 
     public RetrieveAccessTokenTask(Context context, OAuthConsumer consumer,
@@ -53,14 +53,14 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
 
             final Editor edit = prefs.edit();
             edit.putString(OAuth.OAUTH_TOKEN, consumer.getToken());
-            edit.putString(OAuth.OAUTH_TOKEN_SECRET, consumer.getTokenSecret());   
+            edit.putString(OAuth.OAUTH_TOKEN_SECRET, consumer.getTokenSecret());
             edit.commit();
 
             String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
             String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
 
             consumer.setTokenWithSecret(token, secret);
-            context.startActivity(new Intent(context, MainActivity.class));
+            context.startActivity(new Intent(context, MapViewActivity.class));
 
             Log.i(TAG, "OAuth - Access Token Retrieved");
 

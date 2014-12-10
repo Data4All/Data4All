@@ -36,7 +36,7 @@ public class ShowPictureActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
-        touchView = (TouchView)findViewById(R.id.touch_view);
+        touchView = (TouchView) findViewById(R.id.touch_view);
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
