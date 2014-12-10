@@ -1,8 +1,6 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.R.id;
-import io.github.data4all.R.layout;
 import io.github.data4all.listener.CaptureShutterListener;
 import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
@@ -19,9 +17,7 @@ import android.widget.ImageButton;
 
 public class CameraActivity extends Activity {
     
-    private static final String TAG = CameraActivity.class.getSimpleName();
-
-	// Camera Preview View
+    // Camera Preview View
 	private CaptureCameraSurfaceView cameraPreview;
 	// Camera Object
 	private Camera mCamera;
@@ -63,7 +59,7 @@ public class CameraActivity extends Activity {
 		// Open the camera
 		try {
 		    mCamera = Camera.open();
-		    Log.d(TAG, "CameraInstance:" + mCamera);
+		    Log.d(getClass().getSimpleName(), "CameraInstance:" + mCamera);
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
