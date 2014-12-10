@@ -24,4 +24,12 @@
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Select Matching Tag</string>
 	<string name="action_ShowPicture">Show Picture</string>
+    <string name="action_login">Login</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="stayLoggedIn">Remember me?</string>
+    <string name="loginButton">Login</string>
+    <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
+    <string name="loremIpsum50">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</string>
+    <string name="deleteButton">delete Token</string>
+    <string name="alreadyLoggedIn">Already logged in</string>
 </resources>
