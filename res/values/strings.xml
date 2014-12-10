@@ -23,5 +23,5 @@
     <string name="z"> Gyroscope z</string>
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Select Matching Tag</string>
-
+	<string name="action_ShowPicture">Show Picture</string>
 </resources>
