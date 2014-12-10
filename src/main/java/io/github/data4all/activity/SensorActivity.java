@@ -1,5 +1,8 @@
-package io.github.data4all;
+package io.github.data4all.activity;
 
+import io.github.data4all.R;
+import io.github.data4all.R.id;
+import io.github.data4all.R.layout;
 import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,7 +15,7 @@ import android.widget.TextView;
  * this activity will measures the tilting motion and orientation of a mobile phone(accelerometer)
  * and the rate or rotation in rad/s around a device's x, y, and z axis(Gyroscope).
  */
-public class ActivitySensor extends Activity implements SensorEventListener {
+public class SensorActivity extends Activity implements SensorEventListener {
 
     private SensorManager sManager;
 
