@@ -102,6 +102,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
             }
             break;
         case R.id.upload_data:
+            startActivity(new Intent(this, LoginActivity.class));
             break;
         case R.id.switch_to_satellite_map:
             break;
