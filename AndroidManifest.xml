@@ -30,7 +30,6 @@
         <activity android:name="io.github.data4all.activity.MapViewActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
