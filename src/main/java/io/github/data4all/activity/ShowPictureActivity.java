@@ -1,6 +1,11 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.model.drawing.AreaMotionInterpreter;
+import io.github.data4all.model.drawing.BuildingMotionInterpreter;
+import io.github.data4all.model.drawing.PointMotionInterpreter;
+import io.github.data4all.model.drawing.WayMotionInterpreter;
+import io.github.data4all.view.TouchView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,47 +30,43 @@ import android.view.View;
  */
 public class ShowPictureActivity extends Activity {
 
+    private TouchView touchView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
+        touchView = (TouchView)findViewById(R.id.touch_view);
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
-
         }
-    }
-
-    private void openGallery() {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, 1);
     }
 
     public void onClickPoint(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        if (getIntent().hasExtra("file_path")) {
-            Log.d("Status:", "intent is there");
-            // intent.putExtra("file_path", (String)
-            // getIntent().getExtras().get("file_path"));
-            startActivity(intent);
-        } else {
-            // TODO: nachricht an nutzer falls kein file_path vorhanden
-        }
+        touchView.clearMotions();
+        touchView.setInterpreter(new PointMotionInterpreter());
+        touchView.invalidate();
     }
 
     public void onClickPath(View view) {
-        // Kabloey
+        touchView.clearMotions();
+        touchView.setInterpreter(new WayMotionInterpreter());
+        touchView.invalidate();
     }
 
     public void onClickArea(View view) {
-        // Kabloey
+        touchView.clearMotions();
+        touchView.setInterpreter(new AreaMotionInterpreter());
+        touchView.invalidate();
     }
 
     public void onClickBuilding(View view) {
-        // Kabloey
+        touchView.clearMotions();
+        touchView.setInterpreter(new BuildingMotionInterpreter());
+        touchView.invalidate();
     }
 
     @Override
