@@ -2,6 +2,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.service.GPSservice;
 
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -130,6 +131,9 @@ public class MapViewActivity extends Activity implements OnClickListener {
         Log.i(TAG, "Enable Following Location Overlay");
         myLocationOverlay.enableFollowLocation();
         mapView.postInvalidate();
+
+        // Start the GPS tracking
+        startService(new Intent(this, GPSservice.class));
     }
 
     @Override
@@ -140,5 +144,8 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
         Log.i(TAG, "Disable Following Location Overlay");
         myLocationOverlay.disableFollowLocation();
+
+        // Pause the GPS tracking
+        stopService(new Intent(this, GPSservice.class));
     }
 }
