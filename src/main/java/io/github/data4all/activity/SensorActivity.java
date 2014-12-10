@@ -1,8 +1,6 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.R.id;
-import io.github.data4all.R.layout;
 import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;

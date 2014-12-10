@@ -1,6 +1,3 @@
-/**
- * 
- */
 package io.github.data4all.view;
 
 import io.github.data4all.logger.Log;
@@ -37,6 +34,21 @@ public class TouchView extends View {
 
     public TouchView(Context context) {
         super(context);
+    }
+
+    public void setInterpreter(MotionInterpreter<Void> interpreter) {
+        this.interpreter = interpreter;
+    }
+
+    public MotionInterpreter<Void> getInterpreter() {
+        return interpreter;
+    }
+
+    /**
+     * Remove all recorded DrawingMotions from this TouchView
+     */
+    public void clearMotions() {
+        motions.clear();
     }
 
     @Override

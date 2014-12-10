@@ -2,9 +2,6 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.SpeechRecognition;
-import io.github.data4all.R.id;
-import io.github.data4all.R.layout;
-import io.github.data4all.R.menu;
 
 import java.util.Iterator;
 import java.util.List;
