@@ -27,15 +27,15 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="io.github.data4all.activity.MapViewActivity" >
+        <activity android:name=".activity.MapViewActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="io.github.data4all.activity.SensorActivity" />
-        <activity android:name="io.github.data4all.activity.ShowPictureActivity" />
-        <activity android:name="io.github.data4all.activity.CameraActivity" />
+        <activity android:name=".activity.SensorActivity" />
+        <activity android:name=".activity.ShowPictureActivity" />
+        <activity android:name=".activity.CameraActivity" />
     </application>
 
 </manifest>
