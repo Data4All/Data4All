@@ -3,9 +3,6 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.SpeechRecognition;
 import io.github.data4all.Tagging;
-import io.github.data4all.R.id;
-import io.github.data4all.R.layout;
-import io.github.data4all.R.menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.text.Editable;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
