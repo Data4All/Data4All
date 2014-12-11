@@ -35,7 +35,6 @@
     <string name="stayLoggedIn">Eingeloggt bleiben?</string>
     <string name="loginButton">Einloggen</string>
     <string name="loginRedirectMessage">Sie werden zum OpenStreetMap Login weitergeleitet.</string>
-    <string name="loremIpsum50">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</string>
     <string name="deleteButton">Token löschen</string>
     <string name="alreadyLoggedIn">Sie sind bereits eingeloggt.</string>
     
