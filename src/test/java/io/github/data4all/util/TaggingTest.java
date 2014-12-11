@@ -1,4 +1,4 @@
-package io.github.data4all;
+package io.github.data4all.util;
 
 import static org.junit.Assert.assertTrue;
 
@@ -10,13 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TaggingTest {
-
-    private Tagging tag;
     private List<String> list;
 
     @Before
     public void setUp() throws Exception {
-        tag = new Tagging();
         list = new ArrayList<String>();
         list.add("highway");
     }

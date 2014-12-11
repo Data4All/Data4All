@@ -2,7 +2,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.SpeechRecognition;
-import io.github.data4all.Tagging;
+import io.github.data4all.util.Tagging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,10 +68,9 @@ public class TagActivity extends Activity {
                 final Dialog dialog = new Dialog(TagActivity.this);
                 dialog.setContentView(R.layout.dialog_matches);
                 dialog.setTitle("Select Tag");
-                final Tagging tagging = new Tagging();
                 final ListView keyList = (ListView) dialog
                         .findViewById(R.id.list);
-                keys = (ArrayList<String>) tagging.getKeys();
+                keys = (ArrayList<String>) Tagging.getKeys();
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                         context, android.R.layout.simple_list_item_1, keys);
                 keyList.setAdapter(adapter);
@@ -80,7 +79,7 @@ public class TagActivity extends Activity {
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
                         key = keys.get(position);
-                        keys = (ArrayList<String>) tagging.getValues(key);
+                        keys = (ArrayList<String>) Tagging.getValues(key);
                         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                                 context, android.R.layout.simple_list_item_1,
                                 keys);
@@ -170,8 +169,7 @@ public class TagActivity extends Activity {
                 addressTags.add(postcode.getText().toString());
                 addressTags.add(city.getText().toString());
                 addressTags.add(country.getText().toString());
-                Tagging tagging = new Tagging();
-                map = tagging.addressToTag(addressTags, map);
+                map = Tagging.addressToTag(addressTags, map);
                 dialogContacts();
                 output();
                 dialog.hide();
@@ -186,8 +184,7 @@ public class TagActivity extends Activity {
                 addressTags.add(postcode.getText().toString());
                 addressTags.add(city.getText().toString());
                 addressTags.add(country.getText().toString());
-                Tagging tagging = new Tagging();
-                map = tagging.addressToTag(addressTags, map);
+                map = Tagging.addressToTag(addressTags, map);
                 output();
                 dialog.hide();
             }
@@ -237,8 +234,7 @@ public class TagActivity extends Activity {
                 addressTags.add(fax.getText().toString());
                 addressTags.add(website.getText().toString());
                 addressTags.add(email.getText().toString());
-                Tagging tagging = new Tagging();
-                map = tagging.contactToTag(addressTags, map);
+                map = Tagging.contactToTag(addressTags, map);
                 output();
                 dialog1.hide();
             }
