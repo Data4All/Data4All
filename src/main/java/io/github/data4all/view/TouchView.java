@@ -67,30 +67,38 @@ public class TouchView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
-        if (action == MotionEvent.ACTION_DOWN) {
+        switch (action) {
+        case MotionEvent.ACTION_DOWN:
+            handleMotion(event, "end");
+            break;
+        case MotionEvent.ACTION_UP:
             currentMotion = new DrawingMotion();
             motions.add(currentMotion);
-            currentMotion.addPoint(event.getX(), event.getY());
-            Log.d(this.getClass().getSimpleName(),
-                    "Motion start: " + currentMotion.getPathSize()
-                            + ", point: " + currentMotion.isPoint());
-            postInvalidate();
-            return true;
-        } else if (action == MotionEvent.ACTION_UP) {
-            Log.d(this.getClass().getSimpleName(),
-                    "Motion end: " + currentMotion.getPathSize() + ", point: "
-                            + currentMotion.isPoint());
-            currentMotion = null;
-            postInvalidate();
-            return true;
-        } else if (action == MotionEvent.ACTION_MOVE) {
-            currentMotion.addPoint(event.getX(), event.getY());
-            Log.d(this.getClass().getSimpleName(),
-                    "Motion move: " + currentMotion.getPathSize() + ", point: "
-                            + currentMotion.isPoint());
-            postInvalidate();
-            return true;
+            handleMotion(event, "start");
+            break;
+        case MotionEvent.ACTION_MOVE:
+            handleMotion(event, "move");
+            break;
         }
-        return false;
+        return true;
+    }
+
+    /**
+     * Handles the given motion:<br/>
+     * Add the point to the current motion<br/>
+     * Logs the motion<br/>
+     * Causes the view to redraw itself afterwards
+     * 
+     * @param event
+     *            The touch event
+     * @param action
+     *            the named action which is in progress
+     */
+    private void handleMotion(MotionEvent event, String action) {
+        currentMotion.addPoint(event.getX(), event.getY());
+        Log.d(this.getClass().getSimpleName(),
+                "Motion " + action + ": " + currentMotion.getPathSize()
+                        + ", point: " + currentMotion.isPoint());
+        postInvalidate();
     }
 }
