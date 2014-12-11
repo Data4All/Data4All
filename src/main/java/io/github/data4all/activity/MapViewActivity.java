@@ -41,7 +41,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.osm_map_view);
+        setContentView(R.layout.activity_map_view);
         mapView = (MapView) this.findViewById(R.id.mapview);
 
         // Set Maptilesource
