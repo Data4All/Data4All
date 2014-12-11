@@ -69,11 +69,11 @@ public class TouchView extends View {
         int action = event.getAction();
         switch (action) {
         case MotionEvent.ACTION_DOWN:
+            currentMotion = new DrawingMotion();
+            motions.add(currentMotion);
             handleMotion(event, "end");
             break;
         case MotionEvent.ACTION_UP:
-            currentMotion = new DrawingMotion();
-            motions.add(currentMotion);
             handleMotion(event, "start");
             break;
         case MotionEvent.ACTION_MOVE:
