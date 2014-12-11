@@ -28,8 +28,6 @@ public class CapturePictureHandler implements PictureCallback {
 
     // Actual Activity for the context
     private Context context;
-    // An instance of the GeoDataConverter for converting latitude and longitude
-    private GeoDataConverter geoDataConverter;
     // The file into which the picture is saved
     private File photoFile;
     // An ExifInterface for the exif data of a file
@@ -44,12 +42,10 @@ public class CapturePictureHandler implements PictureCallback {
     private final String filepath = "file_path";
 
     public CapturePictureHandler() {
-        geoDataConverter = new GeoDataConverter();
     }
 
     public CapturePictureHandler(Context context) {
         this.context = context;
-        geoDataConverter = new GeoDataConverter();
     }
 
     /*
@@ -159,9 +155,9 @@ public class CapturePictureHandler implements PictureCallback {
             // Write GPS tags into the EXIF of the picture
             exif = new ExifInterface(filepath);
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE,
-                    geoDataConverter.convertToDMS(latitude));
+                    GeoDataConverter.convertToDMS(latitude));
             exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE,
-                    geoDataConverter.convertToDMS(longitude));
+                    GeoDataConverter.convertToDMS(longitude));
             // Set the Latitude reference (west or east)
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, latitudeRef);
             // Set the Longitude reference (north or south)
@@ -209,17 +205,17 @@ public class CapturePictureHandler implements PictureCallback {
             double latitudeReturn;
             double longitudeReturn;
             if (attrLATITUDE_REF.equals("N")) {
-                latitudeReturn = geoDataConverter.convertToDegree(attrLATITUDE);
+                latitudeReturn = GeoDataConverter.convertToDegree(attrLATITUDE);
             } else {
-                latitudeReturn = 0 - geoDataConverter
+                latitudeReturn = 0 - GeoDataConverter
                         .convertToDegree(attrLATITUDE);
             }
 
             if (attrLONGITUDE_REF.equals("E")) {
-                longitudeReturn = geoDataConverter
+                longitudeReturn = GeoDataConverter
                         .convertToDegree(attrLONGITUDE);
             } else {
-                longitudeReturn = 0 - geoDataConverter
+                longitudeReturn = 0 - GeoDataConverter
                         .convertToDegree(attrLONGITUDE);
             }
 

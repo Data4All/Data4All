@@ -10,7 +10,7 @@ package io.github.data4all.util;
  * @author sbollen
  *
  */
-public class GeoDataConverter {
+public abstract class GeoDataConverter {
 
     // Constructor
     public GeoDataConverter() {
@@ -25,7 +25,7 @@ public class GeoDataConverter {
      * 
      * @return the given latitude or longitude in DMS
      */
-    public String convertToDMS(double deg) {
+    public static String convertToDMS(double deg) {
         StringBuilder sb = new StringBuilder(20);
         deg = Math.abs(deg);
         int degree = (int) deg;
@@ -53,7 +53,7 @@ public class GeoDataConverter {
      * 
      * @return the given latitude or longitude in degrees
      */
-    public Double convertToDegree(String stringDMS) {
+    public static Double convertToDegree(String stringDMS) {
         Double result = null;
         String[] DMS = stringDMS.split(",", 3);
 
