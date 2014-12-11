@@ -6,15 +6,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-       <Button
-           android:id="@+id/speech "
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignParentTop="true"
-           android:layout_centerHorizontal="true"
-           android:layout_marginTop="14dp"
-           android:text="@string/speechRecognition" />
-
        <ListView
            android:id="@+id/listView1"
            android:layout_width="match_parent"
@@ -23,5 +14,23 @@
            android:layout_centerHorizontal="true"
            android:layout_marginTop="92dp" >
        </ListView>
+
+       <Button
+           android:id="@+id/startTagging"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_above="@+id/listView1"
+           android:layout_alignRight="@+id/listView1"
+           android:text="@string/tag" />
+
+       <Button
+           android:id="@+id/speech "
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/listView1"
+           android:layout_alignParentTop="true"
+           android:layout_marginLeft="45dp"
+           android:layout_marginTop="30dp"
+           android:text="@string/speechRecognition" />
 
 </RelativeLayout>

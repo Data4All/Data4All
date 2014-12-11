@@ -207,7 +207,8 @@ public class AreaMotionInterpreterTest extends MotionInterpreterTest {
     }
 
     /**
-     * If the User is typing a approximated line, there should be two lines drawn<br/>
+     * If the User is typing a approximated line, there should be two lines
+     * drawn<br/>
      * A line from point one to two and one line from point two to one
      */
     @Test

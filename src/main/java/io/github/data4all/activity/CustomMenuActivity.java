@@ -37,26 +37,26 @@ public class CustomMenuActivity extends Activity {
 
     private void showSettings() {
         // Show the about screen
-        Toast.makeText(getApplicationContext(), "Settings", 
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT)
+                .show();
     }
 
     private void showCamera() {
         // Show the camera screen
-        Toast.makeText(getApplicationContext(), "Camera", 
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Camera", Toast.LENGTH_SHORT)
+                .show();
     }
 
     private void showHelp() {
         // Show the settings screen
-        Toast.makeText(getApplicationContext(), "Help", 
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Help", Toast.LENGTH_SHORT)
+                .show();
     }
 
     private void showMap() {
         // Show the map screen
-        Toast.makeText(getApplicationContext(), "Map", 
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Map", Toast.LENGTH_SHORT)
+                .show();
     }
 
 }

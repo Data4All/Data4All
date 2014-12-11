@@ -22,7 +22,7 @@ public interface MotionInterpreter<T> {
     public static final int POINT_RADIUS = 10;
     public static final int PATH_COLOR = 0xFFBEEEEF;
     public static final float PATH_STROKE_WIDTH = 5f;
-    
+
     /**
      * Interprets the given motions and draws the result on the given canvas
      * 
