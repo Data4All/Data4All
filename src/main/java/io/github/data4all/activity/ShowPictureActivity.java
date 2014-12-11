@@ -45,6 +45,10 @@ public class ShowPictureActivity extends Activity {
         }
     }
 
+    public void onClickOkay(View view) {
+        startActivity(new Intent(this, TagActivity.class));
+    }
+
     public void onClickPoint(View view) {
         touchView.clearMotions();
         touchView.setInterpreter(new PointMotionInterpreter());
