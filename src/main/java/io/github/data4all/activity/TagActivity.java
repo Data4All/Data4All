@@ -2,21 +2,31 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.SpeechRecognition;
+import io.github.data4all.Tagging;
+import io.github.data4all.R.id;
+import io.github.data4all.R.layout;
+import io.github.data4all.R.menu;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 /**
@@ -27,6 +37,10 @@ import android.widget.ListView;
 public class TagActivity extends Activity {
 
     private static final int REQUEST_CODE = 1234;
+    final Context context = this;
+    private ArrayList<String> keys;
+    private String key;
+    private Map<String, String> map;
 
     /**
      * Called when the activity is first created.
@@ -49,6 +63,52 @@ public class TagActivity extends Activity {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                         RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                 startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+        Button startTagging = (Button) findViewById(R.id.startTagging);
+        startTagging.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(TagActivity.this);
+                dialog.setContentView(R.layout.dialog_matches);
+                dialog.setTitle("Select Tag");
+                final Tagging tagging = new Tagging();
+                final ListView keyList = (ListView) dialog
+                        .findViewById(R.id.list);
+                keys = (ArrayList<String>) tagging.getKeys();
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                        context, android.R.layout.simple_list_item_1, keys);
+                keyList.setAdapter(adapter);
+                keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        key = keys.get(position);
+                        keys = (ArrayList<String>) tagging.getValues(key);
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                context, android.R.layout.simple_list_item_1,
+                                keys);
+                        keyList.setAdapter(adapter);
+                        keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent,
+                                    View view, int position, long id) {
+
+                                String value = keys.get(position);
+                                map = new HashMap<String, String>();
+                                map.put(key, value);
+                                if (key.equals("building")
+                                        || key.equals("amenity")) {
+                                    dialogDetails();
+                                }
+                                output();
+                                dialog.hide();
+                            }
+                        });
+
+                    }
+                });
+                dialog.show();
             }
         });
     }
@@ -82,6 +142,113 @@ public class TagActivity extends Activity {
             textList.setAdapter(adapter);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * create the dialog for the address
+     */
+    public void dialogDetails() {
+
+        final Dialog dialog = new Dialog(TagActivity.this);
+        dialog.setContentView(R.layout.dialog_details);
+        dialog.setTitle("Add address");
+        final EditText street = (EditText) dialog.findViewById(R.id.editStreet);
+        final EditText houseNumber = (EditText) dialog
+                .findViewById(R.id.editHouseNumber);
+        final EditText postcode = (EditText) dialog
+                .findViewById(R.id.editPostcode);
+        final EditText city = (EditText) dialog.findViewById(R.id.editCity);
+        final EditText country = (EditText) dialog
+                .findViewById(R.id.editCountry);
+        Button next = (Button) dialog.findViewById(R.id.buttonNext);
+        Button finish = (Button) dialog.findViewById(R.id.buttonFinish);
+        if (key.equals("building")) {
+            next.setEnabled(false);
+        }
+
+        next.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                List<String> addressTags = new ArrayList<String>();
+                addressTags.add(street.getText().toString());
+                addressTags.add(houseNumber.getText().toString());
+                addressTags.add(postcode.getText().toString());
+                addressTags.add(city.getText().toString());
+                addressTags.add(country.getText().toString());
+                Tagging tagging = new Tagging();
+                map = tagging.addressToTag(addressTags, map);
+                dialogContacts();
+                output();
+                dialog.hide();
+            }
+        });
+
+        finish.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                List<String> addressTags = new ArrayList<String>();
+                addressTags.add(street.getText().toString());
+                addressTags.add(houseNumber.getText().toString());
+                addressTags.add(postcode.getText().toString());
+                addressTags.add(city.getText().toString());
+                addressTags.add(country.getText().toString());
+                Tagging tagging = new Tagging();
+                map = tagging.addressToTag(addressTags, map);
+                output();
+                dialog.hide();
+            }
+        });
+        dialog.show();
+
+    }
+
+    /**
+     * to show the tags in the listview
+     */
+
+    private void output() {
+        List<String> endList = new ArrayList<String>();
+        Iterator<String> keySetIterator = map.keySet().iterator();
+        while (keySetIterator.hasNext()) {
+            String key = keySetIterator.next();
+            endList.add(key + "=" + map.get(key));
+            ListView textList = (ListView) findViewById(R.id.listView1);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                    android.R.layout.simple_list_item_1, endList);
+            textList.setAdapter(adapter);
+
+        }
+
+    }
+
+    /**
+     * creates the Dialog with the Contacts
+     */
+
+    public void dialogContacts() {
+        final Dialog dialog1 = new Dialog(TagActivity.this);
+        dialog1.setContentView(R.layout.dialog_contacts);
+        dialog1.setTitle("Add contacts");
+        final EditText phone = (EditText) dialog1.findViewById(R.id.editPhone);
+        final EditText fax = (EditText) dialog1.findViewById(R.id.editFax);
+        final EditText website = (EditText) dialog1
+                .findViewById(R.id.editWebsite);
+        final EditText email = (EditText) dialog1.findViewById(R.id.editEmail);
+        Button finish = (Button) dialog1.findViewById(R.id.buttonFinish1);
+
+        finish.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                List<String> addressTags = new ArrayList<String>();
+                addressTags.add(phone.getText().toString());
+                addressTags.add(fax.getText().toString());
+                addressTags.add(website.getText().toString());
+                addressTags.add(email.getText().toString());
+                Tagging tagging = new Tagging();
+                map = tagging.contactToTag(addressTags, map);
+                output();
+                dialog1.hide();
+            }
+        });
+
+        dialog1.show();
     }
 
 }
