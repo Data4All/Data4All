@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import io.github.data4all.logger.Log;
 
 /**
  * An asynchronous task that communicates with OpenStreetMap to retrieve a

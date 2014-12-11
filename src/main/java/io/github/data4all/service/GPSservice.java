@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
+import io.github.data4all.logger.Log;
 import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {

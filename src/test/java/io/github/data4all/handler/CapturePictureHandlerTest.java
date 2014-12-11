@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowEnvironment;
 
 import android.os.Environment;
-import android.util.Log;
+import io.github.data4all.logger.Log;
 
 /**
  * @author sbollen

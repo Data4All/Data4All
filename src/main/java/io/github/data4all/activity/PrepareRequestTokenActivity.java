@@ -16,7 +16,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import io.github.data4all.logger.Log;
 
 /**
  * Prepares a OAuthConsumer and OAuthProvider

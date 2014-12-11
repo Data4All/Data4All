@@ -6,7 +6,7 @@ import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.util.Log;
+import io.github.data4all.logger.Log;
 import android.widget.ImageButton;
 
 /**

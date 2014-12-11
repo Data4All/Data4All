@@ -5,7 +5,7 @@ import io.github.data4all.handler.CapturePictureHandler;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
-import android.util.Log;
+import io.github.data4all.logger.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
