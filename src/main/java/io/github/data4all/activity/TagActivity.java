@@ -1,7 +1,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.SpeechRecognition;
+import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
 import java.util.ArrayList;
@@ -122,9 +122,8 @@ public class TagActivity extends Activity {
             ListView textList = (ListView) findViewById(R.id.listView1);
             List<String> matchesText = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            SpeechRecognition speechRecognition = new SpeechRecognition();
-            speechRecognition.splitStrings(matchesText);
-            Map<String, String> map = speechRecognition
+            SpeechRecognition.splitStrings(matchesText);
+            Map<String, String> map = SpeechRecognition
                     .speechToTag(matchesText);
             matchesText.clear();
             Iterator<String> keySetIterator = map.keySet().iterator();

@@ -1,8 +1,9 @@
-package io.github.data4all;
+package io.github.data4all.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import io.github.data4all.util.SpeechRecognition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,13 +15,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SpeechRecognitionTest {
-
-    private SpeechRecognition speech;
     private List<String> list;
 
     @Before
     public void setUp() throws Exception {
-        speech = new SpeechRecognition();
         list = new ArrayList<String>();
         list.add("Hello my Name");
     }
@@ -36,7 +34,7 @@ public class SpeechRecognitionTest {
         list1.add("Hello");
         list1.add("my");
         list1.add("Name");
-        speech.splitStrings(list);
+        SpeechRecognition.splitStrings(list);
         assertTrue(list.equals(list1));
     }
 
@@ -47,7 +45,7 @@ public class SpeechRecognitionTest {
         list1.add("Hello");
         list1.add("Name");
         list1.add("my");
-        speech.splitStrings(list);
+        SpeechRecognition.splitStrings(list);
         assertFalse(list.equals(list1));
     }
 
@@ -58,7 +56,7 @@ public class SpeechRecognitionTest {
         list1.add("Hell");
         list1.add("my");
         list1.add("Name");
-        speech.splitStrings(list);
+        SpeechRecognition.splitStrings(list);
         assertFalse(list.equals(list1));
     }
 
@@ -66,7 +64,7 @@ public class SpeechRecognitionTest {
     public void splitStringsEmptyListTest() {
         List<String> list1 = new ArrayList<String>();
         List<String> list2 = new ArrayList<String>();
-        speech.splitStrings(list1);
+        SpeechRecognition.splitStrings(list1);
         assertTrue(list1.equals(list2));
     }
 
@@ -79,7 +77,7 @@ public class SpeechRecognitionTest {
         list1.add("hotel");
         map.put("highway", "motorway");
         map.put("building", "hotel");
-        assertEquals(map, speech.speechToTag(list1));
+        assertEquals(map, SpeechRecognition.speechToTag(list1));
     }
 
     @Test
@@ -88,7 +86,7 @@ public class SpeechRecognitionTest {
         Map<String, String> map = new HashMap<String, String>();
         list1.add("motorway");
         map.put("highway", "motorway");
-        assertEquals(map, speech.speechToTag(list1));
+        assertEquals(map, SpeechRecognition.speechToTag(list1));
     }
 
     @Test
@@ -97,7 +95,7 @@ public class SpeechRecognitionTest {
         Map<String, String> map = new HashMap<String, String>();
         list1.add("Motorway");
         map.put("highway", "motorway");
-        assertEquals(map, speech.speechToTag(list1));
+        assertEquals(map, SpeechRecognition.speechToTag(list1));
     }
 
     @Test
@@ -108,7 +106,7 @@ public class SpeechRecognitionTest {
         list1.add("road");
         list1.add("footway");
         map.put("highway", "motorway");
-        assertEquals(map, speech.speechToTag(list1));
+        assertEquals(map, SpeechRecognition.speechToTag(list1));
     }
 
 }
