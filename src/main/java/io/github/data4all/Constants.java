@@ -1,5 +1,9 @@
 package io.github.data4all;
 
+/**
+ * @author sb
+ *
+ */
 public class Constants {
 
     // TODO uncomment for release
@@ -18,6 +22,8 @@ public class Constants {
     public static final String OAUTH_CALLBACK_URL    = OAUTH_CALLBACK_SCHEME
                                                              + "://"
                                                              + OAUTH_CALLBACK_HOST;
+
+    public static final String API_URL               = "http://api.openstreetmap.org/";
 
     // for developing purpose
     // public static final String CONSUMER_KEY =

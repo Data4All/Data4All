@@ -15,6 +15,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+/**
+ * @author sb
+ *
+ */
 public class LoginActivity extends Activity {
 
     final String TAG = getClass().getSimpleName();
@@ -36,7 +40,7 @@ public class LoginActivity extends Activity {
                         .getDefaultSharedPreferences(getBaseContext());
 
                 // Stay logged in?
-                CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
+               CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
 
                 // Already got token?
                 if (!sharedPrefs.contains(OAuth.OAUTH_TOKEN)
@@ -76,6 +80,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy()");
         // Delete OAuthToken when onDestroy() is called
         if (isTokenTemporary()) {
             deleteTokenFromSharedPreferences();
