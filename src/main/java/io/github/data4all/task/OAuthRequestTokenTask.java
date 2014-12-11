@@ -1,6 +1,7 @@
 package io.github.data4all.task;
 
 import io.github.data4all.Constants;
+import io.github.data4all.logger.Log;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import io.github.data4all.logger.Log;
 
 /**
  * An asynchronous task that communicates with OpenStreetMap to retrieve a

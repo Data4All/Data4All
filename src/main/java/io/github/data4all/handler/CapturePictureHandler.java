@@ -1,6 +1,7 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.activity.ShowPictureActivity;
+import io.github.data4all.logger.Log;
 import io.github.data4all.util.GeoDataConverter;
 
 import java.io.File;
@@ -14,7 +15,6 @@ import android.hardware.Camera.PictureCallback;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
-import io.github.data4all.logger.Log;
 import android.widget.Toast;
 
 /**

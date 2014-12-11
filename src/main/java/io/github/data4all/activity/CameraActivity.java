@@ -2,11 +2,11 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.listener.CaptureShutterListener;
+import io.github.data4all.logger.Log;
 import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
-import io.github.data4all.logger.Log;
 import android.widget.ImageButton;
 
 /**

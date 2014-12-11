@@ -1,6 +1,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.Constants;
+import io.github.data4all.logger.Log;
 import io.github.data4all.task.OAuthRequestTokenTask;
 import io.github.data4all.task.RetrieveAccessTokenTask;
 
@@ -16,7 +17,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import io.github.data4all.logger.Log;
 
 /**
  * Prepares a OAuthConsumer and OAuthProvider

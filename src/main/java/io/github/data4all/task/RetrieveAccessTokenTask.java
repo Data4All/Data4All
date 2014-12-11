@@ -1,6 +1,7 @@
 package io.github.data4all.task;
 
 import io.github.data4all.activity.MapViewActivity;
+import io.github.data4all.logger.Log;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -10,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import io.github.data4all.logger.Log;
 
 /**
  * 

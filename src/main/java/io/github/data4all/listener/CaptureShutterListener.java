@@ -2,10 +2,10 @@ package io.github.data4all.listener;
 
 import io.github.data4all.activity.CameraActivity;
 import io.github.data4all.handler.CapturePictureHandler;
+import io.github.data4all.logger.Log;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
-import io.github.data4all.logger.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 

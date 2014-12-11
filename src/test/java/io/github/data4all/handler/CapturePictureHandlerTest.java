@@ -4,6 +4,7 @@
 package io.github.data4all.handler;
 
 import static org.junit.Assert.assertEquals;
+import io.github.data4all.logger.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +17,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowEnvironment;
 
 import android.os.Environment;
-import io.github.data4all.logger.Log;
 
 /**
  * @author sbollen

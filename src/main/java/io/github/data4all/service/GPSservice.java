@@ -1,5 +1,7 @@
 package io.github.data4all.service;
 
+import io.github.data4all.logger.Log;
+
 import java.util.ArrayList;
 
 import android.app.Service;
@@ -12,7 +14,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import io.github.data4all.logger.Log;
 import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
