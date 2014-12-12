@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 /**
+ * Activity to start authentication process
  * @author sb
  *
  */
@@ -39,33 +40,34 @@ public class LoginActivity extends Activity {
                 SharedPreferences sharedPrefs = PreferenceManager
                         .getDefaultSharedPreferences(getBaseContext());
 
-                // Stay logged in?
+                // By checking oauth tokens will be saved permanently
+                // Otherwise they will be destroyed on by calling onDestroy()
                CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
 
                 // Already got token?
                 if (!sharedPrefs.contains(OAuth.OAUTH_TOKEN)
                         && !sharedPrefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
 
-                    setTemporaryField(!checkBox.isChecked());
+                    //Setting flag to remember tokens
+                    setTemporaryFlag(!checkBox.isChecked());
+                    
+                    //Starting oAuth process
                     startActivity(new Intent().setClass(v.getContext(),
                             PrepareRequestTokenActivity.class));
                 } else {
-
                     Toast.makeText(getApplicationContext(),
                             R.string.alreadyLoggedIn, Toast.LENGTH_SHORT)
                             .show();
-
                 }
             }
         });
 
-        // for debugging
+        // Delete tokens
         Button deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 deleteTokenFromSharedPreferences();
-
             }
         });
     }
@@ -101,7 +103,7 @@ public class LoginActivity extends Activity {
             ed.remove("IS_TEMPORARY");
             ed.commit();
         }
-        Log.i(TAG, "SharedPreferences:" + sharedPrefs.getAll());
+        Log.d(TAG, "SharedPreferences:" + sharedPrefs.getAll());
     }
 
     private boolean isTokenTemporary() {
@@ -110,7 +112,7 @@ public class LoginActivity extends Activity {
         return sharedPrefs.getBoolean("IS_TEMPORARY", false);
     }
 
-    private void setTemporaryField(boolean b) {
+    private void setTemporaryFlag(boolean b) {
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(getBaseContext());
         Editor ed = sharedPrefs.edit();

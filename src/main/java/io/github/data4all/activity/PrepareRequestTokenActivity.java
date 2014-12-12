@@ -35,9 +35,8 @@ import android.webkit.WebViewClient;
  * Execute the OAuthRequestTokenTask to retrieve the request, and authorize the
  * request.
  * 
- * After the request is authorized, a callback is made here.
- * 
- * @author Based on this tutorial:
+ * @author sb
+ * @source Based on this tutorial:
  *         http://blog.doityourselfandroid.com/2010/11/10
  *         /oauth-flow-in-android-app/
  * 
@@ -91,6 +90,11 @@ public class PrepareRequestTokenActivity extends Activity {
         return true;
     }
 
+    
+    /**
+     * Do the oAuth dance to get request token
+     *
+     */
     private class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
 
         final String          TAG = getClass().getName();
@@ -120,7 +124,7 @@ public class PrepareRequestTokenActivity extends Activity {
 
         /**
          * 
-         * Retrieve the OAuth Request Token and present a browser to the user to
+         * Retrieve the OAuth Request Token and present a webview to the user to
          * authorize the token.
          * 
          */
@@ -143,10 +147,7 @@ public class PrepareRequestTokenActivity extends Activity {
             return null;
         }
 
-        /**
-         * When we're done and we've retrieved either a valid token or an error
-         * from the server, we'll return to our original activity
-         */
+        
         @Override
         protected void onPostExecute(Void result) {
 
@@ -193,6 +194,10 @@ public class PrepareRequestTokenActivity extends Activity {
 
     }
 
+    /**
+     * Do the oAuth dance to get access token
+     *
+     */
     private class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
 
         final String              TAG = getClass().getName();
@@ -210,7 +215,7 @@ public class PrepareRequestTokenActivity extends Activity {
 
         /**
          * Retrieve the oauth_verifier, and store the oauth and
-         * oauth_token_secret for future API calls.
+         * oauth_token_secret for future API calls in SharedPreferences.
          */
         @Override
         protected Void doInBackground(Uri... params) {
@@ -250,7 +255,7 @@ public class PrepareRequestTokenActivity extends Activity {
         protected void onPostExecute(Void result) {
             Log.i(TAG, "Starting Loginscreen again");
             startActivity(new Intent(PrepareRequestTokenActivity.this,
-                    LoginActivity.class));
+                    MainActivity.class));
             finish();
         }
     }
