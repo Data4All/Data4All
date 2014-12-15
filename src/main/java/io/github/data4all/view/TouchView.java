@@ -3,6 +3,8 @@ package io.github.data4all.view;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.drawing.DrawingMotion;
 import io.github.data4all.model.drawing.MotionInterpreter;
+import io.github.data4all.model.drawing.Point;
+import io.github.data4all.model.drawing.RedoUndo;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class TouchView extends View {
     private List<DrawingMotion> motions = new ArrayList<DrawingMotion>();
     private DrawingMotion currentMotion;
     private MotionInterpreter<Void> interpreter;
+    private RedoUndo redoundo = new RedoUndo(motions);
 
     public TouchView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -71,6 +74,7 @@ public class TouchView extends View {
         case MotionEvent.ACTION_DOWN:
             currentMotion = new DrawingMotion();
             motions.add(currentMotion);
+            redoundo.addMotion(currentMotion);
             handleMotion(event, "end");
             break;
         case MotionEvent.ACTION_UP:
@@ -100,5 +104,16 @@ public class TouchView extends View {
                 "Motion " + action + ": " + currentMotion.getPathSize()
                         + ", point: " + currentMotion.isPoint());
         postInvalidate();
+    }
+    
+    
+    public void undo(){
+    	motions = redoundo.undo();
+    	this.invalidate();
+    }
+    
+    public void redo(){
+    	motions = redoundo.redo();
+    	this.invalidate();
     }
 }

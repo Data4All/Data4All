@@ -1,54 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_layout"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/android">
+    android:background="@drawable/android"
+    android:orientation="vertical" >
+
     <io.github.data4all.view.TouchView
         android:id="@+id/touch_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    
+
     <Button
+        android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@android:string/ok"
-        android:onClick="onClickOkay">
+        android:onClick="onClickOkay"
+        android:text="@android:string/ok" >
     </Button>
-	<LinearLayout
-    	android:orientation="horizontal"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_centerHorizontal="true"
-    	android:layout_alignParentBottom="true">    
-    	<Button
-        	android:layout_width="wrap_content"
-        	android:text="Punkt"
-        	android:layout_height="wrap_content"
-        	android:onClick="onClickPoint">
-    	</Button>
-    
-    	<Button
-        	android:layout_width="wrap_content"
-        	android:text="Weg"
-        	android:layout_height="wrap_content"
-        	android:onClick="onClickPath">
-    	</Button>
-    
-    	<Button
-        	android:layout_width="wrap_content"
-       		android:text="Fläche"
-    	    android:layout_height="wrap_content"
-    	    android:onClick="onClickArea">
-	    </Button>
-    
-    	<Button
-        	android:layout_width="wrap_content"
-        	android:text="Gebäude"
-        	android:layout_height="wrap_content"
-        	android:onClick="onClickBuilding">
-    	</Button>
-	</LinearLayout>
-    
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal" >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPoint"
+            android:text="Punkt" >
+        </Button>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickPath"
+            android:text="Weg" >
+        </Button>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickArea"
+            android:text="Fläche" >
+        </Button>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickBuilding"
+            android:text="Gebäude" >
+        </Button>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button2"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button1"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_alignRight="@+id/linearLayout1"
+        android:onClick="onClickUndo"
+        android:text="Undo" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_below="@+id/button1"
+        android:onClick="onClickRedo"
+        android:text="Redo" />
+
 </RelativeLayout>

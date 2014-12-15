@@ -67,10 +67,18 @@ public class ShowPictureActivity extends Activity {
         touchView.invalidate();
     }
 
-    public void onClickBuilding(View view) {
+    public void onClickBuilding(View view) { 
         touchView.clearMotions();
         touchView.setInterpreter(new BuildingMotionInterpreter());
         touchView.invalidate();
+    }
+    
+    public void onClickRedo(View view) {
+     touchView.redo();
+    }
+    
+    public void onClickUndo(View view) {
+    touchView.undo();
     }
 
     @Override
