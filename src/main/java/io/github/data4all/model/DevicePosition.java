@@ -26,6 +26,10 @@ public class DevicePosition {
 
     // Actual time when the data was recorded
     private long timestamp;
+    
+    public DevicePosition() {
+        
+    }
 
     public DevicePosition(Location location, float[] accelValues,
             float[] magValues, long timestamp) {
