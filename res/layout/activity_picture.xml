@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/android">
+    <io.github.data4all.view.TouchView
+        android:id="@+id/touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@android:string/ok"
+        android:onClick="onClickOkay">
+    </Button>
+	<LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_centerHorizontal="true"
+    	android:layout_alignParentBottom="true">    
+    	<Button
+        	android:layout_width="wrap_content"
+        	android:text="Punkt"
+        	android:layout_height="wrap_content"
+        	android:onClick="onClickPoint">
+    	</Button>
+    
+    	<Button
+        	android:layout_width="wrap_content"
+        	android:text="Weg"
+        	android:layout_height="wrap_content"
+        	android:onClick="onClickPath">
+    	</Button>
+    
+    	<Button
+        	android:layout_width="wrap_content"
+       		android:text="Fläche"
+    	    android:layout_height="wrap_content"
+    	    android:onClick="onClickArea">
+	    </Button>
+    
+    	<Button
+        	android:layout_width="wrap_content"
+        	android:text="Gebäude"
+        	android:layout_height="wrap_content"
+        	android:onClick="onClickBuilding">
+    	</Button>
+	</LinearLayout>
+    
+</RelativeLayout>

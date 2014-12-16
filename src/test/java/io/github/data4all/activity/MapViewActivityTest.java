@@ -4,8 +4,8 @@ import org.junit.Test;
 
 public class MapViewActivityTest {
 
-	@Test
-	public void testcaseForJenkins() {
-	}
+    @Test
+    public void testcaseForJenkins() {
+    }
 
 }
