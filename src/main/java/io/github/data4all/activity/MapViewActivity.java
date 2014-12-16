@@ -13,16 +13,24 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 public class MapViewActivity extends Activity implements OnClickListener {
 
     private static final String TAG = "MapViewActivity";
     private MapView mapView;
+    private ImageView view;
     private MapController mapController;
+    private Handler handler;
+    private int alpha = 100;
     private MyLocationNewOverlay myLocationOverlay;
     private final int DEFAULT_ZOOM_LEVEL = 18;
     private final int MINIMAL_ZOOM_LEVEL = 10;
@@ -43,7 +51,14 @@ public class MapViewActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
         mapView = (MapView) this.findViewById(R.id.mapview);
-
+        view = (ImageView) findViewById(R.id.imageView1);
+        int width = 200; // ((display.getWidth()*20)/100)
+        int height = 200;// ((display.getHeight()*30)/100)
+        LayoutParams params = (LayoutParams) view.getLayoutParams();
+        params.width = 600;
+        view.setLayoutParams(params);
+        handler = new Handler();
+        handler.postDelayed(runnable, 2000);
         // Set Maptilesource
         Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
         mapView.setTileSource(DEFAULT_TILESOURCE);
@@ -149,4 +164,19 @@ public class MapViewActivity extends Activity implements OnClickListener {
         // Pause the GPS tracking
         stopService(new Intent(this, GPSservice.class));
     }
+    
+    private Runnable runnable = new Runnable() {
+    	   @Override
+    	   public void run() {
+    		   alpha = alpha-1;
+    		   if(alpha > 10){
+    	      view.setImageAlpha(alpha);
+    	      handler.postDelayed(this, 10);
+    		   } else{
+    			   view.setVisibility(View.GONE);
+    		   }
+    	   }
+    	};
+
+
 }
