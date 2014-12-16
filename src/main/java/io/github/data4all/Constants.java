@@ -31,7 +31,9 @@ public class Constants {
                                                              + "://"
                                                              + OAUTH_CALLBACK_HOST;
 
-    public static final String API_URL               = "http://masters.api.dev.openstreetmap.org/";
+    public static final String API_URL               = "http://master.apis.dev.openstreetmap.org/";
+    public static final String API_USERDETAILS       = API_URL
+                                                             + "api/0.6/user/details";
 
     // for developing purpose
     public static final String CONSUMER_KEY          = "pXTyQeCIqpXN3FrHc3lsDQoZbmaH3wnhMANrRNyH";

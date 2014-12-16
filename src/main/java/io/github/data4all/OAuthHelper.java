@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import android.util.Log;
@@ -23,6 +22,8 @@ public class OAuthHelper {
     private static OAuthConsumer mConsumer;
     private static OAuthProvider mProvider;
     private static String        mCallbackUrl;
+    
+    final String TAG = getClass().getSimpleName();
 
     public OAuthHelper(String osmBaseUrl) throws OsmException {
 
@@ -70,7 +71,7 @@ public class OAuthHelper {
     public OAuthConsumer getConsumer() {   
         String key = Constants.CONSUMER_KEY;
         String secret = Constants.CONSUMER_SECRET;
-                return new DefaultOAuthConsumer(key, secret);
+                return new CommonsHttpOAuthConsumer(key, secret);
             }
 
     public static OAuthConsumer getmConsumer() {
