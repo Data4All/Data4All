@@ -4,59 +4,84 @@ import io.github.data4all.model.DevicePosition;
 import android.location.Location;
 
 /**
- * Record the GPS and sensor data of the device and optimize them.
+ * Optimize the position and location data of the device. Save the latest data
+ * in a RingBuffer and optimize these to have one perfect location and position
  * 
  * @author sbollen
  *
  */
 
-public class DevicePositionUtils {
+public class Optimizer {
 
-    // The significant time difference
-    private static final int ONE_MINUTES = 1000 * 60;
-    //current best location
-    private Location currentBestLocation;
+    // a new Ringbuffer for saving the location objects
+    //RingBuffer locRB = new RingBuffer();
+    // a new Ringbuffer for saving the DevicePosition objects
+    //RingBuffer posRB = new RingBuffer();
 
-    public DevicePositionUtils() {
+    public Optimizer() {
         // TODO Auto-generated constructor stub
     }
 
-    // A method for getting the actual location
+    /*
+     * Put a location object to the location RingBuffer
+     */
+    public void putLoc(Location loc) {
+        //locRB.put(loc);
+    }
 
-    // A method for getting the actual sensor data
+    /*
+     * Put a DevicePosition object to the DevicePosition RingBuffer
+     */
+    public void putPos(DevicePosition pos) {
+        //posRB.put(pos);
+    }
 
-    // A method for setting up the ringbuffer and filling it with the models
-    // DevicePosition
+    /*
+     * Give the current best location
+     * 
+     * @return the current best location
+     */
+    public Location currentLoc() {
+        return null;
+    }
 
-    // A method for optimizing the sensor data of the ringbuffer
+    /*
+     * Give the best current DevicePosition
+     * 
+     * @return the current best DevicePosition
+     */
+    public DevicePosition currentPos() {
+        return null;
+    }
 
-    
-    // A method for optimizing the location data of the ringbuffer
-//    public Location getBestGPSData(/*Ringbuffer and actual postion in the buffer*/) {
-//        
-//        double allLat = 0;
-//        double allLong = 0;
-//        Location newestLoc = /*Ringbuffer.getLastLocation */;
-//        Location loc = newestLoc;
-//        
-//        for(DevicePosition devPos : /*Ringbuffer*/) {
-//            allLat += devPos.getLocation().getLatitude();
-//            allLong += devPos.getLocation().getLongitude();
-//        }
-//        double midLat = allLat / /*Anzahl Elemente im Ringbuffer*/;
-//        double midLong = allLong / /*Anzahl Elemente im Ringbuffer*/;
-//        
-//        loc.setLatitude(midLat);
-//        loc.setLongitude(midLong);
-//        
-//        if(Math.abs(loc.getLatitude()-newestLoc.getLatitude()) > 0.0001) {
-//            currentBestLocation = loc;
-//            return loc;
-//        } else {
-//            currentBestLocation = newestLoc;
-//            return newestLoc;
-//        }
-//    }
+    // 
+    // double allLat = 0;
+    // double allLong = 0;
+    // Location newestLoc = /*Ringbuffer.getLastLocation */;
+    // Location loc = newestLoc;
+    //
+    // for(Location loc : /*Ringbuffer*/) {
+    // if (loc.distanceTo(nextLocation) > 10 && loc.distanceTo(previousLocation)
+    // > 10) {//Distance in meter
+    // deleteLocation();
+    // }
+    // allLat += devPos.getLocation().getLatitude();
+    // allLong += devPos.getLocation().getLongitude();
+    // }
+    // double midLat = allLat / /*Anzahl Elemente im Ringbuffer*/;
+    // double midLong = allLong / /*Anzahl Elemente im Ringbuffer*/;
+    //
+    // loc.setLatitude(midLat);
+    // loc.setLongitude(midLong);
+    //
+    // if(Math.abs(loc.getLatitude()-newestLoc.getLatitude()) > 0.0001) {
+    // currentBestLocation = loc;
+    // return loc;
+    // } else {
+    // currentBestLocation = newestLoc;
+    // return newestLoc;
+    // }
+    // }
 
     /*
      * Determines whether one Location reading is better than the current
@@ -76,8 +101,8 @@ public class DevicePositionUtils {
 
         // Check whether the new location fix is newer or older
         long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > ONE_MINUTES;
-        boolean isSignificantlyOlder = timeDelta < -ONE_MINUTES;
+        boolean isSignificantlyNewer = timeDelta > (1000 * 60); //One minute
+        boolean isSignificantlyOlder = timeDelta < -(1000 * 60); //One minute
         boolean isNewer = timeDelta > 0;
 
         // If it's been more than two minutes since the current location, use
