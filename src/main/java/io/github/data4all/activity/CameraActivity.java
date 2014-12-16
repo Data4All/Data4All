@@ -5,6 +5,7 @@ import io.github.data4all.listener.CaptureShutterListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -30,7 +31,8 @@ public class CameraActivity extends Activity {
 
         // Inflate the UI layout
         setContentView(R.layout.activity_camera);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        
         // Initialize the UI components
         initUIComponents();
     }
