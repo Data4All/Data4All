@@ -31,7 +31,6 @@ public class CameraActivity extends Activity {
 
         // Inflate the UI layout
         setContentView(R.layout.activity_camera);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         
         // Initialize the UI components
         initUIComponents();
@@ -106,4 +105,6 @@ public class CameraActivity extends Activity {
         // Retrieve the Camera Preview Component
         cameraPreview = (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
     }
+    
+    
 }
