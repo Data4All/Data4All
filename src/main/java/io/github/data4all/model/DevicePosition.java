@@ -39,6 +39,17 @@ public class DevicePosition {
         this.timestamp = timestamp;
 
     }
+    
+    public DevicePosition(long timestamp,float xAccel,float yAccel,float zAccel,
+    		float azimuth,float pitch,float roll){
+    	this.timestamp = timestamp;
+    	xAccel= accelValues[0];
+    	yAccel= accelValues[1];
+    	zAccel = accelValues[2];
+    	azimuth = magValues[0];
+    	pitch = magValues[1];
+    	roll = magValues[2];
+    }
 
     public Location getLocation() {
         return location;
