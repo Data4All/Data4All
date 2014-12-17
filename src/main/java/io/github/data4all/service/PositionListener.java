@@ -1,6 +1,7 @@
 package io.github.data4all.service;
 
 //import io.github.data4all.model.DevicePosition;
+import io.github.data4ll.model.DevicePosition;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -8,15 +9,13 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 
 public class PositionListener extends Service implements SensorEventListener {
 
 	Sensor accelerometer;
 	Sensor magnetometer;
 	private SensorManager sManager;
-
+	DevicePosition devicePosition;
 
 	public void onCreate() {
 
@@ -39,13 +38,12 @@ public class PositionListener extends Service implements SensorEventListener {
 		float[] mGravity = new float[3];
 		float[] mGeomagnetic = new float[3];
 		// check sensor type
-		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) // ==
-																	// accelerometer)
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
 			mGravity = event.values;
 		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-			;
-		mGeomagnetic = event.values;
+			mGeomagnetic = event.values;
 
+		// when the 2 Sensors data are available
 		if (mGravity != null && mGeomagnetic != null) {
 			float[] mR = new float[9];
 
@@ -54,10 +52,9 @@ public class PositionListener extends Service implements SensorEventListener {
 			if (success) {
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(mR, orientation);
-				// saved data in model
-				/*DevicePosition devicePosition = new DevicePosition(
-						System.currentTimeMillis(),orientation[0] ,
-						, );*/
+				devicePosition = new DevicePosition(orientation[0],
+						orientation[1], orientation[2],
+						System.currentTimeMillis());
 
 			}
 		}
@@ -65,9 +62,11 @@ public class PositionListener extends Service implements SensorEventListener {
 
 	// register the SensorListener in the Service
 	protected void onResume() {
-		sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+		sManager.registerListener(this,
+				sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_NORMAL);
-		sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+		sManager.registerListener(this,
+				sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
 				SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
