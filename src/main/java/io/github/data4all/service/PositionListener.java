@@ -11,12 +11,15 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 
 public class PositionListener extends Service implements SensorEventListener {
-
+    
+	
 	Sensor accelerometer;
 	Sensor magnetometer;
+	//sensorManager
 	private SensorManager sManager;
-	DevicePosition devicePosition;
+	private DevicePosition devicePosition;
 
+		
 	public void onCreate() {
 
 		sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -30,7 +33,8 @@ public class PositionListener extends Service implements SensorEventListener {
 	 * 
 	 * @see
 	 * android.hardware.SensorEventListener#onSensorChanged(android.hardware
-	 * .SensorEvent) when the two Sensors data are available then saved this in
+	 * .SensorEvent) 
+	 * when the two Sensors data are available then saved this in
 	 * model
 	 */
 	public void onSensorChanged(SensorEvent event) {
@@ -52,9 +56,10 @@ public class PositionListener extends Service implements SensorEventListener {
 			if (success) {
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(mR, orientation);
-				devicePosition = new DevicePosition(orientation[0],
+	            //saved data in model
+				setDevicePosition(new DevicePosition(orientation[0],
 						orientation[1], orientation[2],
-						System.currentTimeMillis());
+						System.currentTimeMillis()));
 
 			}
 		}
@@ -62,6 +67,7 @@ public class PositionListener extends Service implements SensorEventListener {
 
 	// register the SensorListener in the Service
 	protected void onResume() {
+		// add listener
 		sManager.registerListener(this,
 				sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_NORMAL);
@@ -87,6 +93,14 @@ public class PositionListener extends Service implements SensorEventListener {
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public DevicePosition getDevicePosition() {
+		return devicePosition;
+	}
+
+	public void setDevicePosition(DevicePosition devicePosition) {
+		this.devicePosition = devicePosition;
 	}
 
 }
