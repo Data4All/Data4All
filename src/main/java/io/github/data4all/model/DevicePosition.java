@@ -1,85 +1,65 @@
 package io.github.data4all.model;
 
-import io.github.data4all.model.drawing.Point;
-
-import java.util.Calendar;
-
-import android.location.Location;
-
 /**
  * A model for the postion of the device. It includes the location and the
  * rotation of the device.
  * 
- * @author sbollen
- *
+ * @author sbollen, Steeve
+ * 
  */
 
 public class DevicePosition {
+ 
+	
+	//rotation around the Z axis
+	private float azimuth;
+   // rotation around the X axis	
+	private float pitch;
+	// rotation around Y axis
+	private float roll;
+	
+	private long timestamp;
 
-    // Location of the device (GPS)
-    Location location;
+	public DevicePosition(long timestamp, float azimuth, float pitch, float roll) {
+		this.timestamp = timestamp;
+		this.azimuth = azimuth;
+		this.pitch = pitch;
+		this.roll = roll;
 
-    // ACCELEROMETER Sensor Values
-    private float[] accelValues = new float[3];
-    // MAGNETIC_FIELD Sensor Values
-    private float[] magValues = new float[3];
-
-    // Actual time when the data was recorded
-    private long timestamp;
+	}
     
-    public DevicePosition() {
-        
-    }
+	//getter and setter Methoden
+	
+	public float getAzimuth() {
+		return azimuth;
+	}
 
-    public DevicePosition(Location location, float[] accelValues,
-            float[] magValues, long timestamp) {
-        this.location = location;
-        this.accelValues = accelValues;
-        this.magValues = magValues;
-        this.timestamp = timestamp;
+	public void setAzimuth(float azimuth) {
+		this.azimuth = azimuth;
+	}
 
-    }
-    
-    public DevicePosition(long timestamp,float xAccel,float yAccel,float zAccel,
-    		float azimuth,float pitch,float roll){
-    	this.timestamp = timestamp;
-    	xAccel= accelValues[0];
-    	yAccel= accelValues[1];
-    	zAccel = accelValues[2];
-    	azimuth = magValues[0];
-    	pitch = magValues[1];
-    	roll = magValues[2];
-    }
+	public float getPitch() {
+		return pitch;
+	}
 
-    public Location getLocation() {
-        return location;
-    }
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
+	public float getRoll() {
+		return roll;
+	}
 
-    public float[] getAccelValues() {
-        return accelValues;
-    }
+	public void setRoll(float roll) {
+		this.roll = roll;
+	}
 
-    public void setAccelValues(float[] accelValues) {
-        this.accelValues = accelValues;
-    }
+	public long getTimestamp() {
+		return timestamp;
+	}
 
-    public float[] getMagValues() {
-        return magValues;
-    }
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
 
-    public void setMagValues(float[] magValues) {
-        this.magValues = magValues;
-    }
-
-    public boolean equals(Object o) {
-        return this == o
-                || ((o instanceof DevicePosition)
-                        && location == ((DevicePosition) o).getLocation()
-                        && accelValues == ((DevicePosition) o).getAccelValues()
-                        && magValues == ((DevicePosition) o).getMagValues());
-    }
 }
