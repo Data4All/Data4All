@@ -7,15 +7,18 @@ import io.github.data4all.util.Tagging;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,7 +26,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * 
@@ -51,6 +57,15 @@ public class TagActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag);
+        Button test = (Button) findViewById(R.id.buttonTest);
+        test.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				createDialog();
+				
+			}
+		});
         Button start = (Button) findViewById(R.id.speech);
         start.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -90,7 +105,7 @@ public class TagActivity extends Activity {
                                     View view, int position, long id) {
 
                                 String value = keys.get(position);
-                                map = new HashMap<String, String>();
+                                map = new LinkedHashMap<String, String>();
                                 map.put(key, value);
                                 if (key.equals("building")
                                         || key.equals("amenity")) {
@@ -216,16 +231,17 @@ public class TagActivity extends Activity {
      */
 
     public void dialogContacts() {
+    
         final Dialog dialog1 = new Dialog(TagActivity.this);
         dialog1.setContentView(R.layout.dialog_contacts);
         dialog1.setTitle("Add contacts");
+     
         final EditText phone = (EditText) dialog1.findViewById(R.id.editPhone);
         final EditText fax = (EditText) dialog1.findViewById(R.id.editFax);
         final EditText website = (EditText) dialog1
                 .findViewById(R.id.editWebsite);
         final EditText email = (EditText) dialog1.findViewById(R.id.editEmail);
         Button finish = (Button) dialog1.findViewById(R.id.buttonFinish1);
-
         finish.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 List<String> addressTags = new ArrayList<String>();
@@ -241,5 +257,29 @@ public class TagActivity extends Activity {
 
         dialog1.show();
     }
+    
+    
+    @SuppressLint("InflateParams")
+	public void createDialog(){
+    	final Dialog dialog = new Dialog(TagActivity.this);
+		dialog.setContentView(R.layout.dialog_dynamic);
+		final EditText text = new EditText(this);
+		
+			text.setHint("asda");
+    		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+    		text.setEms(10);
+    		text.setInputType(InputType.TYPE_CLASS_TEXT);
+    		final EditText text1 = new EditText(this);
+    		text1.setHint("texthgfghfhgjfg");
+    		text1.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+    		text1.setEms(10);
+    		text1.setInputType(InputType.TYPE_CLASS_TEXT);
+    		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+    		layout.addView(text);
+    		layout.addView(text1);
+    		dialog.show();
+       
+    }
+ 
 
 }
