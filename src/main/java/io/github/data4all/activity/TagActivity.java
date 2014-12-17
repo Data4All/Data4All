@@ -1,6 +1,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
@@ -62,7 +63,7 @@ public class TagActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				createDialog();
+				createDialog(Tags.getContactTags());
 				
 			}
 		});
@@ -258,27 +259,39 @@ public class TagActivity extends Activity {
         dialog1.show();
     }
     
-    
-    @SuppressLint("InflateParams")
-	public void createDialog(){
+
+	public void createDialog(String [] list){
     	final Dialog dialog = new Dialog(TagActivity.this);
 		dialog.setContentView(R.layout.dialog_dynamic);
+		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+		final Button next = new Button(this);
+		final Button finish = new Button(this);
+		next.setText(R.string.next);
+		finish.setText(R.string.finish);
+		final List <EditText> edit = new ArrayList<EditText>();
+		for (int i = 0; i < list.length; i++) {
 		final EditText text = new EditText(this);
-		
-			text.setHint("asda");
+			text.setHint(list [i]);
     		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-    		text.setEms(10);
     		text.setInputType(InputType.TYPE_CLASS_TEXT);
-    		final EditText text1 = new EditText(this);
-    		text1.setHint("texthgfghfhgjfg");
-    		text1.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-    		text1.setEms(10);
-    		text1.setInputType(InputType.TYPE_CLASS_TEXT);
-    		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+    		edit.add(text);
     		layout.addView(text);
-    		layout.addView(text1);
-    		dialog.show();
-       
+		}
+		layout.addView(next);
+		layout.addView(finish);
+		finish.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				List<String> tags = new ArrayList<String>();
+				
+				for (int i = 0; i < edit.size(); i++) {
+					tags.add(edit.get(i).getText().toString());
+				}
+				
+			}
+		});
+    		dialog.show();       
     }
  
 
