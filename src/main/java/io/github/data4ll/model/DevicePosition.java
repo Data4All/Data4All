@@ -2,10 +2,15 @@ package io.github.data4ll.model;
 
 public class DevicePosition {
 	
+	//rotation around the Z axis
 	private float azimuth;
+	//rotation around the X axis
 	private float pitch;
+    // rotation around Y axis	
 	private float roll;
+	
     private	long timestamp;
+    
     
     public DevicePosition(float azimuth, float pitch, float roll, long timestamp){
     	this.azimuth = azimuth;
@@ -14,6 +19,7 @@ public class DevicePosition {
     	this.timestamp = timestamp;
     }
     
+    //all getter and setter Methoden
 	public float getAzimuth() {
 		return azimuth;
 	}
