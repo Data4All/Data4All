@@ -1,9 +1,7 @@
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
-
-import java.util.ArrayList;
-
+import io.github.data4all.util.RingBuffer;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -18,14 +16,11 @@ import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
 
-    public static ArrayList<String> history = new ArrayList<String>();
+    public RingBuffer GPShistory = new RingBuffer(10);
 
-    private static final String TAG = "GPStracker";
-    /**
-     * Are we currently tracking ?
-     */
-    private boolean isTracking = false;
+    private static final String TAG = "GPSservice";
 
+    int j = 0;
     /**
      * Is GPS enabled ?
      */
@@ -53,12 +48,19 @@ public class GPSservice extends Service implements LocationListener {
         wakeLock.acquire();
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, // minimum
-                                                                        // of
-                                                                        // time
-                0, this); // minimum of meters
-        lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
-                this);
+
+        if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
+            lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0000, // minimum
+                                                                            // of
+                                                                            // time
+                    0, this); // minimum of meters
+        }
+
+        if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0000,
+                    0, this);
+        }
     }
 
     @Override
@@ -72,27 +74,30 @@ public class GPSservice extends Service implements LocationListener {
     public void onDestroy() {
 
         wakeLock.release();
-
+        stopSelf();
     }
 
     public void onLocationChanged(Location location) {
         // We're receiving location, so GPS is enabled
         isGpsEnabled = true;
 
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
-
-        // timestamp
-        Long tsLong = System.currentTimeMillis() / 1000;
-        String ts = tsLong.toString();
-
         // add
-        history.add("time:" + ts + " lat=" + lat + " lon=" + lon);
+        GPShistory.add(location);
 
-        Log.d(TAG, "time:" + ts + " lat=" + lat + " lon=" + lon);
-        Log.d(TAG, "Points in GPS history: " + history.size());
+        j++;
 
-        lastLocation = location;
+        if(GPShistory.get(GPShistory.index())!= null){
+        Log.d(TAG, "aktuellste GPS: "
+                + GPShistory.get(GPShistory.index()).getLongitude());
+        }
+        //just for testpurpose:
+        if (j>10) {
+            Location[] temp = new Location[10];
+            temp = GPShistory.getAll();
+            for (Location loc : temp) {
+                Log.d(TAG, "" + loc.getLongitude());
+            }
+        }
 
     }
 
