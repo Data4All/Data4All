@@ -12,171 +12,158 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 public class MapViewActivity extends Activity implements OnClickListener {
 
-    private static final String TAG = "MapViewActivity";
-    private MapView mapView;
-    private ImageView view;
-    private MapController mapController;
-    private Handler handler;
-    private int alpha = 100;
-    private MyLocationNewOverlay myLocationOverlay;
-    private final int DEFAULT_ZOOM_LEVEL = 18;
-    private final int MINIMAL_ZOOM_LEVEL = 10;
-    private final int MAXIMAL_ZOOM_LEVEL = 20;
-    private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+	private static final String TAG = "MapViewActivity";
+	private MapView mapView;
+	private ImageView view;
+	private MapController mapController;
+	private MyLocationNewOverlay myLocationOverlay;
+	private final int DEFAULT_ZOOM_LEVEL = 18;
+	private final int MINIMAL_ZOOM_LEVEL = 10;
+	private final int MAXIMAL_ZOOM_LEVEL = 20;
+	private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
-    /**
-     * Called when the activity is first created.
-     * 
-     * @param savedInstanceState
-     *            If the activity is being re-initialized after previously being
-     *            shut down then this Bundle contains the data it most recently
-     *            supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it
-     *            is null.</b>
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map_view);
-        mapView = (MapView) this.findViewById(R.id.mapview);
-        view = (ImageView) findViewById(R.id.imageView1);
-        int width = 200; // ((display.getWidth()*20)/100)
-        int height = 200;// ((display.getHeight()*30)/100)
-        LayoutParams params = (LayoutParams) view.getLayoutParams();
-        params.width = 600;
-        view.setLayoutParams(params);
-        handler = new Handler();
-        handler.postDelayed(runnable, 2000);
-        // Set Maptilesource
-        Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
-        mapView.setTileSource(DEFAULT_TILESOURCE);
+	/**
+	 * Called when the activity is first created.
+	 * 
+	 * @param savedInstanceState
+	 *            If the activity is being re-initialized after previously being
+	 *            shut down then this Bundle contains the data it most recently
+	 *            supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it
+	 *            is null.</b>
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_map_view);
+		mapView = (MapView) this.findViewById(R.id.mapview);
+		view = (ImageView) findViewById(R.id.imageView1);
+		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(500)
+				.withEndAction(new Runnable() {
+					public void run() {
+						view.setVisibility(View.GONE);
+					}
+				}).start();
 
-        // Activate Zoom
-        Log.i(TAG, "Activate Zoom Controls");
-        mapView.setBuiltInZoomControls(true);
+		// Set Maptilesource
+		Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
+		mapView.setTileSource(DEFAULT_TILESOURCE);
 
-        // Activate Multi Touch Control
-        Log.i(TAG, "Activate Multi Touch Controls");
-        mapView.setMultiTouchControls(true);
+		// Activate Zoom
+		Log.i(TAG, "Activate Zoom Controls");
+		mapView.setBuiltInZoomControls(true);
 
-        // Set Min/Max Zoom Level
-        Log.i(TAG, "Set minimal Zoomlevel to " + MINIMAL_ZOOM_LEVEL);
-        mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
+		// Activate Multi Touch Control
+		Log.i(TAG, "Activate Multi Touch Controls");
+		mapView.setMultiTouchControls(true);
 
-        Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_ZOOM_LEVEL);
-        mapView.setMaxZoomLevel(MAXIMAL_ZOOM_LEVEL);
+		// Set Min/Max Zoom Level
+		Log.i(TAG, "Set minimal Zoomlevel to " + MINIMAL_ZOOM_LEVEL);
+		mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
 
-        mapController = (MapController) this.mapView.getController();
+		Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_ZOOM_LEVEL);
+		mapView.setMaxZoomLevel(MAXIMAL_ZOOM_LEVEL);
 
-        // Set Default Zoom Level
-        Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
-        mapController.setZoom(DEFAULT_ZOOM_LEVEL);
+		mapController = (MapController) this.mapView.getController();
 
-        // Set Overlay for the actual Position
-        myLocationOverlay = new MyLocationNewOverlay(this, mapView);
-        mapView.getOverlays().add(myLocationOverlay);
+		// Set Default Zoom Level
+		Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
+		mapController.setZoom(DEFAULT_ZOOM_LEVEL);
 
-        // Set Listener for Buttons
-        Button returnToPosition = (Button) findViewById(R.id.return_to_actual_Position);
-        returnToPosition.setOnClickListener(this);
+		// Set Overlay for the actual Position
+		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
+		mapView.getOverlays().add(myLocationOverlay);
 
-        Button uploadData = (Button) findViewById(R.id.upload_data);
-        uploadData.setOnClickListener(this);
+		// Set Listener for Buttons
+		Button returnToPosition = (Button) findViewById(R.id.return_to_actual_Position);
+		returnToPosition.setOnClickListener(this);
 
-        Button satelliteMap = (Button) findViewById(R.id.switch_to_satellite_map);
-        satelliteMap.setOnClickListener(this);
+		Button uploadData = (Button) findViewById(R.id.upload_data);
+		uploadData.setOnClickListener(this);
 
-        Button camera = (Button) findViewById(R.id.to_camera);
-        camera.setOnClickListener(this);
+		Button satelliteMap = (Button) findViewById(R.id.switch_to_satellite_map);
+		satelliteMap.setOnClickListener(this);
 
-        Button newPoint = (Button) findViewById(R.id.new_point);
-        newPoint.setOnClickListener(this);
+		Button camera = (Button) findViewById(R.id.to_camera);
+		camera.setOnClickListener(this);
 
-    }
+		Button newPoint = (Button) findViewById(R.id.new_point);
+		newPoint.setOnClickListener(this);
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-        case R.id.return_to_actual_Position:
-            if (myLocationOverlay.isMyLocationEnabled()) {
-                Log.i(TAG, "Set Mapcenter to"
-                        + myLocationOverlay.getMyLocation().toString());
-                mapController.setCenter(myLocationOverlay.getMyLocation());
-                mapView.postInvalidate();
-            }
-            break;
-        case R.id.upload_data:
-            startActivity(new Intent(this, LoginActivity.class));
-            break;
-        case R.id.switch_to_satellite_map:
-            break;
-        case R.id.to_camera:
-            startActivity(new Intent(this, CameraActivity.class));
-            break;
-        case R.id.new_point:
-            break;
-        }
-    }
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.return_to_actual_Position:
+			if (myLocationOverlay.isMyLocationEnabled()) {
+				Log.i(TAG, "Set Mapcenter to"
+						+ myLocationOverlay.getMyLocation().toString());
+				mapController.setCenter(myLocationOverlay.getMyLocation());
+				mapView.postInvalidate();
+			}
+			break;
+		case R.id.upload_data:
+			startActivity(new Intent(this, LoginActivity.class));
+			break;
+		case R.id.switch_to_satellite_map:
+			break;
+		case R.id.to_camera:
+			startActivity(new Intent(this, CameraActivity.class));
+			break;
+		case R.id.new_point:
+			break;
+		}
+	}
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // enable Overlay for actual Position
-        Log.i(TAG, "Enable Actual Location Overlay");
-        myLocationOverlay.enableMyLocation();
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
 
-        // enable Location Listener to update the Position
-        Log.i(TAG, "Enable Following Location Overlay");
-        myLocationOverlay.enableFollowLocation();
-        mapView.postInvalidate();
+	@Override
+	public void onResume() {
+		super.onResume();
+		// enable Overlay for actual Position
+		Log.i(TAG, "Enable Actual Location Overlay");
+		myLocationOverlay.enableMyLocation();
 
-        // Start the GPS tracking
-        startService(new Intent(this, GPSservice.class));
-    }
+		// enable Location Listener to update the Position
+		Log.i(TAG, "Enable Following Location Overlay");
+		myLocationOverlay.enableFollowLocation();
+		mapView.postInvalidate();
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i(TAG, "Disable Actual Location Overlay");
-        myLocationOverlay.disableMyLocation();
+		// Start the GPS tracking
+		startService(new Intent(this, GPSservice.class));
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+	    super.onConfigurationChanged(newConfig);
+	
+	}
 
-        Log.i(TAG, "Disable Following Location Overlay");
-        myLocationOverlay.disableFollowLocation();
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.i(TAG, "Disable Actual Location Overlay");
+		myLocationOverlay.disableMyLocation();
 
-        // Pause the GPS tracking
-        stopService(new Intent(this, GPSservice.class));
-    }
-    
-    private Runnable runnable = new Runnable() {
-    	   @Override
-    	   public void run() {
-    		   alpha = alpha-1;
-    		   if(alpha > 10){
-    	      view.setImageAlpha(alpha);
-    	      handler.postDelayed(this, 10);
-    		   } else{
-    			   view.setVisibility(View.GONE);
-    		   }
-    	   }
-    	};
+		Log.i(TAG, "Disable Following Location Overlay");
+		myLocationOverlay.disableFollowLocation();
 
-
+		// Pause the GPS tracking
+		stopService(new Intent(this, GPSservice.class));
+	}
 }
