@@ -6,13 +6,11 @@ import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -30,7 +28,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  * 
@@ -58,15 +55,6 @@ public class TagActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag);
-        Button test = (Button) findViewById(R.id.buttonTest);
-        test.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				createDialog(Tags.getContactTags());
-				
-			}
-		});
         Button start = (Button) findViewById(R.id.speech);
         start.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -110,7 +98,8 @@ public class TagActivity extends Activity {
                                 map.put(key, value);
                                 if (key.equals("building")
                                         || key.equals("amenity")) {
-                                    dialogDetails();
+                                  //  dialogDetails();                                    
+                                    createDialog(Tags.getAddressTags(), "Add Address", key.equals("building"), true);
                                 }
                                 output();
                                 dialog.hide();
@@ -260,9 +249,10 @@ public class TagActivity extends Activity {
     }
     
 
-	public void createDialog(String [] list){
+	public void createDialog(String [] list, String title, final Boolean but, final Boolean first){
     	final Dialog dialog = new Dialog(TagActivity.this);
 		dialog.setContentView(R.layout.dialog_dynamic);
+		dialog.setTitle(title);
 		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
 		final Button next = new Button(this);
 		final Button finish = new Button(this);
@@ -277,7 +267,9 @@ public class TagActivity extends Activity {
     		edit.add(text);
     		layout.addView(text);
 		}
+		if(!but){
 		layout.addView(next);
+		}
 		layout.addView(finish);
 		finish.setOnClickListener(new OnClickListener() {
 			
@@ -288,7 +280,29 @@ public class TagActivity extends Activity {
 				for (int i = 0; i < edit.size(); i++) {
 					tags.add(edit.get(i).getText().toString());
 				}
+				if(first){
+					map = Tagging.addressToTag(tags, map);
+				}
+				else{
+					map = Tagging.contactToTag(tags, map);
+				}
+				output();
+				dialog.hide();
+			}
+		});
+		
+		next.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				List<String> tags = new ArrayList<String>();
 				
+				for (int i = 0; i < edit.size(); i++) {
+					tags.add(edit.get(i).getText().toString());
+				}
+				map = Tagging.addressToTag(tags, map);
+				createDialog(Tags.getContactTags(), "Add Contacts", true, false);
+				dialog.hide();
 			}
 		});
     		dialog.show();       
