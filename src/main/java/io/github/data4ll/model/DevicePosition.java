@@ -1,5 +1,9 @@
 package io.github.data4ll.model;
 
+/**
+ * this class represent the model for PositionListener
+ * @author: Steeve
+ */
 public class DevicePosition {
 	
 	//rotation around the Z axis
