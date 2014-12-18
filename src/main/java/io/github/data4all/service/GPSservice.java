@@ -15,8 +15,10 @@ import android.os.PowerManager.WakeLock;
 import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
-
-    public RingBuffer GPShistory = new RingBuffer(10);
+    
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public RingBuffer GPShistory = new RingBuffer(Location.class, 10);
 
     private static final String TAG = "GPSservice";
 
@@ -51,14 +53,14 @@ public class GPSservice extends Service implements LocationListener {
 
         if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0000, // minimum
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, // minimum
                                                                             // of
                                                                             // time
                     0, this); // minimum of meters
         }
 
         if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0000,
+            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000,
                     0, this);
         }
     }
@@ -82,18 +84,18 @@ public class GPSservice extends Service implements LocationListener {
         isGpsEnabled = true;
 
         // add
-        GPShistory.add(location);
+        GPShistory.put(location);
 
         j++;
 
         if(GPShistory.get(GPShistory.index())!= null){
         Log.d(TAG, "aktuellste GPS: "
-                + GPShistory.get(GPShistory.index()).getLongitude());
+                + ((Location) GPShistory.get(GPShistory.index())).getLongitude());
         }
         //just for testpurpose:
         if (j>10) {
             Location[] temp = new Location[10];
-            temp = GPShistory.getAll();
+            temp = (Location[]) GPShistory.getAll();
             for (Location loc : temp) {
                 Log.d(TAG, "" + loc.getLongitude());
             }

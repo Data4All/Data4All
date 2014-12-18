@@ -1,6 +1,6 @@
 package io.github.data4all.util;
 
-import android.location.Location;
+import java.lang.reflect.Array;
 
 
 /**
@@ -12,10 +12,10 @@ import android.location.Location;
  * @author Koalamann
  *
  */
-public class RingBuffer {
+public class RingBuffer<T> {
 
     /** the buffer that contains the data */
-    private Location[] buffer;
+    private T[] buffer;
 
     /** head of the ringbuffer. the first free position */
     private int head;
@@ -29,28 +29,39 @@ public class RingBuffer {
     /**
      * creates the ringpuffer.
      * 
+     * @param type
      * @param capacity
      */
-    public RingBuffer(int capacity) {
-        buffer = new Location[capacity];
+    @SuppressWarnings("unchecked")
+    public RingBuffer(Class<T> type,int capacity) {
+        
+        buffer = (T[]) Array.newInstance(type,capacity);
         head = 0;
         entries = 0;
     }
 
+    @SuppressWarnings("hiding")
+    public <T> T[] getArray(Class<T> clazz, int size) {
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) Array.newInstance(clazz, size);
+
+        return arr;
+    }
+    
     /**
-     * adds a new location.
+     * adds a new T.
      * 
-     * @param location
+     * @param T
      *            that is added.
      */
-    public void add(Location value) {
+    public void put(T value) {
         if (buffer.length > 0) {
             buffer[head] = value;
             head = (head + 1) % buffer.length;
             if (entries < buffer.length) {
                 ++entries;
             }
-            if (index < buffer.length){
+            if (index < buffer.length-1){
                 ++index;
                
             }else{
@@ -62,20 +73,20 @@ public class RingBuffer {
     /**
      * returns the oldest Element
      * not needed
-     * @return Location
+     * @return T
      */
-//    public Location pop() {
-//        Location value = peek();
+//    public T pop() {
+//        T value = peek();
 //        --entries;
 //        return value;
 //    }
 
     /**
      * @param position
-     * @return Location
+     * @return T
      */
     
-    public Location get(int position) {
+    public T get(int position) {
         if (size()>0) {
          
             return buffer[position];
@@ -87,7 +98,7 @@ public class RingBuffer {
      * 
      * @return the array with all Data.
      */
-    public Location[] getAll(){
+    public T[] getAll(){
         
         return buffer;
     }
@@ -95,9 +106,9 @@ public class RingBuffer {
     /**
      * returns the oldest Element but it stays in the ringbuffer
      * 
-     * @return the oldest location.
+     * @return the oldest T.
      */
-//    public Location peek() {
+//    public T peek() {
 //        return buffer[(head - entries + buffer.length) % buffer.length];
 //    }
 
