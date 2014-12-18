@@ -9,7 +9,7 @@ import java.lang.reflect.Array;
  * more like FIFO-queue
  * 
  * 
- * @author Koalamann
+ * @author konerman
  *
  */
 public class RingBuffer<T> {
@@ -40,19 +40,11 @@ public class RingBuffer<T> {
         entries = 0;
     }
 
-    @SuppressWarnings("hiding")
-    public <T> T[] getArray(Class<T> clazz, int size) {
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) Array.newInstance(clazz, size);
-
-        return arr;
-    }
-    
+     
     /**
-     * adds a new T.
+     * adds a new Element.
      * 
-     * @param T
-     *            that is added.
+     * @param the element that is added.
      */
     public void put(T value) {
         if (buffer.length > 0) {
@@ -70,16 +62,6 @@ public class RingBuffer<T> {
         }
     }
 
-    /**
-     * returns the oldest Element
-     * not needed
-     * @return T
-     */
-//    public T pop() {
-//        T value = peek();
-//        --entries;
-//        return value;
-//    }
 
     /**
      * @param position
@@ -103,15 +85,6 @@ public class RingBuffer<T> {
         return buffer;
     }
     
-    /**
-     * returns the oldest Element but it stays in the ringbuffer
-     * 
-     * @return the oldest T.
-     */
-//    public T peek() {
-//        return buffer[(head - entries + buffer.length) % buffer.length];
-//    }
-
     /**
      * @return the number of elements in the buffer.
      */
