@@ -1,6 +1,6 @@
 package io.github.data4all.util;
 
-import io.github.data4all.model.DevicePosition;
+import io.github.data4all.model.DeviceOrientation;
 import android.location.Location;
 
 /**
@@ -32,7 +32,7 @@ public class Optimizer {
     /*
      * Put a DevicePosition object to the DevicePosition RingBuffer
      */
-    public void putPos(DevicePosition pos) {
+    public  void putPos(DeviceOrientation pos) {
         //posRB.put(pos);
     }
 
@@ -50,7 +50,7 @@ public class Optimizer {
      * 
      * @return the current best DevicePosition
      */
-    public DevicePosition currentPos() {
+    public DeviceOrientation currentPos() {
         return null;
     }
 
