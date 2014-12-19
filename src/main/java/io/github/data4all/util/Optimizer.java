@@ -32,6 +32,8 @@ public class Optimizer {
     public void putLoc(Location loc) {
         locRB.put(loc);
         
+        Log.i(getClass().getSimpleName(), locRB.get(locRB.index()).toString());
+        
     
     }
 
