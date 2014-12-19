@@ -46,6 +46,7 @@ public class PointToCoordsTransformUtil {
 	}
 		
 	public float[] calculate2dPoint(DeviceOrientation deviceOrientation){
+	    Log.i(TAG, deviceOrientation.getAzimuth() + " " + deviceOrientation.getPitch() + " " + deviceOrientation.getRoll());
 		float[] orientation = new float[3];
 		orientation[0] = deviceOrientation.getAzimuth();
 		orientation[1] = deviceOrientation.getPitch();

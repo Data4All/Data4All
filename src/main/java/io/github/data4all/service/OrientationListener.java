@@ -3,6 +3,7 @@ package io.github.data4all.service;
 //import io.github.data4all.model.DevicePosition;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -26,6 +27,8 @@ public class OrientationListener extends Service implements SensorEventListener 
     private SensorManager sManager;
     /** model DevicePosition for saving data */
     private DeviceOrientation deviceOrientation;
+    
+    private Optimizer optimizer = new Optimizer();
 
     private static final String TAG = "OrientationListener";
 
@@ -98,7 +101,9 @@ public class OrientationListener extends Service implements SensorEventListener 
                         orientation[1], orientation[2],
                         System.currentTimeMillis()));
                
-                // Optimizer.putlos(new deviceOrientation(parameter));
+                 optimizer.putPos(new DeviceOrientation(orientation[0],
+                         orientation[1], orientation[2],
+                         System.currentTimeMillis()));
             }
         }
     }

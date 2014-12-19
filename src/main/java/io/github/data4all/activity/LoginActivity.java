@@ -1,8 +1,12 @@
 package io.github.data4all.activity;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.service.OrientationListener;
+import io.github.data4all.util.Optimizer;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import oauth.signpost.OAuth;
 import android.app.Activity;
@@ -21,10 +25,12 @@ import android.widget.Toast;
 public class LoginActivity extends Activity {
 
     final String TAG = getClass().getSimpleName();
-    
+
     OrientationListener ol = new OrientationListener();
     PointToCoordsTransformUtil ptt = new PointToCoordsTransformUtil();
     TextView editText1;
+    Optimizer optimizer = new Optimizer();
+    Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +78,10 @@ public class LoginActivity extends Activity {
             }
         });
         
-        Log.i(TAG, "" + ol.getDevicePosition());
-        float[] p = ptt.calculate2dPoint(ol.getDevicePosition());
+        
+        float[] p = ptt.calculate2dPoint(optimizer.currentPos());
         editText1 = (TextView) findViewById(R.id.editText1);
-        editText1.setText(Float.toString(p[0]));
+        editText1.setText("X-Koord: " + p[0] + " Y-Koord: " + p[1]);
 
     }
 
