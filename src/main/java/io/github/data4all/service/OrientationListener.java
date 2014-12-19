@@ -10,6 +10,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
+import io.github.data4all.util.Optimizer;
 
 /**
  * 
@@ -90,7 +91,7 @@ public class OrientationListener extends Service implements SensorEventListener 
 				setDeviceOrientation(new DeviceOrientation(orientation[0],
 						orientation[1], orientation[2],
 						System.currentTimeMillis()));
-				// Optimizer.putlos(new deviceOrientation(parameter));
+				//Optimizer.putPos();
 			}
 		}
 	}
