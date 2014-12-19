@@ -15,14 +15,21 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
+ * This TouchView listen to MotionEvents from the user, saves them into
+ * DrawingMotions, uses MotionInterpreters to interpret the input and draws the
+ * interpreted polygons.
+ * 
  * @author tbrose
  *
+ * @see MotionEvent
+ * @see DrawingMotion
+ * @see MotionInterpreter
  */
 public class TouchView extends View {
 
     private List<DrawingMotion> motions = new ArrayList<DrawingMotion>();
     private DrawingMotion currentMotion;
-    private MotionInterpreter<Void> interpreter;
+    private MotionInterpreter interpreter;
 
     public TouchView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -36,11 +43,11 @@ public class TouchView extends View {
         super(context);
     }
 
-    public void setInterpreter(MotionInterpreter<Void> interpreter) {
+    public void setInterpreter(MotionInterpreter interpreter) {
         this.interpreter = interpreter;
     }
 
-    public MotionInterpreter<Void> getInterpreter() {
+    public MotionInterpreter getInterpreter() {
         return interpreter;
     }
 
