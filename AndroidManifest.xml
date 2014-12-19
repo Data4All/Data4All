@@ -62,7 +62,7 @@
             android:label="GPS Service" >
         </service>
         <service
-            android:name="io.github.data4all.service.PositionListener"
+            android:name=".service.OrientationListener"
             android:enabled="true" />
     </application>
 

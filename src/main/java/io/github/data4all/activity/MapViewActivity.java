@@ -32,9 +32,6 @@ public class MapViewActivity extends Activity implements OnClickListener {
     private final int MAXIMAL_ZOOM_LEVEL = 20;
     private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
     
-    OrientationListener ol = new OrientationListener();
-    PointToCoordsTransformUtil ptt = new PointToCoordsTransformUtil();
-    TextView editText1;
 
     /**
      * Called when the activity is first created.
@@ -96,10 +93,6 @@ public class MapViewActivity extends Activity implements OnClickListener {
         Button newPoint = (Button) findViewById(R.id.new_point);
         newPoint.setOnClickListener(this);
         
-        float[] p = ptt.calculate2dPoint(ol.getDevicePosition());
-        editText1 = (TextView) findViewById(R.id.editText1);
-        editText1.setText(Float.toString(p[0]));
-
     }
 
     public void onClick(View v) {
@@ -146,6 +139,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
         // Start the GPS tracking
         startService(new Intent(this, GPSservice.class));
+        startService(new Intent(this, OrientationListener.class));
     }
 
     @Override
@@ -159,5 +153,6 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
         // Pause the GPS tracking
         stopService(new Intent(this, GPSservice.class));
+        stopService(new Intent(this, OrientationListener.class));
     }
 }

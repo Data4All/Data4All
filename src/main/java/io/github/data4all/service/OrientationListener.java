@@ -18,121 +18,129 @@ import android.os.IBinder;
  */
 public class OrientationListener extends Service implements SensorEventListener {
 
-	/** sensor accelerometer */
-	Sensor accelerometer;
-	/** sensor magnetic_field */
-	Sensor magnetometer;
-	/** sensorManager */
-	private SensorManager sManager;
-	/** model DevicePosition for saving data */
-	private DeviceOrientation deviceOrientation;
+    /** sensor accelerometer */
+    Sensor accelerometer;
+    /** sensor magnetic_field */
+    Sensor magnetometer;
+    /** sensorManager */
+    private SensorManager sManager;
+    /** model DevicePosition for saving data */
+    private DeviceOrientation deviceOrientation;
 
-	private static final String TAG = "OrientationListener";
+    private static final String TAG = "OrientationListener";
 
-	public void onCreate() {
-		Log.i(TAG, "Service was startet");
-	}
+    float[] mR = new float[16];
+    float[] mI = new float[16];
+    float[] mGravity = new float[3];
+    float[] mGeomagnetic = new float[3];
+    float[] orientation = new float[3];
 
-	/**
-	 * start recording data from accelerometer and magnetic_field, register the
-	 * SensorListener in The Service and when Android kill the sensor to free up
-	 * valuable resources, then use Start_STICKY to restart the Service when
-	 * Resource become available again
-	 */
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.i(TAG, "Service startet");
+    public void onCreate() {
+        Log.i(TAG, "Service was startet");
 
-		sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		accelerometer = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		magnetometer = sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer = sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-		sManager.registerListener(this,
-				sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-				SensorManager.SENSOR_DELAY_NORMAL);
-		sManager.registerListener(this,
-				sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-				SensorManager.SENSOR_DELAY_NORMAL);
+        sManager.registerListener(this,
+                sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sManager.registerListener(this,
+                sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-		return START_STICKY;
-	}
+    /**
+     * start recording data from accelerometer and magnetic_field, register the
+     * SensorListener in The Service and when Android kill the sensor to free up
+     * valuable resources, then use Start_STICKY to restart the Service when
+     * Resource become available again
+     */
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "Service startet");
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware
-	 *      .SensorEvent)
-	 * @param event
-	 *            when the two Sensors data are available then saved this in
-	 *            model
-	 */
-	public void onSensorChanged(SensorEvent event) {
+        return START_STICKY;
+    }
 
-		float[] mGravity = new float[3];
-		float[] mGeomagnetic = new float[3];
-		// check sensor type
-		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-			mGravity = event.values;
-		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-			mGeomagnetic = event.values;
+    /**
+     * (non-Javadoc)
+     * 
+     * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware
+     *      .SensorEvent)
+     * @param event
+     *            when the two Sensors data are available then saved this in
+     *            model
+     */
+    public void onSensorChanged(SensorEvent event) {
 
-		// when the 2 Sensors data are available
-		if (mGravity != null && mGeomagnetic != null) {
-			float[] mR = new float[9];
+        // check sensor type
+        switch (event.sensor.getType()) {
+        case Sensor.TYPE_ACCELEROMETER:
+            System.arraycopy(event.values, 0, mGravity, 0, 3);
+            break;
+        case Sensor.TYPE_MAGNETIC_FIELD:
+            System.arraycopy(event.values, 0, mGeomagnetic, 0, 3);
+            break;
+        }
 
-			boolean success = SensorManager.getRotationMatrix(mR, null,
-					mGravity, mGeomagnetic);
-			if (success) {
-				float orientation[] = new float[3];
-				SensorManager.getOrientation(mR, orientation);
-				// save data in model
+        // when the 2 Sensors data are available
+        if (mGravity != null && mGeomagnetic != null) {
 
-				setDeviceOrientation(new DeviceOrientation(orientation[0],
-						orientation[1], orientation[2],
-						System.currentTimeMillis()));
-				// Optimizer.putlos(new deviceOrientation(parameter));
-			}
-		}
-	}
+            boolean success = SensorManager.getRotationMatrix(mR, mI, mGravity,
+                    mGeomagnetic);
 
-	/**
-	 * stop to recording data from accelerometer and magnetic_field and
-	 * unregister the SensorListener in The Service
-	 **/
-	@Override
-	public void onDestroy() {
-		sManager.unregisterListener(this, accelerometer);
-		sManager.unregisterListener(this, magnetometer);
-		Log.i(TAG, "Service Destroyed");
-	}
+            if (success) {
+                SensorManager.getOrientation(mR, orientation);
+                // save data in model
 
-	/**
-	 * (non-Javadoc) description
-	 * 
-	 * @see android.hardware.SensorEventListener#onAccuracyChanged(android.hardware.Sensor,
-	 *      int)
-	 */
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
+                setDeviceOrientation(new DeviceOrientation(orientation[0],
+                        orientation[1], orientation[2],
+                        System.currentTimeMillis()));
+               
+                // Optimizer.putlos(new deviceOrientation(parameter));
+            }
+        }
+    }
 
-	}
+    /**
+     * stop to recording data from accelerometer and magnetic_field and
+     * unregister the SensorListener in The Service
+     **/
+    @Override
+    public void onDestroy() {
+        sManager.unregisterListener(this, accelerometer);
+        sManager.unregisterListener(this, magnetometer);
+        Log.i(TAG, "Service Destroyed");
+    }
 
-	/**
-	 * (non-Javadoc) description
-	 * 
-	 * @see android.app.Service#onBind(android.content.Intent)
-	 */
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+    /**
+     * (non-Javadoc) description
+     * 
+     * @see android.hardware.SensorEventListener#onAccuracyChanged(android.hardware.Sensor,
+     *      int)
+     */
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO Auto-generated method stub
 
-	public DeviceOrientation getDevicePosition() {
-		return deviceOrientation;
-	}
+    }
 
-	public void setDeviceOrientation(DeviceOrientation deviceOrientation) {
-		this.deviceOrientation = deviceOrientation;
-	}
+    /**
+     * (non-Javadoc) description
+     * 
+     * @see android.app.Service#onBind(android.content.Intent)
+     */
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    public DeviceOrientation getDevicePosition() {
+        return deviceOrientation;
+    }
+
+    public void setDeviceOrientation(DeviceOrientation deviceOrientation) {
+        this.deviceOrientation = deviceOrientation;
+    }
 
 }

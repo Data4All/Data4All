@@ -2,6 +2,8 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.service.OrientationListener;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 import oauth.signpost.OAuth;
 import android.app.Activity;
 import android.content.Intent;
@@ -13,11 +15,16 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 
     final String TAG = getClass().getSimpleName();
+    
+    OrientationListener ol = new OrientationListener();
+    PointToCoordsTransformUtil ptt = new PointToCoordsTransformUtil();
+    TextView editText1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,12 @@ public class LoginActivity extends Activity {
 
             }
         });
+        
+        Log.i(TAG, "" + ol.getDevicePosition());
+        float[] p = ptt.calculate2dPoint(ol.getDevicePosition());
+        editText1 = (TextView) findViewById(R.id.editText1);
+        editText1.setText(Float.toString(p[0]));
+
     }
 
     @Override
