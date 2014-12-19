@@ -127,7 +127,7 @@ public class OrientationListener extends Service implements SensorEventListener 
 		return null;
 	}
 
-	public DeviceOrientation getDevicePosition() {
+	public DeviceOrientation getDeviceOrientation() {
 		return deviceOrientation;
 	}
 
