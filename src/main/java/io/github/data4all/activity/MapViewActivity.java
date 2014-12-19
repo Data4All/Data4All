@@ -3,6 +3,8 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.service.GPSservice;
+import io.github.data4all.service.OrientationListener;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -17,6 +19,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MapViewActivity extends Activity implements OnClickListener {
 
@@ -28,6 +31,10 @@ public class MapViewActivity extends Activity implements OnClickListener {
     private final int MINIMAL_ZOOM_LEVEL = 10;
     private final int MAXIMAL_ZOOM_LEVEL = 20;
     private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+    
+    OrientationListener ol = new OrientationListener();
+    PointToCoordsTransformUtil ptt = new PointToCoordsTransformUtil();
+    TextView editText1;
 
     /**
      * Called when the activity is first created.
@@ -88,6 +95,10 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
         Button newPoint = (Button) findViewById(R.id.new_point);
         newPoint.setOnClickListener(this);
+        
+        float[] p = ptt.calculate2dPoint(ol.getDevicePosition());
+        editText1 = (TextView) findViewById(R.id.editText1);
+        editText1.setText(Float.toString(p[0]));
 
     }
 
