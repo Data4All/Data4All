@@ -1,5 +1,6 @@
 package io.github.data4all.util;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.DevicePosition;
 import android.location.Location;
 
@@ -13,8 +14,10 @@ import android.location.Location;
 
 public class Optimizer {
 
+ 
     // a new Ringbuffer for saving the location objects
-    //RingBuffer locRB = new RingBuffer();
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    RingBuffer locRB = new RingBuffer(Location.class, 10);
     // a new Ringbuffer for saving the DevicePosition objects
     //RingBuffer posRB = new RingBuffer();
 
@@ -25,8 +28,11 @@ public class Optimizer {
     /*
      * Put a location object to the location RingBuffer
      */
+    @SuppressWarnings("unchecked")
     public void putLoc(Location loc) {
-        //locRB.put(loc);
+        locRB.put(loc);
+        
+    
     }
 
     /*

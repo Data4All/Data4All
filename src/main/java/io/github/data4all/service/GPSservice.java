@@ -1,7 +1,7 @@
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
-import io.github.data4all.util.RingBuffer;
+import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -19,12 +19,11 @@ public class GPSservice extends Service implements LocationListener {
     
     private final IBinder gpsBinder = new GPSBinder();
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public RingBuffer GPShistory = new RingBuffer(Location.class, 10);
-
+    Optimizer optimizer = new Optimizer();
+    
     private static final String TAG = "GPSservice";
 
-    int j = 0;
+   
     /**
      * Is GPS enabled ?
      */
@@ -81,27 +80,11 @@ public class GPSservice extends Service implements LocationListener {
         stopSelf();
     }
 
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location loc) {
         // We're receiving location, so GPS is enabled
         isGpsEnabled = true;
-
-        // add
-        GPShistory.put(location);
-
-        j++;
-
-        if(GPShistory.get(GPShistory.index())!= null){
-        Log.d(TAG, "aktuellste GPS: "
-                + ((Location) GPShistory.get(GPShistory.index())).getLongitude());
-        }
-        //just for testpurpose:
-        if (j>10) {
-            Location[] temp = new Location[10];
-            temp = (Location[]) GPShistory.getAll();
-            for (Location loc : temp) {
-                Log.d(TAG, "" + loc.getLongitude());
-            }
-        }
+        
+        optimizer.putLoc(loc);
 
     }
 
