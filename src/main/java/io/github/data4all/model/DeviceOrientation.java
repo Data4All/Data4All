@@ -1,29 +1,29 @@
-package io.github.data4ll.model;
+package io.github.data4all.model;
 
 /**
- * this class represent the model for PositionListener
+ * this class represent the model for OrientationListener
  * @author: Steeve
  */
-public class DevicePosition {
+public class DeviceOrientation {
 	
-	//rotation around the Z axis
+	/** rotation around the Z axis */
 	private float azimuth;
-	//rotation around the X axis
+	/** rotation around the X axis */
 	private float pitch;
-    // rotation around Y axis	
+    /** rotation around Y axis	*/
 	private float roll;
 	
     private	long timestamp;
     
     
-    public DevicePosition(float azimuth, float pitch, float roll, long timestamp){
+    public DeviceOrientation(float azimuth, float pitch, float roll, long timestamp){
     	this.azimuth = azimuth;
     	this.pitch = pitch;
     	this.roll = roll;
     	this.timestamp = timestamp;
     }
     
-    //all getter and setter Methoden
+    /** all getter and setter Method */
 	public float getAzimuth() {
 		return azimuth;
 	}
