@@ -23,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -71,7 +72,7 @@ public class PrepareRequestTokenActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        webView = new WebView(this);
+        webView = new WebView(this);        
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setVisibility(View.VISIBLE);
         setContentView(webView);
@@ -227,6 +228,7 @@ public class PrepareRequestTokenActivity extends Activity {
             try {
                 provider.retrieveAccessToken(consumer, oauth_verifier);
 
+                //Store tokens in SharedPreferences
                 final Editor edit = prefs.edit();
                 edit.putString(OAuth.OAUTH_TOKEN, consumer.getToken());
                 edit.putString(OAuth.OAUTH_TOKEN_SECRET,
@@ -256,6 +258,8 @@ public class PrepareRequestTokenActivity extends Activity {
             Log.i(TAG, "Starting Loginscreen again");
             startActivity(new Intent(PrepareRequestTokenActivity.this,
                     MainActivity.class));
+            //Remove sessioncookie before moving on
+            CookieManager.getInstance().removeSessionCookie();
             finish();
         }
     }

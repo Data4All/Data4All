@@ -75,7 +75,7 @@ public class LoginActivity extends Activity {
         Button deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v) {
+            public void onClick(View v) {                
                 deleteTokenFromSharedPreferences();
             }
         });
