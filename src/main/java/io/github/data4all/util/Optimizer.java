@@ -2,7 +2,6 @@ package io.github.data4all.util;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.DevicePosition;
 import android.location.Location;
 
 /**
@@ -45,7 +44,7 @@ public class Optimizer {
      * @return the current best location
      */
     public Location currentLoc() {
-        return null;
+        return locRB.get(locRB.index());
     }
 
     /*

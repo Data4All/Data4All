@@ -25,22 +25,23 @@ public class OrientationListener extends Service implements SensorEventListener 
     Sensor magnetometer;
     /** sensorManager */
     private SensorManager sManager;
-    /** model DevicePosition for saving data */
-    private DeviceOrientation deviceOrientation;
-    
+    // optimizer class where the data is saved
     private Optimizer optimizer = new Optimizer();
 
     private static final String TAG = "OrientationListener";
 
+    // RotationmatrixR
     float[] mR = new float[16];
+    // RotationmatrixI
     float[] mI = new float[16];
+    // accelerometer sensor data
     float[] mGravity = new float[3];
+    // magnetic field sensor data
     float[] mGeomagnetic = new float[3];
+    // orientation values
     float[] orientation = new float[3];
 
     public void onCreate() {
-        Log.i(TAG, "Service was startet");
-
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -61,8 +62,7 @@ public class OrientationListener extends Service implements SensorEventListener 
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Service startet");
-
+        Log.i(TAG, "Service started");
         return START_STICKY;
     }
 
@@ -95,15 +95,10 @@ public class OrientationListener extends Service implements SensorEventListener 
 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);
-                // save data in model
-
-                setDeviceOrientation(new DeviceOrientation(orientation[0],
-                        orientation[1], orientation[2],
-                        System.currentTimeMillis()));
-               
-                 optimizer.putPos(new DeviceOrientation(orientation[0],
-                         orientation[1], orientation[2],
-                         System.currentTimeMillis()));
+                // saving the new model with the orientation in the RingBuffer
+                optimizer.putPos(new DeviceOrientation(orientation[0],
+                        orientation[1], orientation[2], System
+                                .currentTimeMillis()));
             }
         }
     }
@@ -139,13 +134,4 @@ public class OrientationListener extends Service implements SensorEventListener 
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-    public DeviceOrientation getDevicePosition() {
-        return deviceOrientation;
-    }
-
-    public void setDeviceOrientation(DeviceOrientation deviceOrientation) {
-        this.deviceOrientation = deviceOrientation;
-    }
-
 }
