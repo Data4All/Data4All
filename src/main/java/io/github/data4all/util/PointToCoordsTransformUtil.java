@@ -11,8 +11,9 @@ package io.github.data4all.util;
  */
 
 
-import io.github.data4all.logger.*;
-import java.lang.Math;
+import io.github.data4all.logger.Log;
+import io.github.data4all.model.DeviceOrientation;
+
 import java.util.ArrayList;
 
 
@@ -36,20 +37,35 @@ public class PointToCoordsTransformUtil {
 		return calculatedPoints;
 	}
 	
+	public ArrayList<float[]> calculate(ArrayList<float[]> pointlist, DeviceOrientation deviceOrientation){
+		float[] orientation = new float[3];
+		orientation[0] = deviceOrientation.getAzimuth();
+		orientation[1] = deviceOrientation.getPitch();
+		orientation[2] = deviceOrientation.getRoll();
+		return calculate(pointlist, orientation);
+	}
+		
+	public float[] calculate2dPoint(DeviceOrientation deviceOrientation){
+		float[] orientation = new float[3];
+		orientation[0] = deviceOrientation.getAzimuth();
+		orientation[1] = deviceOrientation.getPitch();
+		orientation[2] = deviceOrientation.getRoll();
+		return calculate2dPoint(orientation);
+	}
 
 	/**
 	 * @param orientation
 	 * @return coords
 	 */
-	public float[] calculate2dPoint (float[] o){
-		float[] vector = calculateVectorfromOrientation(o);
+	public float[] calculate2dPoint (float[] orientation){
+		float[] vector = calculateVectorfromOrientation(orientation);
 		
 		if(vector[2] <= 0){
 			vector[2]=-1;
 			Log.d(TAG,"Camera is looking to the sky.");
 		}		
 
-		float[] coords = null;
+		float[] coords = new float[2];
 		float z = height / vector[2];
 		coords[0] = vector[0] * z;
 		coords[1] = vector[1] * z;		
