@@ -17,24 +17,11 @@ import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
     
-    private final IBinder gpsBinder = new GPSBinder();
-    
     Optimizer optimizer = new Optimizer();
     
     private static final String TAG = "GPSservice";
 
-   
-    /**
-     * Is GPS enabled ?
-     */
-    private boolean isGpsEnabled = false;
-
-    /**
-     * Last known location
-     */
-    private Location lastLocation;
-
-    /**
+     /**
      * LocationManager
      */
     private LocationManager lmgr;
@@ -82,8 +69,7 @@ public class GPSservice extends Service implements LocationListener {
 
     public void onLocationChanged(Location loc) {
         // We're receiving location, so GPS is enabled
-        isGpsEnabled = true;
-        
+         
         optimizer.putLoc(loc);
 
     }
@@ -94,11 +80,10 @@ public class GPSservice extends Service implements LocationListener {
     }
 
     public void onProviderEnabled(String provider) {
-        isGpsEnabled = true;
     }
 
     public void onProviderDisabled(String provider) {
-        isGpsEnabled = false;
+
         Toast.makeText(getBaseContext(),
                 "Gps turned off, GPS tracking not possible ", Toast.LENGTH_LONG)
                 .show();
@@ -107,12 +92,7 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public IBinder onBind(Intent arg0) {
         // TODO Auto-generated method stub
-        return gpsBinder;
+        return null;
     }
     
-    public class GPSBinder extends Binder {
-       public GPSservice getService() {
-            return GPSservice.this;
-        }
-    }
 }
