@@ -4,6 +4,14 @@
 package io.github.data4all.model;
 
 
+import java.util.List;
+
+import io.github.data4all.model.data.BoundingBox;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.Relation;
+import io.github.data4all.model.data.RelationMember;
+import io.github.data4all.model.data.User;
+import io.github.data4all.model.data.Way;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -147,5 +155,335 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         // Create tables again
         onCreate(db);
     }
-
+    
+  //-------------------------------------------------------------------------
+  // BoundingBox CRUD
+    
+    public void createBoundingBox(BoundingBox boundingBox){
+    	SQLiteDatabase db = getWritableDatabase();
+    	
+    	//TODO:
+    	
+    	db.close();
+    }
+    public BoundingBox getBoundingBox (int value){ //evtl. für BoundingBox noch ne id hinzufügen
+    	SQLiteDatabase db = getReadableDatabase();
+    	
+    	//TODO:
+    	
+    	db.close();
+    	return null;
+    }
+    
+    public void deleteBoundingBox(BoundingBox boundingBox){
+    	SQLiteDatabase db = getWritableDatabase();
+    	
+    	//TODO:
+    	
+    	db.close();
+    }
+    
+    public int getBoundingBoxCount(){
+    	SQLiteDatabase db = getReadableDatabase();
+    	
+    	//TODO:
+    	
+    	db.close();
+    	return 0;
+    }
+    
+    public int updateBoundingBox(BoundingBox boundingBox){
+    	SQLiteDatabase db = getWritableDatabase();
+    	
+    	//TODO:
+    	
+    	db.close();
+    	return 0;
+    }
+    
+    public List<BoundingBox> getAllBoundingBox(){
+    	SQLiteDatabase db = getReadableDatabase();
+    	
+    	//TODO:
+    	
+    	db.close();
+    	return null;
+    }
+    
+    //-------------------------------------------------------------------------
+    // USER CRUD
+      
+      public void createUser(User user){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      public User getUser (String Username){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      public void deleteUser(User user){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      
+      public int getUserCount(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public int updateUser(User user){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public List<User> getAllUser(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      //-------------------------------------------------------------------------
+    // NODE CRUD
+      
+      public void createNode(Node node){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      public Node getNode (int id){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      public void deleteNode(Node node){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      
+      public int getNodeCount(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public int updateNode(Node node){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public List<Node> getAllNode(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      //-------------------------------------------------------------------------
+    // WAY CRUD
+      
+      public void createWay(Way way){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      public Way getWay (int id){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      public void deleteWay(Way way){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      
+      public int getWayCount(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public int updateWay(Way way){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public List<Way> getAllWay(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      //-------------------------------------------------------------------------
+    // RELATION CRUD
+      
+      public void createRelation(Relation relation){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      public Relation getRelation (int id){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      public void deleteRelation(Relation relation){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      
+      public int getRelationCount(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public int updateRelation(Relation relation){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public List<Relation> getAllRelation(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      //-------------------------------------------------------------------------
+      
+    // RELATIONMEMBER CRUD
+      
+      public void createRelationMember(RelationMember relationMember){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      public Relation getRelationMember (int ref){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      public void deleteRelationMember(RelationMember relationMember){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      }
+      
+      public int getRelationMemberCount(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public int updateRelationMember(RelationMember relationMember){
+      	SQLiteDatabase db = getWritableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return 0;
+      }
+      
+      public List<Relation> getAllRelationMember(){
+      	SQLiteDatabase db = getReadableDatabase();
+      	
+      	//TODO:
+      	
+      	db.close();
+      	return null;
+      }
+      
+      //-------------------------------------------------------------------------
 }
+
+
+
+
