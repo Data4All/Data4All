@@ -4,6 +4,7 @@
 package io.github.data4all.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.data4all.model.data.BoundingBox;
@@ -12,12 +13,14 @@ import io.github.data4all.model.data.Relation;
 import io.github.data4all.model.data.RelationMember;
 import io.github.data4all.model.data.User;
 import io.github.data4all.model.data.Way;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * @author Richard Rohde
+ * @author Richard Rohde, Kristin Dahnken
  *
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
@@ -51,6 +54,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String KEY_MINLON = "minlon";
     private static final String KEY_MAXLAT = "maxlat";
     private static final String KEY_MAXLON = "maxlon";
+    private static final String KEY_ID = "id";
     
     // Node Column Names    
     private static final String KEY_LAT = "lat";
@@ -95,7 +99,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_OSMVERSION + " INTEGER" 
         		+")";
     	String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
-                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
+                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_OSMVERSION + " INTEGER" + KEY_LAT + " REAL,"
                 + KEY_LON + " REAL" +")";
         String CREATE_WAYS_TABLE = "CREATE TABLE " + TABLE_WAY + " ("
                 + KEY_OSMID + " INTEGER NOT NULL," 
@@ -162,23 +166,40 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void createBoundingBox(BoundingBox boundingBox){
     	SQLiteDatabase db = getWritableDatabase();
     	
-    	//TODO:
+    	ContentValues values = new ContentValues();
     	
+    	values.put(KEY_MINLAT, boundingBox.getMinlat());
+    	values.put(KEY_MINLON, boundingBox.getMinlon());
+    	values.put(KEY_MAXLAT, boundingBox.getMaxlat());
+    	values.put(KEY_MAXLON, boundingBox.getMaxlon());
+    	
+    	db.insert(TABLE_BOUNDINGBOX, null, values);
     	db.close();
     }
-    public BoundingBox getBoundingBox (int value){ //evtl. für BoundingBox noch ne id hinzufügen
+    public BoundingBox getBoundingBox (int id){ //evtl. für BoundingBox noch ne id hinzufügen
     	SQLiteDatabase db = getReadableDatabase();
     	
-    	//TODO:
+    	//TODO: use ID??
+    	Cursor cursor = db.query(TABLE_BOUNDINGBOX, new String[]{KEY_MINLAT, KEY_MINLON, KEY_MAXLAT, KEY_MAXLON}, 
+    			KEY_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
     	
+    	if(cursor != null)
+    		cursor.moveToFirst();
+    	
+    	BoundingBox boundingBox = new BoundingBox(Double.parseDouble(cursor.getString(0)), 
+    			Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), 
+    			Double.parseDouble(cursor.getString(3)));
+    	
+    	cursor.close();
     	db.close();
-    	return null;
+    	return boundingBox;
     }
     
     public void deleteBoundingBox(BoundingBox boundingBox){
     	SQLiteDatabase db = getWritableDatabase();
     	
-    	//TODO:
+    	
+//    	db.delete(TABLE_BOUNDINGBOX, KEY_ID + "=?", new String[]{String.valueOf(boundingBox.getID())});
     	
     	db.close();
     }
@@ -186,28 +207,46 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public int getBoundingBoxCount(){
     	SQLiteDatabase db = getReadableDatabase();
     	
-    	//TODO:
-    	
+    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
+    	cursor.close();
     	db.close();
-    	return 0;
+    	
+    	return cursor.getCount();
     }
     
     public int updateBoundingBox(BoundingBox boundingBox){
     	SQLiteDatabase db = getWritableDatabase();
     	
-    	//TODO:
+    	ContentValues values = new ContentValues();
     	
-    	db.close();
-    	return 0;
+    	values.put(KEY_MINLAT, boundingBox.getMinlat());
+    	values.put(KEY_MINLON, boundingBox.getMinlon());
+    	values.put(KEY_MAXLAT, boundingBox.getMaxlat());
+    	values.put(KEY_MAXLON, boundingBox.getMaxlon());
+    	
+//    	db.close();
+//    	return db.update(TABLE_BOUNDINGBOX, values, KEY_ID + "=?", new String[]{String.valueOf(boundingBox.getID())});
+    return 0;
     }
     
     public List<BoundingBox> getAllBoundingBox(){
-    	SQLiteDatabase db = getReadableDatabase();
+    	List<BoundingBox> boundingBoxes = new ArrayList<BoundingBox>();
     	
-    	//TODO:
+    	SQLiteDatabase db = getReadableDatabase();
+    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
+    	
+    	if(cursor.moveToFirst()){
+    		do{
+    			BoundingBox boundingBox = new BoundingBox(Double.parseDouble(cursor.getString(0)), 
+    					Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), 
+    					Double.parseDouble(cursor.getString(3)));
+    			boundingBoxes.add(boundingBox);
+    		}
+    		while (cursor.moveToNext());
+    	}
     	
     	db.close();
-    	return null;
+    	return boundingBoxes;
     }
     
     //-------------------------------------------------------------------------
@@ -216,269 +255,417 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       public void createUser(User user){
       	SQLiteDatabase db = getWritableDatabase();
       	
-      	//TODO:
+      	ContentValues values = new ContentValues();
+    	
+    	values.put(KEY_USERNAME, user.getUsername());
+    	values.put(KEY_TOKEN, user.getLoginToken());
+    	values.put(KEY_LOGINSTATUS, user.isLoggedIn());
+    	
+    	db.insert(TABLE_USER, null, values);
       	
       	db.close();
       }
-      public User getUser (String Username){
+      public User getUser (String username){
       	SQLiteDatabase db = getReadableDatabase();
+    	
+      	Cursor cursor = db.query(TABLE_USER, new String[]{KEY_USERNAME, KEY_TOKEN, KEY_LOGINSTATUS}, 
+      			KEY_USERNAME + "=?", new String[]{username}, null, null, null, null);
       	
-      	//TODO:
+      	if(cursor != null)
+      		cursor.moveToFirst();
       	
+      	User user  = new User(cursor.getString(0), cursor.getString(1), Boolean.parseBoolean(cursor.getString(2)));
+      	
+      	cursor.close();
       	db.close();
-      	return null;
+      	return user;
       }
       
       public void deleteUser(User user){
-      	SQLiteDatabase db = getWritableDatabase();
+    	  SQLiteDatabase db = getWritableDatabase();
       	
-      	//TODO:
+      	
+      	db.delete(TABLE_USER, KEY_USERNAME + "=?", new String[]{user.getUsername()});
       	
       	db.close();
       }
       
       public int getUserCount(){
-      	SQLiteDatabase db = getReadableDatabase();
+    	SQLiteDatabase db = getReadableDatabase();
       	
-      	//TODO:
-      	
+      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_USER, null);
+      	cursor.close();
       	db.close();
-      	return 0;
+      	
+      	return cursor.getCount();
       }
       
       public int updateUser(User user){
       	SQLiteDatabase db = getWritableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return 0;
+    	
+    	ContentValues values = new ContentValues();
+    	
+    	values.put(KEY_USERNAME, user.getUsername());
+    	values.put(KEY_TOKEN, user.getLoginToken());
+    	values.put(KEY_LOGINSTATUS, user.isLoggedIn());
+   	
+//    	db.close();
+    	return db.update(TABLE_USER, values, KEY_USERNAME + "=?", new String[]{user.getUsername()});
       }
       
       public List<User> getAllUser(){
-      	SQLiteDatabase db = getReadableDatabase();
+    	List<User> users = new ArrayList<User>();
       	
-      	//TODO:
+      	SQLiteDatabase db = getReadableDatabase();
+      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_USER, null);
+      	
+      	if(cursor.moveToFirst()){
+      		do{
+      			User user = new User(cursor.getString(0), cursor.getString(1), Boolean.parseBoolean(cursor.getString(2)));
+      			users.add(user);
+      		}
+      		while (cursor.moveToNext());
+      	}
       	
       	db.close();
-      	return null;
+      	return users;
       }
       
       //-------------------------------------------------------------------------
     // NODE CRUD
       
       public void createNode(Node node){
-      	SQLiteDatabase db = getWritableDatabase();
+    	SQLiteDatabase db = getWritableDatabase();
+        	
+        ContentValues values = new ContentValues();
       	
-      	//TODO:
+      	values.put(KEY_OSMID, node.getOsmId());
+      	values.put(KEY_OSMVERSION, node.getOsmVersion());
+      	values.put(KEY_LAT, node.getLat());
+      	values.put(KEY_LON, node.getLon());
       	
-      	db.close();
-      }
-      public Node getNode (int id){
-      	SQLiteDatabase db = getReadableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return null;
+      	db.insert(TABLE_NODE, null, values);
+        	
+        db.close();
       }
       
+      
+      public Node getNode (int id){
+    	  SQLiteDatabase db = getReadableDatabase();
+      	
+        	Cursor cursor = db.query(TABLE_NODE, new String[]{KEY_OSMID, KEY_OSMVERSION, KEY_LAT, KEY_LON}, 
+        			KEY_OSMID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+        	
+        	if(cursor != null)
+        		cursor.moveToFirst();
+        	
+        	Node node  = new Node(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)), 
+        			Double.parseDouble(cursor.getString(2)), Double.parseDouble(cursor.getString(3)));
+        	
+        	cursor.close();
+        	db.close();
+        	return node;
+      }
+      
+      
       public void deleteNode(Node node){
-      	SQLiteDatabase db = getWritableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
+    	  SQLiteDatabase db = getWritableDatabase();
+        	
+        	
+        	db.delete(TABLE_NODE, KEY_OSMID + "=?", new String[]{String.valueOf(node.getOsmId())});
+        	
+        	db.close();
       }
       
       public int getNodeCount(){
-      	SQLiteDatabase db = getReadableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return 0;
+    	  SQLiteDatabase db = getReadableDatabase();
+        	
+        	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_NODE, null);
+        	cursor.close();
+        	db.close();
+        	
+        	return cursor.getCount();
       }
       
       public int updateNode(Node node){
-      	SQLiteDatabase db = getWritableDatabase();
+    	SQLiteDatabase db = getWritableDatabase();
       	
-      	//TODO:
+      	ContentValues values = new ContentValues();
       	
-      	db.close();
-      	return 0;
+      	values.put(KEY_OSMID, node.getOsmId());
+      	values.put(KEY_OSMVERSION, node.getOsmVersion());
+      	values.put(KEY_LAT, node.getLat());
+      	values.put(KEY_LON, node.getLon());
+     	
+//      	db.close();
+      	return db.update(TABLE_NODE, values, KEY_OSMID + "=?", new String[]{String.valueOf(node.getOsmId())});
       }
       
       public List<Node> getAllNode(){
-      	SQLiteDatabase db = getReadableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return null;
+    	  List<Node> nodes = new ArrayList<Node>();
+        	
+        	SQLiteDatabase db = getReadableDatabase();
+        	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_NODE, null);
+        	
+        	if(cursor.moveToFirst()){
+        		do{
+        			Node node = new Node(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)), 
+                			Double.parseDouble(cursor.getString(2)), Double.parseDouble(cursor.getString(3)));
+        			nodes.add(node);
+        		}
+        		while (cursor.moveToNext());
+        	}
+        	
+        	db.close();
+        	return nodes;
       }
       
       //-------------------------------------------------------------------------
     // WAY CRUD
       
-      public void createWay(Way way){
-      	SQLiteDatabase db = getWritableDatabase();
+      public void createWay(Way way){ // TODO: check
+    	SQLiteDatabase db = getWritableDatabase();
       	
-      	//TODO:
-      	
-      	db.close();
+        ContentValues values = new ContentValues();
+        	
+        values.put(KEY_OSMID, way.getOsmId());
+//        values.put(KEY_NODEID, value);
+        	
+        db.insert(TABLE_WAY, null, values);
+          	
+        db.close();
       }
-      public Way getWay (int id){
-      	SQLiteDatabase db = getReadableDatabase();
+      
+      
+      public Way getWay (int id){ // TODO: check
+    	SQLiteDatabase db = getReadableDatabase();
+        	
+      	Cursor cursor = db.query(TABLE_WAY, new String[]{KEY_OSMID, KEY_NODEID}, 
+      			KEY_OSMID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
       	
-      	//TODO:
+      	if(cursor != null)
+      		cursor.moveToFirst();
       	
+      	Way way  = new Way(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)));
+      	
+      	cursor.close();
       	db.close();
-      	return null;
+      	return way;
       }
       
       public void deleteWay(Way way){
-      	SQLiteDatabase db = getWritableDatabase();
+    	SQLiteDatabase db = getWritableDatabase();   	
       	
-      	//TODO:
+      	db.delete(TABLE_WAY, KEY_OSMID + "=?", new String[]{String.valueOf(way.getOsmId())});
       	
       	db.close();
       }
       
       public int getWayCount(){
-      	SQLiteDatabase db = getReadableDatabase();
+    	SQLiteDatabase db = getReadableDatabase();
       	
-      	//TODO:
-      	
+      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_WAY, null);
+      	cursor.close();
       	db.close();
-      	return 0;
+      	
+      	return cursor.getCount();
       }
       
-      public int updateWay(Way way){
-      	SQLiteDatabase db = getWritableDatabase();
+      public int updateWay(Way way){ // TODO: check
+    	  SQLiteDatabase db = getWritableDatabase();
       	
-      	//TODO:
-      	
-      	db.close();
-      	return 0;
+          ContentValues values = new ContentValues();
+          	
+          values.put(KEY_OSMID, way.getOsmId());
+//        values.put(KEY_NODEID, value);
+         	
+//        db.close();
+          return db.update(TABLE_WAY, values, KEY_OSMID + "=?", new String[]{String.valueOf(way.getOsmId())});
       }
       
-      public List<Way> getAllWay(){
-      	SQLiteDatabase db = getReadableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return null;
+      public List<Way> getAllWay(){ // TODO: check
+    	List<Way> ways = new ArrayList<Way>();
+        	
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_WAY, null);
+        	
+        	if(cursor.moveToFirst()){
+        		do{
+        			Way way = new Way(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)));
+        			ways.add(way);
+        		}
+        		while (cursor.moveToNext());
+        	}
+        	
+        	db.close();
+        	return ways;
       }
       
       //-------------------------------------------------------------------------
     // RELATION CRUD
       
-      public void createRelation(Relation relation){
-      	SQLiteDatabase db = getWritableDatabase();
+      public void createRelation(Relation relation){ // TODO: check
+    	SQLiteDatabase db = getWritableDatabase();
       	
-      	//TODO:
-      	
-      	db.close();
+        ContentValues values = new ContentValues();
+        	
+        values.put(KEY_OSMID, relation.getOsmId());
+//        values.put(KEY_RELATIONMEMBER, value);
+        	
+        db.insert(TABLE_RELATION, null, values);
+          	
+        db.close();
       }
-      public Relation getRelation (int id){
-      	SQLiteDatabase db = getReadableDatabase();
+      public Relation getRelation (int id){ // TODO: check
+    	SQLiteDatabase db = getReadableDatabase();
+        	
+      	Cursor cursor = db.query(TABLE_RELATION, new String[]{KEY_OSMID, KEY_RELATIONMEMBER}, 
+      			KEY_OSMID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
       	
-      	//TODO:
+      	if(cursor != null)
+      		cursor.moveToFirst();
       	
+      	Relation relation  = new Relation(Long.parseLong(cursor.getString(0)), id);
+      	
+      	cursor.close();
       	db.close();
-      	return null;
+      	return relation;
       }
       
       public void deleteRelation(Relation relation){
-      	SQLiteDatabase db = getWritableDatabase();
-      	
-      	//TODO:
+    	SQLiteDatabase db = getWritableDatabase();
+      	      	
+      	db.delete(TABLE_RELATION, KEY_OSMID + "=?", new String[]{String.valueOf(relation.getOsmId())});
       	
       	db.close();
       }
       
       public int getRelationCount(){
-      	SQLiteDatabase db = getReadableDatabase();
+    	SQLiteDatabase db = getReadableDatabase();
       	
-      	//TODO:
-      	
+      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATION, null);
+      	cursor.close();
       	db.close();
-      	return 0;
+      	
+      	return cursor.getCount();
       }
       
-      public int updateRelation(Relation relation){
-      	SQLiteDatabase db = getWritableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return 0;
+      public int updateRelation(Relation relation){ // TODO: check
+    	SQLiteDatabase db = getWritableDatabase();
+        	
+        ContentValues values = new ContentValues();
+        	
+        values.put(KEY_OSMID, relation.getOsmId());
+//        values.put(KEY_RELATIONMEMBER, value);
+       	
+//        	db.close();
+        return db.update(TABLE_RELATION, values, KEY_OSMID + "=?", new String[]{String.valueOf(relation.getOsmId())});
       }
       
-      public List<Relation> getAllRelation(){
-      	SQLiteDatabase db = getReadableDatabase();
+      
+      public List<Relation> getAllRelation(){ // TODO: check
+    	List<Relation> relations = new ArrayList<Relation>();
       	
-      	//TODO:
+      	SQLiteDatabase db = getReadableDatabase();
+      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATION, null);
+      	
+      	if(cursor.moveToFirst()){
+      		do{
+      			Relation relation = new Relation(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)));
+      			relations.add(relation);
+      		}
+      		while (cursor.moveToNext());
+      	}
       	
       	db.close();
-      	return null;
+      	return relations;
       }
       
       //-------------------------------------------------------------------------
       
     // RELATIONMEMBER CRUD
       
-      public void createRelationMember(RelationMember relationMember){
-      	SQLiteDatabase db = getWritableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
+      public void createRelationMember(RelationMember relationMember){ // TODO: check
+    	  SQLiteDatabase db = getWritableDatabase();
+        	
+          ContentValues values = new ContentValues();
+          	
+          values.put(KEY_REF, relationMember.getRef());
+          values.put(KEY_TYPE, relationMember.getType());
+          values.put(KEY_ROLE, relationMember.getRole());
+          	
+          db.insert(TABLE_RELATIONMEMBER, null, values);
+            	
+          db.close();
       }
-      public Relation getRelationMember (int ref){
-      	SQLiteDatabase db = getReadableDatabase();
+      
+      
+      public RelationMember getRelationMember (int ref){ // TODO: check
+    	SQLiteDatabase db = getReadableDatabase();
       	
-      	//TODO:
-      	
-      	db.close();
-      	return null;
+        Cursor cursor = db.query(TABLE_RELATIONMEMBER, new String[]{KEY_REF, KEY_TYPE, KEY_ROLE}, 
+        			KEY_REF + "=?", new String[]{String.valueOf(ref)}, null, null, null, null);
+        	
+        if(cursor != null)
+         cursor.moveToFirst();
+        	
+        	RelationMember relationMember  = new RelationMember(cursor.getString(1), 
+        			Long.parseLong(cursor.getString(0)), cursor.getString(2));
+        	
+        	cursor.close();
+        	db.close();
+        return relationMember;
       }
       
       public void deleteRelationMember(RelationMember relationMember){
-      	SQLiteDatabase db = getWritableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
+    	SQLiteDatabase db = getWritableDatabase();
+	      	
+        db.delete(TABLE_RELATIONMEMBER, KEY_REF + "=?", new String[]{String.valueOf(relationMember.getRef())});
+        	
+        db.close();
       }
       
       public int getRelationMemberCount(){
-      	SQLiteDatabase db = getReadableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return 0;
+    	SQLiteDatabase db = getReadableDatabase();
+        	
+        Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATIONMEMBER, null);
+        cursor.close();
+        db.close();
+        	
+        return cursor.getCount();
       }
       
-      public int updateRelationMember(RelationMember relationMember){
-      	SQLiteDatabase db = getWritableDatabase();
+      public int updateRelationMember(RelationMember relationMember){ // TODO: check
+    	  SQLiteDatabase db = getWritableDatabase();
       	
-      	//TODO:
-      	
-      	db.close();
-      	return 0;
+          ContentValues values = new ContentValues();
+          	
+          values.put(KEY_REF, relationMember.getRef());
+          values.put(KEY_TYPE, relationMember.getType());
+          values.put(KEY_ROLE, relationMember.getRole());
+         	
+//        db.close();
+          return db.update(TABLE_RELATIONMEMBER, values, KEY_REF + "=?", 
+        		  new String[]{String.valueOf(relationMember.getRef())});
       }
       
-      public List<Relation> getAllRelationMember(){
-      	SQLiteDatabase db = getReadableDatabase();
-      	
-      	//TODO:
-      	
-      	db.close();
-      	return null;
+      public List<RelationMember> getAllRelationMember(){
+    	List<RelationMember> relationMembers = new ArrayList<RelationMember>();
+        	
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATIONMEMBER, null);
+        	
+        if(cursor.moveToFirst()){
+        	do{
+        		RelationMember relationMember = new RelationMember(cursor.getString(1), 
+            			Long.parseLong(cursor.getString(0)), cursor.getString(2));
+        		relationMembers.add(relationMember);
+        	}
+        	while (cursor.moveToNext());
+        }
+        	
+        db.close();
+        return relationMembers;
       }
       
       //-------------------------------------------------------------------------
