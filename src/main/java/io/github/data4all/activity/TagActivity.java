@@ -63,7 +63,7 @@ public class TagActivity extends Activity {
         });
         Button startTagging = (Button) findViewById(R.id.startTagging);
         startTagging.setOnClickListener(new OnClickListener() {
-            @Override
+            
             public void onClick(View v) {
                 final Dialog dialog = new Dialog(TagActivity.this);
                 dialog.setContentView(R.layout.dialog_matches);
@@ -75,7 +75,7 @@ public class TagActivity extends Activity {
                         context, android.R.layout.simple_list_item_1, keys);
                 keyList.setAdapter(adapter);
                 keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
+                    
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
                         key = keys.get(position);
@@ -85,7 +85,7 @@ public class TagActivity extends Activity {
                                 keys);
                         keyList.setAdapter(adapter);
                         keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
+                            
                             public void onItemClick(AdapterView<?> parent,
                                     View view, int position, long id) {
 
