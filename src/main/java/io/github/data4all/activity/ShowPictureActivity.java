@@ -2,10 +2,6 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
@@ -51,25 +47,25 @@ public class ShowPictureActivity extends Activity {
 
     public void onClickPoint(View view) {
         touchView.clearMotions();
-        touchView.setInterpreter(new PointMotionInterpreter());
+        touchView.setInterpretationType(TouchView.InterpretationType.POINT);
         touchView.invalidate();
     }
 
     public void onClickPath(View view) {
         touchView.clearMotions();
-        touchView.setInterpreter(new WayMotionInterpreter());
+        touchView.setInterpretationType(TouchView.InterpretationType.WAY);
         touchView.invalidate();
     }
 
     public void onClickArea(View view) {
         touchView.clearMotions();
-        touchView.setInterpreter(new AreaMotionInterpreter());
+        touchView.setInterpretationType(TouchView.InterpretationType.AREA);
         touchView.invalidate();
     }
 
     public void onClickBuilding(View view) {
         touchView.clearMotions();
-        touchView.setInterpreter(new BuildingMotionInterpreter());
+        touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
         touchView.invalidate();
     }
 
