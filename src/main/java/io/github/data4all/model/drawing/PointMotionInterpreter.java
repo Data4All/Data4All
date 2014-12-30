@@ -42,7 +42,7 @@ public class PointMotionInterpreter implements MotionInterpreter {
                     .get(drawingMotions.size() - 1);
             Point point;
             if (lastMotion.getPathSize() != 0 && lastMotion.isPoint()) {
-                point = average(lastMotion);
+                point = lastMotion.average();
             } else {
                 point = lastMotion.getEnd();
             }
@@ -50,27 +50,6 @@ public class PointMotionInterpreter implements MotionInterpreter {
                 canvas.drawCircle(point.getX(), point.getY(), POINT_RADIUS,
                         pointPaint);
             }
-        }
-    }
-
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
-     */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
-        } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
         }
     }
 

@@ -53,7 +53,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         for (DrawingMotion motion : drawingMotions) {
             if (motion.getPathSize() != 0 && motion.isPoint()) {
                 // for dots calculate the average of the given points
-                areaPoints.add(average(motion));
+                areaPoints.add(motion.average());
             } else {
                 // for a path use the last point
                 areaPoints.add(motion.getEnd());
@@ -99,27 +99,6 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
 
         Point d = new Point(x, y);
         areaPoints.add(d);
-    }
-
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
-     */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
-        } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
-        }
     }
 
     /* (non-Javadoc)

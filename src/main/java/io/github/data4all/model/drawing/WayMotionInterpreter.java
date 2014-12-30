@@ -67,7 +67,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
         for (DrawingMotion motion : drawingMotions) {
             if (motion.getPathSize() != 0 && motion.isPoint()) {
                 // for dots calculate the average of the given points
-                areaPoints.add(average(motion));
+                areaPoints.add(motion.average());
             } else {
                 areaPoints.addAll(motion.getPoints());
             }
@@ -118,7 +118,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
                 Point b = polygon.get(i + 1);
                 Point c = polygon.get((i + 2) % polygon.size());
 
-                double alpha = getBeta(a, b, c);
+                double alpha = Point.getBeta(a, b, c);
                 Log.d(TAG, "point " + (i + 1) + ": " + Math.toDegrees(alpha)
                         + "degree");
                 double variation = Math.abs(Math.toDegrees(alpha) - 180);
@@ -181,48 +181,6 @@ public class WayMotionInterpreter implements MotionInterpreter {
             return newPolygon;
         } else {
             return polygon;
-        }
-    }
-
-    /**
-     * Calculates the angle in Point b for the two lines (a,b) and (b,c)
-     * 
-     * @param a
-     *            The first Point
-     * @param b
-     *            The second Point
-     * @param c
-     *            The third Point
-     * @return The angle in Point b
-     */
-    private static double getBeta(Point a, Point b, Point c) {
-        // Calculate the two vectors
-        Point x = new Point(a.getX() - b.getX(), a.getY() - b.getY());
-        Point y = new Point(c.getX() - b.getX(), c.getY() - b.getY());
-
-        return Math.acos((x.getX() * y.getX() + x.getY() * y.getY())
-                / (Math.hypot(x.getX(), x.getY()) * Math.hypot(y.getX(),
-                        y.getY())));
-    }
-
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
-     */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
-        } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
         }
     }
 
