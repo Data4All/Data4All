@@ -1,6 +1,9 @@
 package io.github.data4all.model.drawing;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
@@ -49,7 +52,7 @@ public class DrawingMotionTest {
     public void addPoint_addingPoints_sizeIncreasesCorrect() {
         for (int i = 1; i < 20; i++) {
             drawingMotion.addPoint(0, 0);
-            assertEquals(i, drawingMotion.getPathSize());
+            assertThat(drawingMotion.getPathSize(), is(i));
         }
     }
 
@@ -57,7 +60,7 @@ public class DrawingMotionTest {
 
     @Test
     public void isPath_noEntries_resultIsFalse() {
-        assertEquals(false, drawingMotion.isPath());
+        assertThat(drawingMotion.isPath(), is(false));
     }
 
     @Test
@@ -68,7 +71,7 @@ public class DrawingMotionTest {
         drawingMotion.addPoint(0, DrawingMotion.POINT_TOLERANCE);
         drawingMotion.addPoint(0, -DrawingMotion.POINT_TOLERANCE);
 
-        assertEquals(false, drawingMotion.isPath());
+        assertThat(drawingMotion.isPath(), is(false));
     }
 
     @Test
@@ -79,14 +82,14 @@ public class DrawingMotionTest {
         drawingMotion.addPoint(0, Math.nextUp(DrawingMotion.POINT_TOLERANCE));
         drawingMotion.addPoint(0, -Math.nextUp(DrawingMotion.POINT_TOLERANCE));
 
-        assertEquals(true, drawingMotion.isPath());
+        assertThat(drawingMotion.isPath(), is(true));
     }
 
     // Tests for isPoint
 
     @Test
     public void isPoint_noEntries_resultIsFalse() {
-        assertEquals(false, drawingMotion.isPoint());
+        assertThat(drawingMotion.isPoint(), is(false));
     }
 
     @Test
@@ -97,7 +100,7 @@ public class DrawingMotionTest {
         drawingMotion.addPoint(0, DrawingMotion.POINT_TOLERANCE);
         drawingMotion.addPoint(0, -DrawingMotion.POINT_TOLERANCE);
 
-        assertEquals(true, drawingMotion.isPoint());
+        assertThat(drawingMotion.isPoint(), is(true));
     }
 
     @Test
@@ -108,65 +111,65 @@ public class DrawingMotionTest {
         drawingMotion.addPoint(0, Math.nextUp(DrawingMotion.POINT_TOLERANCE));
         drawingMotion.addPoint(0, -Math.nextUp(DrawingMotion.POINT_TOLERANCE));
 
-        assertEquals(false, drawingMotion.isPoint());
+        assertThat(drawingMotion.isPoint(), is(false));
     }
 
     // Tests for getStart
 
     @Test
     public void getStart_noEntries_resultIsNull() {
-        assertEquals(null, drawingMotion.getStart());
+        assertThat(drawingMotion.getStart(), is((Point) null));
     }
 
     @Test
     public void getStart_someEntries_resultIsCorrect() {
         drawingMotion.addPoint(-1, -1);
         addPoints(10);
-        assertEquals(true, drawingMotion.getStart().equalsTo(-1, -1));
+        assertThat(drawingMotion.getStart().equalsTo(-1, -1), is(true));
     }
 
     // Tests for getEnd
 
     @Test
     public void getEnd_noEntries_resultIsNull() {
-        assertEquals(null, drawingMotion.getEnd());
+        assertThat(drawingMotion.getEnd(), is((Point) null));
     }
 
     @Test
     public void getEnd_someEntries_resultIsCorrect() {
         addPoints(10);
         drawingMotion.addPoint(-1, -1);
-        assertEquals(true, drawingMotion.getEnd().equalsTo(-1, -1));
+        assertThat(drawingMotion.getEnd().equalsTo(-1, -1), is(true));
     }
 
     @Test
     public void getStartGetEnd_oneEntries_samePoint() {
         drawingMotion.addPoint(-1, -1);
-        assertEquals(drawingMotion.getStart(), drawingMotion.getEnd());
+        assertThat(drawingMotion.getStart(), equalTo(drawingMotion.getEnd()));
     }
 
     // Tests for getPathSize
 
     @Test
     public void getPathSize_noEntries_sizeIsZero() {
-        assertEquals(0, drawingMotion.getPathSize());
+        assertThat(drawingMotion.getPathSize(), is(0));
     }
 
     @Test
     public void getPathSize_someEntries_sizeIsCorrect() {
         addPoints(10);
-        assertEquals(10, drawingMotion.getPathSize());
+        assertThat(drawingMotion.getPathSize(), is(10));
 
         // Add some more points ... just to be on the safe side ...
         addPoints(10);
-        assertEquals(20, drawingMotion.getPathSize());
+        assertThat(drawingMotion.getPathSize(), is(20));
     }
 
     // Tests for getPoints
 
     @Test
     public void getPoints_noEntries_resultIsEmpty() {
-        assertEquals(true, drawingMotion.getPoints().isEmpty());
+        assertThat(drawingMotion.getPoints().isEmpty(), is(true));
     }
 
     @Test
@@ -175,8 +178,8 @@ public class DrawingMotionTest {
         List<Point> points = drawingMotion.getPoints();
         for (int i = 0; i < 10; i++) {
             Point point = points.get(i);
-            assertEquals(2 * i, point.getX(), ASSERT_FLOAT_DELTA);
-            assertEquals(2 * i + 1, point.getY(), ASSERT_FLOAT_DELTA);
+            assertThat(point.getX(), is(2f * i));
+            assertThat(point.getY(), is(2f * i + 1));
         }
     }
 
@@ -204,8 +207,37 @@ public class DrawingMotionTest {
         addPoints(10);
         for (int i = 0; i < 10; i++) {
             Point point = drawingMotion.getPoint(i);
-            assertEquals(2 * i, point.getX(), ASSERT_FLOAT_DELTA);
-            assertEquals(2 * i + 1, point.getY(), ASSERT_FLOAT_DELTA);
+            assertThat(point.getX(), is(2f * i));
+            assertThat(point.getY(), is(2f * i + 1));
         }
+    }
+
+    // Tests for average()
+
+    @Test
+    public void average_noEntries_Null() {
+        assertThat(drawingMotion.average(), is((Point) null));
+    }
+
+    @Test
+    public void average_oneEntrie_averageIsFirstPoint() {
+        addPoints(1);
+        assertThat(drawingMotion.average(), equalTo(drawingMotion.getStart()));
+    }
+
+    @Test
+    public void average_twoEntries_exactAverage() {
+        addPoints(2);
+        Point average = drawingMotion.average();
+        assertThat(average.getX(), is(1f)); // 0,2
+        assertThat(average.getY(), is(2f)); // 1,3
+    }
+
+    @Test
+    public void average_manyEntries_exactAverage() {
+        addPoints(10);
+        Point average = drawingMotion.average();
+        assertThat(average.getX(), is(9f)); // 0,2,4,6,8,10,12,14,16,18
+        assertThat(average.getY(), is(10f)); // 1,3,5,7,9,11,13,15,17,19
     }
 }
