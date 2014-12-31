@@ -1,6 +1,7 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.OsmElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import android.graphics.Paint;
  * @author tbrose
  * @see MotionInterpreter
  */
-public class WayMotionInterpreter implements MotionInterpreter<Void> {
+public class WayMotionInterpreter implements MotionInterpreter {
     /**
      * The log-tag for this class
      */
@@ -66,7 +67,7 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
         for (DrawingMotion motion : drawingMotions) {
             if (motion.getPathSize() != 0 && motion.isPoint()) {
                 // for dots calculate the average of the given points
-                areaPoints.add(average(motion));
+                areaPoints.add(motion.average());
             } else {
                 areaPoints.addAll(motion.getPoints());
             }
@@ -117,7 +118,7 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
                 Point b = polygon.get(i + 1);
                 Point c = polygon.get((i + 2) % polygon.size());
 
-                double alpha = getBeta(a, b, c);
+                double alpha = Point.getBeta(a, b, c);
                 Log.d(TAG, "point " + (i + 1) + ": " + Math.toDegrees(alpha)
                         + "degree");
                 double variation = Math.abs(Math.toDegrees(alpha) - 180);
@@ -183,56 +184,32 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
         }
     }
 
-    /**
-     * Calculates the angle in Point b for the two lines (a,b) and (b,c)
-     * 
-     * @param a
-     *            The first Point
-     * @param b
-     *            The second Point
-     * @param c
-     *            The third Point
-     * @return The angle in Point b
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util.List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    private static double getBeta(Point a, Point b, Point c) {
-        // Calculate the two vectors
-        Point x = new Point(a.getX() - b.getX(), a.getY() - b.getY());
-        Point y = new Point(c.getX() - b.getX(), c.getY() - b.getY());
-
-        return Math.acos((x.getX() * y.getX() + x.getY() * y.getY())
-                / (Math.hypot(x.getX(), x.getY()) * Math.hypot(y.getX(),
-                        y.getY())));
-    }
-
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
-     */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
-        } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
-     */
-    public Void create(List<DrawingMotion> drawingMotions) {
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        // TODO Auto-generated method stub
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
+     */
+    @Override
+    public boolean isArea() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

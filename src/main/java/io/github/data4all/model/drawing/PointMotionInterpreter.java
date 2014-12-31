@@ -1,5 +1,7 @@
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.model.data.OsmElement;
+
 import java.util.List;
 
 import android.graphics.Canvas;
@@ -16,7 +18,7 @@ import android.graphics.Paint;
  * @author tbrose
  * @see MotionInterpreter
  */
-public class PointMotionInterpreter implements MotionInterpreter<Void> {
+public class PointMotionInterpreter implements MotionInterpreter {
     /**
      * The paint to draw the points with
      */
@@ -40,7 +42,7 @@ public class PointMotionInterpreter implements MotionInterpreter<Void> {
                     .get(drawingMotions.size() - 1);
             Point point;
             if (lastMotion.getPathSize() != 0 && lastMotion.isPoint()) {
-                point = average(lastMotion);
+                point = lastMotion.average();
             } else {
                 point = lastMotion.getEnd();
             }
@@ -51,35 +53,32 @@ public class PointMotionInterpreter implements MotionInterpreter<Void> {
         }
     }
 
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util.List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
-        } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
-        }
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
      */
-    public Void create(List<DrawingMotion> drawingMotions) {
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        // TODO Auto-generated method stub
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
+     */
+    @Override
+    public boolean isArea() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }
