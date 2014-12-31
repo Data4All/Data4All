@@ -15,6 +15,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.InputType;
@@ -70,6 +72,7 @@ public class TagActivity extends Activity {
             @Override
             public void onClick(View v) {
                 final Dialog dialog = new Dialog(TagActivity.this);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
                 dialog.setContentView(R.layout.dialog_matches);
                 dialog.setTitle("Select Tag");
                 final ListView keyList = (ListView) dialog
@@ -123,7 +126,7 @@ public class TagActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            new Dialog(TagActivity.this);
+        	new Dialog(TagActivity.this);
             ListView textList = (ListView) findViewById(R.id.listView1);
             List<String> matchesText = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -250,9 +253,10 @@ public class TagActivity extends Activity {
     
 
 	public void createDialog(String [] list, String title, final Boolean but, final Boolean first){
-    	final Dialog dialog = new Dialog(TagActivity.this);
+    	final Dialog dialog = new Dialog(this);
 		dialog.setContentView(R.layout.dialog_dynamic);
 		dialog.setTitle(title);
+		dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
 		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
 		final Button next = new Button(this);
 		final Button finish = new Button(this);
@@ -262,6 +266,7 @@ public class TagActivity extends Activity {
 		for (int i = 0; i < list.length; i++) {
 		final EditText text = new EditText(this);
 			text.setHint(list [i]);
+			text.setHintTextColor(Color.BLACK);
     		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     		text.setInputType(InputType.TYPE_CLASS_TEXT);
     		edit.add(text);
