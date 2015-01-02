@@ -30,8 +30,7 @@ public class PointToCoordsTransformUtil {
 		ArrayList<float[]> calculatedPoints = new ArrayList<float[]>();
 		float[] adjustedOrientation = null;
 		for(float[] point : pointlist){
-			adjustedOrientation = orientation;
-			
+			adjustedOrientation = orientation;			
 			calculatedPoints.add(calculate2dPoint(adjustedOrientation));			
 		}		
 		return calculatedPoints;
@@ -46,7 +45,6 @@ public class PointToCoordsTransformUtil {
 	}
 		
 	public float[] calculate2dPoint(DeviceOrientation deviceOrientation){
-	    Log.i(TAG, deviceOrientation.getAzimuth() + " " + deviceOrientation.getPitch() + " " + deviceOrientation.getRoll());
 		float[] orientation = new float[3];
 		orientation[0] = deviceOrientation.getAzimuth();
 		orientation[1] = deviceOrientation.getPitch();
@@ -56,7 +54,8 @@ public class PointToCoordsTransformUtil {
 
 	/**
 	 * @param orientation
-	 * @return coords
+	 * @return coords in mm in a System with (0,0) = Phoneposition; 
+	 * 			x = West/East Axis and y = Norh/South Axis
 	 */
 	public float[] calculate2dPoint (float[] orientation){
 		float[] vector = calculateVectorfromOrientation(orientation);
@@ -71,7 +70,7 @@ public class PointToCoordsTransformUtil {
 		coords[0] = vector[0] * z;
 		coords[1] = vector[1] * z;		
 		
-		Log.d(TAG,"Calculated X = " + vector[0] + " and Y = " + vector[1]);
+		Log.d(TAG,"Calculated X = " + coords[0] + " and Y = " + coords[1]);
 		
 		return coords;
 		
@@ -79,15 +78,15 @@ public class PointToCoordsTransformUtil {
 	
 	/**
 	 * @param orientation
-	 * @return
+	 * @return 
 	 */
 	private float[] calculateVectorfromOrientation(float[] orientation){
 		
 		Log.d(TAG,"Delivered Phoneorientation: azimuth = " 
 				+ orientation[0] +" ,pitch = " + orientation[1]
-				+ ", roll = " + orientation[2]);
+				+ ", roll = " + orientation[2]);		
 		
-		//calculate Z with Pitch
+		//calculate fix Z with Pitch
 		float z = (float) Math.cos(orientation[1]); 
 		
 		//calculate temp.Y with Pitch
@@ -96,15 +95,17 @@ public class PointToCoordsTransformUtil {
 		//calculate temp.X with fix Z and Roll
 		float xx = (float) (Math.tan(orientation[2]) * z);
 		
-		// Rotate Vector with Azimuth
-		float x = (float) ((xx * Math.cos(orientation[0])) 
-				- (yy * Math.sin(orientation[0])));
-		float y = (float) ((xx * Math.sin(orientation[0])) 
-				+ (yy * Math.cos(orientation[0])));
+		Log.d(TAG,"Calculated Vector without azimuth: X = " + xx 
+				+ " ,Y = " + yy
+				+ ", Z = " + z);
 		
-		orientation[0] = x;
-		orientation[1] = y;
+		// Rotate Vector with Azimuth (Z is fix))
+		orientation[0] = (float) ((xx * Math.cos(orientation[0])) 
+				- (yy * Math.sin(orientation[0])));
+		orientation[1] = (float) ((xx * Math.sin(orientation[0])) 
+				+ (yy * Math.cos(orientation[0])));
 		orientation[2] = z;
+		
 		Log.d(TAG,"Calculated Vector: X = " + orientation[0] 
 				+ " ,Y = " + orientation[1]
 				+ ", Z = " + orientation[2]);
