@@ -423,21 +423,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       //-------------------------------------------------------------------------
     // WAY CRUD
       
-      public void createWay(Way way){ // TODO: check
+      public void createWay(Way way){
     	SQLiteDatabase db = getWritableDatabase();
       	
         ContentValues values = new ContentValues();
         	
         values.put(KEY_OSMID, way.getOsmId());
-//        values.put(KEY_NODEID, value);
-        	
-        db.insert(TABLE_WAY, null, values);
-          	
+        
+        for(Node n : way.getNodes()){
+        	values.put(KEY_NODEID, n.getOsmId());
+        	db.insert(TABLE_WAY, null, values);       	
+        }         	
         db.close();
       }
       
       
-      public Way getWay (int id){ // TODO: check
+      public Way getWay (int id){
     	SQLiteDatabase db = getReadableDatabase();
         	
       	Cursor cursor = db.query(TABLE_WAY, new String[]{KEY_OSMID, KEY_NODEID}, 
@@ -446,7 +447,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	if(cursor != null)
       		cursor.moveToFirst();
       	
-      	Way way  = new Way(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)));
+      	List<Node> allNodes = getAllNode();
+      	List<Node> wayNodes = new ArrayList<Node>();
+      	
+      	for(Node n : allNodes){
+      		
+      		if(!cursor.isFirst()){
+      			cursor.moveToNext();
+      		}
+          		if(Long.parseLong(cursor.getString(1)) == n.getOsmId()){
+          			wayNodes.add(n);
+          		} 
+      				
+      	}
+      	
+      	Way way  = new Way(Long.parseLong(cursor.getString(0)), 1L); // TODO: get osmversion from table!
+      	way.addNodes(wayNodes, false);
       	
       	cursor.close();
       	db.close();
@@ -471,27 +487,41 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return cursor.getCount();
       }
       
-      public int updateWay(Way way){ // TODO: check
+      public int updateWay(Way way){
     	  SQLiteDatabase db = getWritableDatabase();
       	
           ContentValues values = new ContentValues();
+          
+          int count = 0;
           	
           values.put(KEY_OSMID, way.getOsmId());
-//        values.put(KEY_NODEID, value);
-         	
-//        db.close();
-          return db.update(TABLE_WAY, values, KEY_OSMID + "=?", new String[]{String.valueOf(way.getOsmId())});
+
+          for(Node n : way.getNodes()){
+        	 values.put(KEY_NODEID, n.getOsmId());
+        	 count += db.update(TABLE_WAY, values, KEY_OSMID + "=?", new String[]{String.valueOf(way.getOsmId())});
+          }        
+          
+          return count;
       }
       
-      public List<Way> getAllWay(){ // TODO: check
+      public List<Way> getAllWay(){
     	List<Way> ways = new ArrayList<Way>();
         	
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_WAY, null);
+      	
+      	List<Node> allNodes = getAllNode();
+      	List<Node> wayNodes = new ArrayList<Node>();
         	
         	if(cursor.moveToFirst()){
         		do{
-        			Way way = new Way(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)));
+        			for(Node n : allNodes){ 	      		
+                  		if(Long.parseLong(cursor.getString(1)) == n.getOsmId()){
+                  			wayNodes.add(n);
+                  		}      				
+              	}
+        			Way way = new Way(Long.parseLong(cursor.getString(0)), 1L); // TODO: get osmversion from table
+        			way.addNodes(wayNodes, false);
         			ways.add(way);
         		}
         		while (cursor.moveToNext());
@@ -504,19 +534,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       //-------------------------------------------------------------------------
     // RELATION CRUD
       
-      public void createRelation(Relation relation){ // TODO: check
+      public void createRelation(Relation relation){
     	SQLiteDatabase db = getWritableDatabase();
       	
         ContentValues values = new ContentValues();
-        	
+          	        
         values.put(KEY_OSMID, relation.getOsmId());
-//        values.put(KEY_RELATIONMEMBER, value);
-        	
-        db.insert(TABLE_RELATION, null, values);
-          	
+        
+        for(RelationMember rm : relation.getMembers()){
+        	values.put(KEY_RELATIONMEMBER, rm.getRef());
+        	db.insert(TABLE_RELATION, null, values);       	
+        }         	
         db.close();
       }
-      public Relation getRelation (int id){ // TODO: check
+      
+      public Relation getRelation (int id){
     	SQLiteDatabase db = getReadableDatabase();
         	
       	Cursor cursor = db.query(TABLE_RELATION, new String[]{KEY_OSMID, KEY_RELATIONMEMBER}, 
@@ -525,7 +557,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	if(cursor != null)
       		cursor.moveToFirst();
       	
-      	Relation relation  = new Relation(Long.parseLong(cursor.getString(0)), id);
+      	List<RelationMember> allMembers = getAllRelationMember();
+      	List<RelationMember> theseMembers = new ArrayList<RelationMember>();
+      	
+      	for(RelationMember rm : allMembers){
+      		
+      		if(!cursor.isFirst()){
+      			cursor.moveToNext();
+      		}
+          		if(Long.parseLong(cursor.getString(1)) == rm.getRef()){
+          			theseMembers.add(rm);
+          		} 
+      				
+      	}
+      	Relation relation = new Relation(id, 1L); // TODO: get osmversion from table
+      	for(RelationMember rm : theseMembers){
+      		relation.addMember(rm);
+      	}
       	
       	cursor.close();
       	db.close();
@@ -550,35 +598,49 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return cursor.getCount();
       }
       
-      public int updateRelation(Relation relation){ // TODO: check
+      public int updateRelation(Relation relation){
     	SQLiteDatabase db = getWritableDatabase();
         	
         ContentValues values = new ContentValues();
-        	
+        
+        int count = 0;
+      	
         values.put(KEY_OSMID, relation.getOsmId());
-//        values.put(KEY_RELATIONMEMBER, value);
-       	
-//        	db.close();
-        return db.update(TABLE_RELATION, values, KEY_OSMID + "=?", new String[]{String.valueOf(relation.getOsmId())});
+
+        for(RelationMember rm : relation.getMembers()){
+      	 values.put(KEY_RELATIONMEMBER, rm.getRef());
+      	 count += db.update(TABLE_RELATION, values, KEY_OSMID + "=?", new String[]{String.valueOf(relation.getOsmId())});
+        }        
+        
+        return count;
       }
       
       
-      public List<Relation> getAllRelation(){ // TODO: check
+      public List<Relation> getAllRelation(){
     	List<Relation> relations = new ArrayList<Relation>();
       	
       	SQLiteDatabase db = getReadableDatabase();
       	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATION, null);
       	
-      	if(cursor.moveToFirst()){
-      		do{
-      			Relation relation = new Relation(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)));
-      			relations.add(relation);
-      		}
-      		while (cursor.moveToNext());
-      	}
-      	
-      	db.close();
-      	return relations;
+      	List<RelationMember> allMembers = getAllRelationMember();
+      	List<RelationMember> theseMembers = new ArrayList<RelationMember>();
+        	
+        	if(cursor.moveToFirst()){
+        		do{
+        			for(RelationMember rm : allMembers){ 	      		
+                  		if(Long.parseLong(cursor.getString(1)) == rm.getRef()){
+                  			theseMembers.add(rm);
+                  		}      				
+              	}
+        			Relation relation = new Relation(Long.parseLong(cursor.getString(0)), 1L); // TODO: get osmversion from table
+        			relation.addMembers(theseMembers, false);
+        			relations.add(relation);
+        		}
+        		while (cursor.moveToNext());
+        	}
+        	
+        	db.close();
+        	return relations;
       }
       
       //-------------------------------------------------------------------------
