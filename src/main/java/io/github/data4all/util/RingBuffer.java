@@ -33,9 +33,9 @@ public class RingBuffer<T> {
      * @param capacity
      */
     @SuppressWarnings("unchecked")
-    public RingBuffer(Class<T> type,int capacity) {
+    public RingBuffer(int capacity) {
         
-        buffer = (T[]) Array.newInstance(type,capacity);
+        buffer = (T[]) new Object[capacity];
         head = 0;
         entries = 0;
     }
@@ -70,7 +70,7 @@ public class RingBuffer<T> {
     
     public T get(int position) {
         if (size()>0) {
-         
+            
             return buffer[position];
         }
         return null;
@@ -99,6 +99,17 @@ public class RingBuffer<T> {
 
     public int index(){
         return index;
+    }
+    
+    /**
+     * 
+     * @return the last added entry of the buffer.
+     */
+    
+    public T getLast(){
+        
+      return buffer[index];
+       
     }
 
 }
