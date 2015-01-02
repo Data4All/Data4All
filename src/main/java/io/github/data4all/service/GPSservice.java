@@ -62,14 +62,13 @@ public class GPSservice extends Service implements LocationListener {
 
     @Override
     public void onDestroy() {
-
+        super.onDestroy();
         wakeLock.release();
-        stopSelf();
+ 
     }
 
     public void onLocationChanged(Location loc) {
-        // We're receiving location, so GPS is enabled
-         
+             
         optimizer.putLoc(loc);
 
     }

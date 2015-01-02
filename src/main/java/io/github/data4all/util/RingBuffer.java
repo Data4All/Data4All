@@ -70,7 +70,7 @@ public class RingBuffer<T> {
     
     public T get(int position) {
         if (size()>0) {
-         
+            
             return buffer[position];
         }
         return null;
@@ -99,6 +99,17 @@ public class RingBuffer<T> {
 
     public int index(){
         return index;
+    }
+    
+    /**
+     * 
+     * @return the last added entry of the buffer.
+     */
+    
+    public T getLast(){
+        
+      return buffer[index];
+       
     }
 
 }
