@@ -16,8 +16,8 @@ public class Optimizer {
 
  
     // a new Ringbuffer for saving the location objects
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    RingBuffer locRB = new RingBuffer(Location.class, 10);
+    @SuppressWarnings({ "rawtypes" })
+    RingBuffer locRB = new RingBuffer(10);
     // a new Ringbuffer for saving the DevicePosition objects
     //RingBuffer posRB = new RingBuffer();
 
