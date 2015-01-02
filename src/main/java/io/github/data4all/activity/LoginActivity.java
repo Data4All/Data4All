@@ -27,41 +27,31 @@ public class LoginActivity extends Activity {
                 "SharedPreferences:"
                         + PreferenceManager.getDefaultSharedPreferences(
                                 getBaseContext()).getAll());
-
         Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 SharedPreferences sharedPrefs = PreferenceManager
                         .getDefaultSharedPreferences(getBaseContext());
-
                 // Stay logged in?
                 CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
-
                 // Already got token?
                 if (!sharedPrefs.contains(OAuth.OAUTH_TOKEN)
                         && !sharedPrefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
-
                     setTemporaryField(!checkBox.isChecked());
                     startActivity(new Intent().setClass(v.getContext(),
                             PrepareRequestTokenActivity.class));
                 } else {
-
                     Toast.makeText(getApplicationContext(),
                             R.string.alreadyLoggedIn, Toast.LENGTH_SHORT)
                             .show();
-
                 }
             }
         });
-
         // for debugging
         Button deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 deleteTokenFromSharedPreferences();
-
             }
         });
     }

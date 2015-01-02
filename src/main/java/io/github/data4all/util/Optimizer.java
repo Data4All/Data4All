@@ -1,7 +1,7 @@
 package io.github.data4all.util;
 
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.DevicePosition;
+import io.github.data4all.model.DeviceOrientation;
 import android.location.Location;
 
 /**
@@ -16,10 +16,9 @@ public class Optimizer {
 
  
     // a new Ringbuffer for saving the location objects
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    RingBuffer locRB = new RingBuffer(Location.class, 10);
+    static RingBuffer<Location> locRB = new RingBuffer<Location>(10);
     // a new Ringbuffer for saving the DevicePosition objects
-    //RingBuffer posRB = new RingBuffer();
+    static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(10);
 
     public Optimizer() {
         // TODO Auto-generated constructor stub
@@ -28,20 +27,15 @@ public class Optimizer {
     /*
      * Put a location object to the location RingBuffer
      */
-    @SuppressWarnings("unchecked")
     public void putLoc(Location loc) {
         locRB.put(loc);
-        
-        Log.i(getClass().getSimpleName(), locRB.get(locRB.index()).toString());
-        
-    
-    }
+        }
 
     /*
      * Put a DevicePosition object to the DevicePosition RingBuffer
      */
-    public void putPos(DevicePosition pos) {
-        //posRB.put(pos);
+    public void putPos(DeviceOrientation pos) {
+        posRB.put(pos);
     }
 
     /*
@@ -50,7 +44,7 @@ public class Optimizer {
      * @return the current best location
      */
     public Location currentLoc() {
-        return null;
+        return locRB.get(locRB.index());
     }
 
     /*
@@ -58,8 +52,8 @@ public class Optimizer {
      * 
      * @return the current best DevicePosition
      */
-    public DevicePosition currentPos() {
-        return null;
+    public DeviceOrientation currentPos() {
+        return posRB.get(posRB.index());
     }
 
     // 

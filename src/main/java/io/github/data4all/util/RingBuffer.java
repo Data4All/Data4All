@@ -33,9 +33,9 @@ public class RingBuffer<T> {
      * @param capacity
      */
     @SuppressWarnings("unchecked")
-    public RingBuffer(Class<T> type,int capacity) {
+    public RingBuffer(int capacity) {
         
-        buffer = (T[]) Array.newInstance(type,capacity);
+        buffer = (T[]) new Object[capacity];
         head = 0;
         entries = 0;
     }
