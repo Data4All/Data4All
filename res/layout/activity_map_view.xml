@@ -8,53 +8,58 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/return_to_actual_Position"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/return_to_position"
-        android:textSize="12sp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:padding="0dp"
+        android:src="@drawable/ic_point" />
 
-    <Button
+    <ImageButton
         android:id="@+id/switch_to_satellite_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/switch_to_satellite"
-        android:textSize="12sp" />
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:padding="0dp"
+        android:src="@drawable/ic_sat" />
 
-    <Button
+    <ImageButton
         android:id="@+id/upload_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/upload_data"
-        android:textSize="12sp" />
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:background="@null"
+        android:padding="0dp"
+        android:src="@drawable/ic_upload" />
 
-    <Button
+    <ImageButton
         android:id="@+id/new_point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="@string/poi"
-        android:textSize="12sp" />
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="10dp"
+        android:background="@null"
+        android:src="@drawable/ic_poi" />
 
-     <ImageButton
-	        android:id="@+id/to_camera"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
- 			android:layout_alignParentBottom="true"
- 			android:layout_alignParentRight="true"
-        	android:layout_marginBottom="46dp"
-        	android:background="@null"
-        	android:padding="0dp"
-	        android:src="@drawable/cam_icon" />
-     
-    
+    <ImageButton
+        android:id="@+id/to_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="100dp"
+        android:layout_marginRight="10dp"
+        android:background="@null"
+        android:src="@drawable/ic_cam" />
 
 </RelativeLayout>
