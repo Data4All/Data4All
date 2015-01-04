@@ -44,14 +44,17 @@
         android:text="@string/poi"
         android:textSize="12sp" />
 
-    <Button
-        android:id="@+id/to_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/new_point"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="46dp"
-        android:text="@string/to_camera"
-        android:textSize="12sp" />
+     <ImageButton
+	        android:id="@+id/to_camera"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+ 			android:layout_alignParentBottom="true"
+ 			android:layout_alignParentRight="true"
+        	android:layout_marginBottom="46dp"
+        	android:background="@null"
+        	android:padding="0dp"
+	        android:src="@drawable/cam_icon" />
+     
+    
 
 </RelativeLayout>

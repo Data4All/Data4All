@@ -16,15 +16,19 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.widget.Toast;
 
+/**
+ * provides the GPSposition of the Device and saves the locations
+ * for calculations later on.
+ * 
+ * @author konerman
+ * 
+ */
+
 public class GPSservice extends Service implements LocationListener {
 
     public static ArrayList<String> history = new ArrayList<String>();
 
     private static final String TAG = "GPStracker";
-    /**
-     * Are we currently tracking ?
-     */
-    private boolean isTracking = false;
 
     /**
      * Is GPS enabled ?
@@ -51,15 +55,21 @@ public class GPSservice extends Service implements LocationListener {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
-
+        
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, // minimum
-                                                                        // of
-                                                                        // time
-                0, this); // minimum of meters
-        lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0,
-                this);
+        
+        if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, // minimum
+                                                                            // of
+                                                                            // time
+                    0, this); // minimum of meters
+        }
+        if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000,
+                    0, this);
+        }
     }
+    
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
