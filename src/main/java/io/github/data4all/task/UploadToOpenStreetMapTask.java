@@ -3,11 +3,7 @@ package io.github.data4all.task;
 import io.github.data4all.Constants;
 import io.github.data4all.R;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 import oauth.signpost.OAuthConsumer;
@@ -30,7 +26,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Task to upload a gpx file to OpenStreetMap
+ * Task to upload a gpx file to OpenStreetMap 
+ * INFO: Request is getting status code 500 if using dev api!
  * 
  * @author sb
  *
@@ -39,10 +36,9 @@ import android.widget.Toast;
 public class UploadToOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
 
     private final String  TAG        = getClass().getSimpleName();
-    private Context context;
+    private Context       context;
 
     private HttpPost      request;
-    private HttpResponse  response;
 
     private OAuthConsumer consumer;
     private File          gpxFile;
@@ -55,8 +51,8 @@ public class UploadToOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
      */
     private int           statusCode = -1;
 
-    public UploadToOpenStreetMapTask(Context context, OAuthConsumer consumer, File gpxFile,
-            String description, String tags, String visibility) {
+    public UploadToOpenStreetMapTask(Context context, OAuthConsumer consumer,
+            File gpxFile, String description, String tags, String visibility) {
 
         this.context = context;
         this.consumer = consumer;
@@ -83,6 +79,10 @@ public class UploadToOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
             // Add different parts to entity
             FileBody gpxBody = new FileBody(gpxFile);
             entity.addPart("file", gpxBody);
+
+            if (description == null || description.length() <= 0) {
+                description = "Data4All GPX-Upload";
+            }
             entity.addPart("description", new StringBody(description));
             entity.addPart("tags", new StringBody(tags));
             entity.addPart("visibility", new StringBody(visibility));
@@ -110,57 +110,33 @@ public class UploadToOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
         switch (statusCode) {
         case -1:
             // Internal error, the request didn't start at all
-            Toast.makeText(context, R.string.uploadToOsmRequestInternalTaskError, Toast.LENGTH_LONG).show();
+            Toast.makeText(context,
+                    R.string.uploadToOsmRequestInternalTaskError,
+                    Toast.LENGTH_LONG).show();
             Log.d(TAG, "Internal error, the request did not start at all");
             break;
         case HttpStatus.SC_OK:
             // Success ! Update database and close activity
-            // TODO make dialog or toast or whatever
             Toast.makeText(context, R.string.success, Toast.LENGTH_LONG).show();
             Log.d(TAG, "Success");
             break;
         case HttpStatus.SC_UNAUTHORIZED:
             // Does not have authorization
-            // TODO make dialog or toast or whatever
-            // TODO login ?
-            Toast.makeText(context, R.string.uploadToOsmRequestTaskAuthError, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.uploadToOsmRequestTaskAuthError,
+                    Toast.LENGTH_LONG).show();
             Log.d(TAG, "Does not have authorization");
             break;
         case HttpStatus.SC_INTERNAL_SERVER_ERROR:
-            Toast.makeText(context, "INTERNAL SERVER ERROR", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "INTERNAL SERVER ERROR", Toast.LENGTH_LONG)
+                    .show();
             Log.d(TAG, "INTERNAL SERVER ERROR");
             break;
-            
 
         default:
-            //unknown error: showing OSM response
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new InputStreamReader(
-                        new BufferedInputStream(response.getEntity()
-                                .getContent())));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line)
-                            .append(System.getProperty("line.separator"));
-                }
-                // TODO specify toast or something
-                Toast.makeText(context, R.string.unkownError, Toast.LENGTH_LONG).show();
-                Log.d(TAG, sb.toString());
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            // unknown error
+            Toast.makeText(context, R.string.unkownError, Toast.LENGTH_LONG)
+                    .show();
+            Log.d(TAG, "Unknown error");
         }
     }
 

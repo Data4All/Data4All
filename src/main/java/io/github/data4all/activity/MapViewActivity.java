@@ -1,19 +1,9 @@
 package io.github.data4all.activity;
 
-import io.github.data4all.Constants;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.service.GPSservice;
-import io.github.data4all.task.UploadToOpenStreetMapTask;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-
-import org.apache.http.entity.mime.content.InputStreamBody;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.views.MapController;
@@ -23,7 +13,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -124,16 +113,6 @@ public class MapViewActivity extends Activity implements OnClickListener {
             startActivity(new Intent(this, CameraActivity.class));
             break;
         case R.id.new_point:
-            break;
-        
-        case R.id.button1:
-            OAuthConsumer consumer = new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
-            consumer.setTokenWithSecret(PreferenceManager
-                    .getDefaultSharedPreferences(this).getString("oauth_token", null), PreferenceManager
-                    .getDefaultSharedPreferences(this).getString("oauth_token_secret", null));
-            
-            File gpxFile = new File("samplegpx.gpx");
-            new UploadToOpenStreetMapTask(getApplicationContext(), consumer, gpxFile, "testdescription", "test", "private").execute();
             break;
         }
     }
