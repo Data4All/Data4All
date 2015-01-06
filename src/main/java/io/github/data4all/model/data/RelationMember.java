@@ -14,6 +14,10 @@ public class RelationMember {
     /**
      * type can be node/way or relation
      */
+	private static String TYPE_NODE = "Node";
+	private static String TYPE_WAY = "Way";
+	private static String TYPE_RELATION = "Relation";
+	
     private String type = null;
 
     /**
@@ -64,7 +68,19 @@ public class RelationMember {
     }
 
     public String getType() {
-        return type;
+    	if (element != null) {
+            if (element.getClass().equals(Node.class)){
+            	type = TYPE_NODE;
+            }
+            if (element.getClass().equals(Way.class)){
+            	type = TYPE_WAY;
+            }
+            if (element.getClass().equals(Relation.class)){
+            	type = TYPE_RELATION;
+            }
+        }
+    	
+    	return type;
     }
 
     public long getRef() {
