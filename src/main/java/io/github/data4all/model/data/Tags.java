@@ -13,26 +13,37 @@ import java.util.Map;
  */
 public class Tags {
 
-    /**
-     * Tags with undefined user input.
-     */
-    public static String[] unclassifiedTags = ("addr:housenumber,addr:street,addr:postcode,addr:city,addr:country,"
-            + "contact:phone,contact:fax,contact:website,contact:email")
-            .split(",");
-
+	
+	 /* Unclassified Tags: */
+	
     /**
      * Tags with address values
+     * tag: addressTags[i][0]
+     * hint: addressTags[i][1]
+     * input: addressTags[i][2]
      */
-
-    public static String[] addressTags = ("addr:street,addr:housenumber,addr:postcode,addr:city,addr:country")
-            .split(",");
-
+    public static String[][] addressTags = {
+    	{"addr:street","Examplestreet", "Text"},
+    	{"addr:housenumber","120", "Number"},
+    	{"addr:postcode","10115", "Number"},
+    	{"addr:city", "Berlin", "Text"},
+    	{"addr:country","Germany", "Text"}
+    };
+   
+    
     /**
      * Tags with contact values
+     * tag: contactTags[i][0]
+     * hint: contactTags[i][1]
+     * input: addressTags[i][2]
      */
-    public static String[] contactTags = ("contact:phone,contact:fax,contact:website,contact:email")
-            .split(",");
-
+    public static String[][] contactTags = {
+    	{"contact:phone","Examplestreet", "Text"},
+    	{"contact:fax","120", "Number"},
+    	{"contact:website", "http://www.somewebsite.com", "Text"},
+    	{"contact:email", "Berlin", "Text"}
+    };
+    
     /**
      * Tags with predefined values.
      */
@@ -57,15 +68,6 @@ public class Tags {
     };
 
     /**
-     * Returns all unclassified tags
-     * 
-     * @return
-     */
-    public static String[] getUnclassifiedTags() {
-        return unclassifiedTags;
-    }
-
-    /**
      * Returns all classified tags
      * 
      * @return
@@ -79,7 +81,7 @@ public class Tags {
      * 
      * @return
      */
-    public static String[] getAddressTags() {
+    public static String[][] getAddressTags() {
         return addressTags;
     }
 
@@ -88,7 +90,7 @@ public class Tags {
      * 
      * @return
      */
-    public static String[] getContactTags() {
+    public static String[][] getContactTags() {
         return contactTags;
     }
 
