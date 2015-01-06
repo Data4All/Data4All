@@ -71,6 +71,11 @@
 			<artifactId>signpost-commonshttp4</artifactId>
 			<version>1.2.1.2</version>
 		</dependency>
+		<dependency>
+            <groupId>tls</groupId>
+            <artifactId>tls</artifactId>
+            <version>1.0</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
