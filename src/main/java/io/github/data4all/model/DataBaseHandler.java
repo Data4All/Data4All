@@ -402,7 +402,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * @param id the id of the desired node
        * @return a {@link Node} object for the desired node
        */
-      public Node getNode (int id){
+      public Node getNode (long id){
     	  SQLiteDatabase db = getReadableDatabase();
       	
         	Cursor cursor = db.query(TABLE_NODE, new String[]{KEY_OSMID, KEY_OSMVERSION, KEY_LAT, KEY_LON}, 
@@ -523,7 +523,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * @param id the id of the desired way
        * @return a {@link Way} object for the desired way
        */
-      public Way getWay (int id){
+      public Way getWay (long id){
     	SQLiteDatabase db = getReadableDatabase();
         	
       	Cursor cursor = db.query(TABLE_WAY, new String[]{KEY_OSMID, KEY_NODEID}, 
@@ -668,7 +668,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * @param id the id of the desired relation
        * @return a {@link Relation} object for the desired relation
        */
-      public Relation getRelation (int id){
+      public Relation getRelation (long id){
     	SQLiteDatabase db = getReadableDatabase();
         	
       	Cursor cursor = db.query(TABLE_RELATION, new String[]{KEY_OSMID, KEY_RELATIONMEMBER}, 
@@ -815,7 +815,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * @param ref the reference to the desired relation member
        * @return a {@link RelationMember} object for the desired relation member
        */
-      public RelationMember getRelationMember (int ref){ // TODO: check
+      public RelationMember getRelationMember (long ref){ // TODO: check
     	SQLiteDatabase db = getReadableDatabase();
       	
         Cursor cursor = db.query(TABLE_RELATIONMEMBER, new String[]{KEY_REF, KEY_TYPE, KEY_ROLE}, 
@@ -905,7 +905,98 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return relationMembers;
       }
       
-      //-------------------------------------------------------------------------
+      //---Hilfsfunktionen----------------------------------------------------------------
+      
+      private void createOsmElement (long OsmId, long OsmVersion){
+    	SQLiteDatabase db = getWritableDatabase();
+        	
+        ContentValues values = new ContentValues();
+      	
+      	values.put(KEY_OSMID, OsmId);
+      	values.put(KEY_OSMVERSION, OsmVersion);
+      	
+      	db.insert(TABLE_OSMELEMENT, null, values);
+        	
+        db.close();
+      }
+      
+      private void createParentRelation (long OsmId, List<Relation> parentRelations){
+      	SQLiteDatabase db = getWritableDatabase();
+          	
+          ContentValues values = new ContentValues();
+        	
+        	values.put(KEY_OSMID, OsmId);
+        	
+        	for(Relation r : parentRelations){
+        		values.put(KEY_RELATIONID, r.getOsmId());
+        		db.insert(TABLE_OSMPARENTLIST, null, values);
+        	}
+          db.close();
+        }
+      
+      private void createTagSortedMap (long OsmId, SortedMap<String, String> tags){
+      	SQLiteDatabase db = getWritableDatabase();
+          	
+          ContentValues values = new ContentValues();
+        	
+        	values.put(KEY_OSMID, OsmId);
+        	
+        	for(String key : tags.keySet()){
+        		values.put(KEY_KEY, key);
+        		values.put(KEY_VALUE, tags.get(key));
+        		db.insert(TABLE_OSMTAGMAP, null, values);
+        	}
+          	
+          db.close();
+        }
+ 
+      private int updateOsmElement (long OsmId, long OsmVersion){
+    	SQLiteDatabase db = getWritableDatabase();
+        	
+        ContentValues values = new ContentValues();
+      	
+      	values.put(KEY_OSMID, OsmId);
+      	values.put(KEY_OSMVERSION, OsmVersion);
+      	
+      	int count = db.update(TABLE_OSMELEMENT, values, KEY_OSMID + "=?", new String[]{String.valueOf(OsmId)});
+        	
+        db.close();
+        return count;
+      }
+      
+      private int updateParentRelation (long OsmId, List<Relation> parentRelations){
+      	SQLiteDatabase db = getWritableDatabase();
+          	
+          ContentValues values = new ContentValues();
+        	
+        	values.put(KEY_OSMID, OsmId);
+        	int count = 0;
+        	for(Relation r : parentRelations){
+        		values.put(KEY_RELATIONID, r.getOsmId());
+        		count += db.update(TABLE_OSMPARENTLIST, values, KEY_OSMID + "=?", new String[]{String.valueOf(OsmId)});
+        	}
+          db.close();
+          return count;
+        }
+      
+      private int updateTagSortedMap (long OsmId, SortedMap<String, String> tags){
+      	SQLiteDatabase db = getWritableDatabase();
+          	
+          ContentValues values = new ContentValues();
+        	
+        	values.put(KEY_OSMID, OsmId);
+        	int count = 0;
+        	for(String key : tags.keySet()){
+        		values.put(KEY_KEY, key);
+        		values.put(KEY_VALUE, tags.get(key));
+        		count += db.update(TABLE_OSMTAGMAP, values, KEY_OSMID + "=?", new String[]{String.valueOf(OsmId)});
+        	}
+          	
+          db.close();
+          
+          return count;
+        }
+
 }
 
 
