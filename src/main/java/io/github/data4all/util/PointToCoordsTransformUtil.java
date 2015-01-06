@@ -13,6 +13,8 @@ package io.github.data4all.util;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.model.drawing.Point;
 
 import java.util.ArrayList;
 
@@ -21,11 +23,34 @@ public class PointToCoordsTransformUtil {
 	static String TAG = "PointToWorldCoords";
 	private float height = 1700;
 	
+	
+	
+	
+	
+	public ArrayList<Point> transform(TransformationParamBean tps, DeviceOrientation deviceOrientation){
+		ArrayList<Point> coords = new ArrayList<Point>(); //to save calculated coordinates
+		ArrayList<Point> points = tps.getPoints();
+		float[] orientation = new float[3];
+		orientation[0] = deviceOrientation.getAzimuth();
+		for(Point point : points){
+			orientation[1] = calculateAngle(point.getX(), tps.getPhotoWidth(),
+					tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
+			orientation[2] = calculateAngle(point.getY(), tps.getPhotoHeight(),
+					tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
+			float[] coord = calculate2dPoint(orientation);
+			Point p = new Point(coord[0], coord[1]);
+			coords.add(p);			
+		}		
+		return coords;
+	}
+	
+	
 	/**
 	 * @param pointlist
 	 * @param orientation
 	 * @return
 	 */
+	/*
 	public ArrayList<float[]> calculate(ArrayList<float[]> pointlist, float[] orientation){
 		ArrayList<float[]> calculatedPoints = new ArrayList<float[]>();
 		float[] adjustedOrientation = null;
@@ -36,6 +61,8 @@ public class PointToCoordsTransformUtil {
 		return calculatedPoints;
 	}
 	
+	
+	
 	public ArrayList<float[]> calculate(ArrayList<float[]> pointlist, DeviceOrientation deviceOrientation){
 		float[] orientation = new float[3];
 		orientation[0] = deviceOrientation.getAzimuth();
@@ -43,7 +70,9 @@ public class PointToCoordsTransformUtil {
 		orientation[2] = deviceOrientation.getRoll();
 		return calculate(pointlist, orientation);
 	}
-		
+	*/
+
+	
 	public float[] calculate2dPoint(DeviceOrientation deviceOrientation){
 		float[] orientation = new float[3];
 		orientation[0] = deviceOrientation.getAzimuth();
@@ -51,13 +80,21 @@ public class PointToCoordsTransformUtil {
 		orientation[2] = deviceOrientation.getRoll();
 		return calculate2dPoint(orientation);
 	}
+	
+	private float calculateAngle(float pixel, float width, float maxAngle, float oldAngle){
+		float percent = (width / 2) / (pixel - (width / 2));
+		float angle = maxAngle * percent;		
+		return oldAngle + angle;
+	}
 
+	
+	
 	/**
 	 * @param orientation
 	 * @return coords in mm in a System with (0,0) = Phoneposition; 
 	 * 			x = West/East Axis and y = Norh/South Axis
 	 */
-	public float[] calculate2dPoint (float[] orientation){
+	public float[] calculate2dPoint(float[] orientation){
 		float[] vector = calculateVectorfromOrientation(orientation);
 		
 		if(vector[2] <= 0){
@@ -72,9 +109,10 @@ public class PointToCoordsTransformUtil {
 		
 		Log.d(TAG,"Calculated X = " + coords[0] + " and Y = " + coords[1]);
 		
-		return coords;
-		
+		return coords;		
 	}
+	
+	
 	
 	/**
 	 * @param orientation
