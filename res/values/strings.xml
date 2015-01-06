@@ -50,4 +50,9 @@
     <string name="fax">fax</string>
     <string name="website">website</string>
     <string name="email">email</string>
+    <string name="success">Success</string>
+    <string name="uploadToOsmRequestInternalTaskError">Internal error, the request did not start at all</string>
+    <string name="uploadToOsmRequestTaskAuthError">Does not have authorization</string>
+    <string name="unkownError">Unknown Error</string>
+    <string name="button1">Test Button</string>
 </resources>

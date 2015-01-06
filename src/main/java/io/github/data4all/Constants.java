@@ -14,7 +14,7 @@ public class Constants {
 
     public static final String   CONSUMER_KEY          = (DEV_MODE) ? CONSUMER_KEY_DEV
                                                                : CONSUMER_KEY_PROD;
-    public static final String   CONSUMER_KEY_SECRET   = (DEV_MODE) ? CONSUMER_SECRET_DEV
+    public static final String   CONSUMER_SECRET   = (DEV_MODE) ? CONSUMER_SECRET_DEV
                                                                : CONSUMER_SECRET_PROD;
     
     public static final String   SCOPE                 = (DEV_MODE) ? OSM_API_URL_DEV
@@ -26,6 +26,8 @@ public class Constants {
                                                                + "/oauth/access_token";
     public static final String   AUTHORIZE_URL         = SCOPE
                                                                + "/oauth/authorize";
+    
+    public static final String API_USERDETAILS       = SCOPE + "api/0.6/user/details";
 
     public static final String   ENCODING              = "UTF-8";
 
