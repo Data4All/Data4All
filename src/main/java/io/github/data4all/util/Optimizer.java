@@ -56,7 +56,7 @@ public class Optimizer {
      * @return the current best DevicePosition
      */
     public DeviceOrientation currentBestPos() {
-        return posRB.get(posRB.index());
+        return posRB.get(posRB.getIndex());
     }
 
     /*
