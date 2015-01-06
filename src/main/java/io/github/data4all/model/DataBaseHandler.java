@@ -87,7 +87,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String KEY_NODEID = "nodeid";
  
     
-    
+    /**
+     * Default constructor for the database handler.
+     * 
+     * @param context the application
+     */
     public DataBaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -163,95 +167,101 @@ public class DataBaseHandler extends SQLiteOpenHelper {
   //-------------------------------------------------------------------------
   // BoundingBox CRUD
     
-    public void createBoundingBox(BoundingBox boundingBox){
-    	SQLiteDatabase db = getWritableDatabase();
-    	
-    	ContentValues values = new ContentValues();
-    	
-    	values.put(KEY_MINLAT, boundingBox.getMinlat());
-    	values.put(KEY_MINLON, boundingBox.getMinlon());
-    	values.put(KEY_MAXLAT, boundingBox.getMaxlat());
-    	values.put(KEY_MAXLON, boundingBox.getMaxlon());
-    	
-    	db.insert(TABLE_BOUNDINGBOX, null, values);
-    	db.close();
-    }
-    public BoundingBox getBoundingBox (int id){ //evtl. für BoundingBox noch ne id hinzufügen
-    	SQLiteDatabase db = getReadableDatabase();
-    	
-    	//TODO: use ID??
-    	Cursor cursor = db.query(TABLE_BOUNDINGBOX, new String[]{KEY_MINLAT, KEY_MINLON, KEY_MAXLAT, KEY_MAXLON}, 
-    			KEY_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
-    	
-    	if(cursor != null)
-    		cursor.moveToFirst();
-    	
-    	BoundingBox boundingBox = new BoundingBox(Double.parseDouble(cursor.getString(0)), 
-    			Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), 
-    			Double.parseDouble(cursor.getString(3)));
-    	
-    	cursor.close();
-    	db.close();
-    	return boundingBox;
-    }
-    
-    public void deleteBoundingBox(BoundingBox boundingBox){
-    	SQLiteDatabase db = getWritableDatabase();
-    	
-    	
-//    	db.delete(TABLE_BOUNDINGBOX, KEY_ID + "=?", new String[]{String.valueOf(boundingBox.getID())});
-    	
-    	db.close();
-    }
-    
-    public int getBoundingBoxCount(){
-    	SQLiteDatabase db = getReadableDatabase();
-    	
-    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
-    	cursor.close();
-    	db.close();
-    	
-    	return cursor.getCount();
-    }
-    
-    public int updateBoundingBox(BoundingBox boundingBox){
-    	SQLiteDatabase db = getWritableDatabase();
-    	
-    	ContentValues values = new ContentValues();
-    	
-    	values.put(KEY_MINLAT, boundingBox.getMinlat());
-    	values.put(KEY_MINLON, boundingBox.getMinlon());
-    	values.put(KEY_MAXLAT, boundingBox.getMaxlat());
-    	values.put(KEY_MAXLON, boundingBox.getMaxlon());
-    	
+//    public void createBoundingBox(BoundingBox boundingBox){
+//    	SQLiteDatabase db = getWritableDatabase();
+//    	
+//    	ContentValues values = new ContentValues();
+//    	
+//    	values.put(KEY_MINLAT, boundingBox.getMinlat());
+//    	values.put(KEY_MINLON, boundingBox.getMinlon());
+//    	values.put(KEY_MAXLAT, boundingBox.getMaxlat());
+//    	values.put(KEY_MAXLON, boundingBox.getMaxlon());
+//    	
+//    	db.insert(TABLE_BOUNDINGBOX, null, values);
 //    	db.close();
-//    	return db.update(TABLE_BOUNDINGBOX, values, KEY_ID + "=?", new String[]{String.valueOf(boundingBox.getID())});
-    return 0;
-    }
-    
-    public List<BoundingBox> getAllBoundingBox(){
-    	List<BoundingBox> boundingBoxes = new ArrayList<BoundingBox>();
-    	
-    	SQLiteDatabase db = getReadableDatabase();
-    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
-    	
-    	if(cursor.moveToFirst()){
-    		do{
-    			BoundingBox boundingBox = new BoundingBox(Double.parseDouble(cursor.getString(0)), 
-    					Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), 
-    					Double.parseDouble(cursor.getString(3)));
-    			boundingBoxes.add(boundingBox);
-    		}
-    		while (cursor.moveToNext());
-    	}
-    	
-    	db.close();
-    	return boundingBoxes;
-    }
+//    }
+//    public BoundingBox getBoundingBox (int id){ //evtl. für BoundingBox noch ne id hinzufügen
+//    	SQLiteDatabase db = getReadableDatabase();
+//    	
+//    	//TODO: use ID??
+//    	Cursor cursor = db.query(TABLE_BOUNDINGBOX, new String[]{KEY_MINLAT, KEY_MINLON, KEY_MAXLAT, KEY_MAXLON}, 
+//    			KEY_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+//    	
+//    	if(cursor != null)
+//    		cursor.moveToFirst();
+//    	
+//    	BoundingBox boundingBox = new BoundingBox(Double.parseDouble(cursor.getString(0)), 
+//    			Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), 
+//    			Double.parseDouble(cursor.getString(3)));
+//    	
+//    	cursor.close();
+//    	db.close();
+//    	return boundingBox;
+//    }
+//    
+//    public void deleteBoundingBox(BoundingBox boundingBox){
+//    	SQLiteDatabase db = getWritableDatabase();
+//    	
+//    	
+////    	db.delete(TABLE_BOUNDINGBOX, KEY_ID + "=?", new String[]{String.valueOf(boundingBox.getID())});
+//    	
+//    	db.close();
+//    }
+//    
+//    public int getBoundingBoxCount(){
+//    	SQLiteDatabase db = getReadableDatabase();
+//    	
+//    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
+//    	cursor.close();
+//    	db.close();
+//    	
+//    	return cursor.getCount();
+//    }
+//    
+//    public int updateBoundingBox(BoundingBox boundingBox){
+//    	SQLiteDatabase db = getWritableDatabase();
+//    	
+//    	ContentValues values = new ContentValues();
+//    	
+//    	values.put(KEY_MINLAT, boundingBox.getMinlat());
+//    	values.put(KEY_MINLON, boundingBox.getMinlon());
+//    	values.put(KEY_MAXLAT, boundingBox.getMaxlat());
+//    	values.put(KEY_MAXLON, boundingBox.getMaxlon());
+//    	
+////    	db.close();
+////    	return db.update(TABLE_BOUNDINGBOX, values, KEY_ID + "=?", new String[]{String.valueOf(boundingBox.getID())});
+//    return 0;
+//    }
+//    
+//    public List<BoundingBox> getAllBoundingBox(){
+//    	List<BoundingBox> boundingBoxes = new ArrayList<BoundingBox>();
+//    	
+//    	SQLiteDatabase db = getReadableDatabase();
+//    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
+//    	
+//    	if(cursor.moveToFirst()){
+//    		do{
+//    			BoundingBox boundingBox = new BoundingBox(Double.parseDouble(cursor.getString(0)), 
+//    					Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)), 
+//    					Double.parseDouble(cursor.getString(3)));
+//    			boundingBoxes.add(boundingBox);
+//    		}
+//    		while (cursor.moveToNext());
+//    	}
+//    	
+//    	db.close();
+//    	return boundingBoxes;
+//    }
     
     //-------------------------------------------------------------------------
     // USER CRUD
       
+    /**
+     * This method creates and stores a new user in the database. The data is taken from the {@link User} object 
+     * that is passed to the method.
+     * 
+     * @param user the {@link User} object from which the data will be taken
+     */
       public void createUser(User user){
       	SQLiteDatabase db = getWritableDatabase();
       	
@@ -265,6 +275,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	
       	db.close();
       }
+      
+      /**
+       * This method returns the data for a specific user stored in the database and creates the corresponding 
+       * {@link User} object.
+       * 
+       * @param username the name of the desired user
+       * @return a {@link User} object for the desired user
+       */
       public User getUser (String username){
       	SQLiteDatabase db = getReadableDatabase();
     	
@@ -281,6 +299,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return user;
       }
       
+      /**
+       * This method deletes a specific user from the database.
+       * 
+       * @param user the {@link User} object whose data should be deleted
+       */
       public void deleteUser(User user){
     	  SQLiteDatabase db = getWritableDatabase();
       	
@@ -290,6 +313,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	db.close();
       }
       
+      /**
+       * This method returns the number of users currently stored in the database.
+       * 
+       * @return the number of users
+       */
       public int getUserCount(){
     	SQLiteDatabase db = getReadableDatabase();
       	
@@ -300,6 +328,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return cursor.getCount();
       }
       
+      /**
+       * This method updates the data for a specific user stored in the database.
+       * 
+       * @param user the {@link User} object for which the data should be updated
+       * @return the number of objects that have been updated
+       */
       public int updateUser(User user){
       	SQLiteDatabase db = getWritableDatabase();
     	
@@ -313,6 +347,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	return db.update(TABLE_USER, values, KEY_USERNAME + "=?", new String[]{user.getUsername()});
       }
       
+      /**
+       * This method returns a list of all users stored in the database and creates corresponding {@link User} 
+       * objects.
+       * 
+       * @return a list of users
+       */
       public List<User> getAllUser(){
     	List<User> users = new ArrayList<User>();
       	
@@ -334,6 +374,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       //-------------------------------------------------------------------------
     // NODE CRUD
       
+      /**
+       * This method creates and stores a new node in the database. The data is taken from the {@link Node} object 
+       * that is passed to the method.
+       * 
+       * @param node the {@link Node} object from which the data will be taken
+       */
       public void createNode(Node node){
     	SQLiteDatabase db = getWritableDatabase();
         	
@@ -349,7 +395,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
       }
       
-      
+      /**
+       * This method returns the data for a specific node stored in the database and creates the corresponding 
+       * {@link Node} object.
+       * 
+       * @param id the id of the desired node
+       * @return a {@link Node} object for the desired node
+       */
       public Node getNode (int id){
     	  SQLiteDatabase db = getReadableDatabase();
       	
@@ -367,7 +419,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         	return node;
       }
       
-      
+      /**
+       * This method deletes a specific node from the database.
+       * 
+       * @param node the {@link Node} object whose data should be deleted
+       */
       public void deleteNode(Node node){
     	  SQLiteDatabase db = getWritableDatabase();
         	
@@ -377,6 +433,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         	db.close();
       }
       
+      /**
+       * This method returns the number of nodes currently stored in the database.
+       * 
+       * @return the number of nodes
+       */
       public int getNodeCount(){
     	  SQLiteDatabase db = getReadableDatabase();
         	
@@ -387,6 +448,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         	return cursor.getCount();
       }
       
+      /**
+       * This method updates the data for a specific node stored in the database.
+       * 
+       * @param node the {@link Node} object for which the data should be updated
+       * @return the number of objects that have been updated
+       */
       public int updateNode(Node node){
     	SQLiteDatabase db = getWritableDatabase();
       	
@@ -401,6 +468,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return db.update(TABLE_NODE, values, KEY_OSMID + "=?", new String[]{String.valueOf(node.getOsmId())});
       }
       
+      /**
+       * This method returns a list of all nodes stored in the database and creates corresponding {@link Node} 
+       * objects.
+       * 
+       * @return a list of nodes
+       */
       public List<Node> getAllNode(){
     	  List<Node> nodes = new ArrayList<Node>();
         	
@@ -423,6 +496,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       //-------------------------------------------------------------------------
     // WAY CRUD
       
+      /**
+       * This method creates and stores a new way in the database. The data is taken from the {@link Way} object 
+       * that is passed to the method.
+       * 
+       * @param way the {@link Way} object from which the data will be taken
+       */
       public void createWay(Way way){
     	SQLiteDatabase db = getWritableDatabase();
       	
@@ -437,7 +516,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
       }
       
-      
+      /**
+       * This method returns the data for a specific way stored in the database and creates the corresponding 
+       * {@link Way} object.
+       * 
+       * @param id the id of the desired way
+       * @return a {@link Way} object for the desired way
+       */
       public Way getWay (int id){
     	SQLiteDatabase db = getReadableDatabase();
         	
@@ -469,6 +554,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return way;
       }
       
+      /**
+       * This method deletes a specific way from the database.
+       * 
+       * @param way the {@link Way} object whose data should be deleted
+       */
       public void deleteWay(Way way){
     	SQLiteDatabase db = getWritableDatabase();   	
       	
@@ -477,6 +567,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	db.close();
       }
       
+      /**
+       * This method returns the number of ways currently stored in the database.
+       * 
+       * @return the number of ways
+       */
       public int getWayCount(){
     	SQLiteDatabase db = getReadableDatabase();
       	
@@ -487,6 +582,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return cursor.getCount();
       }
       
+      /**
+       * This method updates the data for a specific way stored in the database.
+       * 
+       * @param way the {@link Way} object for which the data should be updated
+       * @return the number of objects that have been updated
+       */
       public int updateWay(Way way){
     	  SQLiteDatabase db = getWritableDatabase();
       	
@@ -504,6 +605,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           return count;
       }
       
+      /**
+       * This method returns a list of all ways stored in the database and creates corresponding {@link Way} 
+       * objects.
+       * 
+       * @return a list of ways
+       */
       public List<Way> getAllWay(){
     	List<Way> ways = new ArrayList<Way>();
         	
@@ -534,6 +641,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       //-------------------------------------------------------------------------
     // RELATION CRUD
       
+      /**
+       * This method creates and stores a new relation in the database. The data is taken from the {@link Relation} 
+       * object that is passed to the method.
+       * 
+       * @param relation the {@link Relation} object from which the data will be taken
+       */
       public void createRelation(Relation relation){
     	SQLiteDatabase db = getWritableDatabase();
       	
@@ -548,6 +661,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
       }
       
+      /**
+       * This method returns the data for a specific relation stored in the database and creates the corresponding 
+       * {@link Relation} object.
+       * 
+       * @param id the id of the desired relation
+       * @return a {@link Relation} object for the desired relation
+       */
       public Relation getRelation (int id){
     	SQLiteDatabase db = getReadableDatabase();
         	
@@ -580,6 +700,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return relation;
       }
       
+      /**
+       * This method deletes a specific relation from the database.
+       * 
+       * @param relation the {@link Relation} object whose data should be deleted
+       */
       public void deleteRelation(Relation relation){
     	SQLiteDatabase db = getWritableDatabase();
       	      	
@@ -588,6 +713,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	db.close();
       }
       
+      /**
+       * This method returns the number of relations currently stored in the database.
+       * 
+       * @return the number of relations
+       */
       public int getRelationCount(){
     	SQLiteDatabase db = getReadableDatabase();
       	
@@ -598,6 +728,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	return cursor.getCount();
       }
       
+      /**
+       * This method updates the data for a specific relation stored in the database.
+       * 
+       * @param relation the {@link Relation} object for which the data should be updated
+       * @return the number of objects that have been updated
+       */
       public int updateRelation(Relation relation){
     	SQLiteDatabase db = getWritableDatabase();
         	
@@ -615,7 +751,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return count;
       }
       
-      
+      /**
+       * This method returns a list of all relations stored in the database and creates corresponding 
+       * {@link Relation} objects.
+       * 
+       * @return a list of relations
+       */
       public List<Relation> getAllRelation(){
     	List<Relation> relations = new ArrayList<Relation>();
       	
@@ -647,6 +788,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       
     // RELATIONMEMBER CRUD
       
+      /**
+       * This method creates and stores a new relation member in the database. The data is taken from the 
+       * {@link RelationMember} object that is passed to the method.
+       * 
+       * @param relationMember the {@link RelationMember} object from which the data will be taken
+       */
       public void createRelationMember(RelationMember relationMember){ // TODO: check
     	  SQLiteDatabase db = getWritableDatabase();
         	
@@ -661,7 +808,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           db.close();
       }
       
-      
+      /**
+       * This method returns the data for a specific relation member stored in the database and creates the 
+       * corresponding {@link RelationMember} object.
+       * 
+       * @param ref the reference to the desired relation member
+       * @return a {@link RelationMember} object for the desired relation member
+       */
       public RelationMember getRelationMember (int ref){ // TODO: check
     	SQLiteDatabase db = getReadableDatabase();
       	
@@ -679,6 +832,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return relationMember;
       }
       
+      /**
+       * This method deletes a specific relation member from the database.
+       * 
+       * @param relationMember the {@link RelationMember} object whose data should be deleted
+       */
       public void deleteRelationMember(RelationMember relationMember){
     	SQLiteDatabase db = getWritableDatabase();
 	      	
@@ -687,6 +845,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
       }
       
+      /**
+       * This method returns the number of relation members currently stored in the database.
+       * 
+       * @return the number of relation members
+       */
       public int getRelationMemberCount(){
     	SQLiteDatabase db = getReadableDatabase();
         	
@@ -697,6 +860,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor.getCount();
       }
       
+      /**
+       * This method updates the data for a specific relation member stored in the database.
+       * 
+       * @param relationMember the {@link RelationMember} object for which the data should be updated
+       * @return the number of objects that have been updated
+       */
       public int updateRelationMember(RelationMember relationMember){ // TODO: check
     	  SQLiteDatabase db = getWritableDatabase();
       	
@@ -711,6 +880,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         		  new String[]{String.valueOf(relationMember.getRef())});
       }
       
+      /**
+       * This method returns a list of all relation members stored in the database and creates corresponding 
+       * {@link RelationMember} objects.
+       * 
+       * @return a list of relation members
+       */
       public List<RelationMember> getAllRelationMember(){
     	List<RelationMember> relationMembers = new ArrayList<RelationMember>();
         	
