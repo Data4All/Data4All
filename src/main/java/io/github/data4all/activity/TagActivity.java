@@ -19,7 +19,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -252,7 +251,7 @@ public class TagActivity extends Activity {
     }
     
 
-	public void createDialog(String [] list, String title, final Boolean but, final Boolean first){
+	public void createDialog(String [] [] list, String title, final Boolean but, final Boolean first){
     	final Dialog dialog = new Dialog(this);
 		dialog.setContentView(R.layout.dialog_dynamic);
 		dialog.setTitle(title);
@@ -265,10 +264,10 @@ public class TagActivity extends Activity {
 		final List <EditText> edit = new ArrayList<EditText>();
 		for (int i = 0; i < list.length; i++) {
 		final EditText text = new EditText(this);
-			text.setHint(list [i]);
-			text.setHintTextColor(Color.BLACK);
+			text.setHint(list [i] [1]);
+			text.setHintTextColor(Color.DKGRAY);
     		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-    		text.setInputType(InputType.TYPE_CLASS_TEXT);
+    		text.setInputType(Integer.parseInt(list[i] [2]));
     		edit.add(text);
     		layout.addView(text);
 		}

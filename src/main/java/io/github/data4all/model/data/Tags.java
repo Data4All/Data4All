@@ -23,11 +23,11 @@ public class Tags {
      * input: addressTags[i][2]
      */
     public static String[][] addressTags = {
-    	{"addr:street","Examplestreet", "Text"},
-    	{"addr:housenumber","120", "Number"},
-    	{"addr:postcode","10115", "Number"},
-    	{"addr:city", "Berlin", "Text"},
-    	{"addr:country","Germany", "Text"}
+    	{"addr:street","Street", "1"},
+    	{"addr:housenumber","HouseNumber", "2"},
+    	{"addr:postcode","Postcode", "2"},
+    	{"addr:city", "City", "1"},
+    	{"addr:country","Country", "1"}
     };
    
     
@@ -38,10 +38,10 @@ public class Tags {
      * input: addressTags[i][2]
      */
     public static String[][] contactTags = {
-    	{"contact:phone","Examplestreet", "Text"},
-    	{"contact:fax","120", "Number"},
-    	{"contact:website", "http://www.somewebsite.com", "Text"},
-    	{"contact:email", "Berlin", "Text"}
+    	{"contact:phone","Phone", "2"},
+    	{"contact:fax","Fax", "2"},
+    	{"contact:website", "Website", "1"},
+    	{"contact:email", "Email", "1"}
     };
     
     /**
