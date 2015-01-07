@@ -1,4 +1,4 @@
-package io.github.data4all.model.data;
+package io.github.data4all.model;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
