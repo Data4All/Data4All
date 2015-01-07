@@ -47,7 +47,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_map_view);
 		mapView = (MapView) this.findViewById(R.id.mapview);
 		view = (ImageView) findViewById(R.id.imageView1);
-		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(500)
+		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
 				.withEndAction(new Runnable() {
 					public void run() {
 						view.setVisibility(View.GONE);
