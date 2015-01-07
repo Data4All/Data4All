@@ -54,4 +54,6 @@
         android:text="@string/to_camera"
         android:textSize="12sp" />
 
+    
+
 </RelativeLayout>

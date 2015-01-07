@@ -25,7 +25,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity android:name=".activity.MapViewActivity" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,6 +61,9 @@
             android:name=".service.GPSservice"
             android:label="GPS Service" >
         </service>
+        <service
+            android:name=".service.OrientationListener"
+            android:enabled="true" />
     </application>
 
 </manifest>
