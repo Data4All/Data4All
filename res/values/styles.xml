@@ -11,6 +11,11 @@
             backward-compatibility can go here.
         -->
     </style>
+    
+    <style name="CustomActivityThemeNoActionBar" parent="@android:style/Theme.Holo.Light">
+   <item name="android:windowActionBar">false</item>
+<item name="android:windowNoTitle">true</item>
+ </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">

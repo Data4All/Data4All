@@ -33,7 +33,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.SensorActivity" />
-        <activity android:name=".activity.ShowPictureActivity" />
+        <activity android:name=".activity.ShowPictureActivity" 
+            android:theme="@style/CustomActivityThemeNoActionBar">
+            
+        </activity>
         <activity android:name=".activity.CameraActivity" />
         <activity android:name=".activity.TagActivity" />
         <activity
