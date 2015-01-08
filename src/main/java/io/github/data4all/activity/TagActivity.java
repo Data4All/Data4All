@@ -6,10 +6,10 @@ import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -166,10 +166,9 @@ public class TagActivity extends Activity implements OnClickListener{
             Map<String, String> map = SpeechRecognition
                     .speechToTag(matchesText);
             matchesText.clear();
-            Iterator<String> keySetIterator = map.keySet().iterator();
-            while (keySetIterator.hasNext()) {
-                String key = keySetIterator.next();
-                matchesText.add(key + "=" + map.get(key));
+            for(Entry entry : map.entrySet()){
+    			String key = (String) entry.getKey();
+    			matchesText.add(key + "=" + map.get(key));
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, matchesText);
@@ -188,17 +187,13 @@ public class TagActivity extends Activity implements OnClickListener{
 
     private void output() {
         List<String> endList = new ArrayList<String>();
-        Iterator<String> keySetIterator = map.keySet().iterator();
-        while (keySetIterator.hasNext()) {
-            String key = keySetIterator.next();
-            endList.add(key + "=" + map.get(key));
+        for(Entry entry : map.entrySet()){
+			String key = (String) entry.getKey();endList.add(key + "=" + map.get(key));
             ListView textList = (ListView) findViewById(R.id.listView1);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
                     android.R.layout.simple_list_item_1, endList);
             textList.setAdapter(adapter);
-
         }
-
     }
 
 
