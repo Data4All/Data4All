@@ -11,15 +11,16 @@
             android:layout_height="fill_parent" >
         </io.github.data4all.view.CaptureCameraSurfaceView>
 
-        <ImageButton
-            android:id="@+id/btnTrigger"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="81dp"
-            android:layout_height="74dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:background="#0101DF"/>
-        
+
+         <ImageButton
+        android:id="@+id/btnTrigger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@null"
+        android:src="@drawable/ic_camaction" />
         
 
 </RelativeLayout>
