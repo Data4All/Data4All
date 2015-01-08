@@ -105,7 +105,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_OSMVERSION + " INTEGER" 
         		+")";
     	String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
-                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_OSMVERSION + " INTEGER" + KEY_LAT + " REAL,"
+                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
                 + KEY_LON + " REAL" +")";
         String CREATE_WAYS_TABLE = "CREATE TABLE " + TABLE_WAY + " ("
                 + KEY_OSMID + " INTEGER NOT NULL," 
@@ -334,7 +334,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * This method updates the data for a specific user stored in the database.
        * 
        * @param user the {@link User} object for which the data should be updated
-       * @return the number of objects that have been updated
+       * @return the number of rows that have been updated
        */
       public int updateUser(User user){
       	SQLiteDatabase db = getWritableDatabase();
@@ -344,9 +344,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	values.put(KEY_USERNAME, user.getUsername());
     	values.put(KEY_TOKEN, user.getLoginToken());
     	values.put(KEY_LOGINSTATUS, user.isLoggedIn());
-   	
-//    	db.close();
-    	return db.update(TABLE_USER, values, KEY_USERNAME + "=?", new String[]{user.getUsername()});
+    	
+    	int count = db.update(TABLE_USER, values, KEY_USERNAME + "=?", new String[]{user.getUsername()});
+    	db.close();
+    	return count;
       }
       
       /**
@@ -388,13 +389,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
       	
       	values.put(KEY_OSMID, node.getOsmId());
-      	values.put(KEY_OSMVERSION, node.getOsmVersion());
       	values.put(KEY_LAT, node.getLat());
       	values.put(KEY_LON, node.getLon());
       	
       	db.insert(TABLE_NODE, null, values);
-        	
+      	
+      		
         db.close();
+        
+        createOsmElement(node.getOsmId(),node.getOsmVersion());
+      	createParentRelation(node.getOsmId(),node.getParentRelations());
+      	createTagSortedMap(node.getOsmId(), node.getTags());
       }
       
       /**
@@ -407,17 +412,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       public Node getNode (long id){
     	  SQLiteDatabase db = getReadableDatabase();
       	
-        	Cursor cursor = db.query(TABLE_NODE, new String[]{KEY_OSMID, KEY_OSMVERSION, KEY_LAT, KEY_LON}, 
+        	Cursor cursor = db.query(TABLE_NODE, new String[]{KEY_OSMID, KEY_LAT, KEY_LON}, 
         			KEY_OSMID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
         	
         	if(cursor != null)
         		cursor.moveToFirst();
         	
-        	Node node  = new Node(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)), 
-        			Double.parseDouble(cursor.getString(2)), Double.parseDouble(cursor.getString(3)));
+        	Node node  = new Node(Long.parseLong(cursor.getString(0)), getOsmElementOsmVersion (id), 
+        			Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)));
         	
         	cursor.close();
         	db.close();
+        	
+        	node.setTags(getTagSortedMap(id));
+        	node.addParentRelations(getParentRelationList(id));
+        	
         	return node;
       }
       
@@ -433,6 +442,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         	db.delete(TABLE_NODE, KEY_OSMID + "=?", new String[]{String.valueOf(node.getOsmId())});
         	
         	db.close();
+        	
+        	deleteOsmElement(node.getOsmId());
+        	deleteParentRelationList(node.getOsmId());
+        	deleteTagSortedMap(node.getOsmId());
+        	deleteNodeInWay(node.getOsmId());
+        	deleteRelationMemberByRefId(node.getOsmId());
       }
       
       /**
@@ -454,7 +469,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * This method updates the data for a specific node stored in the database.
        * 
        * @param node the {@link Node} object for which the data should be updated
-       * @return the number of objects that have been updated
+       * @return the number of rows that have been updated
        */
       public int updateNode(Node node){
     	SQLiteDatabase db = getWritableDatabase();
@@ -462,12 +477,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	ContentValues values = new ContentValues();
       	
       	values.put(KEY_OSMID, node.getOsmId());
-      	values.put(KEY_OSMVERSION, node.getOsmVersion());
       	values.put(KEY_LAT, node.getLat());
       	values.put(KEY_LON, node.getLon());
+     	int count = db.update(TABLE_NODE, values, KEY_OSMID + "=?", new String[]{String.valueOf(node.getOsmId())});
+      	db.close();
      	
-//      	db.close();
-      	return db.update(TABLE_NODE, values, KEY_OSMID + "=?", new String[]{String.valueOf(node.getOsmId())});
+      	count += updateOsmElement(node.getOsmId(),node.getOsmVersion());
+      	count += updateParentRelation(node.getOsmId(),node.getParentRelations());
+      	count += updateTagSortedMap(node.getOsmId(), node.getTags());
+     	
+      	return count;
       }
       
       /**
@@ -484,8 +503,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         	
         	if(cursor.moveToFirst()){
         		do{
-        			Node node = new Node(Long.parseLong(cursor.getString(0)), Long.parseLong(cursor.getString(1)), 
-                			Double.parseDouble(cursor.getString(2)), Double.parseDouble(cursor.getString(3)));
+        			Node node = new Node(Long.parseLong(cursor.getString(0)), getOsmElementOsmVersion (Long.parseLong(cursor.getString(0))), 
+                			Double.parseDouble(cursor.getString(1)), Double.parseDouble(cursor.getString(2)));
+        			node.setTags(getTagSortedMap(node.getOsmId()));
+                	node.addParentRelations(getParentRelationList(node.getOsmId()));
         			nodes.add(node);
         		}
         		while (cursor.moveToNext());
@@ -516,6 +537,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         	db.insert(TABLE_WAY, null, values);       	
         }         	
         db.close();
+        
+        createOsmElement(way.getOsmId(),way.getOsmVersion());
+      	createParentRelation(way.getOsmId(),way.getParentRelations());
+      	createTagSortedMap(way.getOsmId(), way.getTags());
       }
       
       /**
@@ -548,11 +573,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       				
       	}
       	
-      	Way way  = new Way(Long.parseLong(cursor.getString(0)), 1L); // TODO: get osmversion from table!
+      	Way way  = new Way(Long.parseLong(cursor.getString(0)), getOsmElementOsmVersion(id)); 
       	way.addNodes(wayNodes, false);
       	
       	cursor.close();
       	db.close();
+      	
+      	way.setTags(getTagSortedMap(id));
+    	way.addParentRelations(getParentRelationList(id));
+      	
       	return way;
       }
       
@@ -567,6 +596,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	db.delete(TABLE_WAY, KEY_OSMID + "=?", new String[]{String.valueOf(way.getOsmId())});
       	
       	db.close();
+      	
+      	deleteOsmElement(way.getOsmId());
+    	deleteParentRelationList(way.getOsmId());
+    	deleteTagSortedMap(way.getOsmId());
+    	deleteRelationMemberByRefId(way.getOsmId()); 
       }
       
       /**
@@ -588,7 +622,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * This method updates the data for a specific way stored in the database.
        * 
        * @param way the {@link Way} object for which the data should be updated
-       * @return the number of objects that have been updated
+       * @return the number of rows that have been updated
        */
       public int updateWay(Way way){
     	  SQLiteDatabase db = getWritableDatabase();
@@ -602,7 +636,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           for(Node n : way.getNodes()){
         	 values.put(KEY_NODEID, n.getOsmId());
         	 count += db.update(TABLE_WAY, values, KEY_OSMID + "=?", new String[]{String.valueOf(way.getOsmId())});
-          }        
+          }       
+          
+          db.close();
+          
+          count += updateOsmElement(way.getOsmId(),way.getOsmVersion());
+          count += updateParentRelation(way.getOsmId(),way.getParentRelations());
+          count += updateTagSortedMap(way.getOsmId(), way.getTags());
           
           return count;
       }
@@ -629,8 +669,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                   			wayNodes.add(n);
                   		}      				
               	}
-        			Way way = new Way(Long.parseLong(cursor.getString(0)), 1L); // TODO: get osmversion from table
+        			Way way = new Way(Long.parseLong(cursor.getString(0)), getOsmElementOsmVersion(Long.parseLong(cursor.getString(0)))); 
         			way.addNodes(wayNodes, false);
+        			way.setTags(getTagSortedMap(way.getOsmId()));
+        	    	way.addParentRelations(getParentRelationList(way.getOsmId()));
         			ways.add(way);
         		}
         		while (cursor.moveToNext());
@@ -661,6 +703,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         	db.insert(TABLE_RELATION, null, values);       	
         }         	
         db.close();
+        
+        createOsmElement(relation.getOsmId(),relation.getOsmVersion());
+      	createParentRelation(relation.getOsmId(),relation.getParentRelations());
+      	createTagSortedMap(relation.getOsmId(), relation.getTags());
       }
       
       /**
@@ -692,13 +738,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           		} 
       				
       	}
-      	Relation relation = new Relation(id, 1L); // TODO: get osmversion from table
+      	Relation relation = new Relation(id, getOsmElementOsmVersion(id)); 
       	for(RelationMember rm : theseMembers){
       		relation.addMember(rm);
       	}
       	
       	cursor.close();
       	db.close();
+      	
+      	relation.setTags(getTagSortedMap(id));
+    	relation.addParentRelations(getParentRelationList(id));
       	return relation;
       }
       
@@ -713,6 +762,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	db.delete(TABLE_RELATION, KEY_OSMID + "=?", new String[]{String.valueOf(relation.getOsmId())});
       	
       	db.close();
+      	
+      	deleteOsmElement(relation.getOsmId());
+    	deleteParentRelationList(relation.getOsmId());
+    	deleteTagSortedMap(relation.getOsmId());
+    	deleteRelationMemberByRefId(relation.getOsmId());
       }
       
       /**
@@ -734,7 +788,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * This method updates the data for a specific relation stored in the database.
        * 
        * @param relation the {@link Relation} object for which the data should be updated
-       * @return the number of objects that have been updated
+       * @return the number of rows that have been updated
        */
       public int updateRelation(Relation relation){
     	SQLiteDatabase db = getWritableDatabase();
@@ -749,6 +803,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       	 values.put(KEY_RELATIONMEMBER, rm.getRef());
       	 count += db.update(TABLE_RELATION, values, KEY_OSMID + "=?", new String[]{String.valueOf(relation.getOsmId())});
         }        
+        
+        db.close();
+        
+        count += updateOsmElement(relation.getOsmId(),relation.getOsmVersion());
+      	count += updateParentRelation(relation.getOsmId(),relation.getParentRelations());
+      	count += updateTagSortedMap(relation.getOsmId(), relation.getTags());
         
         return count;
       }
@@ -775,8 +835,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                   			theseMembers.add(rm);
                   		}      				
               	}
-        			Relation relation = new Relation(Long.parseLong(cursor.getString(0)), 1L); // TODO: get osmversion from table
+        			Relation relation = new Relation(Long.parseLong(cursor.getString(0)), getOsmElementOsmVersion(Long.parseLong(cursor.getString(0)))); 
         			relation.addMembers(theseMembers, false);
+        			relation.setTags(getTagSortedMap(relation.getOsmId()));
+        	    	relation.addParentRelations(getParentRelationList(relation.getOsmId()));
         			relations.add(relation);
         		}
         		while (cursor.moveToNext());
@@ -796,7 +858,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * 
        * @param relationMember the {@link RelationMember} object from which the data will be taken
        */
-      public void createRelationMember(RelationMember relationMember){ // TODO: check
+      public void createRelationMember(RelationMember relationMember){ 
     	  SQLiteDatabase db = getWritableDatabase();
         	
           ContentValues values = new ContentValues();
@@ -817,7 +879,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * @param ref the reference to the desired relation member
        * @return a {@link RelationMember} object for the desired relation member
        */
-      public RelationMember getRelationMember (long ref){ // TODO: check
+      public RelationMember getRelationMember (long ref){ 
     	SQLiteDatabase db = getReadableDatabase();
       	
         Cursor cursor = db.query(TABLE_RELATIONMEMBER, new String[]{KEY_REF, KEY_TYPE, KEY_ROLE}, 
@@ -848,6 +910,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       }
       
       /**
+       * This method deletes a specific relation member from the database by the refId.
+       * 
+       * @param refId the ref of an RelationMember {@link RelationMember} object whose data should be deleted
+       */
+      
+      private void deleteRelationMemberByRefId(long refId){
+      	SQLiteDatabase db = getWritableDatabase();
+  	      	
+          db.delete(TABLE_RELATIONMEMBER, KEY_REF + "=?", new String[]{String.valueOf(refId)});
+          	
+          db.close();
+        }
+      
+      /**
        * This method returns the number of relation members currently stored in the database.
        * 
        * @return the number of relation members
@@ -866,9 +942,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
        * This method updates the data for a specific relation member stored in the database.
        * 
        * @param relationMember the {@link RelationMember} object for which the data should be updated
-       * @return the number of objects that have been updated
+       * @return the number of rows that have been updated
        */
-      public int updateRelationMember(RelationMember relationMember){ // TODO: check
+      public int updateRelationMember(RelationMember relationMember){ 
     	  SQLiteDatabase db = getWritableDatabase();
       	
           ContentValues values = new ContentValues();
@@ -908,7 +984,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       }
       
       //---Hilfsfunktionen----------------------------------------------------------------
-      
+      /**
+       * This method creates and stores a new OsmElement in the database. 
+       * 
+       * @param osmId the id of the OsmElement object
+       * @param osmVersion the version of the OsmElement object
+       * 
+       */      
       private void createOsmElement (long osmId, long osmVersion){
     	SQLiteDatabase db = getWritableDatabase();
         	
@@ -922,6 +1004,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
       }
       
+      /**
+       * This method creates and stores the ParentRelationList of an OsmElement in the database. 
+       * 
+       * @param osmId the id of the OsmElement object
+       * @param parentRelation the List of Parent Relations of the OsmElement object
+       * 
+       */       
       private void createParentRelation (long osmId, List<Relation> parentRelations){
       	SQLiteDatabase db = getWritableDatabase();
           	
@@ -936,6 +1025,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           db.close();
         }
       
+      /**
+       * This method creates and stores the SortedMap of Tags of an OsmElement in the database. 
+       * 
+       * @param osmId the id of the OsmElement object
+       * @param tags the SortedMap of tags of the OsmElement object
+       * 
+       */  
       private void createTagSortedMap (long osmId, SortedMap<String, String> tags){
       	SQLiteDatabase db = getWritableDatabase();
           	
@@ -951,7 +1047,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           	
           db.close();
         }
- 
+      
+      /**
+       * This method updates and stores a new OsmElement in the database. 
+       * 
+       * @param osmId the id of the OsmElement object
+       * @param osmVersion the version of the OsmElement object
+       * @return the number of rows that have been updated
+       */ 
       private int updateOsmElement (long osmId, long osmVersion){
     	SQLiteDatabase db = getWritableDatabase();
         	
@@ -966,6 +1069,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return count;
       }
       
+      /**
+       * This method updates and stores the ParentRelationList of an OsmElement in the database. 
+       * 
+       * @param osmId the id of the OsmElement object
+       * @param parentRelation the List of Parent Relations of the OsmElement object
+       * @return the number of rows that have been updated
+       */
       private int updateParentRelation (long osmId, List<Relation> parentRelations){
       	SQLiteDatabase db = getWritableDatabase();
           	
@@ -981,6 +1091,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           return count;
         }
       
+      /**
+       * This method updates and stores the SortedMap of Tags of an OsmElement in the database. 
+       * 
+       * @param osmId the id of the OsmElement object
+       * @param tags the SortedMap of tags of the OsmElement object
+       * @return the number of rows that have been updated
+       */
       private int updateTagSortedMap (long osmId, SortedMap<String, String> tags){
       	SQLiteDatabase db = getWritableDatabase();
           	
@@ -998,7 +1115,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           
           return count;
         }
-
+      
+      /**
+       * This method deletes a specific OsmElement from the database.
+       * 
+       * @param osmId the id of an OsmElement object whose data should be deleted
+       */
       private void deleteOsmElement (long osmId){
       	SQLiteDatabase db = getWritableDatabase();
   	      	
@@ -1007,7 +1129,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
           db.close();
         }
       
-      private void deleteParentRelation (long osmId){
+      /**
+       * This method deletes a specific ParentRelationList of an OsmElement from the database.
+       * 
+       * @param osmId the id of the OsmElement object whose List data should be deleted
+       */
+      private void deleteParentRelationList (long osmId){
         	SQLiteDatabase db = getWritableDatabase();
     	      	
             db.delete(TABLE_OSMPARENTLIST, KEY_OSMID + "=?", new String[]{String.valueOf(osmId)});
@@ -1015,6 +1142,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.close();
           }
       
+      /**
+       * This method deletes a specific TagSortedMap of an OsmElement from the database.
+       * 
+       * @param osmId the id of the OsmElement object whose Map data should be deleted
+       */
       private void deleteTagSortedMap (long osmId){
         	SQLiteDatabase db = getWritableDatabase();
     	      	
@@ -1023,6 +1155,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.close();
           }
       
+      /**
+       * This method deletes a specific Node in an Way from the database.
+       * 
+       * @param nodeId the id of Node object in an Way whose data should be deleted
+       */
+      private void deleteNodeInWay (long nodeId){
+        	SQLiteDatabase db = getWritableDatabase();
+    	      	
+            db.delete(TABLE_WAY, KEY_NODEID + "=?", new String[]{String.valueOf(nodeId)});
+            	
+            db.close();
+          }      
+      
+      /**
+       * This method returns the data for a specific way stored in the database and creates the corresponding 
+       * List object.
+       * 
+       * @param osmId the id of the OsmElement
+       * @return a List object for the OsmElement
+       */
       private List<Relation> getParentRelationList (long osmId){
     	  List<Relation> parentRelation= new ArrayList<Relation> ();
     	  
@@ -1045,6 +1197,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	  return parentRelation;
       }
       
+      /**
+       * This method returns the data for a specific way stored in the database and creates the corresponding 
+       * Map object.
+       * 
+       * @param osmId the id of the OsmElement
+       * @return a Map object for the OsmElement
+       */
       private SortedMap<String, String> getTagSortedMap (long osmId){
     	  SortedMap<String, String> tagMap= new TreeMap<String, String> ();
     	  
@@ -1064,7 +1223,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	  return tagMap;
       }
        	  
-      
+      /**
+       * This method returns the data for a specific way stored in the database and returns the version of an OsmElement.
+       * 
+       * @param osmId the id of the OsmElement
+       * @return the version of the OsmElement
+       */
       private long getOsmElementOsmVersion (long osmId){
     	  SQLiteDatabase db = getReadableDatabase();
         	
