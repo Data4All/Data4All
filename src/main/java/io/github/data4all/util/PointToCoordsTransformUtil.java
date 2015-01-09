@@ -26,15 +26,19 @@ public class PointToCoordsTransformUtil {
 	
 	
 	
-	
+	/**
+	 * 
+	 * @param tps
+	 * @param deviceOrientation
+	 * @return
+	 */
 	public ArrayList<Point> transform(TransformationParamBean tps, DeviceOrientation deviceOrientation){
 		ArrayList<Point> coords = new ArrayList<Point>(); //to save calculated coordinates
-		ArrayList<Point> points = tps.getPoints();
-		this.height = tps.getHeight();
-		
 		float[] orientation = new float[3];
+		this.height = tps.getHeight();		
 		orientation[0] = deviceOrientation.getAzimuth();
-		for(Point point : points){
+		
+		for(Point point : tps.getPoints()){
 			orientation[1] = calculateAngle(point.getX(), tps.getPhotoWidth(),
 					tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
 			orientation[2] = calculateAngle(point.getY(), tps.getPhotoHeight(),
@@ -57,6 +61,14 @@ public class PointToCoordsTransformUtil {
 		return calculate2dPoint(orientation);
 	}
 	
+	/**
+	 * Calculates the Angle altered by the chosen Pixel
+	 * @param pixel
+	 * @param width
+	 * @param maxAngle
+	 * @param oldAngle
+	 * @return
+	 */
 	private float calculateAngle(float pixel, float width, float maxAngle, float oldAngle){
 		if((pixel - (width / 2)) == 0){
 			return oldAngle;
@@ -83,7 +95,6 @@ public class PointToCoordsTransformUtil {
 
 		float[] coords = new float[2];
 		float z = height / vector[2];
-		Log.d(TAG, "Height : " + height + "  Multiplier : " + z);
 		coords[0] = vector[0] * z;
 		coords[1] = vector[1] * z;		
 		
@@ -95,6 +106,8 @@ public class PointToCoordsTransformUtil {
 	
 	
 	/**
+	 * Calculates a Vector with the given Orientation. 
+	 * The Coordinate-System: y = North , x = West , z = Earth-Center
 	 * @param orientation
 	 * @return 
 	 */
@@ -108,26 +121,24 @@ public class PointToCoordsTransformUtil {
 		float z = (float) Math.cos(orientation[1]); 
 		
 		//calculate temp.Y with Pitch
-		float yy = (float) Math.sin(-orientation[1]); 
+		float y = (float) Math.sin(-orientation[1]); 
 		
 		//calculate temp.X with fix Z and Roll
-		float xx = (float) (Math.tan(orientation[2]) * z);
+		float x = (float) (Math.tan(orientation[2]) * z);
 		
-		Log.d(TAG,"Calculated Vector without azimuth: X = " + xx 
-				+ " ,Y = " + yy
+		Log.d(TAG,"Calculated Vector without azimuth: X = " + x 
+				+ " ,Y = " + y
 				+ ", Z = " + z);
 		
-
 		
 		// Rotate Vector with Azimuth (Z is fix))
 		float[] vector = new float[3];
-		vector[0] = (float) ((xx * Math.cos(orientation[0])) 
-				- (yy * Math.sin(orientation[0])));
-		vector[1] = (float) ((xx * Math.sin(orientation[0])) 
-				+ (yy * Math.cos(orientation[0])));
+		vector[0] = (float) ((x * Math.cos(orientation[0])) 
+				- (y * Math.sin(orientation[0])));
+		vector[1] = (float) ((x * Math.sin(orientation[0])) 
+				+ (y * Math.cos(orientation[0])));
 		vector[2] = z;	
 		
-
 		
 		Log.d(TAG,"Calculated Vector: X = " + vector[0] 
 				+ " ,Y = " + vector[1]
