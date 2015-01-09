@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 public class MapViewActivity extends Activity implements OnClickListener {
 
@@ -105,19 +106,19 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		mapView.getOverlays().add(myLocationOverlay);
 
 		// Set Listener for Buttons
-		Button returnToPosition = (Button) findViewById(R.id.return_to_actual_Position);
+        ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
-		Button uploadData = (Button) findViewById(R.id.upload_data);
+        ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
 		uploadData.setOnClickListener(this);
 
-		Button satelliteMap = (Button) findViewById(R.id.switch_maps);
+        ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_to_satellite_map);
 		satelliteMap.setOnClickListener(this);
 
-		Button camera = (Button) findViewById(R.id.to_camera);
+        ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
 		camera.setOnClickListener(this);
 
-		Button newPoint = (Button) findViewById(R.id.new_point);
+        ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
 		newPoint.setOnClickListener(this);
 
 	}
