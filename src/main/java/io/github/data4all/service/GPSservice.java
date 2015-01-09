@@ -1,46 +1,27 @@
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
-
-import java.util.ArrayList;
-
+import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.widget.Toast;
 
-/**
- * provides the GPSposition of the Device and saves the locations
- * for calculations later on.
- * 
- * @author konerman
- * 
- */
-
 public class GPSservice extends Service implements LocationListener {
+    
+    Optimizer optimizer = new Optimizer();
+    
+    private static final String TAG = "GPSservice";
 
-    public static ArrayList<String> history = new ArrayList<String>();
-
-    private static final String TAG = "GPStracker";
-
-    /**
-     * Is GPS enabled ?
-     */
-    private boolean isGpsEnabled = false;
-
-    /**
-     * Last known location
-     */
-    private Location lastLocation;
-
-    /**
+     /**
      * LocationManager
      */
     private LocationManager lmgr;
@@ -55,21 +36,22 @@ public class GPSservice extends Service implements LocationListener {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
-        
+
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        
+
         if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
-            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, // minimum
+            lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, // minimum
                                                                             // of
                                                                             // time
                     0, this); // minimum of meters
         }
+
         if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000,
+            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000,
                     0, this);
         }
     }
-    
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -80,29 +62,14 @@ public class GPSservice extends Service implements LocationListener {
 
     @Override
     public void onDestroy() {
-
+        super.onDestroy();
         wakeLock.release();
-
+ 
     }
 
-    public void onLocationChanged(Location location) {
-        // We're receiving location, so GPS is enabled
-        isGpsEnabled = true;
-
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
-
-        // timestamp
-        Long tsLong = System.currentTimeMillis() / 1000;
-        String ts = tsLong.toString();
-
-        // add
-        history.add("time:" + ts + " lat=" + lat + " lon=" + lon);
-
-        Log.d(TAG, "time:" + ts + " lat=" + lat + " lon=" + lon);
-        Log.d(TAG, "Points in GPS history: " + history.size());
-
-        lastLocation = location;
+    public void onLocationChanged(Location loc) {
+             
+        optimizer.putLoc(loc);
 
     }
 
@@ -112,11 +79,10 @@ public class GPSservice extends Service implements LocationListener {
     }
 
     public void onProviderEnabled(String provider) {
-        isGpsEnabled = true;
     }
 
     public void onProviderDisabled(String provider) {
-        isGpsEnabled = false;
+
         Toast.makeText(getBaseContext(),
                 "Gps turned off, GPS tracking not possible ", Toast.LENGTH_LONG)
                 .show();
@@ -127,5 +93,5 @@ public class GPSservice extends Service implements LocationListener {
         // TODO Auto-generated method stub
         return null;
     }
-
+    
 }
