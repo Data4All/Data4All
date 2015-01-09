@@ -112,7 +112,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
         ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
 		uploadData.setOnClickListener(this);
 
-        ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_to_satellite_map);
+        ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
 		satelliteMap.setOnClickListener(this);
 
         ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
