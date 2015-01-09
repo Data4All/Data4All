@@ -49,15 +49,16 @@ public class RingBuffer<T> {
     public void put(T value) {
         if (buffer.length > 0) {
             buffer[head] = value;
-
-            index = head;
-
+          
+            index=head;
+            
             head = (head + 1) % buffer.length;
-
+            
             if (entries < buffer.length) {
                 ++entries;
             }
         }
+
     }
 
     /**

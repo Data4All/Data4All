@@ -115,7 +115,6 @@ public class Optimizer {
                 .getAccuracy());
         boolean isLessAccurate = accuracyDelta > 0;
         boolean isMoreAccurate = accuracyDelta < 0;
-        //50 meters are set as a significant difference
         boolean isSignificantlyLessAccurate = accuracyDelta > 50;
 
         // Check if the old and new location are from the same provider
