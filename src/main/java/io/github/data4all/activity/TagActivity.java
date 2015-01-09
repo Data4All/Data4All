@@ -75,6 +75,7 @@ public class TagActivity extends Activity {
                         context, android.R.layout.simple_list_item_1, keys);
                 keyList.setAdapter(adapter);
                 keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
