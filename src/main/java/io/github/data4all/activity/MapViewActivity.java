@@ -191,6 +191,5 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
 		// Pause the GPS tracking
 		stopService(new Intent(this, GPSservice.class));
-		stopService(new Intent(this, OrientationListener.class));
 	}
 }
