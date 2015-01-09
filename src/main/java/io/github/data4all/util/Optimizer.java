@@ -1,6 +1,5 @@
 package io.github.data4all.util;
 
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import android.location.Location;
 
