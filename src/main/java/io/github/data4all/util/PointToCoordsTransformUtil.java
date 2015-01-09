@@ -30,6 +30,8 @@ public class PointToCoordsTransformUtil {
 	public ArrayList<Point> transform(TransformationParamBean tps, DeviceOrientation deviceOrientation){
 		ArrayList<Point> coords = new ArrayList<Point>(); //to save calculated coordinates
 		ArrayList<Point> points = tps.getPoints();
+		this.height = tps.getHeight();
+		
 		float[] orientation = new float[3];
 		orientation[0] = deviceOrientation.getAzimuth();
 		for(Point point : points){
@@ -45,32 +47,6 @@ public class PointToCoordsTransformUtil {
 	}
 	
 	
-	/**
-	 * @param pointlist
-	 * @param orientation
-	 * @return
-	 */
-	/*
-	public ArrayList<float[]> calculate(ArrayList<float[]> pointlist, float[] orientation){
-		ArrayList<float[]> calculatedPoints = new ArrayList<float[]>();
-		float[] adjustedOrientation = null;
-		for(float[] point : pointlist){
-			adjustedOrientation = orientation;			
-			calculatedPoints.add(calculate2dPoint(adjustedOrientation));			
-		}		
-		return calculatedPoints;
-	}
-	
-	
-	
-	public ArrayList<float[]> calculate(ArrayList<float[]> pointlist, DeviceOrientation deviceOrientation){
-		float[] orientation = new float[3];
-		orientation[0] = deviceOrientation.getAzimuth();
-		orientation[1] = deviceOrientation.getPitch();
-		orientation[2] = deviceOrientation.getRoll();
-		return calculate(pointlist, orientation);
-	}
-	*/
 
 	
 	public float[] calculate2dPoint(DeviceOrientation deviceOrientation){
@@ -82,6 +58,9 @@ public class PointToCoordsTransformUtil {
 	}
 	
 	private float calculateAngle(float pixel, float width, float maxAngle, float oldAngle){
+		if((pixel - (width / 2)) == 0){
+			return oldAngle;
+		}
 		float percent = (width / 2) / (pixel - (width / 2));
 		float angle = maxAngle * percent;		
 		return oldAngle + angle;
@@ -104,11 +83,12 @@ public class PointToCoordsTransformUtil {
 
 		float[] coords = new float[2];
 		float z = height / vector[2];
+		Log.d(TAG, "Height : " + height + "  Multiplier : " + z);
 		coords[0] = vector[0] * z;
 		coords[1] = vector[1] * z;		
 		
 		Log.d(TAG,"Calculated X = " + coords[0] + " and Y = " + coords[1]);
-		
+
 		return coords;		
 	}
 	
@@ -137,18 +117,23 @@ public class PointToCoordsTransformUtil {
 				+ " ,Y = " + yy
 				+ ", Z = " + z);
 		
+
+		
 		// Rotate Vector with Azimuth (Z is fix))
-		orientation[0] = (float) ((xx * Math.cos(orientation[0])) 
+		float[] vector = new float[3];
+		vector[0] = (float) ((xx * Math.cos(orientation[0])) 
 				- (yy * Math.sin(orientation[0])));
-		orientation[1] = (float) ((xx * Math.sin(orientation[0])) 
+		vector[1] = (float) ((xx * Math.sin(orientation[0])) 
 				+ (yy * Math.cos(orientation[0])));
-		orientation[2] = z;
+		vector[2] = z;	
 		
-		Log.d(TAG,"Calculated Vector: X = " + orientation[0] 
-				+ " ,Y = " + orientation[1]
-				+ ", Z = " + orientation[2]);
+
 		
-		return orientation;
+		Log.d(TAG,"Calculated Vector: X = " + vector[0] 
+				+ " ,Y = " + vector[1]
+				+ ", Z = " + vector[2]);
+		
+		return vector;
 	}
 		
 }
