@@ -35,5 +35,6 @@
         android:layout_centerInParent="false"
         android:layout_marginBottom="26dp"
         android:text="@string/deleteButton" />
+    
 
 </RelativeLayout>
