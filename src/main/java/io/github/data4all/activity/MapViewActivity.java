@@ -80,10 +80,6 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		//Add Satellite Map TileSource
 		TileSourceFactory.addTileSource(MAPBOX_SATELLITE_LABELLED);
 
-		// Activate Zoom
-		Log.i(TAG, "Activate Zoom Controls");
-		mapView.setBuiltInZoomControls(true);
-
 		// Activate Multi Touch Control
 		Log.i(TAG, "Activate Multi Touch Controls");
 		mapView.setMultiTouchControls(true);
@@ -142,7 +138,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(OSM_TILESOURCE);
-				Button button = (Button)findViewById(R.id.switch_maps);
+				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
 				button.setText(R.string.switch_to_satellite);
 				mapView.postInvalidate();
 			//switch to Satellite Map
@@ -150,7 +146,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
-				Button button = (Button)findViewById(R.id.switch_maps);
+				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
 				button.setText(R.string.switch_to_osm);
 				mapView.postInvalidate();		
 			}
