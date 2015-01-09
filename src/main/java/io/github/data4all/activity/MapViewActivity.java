@@ -1,21 +1,25 @@
 package io.github.data4all.activity;
 
+import io.github.data4all.R;
+import io.github.data4all.logger.Log;
+import io.github.data4all.service.GPSservice;
+
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import io.github.data4all.R;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class MapViewActivity extends Activity implements OnClickListener {
+
 
 	private static final String TAG = "MapViewActivity";
 	private MapView mapView;
@@ -99,10 +103,12 @@ public class MapViewActivity extends Activity implements OnClickListener {
 	    		}
 	    		break;
 	    	case R.id.upload_data:
+            startActivity(new Intent(this, LoginActivity.class));
 	    		break;
 	    	case R.id.switch_to_satellite_map:
 	    		break;
 	    	case R.id.to_camera:
+            startActivity(new Intent(this, CameraActivity.class));
 	    		break;
 	    	case R.id.new_point:
 	    		break;
@@ -127,6 +133,9 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		Log.i(TAG,"Enable Following Location Overlay");
 		myLocationOverlay.enableFollowLocation();
 		mapView.postInvalidate();
+
+        // Start the GPS tracking
+        startService(new Intent(this, GPSservice.class));
 	}
 
 	@Override
@@ -137,5 +146,8 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		
 		Log.i(TAG,"Disable Following Location Overlay");
 		myLocationOverlay.disableFollowLocation();
+
+        // Pause the GPS tracking
+        stopService(new Intent(this, GPSservice.class));
 	}
 }

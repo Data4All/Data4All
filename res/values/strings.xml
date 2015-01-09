@@ -4,10 +4,50 @@
     <string name="app_name">Data4All</string>
     <string name="hello">Hello Data4All!</string>
     <string name="action_settings">Settings</string>
+    <string name="sensor_button">Sensor</string>
+    
+    <string name="X"> Accelerometer X</string>
+    <string name="Y"> Accelerometer Y</string>
+    <string name="Z"> Accelerometer Z</string>
+    
+    
+    <string name="x"> Gyroscope x</string>
+    <string name="y"> Gyroscope y</string>
+    <string name="z"> Gyroscope z</string>
+    
+    <string name="action_ShowPicture">Show Picture</string>
+    
+    <string name="action_camera">Camera</string>
+    <string name="action_map">Map</string>
+    <string name="action_help">Help</string>
+    <string name="title_activity_custom_menu">CustomMenuActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="speechRecognition">Start </string>
+    <string name="selectTag">Select Matching Tag</string>
+    
     <string name="return_to_position">My Position</string>
     <string name="to_camera">Camera</string>
     <string name="switch_to_satellite">Satellite Map</string>
     <string name="upload_data">Upload</string>
     <string name="poi">POI</string>
-
+    <string name="action_login">Login</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="stayLoggedIn">Remember me?</string>
+    <string name="loginButton">Login</string>
+    <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
+    <string name="deleteButton">delete Token</string>
+    <string name="alreadyLoggedIn">Already logged in</string>
+    <string name="title_activity_tag">TagActivity</string>
+    <string name="tag">Start Tagging</string>
+    <string name="houseNumber">house number</string>
+    <string name="street">street</string>
+    <string name="postCode">postcode</string>
+    <string name="city">city</string>
+    <string name="country">country</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="phone">phone</string>
+    <string name="fax">fax</string>
+    <string name="website">website</string>
+    <string name="email">email</string>
 </resources>
