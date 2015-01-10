@@ -16,6 +16,7 @@ import android.graphics.Paint;
  * If a motion is not a dot, the end point is used
  * 
  * @author tbrose
+ * @version 2
  * @see MotionInterpreter
  */
 public class BuildingMotionInterpreter implements MotionInterpreter {
