@@ -106,23 +106,28 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         areaPoints.add(d);
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util.List, io.github.data4all.model.drawing.DrawingMotion)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
+     * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
     @Override
-    public List<Point> interprete(List<Point> interpreted, DrawingMotion drawingMotion) {
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
         ArrayList<Point> result;
-        
+
         if (drawingMotion == null) {
             return interpreted;
-        } else if(interpreted == null) {
+        } else if (interpreted == null) {
             result = new ArrayList<Point>();
-        } else if(interpreted.size() > 3) {
+        } else if (interpreted.size() > 3) {
             return interpreted;
         } else {
             result = new ArrayList<Point>(interpreted);
         }
-        
+
         if (drawingMotion.getPathSize() != 0 && drawingMotion.isPoint()) {
             // for dots use the average of the given points
             result.add(drawingMotion.average());
@@ -130,16 +135,19 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
             // for a path use the last point
             result.add(drawingMotion.getEnd());
         }
-        
+
         if (result.size() == 3) {
             addFourthPoint(result);
         }
-        
+
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
      */
     @Override
     public OsmElement create(List<Point> polygon) {
@@ -147,7 +155,9 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override
