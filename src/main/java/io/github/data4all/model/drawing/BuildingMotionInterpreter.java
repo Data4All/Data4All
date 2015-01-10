@@ -23,13 +23,16 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
     /**
      * The paint to draw the points with
      */
+    @Deprecated
     private final Paint pointPaint = new Paint();
 
     /**
      * The paint to draw the path with
      */
+    @Deprecated
     private final Paint pathPaint = new Paint();
 
+    @Deprecated
     public BuildingMotionInterpreter() {
         // Draw dark blue points
         pointPaint.setColor(POINT_COLOR);
@@ -46,6 +49,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
      * .Canvas, java.util.List)
      */
+    @Deprecated
     public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
         List<Point> areaPoints = new ArrayList<Point>();
 
@@ -105,10 +109,32 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      * @see io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util.List, io.github.data4all.model.drawing.DrawingMotion)
      */
     @Override
-    public List<Point> interprete(List<Point> interpreted,
-            DrawingMotion drawingMotion) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Point> interprete(List<Point> interpreted, DrawingMotion drawingMotion) {
+        ArrayList<Point> result;
+        
+        if (drawingMotion == null) {
+            return interpreted;
+        } else if(interpreted == null) {
+            result = new ArrayList<Point>();
+        } else if(interpreted.size() > 3) {
+            return interpreted;
+        } else {
+            result = new ArrayList<Point>(interpreted);
+        }
+        
+        if (drawingMotion.getPathSize() != 0 && drawingMotion.isPoint()) {
+            // for dots use the average of the given points
+            result.add(drawingMotion.average());
+        } else {
+            // for a path use the last point
+            result.add(drawingMotion.getEnd());
+        }
+        
+        if (result.size() == 3) {
+            addFourthPoint(result);
+        }
+        
+        return result;
     }
 
     /* (non-Javadoc)
@@ -125,8 +151,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public boolean isArea() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
 }
