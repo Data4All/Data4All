@@ -77,10 +77,14 @@ public class PointMotionInterpreter implements MotionInterpreter {
             return new ArrayList<Point>();
         } else if (drawingMotion.isPoint()) {
             // for dots use the average of the given points
-            return Arrays.asList(drawingMotion.average());
+            List<Point> result = new ArrayList<Point>();
+            result.add(drawingMotion.average());
+            return result;
         } else {
             // for a path use the last point
-            return Arrays.asList(drawingMotion.getEnd());
+            List<Point> result = new ArrayList<Point>();
+            result.add(drawingMotion.getEnd());
+            return result;
         }
     }
 
