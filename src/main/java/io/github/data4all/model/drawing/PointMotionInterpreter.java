@@ -2,6 +2,8 @@ package io.github.data4all.model.drawing;
 
 import io.github.data4all.model.data.OsmElement;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.graphics.Canvas;
@@ -16,14 +18,17 @@ import android.graphics.Paint;
  * If this motion is a path, the last Point of the path is shown
  * 
  * @author tbrose
+ * @version 2
  * @see MotionInterpreter
  */
 public class PointMotionInterpreter implements MotionInterpreter {
     /**
      * The paint to draw the points with
      */
+    @Deprecated
     private final Paint pointPaint = new Paint();
 
+    @Deprecated
     public PointMotionInterpreter() {
         // Draw dark blue points
         pointPaint.setColor(POINT_COLOR);
@@ -36,6 +41,7 @@ public class PointMotionInterpreter implements MotionInterpreter {
      * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
      * .Canvas, java.util.List)
      */
+    @Deprecated
     public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
         if (drawingMotions != null && drawingMotions.size() > 0) {
             DrawingMotion lastMotion = drawingMotions
@@ -53,18 +59,36 @@ public class PointMotionInterpreter implements MotionInterpreter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util.List, io.github.data4all.model.drawing.DrawingMotion)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
+     * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
     @Override
     public List<Point> interprete(List<Point> interpreted,
             DrawingMotion drawingMotion) {
-        // TODO Auto-generated method stub
-        return null;
+        if (drawingMotion == null) {
+            return interpreted;
+        } else if (interpreted.size() > 3) {
+            return interpreted;
+        } else if (drawingMotion.getPathSize() == 0) {
+            return new ArrayList<Point>();
+        } else if (drawingMotion.isPoint()) {
+            // for dots use the average of the given points
+            return Arrays.asList(drawingMotion.average());
+        } else {
+            // for a path use the last point
+            return Arrays.asList(drawingMotion.getEnd());
+        }
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
      */
     @Override
     public OsmElement create(List<Point> polygon) {
@@ -72,12 +96,13 @@ public class PointMotionInterpreter implements MotionInterpreter {
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override
     public boolean isArea() {
-        // TODO Auto-generated method stub
         return false;
     }
 
