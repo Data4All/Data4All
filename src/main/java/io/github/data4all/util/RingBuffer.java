@@ -104,7 +104,10 @@ public class RingBuffer<T> {
      * @return the last added entry of the buffer.
      */
     public T getLast() {
+        if(getSize()>0){
         return buffer[index];
+        }
+        return null;
     }
 
     public int getBuffercapacity() {
