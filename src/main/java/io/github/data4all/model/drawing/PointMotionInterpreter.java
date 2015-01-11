@@ -3,7 +3,6 @@ package io.github.data4all.model.drawing;
 import io.github.data4all.model.data.OsmElement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import android.graphics.Canvas;
