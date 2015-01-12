@@ -17,12 +17,14 @@ import org.osmdroid.ResourceProxy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class MapViewActivity extends Activity implements OnClickListener {
 
@@ -31,6 +33,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 	private static final String TAG = "MapViewActivity";
 	
 	private MapView mapView;
+	private ImageView view;
 	private MapController mapController;
 	private MyLocationNewOverlay myLocationOverlay;
 	
@@ -58,6 +61,8 @@ public class MapViewActivity extends Activity implements OnClickListener {
 			"MapBoxSatelliteLabelled",
 			ResourceProxy.string.mapquest_aerial, MINIMAL_ZOOM_LEVEL,
 			MAXIMAL_ZOOM_LEVEL, 256, ".png", aBaseUrl);
+	private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+
 	/**
 	 * Called when the activity is first created.
 	 * 
@@ -79,6 +84,18 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
 		//Add Satellite Map TileSource
 		TileSourceFactory.addTileSource(MAPBOX_SATELLITE_LABELLED);
+		view = (ImageView) findViewById(R.id.imageView1);
+		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+				.withEndAction(new Runnable() {
+					public void run() {
+						view.setVisibility(View.GONE);
+					}
+				}).start();
+
+		// Set Maptilesource
+		Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
+		mapView.setTileSource(DEFAULT_TILESOURCE);
+
 
 		// Activate Multi Touch Control
 		Log.i(TAG, "Activate Multi Touch Controls");
@@ -102,6 +119,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		mapView.getOverlays().add(myLocationOverlay);
 
 		// Set Listener for Buttons
+
         ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
@@ -193,3 +211,4 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		stopService(new Intent(this, GPSservice.class));
 	}
 }
+
