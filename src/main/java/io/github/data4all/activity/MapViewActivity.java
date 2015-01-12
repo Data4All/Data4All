@@ -4,7 +4,6 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.service.GPSservice;
 
-
 import org.osmdroid.ResourceProxy.string;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -20,47 +19,47 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-public class MapViewActivity extends Activity implements OnClickListener {
+public class MapViewActivity extends BasicActivity implements OnClickListener {
 
-
-	//Logger Tag
+	// Logger Tag
 	private static final String TAG = "MapViewActivity";
-	
+
 	private MapView mapView;
 	private ImageView view;
 	private MapController mapController;
 	private MyLocationNewOverlay myLocationOverlay;
-	
-	//Default Zoom Level
+
+	// Default Zoom Level
 	private final int DEFAULT_ZOOM_LEVEL = 18;
-	
-	//Minimal Zoom Level
+
+	// Minimal Zoom Level
 	private final int MINIMAL_ZOOM_LEVEL = 10;
-	
-	//Maximal Zoom Level
+
+	// Maximal Zoom Level
 	private final int MAXIMAL_ZOOM_LEVEL = 20;
-	
-	//Default OpenStreetMap TileSource
+
+	// Default OpenStreetMap TileSource
 	private final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
-	
-	//BaseURL For SatelliteMap download. 
-	//TODO Create Own Account
-	private String[] aBaseUrl = { "http://a.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-            "http://b.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-            "http://c.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-            "http://d.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/"};
-	
-	//Default Satellite Map Tilesource
+
+	// BaseURL For SatelliteMap download.
+	// TODO Create Own Account
+	private String[] aBaseUrl = {
+			"http://a.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
+			"http://b.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
+			"http://c.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
+			"http://d.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/" };
+
+	// Default Satellite Map Tilesource
 	private final OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new XYTileSource(
-			"MapBoxSatelliteLabelled",
-			ResourceProxy.string.mapquest_aerial, MINIMAL_ZOOM_LEVEL,
-			MAXIMAL_ZOOM_LEVEL, 256, ".png", aBaseUrl);
+			"MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial,
+			MINIMAL_ZOOM_LEVEL, MAXIMAL_ZOOM_LEVEL, 256, ".png", aBaseUrl);
 	private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
 	/**
@@ -82,7 +81,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		Log.i(TAG, "Set Maptilesource to " + OSM_TILESOURCE.name());
 		mapView.setTileSource(OSM_TILESOURCE);
 
-		//Add Satellite Map TileSource
+		// Add Satellite Map TileSource
 		TileSourceFactory.addTileSource(MAPBOX_SATELLITE_LABELLED);
 		view = (ImageView) findViewById(R.id.imageView1);
 		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
@@ -95,7 +94,6 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		// Set Maptilesource
 		Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
 		mapView.setTileSource(DEFAULT_TILESOURCE);
-
 
 		// Activate Multi Touch Control
 		Log.i(TAG, "Activate Multi Touch Controls");
@@ -120,19 +118,19 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
 		// Set Listener for Buttons
 
-        ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
+		ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
-        ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
+		ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
 		uploadData.setOnClickListener(this);
 
-        ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
+		ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
 		satelliteMap.setOnClickListener(this);
 
-        ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
+		ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
 		camera.setOnClickListener(this);
 
-        ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
+		ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
 		newPoint.setOnClickListener(this);
 
 	}
@@ -151,20 +149,21 @@ public class MapViewActivity extends Activity implements OnClickListener {
 			startActivity(new Intent(this, LoginActivity.class));
 			break;
 		case R.id.switch_maps:
-			//switch to OSM Map
-			if(mapView.getTileProvider().getTileSource().name().equals("MapBoxSatelliteLabelled")){
+			// switch to OSM Map
+			if (mapView.getTileProvider().getTileSource().name()
+					.equals("MapBoxSatelliteLabelled")) {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(OSM_TILESOURCE);
-				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
+				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				mapView.postInvalidate();
-			//switch to Satellite Map
-			}else{
+				// switch to Satellite Map
+			} else {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
-				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
-				mapView.postInvalidate();		
+				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+				mapView.postInvalidate();
 			}
 			break;
 		case R.id.to_camera:
@@ -175,12 +174,7 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+
 
 	@Override
 	public void onResume() {
@@ -194,8 +188,8 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		myLocationOverlay.enableFollowLocation();
 		mapView.postInvalidate();
 
-        // Start the GPS tracking
-        startService(new Intent(this, GPSservice.class));
+		// Start the GPS tracking
+		startService(new Intent(this, GPSservice.class));
 	}
 
 	@Override
@@ -211,4 +205,3 @@ public class MapViewActivity extends Activity implements OnClickListener {
 		stopService(new Intent(this, GPSservice.class));
 	}
 }
-
