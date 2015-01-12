@@ -16,11 +16,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
 /**
  * Activity to set a new Layer-Backgroundimage
@@ -31,12 +36,16 @@ import android.view.View;
 public class ShowPictureActivity extends Activity {
 
     private TouchView touchView;
-
+    private ImageView imageView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
-        touchView = (TouchView) findViewById(R.id.touch_view);
+        imageView = (ImageView) findViewById(R.id.imageView1);
+        touchView = (TouchView) findViewById(R.id.touchView1);
+       
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
@@ -73,35 +82,26 @@ public class ShowPictureActivity extends Activity {
         touchView.invalidate();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (data != null && resultCode == RESULT_OK) {
-
-                Uri selectedImage = data.getData();
-                setBackground(selectedImage);
-
-            } else {
-                Log.d("Status:", "Photopicker canceled");
-            }
-        }
-    }
-
     /**
      * Get a Uri of a Image and set this to local layout as background
      * 
      * @param selectedImage
      */
     private void setBackground(Uri selectedImage) {
-        Resources res = getResources();
-        Bitmap bitmap;
+        Bitmap bitmap;   
         try { // try to convert a image to a bitmap
-            bitmap = MediaStore.Images.Media.getBitmap(
+        	bitmap = MediaStore.Images.Media.getBitmap(
                     this.getContentResolver(), selectedImage);
-            BitmapDrawable bd = new BitmapDrawable(res, bitmap);
-            View view = findViewById(R.id.main_layout);
-            view.setBackground(bd);
+        	int display_mode = getResources().getConfiguration().orientation;
+        	Matrix matrix = new Matrix();
+        	if (display_mode == 1) {
+        		matrix.setRotate(90);
+        	} 
+        	
+        	Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        	Log.e(this.getClass().toString(), "ROTATION:");
+           imageView.setImageBitmap(adjustedBitmap);
+       //     imageView.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             Log.e(this.getClass().toString(), "ERROR, no file found");
             e.printStackTrace();
