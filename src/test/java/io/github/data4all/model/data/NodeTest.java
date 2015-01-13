@@ -13,8 +13,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.os.Parcel;
-import android.os.ParcelFileDescriptor;
-import android.os.Parcelable.Creator;
 
 /**
  * Testing the main functionality of the node objects. Testing inherited methods

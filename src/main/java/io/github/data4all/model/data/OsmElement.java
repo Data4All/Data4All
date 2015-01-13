@@ -258,7 +258,6 @@ public abstract class OsmElement implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(osmId);
 		dest.writeLong(osmVersion);
-		//dest.writeList(parentRelations);
 		dest.writeInt(tags.size());
 		for (String s: tags.keySet()) {
 			dest.writeString(s);
@@ -274,11 +273,6 @@ public abstract class OsmElement implements Parcelable {
     protected OsmElement(Parcel in) {
     	osmId = in.readLong();
     	osmVersion = in.readLong();
-    	//parentRelations = new ArrayList<Relation>();
-    	//parentRelations = new ArrayList<Relation>();
-    	//tags = new TreeMap<String, String>();
-    	//in.readList(parentRelations, null);
-    	//in.readMap(tags, null);
     	tags = new TreeMap<String, String>();
         int count = in.readInt();
         for (int i = 0; i < count; i++) {
