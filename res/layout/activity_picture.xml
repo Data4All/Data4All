@@ -1,54 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_layout"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/android">
-    <io.github.data4all.view.TouchView
-        android:id="@+id/touch_view"
+    android:background="@drawable/android"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/imageView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    
-    <Button
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/android" />
+
+    <io.github.data4all.view.TouchView
+        android:id="@+id/touchView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@android:string/ok"
-        android:onClick="onClickOkay">
-    </Button>
-	<LinearLayout
-    	android:orientation="horizontal"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_centerHorizontal="true"
-    	android:layout_alignParentBottom="true">    
-    	<Button
-        	android:layout_width="wrap_content"
-        	android:text="Punkt"
-        	android:layout_height="wrap_content"
-        	android:onClick="onClickPoint">
-    	</Button>
-    
-    	<Button
-        	android:layout_width="wrap_content"
-        	android:text="Weg"
-        	android:layout_height="wrap_content"
-        	android:onClick="onClickPath">
-    	</Button>
-    
-    	<Button
-        	android:layout_width="wrap_content"
-       		android:text="Fläche"
-    	    android:layout_height="wrap_content"
-    	    android:onClick="onClickArea">
-	    </Button>
-    
-    	<Button
-        	android:layout_width="wrap_content"
-        	android:text="Gebäude"
-        	android:layout_height="wrap_content"
-        	android:onClick="onClickBuilding">
-    	</Button>
-	</LinearLayout>
-    
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true">
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:onClick="onClickPath"
+            android:src="@drawable/ic_way" />
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:onClick="onClickPoint"
+            android:src="@drawable/ic_point" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickBuilding"
+            android:text="Gebäude" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickArea"
+            android:text="Fläche" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@null"
+        android:onClick="onClickOkay"
+        android:src="@drawable/ic_ok" />
+
 </RelativeLayout>

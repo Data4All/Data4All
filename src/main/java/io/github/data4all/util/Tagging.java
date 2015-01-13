@@ -60,11 +60,11 @@ public abstract class Tagging {
 
     public static Map<String, String> addressToTag(List<String> addressTags,
             Map<String, String> map) {
-        String[] tag;
+        String[] [] tag;
         tag = Tags.getAddressTags();
         for (int i = 0; i < tag.length; i++) {
             if (!addressTags.get(i).equals("")) {
-                map.put(tag[i], addressTags.get(i));
+                map.put(tag[i] [0], addressTags.get(i));
             }
         }
         return map;
@@ -73,11 +73,11 @@ public abstract class Tagging {
 
     public static Map<String, String> contactToTag(List<String> contactTags,
             Map<String, String> map) {
-        String[] tag;
+        String[] [] tag;
         tag = Tags.getContactTags();
         for (int i = 0; i < tag.length; i++) {
             if (!contactTags.get(i).equals("")) {
-                map.put(tag[i], contactTags.get(i));
+                map.put(tag[i] [0], contactTags.get(i));
             }
         }
         return map;

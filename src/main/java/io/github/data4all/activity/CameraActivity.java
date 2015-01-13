@@ -5,8 +5,11 @@ import io.github.data4all.listener.CaptureShutterListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 
 /**
@@ -27,10 +30,11 @@ public class CameraActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // Inflate the UI layout
         setContentView(R.layout.activity_camera);
-
+        
         // Initialize the UI components
         initUIComponents();
     }
@@ -104,4 +108,6 @@ public class CameraActivity extends Activity {
         // Retrieve the Camera Preview Component
         cameraPreview = (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
     }
+    
+    
 }
