@@ -213,11 +213,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //    public int getBoundingBoxCount(){
 //    	SQLiteDatabase db = getReadableDatabase();
 //    	
-//    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
+//    	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_BOUNDINGBOX, null);
+//      int count = cursor.getCount();
 //    	cursor.close();
 //    	db.close();
 //    	
-//    	return cursor.getCount();
+//    	return count;
 //    }
 //    
 //    public int updateBoundingBox(BoundingBox boundingBox){
@@ -239,7 +240,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //    	List<BoundingBox> boundingBoxes = new ArrayList<BoundingBox>();
 //    	
 //    	SQLiteDatabase db = getReadableDatabase();
-//    	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_BOUNDINGBOX, null);
+//    	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_BOUNDINGBOX, null);
 //    	
 //    	if(cursor.moveToFirst()){
 //    		do{
@@ -323,11 +324,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       public int getUserCount(){
     	SQLiteDatabase db = getReadableDatabase();
       	
-      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_USER, null);
+      	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
+      	int count = cursor.getCount();
       	cursor.close();
       	db.close();
       	
-      	return cursor.getCount();
+      	return count;
       }
       
       /**
@@ -360,7 +362,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	List<User> users = new ArrayList<User>();
       	
       	SQLiteDatabase db = getReadableDatabase();
-      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_USER, null);
+      	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
       	
       	if(cursor.moveToFirst()){
       		do{
@@ -458,11 +460,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       public int getNodeCount(){
     	  SQLiteDatabase db = getReadableDatabase();
         	
-        	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_NODE, null);
+        	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
+        	int count = cursor.getCount();
         	cursor.close();
         	db.close();
         	
-        	return cursor.getCount();
+        	return count;
       }
       
       /**
@@ -499,7 +502,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	  List<Node> nodes = new ArrayList<Node>();
         	
         	SQLiteDatabase db = getReadableDatabase();
-        	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_NODE, null);
+        	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
         	
         	if(cursor.moveToFirst()){
         		do{
@@ -611,11 +614,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       public int getWayCount(){
     	SQLiteDatabase db = getReadableDatabase();
       	
-      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_WAY, null);
+      	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_WAY, null);
+      	int count = cursor.getCount();
       	cursor.close();
       	db.close();
       	
-      	return cursor.getCount();
+      	return count;
       }
       
       /**
@@ -657,7 +661,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	List<Way> ways = new ArrayList<Way>();
         	
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_WAY, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_WAY, null);
       	
       	List<Node> allNodes = getAllNode();
       	List<Node> wayNodes = new ArrayList<Node>();
@@ -777,11 +781,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       public int getRelationCount(){
     	SQLiteDatabase db = getReadableDatabase();
       	
-      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATION, null);
+      	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_RELATION, null);
+      	int count = cursor.getCount();
       	cursor.close();
       	db.close();
       	
-      	return cursor.getCount();
+      	return count;
       }
       
       /**
@@ -823,7 +828,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	List<Relation> relations = new ArrayList<Relation>();
       	
       	SQLiteDatabase db = getReadableDatabase();
-      	Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATION, null);
+      	Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_RELATION, null);
       	
       	List<RelationMember> allMembers = getAllRelationMember();
       	List<RelationMember> theseMembers = new ArrayList<RelationMember>();
@@ -931,11 +936,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
       public int getRelationMemberCount(){
     	SQLiteDatabase db = getReadableDatabase();
         	
-        Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATIONMEMBER, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_RELATIONMEMBER, null);
+        int count = cursor.getCount();
         cursor.close();
         db.close();
         	
-        return cursor.getCount();
+        return count;
       }
       
       /**
@@ -968,7 +974,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	List<RelationMember> relationMembers = new ArrayList<RelationMember>();
         	
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_RELATIONMEMBER, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_RELATIONMEMBER, null);
         	
         if(cursor.moveToFirst()){
         	do{
@@ -1179,7 +1185,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     	  List<Relation> parentRelation= new ArrayList<Relation> ();
     	  
     	  SQLiteDatabase db = getReadableDatabase();
-          Cursor cursor = db.rawQuery("SELECT * FROM" + TABLE_OSMPARENTLIST, null);
+          Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_OSMPARENTLIST, null);
           db.query(TABLE_OSMPARENTLIST, new String[]{KEY_OSMID, KEY_RELATIONID}, 
       			KEY_OSMID + "=?", new String[]{String.valueOf(osmId)}, null, null, null, null);
           	
