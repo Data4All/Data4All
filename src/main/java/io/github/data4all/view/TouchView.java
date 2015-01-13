@@ -125,10 +125,10 @@ public class TouchView extends View {
         switch (action) {
         case MotionEvent.ACTION_DOWN:
             currentMotion = new DrawingMotion();
-            handleMotion(event, "end");
+            handleMotion(event, "start");
             break;
         case MotionEvent.ACTION_UP:
-            handleMotion(event, "start");
+            handleMotion(event, "end");
             polygon = newPolygon;
             break;
         case MotionEvent.ACTION_MOVE:
