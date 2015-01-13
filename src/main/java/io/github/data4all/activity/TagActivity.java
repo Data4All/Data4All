@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
@@ -56,7 +57,7 @@ public class TagActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag);
-        Button start = (Button) findViewById(R.id.speech);
+        ImageButton start = (ImageButton) findViewById(R.id.speech);
         start.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(
