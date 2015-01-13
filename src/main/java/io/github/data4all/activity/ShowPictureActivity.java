@@ -25,6 +25,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -52,7 +53,7 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-tagIntent = new Intent(this,TagActivity.class);
+        tagIntent = new Intent(this,TagActivity.class);
        
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
@@ -60,9 +61,11 @@ tagIntent = new Intent(this,TagActivity.class);
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
         }
+    	
     }
 
 	public void onClickOkay(View view) {
+		disableButtons();
 		startActivity(tagIntent);
 	}
 
@@ -121,6 +124,15 @@ tagIntent = new Intent(this,TagActivity.class);
 			Log.e(this.getClass().toString(), "ERROR, file is no image");
 			e.printStackTrace();
 		}
+	}
+	
+	private void disableButtons(){
+		findViewById(R.id.imageButton1).setVisibility(View.GONE);;
+		findViewById(R.id.imageButton2).setVisibility(View.GONE);
+		findViewById(R.id.imageButton3).setVisibility(View.GONE);
+		findViewById(R.id.button1).setVisibility(View.GONE);
+		findViewById(R.id.button2).setVisibility(View.GONE);
+		
 	}
 
 }
