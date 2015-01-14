@@ -1,10 +1,14 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,18 +19,25 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
@@ -46,6 +57,7 @@ public class TagActivity extends Activity implements OnClickListener{
     private List <EditText> edit;
     private Boolean first;
     private Dialog dialog1;
+    private ImageView imageView;
 
     /**
      * Called when the activity is first created.
@@ -59,66 +71,67 @@ public class TagActivity extends Activity implements OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tag);
-        
-        Button start = (Button) findViewById(R.id.speech);
-        start.setOnClickListener(this);
-        
-        Button startTagging = (Button) findViewById(R.id.startTagging);
-        startTagging.setOnClickListener(this);
-        
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_tag);    
+        imageView = (ImageView) findViewById(R.id.imageView5);
+        if (getIntent().hasExtra("file_path")) {
+           setBackground(Uri.fromFile((File) getIntent().getExtras().get(
+                   "file_path")));}
+       
+            
+        final Dialog dialog = new Dialog(TagActivity.this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
+        dialog.setContentView(R.layout.dialog_matches);
+        //dialog.setTitle("Select Tag");
+        final ListView keyList = (ListView) dialog
+                .findViewById(R.id.list);
+        //ImageButton start = (ImageButton) findViewById(R.id.speech2);
+        //start.setOnClickListener(this);
+        keys = (ArrayList<String>) Tagging.getKeys();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                context, android.R.layout.simple_list_item_1, keys);
+        keyList.setAdapter(adapter);
+        keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                key = keys.get(position);
+                keys = (ArrayList<String>) Tagging.getValues(key);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                        context, android.R.layout.simple_list_item_1,
+                        keys);
+                keyList.setAdapter(adapter);
+                keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent,
+                            View view, int position, long id) {
+
+                        String value = keys.get(position);
+                        map = new LinkedHashMap<String, String>();
+                        map.put(key, value);
+                        if (key.equals("building")
+                                || key.equals("amenity")) {                                  
+                            createDialog(Tags.getAddressTags(), "Add Address", key.equals("building"), true);
+                        }
+                        output();
+                        dialog.hide();
+                    }
+                });
+
+            }
+        });
+        dialog.show();
     }
 
     public void onClick(View v) {
     	switch (v.getId()){
-    	case R.id.speech:
+  	case R.id.speech2:
     		Intent intent = new Intent(
                     RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             startActivityForResult(intent, REQUEST_CODE);
-            break;
-    	case R.id.startTagging:
-            final Dialog dialog = new Dialog(TagActivity.this);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
-            dialog.setContentView(R.layout.dialog_matches);
-            dialog.setTitle("Select Tag");
-            final ListView keyList = (ListView) dialog
-                    .findViewById(R.id.list);
-            keys = (ArrayList<String>) Tagging.getKeys();
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                    context, android.R.layout.simple_list_item_1, keys);
-            keyList.setAdapter(adapter);
-            keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                        int position, long id) {
-                    key = keys.get(position);
-                    keys = (ArrayList<String>) Tagging.getValues(key);
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                            context, android.R.layout.simple_list_item_1,
-                            keys);
-                    keyList.setAdapter(adapter);
-                    keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent,
-                                View view, int position, long id) {
-
-                            String value = keys.get(position);
-                            map = new LinkedHashMap<String, String>();
-                            map.put(key, value);
-                            if (key.equals("building")
-                                    || key.equals("amenity")) {                                  
-                                createDialog(Tags.getAddressTags(), "Add Address", key.equals("building"), true);
-                            }
-                            output();
-                            dialog.hide();
-                        }
-                    });
-
-                }
-            });
-            dialog.show();
             break;
     	case R.id.buttonNext:
     		List<String> tags = new ArrayList<String>();
@@ -234,6 +247,31 @@ public class TagActivity extends Activity implements OnClickListener{
 		
     		dialog1.show();       
     }
- 
+
+
+	private void setBackground(Uri selectedImage) {
+		Bitmap bitmap;
+		try { // try to convert a image to a bitmap
+			bitmap = MediaStore.Images.Media.getBitmap(
+					this.getContentResolver(), selectedImage);
+			int display_mode = getResources().getConfiguration().orientation;
+			Matrix matrix = new Matrix();
+			if (display_mode == 1) {
+				matrix.setRotate(90);
+			}
+
+			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+			Log.e(this.getClass().toString(), "ROTATION:");
+			imageView.setImageBitmap(adjustedBitmap);
+		} catch (FileNotFoundException e) {
+			Log.e(this.getClass().toString(), "ERROR, no file found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.e(this.getClass().toString(), "ERROR, file is no image");
+			e.printStackTrace();
+		}
+	}
+	
 
 }
