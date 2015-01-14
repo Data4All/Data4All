@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Maurice Boyke
@@ -20,25 +21,20 @@ public abstract class SpeechRecognition {
      * @return The HashMap of the matching Tags
      */
     public static Map<String, String> speechToTag(List<String> matchesText) {
-        Map<String, String> map = new HashMap<String, String>();
-        Map<String, String> tagData = new HashMap<String, String>();
-        tagData = Tags.getClassifiedTags();
-        Iterator<String> keySetIterator = tagData.keySet().iterator();
-        while (keySetIterator.hasNext()) {
-            String key = keySetIterator.next();
-            String[] split;
-            split = tagData.get(key).split(",");
-            for (int i = 0; i < matchesText.size(); i++) {
-                for (int j = 0; j < split.length; j++) {
-                    if (matchesText.get(i).equalsIgnoreCase(split[j])
-                            && map.get(key) == null) {
-                        map.put(key, split[j]);
-                        break;
-                    }
-                }
-            }
-        }
-        return map;
+    	Map<String, String> map = new HashMap <String, String>();
+		Map<String, String> tagData = new HashMap<String, String>();
+		Tags tags = new Tags();
+		tagData = tags.getClassifiedTags();
+		for(Entry entry : tagData.entrySet()){
+			String key = (String) entry.getKey();
+			// split is the Array from the Key Values
+			String [] split = tagData.get(key).split(",");
+			if(compareStringTag(split, matchesText) != null){
+				map.put(key, compareStringTag(split, matchesText));
+				break;
+			}
+		}
+		return map;
     }
 
     /**
@@ -60,4 +56,22 @@ public abstract class SpeechRecognition {
         }
 
     }
+	 /**
+	  * It Compares the list of the Google Speechrecognition and the array of key Values
+	  * @param tag
+	  * @param matchesText
+	  * @return the String that matches with the tagValue
+	  */
+	 private static String compareStringTag(String[] tag, List<String> matchesText){
+		 for (int i = 0; i < matchesText.size(); i++) {
+				for (int j = 0; j < tag.length; j++) {
+					// Compares the String of matchesText with split 
+					if(matchesText.get(i).equalsIgnoreCase(tag[j])){
+						return tag[j];
+					}	 
+				}
+		 	}
+		return null;
+	 }
+
 }
