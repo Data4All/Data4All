@@ -172,7 +172,7 @@ public class TouchView extends View {
         postInvalidate();
 
     }
-    
+
     /**
      * this function determines if there is a Point of the polygon close to this
      * point
@@ -181,12 +181,17 @@ public class TouchView extends View {
      *            the X-value of the point
      * @param y
      *            the Y-value of the point
-     *                   
+     * 
      */
     public Point lookUp(float x, float y) {
 
-        // the value which represent the maximum distance between two points
+        // the value which represent the maximum distance between the userinput
+        // and the nearest Point.
+        // Right now, it will return the nearest point of the Polygon no matter
+        // how far away it is
+        // TODO: find a suitable value
         float shortest = Float.MAX_VALUE;
+
         Point closePoint = null;
 
         if (!polygon.isEmpty()) {
@@ -194,9 +199,7 @@ public class TouchView extends View {
             // runs through the list of points in the polygon and checks which
             // point is the closest
             for (Point p : polygon) {
-                float px = p.getX();
-                float py = p.getY();
-                float distance = Math.abs(x - px) + Math.abs(y - py);
+                float distance = Math.abs(x - p.getX()) + Math.abs(y - p.getY());
 
                 Log.d(this.getClass().getSimpleName(), "distance:" + distance);
 
