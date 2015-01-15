@@ -1,6 +1,5 @@
 package io.github.data4all.view;
 
-import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
@@ -167,11 +166,48 @@ public class TouchView extends View {
      * @param point
      *            The selected point
      */
-    private void deletePoint(Point point) {
+    public void deletePoint(Point point) {
         polygon.remove(point);
-        newPolygon = interpreter.interprete(polygon, currentMotion);
         Log.d(this.getClass().getSimpleName(), "Point deleted");
         postInvalidate();
+
+    }
+    
+    /**
+     * this function determines if there is a Point of the polygon close to this
+     * point
+     * 
+     * @param x
+     *            the X-value of the point
+     * @param y
+     *            the Y-value of the point
+     *                   
+     */
+    public Point lookUp(float x, float y) {
+
+        // the value which represent the maximum distance between two points
+        float shortest = Float.MAX_VALUE;
+        Point closePoint = null;
+
+        if (!polygon.isEmpty()) {
+
+            // runs through the list of points in the polygon and checks which
+            // point is the closest
+            for (Point p : polygon) {
+                float px = p.getX();
+                float py = p.getY();
+                float distance = Math.abs(x - px) + Math.abs(y - py);
+
+                Log.d(this.getClass().getSimpleName(), "distance:" + distance);
+
+                if (distance <= shortest) {
+                    shortest = distance;
+                    closePoint = p;
+                }
+            }
+        }
+        Log.d(this.getClass().getSimpleName(), "shortest distance:" + shortest);
+        return closePoint;
 
     }
 
