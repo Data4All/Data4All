@@ -53,7 +53,7 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-        tagIntent = new Intent(this,TagActivity.class);
+        tagIntent = new Intent(this,CopyOfTagActivity.class);
         tagIntent.putExtra("file_path", (File) getIntent().getExtras().get(
                 "file_path"));
         if (getIntent().hasExtra("file_path")) {

@@ -40,8 +40,9 @@
         <activity android:name=".activity.ShowPictureActivity" />
         <activity android:name=".activity.CameraActivity" />
         <activity android:name=".activity.TagActivity" 
-                />
-
+           />
+        <activity android:name=".activity.CopyOfTagActivity" 
+               android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" >
