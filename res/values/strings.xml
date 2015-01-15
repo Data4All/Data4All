@@ -32,6 +32,7 @@
     <string name="upload_data">Upload</string>
     <string name="poi">POI</string>
     <string name="action_login">Login</string>
+<<<<<<< HEAD
     <string name="title_activity_login">LoginActivity</string>
     <string name="stayLoggedIn">Remember me?</string>
     <string name="loginButton">Login</string>
@@ -51,4 +52,15 @@
     <string name="fax">fax</string>
     <string name="website">website</string>
     <string name="email">email</string>
+=======
+    <string name="title_activity_login">Login</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="stayLoggedIn">Remember me?</string>
+    <string name="loginButton">Login</string>
+    <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
+    <string name="deleteButton">Logout</string>
+    <string name="alreadyLoggedIn">Already logged in</string>
+    <string name="getUsernameButton">show Username</string>
+
+>>>>>>> feature/2514-OSM-Authentication
 </resources>

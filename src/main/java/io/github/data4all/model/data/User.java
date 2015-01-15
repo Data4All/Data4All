@@ -14,6 +14,7 @@ public class User {
     private String username;
     private String oauthToken;
     private boolean isLoggedIn;
+    private String oauthTokenSecret;
 
     /**
      * Default constructor
@@ -21,9 +22,16 @@ public class User {
      * @param username
      * @param loginToken
      */
-    public User(String username, String loginToken) {
+    public User(String oauthToken, String oauthTokenSecret) {
+        this.oauthToken = oauthToken;
+        this.setOauthTokenSecret(oauthTokenSecret);
+    }
+
+ 
+    public User(String username, String oauthToken, String oauthTokenSecret) {
         this.username = username;
-        this.oauthToken = loginToken;
+        this.oauthToken = oauthToken;
+        this.setOauthTokenSecret(oauthTokenSecret);
     }
 
     /**
@@ -61,6 +69,22 @@ public class User {
 
     public void setLoggedIn(boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
+    }
+     
+    public String getOAuthToken() {
+        return oauthToken;
+    }
+
+    public void setOAuthToken(String oauthToken) {
+        this.oauthToken = oauthToken;
+    }
+
+    public String getOauthTokenSecret() {
+        return oauthTokenSecret;
+    }
+
+    public void setOauthTokenSecret(String oauthTokenSecret) {
+        this.oauthTokenSecret = oauthTokenSecret;
     }
 
 }
