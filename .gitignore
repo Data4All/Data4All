@@ -33,7 +33,6 @@ tmp/
 *.bak
 *.swp
 *~.nib
-local.properties
 .settings/
 .loadpath
 /target/
@@ -49,3 +48,4 @@ local.properties
 
 # PDT-specific
 .buildpath
+/.classpath

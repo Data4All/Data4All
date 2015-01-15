@@ -49,15 +49,16 @@ public class RingBuffer<T> {
     public void put(T value) {
         if (buffer.length > 0) {
             buffer[head] = value;
-
-            index = head;
-
+          
+            index=head;
+            
             head = (head + 1) % buffer.length;
-
+            
             if (entries < buffer.length) {
                 ++entries;
             }
         }
+
     }
 
     /**
@@ -103,7 +104,10 @@ public class RingBuffer<T> {
      * @return the last added entry of the buffer.
      */
     public T getLast() {
+        if(getSize()>0){
         return buffer[index];
+        }
+        return null;
     }
 
     public int getBuffercapacity() {
