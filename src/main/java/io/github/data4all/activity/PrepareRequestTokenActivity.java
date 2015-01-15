@@ -260,7 +260,7 @@ public class PrepareRequestTokenActivity extends Activity {
         protected void onPostExecute(Void result) {
             Log.i(TAG, "Starting Loginscreen again");
             startActivity(new Intent(PrepareRequestTokenActivity.this,
-                    MainActivity.class));
+                    MapViewActivity.class));
             //Remove sessioncookie before moving on
             CookieManager.getInstance().removeSessionCookie();
             finish();
