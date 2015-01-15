@@ -1,5 +1,6 @@
 package io.github.data4all.view;
 
+import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
@@ -158,6 +159,20 @@ public class TouchView extends View {
                             + ", point: " + currentMotion.isPoint());
             postInvalidate();
         }
+    }
+
+    /**
+     * deletes a Point of the polygon
+     * 
+     * @param point
+     *            The selected point
+     */
+    private void deletePoint(Point point) {
+        polygon.remove(point);
+        newPolygon = interpreter.interprete(polygon, currentMotion);
+        Log.d(this.getClass().getSimpleName(), "Point deleted");
+        postInvalidate();
+
     }
 
     public void setInterpretationType(InterpretationType type) {
