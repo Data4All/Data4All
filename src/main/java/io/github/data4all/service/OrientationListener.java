@@ -25,9 +25,7 @@ public class OrientationListener extends Service implements SensorEventListener 
     Sensor magnetometer;
     /** sensorManager */
     private SensorManager sManager;
-    // optimizer class where the data is saved
-    private Optimizer optimizer = new Optimizer();
-
+    
     private static final String TAG = "OrientationListener";
 
     // RotationmatrixR
@@ -96,7 +94,7 @@ public class OrientationListener extends Service implements SensorEventListener 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);
                 // saving the new model with the orientation in the RingBuffer
-                optimizer.putPos(new DeviceOrientation(orientation[0],
+                Optimizer.putPos(new DeviceOrientation(orientation[0],
                         orientation[1], orientation[2], System
                                 .currentTimeMillis()));
             }
