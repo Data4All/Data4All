@@ -323,36 +323,32 @@ public class RelationTest {
     public void test_parcelable_way() {
     	Parcel newParcel = Parcel.obtain();
     	Relation testRelation = new Relation(1, 1);
+    	
     	testRelation.addOrUpdateTag("testtag", "test");
     	testRelation.addOrUpdateTag("foo", "bar");
-
-
-    	//        Relation relation1 = new Relation(3, 1);
-    	//        testWay.addParentRelation(relation1);
-    	//        Relation relation2 = new Relation(4, 2);
-    	//        testWay.addParentRelation(relation2);
-    	//        testWay.addNode(testNode1);
-    	//        testWay.addNode(testNode2);
-    	//        testWay.addNode(testNode3);
+    	
+        RelationMember member1 = new RelationMember("type", 12345, "role");
+        testRelation.addMember(member1);
+        RelationMember member2 = new RelationMember("othertype", 54321, "otherrole");    	
+        testRelation.addMember(member2);
+        
     	testRelation.writeToParcel(newParcel, 0);
     	newParcel.setDataPosition(0);
     	Relation deParcelRelation = Relation.CREATOR.createFromParcel(newParcel);
-    	//    	assertEquals(1, deParcelWay.getOsmId()); 
-    	//    	assertEquals(2, deParcelWay.getOsmVersion());
+    	
     	assertEquals("test", deParcelRelation.getTagWithKey("testtag"));
     	assertEquals("bar", deParcelRelation.getTagWithKey("foo"));
-    	//    	assertEquals(2, deParcelWay.getParentRelations().size());
-    	//    	assertEquals(3, deParcelWay.getParentRelations().get(0).getOsmId());
-    	//    	assertEquals(1, deParcelWay.getParentRelations().get(0).getOsmVersion());
-    	//    	assertEquals(4, deParcelWay.getParentRelations().get(1).getOsmId());
-    	//    	assertEquals(2, deParcelWay.getParentRelations().get(1).getOsmVersion());
-    	//    	assertEquals(3, deParcelWay.getNodes().size());
-    	//        assertEquals(10, deParcelWay.getNodes().get(0).getOsmId());
-    	//        assertEquals(11, deParcelWay.getNodes().get(1).getOsmId());
-    	//        assertEquals(12, deParcelWay.getNodes().get(2).getOsmId());
-    	//        assertEquals(1, deParcelWay.getNodes().get(0).getOsmVersion());
-    	//        assertEquals(1, deParcelWay.getNodes().get(1).getOsmVersion());
-    	//        assertEquals(1, deParcelWay.getNodes().get(2).getOsmVersion());	
+    	
+    	assertEquals(2, deParcelRelation.getMembers().size());
+    	
+        assertEquals("type", deParcelRelation.getMembers().get(0).getType());
+        assertEquals(12345, deParcelRelation.getMembers().get(0).getRef());
+        assertEquals("role", deParcelRelation.getMembers().get(0).getRole());
+        
+        assertEquals("othertype", deParcelRelation.getMembers().get(1).getType());
+        assertEquals(54321, deParcelRelation.getMembers().get(1).getRef());
+        assertEquals("otherrole", deParcelRelation.getMembers().get(1).getRole());	
+
     }  
 
 }
