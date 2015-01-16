@@ -60,5 +60,26 @@
         style="@style/imageButtonOkay"
         android:onClick="onClickOkay"
         android:contentDescription="@string/noDescription" />
+    
+    <Button
+        android:id="@+id/redobtn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/undobtn"
+        android:onClick="onClickRedo"
+        android:enabled="false"
+        android:text="Redo" />
+
+    <Button
+        android:id="@+id/undobtn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:onClick="onClickUndo"
+        android:enabled="false"
+        android:text="Undo" />
 
 </RelativeLayout>

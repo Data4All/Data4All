@@ -57,9 +57,15 @@
 
     <style name="imageButtonCamAction" parent="imageButtonStyle">
         <item name="android:layout_alignParentBottom">true</item>
-        <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:src">@drawable/ic_camaction</item>
+    </style>
+    
+    <style name="imageButtonCamActionLand" parent="imageButtonStyle">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginRight">10dp</item>
         <item name="android:src">@drawable/ic_camaction</item>
     </style>
 

@@ -13,7 +13,7 @@
 
     <ImageButton
         android:id="@+id/btnTrigger"
-        style="@style/imageButtonReturnToActualPosition"
+        style="@style/imageButtonCamAction"
         android:contentDescription="@string/noDescription" />
 
 </RelativeLayout>
