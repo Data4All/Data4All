@@ -266,7 +266,6 @@ public class Relation extends OsmElement {
 	 */
     private Relation(Parcel in) {
     	super(in);
-    	//members = in.readArrayList(null);
         members = new ArrayList<RelationMember>();
         in.readTypedList(members, RelationMember.CREATOR);
     }
