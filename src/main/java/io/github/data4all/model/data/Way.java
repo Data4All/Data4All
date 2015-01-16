@@ -292,7 +292,7 @@ public class Way extends OsmElement {
 	}
 	
     /**
-     * Methods to write and restore a Parcel
+     * Methods to write and restore a Parcel.
      */
     public static final Parcelable.Creator<Way> CREATOR
             = new Parcelable.Creator<Way>() {
@@ -312,7 +312,7 @@ public class Way extends OsmElement {
 	}
 
     /**
-     * Writes the lat and the lon to the given parcel
+     * Writes the nodes to the given parcel.
      */
 	public void writeToParcel(Parcel dest, int flags) {		
 		super.writeToParcel(dest, flags);
@@ -320,7 +320,7 @@ public class Way extends OsmElement {
 	}
 	
 	/**
-	 * Constructor to create a node from a parcel
+	 * Constructor to create a way from a parcel.
 	 * @param in
 	 */
     private Way(Parcel in) {

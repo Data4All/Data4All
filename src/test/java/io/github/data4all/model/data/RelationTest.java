@@ -316,8 +316,8 @@ public class RelationTest {
     }
     
     /**
-     * Create a new parcial to save/parcelable the testWay, 
-     * afterwards a new node is created from the parcel and we check if it contains all attributes.
+     * Create a new parcial to save/parcelable the testRelation, 
+     * afterwards a new relation is created from the parcel and we check if it contains all attributes.
      */
     @Test 
     public void test_parcelable_way() {

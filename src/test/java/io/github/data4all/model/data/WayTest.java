@@ -239,7 +239,7 @@ public class WayTest {
     
     /**
      * Create a new parcial to save/parcelable the testWay, 
-     * afterwards a new node is created from the parcel and we check if it contains all attributes.
+     * afterwards a new way is created from the parcel and we check if it contains all attributes.
      */
 	@Test 
     public void test_parcelable_way() {

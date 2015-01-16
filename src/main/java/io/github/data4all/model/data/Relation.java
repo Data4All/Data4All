@@ -233,7 +233,7 @@ public class Relation extends OsmElement {
     }
     
     /**
-     * Methods to write and restore a Parcel
+     * Methods to write and restore a Parcel.
      */
     public static final Parcelable.Creator<Relation> CREATOR
             = new Parcelable.Creator<Relation>() {
@@ -253,7 +253,7 @@ public class Relation extends OsmElement {
 	}
 
     /**
-     * Writes the lat and the lon to the given parcel
+     * Writes the members to the given parcel.
      */
 	public void writeToParcel(Parcel dest, int flags) {		
 		super.writeToParcel(dest, flags);
@@ -261,7 +261,7 @@ public class Relation extends OsmElement {
 	}
 	
 	/**
-	 * Constructor to create a node from a parcel
+	 * Constructor to create a relation from a parcel.
 	 * @param in
 	 */
     private Relation(Parcel in) {
