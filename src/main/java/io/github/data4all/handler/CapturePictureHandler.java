@@ -76,8 +76,8 @@ public class CapturePictureHandler implements PictureCallback {
                 .toRadians(params.getVerticalViewAngle());
         Size pictureSize = params.getSupportedPictureSizes().get(0);
         Location currentLocation = optimizer.currentBestLoc();
-        // transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
-        // verticalViewAngle, pictureSize.width, pictureSize.height, currentLocation);
+        transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
+         verticalViewAngle, pictureSize.width, pictureSize.height, currentLocation);
         currentOrientation = optimizer.currentBestPos();
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
@@ -117,8 +117,8 @@ public class CapturePictureHandler implements PictureCallback {
                 // ShowPictureActivity
                 Intent intent = new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
-                //intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
-                // intent.putExtra(TRANSFORM_BEAN, transformBean);
+                intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+                //TODO intent.putExtra(TRANSFORM_BEAN, transformBean);
 
                 // start the new ShowPictureActivity
                 context.startActivity(intent);

@@ -39,30 +39,31 @@ import android.widget.Toast;
  */
 public class ShowPictureActivity extends Activity {
 
-
     private TouchView touchView;
     private ImageView imageView;
-    	private Intent tagIntent;
-	private String type = "TYPE_DEF";
-	private String point = "POINT";
-	private String building = "BUILDING";
-	private String way = "WAY";
-	private String area = "AREA";
-	
-	//the current TransformationBean and device orientation when the picture was taken
-	private TransformationParamBean transformBean;
-	private DeviceOrientation currentOrientation;
-	
+    private Intent tagIntent;
+    private String type = "TYPE_DEF";
+    private String point = "POINT";
+    private String building = "BUILDING";
+    private String way = "WAY";
+    private String area = "AREA";
+
+    // the current TransformationBean and device orientation when the picture
+    // was taken
+    private TransformationParamBean transformBean;
+    private DeviceOrientation currentOrientation;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-        tagIntent = new Intent(this,TagActivity.class);
-       
+        tagIntent = new Intent(this, TagActivity.class);
+
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
@@ -70,75 +71,74 @@ public class ShowPictureActivity extends Activity {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
         }
         if (getIntent().hasExtra("transform_bean")) {
-            transformBean = getIntent().getExtras().getParcelable("transform_bean");
+            transformBean = getIntent().getExtras().getParcelable(
+                    "transform_bean");
         }
         if (getIntent().hasExtra("current_orientation")) {
-            //currentOrientation = getIntent().getExtras().getParcelable("current_orientation");
-            Log.d(getClass().getSimpleName(), "Current Position: " + getIntent().getExtras().getParcelable("current_orientation"));
-        } else {
-            Toast.makeText(this, "No device orientation available", Toast.LENGTH_SHORT).show();
+            currentOrientation = getIntent().getExtras().getParcelable(
+                    "current_orientation");
         }
     }
 
-	public void onClickOkay(View view) {
-		startActivity(tagIntent);
-	}
+    public void onClickOkay(View view) {
+        startActivity(tagIntent);
+    }
 
-	public void onClickPoint(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new PointMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, point);
-	}
+    public void onClickPoint(View view) {
+        touchView.clearMotions();
+        touchView.setInterpreter(new PointMotionInterpreter());
+        touchView.invalidate();
+        tagIntent.putExtra(type, point);
+    }
 
-	public void onClickPath(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new WayMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, way);
-	}
+    public void onClickPath(View view) {
+        touchView.clearMotions();
+        touchView.setInterpreter(new WayMotionInterpreter());
+        touchView.invalidate();
+        tagIntent.putExtra(type, way);
+    }
 
-	public void onClickArea(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new AreaMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, area);
-	}
+    public void onClickArea(View view) {
+        touchView.clearMotions();
+        touchView.setInterpreter(new AreaMotionInterpreter());
+        touchView.invalidate();
+        tagIntent.putExtra(type, area);
+    }
 
-	public void onClickBuilding(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new BuildingMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, building);
-	}
+    public void onClickBuilding(View view) {
+        touchView.clearMotions();
+        touchView.setInterpreter(new BuildingMotionInterpreter());
+        touchView.invalidate();
+        tagIntent.putExtra(type, building);
+    }
 
-	/**
-	 * Get a Uri of a Image and set this to local layout as background
-	 * 
-	 * @param selectedImage
-	 */
-	private void setBackground(Uri selectedImage) {
-		Bitmap bitmap;
-		try { // try to convert a image to a bitmap
-			bitmap = MediaStore.Images.Media.getBitmap(
-					this.getContentResolver(), selectedImage);
-			int display_mode = getResources().getConfiguration().orientation;
-			Matrix matrix = new Matrix();
-			if (display_mode == 1) {
-				matrix.setRotate(90);
-			}
+    /**
+     * Get a Uri of a Image and set this to local layout as background
+     * 
+     * @param selectedImage
+     */
+    private void setBackground(Uri selectedImage) {
+        Bitmap bitmap;
+        try { // try to convert a image to a bitmap
+            bitmap = MediaStore.Images.Media.getBitmap(
+                    this.getContentResolver(), selectedImage);
+            int display_mode = getResources().getConfiguration().orientation;
+            Matrix matrix = new Matrix();
+            if (display_mode == 1) {
+                matrix.setRotate(90);
+            }
 
-			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			Log.e(this.getClass().toString(), "ROTATION:");
-			imageView.setImageBitmap(adjustedBitmap);
-		} catch (FileNotFoundException e) {
-			Log.e(this.getClass().toString(), "ERROR, no file found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.e(this.getClass().toString(), "ERROR, file is no image");
-			e.printStackTrace();
-		}
-	}
+            Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            Log.e(this.getClass().toString(), "ROTATION:");
+            imageView.setImageBitmap(adjustedBitmap);
+        } catch (FileNotFoundException e) {
+            Log.e(this.getClass().toString(), "ERROR, no file found");
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e(this.getClass().toString(), "ERROR, file is no image");
+            e.printStackTrace();
+        }
+    }
 
 }
