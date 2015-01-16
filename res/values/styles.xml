@@ -22,13 +22,17 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
-    <style name="Theme.Transparent" parent="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+    <style name="Theme.Transparent" parent="@android:style/Theme.Dialog">
   	 <!--  	<item name="android:windowIsTranslucent">true</item> 
  		<item name="android:windowBackground">@android:color/transparent</item>
       	<item name="android:windowContentOverlay">@null</item>
    		<item name="android:windowNoTitle">true</item>
    		<item name="android:textColor">@android:color/white</item>-->
-   		<item name="android:windowBackground">@android:color/transparent</item>
+   		<item name="android:columnWidth">30sp</item>
    	</style>
+   	
+    <style name="CustomDialog" parent="@android:style/Theme.DeviceDefault.Dialog.MinWidth">
+        <item name="android:text" >"Tag"</item>
+    </style>
 
 </resources>

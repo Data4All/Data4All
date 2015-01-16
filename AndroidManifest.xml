@@ -42,7 +42,7 @@
         <activity android:name=".activity.TagActivity" 
            />
         <activity android:name=".activity.CopyOfTagActivity" 
-               android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+               android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" >

@@ -57,7 +57,6 @@ public class CopyOfTagActivity extends Activity implements OnClickListener{
     private Map<String, String> map;
     private List <EditText> edit;
     private Boolean first;
-    private Dialog dialog1;
     private ImageView imageView;
 
     /**
@@ -72,18 +71,11 @@ public class CopyOfTagActivity extends Activity implements OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setTitle("Select Tag");
       //  this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tagcoppy);    
-       /** imageView = (ImageView) findViewById(R.id.imageView5);
-        if (getIntent().hasExtra("file_path")) {
-           setBackground(Uri.fromFile((File) getIntent().getExtras().get(
-                   "file_path")));}
        
-            */
         final ListView keyList = (ListView) findViewById(R.id.listView1);
-        //ImageButton start = (ImageButton) findViewById(R.id.speech2);
-        //start.setOnClickListener(this);
         keys = (ArrayList<String>) Tagging.getKeys();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 context, android.R.layout.simple_list_item_1, keys);
@@ -208,6 +200,7 @@ public class CopyOfTagActivity extends Activity implements OnClickListener{
 
 
 	public void createDialog(String [] [] list, String title, final Boolean but, final Boolean first1){
+		 setTitle("Add Details");  
 		setContentView(R.layout.dialog_dynamic);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.dialogDynamic);
 		final Button next = new Button(this);
@@ -216,12 +209,15 @@ public class CopyOfTagActivity extends Activity implements OnClickListener{
 		finish.setText(R.string.finish);
 		next.setId(R.id.buttonNext);
 		finish.setId(R.id.buttonFinish);
+		//next.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		//finish.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		
 		first = first1;
 		edit = new ArrayList<EditText>();
 		for (int i = 0; i < list.length; i++) {
 		final EditText text = new EditText(this);
 			text.setHint(list [i] [1]);
-			text.setHintTextColor(Color.DKGRAY);
+			text.setHintTextColor(Color.WHITE);
     		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     		text.setInputType(Integer.parseInt(list[i] [2]));
     		edit.add(text);
@@ -239,30 +235,5 @@ public class CopyOfTagActivity extends Activity implements OnClickListener{
 		     
     }
 
-
-	private void setBackground(Uri selectedImage) {
-		Bitmap bitmap;
-		try { // try to convert a image to a bitmap
-			bitmap = MediaStore.Images.Media.getBitmap(
-					this.getContentResolver(), selectedImage);
-			int display_mode = getResources().getConfiguration().orientation;
-			Matrix matrix = new Matrix();
-			if (display_mode == 1) {
-				matrix.setRotate(90);
-			}
-
-			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			Log.e(this.getClass().toString(), "ROTATION:");
-			imageView.setImageBitmap(adjustedBitmap);
-		} catch (FileNotFoundException e) {
-			Log.e(this.getClass().toString(), "ERROR, no file found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.e(this.getClass().toString(), "ERROR, file is no image");
-			e.printStackTrace();
-		}
-	}
-	
 
 }
