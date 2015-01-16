@@ -208,7 +208,6 @@ public class TouchView extends View {
         }
         Log.d(this.getClass().getSimpleName(), "shortest distance:" + shortest);
         return closePoint;
-
     }
 
     public void setInterpretationType(InterpretationType type) {
