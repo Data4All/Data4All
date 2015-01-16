@@ -38,9 +38,13 @@ public final class OsmElementBuilder {
 	 * @param flags
 	 */
 	public static final void write(Parcel parcel, OsmElement element, int flags) {
-		int id = IDS.keyAt(IDS.indexOfValue(element.getClass()));
-		parcel.writeInt(id);
-		parcel.writeParcelable(element, flags);
+		if (element != null) {
+			int id = IDS.keyAt(IDS.indexOfValue(element.getClass()));
+			parcel.writeInt(id);
+			parcel.writeParcelable(element, flags);
+		} else {
+			throw new IllegalStateException("OsmObject is null");
+		}
 	}
 
 	/**

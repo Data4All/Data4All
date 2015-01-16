@@ -258,22 +258,22 @@ public class NodeTest {
     	newParcel.setDataPosition(0);
     	Node deParcelNode = Node.CREATOR.createFromParcel(newParcel);
     	
-    	assertEquals(1, deParcelNode.getOsmId()); 
-    	assertEquals(2, deParcelNode.getOsmVersion());
+    	assertEquals(testNode.getOsmId(), deParcelNode.getOsmId()); 
+    	assertEquals(testNode.getOsmVersion(), deParcelNode.getOsmVersion());
     	
-    	assertEquals(40.1234567, deParcelNode.getLon(), 0);
-    	assertEquals(30.123456, deParcelNode.getLat(), 0);
+    	assertEquals(testNode.getLon(), deParcelNode.getLon(), 0);
+    	assertEquals(testNode.getLat(), deParcelNode.getLat(), 0);
     	
     	assertEquals("test", deParcelNode.getTagWithKey("testtag"));
     	assertEquals("bar", deParcelNode.getTagWithKey("foo"));
     	
     	assertEquals(2, deParcelNode.getParentRelations().size());
     	
-    	assertEquals(3, deParcelNode.getParentRelations().get(0).getOsmId());
-    	assertEquals(1, deParcelNode.getParentRelations().get(0).getOsmVersion());
+    	assertEquals(relation1.getOsmId(), deParcelNode.getParentRelations().get(0).getOsmId());
+    	assertEquals(relation1.getOsmVersion(), deParcelNode.getParentRelations().get(0).getOsmVersion());
     	
-    	assertEquals(4, deParcelNode.getParentRelations().get(1).getOsmId());
-    	assertEquals(2, deParcelNode.getParentRelations().get(1).getOsmVersion());
+    	assertEquals(relation2.getOsmId(), deParcelNode.getParentRelations().get(1).getOsmId());
+    	assertEquals(relation2.getOsmVersion(), deParcelNode.getParentRelations().get(1).getOsmVersion());
     }
 
 }

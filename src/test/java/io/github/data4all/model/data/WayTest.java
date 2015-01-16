@@ -267,37 +267,37 @@ public class WayTest {
     	newParcel.setDataPosition(0);
     	Way deParcelWay = Way.CREATOR.createFromParcel(newParcel);
     	
-    	assertEquals(1, deParcelWay.getOsmId()); 
-    	assertEquals(2, deParcelWay.getOsmVersion());
+    	assertEquals(testWay.getOsmId(), deParcelWay.getOsmId()); 
+    	assertEquals(testWay.getOsmVersion(), deParcelWay.getOsmVersion());
     	
     	assertEquals("test", deParcelWay.getTagWithKey("testtag"));
     	assertEquals("bar", deParcelWay.getTagWithKey("foo"));
     	
     	assertEquals(2, deParcelWay.getParentRelations().size());
     	
-    	assertEquals(3, deParcelWay.getParentRelations().get(0).getOsmId());
-    	assertEquals(1, deParcelWay.getParentRelations().get(0).getOsmVersion());
+    	assertEquals(relation1.getOsmId(), deParcelWay.getParentRelations().get(0).getOsmId());
+    	assertEquals(relation1.getOsmVersion(), deParcelWay.getParentRelations().get(0).getOsmVersion());
     	
-    	assertEquals(4, deParcelWay.getParentRelations().get(1).getOsmId());
-    	assertEquals(2, deParcelWay.getParentRelations().get(1).getOsmVersion());
+    	assertEquals(relation2.getOsmId(), deParcelWay.getParentRelations().get(1).getOsmId());
+    	assertEquals(relation2.getOsmVersion(), deParcelWay.getParentRelations().get(1).getOsmVersion());
     	
     	assertEquals(3, deParcelWay.getNodes().size());
     	
-        assertEquals(10, deParcelWay.getNodes().get(0).getOsmId());
-        assertEquals(11, deParcelWay.getNodes().get(1).getOsmId());
-        assertEquals(12, deParcelWay.getNodes().get(2).getOsmId());
+        assertEquals(testNode1.getOsmId(), deParcelWay.getNodes().get(0).getOsmId());
+        assertEquals(testNode2.getOsmId(), deParcelWay.getNodes().get(1).getOsmId());
+        assertEquals(testNode3.getOsmId(), deParcelWay.getNodes().get(2).getOsmId());
         
-        assertEquals(1, deParcelWay.getNodes().get(0).getOsmVersion());
-        assertEquals(1, deParcelWay.getNodes().get(1).getOsmVersion());
-        assertEquals(1, deParcelWay.getNodes().get(2).getOsmVersion());	
+        assertEquals(testNode1.getOsmVersion(), deParcelWay.getNodes().get(0).getOsmVersion());
+        assertEquals(testNode1.getOsmVersion(), deParcelWay.getNodes().get(1).getOsmVersion());
+        assertEquals(testNode1.getOsmVersion(), deParcelWay.getNodes().get(2).getOsmVersion());	
         
-        assertEquals("type", deParcelWay.getParentRelations().get(0).getMembers().get(0).getType());
-        assertEquals("role", deParcelWay.getParentRelations().get(0).getMembers().get(0).getRole());
-        assertEquals(12345, deParcelWay.getParentRelations().get(0).getMembers().get(0).getRef());
+        assertEquals(member1.getType(), deParcelWay.getParentRelations().get(0).getMembers().get(0).getType());
+        assertEquals(member1.getRole(), deParcelWay.getParentRelations().get(0).getMembers().get(0).getRole());
+        assertEquals(member1.getRef(), deParcelWay.getParentRelations().get(0).getMembers().get(0).getRef());
         
-        assertEquals("othertype", deParcelWay.getParentRelations().get(1).getMembers().get(0).getType());
-        assertEquals("otherrole", deParcelWay.getParentRelations().get(1).getMembers().get(0).getRole());
-        assertEquals(54321, deParcelWay.getParentRelations().get(1).getMembers().get(0).getRef());
+        assertEquals(member2.getType(), deParcelWay.getParentRelations().get(1).getMembers().get(0).getType());
+        assertEquals(member2.getRole(), deParcelWay.getParentRelations().get(1).getMembers().get(0).getRole());
+        assertEquals(member2.getRef(), deParcelWay.getParentRelations().get(1).getMembers().get(0).getRef());
     }    
     
 }
