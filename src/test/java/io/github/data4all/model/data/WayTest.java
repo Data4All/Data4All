@@ -248,8 +248,12 @@ public class WayTest {
     	testWay.addOrUpdateTag("testtag", "test");
     	testWay.addOrUpdateTag("foo", "bar");
         Relation relation1 = new Relation(3, 1);
+        RelationMember member1 = new RelationMember("type", 12345, "role");
+        relation1.addMember(member1);
         testWay.addParentRelation(relation1);
         Relation relation2 = new Relation(4, 2);
+        RelationMember member2 = new RelationMember("othertype", 54321, "otherrole");
+        relation2.addMember(member2);
         testWay.addParentRelation(relation2);
         testWay.addNode(testNode1);
         testWay.addNode(testNode2);
@@ -273,6 +277,12 @@ public class WayTest {
         assertEquals(1, deParcelWay.getNodes().get(0).getOsmVersion());
         assertEquals(1, deParcelWay.getNodes().get(1).getOsmVersion());
         assertEquals(1, deParcelWay.getNodes().get(2).getOsmVersion());	
+        assertEquals("type", deParcelWay.getParentRelations().get(0).getMembers().get(0).getType());
+        assertEquals("role", deParcelWay.getParentRelations().get(0).getMembers().get(0).getRole());
+        assertEquals(12345, deParcelWay.getParentRelations().get(0).getMembers().get(0).getRef());
+        assertEquals("othertype", deParcelWay.getParentRelations().get(1).getMembers().get(0).getType());
+        assertEquals("otherrole", deParcelWay.getParentRelations().get(1).getMembers().get(0).getRole());
+        assertEquals(54321, deParcelWay.getParentRelations().get(1).getMembers().get(0).getRef());
     }    
     
 }
