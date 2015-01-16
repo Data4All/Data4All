@@ -2,6 +2,7 @@ package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,11 @@ public class AreaMotionInterpreter implements MotionInterpreter {
      */
     @Deprecated
     private final Paint pathPaint = new Paint();
+    
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
 
     @Deprecated
     public AreaMotionInterpreter() {
@@ -54,6 +60,10 @@ public class AreaMotionInterpreter implements MotionInterpreter {
         // Draw semi-thick light blue lines
         pathPaint.setColor(PATH_COLOR);
         pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
+    }
+    
+    public AreaMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
 
     /*

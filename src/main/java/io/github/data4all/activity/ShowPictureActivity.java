@@ -4,11 +4,9 @@ import io.github.data4all.R;
 import io.github.data4all.activity.TagActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.TransformationParamBean;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
@@ -48,6 +46,7 @@ public class ShowPictureActivity extends Activity {
     private String building = "BUILDING";
     private String way = "WAY";
     private String area = "AREA";
+    private String osmElem = "OSM_ELEM";
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -79,9 +78,12 @@ public class ShowPictureActivity extends Activity {
             currentOrientation = getIntent().getExtras().getParcelable(
                     "current_orientation");
         }
+        touchView.setTransformUtil(new PointToCoordsTransformUtil(transformBean, currentOrientation));
     }
 
     public void onClickOkay(View view) {
+        OsmElement osmElement = touchView.create();
+        tagIntent.putExtra(osmElem, osmElement);
         startActivity(tagIntent);
     }
 

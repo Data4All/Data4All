@@ -1,6 +1,7 @@
 package io.github.data4all.view;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -8,6 +9,7 @@ import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.Point;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,11 @@ public class TouchView extends View {
      * The current motion the user is typing via the screen
      */
     private DrawingMotion currentMotion;
+    
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
 
     /**
      * The currently used interpreter
@@ -163,16 +170,16 @@ public class TouchView extends View {
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:
-            interpreter = new AreaMotionInterpreter();
+            interpreter = new AreaMotionInterpreter(pointTrans);
             break;
         case POINT:
-            interpreter = new PointMotionInterpreter();
+            interpreter = new PointMotionInterpreter(pointTrans);
             break;
         case BUILDING:
-            interpreter = new BuildingMotionInterpreter();
+            interpreter = new BuildingMotionInterpreter(pointTrans);
             break;
         case WAY:
-            interpreter = new WayMotionInterpreter();
+            interpreter = new WayMotionInterpreter(pointTrans);
             break;
         default:
             throw new IllegalArgumentException("'type' cannot be null");
@@ -181,5 +188,21 @@ public class TouchView extends View {
 
     public static enum InterpretationType {
         AREA, POINT, BUILDING, WAY;
+    }
+    
+    /**
+     * Set the actual PointToCoordsTransformUtil with the actual location and camera parameters
+     * @param pointTrans the actual object
+     */
+    public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
+    }
+    
+    /**
+     * Create an OsmElement from the given polynom
+     * @return the created OsmElement (with located nodes)
+     */
+    public OsmElement create() {
+        return interpreter.create(polygon);
     }
 }
