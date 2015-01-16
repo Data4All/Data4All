@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class PointToCoordsTransformUtilTest {
 		points.add(new Point(500, 1000));
 		points.add(new Point(1 , 500));
 		points.add(new Point(500,1));
-		ArrayList<Node> test = util.transform(tps, deviceOrientation, points);
+		List<Node> test = util.transform(tps, deviceOrientation, points);
 		assertThat(test.get(0).getLat(), is(0.0));
 		assertThat(test.get(0).getLon(), is(0.0));
 		assertThat(test.get(1).getLat(), is(0.0));

@@ -82,11 +82,39 @@ public class PointToCoordsTransformUtil {
 	
 	public Point calculate4Point(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, List<Point> points){
-		
+		List<double[]> coords = new ArrayList<double[]>();
+		double[] orientation = new double[3];
+		this.height = tps.getHeight();		
+		orientation[0] = - deviceOrientation.getAzimuth();		
+		for(Point point : points){
+			orientation[1] = calculateAngle(point.getX(), tps.getPhotoWidth(),
+					tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
+			orientation[2] = calculateAngle(point.getY(), tps.getPhotoHeight(),
+					tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
+			coords.add(calculate2dPoint(orientation));					
+		}	
+		add4Point(coords);
 		return null;
 	}
 	
 	
+	
+	/**
+     * Calculates the fourth point in dependence of the first three points of
+     * the given list
+     * 
+     * @param areaPoints
+     *            A list with exact three points
+     */
+    private static Point add4Point(List<double[]> coords) {
+    	double[] a = coords.get(0);
+      	double[] b = coords.get(1);
+      	double[] c = coords.get(2);
+        double x = a[0] + (c[0] - b[0]);
+        double y = a[1] + (c[1] - b[1]);
+        Point d = new Point((float) x, (float) y);
+        return d;
+    }
 	
 	
 	/*
