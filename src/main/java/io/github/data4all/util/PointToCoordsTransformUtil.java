@@ -221,7 +221,7 @@ public class PointToCoordsTransformUtil {
 			lon2 = -(Math.PI/2) + lon2;
 		}						
 		
-		Node node = new Node(osmID, osmVersion, lat, lon);
+		Node node = new Node(osmID, osmVersion, lat2, lon2);
 		osmID--;
 		return node;
 	}
