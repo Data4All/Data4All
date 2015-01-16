@@ -8,6 +8,11 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+import android.os.Parcel;
 
 /**
  * Testing the main functionality of the relation and relation member objects.
@@ -16,6 +21,8 @@ import org.junit.Test;
  * @author fkirchge
  *
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
 public class RelationTest {
 
     private Relation relation;
@@ -307,5 +314,45 @@ public class RelationTest {
         assertEquals(true, relation.getMemberElements().contains(node1));
         assertEquals(true, relation.getMemberElements().contains(node2));
     }
+    
+    /**
+     * Create a new parcial to save/parcelable the testWay, 
+     * afterwards a new node is created from the parcel and we check if it contains all attributes.
+     */
+    @Test 
+    public void test_parcelable_way() {
+    	Parcel newParcel = Parcel.obtain();
+    	Relation testRelation = new Relation(1, 1);
+    	testRelation.addOrUpdateTag("testtag", "test");
+    	testRelation.addOrUpdateTag("foo", "bar");
+
+
+    	//        Relation relation1 = new Relation(3, 1);
+    	//        testWay.addParentRelation(relation1);
+    	//        Relation relation2 = new Relation(4, 2);
+    	//        testWay.addParentRelation(relation2);
+    	//        testWay.addNode(testNode1);
+    	//        testWay.addNode(testNode2);
+    	//        testWay.addNode(testNode3);
+    	testRelation.writeToParcel(newParcel, 0);
+    	newParcel.setDataPosition(0);
+    	Relation deParcelRelation = Relation.CREATOR.createFromParcel(newParcel);
+    	//    	assertEquals(1, deParcelWay.getOsmId()); 
+    	//    	assertEquals(2, deParcelWay.getOsmVersion());
+    	assertEquals("test", deParcelRelation.getTagWithKey("testtag"));
+    	assertEquals("bar", deParcelRelation.getTagWithKey("foo"));
+    	//    	assertEquals(2, deParcelWay.getParentRelations().size());
+    	//    	assertEquals(3, deParcelWay.getParentRelations().get(0).getOsmId());
+    	//    	assertEquals(1, deParcelWay.getParentRelations().get(0).getOsmVersion());
+    	//    	assertEquals(4, deParcelWay.getParentRelations().get(1).getOsmId());
+    	//    	assertEquals(2, deParcelWay.getParentRelations().get(1).getOsmVersion());
+    	//    	assertEquals(3, deParcelWay.getNodes().size());
+    	//        assertEquals(10, deParcelWay.getNodes().get(0).getOsmId());
+    	//        assertEquals(11, deParcelWay.getNodes().get(1).getOsmId());
+    	//        assertEquals(12, deParcelWay.getNodes().get(2).getOsmId());
+    	//        assertEquals(1, deParcelWay.getNodes().get(0).getOsmVersion());
+    	//        assertEquals(1, deParcelWay.getNodes().get(1).getOsmVersion());
+    	//        assertEquals(1, deParcelWay.getNodes().get(2).getOsmVersion());	
+    }  
 
 }
