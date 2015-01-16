@@ -119,22 +119,24 @@ public class RelationMember implements Parcelable {
 	}
 
     /**
-     * Writes the lat and the lon to the given parcel
+     * Writes the type, role, ref and element to the given parcel.
      */
 	public void writeToParcel(Parcel dest, int flags) {		
 		dest.writeString(type);
 		dest.writeString(role);
 		dest.writeLong(ref);
+		OsmElementBuilder.write(dest, element, flags);
 	}
 	
 	/**
-	 * Constructor to create a node from a parcel
+	 * Constructor to create a relation member from a parcel.
 	 * @param in
 	 */
     private RelationMember(Parcel in) {
     	type = in.readString();
     	role = in.readString();
     	ref = in.readLong();
+    	element = OsmElementBuilder.read(in);
     }
 
 }
