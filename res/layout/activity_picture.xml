@@ -8,12 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/android" />
+        style="@style/imageViewTakedPicture"
+        android:contentDescription="@string/returnToActualPosition" />
 
     <io.github.data4all.view.TouchView
         android:id="@+id/touchView1"
@@ -27,25 +23,20 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true">
+        android:layout_alignParentRight="true" >
 
         <ImageButton
             android:id="@+id/imageButton3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
+            style="@style/imageButtonDrawWay"
             android:onClick="onClickPath"
-            android:src="@drawable/ic_way" />
+        	android:contentDescription="@string/drawWay" />
+      
 
         <ImageButton
             android:id="@+id/imageButton1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
+            style="@style/imageButtonDrawPoint"
             android:onClick="onClickPoint"
-            android:src="@drawable/ic_point" />
+        	android:contentDescription="@string/drawPoint" />            
 
         <Button
             android:id="@+id/button2"
@@ -62,12 +53,12 @@
             android:layout_weight="1"
             android:onClick="onClickArea"
             android:text="Fläche" />
-
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/imageButton2"
-        style="@style/imageButtonSwitchMaps"       
-        android:onClick="onClickOkay"/>
+        style="@style/imageButtonOkay"
+        android:onClick="onClickOkay"
+        android:contentDescription="@string/noDescription" />
 
 </RelativeLayout>

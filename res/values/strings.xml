@@ -57,5 +57,8 @@
     <string name="switchMaps">Switch Maps</string>
     <string name="upload_data">Upload</string>
     <string name="startUpScreen">StartUpScreen</string>
+    <string name="noDescription"> </string>
+    <string name="drawWay">Drawing a Way </string>
+    <string name="drawPoint">Drawing a Point </string>
     
 </resources>

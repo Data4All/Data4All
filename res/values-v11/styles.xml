@@ -46,20 +46,55 @@
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:src">@drawable/ic_cam</item>
     </style>
-    
+
     <style name="imageButtonOkay" parent="imageButtonStyle">
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentRight">true</item>
-        <item name="android:src">@drawable/ic_ok</item>       
+         <item name="android:layout_marginTop">10dp</item>
+          <item name="android:layout_marginRight">10dp</item>
+        <item name="android:src">@drawable/ic_ok</item>
     </style>
-    
+
+    <style name="imageButtonCamAction" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:src">@drawable/ic_camaction</item>
+    </style>
+
+    <style name="imageButtonDrawWay" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:src">@drawable/ic_way</item>
+    </style>
+
+    <style name="imageButtonDrawPoint" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:src">@drawable/ic_point</item>
+    </style>
+
     <style name="startUpScreen">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:scaleType">fitXY</item>
-        <item name="android:src">@drawable/data4allport</item>   
+        <item name="android:src">@drawable/data4allport</item>
+    </style>
+
+    <style name="imageViewTakedPicture">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/android</item>
     </style>
 
 </resources>
