@@ -1,5 +1,8 @@
 package io.github.data4all.model.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * RelationMember stores the necessary information for a relation member, if the
  * element field is null the element itself is not present (not downloaded
@@ -9,7 +12,7 @@ package io.github.data4all.model.data;
  * @author simon, fkirchge
  *
  */
-public class RelationMember {
+public class RelationMember implements Parcelable {
 
     /**
      * type can be node/way or relation
@@ -93,6 +96,47 @@ public class RelationMember {
      */
     public void setElement(final OsmElement e) {
         this.element = e;
+    }
+    
+    /**
+     * Methods to write and restore a Parcel
+     */
+    public static final Parcelable.Creator<RelationMember> CREATOR
+            = new Parcelable.Creator<RelationMember>() {
+    	
+        public RelationMember createFromParcel(Parcel in) {
+            return new RelationMember(in);
+        }
+
+        public RelationMember[] newArray(int size) {
+            return new RelationMember[size];
+        }
+    };
+    
+    
+    public int describeContents() {
+		return 0;
+	}
+
+    /**
+     * Writes the type, role, ref and element to the given parcel.
+     */
+	public void writeToParcel(Parcel dest, int flags) {		
+		dest.writeString(type);
+		dest.writeString(role);
+		dest.writeLong(ref);
+		OsmElementBuilder.write(dest, element, flags);
+	}
+	
+	/**
+	 * Constructor to create a relation member from a parcel.
+	 * @param in
+	 */
+    private RelationMember(Parcel in) {
+    	type = in.readString();
+    	role = in.readString();
+    	ref = in.readLong();
+    	element = OsmElementBuilder.read(in);
     }
 
 }

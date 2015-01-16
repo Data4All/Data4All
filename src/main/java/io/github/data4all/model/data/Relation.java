@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Relation represents an OSM relation element which essentially is a collection
  * of other OSM elements. A relation consists of one or more tags and also an
@@ -18,7 +21,7 @@ public class Relation extends OsmElement {
     /**
      * List of all member of the relation.
      */
-    private final ArrayList<RelationMember> members;
+    private ArrayList<RelationMember> members = null;
 
     /**
      * Default constructor
@@ -228,5 +231,43 @@ public class Relation extends OsmElement {
         }
         return result;
     }
+    
+    /**
+     * Methods to write and restore a Parcel.
+     */
+    public static final Parcelable.Creator<Relation> CREATOR
+            = new Parcelable.Creator<Relation>() {
+    	
+        public Relation createFromParcel(Parcel in) {
+            return new Relation(in);
+        }
 
+        public Relation[] newArray(int size) {
+            return new Relation[size];
+        }
+    };
+    
+    
+    public int describeContents() {
+		return 0;
+	}
+
+    /**
+     * Writes the members to the given parcel.
+     */
+	public void writeToParcel(Parcel dest, int flags) {		
+		super.writeToParcel(dest, flags);
+		dest.writeTypedList(members);
+	}
+	
+	/**
+	 * Constructor to create a relation from a parcel.
+	 * @param in
+	 */
+    private Relation(Parcel in) {
+    	super(in);
+        members = new ArrayList<RelationMember>();
+        in.readTypedList(members, RelationMember.CREATOR);
+    }
+    
 }
