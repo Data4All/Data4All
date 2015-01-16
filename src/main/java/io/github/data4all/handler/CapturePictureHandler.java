@@ -3,6 +3,7 @@ package io.github.data4all.handler;
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.util.Optimizer;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.Size;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -35,6 +37,9 @@ public class CapturePictureHandler implements PictureCallback {
 
     // The Optimizer class for the current location and device orientation
     private Optimizer optimizer;
+    
+    
+    private TransformationParamBean transformBean;
 
     // The directory where the pictures are saved into
     private static final String DIRECTORY = "/Data4all";
@@ -64,8 +69,14 @@ public class CapturePictureHandler implements PictureCallback {
      */
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
-        
-        
+
+        Camera.Parameters params = camera.getParameters();
+        double horizontalViewAngle = Math.toRadians(params.getHorizontalViewAngle());
+        double verticalViewAngle = Math.toRadians(params.getVerticalViewAngle());
+        Size pictureSize = params.getSupportedPictureSizes().get(0);
+        //transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
+        //        verticalViewAngle, pictureSize.height, pictureSize.width);
+
         currentLocation = optimizer.currentBestLoc();
         currentOrientation = optimizer.currentBestPos();
         // Start a thread to save the Raw Image in JPEG into SDCard
