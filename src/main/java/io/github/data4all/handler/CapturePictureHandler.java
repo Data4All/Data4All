@@ -2,6 +2,7 @@ package io.github.data4all.handler;
 
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.util.Optimizer;
 
 import java.io.File;
@@ -12,8 +13,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.widget.Toast;
 
 /**
@@ -30,7 +33,7 @@ public class CapturePictureHandler implements PictureCallback {
     // The file into which the picture is saved
     private File photoFile;
 
-    //The Optimizer class for the current location and device orientation
+    // The Optimizer class for the current location and device orientation
     private Optimizer optimizer;
 
     // The directory where the pictures are saved into
@@ -41,7 +44,9 @@ public class CapturePictureHandler implements PictureCallback {
     // activity
     private static final String FILEPATH = "file_path";
     private static final String LOCATION = "current_location";
-    private static final String DEVICE_ORIENTATION = "current_device_orientation";
+    private Location currentLocation = null;
+    private static final String DEVICE_ORIENTATION = "currentOrientation";
+    private DeviceOrientation currentOrientation = null;
 
     public CapturePictureHandler() {
     }
@@ -59,7 +64,10 @@ public class CapturePictureHandler implements PictureCallback {
      */
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
-
+        
+        
+        currentLocation = optimizer.currentBestLoc();
+        currentOrientation = optimizer.currentBestPos();
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
     }
@@ -98,10 +106,10 @@ public class CapturePictureHandler implements PictureCallback {
                 // ShowPictureActivity
                 Intent intent = new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
-                intent.putExtra(LOCATION, optimizer.currentBestLoc());
-                // intent.putExtra(DEVICE_ORIENTATION, optimizer.currentBestPos());
-                
-                //start the new ShowPictureActivity
+                intent.putExtra(LOCATION, (Parcelable) currentLocation);
+                // intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+
+                // start the new ShowPictureActivity
                 context.startActivity(intent);
 
             } else {

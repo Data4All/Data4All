@@ -2,6 +2,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
@@ -18,6 +19,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Activity to set a new Layer-Backgroundimage
@@ -44,6 +47,11 @@ public class ShowPictureActivity extends Activity {
 	private String building = "BUILDING";
 	private String way = "WAY";
 	private String area = "AREA";
+	
+	//the current location and device orientation when the picture was taken
+	private Location currentLocation;
+	private DeviceOrientation currentOrientation;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +67,18 @@ tagIntent = new Intent(this,TagActivity.class);
                     "file_path")));
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
+        }
+        if (getIntent().hasExtra("current_location")) {
+            currentLocation = getIntent().getExtras().getParcelable("current_location");
+            Log.d(getClass().getSimpleName(), "Current Location: " + getIntent().getExtras().getParcelable("current_location"));
+        } else {
+            Toast.makeText(this, "No location available", Toast.LENGTH_SHORT).show();
+        }
+        if (getIntent().hasExtra("current_position")) {
+            currentOrientation = getIntent().getExtras().getParcelable("current_orientation");
+            Log.d(getClass().getSimpleName(), "Current Position: " + getIntent().getExtras().getParcelable("current_orientation"));
+        } else {
+            Toast.makeText(this, "No device orientation available", Toast.LENGTH_SHORT).show();
         }
     }
 
