@@ -1,5 +1,7 @@
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.model.data.OsmElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ import android.graphics.Paint;
  * @author tbrose
  * @see MotionInterpreter
  */
-public class BuildingMotionInterpreter implements MotionInterpreter<Void> {
+public class BuildingMotionInterpreter implements MotionInterpreter {
 
     /**
      * The paint to draw the points with
@@ -120,14 +122,32 @@ public class BuildingMotionInterpreter implements MotionInterpreter<Void> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util.List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    public Void create(List<DrawingMotion> drawingMotions) {
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        // TODO Auto-generated method stub
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
+     */
+    @Override
+    public boolean isArea() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

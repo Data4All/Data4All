@@ -15,27 +15,43 @@ public class RedoUndo {
 	/**
 	 * List of all added Points
 	 */
-	private List<DrawingMotion> motions = new ArrayList<DrawingMotion>();
+	private List<Point> motions = new ArrayList<Point>();
 	int maxCount, currentCount;
 
-	public RedoUndo(List<DrawingMotion> points) {
+	public RedoUndo(List<Point> points) {
 		this.motions = points;
-		maxCount = 0;
-		currentCount = 0;
+		if(points!=null){
+		maxCount = points.size();
+		currentCount = points.size();
+		} else{
+			maxCount = 0;
+			currentCount = 0;
+		}
 	}
 
-	public void addMotion(DrawingMotion p) {
+	public void addMotion(Point point) {
 		Log.d(this.getClass().getSimpleName(),"ADD: " + currentCount + ":" + maxCount);
-		motions.add(p);
-		maxCount++;
-		currentCount++;
+		motions.add(point);
+		if(maxCount==currentCount){
+			maxCount++;
+			currentCount++;
+		} else{
+			currentCount++;
+			maxCount = currentCount;
+		}
+	}
+	
+	public void addList(List<Point> newPoly){
+		for(Point p:newPoly){
+			addMotion(p);
+		}
 	}
 
-	public List<DrawingMotion> undo() {
+	public List<Point> undo() {
 		Log.d(this.getClass().getSimpleName(),"UNDO: " + currentCount + ":" + maxCount); 
 		if (currentCount != 0 && currentCount <= maxCount) {
 			currentCount--;
-			List<DrawingMotion> relist = new ArrayList<DrawingMotion>();
+			List<Point> relist = new ArrayList<Point>();
 			for (int i = 0; i < currentCount; i++) {
 				relist.add(motions.get(i));
 			}
@@ -44,11 +60,11 @@ public class RedoUndo {
 		return motions;
 	}
 
-	public List<DrawingMotion> redo() {
+	public List<Point> redo() {
 		Log.d(this.getClass().getSimpleName(),"REDO: " + currentCount + ":" + maxCount); 
 		if (currentCount < maxCount) {
 			currentCount++;
-			List<DrawingMotion> relist = new ArrayList<DrawingMotion>();
+			List<Point> relist = new ArrayList<Point>();
 			for (int i = 0; i < currentCount; i++) {
 				relist.add(motions.get(i));
 			}

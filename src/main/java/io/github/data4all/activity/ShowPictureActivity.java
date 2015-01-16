@@ -2,10 +2,6 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
@@ -66,33 +62,43 @@ tagIntent = new Intent(this,TagActivity.class);
 		startActivity(tagIntent);
 	}
 
-	public void onClickPoint(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new PointMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, point);
-	}
+    public void onClickPoint(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.POINT);
+        touchView.invalidate();
+        tagIntent.putExtra(type, point);
+    }
 
-	public void onClickPath(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new WayMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, way);
-	}
+    public void onClickPath(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.WAY);
+        touchView.invalidate();
+        tagIntent.putExtra(type, way);
+    }
 
-	public void onClickArea(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new AreaMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, area);
-	}
+    public void onClickArea(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.AREA);
+        touchView.invalidate();
+        tagIntent.putExtra(type, area);
+    }
 
-	public void onClickBuilding(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new BuildingMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, building);
-	}
+    public void onClickBuilding(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
+        touchView.invalidate();
+        tagIntent.putExtra(type, building);
+    }
+    
+    public void onClickRedo(View view) {
+        touchView.redo();
+        touchView.invalidate();
+    }
+    
+    public void onClickUndo(View view) {
+        touchView.undo();
+        touchView.invalidate();
+    }
 
 	/**
 	 * Get a Uri of a Image and set this to local layout as background
