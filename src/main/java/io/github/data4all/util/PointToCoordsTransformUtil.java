@@ -18,8 +18,8 @@ import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.Point;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import android.hardware.Camera;
 import android.location.Location;
 
 
@@ -41,7 +41,7 @@ public class PointToCoordsTransformUtil {
 		this.deviceOrientation = deviceOrientation;		
 	}
 	
-	public ArrayList<Node> transform(ArrayList<Point> points){
+	public List<Node> transform(List<Point> points){
 		return transform(tps, deviceOrientation, points);
 	}
 	
@@ -51,10 +51,10 @@ public class PointToCoordsTransformUtil {
 	 * @param deviceOrientation
 	 * @return
 	 */
-	public ArrayList<Node> transform(TransformationParamBean tps, 
-			DeviceOrientation deviceOrientation, ArrayList<Point> points){
+	public List<Node> transform(TransformationParamBean tps, 
+			DeviceOrientation deviceOrientation, List<Point> points){
 		
-		ArrayList<Node> nodes = new ArrayList<Node>();
+		List<Node> nodes = new ArrayList<Node>();
 		double[] orientation = new double[3];
 		this.height = tps.getHeight();		
 		orientation[0] = - deviceOrientation.getAzimuth();		
@@ -69,6 +69,25 @@ public class PointToCoordsTransformUtil {
 		}	
 		return nodes;
 	}
+	
+	
+	
+	
+	public Point calculate4Point(List<Point> points){
+		if(points.size() != 0){
+			return null;
+		}
+		return calculate4Point(tps, deviceOrientation, points);		
+	}
+	
+	public Point calculate4Point(TransformationParamBean tps, 
+			DeviceOrientation deviceOrientation, List<Point> points){
+		
+		return null;
+	}
+	
+	
+	
 	
 	/*
 
@@ -97,7 +116,7 @@ public class PointToCoordsTransformUtil {
 		p = new Point(1,1000);
 		tps.addPoint(p);
 		p = new Point(1000, 1000);
-		ArrayList<double[]> list = transform(tps, deviceOrientation);
+		List<double[]> list = transform(tps, deviceOrientation);
 		Log.d(TAG, "tranform finished");
 		return list.get(0);
 	}*/
