@@ -6,15 +6,15 @@ import io.github.data4all.model.data.GPSBean;
 import io.github.data4all.model.drawing.Point;
 
 public class TransformationParamBean {
-	private float height;
-	private float cameraMaxRotationAngle;
-	private float cameraMaxPitchAngle;
+	private double height;
+	private double cameraMaxRotationAngle;
+	private double cameraMaxPitchAngle;
 	private int photoWidth;
 	private int photoHeight;
 	private ArrayList<Point> points = new ArrayList<Point>();
 
-	private TransformationParamBean(float height, float cameraMaxRotationAngle, 
-					float cameraMaxPitchAngle, int photoWidth, int photoHeight){
+	public TransformationParamBean(double height, double cameraMaxRotationAngle, 
+					double cameraMaxPitchAngle, int photoWidth, int photoHeight){
 		this.height = height;
 		this.cameraMaxPitchAngle = cameraMaxPitchAngle;
 		this.cameraMaxRotationAngle = cameraMaxRotationAngle;
@@ -26,7 +26,7 @@ public class TransformationParamBean {
 	
 	
 	
-	public float getHeight() {
+	public double getHeight() {
 		return height;
 	}
 
@@ -34,7 +34,7 @@ public class TransformationParamBean {
 		this.height = height;
 	}
 
-	public float getCameraMaxRotationAngle() {
+	public double getCameraMaxRotationAngle() {
 		return cameraMaxRotationAngle;
 	}
 
@@ -42,7 +42,7 @@ public class TransformationParamBean {
 		this.cameraMaxRotationAngle = cameraMaxRotationAngle;
 	}
 
-	public float getCameraMaxPitchAngle() {
+	public double getCameraMaxPitchAngle() {
 		return cameraMaxPitchAngle;
 	}
 

@@ -79,7 +79,7 @@ public class LoginActivity extends Activity {
         });
         
         
-        float[] p = ptt.calculate2dPoint(optimizer.currentPos());
+        double[] p = ptt.calculate2dPoint(optimizer.currentPos());
         editText1 = (TextView) findViewById(R.id.editText1);
         editText1.setText("X-Koord: " + p[0] + " Y-Koord: " + p[1]);
 

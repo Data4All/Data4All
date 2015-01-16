@@ -13,16 +13,22 @@ package io.github.data4all.util;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.Point;
 
 import java.util.ArrayList;
 
+import android.hardware.Camera;
+
 
 public class PointToCoordsTransformUtil {
 	static String TAG = "PointToWorldCoords";
-	private float height = 1700;
+	private double height = 1.0;
 	
+	public PointToCoordsTransformUtil() {
+		
+	}
 	
 	
 	
@@ -32,20 +38,24 @@ public class PointToCoordsTransformUtil {
 	 * @param deviceOrientation
 	 * @return
 	 */
-	public ArrayList<Point> transform(TransformationParamBean tps, DeviceOrientation deviceOrientation){
-		ArrayList<Point> coords = new ArrayList<Point>(); //to save calculated coordinates
-		float[] orientation = new float[3];
+	public ArrayList<double[]> transform(TransformationParamBean tps, DeviceOrientation deviceOrientation){
+		ArrayList<double[]> coords = new ArrayList<double[]>(); //to save calculated coordinates
+		double[] orientation = new double[3];
 		this.height = tps.getHeight();		
 		orientation[0] = deviceOrientation.getAzimuth();
 		
 		for(Point point : tps.getPoints()){
+			Log.d(TAG, "tranform 1");
 			orientation[1] = calculateAngle(point.getX(), tps.getPhotoWidth(),
 					tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
 			orientation[2] = calculateAngle(point.getY(), tps.getPhotoHeight(),
 					tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
-			float[] coord = calculate2dPoint(orientation);
-			Point p = new Point(coord[0], coord[1]);
-			coords.add(p);			
+
+			Log.d(TAG, "tranform 2");
+			double[] coord = calculate2dPoint(orientation);
+
+			Log.d(TAG, "tranform 3");
+			coords.add(coord);			
 		}		
 		return coords;
 	}
@@ -53,12 +63,32 @@ public class PointToCoordsTransformUtil {
 	
 
 	
-	public float[] calculate2dPoint(DeviceOrientation deviceOrientation){
-		float[] orientation = new float[3];
+	public double[] calculate2dPoint(DeviceOrientation deviceOrientation){/*
+		double[] orientation = new double[3];
 		orientation[0] = deviceOrientation.getAzimuth();
 		orientation[1] = deviceOrientation.getPitch();
 		orientation[2] = deviceOrientation.getRoll();
-		return calculate2dPoint(orientation);
+		return calculate2dPoint(orientation);*/
+		
+		
+		
+		Camera mCamera = Camera.open();
+		Camera.Parameters params = mCamera.getParameters();
+		double rotation = Math.toRadians(params.getHorizontalViewAngle());
+		double pitch = Math.toRadians(params.getVerticalViewAngle());
+		TransformationParamBean tps = new TransformationParamBean(1.7, 
+				rotation, pitch , 1000, 1000);
+		mCamera.release();
+		Log.d(TAG, "Horizontal: " + rotation);
+		
+		Point p = new Point(500,500);
+		tps.addPoint(p);/*
+		p = new Point(1,1000);
+		tps.addPoint(p);
+		p = new Point(1000, 1000);*/
+		ArrayList<double[]> list = transform(tps, deviceOrientation);
+		Log.d(TAG, "tranform finished");
+		return list.get(0);
 	}
 	
 	/**
@@ -69,12 +99,15 @@ public class PointToCoordsTransformUtil {
 	 * @param oldAngle
 	 * @return
 	 */
-	private float calculateAngle(float pixel, float width, float maxAngle, float oldAngle){
+	public double calculateAngle(double pixel, double width, double maxAngle, double oldAngle){
+
+		Log.d(TAG, "Calculate Angle, OldAngle: " + oldAngle + " maxANgle: " + maxAngle);
 		if((pixel - (width / 2)) == 0){
 			return oldAngle;
 		}
-		float percent = (width / 2) / (pixel - (width / 2));
-		float angle = maxAngle * percent;		
+		double percent = (width / 2) / (pixel - (width / 2));
+		double angle = maxAngle * percent;	
+		
 		return oldAngle + angle;
 	}
 
@@ -82,19 +115,19 @@ public class PointToCoordsTransformUtil {
 	
 	/**
 	 * @param orientation
-	 * @return coords in mm in a System with (0,0) = Phoneposition; 
+	 * @return coords in m in a System with (0,0) = Phoneposition; 
 	 * 			x = West/East Axis and y = Norh/South Axis
 	 */
-	public float[] calculate2dPoint(float[] orientation){
-		float[] vector = calculateVectorfromOrientation(orientation);
+	public double[] calculate2dPoint(double[] orientation){
+		double[] vector = calculateVectorfromOrientation(orientation);
 		
 		if(vector[2] <= 0){
 			vector[2]=-1;
 			Log.d(TAG,"Camera is looking to the sky.");
 		}		
 
-		float[] coords = new float[2];
-		float z = height / vector[2];
+		double[] coords = new double[2];
+		double z = height / vector[2];
 		coords[0] = vector[0] * z;
 		coords[1] = vector[1] * z;		
 		
@@ -111,20 +144,25 @@ public class PointToCoordsTransformUtil {
 	 * @param orientation
 	 * @return 
 	 */
-	private float[] calculateVectorfromOrientation(float[] orientation){
+	public double[] calculateVectorfromOrientation(double[] orientation){
 		
-		Log.d(TAG,"Delivered Phoneorientation: azimuth = " 
+		Log.i(TAG,"Delivered Phoneorientation: azimuth = " 
 				+ orientation[0] +" ,pitch = " + orientation[1]
 				+ ", roll = " + orientation[2]);		
 		
 		//calculate fix Z with Pitch
-		float z = (float) Math.cos(orientation[1]); 
+		double z = Math.cos(orientation[1]); 
 		
 		//calculate temp.Y with Pitch
-		float y = (float) Math.sin(-orientation[1]); 
-		
-		//calculate temp.X with fix Z and Roll
-		float x = (float) (Math.tan(orientation[2]) * z);
+		double y = Math.sin(-orientation[1]); 
+		double x;
+		if (orientation[1] != 0.0){
+			//calculate temp.X with fix Z and Roll
+			x = (Math.tan(orientation[2]) * z);
+		}
+		else{
+			x = Math.sin(orientation[2]);
+		}
 		
 		Log.d(TAG,"Calculated Vector without azimuth: X = " + x 
 				+ " ,Y = " + y
@@ -132,10 +170,10 @@ public class PointToCoordsTransformUtil {
 		
 		
 		// Rotate Vector with Azimuth (Z is fix))
-		float[] vector = new float[3];
-		vector[0] = (float) ((x * Math.cos(orientation[0])) 
+		double[] vector = new double[3];
+		vector[0] =  ((x * Math.cos(orientation[0])) 
 				- (y * Math.sin(orientation[0])));
-		vector[1] = (float) ((x * Math.sin(orientation[0])) 
+		vector[1] =  ((x * Math.sin(orientation[0])) 
 				+ (y * Math.cos(orientation[0])));
 		vector[2] = z;	
 		
@@ -145,6 +183,36 @@ public class PointToCoordsTransformUtil {
 				+ ", Z = " + vector[2]);
 		
 		return vector;
+	}
+	
+	
+	public void calculateGPSPoint(Node node, double[] point){
+		double radius = 6371004.0;
+		double lat = Math.toRadians(node.getLat());
+		double lon = Math.toRadians(node.getLon());
+		
+		double latLength = radius * Math.cos(lat);
+		latLength = latLength * 2 * Math.PI;
+		double lat2 = lat + ((-point[0]) / (latLength / 360));
+		if (lat2 < (-Math.PI/2)){
+			lat2 += Math.PI;
+		}
+		if (lat2 > (Math.PI/2)){
+			lat2 -= Math.PI;
+		}
+		
+		double lonLength = radius * 2 * Math.PI;
+		double lon2 = lon + ((point[1]) / (lonLength / 360));
+		if (lon2 > (Math.PI/4)){
+			lon2 = (Math.PI/2) - lon2;
+		}
+		if (lon2 < (-Math.PI/4)){
+			lon2 = -(Math.PI/2) + lon2;
+		}		
+		
+		lat = Math.toDegrees(lat);
+		lon = Math.toDegrees(lon);				
+		
 	}
 		
 }
