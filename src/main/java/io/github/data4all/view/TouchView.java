@@ -161,48 +161,45 @@ public class TouchView extends View {
     }
 
     /**
-     * deletes a Point of the polygon
+     * Deletes a Point of the polygon
      * 
      * @param point
-     *            The selected point
+     *            The point to delete
      */
     public void deletePoint(Point point) {
-        polygon.remove(point);
-        Log.d(this.getClass().getSimpleName(), "Point deleted");
+        if(polygon.remove(point)) {
+            Log.d(this.getClass().getSimpleName(), "Point deleted");
+        } else {
+            Log.d(this.getClass().getSimpleName(), "Point not found");
+        }
         postInvalidate();
-
     }
 
     /**
-     * this function determines if there is a Point of the polygon close to this
+     * This function determines if there is a Point of the polygon close to this
      * point
      * 
      * @param x
      *            the X-value of the point
      * @param y
      *            the Y-value of the point
+     * @param maxDistance
+     *            the max distance between the x/y and the Point
+     * @return the closest point to the given x/y or {@code null} if the nearest
+     *         point is more than maxDistance away
      * 
      */
-    public Point lookUp(float x, float y) {
-
-        // the value which represent the maximum distance between the userinput
-        // and the nearest Point.
-        // Right now, it will return the nearest point of the Polygon no matter
-        // how far away it is
-        // TODO: find a suitable value
-        float shortest = Float.MAX_VALUE;
-
+    public Point lookUp(float x, float y, float maxDistance) {
+        double shortest = maxDistance;
         Point closePoint = null;
 
         if (!polygon.isEmpty()) {
-
             // runs through the list of points in the polygon and checks which
             // point is the closest
             for (Point p : polygon) {
-                float distance = Math.abs(x - p.getX()) + Math.abs(y - p.getY());
+                double distance = Math.hypot(x - p.getX(), y - p.getY());
 
                 Log.d(this.getClass().getSimpleName(), "distance:" + distance);
-
                 if (distance <= shortest) {
                     shortest = distance;
                     closePoint = p;
