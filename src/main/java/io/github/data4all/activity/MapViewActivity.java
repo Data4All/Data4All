@@ -121,9 +121,6 @@ public class MapViewActivity extends BasicActivity implements OnClickListener {
 		ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
-		ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
-		uploadData.setOnClickListener(this);
-
 		ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
 		satelliteMap.setOnClickListener(this);
 
@@ -173,8 +170,6 @@ public class MapViewActivity extends BasicActivity implements OnClickListener {
 			break;
 		}
 	}
-
-
 
 	@Override
 	public void onResume() {

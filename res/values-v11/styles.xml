@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@drawable/actionbar</item>
@@ -9,6 +9,42 @@
     <style name="CustomActivityThemeNoActionBar" parent="@android:style/Theme.Holo.Light">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="imageButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@null</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="imageButtonReturnToActualPosition" parent="imageButtonStyle">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:src">@drawable/ic_point</item>
+    </style>
+
+    <style name="imageButtonSwitchMaps" parent="imageButtonStyle">
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:src">@drawable/ic_sat</item>
+    </style>
+
+    <style name="imageButtonNewPointOfInterest" parent="imageButtonStyle">
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/ic_poi</item>
+    </style>
+
+    <style name="imageButtonToCamera" parent="imageButtonStyle">
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">100dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/ic_cam</item>
     </style>
 
 </resources>
