@@ -1,7 +1,11 @@
 package io.github.data4all.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
 
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsSame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -10,6 +14,7 @@ import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
 
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
@@ -23,15 +28,12 @@ public class PointToCoordsTransformUtilTest {
 	}
 
 	@Test
-	public void calculateVectorfromOrientationTest(){
-		
-		double[] orientation = new double[3];
-		orientation[0] = 0.0;
-		orientation[1] = 0.0;
-		orientation[2] = 0.0;
-		double[] vector = util.calculateVectorfromOrientation(orientation);
-		assertEquals(0.0,vector[0], 0);
-		assertEquals(0.0,vector[1],0);
-		assertEquals(1.0,vector[2],0);
+	public void calculateVectorfromOrientationTest(){		
+		double[] orientation = {0.0,0.0,0.0};
+		double[] vector = {0.0,0.0,1.0};
+	//	assertThat(util.calculateVectorfromOrientation(orientation), );
+		double[] orientation2 = {Math.PI,0.0,0.0};
+		double[] vector2 = {0.0,0.0,-2.0};
+		assertThat(util.calculateVectorfromOrientation(orientation), is(vector));
 	}
 }

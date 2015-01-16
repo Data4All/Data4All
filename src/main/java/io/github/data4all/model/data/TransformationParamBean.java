@@ -2,6 +2,7 @@ package io.github.data4all.model.data;
 
 import java.util.ArrayList;
 
+import android.location.Location;
 import io.github.data4all.model.data.GPSBean;
 import io.github.data4all.model.drawing.Point;
 
@@ -12,14 +13,16 @@ public class TransformationParamBean {
 	private int photoWidth;
 	private int photoHeight;
 	private ArrayList<Point> points = new ArrayList<Point>();
+	private Location location;
 
 	public TransformationParamBean(double height, double cameraMaxRotationAngle, 
-					double cameraMaxPitchAngle, int photoWidth, int photoHeight){
+					double cameraMaxPitchAngle, int photoWidth, int photoHeight, Location location){
 		this.height = height;
 		this.cameraMaxPitchAngle = cameraMaxPitchAngle;
 		this.cameraMaxRotationAngle = cameraMaxRotationAngle;
 		this.photoHeight = photoHeight;
 		this.photoWidth = photoWidth;
+		this.location = location;
 
 	}
 	
@@ -76,6 +79,20 @@ public class TransformationParamBean {
 	
 	public void addPoint(Point point){
 		points.add(point);
+	}
+
+
+
+
+	public Location getLocation() {
+		return location;
+	}
+
+
+
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
 
