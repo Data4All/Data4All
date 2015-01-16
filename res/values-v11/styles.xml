@@ -46,5 +46,20 @@
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:src">@drawable/ic_cam</item>
     </style>
+    
+    <style name="imageButtonOkay" parent="imageButtonStyle">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/ic_ok</item>       
+    </style>
+    
+    <style name="startUpScreen">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/data4allport</item>   
+    </style>
 
 </resources>

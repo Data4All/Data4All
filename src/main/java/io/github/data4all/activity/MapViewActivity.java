@@ -3,8 +3,6 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.service.GPSservice;
-
-import org.osmdroid.ResourceProxy.string;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -13,16 +11,10 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.ResourceProxy;
-
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -153,6 +145,7 @@ public class MapViewActivity extends BasicActivity implements OnClickListener {
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(OSM_TILESOURCE);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+				button.setImageResource(R.drawable.ic_way);
 				mapView.postInvalidate();
 				// switch to Satellite Map
 			} else {
@@ -160,6 +153,7 @@ public class MapViewActivity extends BasicActivity implements OnClickListener {
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+				button.setImageResource(R.drawable.ic_sat);
 				mapView.postInvalidate();
 			}
 			break;

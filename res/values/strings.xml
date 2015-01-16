@@ -56,5 +56,6 @@
     <string name="pointOfInterest">Point of Interest</string>
     <string name="switchMaps">Switch Maps</string>
     <string name="upload_data">Upload</string>
+    <string name="startUpScreen">StartUpScreen</string>
     
 </resources>
