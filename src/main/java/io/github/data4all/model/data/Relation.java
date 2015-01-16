@@ -257,7 +257,7 @@ public class Relation extends OsmElement {
      */
 	public void writeToParcel(Parcel dest, int flags) {		
 		super.writeToParcel(dest, flags);
-		dest.writeList(members);
+		dest.writeTypedList(members);
 	}
 	
 	/**
@@ -266,7 +266,9 @@ public class Relation extends OsmElement {
 	 */
     private Relation(Parcel in) {
     	super(in);
-    	members = in.readArrayList(null);
+    	//members = in.readArrayList(null);
+        members = new ArrayList<RelationMember>();
+        in.readTypedList(members, RelationMember.CREATOR);
     }
     
 }

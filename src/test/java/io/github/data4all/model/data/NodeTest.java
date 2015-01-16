@@ -241,7 +241,7 @@ public class NodeTest {
      * a new node is created from the parcel and we check if it contains all attributes.
      */
 	@Test 
-    public void test_parcelable() {
+    public void test_parcelable_node() {
     	Parcel newParcel = Parcel.obtain();
     	Node testNode = new Node(1, 2, 30.123456, 40.1234567);
     	testNode.addOrUpdateTag("testtag", "test");

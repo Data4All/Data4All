@@ -316,7 +316,7 @@ public class Way extends OsmElement {
      */
 	public void writeToParcel(Parcel dest, int flags) {		
 		super.writeToParcel(dest, flags);
-		dest.writeList(nodes);
+		dest.writeTypedList(nodes);
 	}
 	
 	/**
@@ -325,7 +325,8 @@ public class Way extends OsmElement {
 	 */
     private Way(Parcel in) {
     	super(in);
-    	nodes = in.readArrayList(null);
+        nodes = new LinkedList<Node>();
+        in.readTypedList(nodes, Node.CREATOR);
     }	
 
 }
