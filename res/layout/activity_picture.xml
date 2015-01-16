@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"
-            android:onClick="onClickOkay"
+            android:onClick="onClickPoint"
             android:src="@drawable/ic_point" />
 
         <Button

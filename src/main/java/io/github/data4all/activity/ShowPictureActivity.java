@@ -52,6 +52,7 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
+tagIntent = new Intent(this,TagActivity.class);
        
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
