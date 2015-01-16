@@ -18,7 +18,6 @@ import android.hardware.Camera.Size;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.widget.Toast;
 
 /**
@@ -37,9 +36,6 @@ public class CapturePictureHandler implements PictureCallback {
 
     // The Optimizer class for the current location and device orientation
     private Optimizer optimizer;
-    
-    
-    private TransformationParamBean transformBean;
 
     // The directory where the pictures are saved into
     private static final String DIRECTORY = "/Data4all";
@@ -48,10 +44,13 @@ public class CapturePictureHandler implements PictureCallback {
     // The name of the extra info for the filepath in the intent for the new
     // activity
     private static final String FILEPATH = "file_path";
-    private static final String LOCATION = "current_location";
-    private Location currentLocation = null;
-    private static final String DEVICE_ORIENTATION = "currentOrientation";
+    // Name and object of the DeviceOrientation to give to the next activity
+    private static final String DEVICE_ORIENTATION = "current_orientation";
     private DeviceOrientation currentOrientation = null;
+    // Name and object of the TransformationParamBean to give to the next
+    // activity
+    private static final String TRANSFORM_BEAN = "transform_bean";
+    private TransformationParamBean transformBean;
 
     public CapturePictureHandler() {
     }
@@ -71,13 +70,14 @@ public class CapturePictureHandler implements PictureCallback {
         Log.d(getClass().getSimpleName(), "Save the Picture");
 
         Camera.Parameters params = camera.getParameters();
-        double horizontalViewAngle = Math.toRadians(params.getHorizontalViewAngle());
-        double verticalViewAngle = Math.toRadians(params.getVerticalViewAngle());
+        double horizontalViewAngle = Math.toRadians(params
+                .getHorizontalViewAngle());
+        double verticalViewAngle = Math
+                .toRadians(params.getVerticalViewAngle());
         Size pictureSize = params.getSupportedPictureSizes().get(0);
-        //transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
-        //        verticalViewAngle, pictureSize.height, pictureSize.width);
-
-        currentLocation = optimizer.currentBestLoc();
+        Location currentLocation = optimizer.currentBestLoc();
+        // transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
+        // verticalViewAngle, pictureSize.width, pictureSize.height, currentLocation);
         currentOrientation = optimizer.currentBestPos();
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
@@ -117,8 +117,8 @@ public class CapturePictureHandler implements PictureCallback {
                 // ShowPictureActivity
                 Intent intent = new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
-                intent.putExtra(LOCATION, (Parcelable) currentLocation);
-                // intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+                //intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+                // intent.putExtra(TRANSFORM_BEAN, transformBean);
 
                 // start the new ShowPictureActivity
                 context.startActivity(intent);

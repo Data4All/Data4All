@@ -3,6 +3,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
@@ -48,8 +49,8 @@ public class ShowPictureActivity extends Activity {
 	private String way = "WAY";
 	private String area = "AREA";
 	
-	//the current location and device orientation when the picture was taken
-	private Location currentLocation;
+	//the current TransformationBean and device orientation when the picture was taken
+	private TransformationParamBean transformBean;
 	private DeviceOrientation currentOrientation;
 	
     @Override
@@ -60,7 +61,7 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-tagIntent = new Intent(this,TagActivity.class);
+        tagIntent = new Intent(this,TagActivity.class);
        
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
@@ -68,14 +69,11 @@ tagIntent = new Intent(this,TagActivity.class);
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
         }
-        if (getIntent().hasExtra("current_location")) {
-            currentLocation = getIntent().getExtras().getParcelable("current_location");
-            Log.d(getClass().getSimpleName(), "Current Location: " + getIntent().getExtras().getParcelable("current_location"));
-        } else {
-            Toast.makeText(this, "No location available", Toast.LENGTH_SHORT).show();
+        if (getIntent().hasExtra("transform_bean")) {
+            transformBean = getIntent().getExtras().getParcelable("transform_bean");
         }
-        if (getIntent().hasExtra("current_position")) {
-            currentOrientation = getIntent().getExtras().getParcelable("current_orientation");
+        if (getIntent().hasExtra("current_orientation")) {
+            //currentOrientation = getIntent().getExtras().getParcelable("current_orientation");
             Log.d(getClass().getSimpleName(), "Current Position: " + getIntent().getExtras().getParcelable("current_orientation"));
         } else {
             Toast.makeText(this, "No device orientation available", Toast.LENGTH_SHORT).show();
