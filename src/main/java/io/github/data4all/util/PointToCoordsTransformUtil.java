@@ -41,7 +41,7 @@ public class PointToCoordsTransformUtil {
 		this.deviceOrientation = deviceOrientation;		
 	}
 	
-	public ArrayList<Node> tranfrom(ArrayList<Point> points){
+	public ArrayList<Node> transform(ArrayList<Point> points){
 		return transform(tps, deviceOrientation, points);
 	}
 	
@@ -57,7 +57,7 @@ public class PointToCoordsTransformUtil {
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		double[] orientation = new double[3];
 		this.height = tps.getHeight();		
-		orientation[0] = deviceOrientation.getAzimuth();		
+		orientation[0] = - deviceOrientation.getAzimuth();		
 		for(Point point : points){
 			orientation[1] = calculateAngle(point.getX(), tps.getPhotoWidth(),
 					tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
@@ -119,7 +119,7 @@ public class PointToCoordsTransformUtil {
 		double percent = (width / 2) / (pixel - (width / 2));
 		double angle = maxAngle * percent;	
 		
-		return oldAngle + angle;
+		return oldAngle - angle;
 	}
 
 	
@@ -133,7 +133,7 @@ public class PointToCoordsTransformUtil {
 		double[] vector = calculateVectorfromOrientation(orientation);
 		
 		if(vector[2] <= 0){
-			vector[2]=-1;
+			vector[2]=1;
 			Log.d(TAG,"Camera is looking to the sky.");
 		}		
 
@@ -173,6 +173,7 @@ public class PointToCoordsTransformUtil {
 		}
 		else{
 			x = Math.sin(orientation[2]);
+			z = Math.cos(orientation[2]);
 		}
 		
 		Log.d(TAG,"Calculated Vector without azimuth: X = " + x 
@@ -204,7 +205,7 @@ public class PointToCoordsTransformUtil {
 
 		double latLength = radius * Math.cos(lat);
 		latLength = latLength * 2 * Math.PI;
-		double lat2 =lat + Math.toRadians(((-point[0]) / (latLength / 360)));
+		double lat2 =lat + Math.toRadians(((point[0]) / (latLength / 360)));
 		if (lat2 < (-Math.PI/2)){
 			lat2 += Math.PI;
 		}
