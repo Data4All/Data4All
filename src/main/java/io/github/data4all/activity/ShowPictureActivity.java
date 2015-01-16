@@ -1,6 +1,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.activity.TagActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.view.TouchView;
 
