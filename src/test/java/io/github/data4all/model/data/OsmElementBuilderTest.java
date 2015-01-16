@@ -64,4 +64,16 @@ public class OsmElementBuilderTest {
 		assertEquals(true, OsmElementBuilder.read(newParcel) instanceof Relation); 
 	}
 
+    /**
+     * Create a new parcial to save/parcelable an osm element (in this case null), 
+     * tests if an illegalstateexception is thrown.
+     */
+	@Test(expected=IllegalStateException.class)
+	public void test_write_null_element() {
+		Parcel newParcel = Parcel.obtain();
+		
+		OsmElementBuilder.write(newParcel, null, 0);
+		newParcel.setDataPosition(0);
+	}
+	
 }
