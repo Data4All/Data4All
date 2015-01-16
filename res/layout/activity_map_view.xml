@@ -10,69 +10,27 @@
 
     <ImageButton
         android:id="@+id/return_to_actual_Position"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:background="@null"
-        android:padding="0dp"
-        android:src="@drawable/ic_point" />
+        style="@style/imageButtonReturnToActualPosition"
+        android:contentDescription="@string/returnToActualPosition" />
 
     <ImageButton
         android:id="@+id/switch_maps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:background="@null"
-        android:padding="0dp"
-        android:src="@drawable/ic_sat" />
-
-    <ImageButton
-        android:id="@+id/upload_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="10dp"
-        android:background="@null"
-        android:padding="0dp"
-        android:src="@drawable/ic_upload" />
+        style="@style/imageButtonSwitchMaps"
+        android:contentDescription="@string/switchMaps" />
 
     <ImageButton
         android:id="@+id/new_point"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="10dp"
-        android:background="@null"
-        android:src="@drawable/ic_poi" />
+        style="@style/imageButtonNewPointOfInterest"
+        android:contentDescription="@string/pointOfInterest" />
 
     <ImageButton
         android:id="@+id/to_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="100dp"
-        android:layout_marginRight="10dp"
-        android:background="@null"
-        android:src="@drawable/ic_cam" />
-
-    
+        style="@style/imageButtonToCamera"
+        android:contentDescription="@string/returnToCamera" />
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/data4allport" />
+        style="@style/startUpScreen"
+        android:contentDescription="@string/startUpScreen" />
 
 </RelativeLayout>

@@ -25,11 +25,7 @@
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Select Matching Tag</string>
     
-    <string name="return_to_position">My Position</string>
-    <string name="to_camera">Camera</string>
-    <string name="switch_to_satellite">Satellite Map</string>
-    <string name="switch_to_osm">OpenStreet Map</string>
-    <string name="upload_data">Upload</string>
+    
     <string name="poi">POI</string>
     <string name="action_login">Login</string>
     
@@ -53,4 +49,13 @@
     <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
     <string name="deleteButton">Logout</string>
     <string name="getUsernameButton">show Username</string>
+    
+    <!-- Strings Content Description ImageButtons on MapViewActivity -->
+    <string name="returnToActualPosition">My Position</string>
+    <string name="returnToCamera">Camera</string>
+    <string name="pointOfInterest">Point of Interest</string>
+    <string name="switchMaps">Switch Maps</string>
+    <string name="upload_data">Upload</string>
+    <string name="startUpScreen">StartUpScreen</string>
+    
 </resources>
