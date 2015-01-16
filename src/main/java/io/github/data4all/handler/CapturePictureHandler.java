@@ -2,7 +2,9 @@ package io.github.data4all.handler;
 
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.util.GeoDataConverter;
+import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.util.Optimizer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,7 +14,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
-import android.media.ExifInterface;
+import android.hardware.Camera.Size;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
@@ -30,16 +33,21 @@ public class CapturePictureHandler implements PictureCallback {
     private Context context;
     // The file into which the picture is saved
     private File photoFile;
-    // An ExifInterface for the exif data of a file
-    private ExifInterface exif;
 
     // The directory where the pictures are saved into
-    private final String directory = "/Data4all";
+    private static final String DIRECTORY = "/Data4all";
     // The fileformat of the saved picture
-    private final String fileformat = ".jpeg";
+    private static final String FILE_FORMAT = ".jpeg";
     // The name of the extra info for the filepath in the intent for the new
     // activity
-    private final String filepath = "file_path";
+    private static final String FILEPATH = "file_path";
+    // Name and object of the DeviceOrientation to give to the next activity
+    private static final String DEVICE_ORIENTATION = "current_orientation";
+    private DeviceOrientation currentOrientation = null;
+    // Name and object of the TransformationParamBean to give to the next
+    // activity
+    private static final String TRANSFORM_BEAN = "transform_bean";
+    private TransformationParamBean transformBean;
 
     public CapturePictureHandler() {
     }
@@ -57,6 +65,16 @@ public class CapturePictureHandler implements PictureCallback {
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
 
+        Camera.Parameters params = camera.getParameters();
+        double horizontalViewAngle = Math.toRadians(params
+                .getHorizontalViewAngle());
+        double verticalViewAngle = Math
+                .toRadians(params.getVerticalViewAngle());
+        Size pictureSize = params.getSupportedPictureSizes().get(0);
+        Location currentLocation = Optimizer.currentBestLoc();
+        transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
+         verticalViewAngle, pictureSize.width, pictureSize.height, currentLocation);
+        currentOrientation = Optimizer.currentBestPos();
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
     }
@@ -83,27 +101,22 @@ public class CapturePictureHandler implements PictureCallback {
                 return ex.getMessage();
             }
 
-            // Call the method where the extra data is written to the exif of
-            // the photofile
-            writeExifToFile(photoFile.getPath());
-
             return "successful";
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d(getClass().getSimpleName(), "########### onPostExecute");
             if (result.equals("successful")) {
-                // Toast.makeText(context, "Picture successfully saved",
-                // Toast.LENGTH_SHORT).show();
+                Log.d(getClass().getSimpleName(), "Picture successfully saved");
 
-                // A method to log the saved metadata of the taken picture
-                // TODO remove
-                showReturnedMetadata();
-
-                /* Passes the filepath to the ShowPictureActivity */
+                // Passes the filepath, location and device orientation to the
+                // ShowPictureActivity
                 Intent intent = new Intent(context, ShowPictureActivity.class);
-                intent.putExtra(filepath, photoFile);
+                intent.putExtra(FILEPATH, photoFile);
+                intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+                //TODO intent.putExtra(TRANSFORM_BEAN, transformBean);
+
+                // start the new ShowPictureActivity
                 context.startActivity(intent);
 
             } else {
@@ -121,109 +134,16 @@ public class CapturePictureHandler implements PictureCallback {
         // Create a File Reference of Photo File
         // Image Type is JPEG
 
-        // TODO decide where to save the files
-        // This will store the file to the internal directory of the app
-        // photoFile = new File(context.getFilesDir(),
-        // System.currentTimeMillis() + fileformat);
-        // Log.d(TAG, "Picturepath:" + photoFile);
-
         // Create a new folder on the internal storage named Data4all
         File folder = new File(Environment.getExternalStorageDirectory()
-                + directory);
+                + DIRECTORY);
         if (!folder.exists() && folder.mkdirs()) {
             Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
                     .show();
         }
 
         // Save the picture to the folder in the internal storage
-        return new File(Environment.getExternalStorageDirectory() + directory,
-                System.currentTimeMillis() + fileformat);
+        return new File(Environment.getExternalStorageDirectory() + DIRECTORY,
+                System.currentTimeMillis() + FILE_FORMAT);
     }
-
-    /*
-     * Write the metadata like GPS and tilt and position data to the EXIF of the
-     * photofile.
-     */
-    private void writeExifToFile(String filepath) {
-        // Get the location in degrees TODO call real method for geo data
-        double latitude = 47.345183;
-        double longitude = -117.260489;
-        String latitudeRef = latitude < 0.0d ? "S" : "N";
-        String longitudeRef = longitude < 0.0d ? "W" : "E";
-
-        try {
-            // Write GPS tags into the EXIF of the picture
-            exif = new ExifInterface(filepath);
-            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE,
-                    GeoDataConverter.convertToDMS(latitude));
-            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE,
-                    GeoDataConverter.convertToDMS(longitude));
-            // Set the Latitude reference (west or east)
-            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, latitudeRef);
-            // Set the Longitude reference (north or south)
-            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, longitudeRef);
-
-            // Set the position and tilt data to the UserComment Tag
-            // TODO call real method for data
-            exif.setAttribute("UserComment", "Tilt and position data");
-
-            exif.saveAttributes();
-        } catch (IOException e) {
-            Log.e(getClass().getSimpleName(), "cannot access exif", e);
-        }
-
-    }
-
-    /*
-     * Just for developing to show how to get the metadata TODO remove later
-     * 
-     * An example, how to receive the metadata of the picture Show a log with
-     * the returned metadata saved to the picture
-     */
-    private void showReturnedMetadata() {
-
-        ExifInterface showexif = null;
-        try {
-            showexif = new ExifInterface(photoFile.getPath());
-        } catch (IOException e) {
-            Log.e(getClass().getSimpleName(), "cannot read exif", e);
-        }
-
-        String attrLATITUDE = showexif
-                .getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-        String attrLATITUDE_REF = showexif
-                .getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-        String attrLONGITUDE = showexif
-                .getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-        String attrLONGITUDE_REF = showexif
-                .getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-        if (attrLATITUDE == null || attrLONGITUDE == null
-                || attrLONGITUDE_REF == null || attrLATITUDE_REF == null) {
-            Log.w(getClass().getSimpleName(),
-                    "No geotag in the exif of the imagefile");
-        } else {
-            double latitudeReturn;
-            double longitudeReturn;
-            if (attrLATITUDE_REF.equals("N")) {
-                latitudeReturn = GeoDataConverter.convertToDegree(attrLATITUDE);
-            } else {
-                latitudeReturn = 0 - GeoDataConverter
-                        .convertToDegree(attrLATITUDE);
-            }
-
-            if (attrLONGITUDE_REF.equals("E")) {
-                longitudeReturn = GeoDataConverter
-                        .convertToDegree(attrLONGITUDE);
-            } else {
-                longitudeReturn = 0 - GeoDataConverter
-                        .convertToDegree(attrLONGITUDE);
-            }
-
-            Log.i(getClass().getSimpleName(), exif.getAttribute("UserComment"));
-
-            Log.i(getClass().getSimpleName(), "Latitude: " + latitudeReturn);
-            Log.i(getClass().getSimpleName(), "Longitude: " + longitudeReturn);
-        }
-    }
-
 }
