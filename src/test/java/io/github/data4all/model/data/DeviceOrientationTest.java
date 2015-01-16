@@ -28,7 +28,6 @@ public class DeviceOrientationTest {
     public void test_parcelable_node() {
     	Parcel newParcel = Parcel.obtain();
     	DeviceOrientation testDeviceOrientation = new DeviceOrientation(10, 20, 30, 1234567);
-    	//RelationMember testRelationMember = new RelationMember("type", 12345, "role");
       
     	testDeviceOrientation.writeToParcel(newParcel, 0);
     	newParcel.setDataPosition(0);
