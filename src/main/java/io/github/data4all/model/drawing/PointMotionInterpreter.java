@@ -105,8 +105,7 @@ public class PointMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
-        // TODO Auto-generated method stub
-        return null;
+        return pointTrans.transform(polygon).get(0);
     }
 
     /*

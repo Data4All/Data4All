@@ -114,7 +114,7 @@ public class CapturePictureHandler implements PictureCallback {
                 Intent intent = new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
                 intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
-                //TODO intent.putExtra(TRANSFORM_BEAN, transformBean);
+                intent.putExtra(TRANSFORM_BEAN, transformBean);
 
                 // start the new ShowPictureActivity
                 context.startActivity(intent);

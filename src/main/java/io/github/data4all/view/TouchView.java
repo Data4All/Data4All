@@ -93,7 +93,7 @@ public class TouchView extends View {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        interpreter = new WayMotionInterpreter();
+        setInterpretationType(InterpretationType.WAY);
         pointPaint.setColor(MotionInterpreter.POINT_COLOR);
         pathPaint.setColor(MotionInterpreter.PATH_COLOR);
         pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
