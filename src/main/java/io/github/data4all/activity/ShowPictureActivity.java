@@ -19,9 +19,11 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
 /**
@@ -41,6 +43,8 @@ public class ShowPictureActivity extends Activity {
 	private String building = "BUILDING";
 	private String way = "WAY";
 	private String area = "AREA";
+	private Button undo;
+	private Button redo;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,8 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
+        undo = (Button) findViewById(R.id.undobtn);
+        redo = (Button)findViewById(R.id.redobtn);
 tagIntent = new Intent(this,TagActivity.class);
        
         if (getIntent().hasExtra("file_path")) {
@@ -100,6 +106,14 @@ tagIntent = new Intent(this,TagActivity.class);
         touchView.undo();
         touchView.invalidate();
     }
+    
+    public void SetRedoEnable(boolean enabled){
+    	redo.setEnabled(enabled);
+    }
+    
+    public void SetUndoEnable(boolean enabled){
+    	undo.setEnabled(enabled);
+    }
 
 	/**
 	 * Get a Uri of a Image and set this to local layout as background
@@ -119,7 +133,6 @@ tagIntent = new Intent(this,TagActivity.class);
 
 			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
 					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			Log.e(this.getClass().toString(), "ROTATION:");
 			imageView.setImageBitmap(adjustedBitmap);
 		} catch (FileNotFoundException e) {
 			Log.e(this.getClass().toString(), "ERROR, no file found");

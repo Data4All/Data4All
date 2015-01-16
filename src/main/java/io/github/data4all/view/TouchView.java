@@ -1,5 +1,6 @@
 package io.github.data4all.view;
 
+import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
@@ -65,17 +66,22 @@ public class TouchView extends View {
 	 * The current used RedoUndo object
 	 */
 	private RedoUndo redoUndo;
+	
+	ShowPictureActivity show;
 
 	public TouchView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		show = (ShowPictureActivity) context;
 	}
 
 	public TouchView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		show = (ShowPictureActivity) context;
 	}
 
 	public TouchView(Context context) {
 		super(context);
+		show = (ShowPictureActivity) context;
 	}
 
 	/**
@@ -94,6 +100,7 @@ public class TouchView extends View {
 		pointPaint.setColor(MotionInterpreter.POINT_COLOR);
 		pathPaint.setColor(MotionInterpreter.PATH_COLOR);
 		pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
+		redoUndo = new RedoUndo();
 	}
 
 	@Override
@@ -120,6 +127,8 @@ public class TouchView extends View {
 				canvas.drawCircle(p.getX(), p.getY(),
 						MotionInterpreter.POINT_RADIUS, pointPaint);
 			}
+			undoUseable();
+			redoUseable();
 		}
 	}
 
@@ -134,6 +143,7 @@ public class TouchView extends View {
 		case MotionEvent.ACTION_UP:
 			handleMotion(event, "end");
 			polygon = newPolygon;
+			redoUndo= new RedoUndo(polygon);
 			break;
 		case MotionEvent.ACTION_MOVE:
 			handleMotion(event, "move");
@@ -156,9 +166,7 @@ public class TouchView extends View {
 	private void handleMotion(MotionEvent event, String action) {
 		if (currentMotion != null) {
 			currentMotion.addPoint(event.getX(), event.getY());
-
 			newPolygon = interpreter.interprete(polygon, currentMotion);
-		//	redoUndo= new RedoUndo(newPolygon);
 			Log.d(this.getClass().getSimpleName(),
 					"Motion " + action + ": " + currentMotion.getPathSize()
 							+ ", point: " + currentMotion.isPoint());
@@ -191,9 +199,42 @@ public class TouchView extends View {
 
 	public void redo() {
 		newPolygon = redoUndo.redo();
+		polygon = newPolygon;
+		redoUseable();
 	}
 
-	public void undo() {
+	public void undo() { 
 		newPolygon = redoUndo.undo();
+		polygon = newPolygon;
+		show.SetRedoEnable(true);
+		undoUseable();
+	}
+	
+	public boolean redoUseable(){
+		if(redoUndo.getCurrent() == redoUndo.getMax()){
+			Log.d(this.getClass().getSimpleName(),
+					"false redo");
+			show.SetRedoEnable(false);
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(),
+					"false redo");
+			show.SetRedoEnable(true);
+			return false;
+		}
+	}
+	
+	public boolean undoUseable(){
+		if(redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0){
+			Log.d(this.getClass().getSimpleName(),
+					"true undo");
+			show.SetUndoEnable(true);
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(),
+					"false undo");
+			show.SetUndoEnable(false);
+			return false;
+		}
 	}
 }
