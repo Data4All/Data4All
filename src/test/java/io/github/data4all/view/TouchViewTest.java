@@ -33,7 +33,7 @@ public class TouchViewTest {
     Point point4;
     Point point5;
     Point point6;
-    
+
     @Before
     public void setUp() throws Exception {
         touchview = new TouchView(Robolectric.application);
@@ -41,6 +41,7 @@ public class TouchViewTest {
         point1 = new Point(2, 2);
         point2 = new Point(40, 40);
         point3 = new Point(43, 43);
+        point4 = new Point(33, 33);
         Field declaredField = touchview.getClass().getDeclaredField("polygon");
         declaredField.setAccessible(true);
         polygon = new ArrayList<Point>();
@@ -53,23 +54,21 @@ public class TouchViewTest {
 
     @Test
     public void testDeletePoint() {
-        //point5 isnt in the polygon
+        // point5 isnt in the polygon
         touchview.deletePoint(point5);
-        assertFalse(polygon.contains(point5));
-        
-        //first check if point 4 is in the polygon and check afterwards
+        assertEquals(false, polygon.contains(point5));
+
+        // first check if point 4 is in the polygon and check afterwards
         assertTrue(polygon.contains(point4));
         touchview.deletePoint(point4);
-        assertFalse(polygon.contains(point4));
-        
+        assertEquals(false, polygon.contains(point4));
 
-        
     }
 
     @Test
     public void testLookUp() {
         // there is no point around
-        assertNull(touchview.lookUp(22, 22, 1));
+        assertNull(touchview.lookUp(20, 20, 2));
         // there is a point near x=1 and y=1 -->point1
         assertEquals(point1, touchview.lookUp(1, 1, 5));
         // there is no point within the maximum distance. point 1 is too far
