@@ -34,9 +34,6 @@ public class CapturePictureHandler implements PictureCallback {
     // The file into which the picture is saved
     private File photoFile;
 
-    // The Optimizer class for the current location and device orientation
-    private Optimizer optimizer;
-
     // The directory where the pictures are saved into
     private static final String DIRECTORY = "/Data4all";
     // The fileformat of the saved picture
@@ -57,7 +54,6 @@ public class CapturePictureHandler implements PictureCallback {
 
     public CapturePictureHandler(Context context) {
         this.context = context;
-        optimizer = new Optimizer();
     }
 
     /*
@@ -75,10 +71,10 @@ public class CapturePictureHandler implements PictureCallback {
         double verticalViewAngle = Math
                 .toRadians(params.getVerticalViewAngle());
         Size pictureSize = params.getSupportedPictureSizes().get(0);
-        Location currentLocation = optimizer.currentBestLoc();
+        Location currentLocation = Optimizer.currentBestLoc();
         transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
          verticalViewAngle, pictureSize.width, pictureSize.height, currentLocation);
-        currentOrientation = optimizer.currentBestPos();
+        currentOrientation = Optimizer.currentBestPos();
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
     }
