@@ -28,12 +28,22 @@ public class PointToCoordsTransformUtil {
 	private int osmID = -1;
 	private static int osmVersion = 1;
 	private double height = 1.0;
+	TransformationParamBean tps;
+	DeviceOrientation deviceOrientation;
 	
 	public PointToCoordsTransformUtil() {
 		
 	}
 	
+	public PointToCoordsTransformUtil(TransformationParamBean tps, 
+			DeviceOrientation deviceOrientation) {
+		this.tps = tps;
+		this.deviceOrientation = deviceOrientation;		
+	}
 	
+	public ArrayList<Node> tranfrom(ArrayList<Point> points){
+		return transform(tps, deviceOrientation, points);
+	}
 	
 	/**
 	 * 
@@ -194,7 +204,7 @@ public class PointToCoordsTransformUtil {
 
 		double latLength = radius * Math.cos(lat);
 		latLength = latLength * 2 * Math.PI;
-		double lat2 = lat + ((-point[0]) / (latLength / 360));
+		double lat2 =lat + Math.toRadians(((-point[0]) / (latLength / 360)));
 		if (lat2 < (-Math.PI/2)){
 			lat2 += Math.PI;
 		}
@@ -203,15 +213,13 @@ public class PointToCoordsTransformUtil {
 		}
 		
 		double lonLength = radius * 2 * Math.PI;
-		double lon2 = lon + ((point[1]) / (lonLength / 360));
+		double lon2 = lon + Math.toRadians(((point[1]) / (lonLength / 360)));
 		if (lon2 > (Math.PI/4)){
 			lon2 = (Math.PI/2) - lon2;
 		}
 		if (lon2 < (-Math.PI/4)){
 			lon2 = -(Math.PI/2) + lon2;
-		}		
-		lat = Math.toDegrees(lat);
-		lon = Math.toDegrees(lon);				
+		}						
 		
 		Node node = new Node(osmID, osmVersion, lat, lon);
 		osmID--;

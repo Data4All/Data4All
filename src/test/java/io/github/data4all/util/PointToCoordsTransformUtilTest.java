@@ -1,17 +1,14 @@
 package io.github.data4all.util;
 
-import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
 import java.util.ArrayList;
 
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsSame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.TransformationParamBean;
@@ -34,11 +31,19 @@ public class PointToCoordsTransformUtilTest {
 	public void transformTest(){
 		location.setLatitude(0.0);
 		location.setLongitude(0.0);
-		TransformationParamBean tps = new TransformationParamBean(1.0, Math.toRadians(45) ,
+		TransformationParamBean tps = new TransformationParamBean(10000000.0, Math.toRadians(45) ,
 		Math.toRadians(45) , 1000, 1000, location);
-		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.0f, 0.0f, 10L);
+		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.1f, 0.0f, 10L);
 		ArrayList<Point> points = new ArrayList<Point>();
+		points.add(new Point(500, 500));
+		points.add(new Point(1000, 500));
+		points.add(new Point(500, 1000));
 		ArrayList<Node> test = util.transform(tps, deviceOrientation, points);
+		assertThat(test.get(0).getLat(), is(0.0));
+		assertThat(test.get(0).getLon(), is(0.0));
+		assertThat(test.get(1).getLat(), is(0.0));
+		//test.get(1).setLon(1.0);
+		assertThat(test.get(1).getLon(), is(not(0.0)));
 		
 	}
 
