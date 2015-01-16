@@ -6,74 +6,73 @@
     android:background="@drawable/android"
     android:orientation="vertical" >
 
-    <io.github.data4all.view.TouchView
-        android:id="@+id/touch_view"
+    <ImageView
+        android:id="@+id/imageView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/android" />
 
-    <Button
-        android:id="@+id/button1"
+    <io.github.data4all.view.TouchView
+        android:id="@+id/touchView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onClickOkay"
-        android:text="@android:string/ok" >
-    </Button>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal" >
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true">
 
-        <Button
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:onClick="onClickPoint"
-            android:text="Punkt" >
-        </Button>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
             android:onClick="onClickPath"
-            android:text="Weg" >
-        </Button>
+            android:src="@drawable/ic_way" />
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:onClick="onClickPoint"
+            android:src="@drawable/ic_point" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:id="@+id/button2"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:onClick="onClickArea"
-            android:text="Fläche" >
-        </Button>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="onClickBuilding"
-            android:text="Gebäude" >
-        </Button>
+            android:text="Gebäude" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickArea"
+            android:text="Fläche" />
+
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button2"
-        style="?android:attr/buttonStyleSmall"
+    <ImageButton
+        android:id="@+id/imageButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignRight="@+id/linearLayout1"
-        android:onClick="onClickUndo"
-        android:text="Undo" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_below="@+id/button1"
-        android:onClick="onClickRedo"
-        android:text="Redo" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@null"
+        android:onClick="onClickOkay"
+        android:src="@drawable/ic_ok" />
 
 </RelativeLayout>

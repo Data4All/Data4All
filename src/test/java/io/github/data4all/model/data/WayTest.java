@@ -168,6 +168,14 @@ public class WayTest {
         assertEquals(true, way.hasNode(testNode1));
         way.removeNode(testNode1);
         assertEquals(false, way.hasNode(testNode1));
+        way.addNode(testNode2);
+        assertEquals(true, way.hasNode(testNode2));
+        way.addNode(testNode3);
+        assertEquals(true, way.hasNode(testNode3));
+        way.removeNode(testNode2);
+        way.removeNode(testNode3);
+        assertEquals(false, way.hasNode(testNode2));
+        assertEquals(false, way.hasNode(testNode3));
     }
 
     /**
