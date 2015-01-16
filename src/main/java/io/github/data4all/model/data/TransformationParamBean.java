@@ -1,31 +1,34 @@
 package io.github.data4all.model.data;
 
+import java.util.ArrayList;
+
+import android.location.Location;
 import io.github.data4all.model.data.GPSBean;
+import io.github.data4all.model.drawing.Point;
 
 public class TransformationParamBean {
-	private float height;
-	private double rotate;
-	private float cameraVerticalAngle;
-	private float cameraHorizontalAngle;
-	private float cameraDistanceInPixel;
+	private double height;
+	private double cameraMaxRotationAngle;
+	private double cameraMaxPitchAngle;
 	private int photoWidth;
 	private int photoHeight;
-	private GPSBean observerPostion;
+	private Location location;
 
-	private TransformationParamBean(float h, double r,
-			float cva, float cha, float cdip, int cw, int ch, GPSBean op) {
-		this.height = h;
-		this.rotate = r;
-		this.cameraVerticalAngle = cva;
-		this.cameraHorizontalAngle = cha;
-		this.cameraDistanceInPixel = cdip;
-		this.photoWidth = cw;
-		this.photoHeight = ch;
-		this.observerPostion = op;
+	public TransformationParamBean(double height, double cameraMaxRotationAngle, 
+					double cameraMaxPitchAngle, int photoWidth, int photoHeight, Location location){
+		this.height = height;
+		this.cameraMaxPitchAngle = cameraMaxPitchAngle;
+		this.cameraMaxRotationAngle = cameraMaxRotationAngle;
+		this.photoHeight = photoHeight;
+		this.photoWidth = photoWidth;
+		this.location = location;
 
 	}
-
-	public float getHeight() {
+	
+	
+	
+	
+	public double getHeight() {
 		return height;
 	}
 
@@ -33,36 +36,20 @@ public class TransformationParamBean {
 		this.height = height;
 	}
 
-	public double getRotate() {
-		return rotate;
+	public double getCameraMaxRotationAngle() {
+		return cameraMaxRotationAngle;
 	}
 
-	public void setRotate(double rotate) {
-		this.rotate = rotate;
+	public void setCameraMaxRotationAngle(float cameraMaxRotationAngle) {
+		this.cameraMaxRotationAngle = cameraMaxRotationAngle;
 	}
 
-	public float getCameraVerticalAngle() {
-		return cameraVerticalAngle;
+	public double getCameraMaxPitchAngle() {
+		return cameraMaxPitchAngle;
 	}
 
-	public void setCameraVerticalAngle(float cameraVerticalAngle) {
-		this.cameraVerticalAngle = cameraVerticalAngle;
-	}
-
-	public float getCameraHorizontalAngle() {
-		return cameraHorizontalAngle;
-	}
-
-	public void setCameraHorizontalAngle(float cameraHorizontalAngle) {
-		this.cameraHorizontalAngle = cameraHorizontalAngle;
-	}
-
-	public float getCameraDistanceInPixel() {
-		return cameraDistanceInPixel;
-	}
-
-	public void setCameraDistanceInPixel(float cameraDistanceInPixel) {
-		this.cameraDistanceInPixel = cameraDistanceInPixel;
+	public void setCameraMaxPitchAngle(float cameraMaxPitchAngle) {
+		this.cameraMaxPitchAngle = cameraMaxPitchAngle;
 	}
 
 	public int getPhotoWidth() {
@@ -81,12 +68,21 @@ public class TransformationParamBean {
 		this.photoHeight = photoHeight;
 	}
 
-	public GPSBean getObserverPostion() {
-		return observerPostion;
+
+
+
+
+	public Location getLocation() {
+		return location;
 	}
 
-	public void setObserverPostion(GPSBean observerPostion) {
-		this.observerPostion = observerPostion;
+
+
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
+
+
 
 }
