@@ -125,7 +125,12 @@ public class RelationMember implements Parcelable {
 		dest.writeString(type);
 		dest.writeString(role);
 		dest.writeLong(ref);
-		OsmElementBuilder.write(dest, element, flags);
+		if (element != null) {
+			dest.writeInt(1);
+			OsmElementBuilder.write(dest, element, flags);
+		} else {
+			dest.writeInt(0);
+		}
 	}
 	
 	/**
@@ -136,7 +141,9 @@ public class RelationMember implements Parcelable {
     	type = in.readString();
     	role = in.readString();
     	ref = in.readLong();
-    	element = OsmElementBuilder.read(in);
+    	if (in.readInt() != 0) {
+    		element = OsmElementBuilder.read(in);
+    	}
     }
 
 }

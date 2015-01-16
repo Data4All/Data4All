@@ -24,7 +24,7 @@ public class RelationMemberTest {
      * a new relation member is created from the parcel and we check if it contains all attributes.
      */
 	@Test 
-    public void test_parcelable_node() {
+    public void test_parcelable_relationmember() {
     	Parcel newParcel = Parcel.obtain();
     	RelationMember testRelationMember = new RelationMember("type", 12345, "role");
         
@@ -39,8 +39,8 @@ public class RelationMemberTest {
     	assertEquals(testRelationMember.getRef(), deParcelRelationMember.getRef());
     	assertEquals(testRelationMember.getRole(), deParcelRelationMember.getRole());
     	
-    	assertEquals(1, deParcelRelationMember.getElement().getOsmId());
-    
+    	assertEquals(newNode.getOsmId(), deParcelRelationMember.getElement().getOsmId());
+    	assertEquals(newNode.getOsmVersion(), deParcelRelationMember.getElement().getOsmVersion());
     }
 
 }
