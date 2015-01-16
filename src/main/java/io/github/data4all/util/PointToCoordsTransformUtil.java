@@ -41,7 +41,9 @@ public class PointToCoordsTransformUtil {
 	 * @param deviceOrientation
 	 * @return
 	 */
-	public ArrayList<Node> transform(TransformationParamBean tps, DeviceOrientation deviceOrientation, ArrayList<Point> points){
+	public ArrayList<Node> transform(TransformationParamBean tps, 
+			DeviceOrientation deviceOrientation, ArrayList<Point> points){
+		
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		double[] orientation = new double[3];
 		this.height = tps.getHeight();		
@@ -208,7 +210,6 @@ public class PointToCoordsTransformUtil {
 		if (lon2 < (-Math.PI/4)){
 			lon2 = -(Math.PI/2) + lon2;
 		}		
-		
 		lat = Math.toDegrees(lat);
 		lon = Math.toDegrees(lon);				
 		

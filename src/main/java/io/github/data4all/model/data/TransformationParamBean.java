@@ -12,7 +12,6 @@ public class TransformationParamBean {
 	private double cameraMaxPitchAngle;
 	private int photoWidth;
 	private int photoHeight;
-	private ArrayList<Point> points = new ArrayList<Point>();
 	private Location location;
 
 	public TransformationParamBean(double height, double cameraMaxRotationAngle, 
@@ -69,17 +68,6 @@ public class TransformationParamBean {
 		this.photoHeight = photoHeight;
 	}
 
-	public ArrayList<Point> getPoints() {
-		return points;
-	}
-
-	public void setPoints(ArrayList<Point> points) {
-		this.points = points;
-	}
-	
-	public void addPoint(Point point){
-		points.add(point);
-	}
 
 
 
