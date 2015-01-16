@@ -1,6 +1,7 @@
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Context;
@@ -8,7 +9,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -16,17 +16,25 @@ import android.os.PowerManager.WakeLock;
 import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
-    
-    Optimizer optimizer = new Optimizer();
-    
-    private static final String TAG = "GPSservice";
 
-     /**
+    Optimizer                   optimizer          = new Optimizer();
+
+    Track                       track;
+
+    private static final String TAG                = "GPSservice";
+
+    /**
      * LocationManager
      */
-    private LocationManager lmgr;
+    private LocationManager     lmgr;
 
-    private WakeLock wakeLock;
+    private WakeLock            wakeLock;
+
+    // Flag to set if track should be generated
+    private boolean             trackableIsOn      = true;
+    
+    // Flag if Locationobjects can be obtained
+    private boolean             gpsAvailable = false;
 
     @Override
     public void onCreate() {
@@ -51,6 +59,16 @@ public class GPSservice extends Service implements LocationListener {
             lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000,
                     0, this);
         }
+
+        // Start a new track when GPSservice starts
+        if (trackableIsOn && gpsAvailable) {
+            if (!track.isOpen()) { // Only one track per service
+                track = new Track();
+            } else {
+                Log.e(TAG,
+                        "Error starting Track: Track already exist! Track not created!");
+            }
+        }
     }
 
     @Override
@@ -63,12 +81,14 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        track.saveTrack(); // when gpsservice is destroyed, save track to
+                           // internal memory
         wakeLock.release();
- 
+
     }
 
     public void onLocationChanged(Location loc) {
-             
+        track.addTrackPoint(loc); // Add a trackpoint to an existing track
         optimizer.putLoc(loc);
 
     }
@@ -79,10 +99,11 @@ public class GPSservice extends Service implements LocationListener {
     }
 
     public void onProviderEnabled(String provider) {
+        gpsAvailable = true;
     }
 
     public void onProviderDisabled(String provider) {
-
+        gpsAvailable = false;
         Toast.makeText(getBaseContext(),
                 "Gps turned off, GPS tracking not possible ", Toast.LENGTH_LONG)
                 .show();
@@ -93,5 +114,5 @@ public class GPSservice extends Service implements LocationListener {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
 }
