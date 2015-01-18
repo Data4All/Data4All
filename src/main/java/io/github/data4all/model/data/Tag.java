@@ -1,5 +1,7 @@
 package io.github.data4all.model.data;
 
+import java.util.Arrays;
+
 import io.github.data4all.R;
 
 /**
@@ -8,58 +10,60 @@ import io.github.data4all.R;
  *
  */
 public class Tag {
-	
+
 	/**
-	 * key for the internal representation in osm 
-	 * e.g. addr:street
+	 * key for the internal representation in osm e.g. addr:street
 	 */
-	private String key; 
-	
+	private String key;
+
 	/**
 	 * nameRessource defines the displayed name/value in the tagging activity
 	 */
 	private int nameRessource;
-	
+
 	/**
 	 * hintRessource defines the displayed hint/value in the tagging activity
 	 */
 	private int hintRessource;
-	
+
 	/**
-	 * type defines if the tagging activity should display a keyboard or a numpad as
-	 * input method
+	 * type defines if the tagging activity should display a keyboard or a
+	 * numpad as input method
 	 */
 	private InputType type;
-	
+
 	/**
 	 * define to which osm objects the tag refers
 	 */
 	private int[] osmObjects;
-	
+
 	/**
-	 *	defines different input types
+	 * defines different input types
 	 */
 	public static enum InputType {
 		KEYBOARD, NUMPAD;
 	}
-	
+
 	/**
 	 * Default constructor to create a tag
+	 * 
 	 * @param key
 	 * @param nameRessource
 	 * @param hintRessource
 	 * @param type
 	 */
-	public Tag(String key, int nameRessource, int hintRessource, InputType type, int[] osmObjects) {
+	public Tag(String key, int nameRessource, int hintRessource,
+			InputType type, int[] osmObjects) {
 		this.key = key;
 		this.nameRessource = nameRessource;
 		this.hintRessource = hintRessource;
 		this.type = type;
 		this.setOsmObjects(osmObjects);
 	}
-	
+
 	/**
 	 * Constructor to create nameRessource and hintRessource from the key
+	 * 
 	 * @param key
 	 * @param type
 	 * @param osmObjects
@@ -67,8 +71,12 @@ public class Tag {
 	public Tag(String key, InputType type, int[] osmObjects) {
 		this.key = key;
 		try {
-			this.nameRessource = (Integer) R.string.class.getDeclaredField("name_" + key.replaceAll(":", "_")).get(null);
-			this.hintRessource = (Integer) R.string.class.getDeclaredField("hint_" + key.replaceAll(":", "_")).get(null);
+			this.nameRessource = (Integer) R.string.class.getDeclaredField(
+					"name_" + key.replaceAll(":", "_")).get(null);
+			if (type != null) {
+				this.hintRessource = (Integer) R.string.class.getDeclaredField(
+						"hint_" + key.replaceAll(":", "_")).get(null);
+			}
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -122,5 +130,15 @@ public class Tag {
 	public void setOsmObjects(int[] osmObjects) {
 		this.osmObjects = osmObjects;
 	}
-	
+
+	/**
+	 * toString method just for debug purpose
+	 */
+	@Override
+	public String toString() {
+		return "key: " + key + " nameRessource: " + nameRessource
+				+ " hintRessource: " + hintRessource + " osmObjects: "
+				+ Arrays.toString(osmObjects);
+	}
+
 }
