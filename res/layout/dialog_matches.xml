@@ -9,7 +9,7 @@
       android:layout_height="wrap_content"
       android:layout_below="@+id/speech2" />
 
-   <ImageButton
+<!--    <ImageButton
        android:id="@+id/speech2"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
@@ -18,5 +18,5 @@
     
        android:background="@null"
        android:src="@drawable/ic_mic" />
-
+ -->
 </RelativeLayout>

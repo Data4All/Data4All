@@ -71,11 +71,13 @@ public class CopyOfTagActivity extends Activity implements OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setTitle("Select Tag");
-      //  this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tagcoppy);    
-       
+        
         final ListView keyList = (ListView) findViewById(R.id.listView1);
+        
+       this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.drawable.header_listview); 
         keys = (ArrayList<String>) Tagging.getKeys();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 context, android.R.layout.simple_list_item_1, keys);

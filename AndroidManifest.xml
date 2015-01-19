@@ -40,9 +40,12 @@
         <activity android:name=".activity.ShowPictureActivity" />
         <activity android:name=".activity.CameraActivity" />
         <activity android:name=".activity.TagActivity" 
+         android:theme="@android:style/Theme.Holo.Dialog.MinWidth"
+        
            />
         <activity android:name=".activity.CopyOfTagActivity" 
-               android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
+         android:theme="@android:style/Theme.Holo.Dialog.MinWidth"
+               />
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" >

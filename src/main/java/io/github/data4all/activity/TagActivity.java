@@ -6,9 +6,6 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,31 +13,28 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * 
@@ -57,7 +51,9 @@ public class TagActivity extends Activity implements OnClickListener{
     private List <EditText> edit;
     private Boolean first;
     private Dialog dialog1;
-    private ImageView imageView;
+    private CharSequence [] array;
+    private AlertDialog alert;
+    private AlertDialog alert1;
 
     /**
      * Called when the activity is first created.
@@ -74,64 +70,62 @@ public class TagActivity extends Activity implements OnClickListener{
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tag);    
-        imageView = (ImageView) findViewById(R.id.imageView5);
-        if (getIntent().hasExtra("file_path")) {
-           setBackground(Uri.fromFile((File) getIntent().getExtras().get(
-                   "file_path")));}
-       
-            
-        final Dialog dialog = new Dialog(TagActivity.this);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
-        dialog.setContentView(R.layout.dialog_matches);
-        //dialog.setTitle("Select Tag");
-        final ListView keyList = (ListView) dialog
-                .findViewById(R.id.list);
-        //ImageButton start = (ImageButton) findViewById(R.id.speech2);
-        //start.setOnClickListener(this);
-        keys = (ArrayList<String>) Tagging.getKeys();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                context, android.R.layout.simple_list_item_1, keys);
-        keyList.setAdapter(adapter);
-        keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                key = keys.get(position);
-                keys = (ArrayList<String>) Tagging.getValues(key);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                        context, android.R.layout.simple_list_item_1,
-                        keys);
-                keyList.setAdapter(adapter);
-                keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent,
-                            View view, int position, long id) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(TagActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view=inflater.inflate(R.drawable.header_listview, null);
+        ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");;        
+        alertDialog.setCustomTitle(view);
+        ImageButton speechStart = (ImageButton) view.findViewById(R.id.speech); 
+        if(speechStart != null){
+        	speechStart.setOnClickListener(this);
+        }
 
-                        String value = keys.get(position);
+        array = Tagging.getKeys().toArray(new String[Tagging.getKeys().size()]);
+        alertDialog.setItems(array, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	key = (String) array [which];
+            	array = Tagging.getValues(key).toArray(new String[Tagging.getValues(key).size()]);
+            	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TagActivity.this);
+            	alertDialogBuilder.setTitle("Select Tag");
+            	 alertDialogBuilder.setItems(array, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String value = (String) array [which];
                         map = new LinkedHashMap<String, String>();
                         map.put(key, value);
                         if (key.equals("building")
                                 || key.equals("amenity")) {                                  
                             createDialog(Tags.getAddressTags(), "Add Address", key.equals("building"), true);
                         }
+                        else{
                         output();
-                        dialog.hide();
-                    }
-                });
+                        }
+                      
+                        
 
+					}
+				});
+
+                 alert1 = alertDialogBuilder.create();
+                 alert1.show();
             }
-        });
-        dialog.show();
+            
+        });alert = alertDialog.create();
+        
+        alert.show();
+        
     }
 
     public void onClick(View v) {
     	switch (v.getId()){
-  	case R.id.speech2:
+  	case R.id.speech:
     		Intent intent = new Intent(
                     RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             startActivityForResult(intent, REQUEST_CODE);
+            alert.dismiss();
             break;
     	case R.id.buttonNext:
     		List<String> tags = new ArrayList<String>();
@@ -216,7 +210,7 @@ public class TagActivity extends Activity implements OnClickListener{
     	dialog1 = new Dialog(this);
 		dialog1.setContentView(R.layout.dialog_dynamic);
 		dialog1.setTitle(title);
-		dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
+		//dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
 		LinearLayout layout = (LinearLayout) dialog1.findViewById(R.id.dialogDynamic);
 		final Button next = new Button(this);
 		final Button finish = new Button(this);
@@ -248,30 +242,6 @@ public class TagActivity extends Activity implements OnClickListener{
     		dialog1.show();       
     }
 
-
-	private void setBackground(Uri selectedImage) {
-		Bitmap bitmap;
-		try { // try to convert a image to a bitmap
-			bitmap = MediaStore.Images.Media.getBitmap(
-					this.getContentResolver(), selectedImage);
-			int display_mode = getResources().getConfiguration().orientation;
-			Matrix matrix = new Matrix();
-			if (display_mode == 1) {
-				matrix.setRotate(90);
-			}
-
-			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			Log.e(this.getClass().toString(), "ROTATION:");
-			imageView.setImageBitmap(adjustedBitmap);
-		} catch (FileNotFoundException e) {
-			Log.e(this.getClass().toString(), "ERROR, no file found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.e(this.getClass().toString(), "ERROR, file is no image");
-			e.printStackTrace();
-		}
-	}
 	
 
 }

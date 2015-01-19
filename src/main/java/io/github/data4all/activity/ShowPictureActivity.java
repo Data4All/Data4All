@@ -53,9 +53,7 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-        tagIntent = new Intent(this,CopyOfTagActivity.class);
-        tagIntent.putExtra("file_path", (File) getIntent().getExtras().get(
-                "file_path"));
+        tagIntent = new Intent(this,TagActivity.class);
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
@@ -81,7 +79,7 @@ public class ShowPictureActivity extends Activity {
 		touchView.clearMotions();
 		touchView.setInterpreter(new WayMotionInterpreter());
 		touchView.invalidate();
-		tagIntent.putExtra(type, way);
+			tagIntent.putExtra(type, way);
 	}
 
 	public void onClickArea(View view) {
