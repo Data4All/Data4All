@@ -46,9 +46,7 @@ public class SensorReactionActivity extends Activity implements
 	}
 
 	/**
-	 * when the user touch the screen then store the initial Time on the
-	 * variable startTime and the time when the user have touching the screen on
-	 * the variable touchInitialTime
+	 * when the user touch the screen then store the initial Time in startTime 
 	 * 
 	 */
 
