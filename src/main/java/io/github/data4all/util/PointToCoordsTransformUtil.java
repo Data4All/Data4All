@@ -98,6 +98,11 @@ public class PointToCoordsTransformUtil {
 				tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
 		orientation[2] = calculateAngleFromPixel(point.getY(), tps.getPhotoHeight(),
 				tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
+		if(orientation[1] <= (float) (-Math.PI/2) || orientation[1] >= (float) (Math.PI/2)
+				|| orientation[2] <= (float) (-Math.PI/2) || orientation[2] >= (float) (Math.PI/2)){
+			double[] fail = {0.0,0.0,-1};
+			return fail;
+		}
 		double[] vector = calculateVectorfromOrientation(orientation);
 		return calculate2dPoint(vector);
 	}
@@ -152,25 +157,22 @@ public class PointToCoordsTransformUtil {
 	 * 			x = West/East Axis and y = Norh/South Axis
 	 */
 	public double[] calculate2dPoint(double[] vector){
-		
-		if(vector[2] <= 0){
-			vector[2]=1;
-			Log.d(TAG,"Camera is looking to the sky.");
-		}		
-
-		double[] coords = new double[2];
+		double[] coord = new double[3];
 		double z = height / vector[2];
-		coords[0] = vector[0] * z;
-		coords[1] = vector[1] * z;		
-		
-		Log.d(TAG,"Calculated X = " + coords[0] + " and Y = " + coords[1]);
-
-		return coords;		
+		coord[0] = vector[0] * z;
+		coord[1] = vector[1] * z;		
+		coord[2] = 0;	
+		Log.d(TAG,"Calculated X = " + coord[0] + " and Y = " + coord[1]);
+		return coord;		
 	}
 	
 	
 	public Point calculatePointFromCoords(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, double[] coord){
+		if (coord[2] == -1){
+			Point point = new Point(1, 1);
+			return point;
+		}
 		double x =  ((coord[0] * Math.cos(deviceOrientation.getAzimuth())) 
 				- (coord[1] * Math.sin(deviceOrientation.getAzimuth())));
 		double y =  ((coord[0] * Math.sin(deviceOrientation.getAzimuth())) 
@@ -250,21 +252,23 @@ public class PointToCoordsTransformUtil {
 		double latLength = radius * Math.cos(lat);
 		latLength = latLength * 2 * Math.PI;
 		double lat2 =lat + Math.toRadians(((point[0]) / (latLength / 360)));
+		/*
 		if (lat2 < (-Math.PI/2)){
 			lat2 += Math.PI;
 		}
 		if (lat2 > (Math.PI/2)){
 			lat2 -= Math.PI;
-		}
+		}*/
 		
 		double lonLength = radius * 2 * Math.PI;
 		double lon2 = lon + Math.toRadians(((point[1]) / (lonLength / 360)));
+		/*
 		if (lon2 > (Math.PI/4)){
 			lon2 = (Math.PI/2) - lon2;
 		}
 		if (lon2 < (-Math.PI/4)){
 			lon2 = -(Math.PI/2) + lon2;
-		}						
+		}		*/				
 		lat2 = Math.toDegrees(lat2);
 		lon2 = Math.toDegrees(lon2);
 		

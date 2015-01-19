@@ -71,33 +71,34 @@ public class PointToCoordsTransformUtilTest {
 		location.setLongitude((float) (-Math.PI/1.3));
 		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(90) ,
 		Math.toRadians(90) , 1000, 1000, location);
-		float a = (float) (Math.PI/4);
-		
-		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f,a,0.0f, 10L);
-		float x=500;
-		float y = 500;
-		Point point = new Point(x,y);
-		double[] coord = util.calculateCoordFromPoint(tps, deviceOrientation, point);
-		Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord);
-		
-		assertThat((double) point.getX(), closeTo(test.getX() , 1));
-		assertThat((double) point.getY(), closeTo(test.getY() , 1));
-		/*
-		ArrayList<Point> points = new ArrayList<Point>();
-		points.add(new Point(123, 624));
-		points.add(new Point(123, 624));
-		points.add(new Point(123, 624));
-		util.calculate4Point(tps, deviceOrientation, points);*/
+		float a = (float) - Math.PI;
+		float b = (float) -(Math.PI/2);
+		float c = (float) -(Math.PI/2);
+		while(a <= (float) Math.PI){
+			while(b <= (float) (Math.PI/2)){
+				while(c <= (float) (Math.PI/2)){
+					DeviceOrientation deviceOrientation = new DeviceOrientation(a,b,c, 10L);
+					int x=1;
+					while(x<=1000){
+						int y=1;
+						while(y<=1000){
+							Point point = new Point(x,y);
+							double[] coord = util.calculateCoordFromPoint(tps, deviceOrientation, point);
+							if(coord[2] == 0){
+								Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord);							
+								assertThat((double) point.getX(), closeTo(test.getX() , 1));
+								assertThat((double) point.getY(), closeTo(test.getY() , 1));
+							}
+							y += 13;
+						}
+						x += 13;
+					}
+					c += (float) (Math.PI/21);
+				}
+				b += (float) (Math.PI/21);
+			}
+			a += (float) (Math.PI/21);			
+		}
 	}
 
-	/*
-	@Test
-	public void calculateVectorfromOrientationTest(){		
-		double[] orientation = {0.0,0.0,0.0};
-		double[] vector = {0.0,0.0,1.0};
-	//	assertThat(util.calculateVectorfromOrientation(orientation), );
-		double[] orientation2 = {Math.PI,0.0,0.0};
-		double[] vector2 = {0.0,0.0,-2.0};
-		assertThat(util.calculateVectorfromOrientation(orientation), is(vector));
-	}*/
 }
