@@ -1,11 +1,8 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.activity.TagActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
@@ -14,6 +11,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -22,9 +20,11 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
 /**
@@ -44,6 +44,8 @@ public class ShowPictureActivity extends Activity {
 	private String building = "BUILDING";
 	private String way = "WAY";
 	private String area = "AREA";
+	private Button undo;
+	private Button redo;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +54,8 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
+        undo = (Button) findViewById(R.id.undobtn);
+        redo = (Button)findViewById(R.id.redobtn);
 tagIntent = new Intent(this,TagActivity.class);
        
         if (getIntent().hasExtra("file_path")) {
@@ -66,33 +70,51 @@ tagIntent = new Intent(this,TagActivity.class);
 		startActivity(tagIntent);
 	}
 
-	public void onClickPoint(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new PointMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, point);
-	}
+    public void onClickPoint(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.POINT);
+        touchView.invalidate();
+        tagIntent.putExtra(type, point);
+    }
 
-	public void onClickPath(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new WayMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, way);
-	}
+    public void onClickPath(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.WAY);
+        touchView.invalidate();
+        tagIntent.putExtra(type, way);
+    }
 
-	public void onClickArea(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new AreaMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, area);
-	}
+    public void onClickArea(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.AREA);
+        touchView.invalidate();
+        tagIntent.putExtra(type, area);
+    }
 
-	public void onClickBuilding(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new BuildingMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, building);
-	}
+    public void onClickBuilding(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
+        touchView.invalidate();
+        tagIntent.putExtra(type, building);
+    }
+    
+    public void onClickRedo(View view) {
+        touchView.redo();
+        touchView.invalidate();
+    }
+    
+    public void onClickUndo(View view) {
+        touchView.undo();
+        touchView.invalidate();
+    }
+    
+    public void SetRedoEnable(boolean enabled){
+    	redo.setEnabled(enabled);
+    }
+    
+    public void SetUndoEnable(boolean enabled){
+    	undo.setEnabled(enabled);
+    }
 
 	/**
 	 * Get a Uri of a Image and set this to local layout as background
@@ -104,18 +126,7 @@ tagIntent = new Intent(this,TagActivity.class);
 		try { // try to convert a image to a bitmap
 			bitmap = MediaStore.Images.Media.getBitmap(
 					this.getContentResolver(), selectedImage);
-			int display_mode = getResources().getConfiguration().orientation;
-			Matrix matrix = new Matrix();
-			if (display_mode == 1) {
-				matrix.setRotate(90);
-			}
-
-			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			bitmap.recycle();
-			bitmap = null;
-			Log.e(this.getClass().toString(), "ROTATION:");
-			imageView.setImageBitmap(adjustedBitmap);
+			imageView.setImageBitmap(bitmap);
 		} catch (FileNotFoundException e) {
 			Log.e(this.getClass().toString(), "ERROR, no file found");
 			e.printStackTrace();
