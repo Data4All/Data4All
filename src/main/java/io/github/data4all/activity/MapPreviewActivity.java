@@ -6,10 +6,14 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,12 +35,35 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 		element = getIntent().getParcelableExtra("OSM_ELEMENT");
 		addOsmElementToMap(element);
 		view = (ImageView) findViewById(R.id.imageView1);
-		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-				.withEndAction(new Runnable() {
-					public void run() {
-						view.setVisibility(View.GONE);
-					}
-				}).start();
+		if (savedInstanceState != null) {
+			if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
+				actualZoomLevel = (Integer) savedInstanceState
+						.getSerializable("actualZoomLevel");
+			}
+			if (savedInstanceState.getSerializable("actualCenterLongitude") != null
+					&& savedInstanceState
+							.getSerializable("actualCenterLatitude") != null) {
+				actualCenterLatitude = (Double) savedInstanceState
+						.getSerializable("actualCenterLatitude");
+				actualCenterLongitude = (Double) savedInstanceState
+						.getSerializable("actualCenterLongitude");
+				actualCenter = new GeoPoint(actualCenterLatitude,
+						actualCenterLongitude);
+				Log.i(TAG, "Set Mapcenter to" + actualCenter.toString());
+
+			}
+			view.setVisibility(View.GONE);
+		} else {
+			view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+					.withEndAction(new Runnable() {
+						public void run() {
+							view.setVisibility(View.GONE);
+						}
+					}).start();
+		}
+		
+		mapController.setZoom(actualZoomLevel);
+		mapController.setCenter(actualCenter);
 		ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
@@ -93,6 +120,15 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 		case R.id.okay:
 			break;
 		}
+	}
+	
+	protected IGeoPoint getMyLocation() {
+		LocationManager locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+		Location currentLocation = locationManager
+				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		return new GeoPoint(currentLocation.getLatitude(),
+				currentLocation.getLongitude());
 	}
 
 	

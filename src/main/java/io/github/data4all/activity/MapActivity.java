@@ -7,6 +7,7 @@ import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
 
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.bonuspack.overlays.Polyline;
@@ -14,12 +15,17 @@ import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.ImageView;
 
@@ -32,6 +38,11 @@ public abstract class MapActivity extends Activity {
 	protected ImageView view;
 	protected MapController mapController;
 	protected MyLocationNewOverlay myLocationOverlay;
+	
+	protected int actualZoomLevel;
+	protected double actualCenterLatitude;
+	protected double actualCenterLongitude;
+	protected IGeoPoint actualCenter;
 	
 	// Default Zoom Level
 	protected final int DEFAULT_ZOOM_LEVEL = 18;
@@ -92,7 +103,10 @@ public abstract class MapActivity extends Activity {
 
 			// Set Default Zoom Level
 			Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
-			mapController.setZoom(DEFAULT_ZOOM_LEVEL);
+			actualZoomLevel = DEFAULT_ZOOM_LEVEL;
+			
+			// Set Default Center
+			actualCenter = getMyLocation();
 	 }
 	
 		protected void addOsmElementToMap(OsmElement element) {
@@ -138,6 +152,32 @@ public abstract class MapActivity extends Activity {
 		mapView.getOverlays().add(path);
 		mapView.postInvalidate();
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle state) {
+		super.onSaveInstanceState(state);
 
+		state.putSerializable("actualZoomLevel", actualZoomLevel);
+		state.putSerializable("actualCenterLatitude", actualCenterLatitude);
+		state.putSerializable("actualCenterLongitude", actualCenterLongitude);
+
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		actualCenterLatitude = mapView.getMapCenter().getLatitude();
+		actualCenterLongitude = mapView.getMapCenter().getLongitude();
+		actualZoomLevel = mapView.getZoomLevel();
+	}
+	
+	protected IGeoPoint getMyLocation() {
+		LocationManager locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+		Location currentLocation = locationManager
+				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		return new GeoPoint(currentLocation.getLatitude(),
+				currentLocation.getLongitude());
+	}
 
 }

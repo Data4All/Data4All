@@ -2,36 +2,30 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.Way;
 import io.github.data4all.service.GPSservice;
 
-import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.util.GeoPoint;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+import org.osmdroid.ResourceProxy;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-public class MapViewActivity extends MapActivity implements OnClickListener {
+public class MapViewActivity extends Activity implements OnClickListener {
 
-	// Logger Tag
+	//Logger Tag
 	private static final String TAG = "MapViewActivity";
-	private int actualZoomLevel;
-	private double actualCenterLatitude;
-	private double actualCenterLongitude;
-	private IGeoPoint actualCenter;
-	
-
 	/**
 	 * Called when the activity is first created.
 	 * 
@@ -45,14 +39,15 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map_view);
+
 		setUpMapView();
 		// Set Overlay for the actual Position
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		mapView.getOverlays().add(myLocationOverlay);
-		view = (ImageView) findViewById(R.id.imageView1);
 		// Set Overlay for the actual Position
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		mapView.getOverlays().add(myLocationOverlay);
+		view = (ImageView) findViewById(R.id.imageView1);
 		if (savedInstanceState != null) {
 			if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
 				actualZoomLevel = (Integer) savedInstanceState
@@ -67,34 +62,38 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 						.getSerializable("actualCenterLongitude");
 				actualCenter = new GeoPoint(actualCenterLatitude,
 						actualCenterLongitude);
+				Log.i(TAG, "Set Mapcenter to" + actualCenter.toString());
+
 			}
 			view.setVisibility(View.GONE);
 		} else {
-			actualCenter = getMyLocation();
 			view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-			.withEndAction(new Runnable() {
-				public void run() {
-					view.setVisibility(View.GONE);
-				}
-			}).start();
+					.withEndAction(new Runnable() {
+						public void run() {
+							view.setVisibility(View.GONE);
+						}
+					}).start();
 		}
+		
+		mapController.setZoom(actualZoomLevel);
+		mapController.setCenter(actualCenter);
 
 		// Set Listener for Buttons
-		ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
+        ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
-		ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
+        ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
 		uploadData.setOnClickListener(this);
 
-		ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
+        ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
 		satelliteMap.setOnClickListener(this);
 
-		ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
+        ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
 		camera.setOnClickListener(this);
 
-		ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
+        ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
 		newPoint.setOnClickListener(this);
-		mapView.postInvalidate();
+
 	}
 
 	public void onClick(View v) {
@@ -111,23 +110,20 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 			startActivity(new Intent(this, LoginActivity.class));
 			break;
 		case R.id.switch_maps:
-			// switch to OSM Map
-			if (mapView.getTileProvider().getTileSource().name()
-					.equals("MapBoxSatelliteLabelled")) {
+			//switch to OSM Map
+			if(mapView.getTileProvider().getTileSource().name().equals("MapBoxSatelliteLabelled")){
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(OSM_TILESOURCE);
-				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-				button.setImageResource(R.drawable.ic_sat);
+				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
 				mapView.postInvalidate();
-				// switch to Satellite Map
-			} else {
+			//switch to Satellite Map
+			}else{
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
-				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-				button.setImageResource(R.drawable.ic_mic);
-				mapView.postInvalidate();
+				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
+				mapView.postInvalidate();		
 			}
 			break;
 		case R.id.to_camera:
@@ -136,7 +132,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		case R.id.new_point:
 			GeoPoint myPosition = myLocationOverlay.getMyLocation();
 			Intent tagIntent = new Intent(this, TagActivity.class);
-			Node poi = new Node(-1, 1, myPosition.getLatitude(),myPosition.getLongitude());
+			Node poi = new Node(-1, 1, myPosition.getLatitude(),
+					myPosition.getLongitude());
 			tagIntent.putExtra("TYPE_DEF", "POINT");
 			tagIntent.putExtra("OSM_ELEMENT", poi);
 			startActivity(tagIntent);
@@ -157,6 +154,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 	public void onResume() {
 		super.onResume();
 		myLocationOverlay.enableMyLocation();
+
 		// enable Location Listener to update the Position
 		// Log.i(TAG, "Enable Following Location Overlay");
 		// myLocationOverlay.enableFollowLocation();
@@ -192,6 +190,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		Log.i(TAG, "CENTER IS " +  mapView.getMapCenter().toString());
 	}
 
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -208,11 +207,4 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		// Pause the GPS tracking
 		stopService(new Intent(this, GPSservice.class));
 	}
-	private IGeoPoint getMyLocation() {
-		LocationManager locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-		Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		return new GeoPoint(currentLocation.getLatitude(),currentLocation.getLongitude());
-	}
-
 }

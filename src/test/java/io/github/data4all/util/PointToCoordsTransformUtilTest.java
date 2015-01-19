@@ -33,7 +33,7 @@ public class PointToCoordsTransformUtilTest {
 	public void transformTest(){
 		location.setLatitude(0.0);
 		location.setLongitude(0.0);
-		TransformationParamBean tps = new TransformationParamBean(10.0, Math.toRadians(45) ,
+		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(45) ,
 		Math.toRadians(45) , 1000, 1000, location);
 		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.0f, 0.0f, 10L);
 		ArrayList<Point> points = new ArrayList<Point>();
@@ -60,9 +60,34 @@ public class PointToCoordsTransformUtilTest {
 		assertThat(test.get(0).getLat(), is(0.0));
 		assertThat(test.get(0).getLon(), is(0.0));
 		assertThat(test.get(1).getLat(), greaterThan(0.0));
-		assertThat(test.get(1).getLon(), closeTo(0.0, 0.0000001));		
+		assertThat(test.get(1).getLon(), closeTo(0.0, 0.0000001));	
 		assertThat(test.get(2).getLat(), closeTo(0.0, 0.0000001));
 		assertThat(test.get(2).getLon(), greaterThan(0.0) );
+	}
+	
+	@Test
+	public void calculateCoordFromPointTest(){
+		location.setLatitude((float) (Math.PI/1.2));
+		location.setLongitude((float) (-Math.PI/1.3));
+		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(90) ,
+		Math.toRadians(90) , 1000, 1000, location);
+		float a = (float) (Math.PI/4);
+		
+		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f,a,0.0f, 10L);
+		float x=500;
+		float y = 500;
+		Point point = new Point(x,y);
+		double[] coord = util.calculateCoordFromPoint(tps, deviceOrientation, point);
+		Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord);
+		
+		assertThat((double) point.getX(), closeTo(test.getX() , 1));
+		assertThat((double) point.getY(), closeTo(test.getY() , 1));
+		/*
+		ArrayList<Point> points = new ArrayList<Point>();
+		points.add(new Point(123, 624));
+		points.add(new Point(123, 624));
+		points.add(new Point(123, 624));
+		util.calculate4Point(tps, deviceOrientation, points);*/
 	}
 
 	/*
