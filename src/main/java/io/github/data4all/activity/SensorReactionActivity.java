@@ -38,9 +38,11 @@ public class SensorReactionActivity extends Activity implements
 			long millis = System.currentTimeMillis();
 			reactionTime = millis - startTime;
 
-			new AlertDialog.Builder(this).setTitle("Delay:")
+			AlertDialog ad = new AlertDialog.Builder(this).setTitle("Delay:")
 					.setMessage("" + reactionTime)
-					.setPositiveButton("Okay", null).show();
+					.setPositiveButton("Okay", null).create();
+					
+			ad.show();
 		}
 		
 	}
