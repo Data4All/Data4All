@@ -112,6 +112,8 @@ tagIntent = new Intent(this,TagActivity.class);
 
 			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
 					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+			bitmap.recycle();
+			bitmap = null;
 			Log.e(this.getClass().toString(), "ROTATION:");
 			imageView.setImageBitmap(adjustedBitmap);
 		} catch (FileNotFoundException e) {
