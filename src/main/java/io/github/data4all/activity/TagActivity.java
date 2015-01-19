@@ -1,10 +1,13 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -17,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.Menu;
@@ -55,6 +59,11 @@ public class TagActivity extends Activity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        
+        if (getIntent().hasExtra("OSM_ELEMENT")) {
+            
+        }
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag);
         ImageButton start = (ImageButton) findViewById(R.id.speech);

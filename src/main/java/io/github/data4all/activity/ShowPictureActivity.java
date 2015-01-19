@@ -46,7 +46,7 @@ public class ShowPictureActivity extends Activity {
     private String building = "BUILDING";
     private String way = "WAY";
     private String area = "AREA";
-    private String osmElem = "OSM_ELEM";
+    private String osmElem = "OSM_ELEMENT";
 
     // the current TransformationBean and device orientation when the picture
     // was taken
