@@ -48,9 +48,32 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 					}
 				}).start();
 
-		
-		// Set Listener for Buttons
+		// Set Overlay for the actual Position
+		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
+		mapView.getOverlays().add(myLocationOverlay);
+		if (savedInstanceState != null) {
+			if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
+				actualZoomLevel = (Integer) savedInstanceState
+						.getSerializable("actualZoomLevel");
+			}
+			if (savedInstanceState.getSerializable("actualCenterLongitude") != null
+					&& savedInstanceState
+							.getSerializable("actualCenterLatitude") != null) {
+				actualCenterLatitude = (Double) savedInstanceState
+						.getSerializable("actualCenterLatitude");
+				actualCenterLongitude = (Double) savedInstanceState
+						.getSerializable("actualCenterLongitude");
+				actualCenter = new GeoPoint(actualCenterLatitude,
+						actualCenterLongitude);
+			}
+		} else {
+			// Set Default Zoom Level
+			Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
+			actualZoomLevel = DEFAULT_ZOOM_LEVEL;
+			actualCenter = getMyLocation();
+		}
 
+		// Set Listener for Buttons
 		ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
@@ -65,7 +88,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
 		ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
 		newPoint.setOnClickListener(this);
-
+		mapView.postInvalidate();
 	}
 
 	public void onClick(View v) {
@@ -122,20 +145,45 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		return true;
 	}
 
+
+
 	@Override
 	public void onResume() {
 		super.onResume();
-		// enable Overlay for actual Position
-		Log.i(TAG, "Enable Actual Location Overlay");
 		myLocationOverlay.enableMyLocation();
-
 		// enable Location Listener to update the Position
-		Log.i(TAG, "Enable Following Location Overlay");
-		myLocationOverlay.enableFollowLocation();
-		mapView.postInvalidate();
+		// Log.i(TAG, "Enable Following Location Overlay");
+		// myLocationOverlay.enableFollowLocation();
+		mapController.setZoom(actualZoomLevel);
+		if (actualCenter != null) {
+			Log.i(TAG, "Set Mapcenter to"
+					+ actualCenter.toString());
+			mapController.setCenter(actualCenter);
+		} 
 
+		// if (myLocationOverlay.getMyLocation() == null) {
+		// Log.e(TAG, "LocationAAAAAAAAAAAAAAAAH!!!!!!");
+		// actualCenter = myLocationOverlay.getMyLocation();
+
+		// }
 		// Start the GPS tracking
 		startService(new Intent(this, GPSservice.class));
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle state) {
+		super.onSaveInstanceState(state);
+
+		state.putSerializable("actualZoomLevel", actualZoomLevel);
+		state.putSerializable("actualCenterLatitude", actualCenterLatitude);
+		state.putSerializable("actualCenterLongitude", actualCenterLongitude);
+
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		Log.i(TAG, "CENTER IS " +  mapView.getMapCenter().toString());
 	}
 
 	@Override
@@ -147,7 +195,18 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		Log.i(TAG, "Disable Following Location Overlay");
 		myLocationOverlay.disableFollowLocation();
 
+		actualCenterLatitude = mapView.getMapCenter().getLatitude();
+		actualCenterLongitude = mapView.getMapCenter().getLongitude();
+		actualZoomLevel = mapView.getZoomLevel();
+
 		// Pause the GPS tracking
 		stopService(new Intent(this, GPSservice.class));
 	}
+	private IGeoPoint getMyLocation() {
+		LocationManager locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+		Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		return new GeoPoint(currentLocation.getLatitude(),currentLocation.getLongitude());
+	}
+
 }
