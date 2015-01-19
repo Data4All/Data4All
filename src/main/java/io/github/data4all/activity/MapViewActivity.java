@@ -2,10 +2,12 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -22,7 +24,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-public class MapViewActivity extends Activity implements OnClickListener {
+public class MapViewActivity extends MapActivity implements OnClickListener {
 
 	//Logger Tag
 	private static final String TAG = "MapViewActivity";
