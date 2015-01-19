@@ -23,7 +23,7 @@ public abstract class OsmElement {
      */
     private long osmId;
     private long osmVersion;
-
+    public String osmType;
     /**
      * Stores a list of parent relations to which the osm object belongs.
      */
@@ -248,5 +248,6 @@ public abstract class OsmElement {
             }
         }
     }
+    
 
 }

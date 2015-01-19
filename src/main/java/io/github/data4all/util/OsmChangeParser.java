@@ -7,7 +7,9 @@ import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Relation;
 import io.github.data4all.model.data.RelationMember;
 import io.github.data4all.model.data.Way;
+
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,28 +19,44 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 
+
+/**
+ * @author Richard
+ *
+ */
 @SuppressLint("SimpleDateFormat")
 public class OsmChangeParser {
 
+	/** Parses a List of OsmElements into the OSM Change Format
+	 * 
+	 * @param filename the filename (in Activity getApplicationContext().getFilesDir().getAbsolutePath() +"/OsmChange/upload.osc")
+	 * @param elems the List of Element which should be uploaded
+	 * @param changesetID the changesetID requiered for the upload
+	 */
+	
 	
 	public static void parse(String filename, List<OsmElement> elems, long changesetID){
 		try {
-			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(filename))));
 			ArrayList<Node> nodes = new ArrayList<Node>();
 			ArrayList<Way> ways = new ArrayList<Way>();
 			ArrayList<Relation> relations = new ArrayList<Relation>();
 			ArrayList<RelationMember> relationMembers = new ArrayList<RelationMember>();
 			
 			for(OsmElement osm :elems){
-				if(osm.getClass().isInstance(Node.class)){
+				if(osm.osmType.equals("NODE")){ 
 					nodes.add((Node) osm);
 				}
-				if(osm.getClass().isInstance(Way.class)){
+				if(osm.osmType.equals("WAY")){ 
 					Way way =(Way) osm;
-					nodes.addAll(way.getNodes());
+					for (Node n : way.getNodes()){
+						if(!nodes.contains(n)){
+							nodes.add(n);
+						}
+					}
 					ways.add(way);
 				}
-				if(osm.getClass().isInstance(Relation.class)){
+				if(osm.osmType.equals("RELATION")){
 					Relation rel =(Relation) osm;
 					rel.getMembers();
 					//TODO: RelationMembers hinzufügen benötigt DataBaseHandler
@@ -46,8 +64,16 @@ public class OsmChangeParser {
 				}
 			}
 			
+			// Ab hier wird geparst
+			
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.println("<osmChange version=\"1\" generator=\"Data4All\"");
+			writer.println("<create>");
+			
 			for (Node n: nodes){
+				Log.i("OsmChangeParser", "Node parsed" + n.toString());
 				parseNode(writer,n,changesetID);
+				Log.i("OsmChangeParser", "Node parsed");
 			}
 			for (Way w: ways){
 				parseWay(writer,w,changesetID);
@@ -56,8 +82,11 @@ public class OsmChangeParser {
 				parseRelation(writer,r,changesetID);
 			}
 			
+			writer.println("</create>");
+			writer.println("</osmChange>");
+			
 			writer.flush();
-			Log.i("OsmChangeParser", "Data is flushed");
+			Log.i("OsmChangeParser", "Data is flushed to :" + filename);
 			writer.close();
 			Log.i("OsmChangeParser", "Writer is closed");			
 			
@@ -68,11 +97,14 @@ public class OsmChangeParser {
 	}
 	
 	private static void parseNode(PrintWriter writer, Node node, long changesetID){
+		Log.i("OsmChangeParser", "in die Methode");
 		SimpleDateFormat dateformat = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss.SXXX");
+				"yyyy-MM-dd'T'HH:mm:ss.SZ");
+		
 		writer.print("<node id=\""+ node.getOsmId() +"\" timestamp=\""+ dateformat.format(new Date()) 
 				+ "\" lat=\""+ node.getLat() + "\" lon=\""+ node.getLon() 
 				+ "\" changeset=\""+ changesetID + "\" version=\""+ node.getOsmVersion() +"\""); 
+		
 		SortedMap<String, String> tags = node.getTags(); 
 		if(tags.isEmpty()){
 			writer.print("/>");
@@ -89,7 +121,7 @@ public class OsmChangeParser {
 	
 	private static void parseWay(PrintWriter writer, Way way, long changesetID){
 		SimpleDateFormat dateformat = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss.SXXX");
+				"yyyy-MM-dd'T'HH:mm:ss.SZ");
 		writer.println("<way id=\""+ way.getOsmId() +"\" timestamp=\""+ dateformat.format(new Date()) 
 				+ "\" changeset=\""+ changesetID + "\" version=\""+ way.getOsmVersion() +"\">"); 
 		SortedMap<String, String> tags = way.getTags();
@@ -105,7 +137,7 @@ public class OsmChangeParser {
 	
 	private static void parseRelation(PrintWriter writer, Relation relation,long changesetID){
 		SimpleDateFormat dateformat = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss.SXXX");
+				"yyyy-MM-dd'T'HH:mm:ss.SZ");
 		writer.println("<relation id=\""+ relation.getOsmId() +"\" timestamp=\""+ dateformat.format(new Date()) 
 				+ "\" changeset=\""+ changesetID + "\" version=\""+ relation.getOsmVersion() +"\">"); 
 		SortedMap<String, String> tags = relation.getTags();

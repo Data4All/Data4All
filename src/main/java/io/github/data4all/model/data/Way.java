@@ -35,6 +35,7 @@ public class Way extends OsmElement {
     public Way(long osmId, long osmVersion) {
         super(osmId, osmVersion);
         nodes = new ArrayList<Node>();
+        osmType = "WAY";
     }
 
     /**
@@ -248,5 +249,6 @@ public class Way extends OsmElement {
     public int length() {
         return nodes.size();
     }
+
 
 }

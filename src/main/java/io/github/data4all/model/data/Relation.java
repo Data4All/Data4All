@@ -29,6 +29,7 @@ public class Relation extends OsmElement {
     public Relation(final long osmId, final long osmVersion) {
         super(osmId, osmVersion);
         members = new ArrayList<RelationMember>();
+        osmType = "RELATION";
     }
 
     /**

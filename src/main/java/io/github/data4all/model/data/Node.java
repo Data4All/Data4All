@@ -31,6 +31,7 @@ public class Node extends OsmElement implements GeoPoint {
         super(osmId, osmVersion);
         this.lat = lat;
         this.lon = lon;
+        osmType = "NODE";
     }
 
     public double getLat() {
@@ -48,5 +49,6 @@ public class Node extends OsmElement implements GeoPoint {
     public void setLon(final double lon) {
         this.lon = lon;
     }
+
 
 }
