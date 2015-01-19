@@ -6,10 +6,15 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.Way;
 import io.github.data4all.service.GPSservice;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -21,6 +26,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
 	// Logger Tag
 	private static final String TAG = "MapViewActivity";
+	private int actualZoomLevel;
+	private double actualCenterLatitude;
+	private double actualCenterLongitude;
+	private IGeoPoint actualCenter;
+	
 
 	/**
 	 * Called when the activity is first created.
@@ -39,15 +49,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		// Set Overlay for the actual Position
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		mapView.getOverlays().add(myLocationOverlay);
-		
 		view = (ImageView) findViewById(R.id.imageView1);
-		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-				.withEndAction(new Runnable() {
-					public void run() {
-						view.setVisibility(View.GONE);
-					}
-				}).start();
-
 		// Set Overlay for the actual Position
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		mapView.getOverlays().add(myLocationOverlay);
@@ -66,11 +68,15 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 				actualCenter = new GeoPoint(actualCenterLatitude,
 						actualCenterLongitude);
 			}
+			view.setVisibility(View.GONE);
 		} else {
-			// Set Default Zoom Level
-			Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
-			actualZoomLevel = DEFAULT_ZOOM_LEVEL;
 			actualCenter = getMyLocation();
+			view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+			.withEndAction(new Runnable() {
+				public void run() {
+					view.setVisibility(View.GONE);
+				}
+			}).start();
 		}
 
 		// Set Listener for Buttons
