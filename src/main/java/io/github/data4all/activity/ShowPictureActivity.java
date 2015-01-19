@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -125,15 +126,7 @@ tagIntent = new Intent(this,TagActivity.class);
 		try { // try to convert a image to a bitmap
 			bitmap = MediaStore.Images.Media.getBitmap(
 					this.getContentResolver(), selectedImage);
-			int display_mode = getResources().getConfiguration().orientation;
-			Matrix matrix = new Matrix();
-			if (display_mode == 1) {
-				matrix.setRotate(90);
-			}
-
-			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			imageView.setImageBitmap(adjustedBitmap);
+			imageView.setImageBitmap(bitmap);
 		} catch (FileNotFoundException e) {
 			Log.e(this.getClass().toString(), "ERROR, no file found");
 			e.printStackTrace();

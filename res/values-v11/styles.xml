@@ -111,12 +111,19 @@
     </style>
 
     <style name="imageViewTakedPicture">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_alignParentTop">true</item>
-        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:layout_centerInParent">true</item>
         <item name="android:scaleType">fitXY</item>
-        <item name="android:src">@drawable/android</item>
+    </style>
+    
+    <style name="imageViewTakedPictureLand">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:scaleType">fitXY</item>
     </style>
 
 </resources>
