@@ -55,15 +55,9 @@ public class PointToCoordsTransformUtil {
 			DeviceOrientation deviceOrientation, List<Point> points){
 		
 		List<Node> nodes = new ArrayList<Node>();
-		double[] orientation = new double[3];
-		this.height = tps.getHeight();		
-		orientation[0] = - deviceOrientation.getAzimuth();		
-		for(Point point : points){
-			orientation[1] = calculateAngle(point.getX(), tps.getPhotoWidth(),
-					tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
-			orientation[2] = calculateAngle(point.getY(), tps.getPhotoHeight(),
-					tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
-			double[] coord = calculate2dPoint(orientation);
+		this.height = tps.getHeight();				
+		for(Point point : points){			
+			double[] coord = calculateCoordFromPoint(tps, deviceOrientation, point);
 			Node node = calculateGPSPoint(tps.getLocation(), coord);
 			nodes.add(node);		
 		}	
@@ -74,27 +68,38 @@ public class PointToCoordsTransformUtil {
 	
 	
 	public Point calculate4Point(List<Point> points){
-		if(points.size() != 0){
-			return null;
-		}
 		return calculate4Point(tps, deviceOrientation, points);		
 	}
 	
+	
+	
 	public Point calculate4Point(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, List<Point> points){
+		if(points.size() != 3){
+			return null;
+		}
 		List<double[]> coords = new ArrayList<double[]>();
-		double[] orientation = new double[3];
-		this.height = tps.getHeight();		
-		orientation[0] = - deviceOrientation.getAzimuth();		
+		this.height = tps.getHeight();			
 		for(Point point : points){
-			orientation[1] = calculateAngle(point.getX(), tps.getPhotoWidth(),
-					tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
-			orientation[2] = calculateAngle(point.getY(), tps.getPhotoHeight(),
-					tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
-			coords.add(calculate2dPoint(orientation));					
+			coords.add(calculateCoordFromPoint(tps, deviceOrientation, point));					
 		}	
-		add4Point(coords);
-		return null;
+		double[] coord  = add4Point(coords);
+		return calculatePointFromCoords(tps, deviceOrientation, coord);
+	}
+	
+	
+	
+	public double[] calculateCoordFromPoint(TransformationParamBean tps, 
+			DeviceOrientation deviceOrientation, Point point){
+		this.height = tps.getHeight();
+		double[] orientation = new double[3];
+		orientation[0] = -deviceOrientation.getAzimuth();
+		orientation[1] = calculateAngleFromPixel(point.getX(), tps.getPhotoWidth(),
+				tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
+		orientation[2] = calculateAngleFromPixel(point.getY(), tps.getPhotoHeight(),
+				tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
+		double[] vector = calculateVectorfromOrientation(orientation);
+		return calculate2dPoint(vector);
 	}
 	
 	
@@ -106,48 +111,18 @@ public class PointToCoordsTransformUtil {
      * @param areaPoints
      *            A list with exact three points
      */
-    private static Point add4Point(List<double[]> coords) {
+    private static double[] add4Point(List<double[]> coords) {
     	double[] a = coords.get(0);
       	double[] b = coords.get(1);
       	double[] c = coords.get(2);
-        double x = a[0] + (c[0] - b[0]);
-        double y = a[1] + (c[1] - b[1]);
-        Point d = new Point((float) x, (float) y);
-        return d;
+        double[] coord = new double[2];
+        coord[0] = a[0] + (c[0] - b[0]);
+        coord[1] = a[1] + (c[1] - b[1]);
+        return coord;
     }
 	
 	
-	/*
 
-	
-	public double[] calculate2dPoint(DeviceOrientation deviceOrientation){/*
-		double[] orientation = new double[3];
-		orientation[0] = deviceOrientation.getAzimuth();
-		orientation[1] = deviceOrientation.getPitch();
-		orientation[2] = deviceOrientation.getRoll();
-		return calculate2dPoint(orientation);
-		
-		
-		Location location = new Location("TEST");
-		Camera mCamera = Camera.open();
-		Camera.Parameters params = mCamera.getParameters();
-		double rotation = Math.toRadians(params.getHorizontalViewAngle());
-		double pitch = Math.toRadians(params.getVerticalViewAngle());
-		
-		TransformationParamBean tps = new TransformationParamBean(1.7, 
-				rotation, pitch , 1000, 1000, location);
-		mCamera.release();
-		Log.d(TAG, "Horizontal: " + rotation);
-		
-		Point p = new Point(500,500);
-		tps.addPoint(p);/*
-		p = new Point(1,1000);
-		tps.addPoint(p);
-		p = new Point(1000, 1000);
-		List<double[]> list = transform(tps, deviceOrientation);
-		Log.d(TAG, "tranform finished");
-		return list.get(0);
-	}*/
 	
 	/**
 	 * Calculates the Angle altered by the chosen Pixel
@@ -157,15 +132,15 @@ public class PointToCoordsTransformUtil {
 	 * @param oldAngle
 	 * @return
 	 */
-	public double calculateAngle(double pixel, double width, double maxAngle, double oldAngle){
+	public double calculateAngleFromPixel(double pixel, double width, double maxAngle, double oldAngle){
 
 		Log.d(TAG, "Calculate Angle, OldAngle: " + oldAngle + " maxANgle: " + maxAngle);
 		if((pixel - (width / 2)) == 0){
 			return oldAngle;
 		}
-		double percent = (width / 2) / (pixel - (width / 2));
+		double percent = pixel  / width;
 		double angle = maxAngle * percent;	
-		
+		angle = angle - (maxAngle / 2);
 		return oldAngle - angle;
 	}
 
@@ -176,8 +151,7 @@ public class PointToCoordsTransformUtil {
 	 * @return coords in m in a System with (0,0) = Phoneposition; 
 	 * 			x = West/East Axis and y = Norh/South Axis
 	 */
-	public double[] calculate2dPoint(double[] orientation){
-		double[] vector = calculateVectorfromOrientation(orientation);
+	public double[] calculate2dPoint(double[] vector){
 		
 		if(vector[2] <= 0){
 			vector[2]=1;
@@ -192,6 +166,29 @@ public class PointToCoordsTransformUtil {
 		Log.d(TAG,"Calculated X = " + coords[0] + " and Y = " + coords[1]);
 
 		return coords;		
+	}
+	
+	
+	public Point calculatePointFromCoords(TransformationParamBean tps, 
+			DeviceOrientation deviceOrientation, double[] coord){
+		double x =  ((coord[0] * Math.cos(deviceOrientation.getAzimuth())) 
+				- (coord[1] * Math.sin(deviceOrientation.getAzimuth())));
+		double y =  ((coord[0] * Math.sin(deviceOrientation.getAzimuth())) 
+				+ (coord[1] * Math.cos(deviceOrientation.getAzimuth())));
+		double rx = x / tps.getHeight();
+		double py = y / tps.getHeight();
+		double rotation = Math.atan(rx);
+		double pitch = Math.atan(py);
+		double rotation2 = +rotation-deviceOrientation.getRoll();
+		double pitch2 = pitch+deviceOrientation.getPitch();		
+
+		double x1 =  (pitch2 + (tps.getCameraMaxPitchAngle() / 2)) / tps.getCameraMaxPitchAngle();
+		double y1 =  -((rotation2 - (tps.getCameraMaxRotationAngle() / 2)) / tps.getCameraMaxRotationAngle()) ;
+		
+		float xx =(float) ((int) ( x1 * tps.getPhotoWidth()));
+		float yy =(float) ((int) ( y1 * tps.getPhotoHeight()));
+		Point point = new Point(xx, yy);
+		return point;
 	}
 	
 	
@@ -268,6 +265,9 @@ public class PointToCoordsTransformUtil {
 		if (lon2 < (-Math.PI/4)){
 			lon2 = -(Math.PI/2) + lon2;
 		}						
+		lat2 = Math.toDegrees(lat2);
+		lon2 = Math.toDegrees(lon2);
+		
 		
 		Node node = new Node(osmID, osmVersion, lat2, lon2);
 		osmID--;
