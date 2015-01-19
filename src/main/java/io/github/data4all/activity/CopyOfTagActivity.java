@@ -6,6 +6,9 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,35 +16,39 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 /**
  * 
  * @author Maurice Boyke
  *
  */
-public class TagActivity extends Activity implements OnClickListener{
+public class CopyOfTagActivity extends Activity implements OnClickListener{
 
     private static final int REQUEST_CODE = 1234;
     final Context context = this;
@@ -50,10 +57,7 @@ public class TagActivity extends Activity implements OnClickListener{
     private Map<String, String> map;
     private List <EditText> edit;
     private Boolean first;
-    private Dialog dialog1;
-    private CharSequence [] array;
-    private AlertDialog alert;
-    private AlertDialog alert1;
+    private ImageView imageView;
 
     /**
      * Called when the activity is first created.
@@ -67,65 +71,56 @@ public class TagActivity extends Activity implements OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_tag);    
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(TagActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View view=inflater.inflate(R.drawable.header_listview, null);
-        ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");;        
-        alertDialog.setCustomTitle(view);
-        ImageButton speechStart = (ImageButton) view.findViewById(R.id.speech); 
-        if(speechStart != null){
-        	speechStart.setOnClickListener(this);
-        }
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setTitle("Select Tag");
+        setContentView(R.layout.activity_tagcoppy);    
+        
+        final ListView keyList = (ListView) findViewById(R.id.listView1);
+        
+       this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.drawable.header_listview); 
+        keys = (ArrayList<String>) Tagging.getKeys();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                context, android.R.layout.simple_list_item_1, keys);
+        keyList.setAdapter(adapter);
+        keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                key = keys.get(position);
+                keys = (ArrayList<String>) Tagging.getValues(key);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                        context, android.R.layout.simple_list_item_1,
+                        keys);
+                keyList.setAdapter(adapter);
+                keyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent,
+                            View view, int position, long id) {
 
-        array = Tagging.getKeys().toArray(new String[Tagging.getKeys().size()]);
-        alertDialog.setItems(array, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            	key = (String) array [which];
-            	array = Tagging.getValues(key).toArray(new String[Tagging.getValues(key).size()]);
-            	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TagActivity.this);
-            	alertDialogBuilder.setTitle("Select Tag");
-            	 alertDialogBuilder.setItems(array, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						String value = (String) array [which];
+                        String value = keys.get(position);
                         map = new LinkedHashMap<String, String>();
                         map.put(key, value);
                         if (key.equals("building")
                                 || key.equals("amenity")) {                                  
                             createDialog(Tags.getAddressTags(), "Add Address", key.equals("building"), true);
-                        }
-                        else{
+                        }else{
                         output();
                         }
-                      
-                        
+                    }
+                });
 
-					}
-				});
-
-                 alert1 = alertDialogBuilder.create();
-                 alert1.show();
             }
-            
-        });alert = alertDialog.create();
-        
-        alert.show();
-        
+        });
     }
 
     public void onClick(View v) {
     	switch (v.getId()){
-  	case R.id.speech:
+  	case R.id.speech2:
     		Intent intent = new Intent(
                     RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             startActivityForResult(intent, REQUEST_CODE);
-            alert.dismiss();
             break;
     	case R.id.buttonNext:
     		List<String> tags = new ArrayList<String>();
@@ -134,11 +129,12 @@ public class TagActivity extends Activity implements OnClickListener{
 				tags.add(edit.get(i).getText().toString());
 			}
 			map = Tagging.addressToTag(tags, map);
-			dialog1.hide();
+			
 			createDialog(Tags.getContactTags(), "Add Contacts", true, false);
 			
 			break;
     	case R.id.buttonFinish:	
+    		setContentView(R.layout.activity_tagcoppy);
     		List<String> tags1 = new ArrayList<String>();
 			
 			for (int i = 0; i < edit.size(); i++) {
@@ -151,7 +147,6 @@ public class TagActivity extends Activity implements OnClickListener{
 				map = Tagging.contactToTag(tags1, map);
 			}
 			output();
-			dialog1.hide();
 			break;
     	}
     }
@@ -166,7 +161,7 @@ public class TagActivity extends Activity implements OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-        	new Dialog(TagActivity.this);
+        	new Dialog(CopyOfTagActivity.this);
             ListView textList = (ListView) findViewById(R.id.listView1);
             List<String> matchesText = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -207,23 +202,24 @@ public class TagActivity extends Activity implements OnClickListener{
 
 
 	public void createDialog(String [] [] list, String title, final Boolean but, final Boolean first1){
-    	dialog1 = new Dialog(this);
-		dialog1.setContentView(R.layout.dialog_dynamic);
-		dialog1.setTitle(title);
-		//dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
-		LinearLayout layout = (LinearLayout) dialog1.findViewById(R.id.dialogDynamic);
+		 setTitle("Add Details");  
+		setContentView(R.layout.dialog_dynamic);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.dialogDynamic);
 		final Button next = new Button(this);
 		final Button finish = new Button(this);
 		next.setText(R.string.next);
 		finish.setText(R.string.finish);
 		next.setId(R.id.buttonNext);
 		finish.setId(R.id.buttonFinish);
+		//next.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		//finish.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		
 		first = first1;
 		edit = new ArrayList<EditText>();
 		for (int i = 0; i < list.length; i++) {
 		final EditText text = new EditText(this);
 			text.setHint(list [i] [1]);
-			text.setHintTextColor(Color.DKGRAY);
+			text.setHintTextColor(Color.WHITE);
     		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     		text.setInputType(Integer.parseInt(list[i] [2]));
     		edit.add(text);
@@ -238,10 +234,8 @@ public class TagActivity extends Activity implements OnClickListener{
 		finish.setOnClickListener(this);
 		
 		next.setOnClickListener(this);
-		
-    		dialog1.show();       
+		     
     }
 
-	
 
 }
