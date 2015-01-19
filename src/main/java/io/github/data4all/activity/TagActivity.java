@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,6 +40,9 @@ import android.widget.ListView;
  */
 public class TagActivity extends Activity {
 
+	// Logger Tag
+	private static final String TAG = "TagActivity";
+	
 	private static final int REQUEST_CODE = 1234;
 	final Context context = this;
 	private ArrayList<String> keys;
@@ -327,9 +331,10 @@ public class TagActivity extends Activity {
 	public void finish() {
 	  OsmElement element = getIntent().getParcelableExtra("OSM_ELEMENT");
 	  element.addTags(map);
-	  Intent result = new Intent();
+	  Intent result = new Intent(this, MapPreviewActivity.class);
 	  result.putExtra("OSM_ELEMENT", element);
 	  setResult(RESULT_OK, result);
 	  super.finish();
+	  startActivity(result);
 	}
 }

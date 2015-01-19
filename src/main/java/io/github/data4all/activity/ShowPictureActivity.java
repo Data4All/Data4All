@@ -46,7 +46,7 @@ public class ShowPictureActivity extends Activity {
     private String building = "BUILDING";
     private String way = "WAY";
     private String area = "AREA";
-    private String osmElem = "OSM_ELEM";
+    private String osmElem = "OSM_ELEMENT";
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -125,18 +125,8 @@ public class ShowPictureActivity extends Activity {
 		try { // try to convert a image to a bitmap
 			bitmap = MediaStore.Images.Media.getBitmap(
 					this.getContentResolver(), selectedImage);
-			int display_mode = getResources().getConfiguration().orientation;
-			Matrix matrix = new Matrix();
-			if (display_mode == 1) {
-				matrix.setRotate(90);
-			}
 
-			Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-					bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			bitmap.recycle();
-			bitmap = null;
-			Log.e(this.getClass().toString(), "ROTATION:");
-			imageView.setImageBitmap(adjustedBitmap);
+			imageView.setImageBitmap(bitmap);
 		} catch (FileNotFoundException e) {
 			Log.e(this.getClass().toString(), "ERROR, no file found");
 			e.printStackTrace();

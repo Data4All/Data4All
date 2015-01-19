@@ -104,4 +104,8 @@ public class Node extends OsmElement implements GeoPoint {
 		return node.getLat()==lat && node.getLon()==lon;
     	
     }
+    
+    public String toString(){
+    	return toGeoPoint().toString();
+    }
 }

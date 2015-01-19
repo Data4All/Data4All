@@ -341,5 +341,13 @@ public class Way extends OsmElement {
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
     }	
+    
+    public String toString(){
+    	String s = "";
+    	for(Node n : nodes){
+    		s += n.toString() + " ";
+    	}
+    	return s;
+    }
 
 }
