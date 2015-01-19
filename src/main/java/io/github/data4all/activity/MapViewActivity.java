@@ -145,7 +145,7 @@ public class MapViewActivity extends BasicActivity implements OnClickListener {
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(OSM_TILESOURCE);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-				button.setImageResource(R.drawable.ic_way);
+				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
 				// switch to Satellite Map
 			} else {
