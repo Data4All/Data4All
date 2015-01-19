@@ -75,7 +75,9 @@ public class PointToCoordsTransformUtilTest {
 		float b = (float) -(Math.PI/2);
 		float c = (float) -(Math.PI/2);
 		while(a <= (float) Math.PI){
+			b = (float) -(Math.PI/2);
 			while(b <= (float) (Math.PI/2)){
+				c = (float) -(Math.PI/2);
 				while(c <= (float) (Math.PI/2)){
 					DeviceOrientation deviceOrientation = new DeviceOrientation(a,b,c, 10L);
 					int x=1;
@@ -89,16 +91,17 @@ public class PointToCoordsTransformUtilTest {
 								assertThat((double) point.getX(), closeTo(test.getX() , 1));
 								assertThat((double) point.getY(), closeTo(test.getY() , 1));
 							}
-							y += 13;
+							else{
+							}
+							y += 113;
 						}
-						x += 13;
+						x += 113;
 					}
-					c += (float) (Math.PI/21);
+					c += (float) (Math.PI/11);
 				}
-				b += (float) (Math.PI/21);
+				b += (float) (Math.PI/11);
 			}
-			a += (float) (Math.PI/21);			
+			a += (float) (Math.PI/11);			
 		}
 	}
-
 }

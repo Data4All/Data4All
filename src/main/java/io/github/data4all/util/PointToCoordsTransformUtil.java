@@ -67,13 +67,13 @@ public class PointToCoordsTransformUtil {
 	
 	
 	
-	public Point calculate4Point(List<Point> points){
-		return calculate4Point(tps, deviceOrientation, points);		
+	public Point calculate4thPoint(List<Point> points){
+		return calculate4thPoint(tps, deviceOrientation, points);		
 	}
 	
 	
 	
-	public Point calculate4Point(TransformationParamBean tps, 
+	public Point calculate4thPoint(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, List<Point> points){
 		if(points.size() != 3){
 			return null;
@@ -98,6 +98,7 @@ public class PointToCoordsTransformUtil {
 				tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
 		orientation[2] = calculateAngleFromPixel(point.getY(), tps.getPhotoHeight(),
 				tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
+		
 		if(orientation[1] <= (float) (-Math.PI/2) || orientation[1] >= (float) (Math.PI/2)
 				|| orientation[2] <= (float) (-Math.PI/2) || orientation[2] >= (float) (Math.PI/2)){
 			double[] fail = {0.0,0.0,-1};
