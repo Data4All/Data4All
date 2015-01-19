@@ -1,6 +1,10 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Way;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +20,7 @@ import android.graphics.Paint;
  * @author tbrose
  * @see MotionInterpreter
  */
-public class WayMotionInterpreter implements MotionInterpreter<Void> {
+public class WayMotionInterpreter implements MotionInterpreter {
     /**
      * The log-tag for this class
      */
@@ -36,13 +40,21 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
     /**
      * The paint to draw the points with
      */
+    @Deprecated
     private final Paint pointPaint = new Paint();
 
     /**
      * The paint to draw the path with
      */
+    @Deprecated
     private final Paint pathPaint = new Paint();
+    
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
 
+    @Deprecated
     public WayMotionInterpreter() {
         // Draw dark blue points
         pointPaint.setColor(POINT_COLOR);
@@ -50,6 +62,10 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
         // Draw semi-thick light blue lines
         pathPaint.setColor(PATH_COLOR);
         pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
+    }
+    
+    public WayMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
 
     /*
@@ -59,6 +75,7 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
      * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
      * .Canvas, java.util.List)
      */
+    @Deprecated
     public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
         List<Point> areaPoints = new ArrayList<Point>();
 
@@ -66,7 +83,7 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
         for (DrawingMotion motion : drawingMotions) {
             if (motion.getPathSize() != 0 && motion.isPoint()) {
                 // for dots calculate the average of the given points
-                areaPoints.add(average(motion));
+                areaPoints.add(motion.average());
             } else {
                 areaPoints.addAll(motion.getPoints());
             }
@@ -117,7 +134,7 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
                 Point b = polygon.get(i + 1);
                 Point c = polygon.get((i + 2) % polygon.size());
 
-                double alpha = getBeta(a, b, c);
+                double alpha = Point.getBeta(a, b, c);
                 Log.d(TAG, "point " + (i + 1) + ": " + Math.toDegrees(alpha)
                         + "degree");
                 double variation = Math.abs(Math.toDegrees(alpha) - 180);
@@ -183,46 +200,34 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
         }
     }
 
-    /**
-     * Calculates the angle in Point b for the two lines (a,b) and (b,c)
+    /*
+     * (non-Javadoc)
      * 
-     * @param a
-     *            The first Point
-     * @param b
-     *            The second Point
-     * @param c
-     *            The third Point
-     * @return The angle in Point b
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
+     * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    private static double getBeta(Point a, Point b, Point c) {
-        // Calculate the two vectors
-        Point x = new Point(a.getX() - b.getX(), a.getY() - b.getY());
-        Point y = new Point(c.getX() - b.getX(), c.getY() - b.getY());
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        ArrayList<Point> result;
 
-        return Math.acos((x.getX() * y.getX() + x.getY() * y.getY())
-                / (Math.hypot(x.getX(), x.getY()) * Math.hypot(y.getX(),
-                        y.getY())));
-    }
-
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
-     */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
+        if (drawingMotion == null) {
+            return interpreted;
+        } else if (interpreted == null) {
+            result = new ArrayList<Point>();
         } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
+            result = new ArrayList<Point>(interpreted);
         }
+
+        if (drawingMotion.isPoint()) {
+            result.add(drawingMotion.average());
+        } else {
+            // for a path use the last point
+            result.addAll(drawingMotion.getPoints());
+        }
+
+        return reduce(result);
     }
 
     /*
@@ -231,8 +236,23 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
      * @see
      * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
      */
-    public Void create(List<DrawingMotion> drawingMotions) {
-        return null;
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        Way newWay = new Way(-1, 1); 
+
+        List<Node> nodeList = pointTrans.transform(polygon);
+        newWay.addNodes(nodeList, false);
+        return newWay;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
+     */
+    @Override
+    public boolean isArea() {
+        return false;
     }
 
 }

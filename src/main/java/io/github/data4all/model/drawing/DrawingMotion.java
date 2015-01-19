@@ -155,6 +155,26 @@ public class DrawingMotion {
     }
 
     /**
+     * Calculates the average point over all points in this motion
+     * 
+     * @return The average point over all points or {@code null} if there is no
+     *         point in this motion
+     */
+    public Point average() {
+        if (getPathSize() == 0) {
+            return null;
+        } else {
+            float x = 0;
+            float y = 0;
+            for (Point p : getPoints()) {
+                x += p.getX();
+                y += p.getY();
+            }
+            return new Point(x / getPathSize(), y / getPathSize());
+        }
+    }
+
+    /**
      * Calculates the euclidean distance between point a and point b
      * 
      * @param a

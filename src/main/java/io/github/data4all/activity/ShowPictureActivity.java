@@ -1,11 +1,12 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.activity.TagActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
+import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Activity to set a new Layer-Backgroundimage
@@ -35,64 +38,82 @@ import android.widget.ImageView;
  */
 public class ShowPictureActivity extends Activity {
 
-
     private TouchView touchView;
     private ImageView imageView;
-    	private Intent tagIntent;
-	private String type = "TYPE_DEF";
-	private String point = "POINT";
-	private String building = "BUILDING";
-	private String way = "WAY";
-	private String area = "AREA";
+    private Intent tagIntent;
+    private String type = "TYPE_DEF";
+    private String point = "POINT";
+    private String building = "BUILDING";
+    private String way = "WAY";
+    private String area = "AREA";
+    private String osmElem = "OSM_ELEM";
+
+    // the current TransformationBean and device orientation when the picture
+    // was taken
+    private TransformationParamBean transformBean;
+    private DeviceOrientation currentOrientation;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-tagIntent = new Intent(this,TagActivity.class);
-       
+        tagIntent = new Intent(this, TagActivity.class);
+
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
         }
+        if (getIntent().hasExtra("transform_bean")) {
+            transformBean = getIntent().getExtras().getParcelable(
+                    "transform_bean");
+        }
+        if (getIntent().hasExtra("current_orientation")) {
+            currentOrientation = getIntent().getExtras().getParcelable(
+                    "current_orientation");
+        }
+        touchView.setTransformUtil(new PointToCoordsTransformUtil(transformBean, currentOrientation));
     }
 
-	public void onClickOkay(View view) {
-		startActivity(tagIntent);
-	}
+    public void onClickOkay(View view) {
+        OsmElement osmElement = touchView.create();
+        tagIntent.putExtra(osmElem, osmElement);
+        startActivity(tagIntent);
+    }
 
-	public void onClickPoint(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new PointMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, point);
-	}
+    public void onClickPoint(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.POINT);
+        touchView.invalidate();
+        tagIntent.putExtra(type, point);
+    }
 
-	public void onClickPath(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new WayMotionInterpreter());
-		touchView.invalidate();
+    public void onClickPath(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.WAY);
+        touchView.invalidate();
 		tagIntent.putExtra(type, way);
 	}
 
-	public void onClickArea(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new AreaMotionInterpreter());
-		touchView.invalidate();
+    public void onClickArea(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.AREA);
+        touchView.invalidate();
 		tagIntent.putExtra(type, area);
-	}
+    }
 
-	public void onClickBuilding(View view) {
-		touchView.clearMotions();
-		touchView.setInterpreter(new BuildingMotionInterpreter());
-		touchView.invalidate();
-		tagIntent.putExtra(type, building);
-	}
+    public void onClickBuilding(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
+        touchView.invalidate();
+        tagIntent.putExtra(type, building);
+    }
 
 	/**
 	 * Get a Uri of a Image and set this to local layout as background
@@ -124,5 +145,4 @@ tagIntent = new Intent(this,TagActivity.class);
 			e.printStackTrace();
 		}
 	}
-
 }

@@ -320,7 +320,7 @@ public class RelationTest {
      * afterwards a new relation is created from the parcel and we check if it contains all attributes.
      */
     @Test 
-    public void test_parcelable_way() {
+    public void test_parcelable_relation() {
     	Parcel newParcel = Parcel.obtain();
     	Relation testRelation = new Relation(1, 1);
     	
@@ -341,13 +341,13 @@ public class RelationTest {
     	
     	assertEquals(2, deParcelRelation.getMembers().size());
     	
-        assertEquals("type", deParcelRelation.getMembers().get(0).getType());
-        assertEquals(12345, deParcelRelation.getMembers().get(0).getRef());
-        assertEquals("role", deParcelRelation.getMembers().get(0).getRole());
+        assertEquals(member1.getType(), deParcelRelation.getMembers().get(0).getType());
+        assertEquals(member1.getRef(), deParcelRelation.getMembers().get(0).getRef());
+        assertEquals(member1.getRole(), deParcelRelation.getMembers().get(0).getRole());
         
-        assertEquals("othertype", deParcelRelation.getMembers().get(1).getType());
-        assertEquals(54321, deParcelRelation.getMembers().get(1).getRef());
-        assertEquals("otherrole", deParcelRelation.getMembers().get(1).getRole());	
+        assertEquals(member2.getType(), deParcelRelation.getMembers().get(1).getType());
+        assertEquals(member2.getRef(), deParcelRelation.getMembers().get(1).getRef());
+        assertEquals(member2.getRole(), deParcelRelation.getMembers().get(1).getRole());	
 
     }  
 

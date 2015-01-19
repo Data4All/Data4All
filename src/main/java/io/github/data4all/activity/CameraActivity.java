@@ -3,8 +3,11 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.listener.CaptureShutterListener;
 import io.github.data4all.logger.Log;
+import io.github.data4all.service.GPSservice;
+import io.github.data4all.service.OrientationListener;
 import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -70,6 +73,9 @@ public class CameraActivity extends Activity {
         // Calculate the camera previews
         cameraPreview.setCamera(mCamera);
         mCamera.startPreview();
+        
+        // Start the Device Orientation listener
+        startService(new Intent(this, OrientationListener.class));
 
         // Assign the camera trigger listener here, instead of being in
         // onCreated method.
@@ -87,6 +93,8 @@ public class CameraActivity extends Activity {
             mCamera.release();
             mCamera = null;
         }
+        stopService(new Intent(this, OrientationListener.class));
+        
         btnTrigger.setOnClickListener(null);
     }
 
