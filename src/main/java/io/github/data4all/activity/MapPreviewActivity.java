@@ -5,13 +5,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
-
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
-
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +17,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	// Logger Tag
 	private static final String TAG = "MapPreviewActivity";
 	
+	
+	//  the OsmElement which should be added
 	private OsmElement element;
 	
 	@Override
@@ -88,12 +84,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.return_to_actual_Position:
-			if (myLocationOverlay.isMyLocationEnabled()) {
-				Log.i(TAG, "Set Mapcenter to"
-						+ myLocationOverlay.getMyLocation().toString());
-				mapController.setCenter(myLocationOverlay.getMyLocation());
-				mapView.postInvalidate();
-			}
 			break;
 		case R.id.switch_maps:
 			// switch to OSM Map
@@ -119,18 +109,5 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 			break;
 		}
 	}
-	
-	protected IGeoPoint getMyLocation() {
-		LocationManager locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-		Location currentLocation = locationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		return new GeoPoint(currentLocation.getLatitude(),
-				currentLocation.getLongitude());
-	}
-
-	
-
-
 
 }

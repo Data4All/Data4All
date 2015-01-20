@@ -27,21 +27,39 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+/**
+ * @author olli
+ *
+ */
 public abstract class MapActivity extends BasicActivity {
-	
+
 	// Logger Tag
 	private static final String TAG = "MapActivity";
-	
+
+	// OsmDroid Mapview
 	protected MapView mapView;
+
+	// ImageView
 	protected ImageView view;
+
+	// OsmDroid Mapcontroller
 	protected MapController mapController;
+
+	// Overlay for actual Position
 	protected MyLocationNewOverlay myLocationOverlay;
-	
+
+	// Last known ZoomLevel;
 	protected int actualZoomLevel;
+
+	// Last known Center Latitude
 	protected double actualCenterLatitude;
+
+	// Last known Center Longitude
 	protected double actualCenterLongitude;
+
+	// Last known Center Geopoint
 	protected IGeoPoint actualCenter;
-	
+
 	// Default Zoom Level
 	protected final int DEFAULT_ZOOM_LEVEL = 18;
 
@@ -50,6 +68,15 @@ public abstract class MapActivity extends BasicActivity {
 
 	// Maximal Zoom Level
 	protected final int MAXIMAL_ZOOM_LEVEL = 20;
+	
+	// Default Stroke width
+	protected final float DEFAULT_STROKE_WIDTH = 3.0f;
+	
+	// Default Stroke Color
+	protected final int DEFAULT_STROKE_COLOR = Color.BLUE;
+	
+	// Fill Color for Polygons
+	protected final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
 	// Default OpenStreetMap TileSource
 	protected final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
@@ -72,91 +99,149 @@ public abstract class MapActivity extends BasicActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
-	 protected void setUpMapView(){
-			mapView = (MapView) this.findViewById(R.id.mapview);
 
-			// Set Maptilesource
-			Log.i(TAG, "Set Maptilesource to " + OSM_TILESOURCE.name());
-			mapView.setTileSource(OSM_TILESOURCE);
+	protected void setUpMapView() {
+		mapView = (MapView) this.findViewById(R.id.mapview);
 
-			// Add Satellite Map TileSource
-			TileSourceFactory.addTileSource(MAPBOX_SATELLITE_LABELLED);
+		// Set Maptilesource
+		Log.i(TAG, "Set Maptilesource to " + OSM_TILESOURCE.name());
+		mapView.setTileSource(OSM_TILESOURCE);
 
-			// Set Maptilesource
-			Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
-			mapView.setTileSource(DEFAULT_TILESOURCE);
+		// Add Satellite Map TileSource
+		TileSourceFactory.addTileSource(MAPBOX_SATELLITE_LABELLED);
 
-			// Activate Multi Touch Control
-			Log.i(TAG, "Activate Multi Touch Controls");
-			mapView.setMultiTouchControls(true);
+		// Set Maptilesource
+		Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
+		mapView.setTileSource(DEFAULT_TILESOURCE);
 
-			// Set Min/Max Zoom Level
-			Log.i(TAG, "Set minimal Zoomlevel to " + MINIMAL_ZOOM_LEVEL);
-			mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
+		// Activate Multi Touch Control
+		Log.i(TAG, "Activate Multi Touch Controls");
+		mapView.setMultiTouchControls(true);
 
-			Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_ZOOM_LEVEL);
-			mapView.setMaxZoomLevel(MAXIMAL_ZOOM_LEVEL);
+		// Set Min/Max Zoom Level
+		Log.i(TAG, "Set minimal Zoomlevel to " + MINIMAL_ZOOM_LEVEL);
+		mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
 
-			mapController = (MapController) this.mapView.getController();
+		Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_ZOOM_LEVEL);
+		mapView.setMaxZoomLevel(MAXIMAL_ZOOM_LEVEL);
 
-			// Set Default Zoom Level
-			Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
-			actualZoomLevel = DEFAULT_ZOOM_LEVEL;
-			
-			// Set Default Center
+		mapController = (MapController) this.mapView.getController();
+
+		// Set Default Zoom Level
+		Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
+		actualZoomLevel = DEFAULT_ZOOM_LEVEL;
+
+		// Set actual Center
+		if (getMyLocation() != null) {
+			Log.i(TAG, "Set actual Center to " + getMyLocation());
 			actualCenter = getMyLocation();
-	 }
-	
-		protected void addOsmElementToMap(OsmElement element) {
+		}
+	}
+
+	/**
+	 * Adds an OsmElement as an Overlay to the Map
+	 *
+	 * @param element
+	 *            the OsmElement which should be added to the map
+	 **/
+	protected void addOsmElementToMap(OsmElement element) {
+		if (element != null) {
+			// if the Element is a Node
 			if (element instanceof Node) {
 				Node node = (Node) element;
-				Log.d(TAG, "Add Node with Coordinates " + node.toGeoPoint().toString());
+				Log.i(TAG, "Add Node with Coordinates "
+						+ node.toGeoPoint().toString());
 				addNodeToMap(node);
-			} else if (element instanceof Node) {
+				// if the Element is Way
+			} else if (element instanceof Way) {
 				Way way = (Way) element;
+				// if the Element is an Area
 				if (way.isClosed()) {
-					Log.d(TAG, "Add Area with Coordinates " + way.toString());
+					Log.i(TAG, "Add Area with Coordinates " + way.toString());
 					addAreaToMap(way);
+					// if the Element is an Path
 				} else {
-					Log.d(TAG, "Add Path with Coordinates " + way.toString());
+					Log.i(TAG, "Add Path with Coordinates " + way.toString());
 					addPathToMap(way);
 				}
 			}
 		}
-	
+	}
+
+	/**
+	 * Adds an Node as an Overlay to the Map
+	 *
+	 * @param node
+	 *            the node which should be added to the map
+	 **/
 	protected void addNodeToMap(Node node) {
 		Marker poi = new Marker(mapView);
+
+		Log.i(TAG, "Set Node Points to " + node.toString());	
 		poi.setPosition(node.toGeoPoint());
+		
 		poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 		mapView.getOverlays().add(poi);
 		mapView.postInvalidate();
 	}
 
+	/**
+	 * Adds an area as an Overlay to the Map
+	 *
+	 * @param way
+	 *            the area which should be added to the map
+	 **/
 	protected void addAreaToMap(Way way) {
 		Polygon area = new Polygon(this);
+		
+		Log.i(TAG, "Set Area Points to " + way.toString());		
 		area.setPoints(way.getGeoPoints());
-		area.setFillColor(Color.argb(100, 0, 0, 255));
-		area.setStrokeWidth(3.0f);
-		area.setStrokeColor(Color.BLUE);
+		
+		Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
+		area.setFillColor(DEFAULT_FILL_COLOR);
+		
+		Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
+		area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+		
+		Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
+		area.setStrokeColor(DEFAULT_STROKE_COLOR);
+		
 		mapView.getOverlays().add(area);
 		mapView.postInvalidate();
 	}
 
-	protected void addPathToMap(Way way) {
+	/**
+	 * Adds an Path as an Overlay to the Map
+	 *
+	 * @param way
+	 *            the path which should be added to the map
+	 **/
+	protected void addPathToMap(Way way) {		
 		Polyline path = new Polyline(this);
+		
+		Log.i(TAG, "Set Path Points to " + way.toString());
 		path.setPoints(way.getGeoPoints());
-		path.setColor(Color.BLUE);
-		path.setWidth(3.0f);
+		
+		Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);	
+		path.setColor(DEFAULT_STROKE_COLOR);
+		
+		Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
+		path.setWidth(DEFAULT_STROKE_WIDTH);
+		
 		mapView.getOverlays().add(path);
 		mapView.postInvalidate();
 	}
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle state) {
 		super.onSaveInstanceState(state);
-
+		Log.i(TAG, "Save actual zoom level: " + actualZoomLevel);
 		state.putSerializable("actualZoomLevel", actualZoomLevel);
+		
+		Log.i(TAG, "Save actual Center Latitude: " + actualCenterLatitude);
 		state.putSerializable("actualCenterLatitude", actualCenterLatitude);
+		
+		Log.i(TAG, "Save actual Center Longitude: " + actualCenterLongitude);
 		state.putSerializable("actualCenterLongitude", actualCenterLongitude);
 
 	}
@@ -164,11 +249,22 @@ public abstract class MapActivity extends BasicActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		
+		Log.i(TAG, "Set actual Center Latitude: " + mapView.getMapCenter().getLatitude());
 		actualCenterLatitude = mapView.getMapCenter().getLatitude();
+		
+		Log.i(TAG, "Set actual Center Longitude: " + mapView.getMapCenter().getLongitude());
 		actualCenterLongitude = mapView.getMapCenter().getLongitude();
+		
+		Log.i(TAG, "Set actual Zoom Level: " + mapView.getZoomLevel());
 		actualZoomLevel = mapView.getZoomLevel();
 	}
-	
+
+	/**
+	 * Returns the actual Position
+	 *
+	 * @return the actual position
+	 **/
 	protected IGeoPoint getMyLocation() {
 		LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
