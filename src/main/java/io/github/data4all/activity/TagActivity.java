@@ -2,6 +2,8 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
@@ -54,6 +56,7 @@ public class TagActivity extends Activity implements OnClickListener{
     private CharSequence [] array;
     private AlertDialog alert;
     private AlertDialog alert1;
+    private Map<String, ClassifiedTag> tagMap;
 
     /**
      * Called when the activity is first created.
@@ -76,18 +79,20 @@ public class TagActivity extends Activity implements OnClickListener{
         ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");;        
         alertDialog.setCustomTitle(view);
         ImageButton speechStart = (ImageButton) view.findViewById(R.id.speech); 
-        if(speechStart != null){
-        	speechStart.setOnClickListener(this);
+        speechStart.setOnClickListener(this);
+        
+        if(getIntent().hasExtra("TYPE_DEF")){
+        	array = Tagging.getArrayKeys((Integer) getIntent().getExtras().get("TYPE_DEF"));
+        	tagMap = Tagging.getMapKeys((Integer) getIntent().getExtras().get("TYPE_DEF"));
         }
-
-        array = Tagging.getKeys().toArray(new String[Tagging.getKeys().size()]);
+        
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             	key = (String) array [which];
-            	array = Tagging.getValues(key).toArray(new String[Tagging.getValues(key).size()]);
+            	array =  tagMap.get(key).getClassifiedValues().toArray(new String [tagMap.get(key).getClassifiedValues().size()]);
             	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TagActivity.this);
             	alertDialogBuilder.setTitle("Select Tag");
-            	 alertDialogBuilder.setItems(array, new DialogInterface.OnClickListener() {
+            	alertDialogBuilder.setItems(array, new DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -96,7 +101,7 @@ public class TagActivity extends Activity implements OnClickListener{
                         map.put(key, value);
                         if (key.equals("building")
                                 || key.equals("amenity")) {                                  
-                            createDialog(Tags.getAddressTags(), "Add Address", key.equals("building"), true);
+                            createDialog(Tags.getAllAddressTags(), "Add Address", key.equals("building"), true);
                         }
                         else{
                         output();
@@ -135,7 +140,7 @@ public class TagActivity extends Activity implements OnClickListener{
 			}
 			map = Tagging.addressToTag(tags, map);
 			dialog1.hide();
-			createDialog(Tags.getContactTags(), "Add Contacts", true, false);
+			createDialog(Tags.getAllContactTags(), "Add Contacts", true, false);
 			
 			break;
     	case R.id.buttonFinish:	
@@ -206,7 +211,7 @@ public class TagActivity extends Activity implements OnClickListener{
 
 
 
-	public void createDialog(String [] [] list, String title, final Boolean but, final Boolean first1){
+	public void createDialog(ArrayList<Tag> arrayList, String title, final Boolean but, final Boolean first1){
     	dialog1 = new Dialog(this);
 		dialog1.setContentView(R.layout.dialog_dynamic);
 		dialog1.setTitle(title);
@@ -220,12 +225,12 @@ public class TagActivity extends Activity implements OnClickListener{
 		finish.setId(R.id.buttonFinish);
 		first = first1;
 		edit = new ArrayList<EditText>();
-		for (int i = 0; i < list.length; i++) {
+		for (int i = 0; i < arrayList.size(); i++) {
 		final EditText text = new EditText(this);
-			text.setHint(list [i] [1]);
+			text.setHint(arrayList.get(i).getHintRessource());
 			text.setHintTextColor(Color.DKGRAY);
     		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-    		text.setInputType(Integer.parseInt(list[i] [2]));
+    		//text.setInputType(arrayList.get(i).getType());
     		edit.add(text);
     		layout.addView(text);
 		}

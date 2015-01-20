@@ -41,10 +41,10 @@ public class ShowPictureActivity extends Activity {
     private ImageView imageView;
     	private Intent tagIntent;
 	private String type = "TYPE_DEF";
-	private String point = "POINT";
-	private String building = "BUILDING";
-	private String way = "WAY";
-	private String area = "AREA";
+	private static int point = 1;
+	private static int building = 3;
+	private static int way = 2;
+	private static int area = 4;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

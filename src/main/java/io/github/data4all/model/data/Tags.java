@@ -217,6 +217,16 @@ public class Tags {
 		}
 		return result;
 	}	
+	
+	public static ArrayList<ClassifiedTag> getAllClassifiedTags(){
+		ArrayList<ClassifiedTag> result = new ArrayList<ClassifiedTag>();
+		for(Tag t : tagList) {
+			if(t instanceof ClassifiedTag){
+				result.add((ClassifiedTag) t);
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * returns an arraylist containing all address tags

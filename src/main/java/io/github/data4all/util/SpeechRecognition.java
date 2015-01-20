@@ -1,7 +1,9 @@
 package io.github.data4all.util;
 
+import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tags;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,15 +24,14 @@ public abstract class SpeechRecognition {
      */
     public static Map<String, String> speechToTag(List<String> matchesText) {
     	Map<String, String> map = new HashMap <String, String>();
-		Map<String, String> tagData = new HashMap<String, String>();
+		ArrayList<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
 		Tags tags = new Tags();
-		tagData = tags.getClassifiedTags();
-		for(Entry entry : tagData.entrySet()){
+		tagData = tags.getAllClassifiedTags();
+		for(ClassifiedTag entry : tagData){
 			String key = (String) entry.getKey();
 			// split is the Array from the Key Values
-			String [] split = tagData.get(key).split(",");
-			if(compareStringTag(split, matchesText) != null){
-				map.put(key, compareStringTag(split, matchesText));
+			if(compareStringTag(entry.getClassifiedValues(), matchesText) != null){
+				map.put(key, compareStringTag(entry.getClassifiedValues(), matchesText));
 				break;
 			}
 		}
@@ -58,16 +59,16 @@ public abstract class SpeechRecognition {
     }
 	 /**
 	  * It Compares the list of the Google Speechrecognition and the array of key Values
-	  * @param tag
+	  * @param arrayList
 	  * @param matchesText
 	  * @return the String that matches with the tagValue
 	  */
-	 private static String compareStringTag(String[] tag, List<String> matchesText){
+	 private static String compareStringTag(ArrayList<String> arrayList, List<String> matchesText){
 		 for (int i = 0; i < matchesText.size(); i++) {
-				for (int j = 0; j < tag.length; j++) {
+				for (int j = 0; j < arrayList.size(); j++) {
 					// Compares the String of matchesText with split 
-					if(matchesText.get(i).equalsIgnoreCase(tag[j])){
-						return tag[j];
+					if(matchesText.get(i).equalsIgnoreCase(arrayList.get(j))){
+						return arrayList.get(j);
 					}	 
 				}
 		 	}
