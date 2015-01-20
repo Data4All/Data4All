@@ -76,6 +76,10 @@ public class ShowPictureActivity extends Activity {
             currentOrientation = getIntent().getExtras().getParcelable(
                     "current_orientation");
         }
+        
+        transformBean.setPhotoWidth(touchView.getWidth());
+        transformBean.setPhotoHeight(touchView.getHeight());
+        
         // set a new PointToCoordsTransformUtil to the touchView which includes
         // the deviceOrientation, current Location, camera angle, photo size and
         // height
