@@ -253,7 +253,6 @@ public class TagActivity extends BasicActivity {
 	public void createDialog(String[][] list, String title, final Boolean but,
 			final Boolean first) {
 		final Dialog dialog = new Dialog(this);
->>>>>>> origin/feature/2512-AddPointOnMap
 		dialog.setContentView(R.layout.dialog_dynamic);
 		dialog.setTitle(title);
 		dialog.getWindow().setBackgroundDrawable(
