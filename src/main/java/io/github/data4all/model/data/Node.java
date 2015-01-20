@@ -14,10 +14,27 @@ import android.os.Parcelable;
 public class Node extends OsmElement implements GeoPoint {
 
     /**
-     * Latitude and Longitude of the Node.
+     * Latitude of the Node.
      */
     private double lat;
+
+    /**
+     * Longitude of the Node.
+     */
     private double lon;
+
+    /**
+     * CREATOR that generates instances of {@link Node} from a Parcel
+     */
+    public static final Parcelable.Creator<Node> CREATOR = new Parcelable.Creator<Node>() {
+        public Node createFromParcel(Parcel in) {
+            return new Node(in);
+        }
+
+        public Node[] newArray(int size) {
+            return new Node[size];
+        }
+    };
 
     /**
      * Default Constructor
@@ -36,6 +53,22 @@ public class Node extends OsmElement implements GeoPoint {
         this.lon = lon;
     }
 
+    /**
+     * Constructor to create a {@link Node} from a parcel
+     * 
+     * @param in
+     *            The {@link Parcel} to read the object's data from
+     */
+    private Node(Parcel in) {
+        super(in);
+        lat = in.readDouble();
+        lon = in.readDouble();
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
     public double getLat() {
         return lat;
     }
@@ -52,43 +85,10 @@ public class Node extends OsmElement implements GeoPoint {
         this.lon = lon;
     }
 
-    /**
-     * Methods to write and restore a Parcel
-     */
-    public static final Parcelable.Creator<Node> CREATOR
-            = new Parcelable.Creator<Node>() {
-    	
-        public Node createFromParcel(Parcel in) {
-            return new Node(in);
-        }
-
-        public Node[] newArray(int size) {
-            return new Node[size];
-        }
-    };
-    
-    
-    public int describeContents() {
-		return 0;
-	}
-
-    /**
-     * Writes the lat and the lon to the given parcel
-     */
-	public void writeToParcel(Parcel dest, int flags) {		
-		super.writeToParcel(dest, flags);
-		dest.writeDouble(lat);
-		dest.writeDouble(lon);
-	}
-	
-	/**
-	 * Constructor to create a node from a parcel
-	 * @param in
-	 */
-    private Node(Parcel in) {
-    	super(in);
-    	lat = in.readDouble();
-    	lon = in.readDouble();
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
     }
-
 }

@@ -36,20 +36,29 @@ public class RelationMember implements Parcelable {
     private OsmElement element = null;
 
     /**
-     * Default constructor Constructor for members that have not been downloaded
+     * CREATOR that generates instances of {@link RelationMember} from a Parcel
      */
-    public RelationMember(final String type, final long refId, final String role) {
-        this.type = type;
-        this.ref = refId;
-        this.role = role;
-    }
+    public static final Parcelable.Creator<RelationMember> CREATOR = new Parcelable.Creator<RelationMember>() {
+        public RelationMember createFromParcel(Parcel in) {
+            return new RelationMember(in);
+        }
+
+        public RelationMember[] newArray(int size) {
+            return new RelationMember[size];
+        }
+    };
 
     /**
-     * Constructor for members that have been downloaded
+     * Constructor to create a {@link RelationMember} from a parcel.
+     * 
+     * @param in
+     *            The {@link Parcel} to read the object's data from
      */
-    public RelationMember(final String role, final OsmElement element) {
-        this.role = role;
-        this.element = element;
+    private RelationMember(Parcel in) {
+        type = in.readString();
+        role = in.readString();
+        ref = in.readLong();
+        element = OsmElementBuilder.read(in);
     }
 
     /**
@@ -66,8 +75,29 @@ public class RelationMember implements Parcelable {
         }
     }
 
-    public String getType() {
-        return type;
+    /**
+     * Default constructor Constructor for members that have not been downloaded
+     */
+    public RelationMember(final String type, final long refId, final String role) {
+        this.type = type;
+        this.ref = refId;
+        this.role = role;
+    }
+
+    /**
+     * Constructor for members that have been downloaded
+     */
+    public RelationMember(final String role, final OsmElement element) {
+        this.role = role;
+        this.element = element;
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public OsmElement getElement() {
+        return element;
     }
 
     public long getRef() {
@@ -81,12 +111,8 @@ public class RelationMember implements Parcelable {
         return role;
     }
 
-    public void setRole(final String role) {
-        this.role = role;
-    }
-
-    public OsmElement getElement() {
-        return element;
+    public String getType() {
+        return type;
     }
 
     /**
@@ -97,53 +123,16 @@ public class RelationMember implements Parcelable {
     public void setElement(final OsmElement e) {
         this.element = e;
     }
-    
-    /**
-     * Methods to write and restore a Parcel
-     */
-    public static final Parcelable.Creator<RelationMember> CREATOR
-            = new Parcelable.Creator<RelationMember>() {
-    	
-        public RelationMember createFromParcel(Parcel in) {
-            return new RelationMember(in);
-        }
 
-        public RelationMember[] newArray(int size) {
-            return new RelationMember[size];
-        }
-    };
-    
-    
-    public int describeContents() {
-		return 0;
-	}
-
-    /**
-     * Writes the type, role, ref and element to the given parcel.
-     */
-	public void writeToParcel(Parcel dest, int flags) {		
-		dest.writeString(type);
-		dest.writeString(role);
-		dest.writeLong(ref);
-		if (element != null) {
-			dest.writeInt(1);
-			OsmElementBuilder.write(dest, element, flags);
-		} else {
-			dest.writeInt(0);
-		}
-	}
-	
-	/**
-	 * Constructor to create a relation member from a parcel.
-	 * @param in
-	 */
-    private RelationMember(Parcel in) {
-    	type = in.readString();
-    	role = in.readString();
-    	ref = in.readLong();
-    	if (in.readInt() != 0) {
-    		element = OsmElementBuilder.read(in);
-    	}
+    public void setRole(final String role) {
+        this.role = role;
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(type);
+        dest.writeString(role);
+        dest.writeLong(ref);
+        OsmElementBuilder.write(dest, element, flags);
+    }
 }
