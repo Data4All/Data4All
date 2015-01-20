@@ -256,7 +256,7 @@ public class TouchView extends View {
     }
     
     /**
-     * Create an OsmElement from the given polynom
+     * Create an OsmElement from the given polygon
      * @return the created OsmElement (with located nodes)
      */
     public OsmElement create() {

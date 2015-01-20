@@ -48,7 +48,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
      */
     @Deprecated
     private final Paint pathPaint = new Paint();
-    
+
     /**
      * An object for the calculation of the point transformation
      */
@@ -63,7 +63,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
         pathPaint.setColor(PATH_COLOR);
         pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
     }
-    
+
     public WayMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
@@ -238,7 +238,8 @@ public class WayMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
-        Way newWay = new Way(-1, 1); 
+        // create a new Way and copy the List of Nodes to this way
+        Way newWay = new Way(-1, 1);
 
         List<Node> nodeList = pointTrans.transform(polygon);
         newWay.addNodes(nodeList, false);

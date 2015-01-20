@@ -105,6 +105,7 @@ public class PointMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
+        //The list contains only one Node which then will be returned
         return pointTrans.transform(polygon).get(0);
     }
 

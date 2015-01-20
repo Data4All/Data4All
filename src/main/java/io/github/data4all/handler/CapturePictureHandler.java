@@ -65,6 +65,7 @@ public class CapturePictureHandler implements PictureCallback {
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
 
+        //get the current data which is necessary for creating an osm element
         Camera.Parameters params = camera.getParameters();
         double horizontalViewAngle = Math.toRadians(params
                 .getHorizontalViewAngle());
@@ -75,6 +76,7 @@ public class CapturePictureHandler implements PictureCallback {
         transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
          verticalViewAngle, pictureSize.width, pictureSize.height, currentLocation);
         currentOrientation = Optimizer.currentBestPos();
+        
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
     }
