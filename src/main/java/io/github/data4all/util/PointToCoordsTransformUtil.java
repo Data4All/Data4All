@@ -27,7 +27,7 @@ public class PointToCoordsTransformUtil {
 	static String TAG = "PointToWorldCoords";
 	private int osmID = -1;
 	private static int osmVersion = 1;
-	private double height = 1.0;
+	private double height = 0;
 	TransformationParamBean tps;
 	DeviceOrientation deviceOrientation;
 	
@@ -205,8 +205,7 @@ public class PointToCoordsTransformUtil {
 	public Point calculatePointFromCoords(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, double[] coord){
 		if (coord[2] == -1){
-			Point point = new Point(1, 1);
-			return point;
+			return null;
 		}
 		// rotates the vector with azimuth
 		double x =  ((coord[0] * Math.cos(deviceOrientation.getAzimuth())) 
