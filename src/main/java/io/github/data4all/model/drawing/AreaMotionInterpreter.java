@@ -5,6 +5,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Relation;
 import io.github.data4all.model.data.RelationMember;
+import io.github.data4all.model.data.Way;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
@@ -147,13 +148,11 @@ public class AreaMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
-        // create a new Relation and add the given nodes as relationMembers to
-        // the Relation
-        Relation relation = new Relation(-1, 1);
-        for (Node node : pointTrans.transform(polygon)) {
-            relation.addMember(new RelationMember(null, node));
-        }
-        return relation;
+        Way newWay = new Way(-1, 1);
+
+        List<Node> nodeList = pointTrans.transform(polygon);
+        newWay.addNodes(nodeList, false);
+        return newWay;
     }
 
     /*
