@@ -60,8 +60,9 @@ public class TagActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         
+        //check for an osm element in the intent
         if (getIntent().hasExtra("OSM_ELEMENT")) {
-            
+            //TODO do something with the given osm element
         }
         
         super.onCreate(savedInstanceState);

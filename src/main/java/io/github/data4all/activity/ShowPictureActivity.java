@@ -19,8 +19,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -78,10 +76,15 @@ public class ShowPictureActivity extends Activity {
             currentOrientation = getIntent().getExtras().getParcelable(
                     "current_orientation");
         }
-        touchView.setTransformUtil(new PointToCoordsTransformUtil(transformBean, currentOrientation));
+        // set a new PointToCoordsTransformUtil to the touchView which includes
+        // the deviceOrientation, current Location, camera angle, photo size and
+        // height
+        touchView.setTransformUtil(new PointToCoordsTransformUtil(
+                transformBean, currentOrientation));
     }
 
     public void onClickOkay(View view) {
+        //create an osm element from the given data and pass it to the next activity
         OsmElement osmElement = touchView.create();
         tagIntent.putExtra(osmElem, osmElement);
         startActivity(tagIntent);
@@ -98,14 +101,14 @@ public class ShowPictureActivity extends Activity {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.WAY);
         touchView.invalidate();
-		tagIntent.putExtra(type, way);
-	}
+        tagIntent.putExtra(type, way);
+    }
 
     public void onClickArea(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.AREA);
         touchView.invalidate();
-		tagIntent.putExtra(type, area);
+        tagIntent.putExtra(type, area);
     }
 
     public void onClickBuilding(View view) {
