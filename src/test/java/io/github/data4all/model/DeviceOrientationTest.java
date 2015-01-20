@@ -71,7 +71,7 @@ public class DeviceOrientationTest {
     }
 
     /**
-     * Create a new parcial to save/parcelable the testDeviceOrientation,
+     * Create a new Parcel to save/parcelable the testDeviceOrientation,
      * afterwards a new deviceorientation is created from the parcel and we
      * check if it contains all attributes.
      */
