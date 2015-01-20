@@ -65,7 +65,8 @@ public class PointToCoordsTransformUtil {
 		
 		List<Node> nodes = new ArrayList<Node>();
 		this.height = tps.getHeight();				
-		for(Point point : points){		
+		for(Point point : points){	
+			Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
 			// first calculates local coordinates in meter
 			double[] coord = calculateCoordFromPoint(tps, deviceOrientation, point);
 			// transforms local coordinates in global GPS-coordinates
