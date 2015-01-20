@@ -86,18 +86,18 @@ public class PointToCoordsTransformUtilTest {
 						while(y<=1000){
 							Point point = new Point(x,y);
 							double[] coord = util.calculateCoordFromPoint(tps, deviceOrientation, point);
-							if(coord[2] == 0){/*
+							if(coord[2] == 0){
 								Node node = util.calculateGPSPoint(location, coord);
-								double[] coord2 = util.calculateCoordFromGPS(location, node);*/
-								Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord);	
+								double[] coord2 = util.calculateCoordFromGPS(location, node);
+								Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord2);	
 								assertThat((double) point.getX(), closeTo(test.getX() , 1));
 								assertThat((double) point.getY(), closeTo(test.getY() , 1));
 							}
 							else{
 							}
-							y += 113;
+							y += 13;
 						}
-						x += 113;
+						x += 13;
 					}
 					c += (float) (Math.PI/11);
 				}

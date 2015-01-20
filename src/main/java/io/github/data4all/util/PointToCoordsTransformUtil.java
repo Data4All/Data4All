@@ -288,7 +288,7 @@ public class PointToCoordsTransformUtil {
 		double latLength = radius * Math.cos(lat);
 		latLength = latLength * 2 * Math.PI;
 		// add to the current Latitude the distance of the coord
-		double lat2 =lat + Math.toRadians(((coord[0]) / (latLength / 360)));
+		double lat2 =lat + Math.toRadians((coord[0] / latLength) * 360);
 		/*
 		if (lat2 < (-Math.PI/2)){
 			lat2 += Math.PI;
@@ -300,7 +300,7 @@ public class PointToCoordsTransformUtil {
 		// calculate the Length of the current Longitude with the earth Radius
 		double lonLength = radius * 2 * Math.PI;
 		// add to the current Longitude the distance of the coord
-		double lon2 = lon + Math.toRadians(((coord[1]) / (lonLength / 360)));
+		double lon2 = lon + Math.toRadians((coord[1] / lonLength) * 360);
 		/*
 		if (lon2 > (Math.PI/4)){
 			lon2 = (Math.PI/2) - lon2;
@@ -324,12 +324,11 @@ public class PointToCoordsTransformUtil {
 		
 		// calculate the Length of the current Latitude with the earth Radius
 		double latLength = radius * Math.cos(localLat);
-		latLength = latLength * 2 * Math.PI;
 		
 		double[] coord = new double[3];
 		coord[0] = latLength * lat;
 		
-		double lonLength = radius * 2 * Math.PI;
+		double lonLength = radius;
 		coord[1] = lonLength * lon;
 		coord[2] = 0;
 		
