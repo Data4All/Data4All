@@ -86,8 +86,10 @@ public class PointToCoordsTransformUtilTest {
 						while(y<=1000){
 							Point point = new Point(x,y);
 							double[] coord = util.calculateCoordFromPoint(tps, deviceOrientation, point);
-							if(coord[2] == 0){
-								Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord);							
+							if(coord[2] == 0){/*
+								Node node = util.calculateGPSPoint(location, coord);
+								double[] coord2 = util.calculateCoordFromGPS(location, node);*/
+								Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord);	
 								assertThat((double) point.getX(), closeTo(test.getX() , 1));
 								assertThat((double) point.getY(), closeTo(test.getY() , 1));
 							}
@@ -103,5 +105,17 @@ public class PointToCoordsTransformUtilTest {
 			}
 			a += (float) (Math.PI/11);			
 		}
+	}
+	
+	@Test
+	public void calculateGPSPoint(){
+		location.setLatitude(0);//(float) (Math.PI/1.2));
+		location.setLongitude(0);//(float) (-Math.PI/1.3));
+		double[] coord = {123,123};
+		Node node = util.calculateGPSPoint(location, coord);
+		double lontest = node.getLon() - location.getLongitude();
+		double lattest = node.getLat() - location.getLatitude();
+		double[] test = util.calculateCoordFromGPS(location, node);
+		
 	}
 }

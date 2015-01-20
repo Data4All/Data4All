@@ -315,5 +315,25 @@ public class PointToCoordsTransformUtil {
 		osmID--;
 		return node;
 	}
+	
+	public double[] calculateCoordFromGPS(Location location, Node node){
+		double radius = 6371004.0;
+		double lat = Math.toRadians(node.getLat() - location.getLatitude());
+		double lon = Math.toRadians(node.getLon() - location.getLongitude());
+		double localLat = Math.toRadians(location.getLatitude());
+		
+		// calculate the Length of the current Latitude with the earth Radius
+		double latLength = radius * Math.cos(localLat);
+		latLength = latLength * 2 * Math.PI;
+		
+		double[] coord = new double[3];
+		coord[0] = latLength * lat;
+		
+		double lonLength = radius * 2 * Math.PI;
+		coord[1] = lonLength * lon;
+		coord[2] = 0;
+		
+		return coord;
+	}
 		
 }
