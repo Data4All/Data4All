@@ -95,9 +95,9 @@ public class PointToCoordsTransformUtilTest {
 							}
 							else{
 							}
-							y += 13;
+							y += 113;
 						}
-						x += 13;
+						x += 113;
 					}
 					c += (float) (Math.PI/11);
 				}
@@ -106,16 +106,5 @@ public class PointToCoordsTransformUtilTest {
 			a += (float) (Math.PI/11);			
 		}
 	}
-	
-	@Test
-	public void calculateGPSPoint(){
-		location.setLatitude(0);//(float) (Math.PI/1.2));
-		location.setLongitude(0);//(float) (-Math.PI/1.3));
-		double[] coord = {123,123};
-		Node node = util.calculateGPSPoint(location, coord);
-		double lontest = node.getLon() - location.getLongitude();
-		double lattest = node.getLat() - location.getLatitude();
-		double[] test = util.calculateCoordFromGPS(location, node);
-		
-	}
+
 }

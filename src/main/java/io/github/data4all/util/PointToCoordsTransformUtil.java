@@ -168,7 +168,8 @@ public class PointToCoordsTransformUtil {
 	 * @param oldAngle
 	 * @return altered Angle
 	 */
-	public double calculateAngleFromPixel(double pixel, double width, double maxAngle, double oldAngle){
+	public double calculateAngleFromPixel(double pixel, double width, 
+			double maxAngle, double oldAngle){
 
 		Log.d(TAG, "Calculate Angle, OldAngle: " + oldAngle + " maxANgle: " + maxAngle);
 		if((pixel - (width / 2)) == 0){
@@ -316,6 +317,12 @@ public class PointToCoordsTransformUtil {
 		return node;
 	}
 	
+	/**
+	 * Calculates the given GPS-Point in a local System
+	 * @param location
+	 * @param node
+	 * @return coord[]
+	 */
 	public double[] calculateCoordFromGPS(Location location, Node node){
 		double radius = 6371004.0;
 		double lat = Math.toRadians(node.getLat() - location.getLatitude());
