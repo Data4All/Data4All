@@ -5,7 +5,8 @@ import java.util.Arrays;
 import io.github.data4all.R;
 
 /**
- * 
+ * This class represents a predefined osm tag. 
+ * The name and hint for a specific tag is defined in the tag_name.xml and tag_hint.xml. 
  * @author fkirchge, tbrose
  *
  */
@@ -33,6 +34,14 @@ public class Tag {
 	private InputType type;
 
 	/**
+	 * constant values to define which osmObject the tag refers to
+	 */
+	public static final int NODE_TAG = 1;
+	public static final int WAY_TAG = 2;
+	public static final int RELATION_TAG = 3;
+	public static final int AREA_TAG = 4;	
+	
+	/**
 	 * define to which osm objects the tag refers
 	 */
 	private int[] osmObjects;
@@ -53,7 +62,7 @@ public class Tag {
 	 * @param type
 	 */
 	public Tag(String key, int nameRessource, int hintRessource,
-			InputType type, int[] osmObjects) {
+			InputType type, int... osmObjects) {
 		this.key = key;
 		this.nameRessource = nameRessource;
 		this.hintRessource = hintRessource;
@@ -68,7 +77,7 @@ public class Tag {
 	 * @param type
 	 * @param osmObjects
 	 */
-	public Tag(String key, InputType type, int[] osmObjects) {
+	public Tag(String key, InputType type, int... osmObjects) {
 		this.key = key;
 		try {
 			this.nameRessource = (Integer) R.string.class.getDeclaredField(

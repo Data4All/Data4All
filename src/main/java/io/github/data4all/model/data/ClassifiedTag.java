@@ -3,7 +3,7 @@ package io.github.data4all.model.data;
 import java.util.ArrayList;
 
 /**
- * This class represents a classified tag. 
+ * This class represents a classified tag. A classified tag is a subclass of tag.  
  * classifiedTags are tags where the user can choose input/value from listed values.
  * @author fkirchge
  *
@@ -22,7 +22,7 @@ public class ClassifiedTag extends Tag {
 	 * @param classifiedValues
 	 * @param osmObjects
 	 */
-	public ClassifiedTag(String key, InputType type, ArrayList<String> classifiedValues, int[] osmObjects) {
+	public ClassifiedTag(String key, InputType type, ArrayList<String> classifiedValues, int... osmObjects) {
 		super(key, type, osmObjects);
 		this.classifiedValues = classifiedValues;
 	}	
