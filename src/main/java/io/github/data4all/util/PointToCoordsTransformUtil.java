@@ -73,11 +73,7 @@ public class PointToCoordsTransformUtil {
 			nodes.add(node);		
 		}	
 		return nodes;
-	}
-	
-	
-	
-	
+	}	
 
 	/**
 	 * opens calculate4thPoint with saved information
@@ -289,7 +285,7 @@ public class PointToCoordsTransformUtil {
 		double latLength = radius * Math.cos(lat);
 		latLength = latLength * 2 * Math.PI;
 		// add to the current Latitude the distance of the coord
-		double lat2 =lat + Math.toRadians((coord[0] / latLength) * 360);
+		double lat2 =lat + Math.toRadians((coord[0] * 360) / latLength);
 		/*
 		if (lat2 < (-Math.PI/2)){
 			lat2 += Math.PI;
@@ -301,7 +297,7 @@ public class PointToCoordsTransformUtil {
 		// calculate the Length of the current Longitude with the earth Radius
 		double lonLength = radius * 2 * Math.PI;
 		// add to the current Longitude the distance of the coord
-		double lon2 = lon + Math.toRadians((coord[1] / lonLength) * 360);
+		double lon2 = lon + Math.toRadians((coord[1] * 360) / lonLength);
 		/*
 		if (lon2 > (Math.PI/4)){
 			lon2 = (Math.PI/2) - lon2;
