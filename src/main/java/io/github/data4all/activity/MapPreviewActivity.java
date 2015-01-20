@@ -8,10 +8,8 @@ import io.github.data4all.model.data.Way;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -77,7 +75,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if(element.getClass().getSimpleName().equals("Node")){
+		if(element instanceof Node){
 			Node node = (Node) element;
 			mapController.setCenter(node.toGeoPoint());
 			mapController.animateTo(node.toGeoPoint());

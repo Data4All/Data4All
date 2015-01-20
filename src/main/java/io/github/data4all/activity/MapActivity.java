@@ -22,7 +22,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -110,11 +109,11 @@ public abstract class MapActivity extends Activity {
 	 }
 	
 		protected void addOsmElementToMap(OsmElement element) {
-			if (element.getClass().getSimpleName().equals("Node")) {
+			if (element instanceof Node) {
 				Node node = (Node) element;
 				Log.d(TAG, "Add Node with Coordinates " + node.toGeoPoint().toString());
 				addNodeToMap(node);
-			} else if (element.getClass().getSimpleName().equals("Way")) {
+			} else if (element instanceof Node) {
 				Way way = (Way) element;
 				if (way.isClosed()) {
 					Log.d(TAG, "Add Area with Coordinates " + way.toString());
