@@ -13,20 +13,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
+
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Activity to set a new Layer-Backgroundimage
@@ -34,7 +34,7 @@ import android.widget.Toast;
  * @author vkochno
  *
  */
-public class ShowPictureActivity extends Activity {
+public class ShowPictureActivity extends BasicActivity {
 
     private TouchView touchView;
     private ImageView imageView;
@@ -45,12 +45,14 @@ public class ShowPictureActivity extends Activity {
     private String way = "WAY";
     private String area = "AREA";
     private String osmElem = "OSM_ELEMENT";
+    private Button undo;
+	private Button redo;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
     private TransformationParamBean transformBean;
     private DeviceOrientation currentOrientation;
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,8 @@ public class ShowPictureActivity extends Activity {
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
         tagIntent = new Intent(this, TagActivity.class);
+        undo = (Button) findViewById(R.id.undobtn);
+        redo = (Button)findViewById(R.id.redobtn);
 
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
@@ -121,34 +125,43 @@ public class ShowPictureActivity extends Activity {
         touchView.invalidate();
         tagIntent.putExtra(type, building);
     }
-
-    /**
-     * Get a Uri of a Image and set this to local layout as background
-     * 
-     * @param selectedImage
-     */
-    private void setBackground(Uri selectedImage) {
-        Bitmap bitmap;
-        try { // try to convert a image to a bitmap
-            bitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(), selectedImage);
-            int display_mode = getResources().getConfiguration().orientation;
-            Matrix matrix = new Matrix();
-            if (display_mode == 1) {
-                matrix.setRotate(90);
-            }
-
-            Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                    bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            Log.e(this.getClass().toString(), "ROTATION:");
-            imageView.setImageBitmap(adjustedBitmap);
-        } catch (FileNotFoundException e) {
-            Log.e(this.getClass().toString(), "ERROR, no file found");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.e(this.getClass().toString(), "ERROR, file is no image");
-            e.printStackTrace();
-        }
+    
+    public void onClickRedo(View view) {
+        touchView.redo();
+        touchView.invalidate();
+    }
+    
+    public void onClickUndo(View view) {
+        touchView.undo();
+        touchView.invalidate();
+    }
+    
+    public void SetRedoEnable(boolean enabled){
+    	redo.setEnabled(enabled);
+    }
+    
+    public void SetUndoEnable(boolean enabled){
+    	undo.setEnabled(enabled);
     }
 
+	/**
+	 * Get a Uri of a Image and set this to local layout as background
+	 * 
+	 * @param selectedImage
+	 */
+	private void setBackground(Uri selectedImage) {
+		Bitmap bitmap;
+		try { // try to convert a image to a bitmap
+			bitmap = MediaStore.Images.Media.getBitmap(
+					this.getContentResolver(), selectedImage);
+
+			imageView.setImageBitmap(bitmap);
+		} catch (FileNotFoundException e) {
+			Log.e(this.getClass().toString(), "ERROR, no file found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.e(this.getClass().toString(), "ERROR, file is no image");
+			e.printStackTrace();
+		}
+	}
 }

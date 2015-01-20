@@ -1,0 +1,5 @@
+<resources>
+	<!-- XML resource that carries a color value (a hexadecimal color). 
+    For example: <color name="actionbar_background">#80e220</color> -->
+
+</resources>

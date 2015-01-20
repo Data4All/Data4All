@@ -173,6 +173,19 @@ public class Way extends OsmElement {
 	}
 
 	/**
+	 * Returns all points which belong to the way.
+	 * 
+	 * @return list of points
+	 */
+	public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
+		List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
+		for (Node n : nodes){
+			points.add(n.toGeoPoint());
+		}
+		return points;
+	}
+
+	/**
 	 * Returns true if the node is part of the way.
 	 * 
 	 * @param node
@@ -328,5 +341,13 @@ public class Way extends OsmElement {
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
     }	
+    
+    public String toString(){
+    	String s = "";
+    	for(Node n : nodes){
+    		s += n.toString() + " ";
+    	}
+    	return s;
+    }
 
 }

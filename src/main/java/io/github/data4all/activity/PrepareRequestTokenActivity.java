@@ -2,10 +2,6 @@ package io.github.data4all.activity;
 
 import io.github.data4all.Constants;
 import io.github.data4all.logger.Log;
-import io.github.data4all.task.OAuthRequestTokenTask;
-import io.github.data4all.task.RetrieveAccessTokenTask;
-import io.github.data4all.R;
-
 import java.net.URLEncoder;
 
 import oauth.signpost.OAuth;
@@ -13,7 +9,6 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +18,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.Menu;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
@@ -45,7 +39,7 @@ import android.webkit.WebViewClient;
  *         /oauth-flow-in-android-app/
  * 
  */
-public class PrepareRequestTokenActivity extends Activity {
+public class PrepareRequestTokenActivity extends BasicActivity {
 
     final String TAG = getClass().getName();
 
@@ -85,13 +79,6 @@ public class PrepareRequestTokenActivity extends Activity {
         Log.i(TAG, "Starting task to request a token");
         new OAuthRequestTokenTask(this, consumer, provider).execute();
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
     }
 
     

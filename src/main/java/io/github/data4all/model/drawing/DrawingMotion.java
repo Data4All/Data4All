@@ -44,7 +44,7 @@ public class DrawingMotion {
      * List of all added Points
      */
     private List<Point> points = new ArrayList<Point>();
-
+    
     /**
      * Adds a Point to the DrawingMotion
      * 

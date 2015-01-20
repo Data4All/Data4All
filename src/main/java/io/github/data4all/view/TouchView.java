@@ -1,5 +1,6 @@
 package io.github.data4all.view;
 
+import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
@@ -7,6 +8,7 @@ import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
 import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.Point;
+import io.github.data4all.model.drawing.RedoUndo;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.util.PointToCoordsTransformUtil;
@@ -33,6 +35,7 @@ import android.view.View;
  * @see MotionInterpreter
  */
 public class TouchView extends View {
+
 
     /**
      * The paint to draw the points with
@@ -69,17 +72,27 @@ public class TouchView extends View {
      */
     private MotionInterpreter interpreter;
 
-    public TouchView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
+    /**
+	 * The current used RedoUndo object
+	 */
+	private RedoUndo redoUndo;
+	
+	ShowPictureActivity show;
 
-    public TouchView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+	public TouchView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		show = (ShowPictureActivity) context;
+	}
 
-    public TouchView(Context context) {
-        super(context);
-    }
+	public TouchView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		show = (ShowPictureActivity) context;
+	}
+
+	public TouchView(Context context) {
+		super(context);
+		show = (ShowPictureActivity) context;
+	}
 
     /**
      * Remove all recorded DrawingMotions from this TouchView
@@ -97,6 +110,7 @@ public class TouchView extends View {
         pointPaint.setColor(MotionInterpreter.POINT_COLOR);
         pathPaint.setColor(MotionInterpreter.PATH_COLOR);
         pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
+        redoUndo = new RedoUndo();
     }
 
     @Override
@@ -123,6 +137,8 @@ public class TouchView extends View {
                 canvas.drawCircle(p.getX(), p.getY(),
                         MotionInterpreter.POINT_RADIUS, pointPaint);
             }
+            undoUseable();
+			redoUseable();
         }
     }
 
@@ -189,6 +205,47 @@ public class TouchView extends View {
     public static enum InterpretationType {
         AREA, POINT, BUILDING, WAY;
     }
+
+    	public void redo() {
+		newPolygon = redoUndo.redo();
+		polygon = newPolygon;
+		redoUseable();
+	}
+
+	public void undo() { 
+		newPolygon = redoUndo.undo();
+		polygon = newPolygon;
+		show.SetRedoEnable(true);
+		undoUseable();
+	}
+	
+	public boolean redoUseable(){
+		if(redoUndo.getCurrent() == redoUndo.getMax()){
+			Log.d(this.getClass().getSimpleName(),
+					"false redo");
+			show.SetRedoEnable(false);
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(),
+					"false redo");
+			show.SetRedoEnable(true);
+			return false;
+		}
+	}
+	
+	public boolean undoUseable(){
+		if(redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0){
+			Log.d(this.getClass().getSimpleName(),
+					"true undo");
+			show.SetUndoEnable(true);
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(),
+					"false undo");
+			show.SetUndoEnable(false);
+			return false;
+		}
+	}
     
     /**
      * Set the actual PointToCoordsTransformUtil with the actual location and camera parameters

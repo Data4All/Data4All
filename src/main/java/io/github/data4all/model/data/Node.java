@@ -82,6 +82,15 @@ public class Node extends OsmElement implements GeoPoint {
 	}
 	
 	/**
+	 * Returns the Node as a GeoPoint representation
+	 * 
+	 * @return the node as a GeoPoint representation
+	 */
+	public org.osmdroid.util.GeoPoint toGeoPoint(){
+		return new org.osmdroid.util.GeoPoint(lat,lon);
+	}
+	
+	/**
 	 * Constructor to create a node from a parcel
 	 * @param in
 	 */
@@ -91,4 +100,12 @@ public class Node extends OsmElement implements GeoPoint {
     	lon = in.readDouble();
     }
 
+    public boolean equals(Node node){
+		return node.getLat()==lat && node.getLon()==lon;
+    	
+    }
+    
+    public String toString(){
+    	return toGeoPoint().toString();
+    }
 }
