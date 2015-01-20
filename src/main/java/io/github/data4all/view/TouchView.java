@@ -173,6 +173,53 @@ public class TouchView extends View {
         Log.d(this.getClass().getSimpleName(), "Point deleted");
         postInvalidate();
 
+     
+    }
+
+
+    
+    /**
+     * gets the position of the point
+     * 
+     * @param point
+     *            the point you want to move
+     *     
+     * @return PointMover
+     *              the position in the polygon
+     */
+    private PointMover movePoint(Point point){
+        for (int i = 0; i < polygon.size()-1; i++) {
+            if(polygon.get(i).equals(point)){
+                Log.d(this.getClass().getSimpleName(),"new PointMover, index:" +i);
+                return new PointMover(i);
+                }
+            }
+        Log.d(this.getClass().getSimpleName(),"");
+       return null;
+   }
+    /**
+     * Pointer of the position of a point in the polygon
+     * 
+     * @author konerman
+     *
+     */
+    public class PointMover {
+        private final int idx;
+
+        public PointMover(int idx) {
+            this.idx = idx;
+        }
+        
+        /**
+         * moves a Point to the new coordinates
+         * 
+         * @param x,y
+         *            the new coordinates
+         */
+        public void moveTo(float x, float y){
+            polygon.set(idx, new Point(x,y));
+        }
+        
     }
 
     public void setInterpretationType(InterpretationType type) {
