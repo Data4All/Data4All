@@ -67,6 +67,7 @@ public class PointToCoordsTransformUtil {
 		this.height = tps.getHeight();				
 		for(Point point : points){	
 			Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
+			Log.d(TAG, "TPS-DATA pic height;width height"+ tps.getPhotoHeight() + tps.getPhotoWidth() + tps.getHeight());
 			// first calculates local coordinates in meter
 			double[] coord = calculateCoordFromPoint(tps, deviceOrientation, point);
 			// transforms local coordinates in global GPS-coordinates
