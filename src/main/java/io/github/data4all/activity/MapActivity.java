@@ -20,7 +20,6 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -28,7 +27,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-public abstract class MapActivity extends Activity {
+public abstract class MapActivity extends BasicActivity {
 	
 	// Logger Tag
 	private static final String TAG = "MapActivity";

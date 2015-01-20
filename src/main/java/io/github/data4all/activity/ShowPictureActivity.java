@@ -13,25 +13,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Activity to set a new Layer-Backgroundimage
@@ -39,11 +30,10 @@ import android.widget.Toast;
  * @author vkochno
  *
  */
-public class ShowPictureActivity extends Activity {
+public class ShowPictureActivity extends BasicActivity {
 
     private TouchView touchView;
     private ImageView imageView;
-<<<<<<< HEAD
     private Intent tagIntent;
     private String type = "TYPE_DEF";
     private String point = "POINT";
@@ -51,7 +41,7 @@ public class ShowPictureActivity extends Activity {
     private String way = "WAY";
     private String area = "AREA";
     private String osmElem = "OSM_ELEMENT";
-    	private Button undo;
+    private Button undo;
 	private Button redo;
 
     // the current TransformationBean and device orientation when the picture

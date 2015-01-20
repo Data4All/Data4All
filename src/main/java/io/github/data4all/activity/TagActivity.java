@@ -2,13 +2,10 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -20,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.View;
@@ -124,12 +120,6 @@ public class TagActivity extends BasicActivity {
 				dialog.show();
 			}
 		});
-	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
 	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -4,13 +4,8 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-import org.osmdroid.ResourceProxy;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -138,15 +133,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-
-
-	@Override
 	public void onResume() {
 		super.onResume();
 		myLocationOverlay.enableMyLocation();
@@ -177,12 +163,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		state.putSerializable("actualCenterLatitude", actualCenterLatitude);
 		state.putSerializable("actualCenterLongitude", actualCenterLongitude);
 
-	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		Log.i(TAG, "CENTER IS " +  mapView.getMapCenter().toString());
 	}
 
 
