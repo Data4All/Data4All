@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -41,11 +39,11 @@ import android.widget.ListView;
  * @author Maurice Boyke
  *
  */
-public class TagActivity extends Activity {
+
+public class TagActivity extends BasicActivity {
 
 	// Logger Tag
 	private static final String TAG = "TagActivity";
-	
 	private static final int REQUEST_CODE = 1234;
 	final Context context = this;
 	private ArrayList<String> keys;
@@ -127,14 +125,12 @@ public class TagActivity extends Activity {
 			}
 		});
 	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
@@ -257,6 +253,7 @@ public class TagActivity extends Activity {
 				map = Tagging.contactToTag(addressTags, map);
 				output();
 				dialog1.dismiss();
+
 			}
 		});
 

@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -24,9 +25,11 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -40,6 +43,7 @@ public class ShowPictureActivity extends Activity {
 
     private TouchView touchView;
     private ImageView imageView;
+<<<<<<< HEAD
     private Intent tagIntent;
     private String type = "TYPE_DEF";
     private String point = "POINT";
@@ -47,12 +51,14 @@ public class ShowPictureActivity extends Activity {
     private String way = "WAY";
     private String area = "AREA";
     private String osmElem = "OSM_ELEMENT";
+    	private Button undo;
+	private Button redo;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
     private TransformationParamBean transformBean;
     private DeviceOrientation currentOrientation;
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +69,8 @@ public class ShowPictureActivity extends Activity {
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
         tagIntent = new Intent(this, TagActivity.class);
+        undo = (Button) findViewById(R.id.undobtn);
+        redo = (Button)findViewById(R.id.redobtn);
 
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
@@ -106,6 +114,7 @@ public class ShowPictureActivity extends Activity {
         touchView.setInterpretationType(TouchView.InterpretationType.AREA);
         touchView.invalidate();
 		tagIntent.putExtra(type, area);
+
     }
 
     public void onClickBuilding(View view) {
@@ -113,6 +122,24 @@ public class ShowPictureActivity extends Activity {
         touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
         touchView.invalidate();
         tagIntent.putExtra(type, building);
+    }
+    
+    public void onClickRedo(View view) {
+        touchView.redo();
+        touchView.invalidate();
+    }
+    
+    public void onClickUndo(View view) {
+        touchView.undo();
+        touchView.invalidate();
+    }
+    
+    public void SetRedoEnable(boolean enabled){
+    	redo.setEnabled(enabled);
+    }
+    
+    public void SetUndoEnable(boolean enabled){
+    	undo.setEnabled(enabled);
     }
 
 	/**

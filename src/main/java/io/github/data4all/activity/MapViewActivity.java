@@ -4,7 +4,6 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
-
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -12,15 +11,10 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.ResourceProxy;
-
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -28,6 +22,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
 	//Logger Tag
 	private static final String TAG = "MapViewActivity";
+
 	/**
 	 * Called when the activity is first created.
 	 * 
@@ -41,7 +36,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map_view);
-
 		setUpMapView();
 		// Set Overlay for the actual Position
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
@@ -84,16 +78,13 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
-        ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
-		uploadData.setOnClickListener(this);
-
-        ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
+		ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
 		satelliteMap.setOnClickListener(this);
 
-        ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
+		ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
 		camera.setOnClickListener(this);
 
-        ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
+		ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
 		newPoint.setOnClickListener(this);
 
 	}
@@ -112,20 +103,23 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 			startActivity(new Intent(this, LoginActivity.class));
 			break;
 		case R.id.switch_maps:
-			//switch to OSM Map
-			if(mapView.getTileProvider().getTileSource().name().equals("MapBoxSatelliteLabelled")){
+			// switch to OSM Map
+			if (mapView.getTileProvider().getTileSource().name()
+					.equals("MapBoxSatelliteLabelled")) {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(OSM_TILESOURCE);
-				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
+				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
-			//switch to Satellite Map
-			}else{
+				// switch to Satellite Map
+			} else {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
-				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
-				mapView.postInvalidate();		
+				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+				button.setImageResource(R.drawable.ic_sat);
+				mapView.postInvalidate();
 			}
 			break;
 		case R.id.to_camera:
@@ -179,7 +173,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 	@Override
 	protected void onSaveInstanceState(Bundle state) {
 		super.onSaveInstanceState(state);
-
 		state.putSerializable("actualZoomLevel", actualZoomLevel);
 		state.putSerializable("actualCenterLatitude", actualCenterLatitude);
 		state.putSerializable("actualCenterLongitude", actualCenterLongitude);
