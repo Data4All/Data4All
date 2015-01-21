@@ -19,10 +19,10 @@ public class SensorReactionActivity extends Activity implements
         OnTouchListener, SensorEventListener {
 
     // variable for storing the time of first click
-    long startTime;
+   private long startTime;
 
     // delay time for sensor
-    long reactionTime;
+    private long reactionTime;
 
     // sensor Manager
     private SensorManager sManager;
