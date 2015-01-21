@@ -106,9 +106,6 @@ public class TagActivity extends Activity implements OnClickListener{
                         else{
                         output();
                         }
-                      
-                        
-
 					}
 				});
 
@@ -139,7 +136,7 @@ public class TagActivity extends Activity implements OnClickListener{
 				tags.add(edit.get(i).getText().toString());
 			}
 			map = Tagging.addressToTag(tags, map);
-			dialog1.hide();
+			dialog1.dismiss();
 			createDialog(Tags.getAllContactTags(), "Add Contacts", true, false);
 			
 			break;
@@ -156,7 +153,8 @@ public class TagActivity extends Activity implements OnClickListener{
 				map = Tagging.contactToTag(tags1, map);
 			}
 			output();
-			dialog1.hide();
+			dialog1.dismiss();
+			startActivity(new Intent(this, ResultViewActivity.class));
 			break;
     	}
     }
