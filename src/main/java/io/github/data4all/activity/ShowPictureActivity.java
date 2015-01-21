@@ -25,6 +25,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -40,10 +41,10 @@ public class ShowPictureActivity extends Activity {
     private ImageView imageView;
     	private Intent tagIntent;
 	private String type = "TYPE_DEF";
-	private String point = "POINT";
-	private String building = "BUILDING";
-	private String way = "WAY";
-	private String area = "AREA";
+	private static int point = 1;
+	private static int building = 3;
+	private static int way = 2;
+	private static int area = 4;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,17 +53,18 @@ public class ShowPictureActivity extends Activity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-tagIntent = new Intent(this,TagActivity.class);
-       
+        tagIntent = new Intent(this,TagActivity.class);
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
         }
+    	
     }
 
 	public void onClickOkay(View view) {
+		disableButtons();
 		startActivity(tagIntent);
 	}
 
@@ -77,7 +79,7 @@ tagIntent = new Intent(this,TagActivity.class);
 		touchView.clearMotions();
 		touchView.setInterpreter(new WayMotionInterpreter());
 		touchView.invalidate();
-		tagIntent.putExtra(type, way);
+			tagIntent.putExtra(type, way);
 	}
 
 	public void onClickArea(View view) {
@@ -121,6 +123,15 @@ tagIntent = new Intent(this,TagActivity.class);
 			Log.e(this.getClass().toString(), "ERROR, file is no image");
 			e.printStackTrace();
 		}
+	}
+	
+	private void disableButtons(){
+		findViewById(R.id.imageButton1).setVisibility(View.GONE);;
+		findViewById(R.id.imageButton2).setVisibility(View.GONE);
+		findViewById(R.id.imageButton3).setVisibility(View.GONE);
+		findViewById(R.id.button1).setVisibility(View.GONE);
+		findViewById(R.id.button2).setVisibility(View.GONE);
+		
 	}
 
 }

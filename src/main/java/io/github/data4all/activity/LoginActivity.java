@@ -11,11 +11,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements OnClickListener{
 
     final String TAG = getClass().getSimpleName();
 
@@ -28,32 +29,41 @@ public class LoginActivity extends Activity {
                         + PreferenceManager.getDefaultSharedPreferences(
                                 getBaseContext()).getAll());
         Button loginButton = (Button) findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                SharedPreferences sharedPrefs = PreferenceManager
-                        .getDefaultSharedPreferences(getBaseContext());
-                // Stay logged in?
-                CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
-                // Already got token?
-                if (!sharedPrefs.contains(OAuth.OAUTH_TOKEN)
-                        && !sharedPrefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
-                    setTemporaryField(!checkBox.isChecked());
-                    startActivity(new Intent().setClass(v.getContext(),
-                            PrepareRequestTokenActivity.class));
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            R.string.alreadyLoggedIn, Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        });
+        loginButton.setOnClickListener(this);
+
         // for debugging
         Button deleteButton = (Button) findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                deleteTokenFromSharedPreferences();
-            }
-        });
+        deleteButton.setOnClickListener(this);
+    }
+    
+    
+    
+    public void onClick(View v){
+    	switch(v.getId()){
+    	case R.id.loginButton:
+    		SharedPreferences sharedPrefs = PreferenceManager
+            .getDefaultSharedPreferences(getBaseContext());
+
+    		// Stay logged in?
+    		CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
+
+    		// Already got token?
+    		if (!sharedPrefs.contains(OAuth.OAUTH_TOKEN)
+    				&& !sharedPrefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
+
+    			setTemporaryField(!checkBox.isChecked());
+    			startActivity(new Intent().setClass(v.getContext(),
+    					PrepareRequestTokenActivity.class));
+    		} else {
+
+    			Toast.makeText(getApplicationContext(),
+    					R.string.alreadyLoggedIn, Toast.LENGTH_SHORT)
+    					.show();
+
+    		}
+    	case R.id.deleteButton:
+    		deleteTokenFromSharedPreferences();
+    	}
     }
 
     @Override
