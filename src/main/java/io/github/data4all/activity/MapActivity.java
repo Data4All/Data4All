@@ -28,10 +28,21 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 /**
- * @author olli
+ * Super Class for all Map Activitys
+ * 
+ * @author Oliver Schwartz
  *
  */
 public abstract class MapActivity extends BasicActivity {
+	
+	//Node Type Definition Number
+	protected static final int NODE_TYPE_DEF = 1;
+	
+	//Type Definition Key
+	protected static final String TYPE = "TYPE_DEF";
+	
+	//OSMElement Key
+	protected static final String OSM = "OSM_ELEMENT";
 
 	// Logger Tag
 	private static final String TAG = "MapActivity";

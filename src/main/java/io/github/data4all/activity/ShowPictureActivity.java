@@ -36,13 +36,13 @@ public class ShowPictureActivity extends BasicActivity {
 
     private TouchView touchView;
     private ImageView imageView;
-    private Intent tagIntent;
-    private String type = "TYPE_DEF";
-    private String point = "POINT";
-    private String building = "BUILDING";
-    private String way = "WAY";
-    private String area = "AREA";
-    private String osmElem = "OSM_ELEMENT";
+    private Intent intent;
+    private static final String TYPE = "TYPE_DEF";
+    private static final int POINT = 1;
+    private static final int BUILDING = 3;
+    private static final int WAY = 2;
+    private static final int AREA = 4;
+    private static final String OSM_ELEMENT = "OSM_ELEMENT";
     private Button undo;
 	private Button redo;
 
@@ -60,7 +60,7 @@ public class ShowPictureActivity extends BasicActivity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-        tagIntent = new Intent(this, TagActivity.class);
+        intent = new Intent(this, MapPreviewActivity.class);
         undo = (Button) findViewById(R.id.undobtn);
         redo = (Button)findViewById(R.id.redobtn);
 
@@ -92,36 +92,36 @@ public class ShowPictureActivity extends BasicActivity {
     public void onClickOkay(View view) {
         //create an osm element from the given data and pass it to the next activity
         OsmElement osmElement = touchView.create();
-        tagIntent.putExtra(osmElem, osmElement);
-        startActivity(tagIntent);
+        intent.putExtra(OSM_ELEMENT, osmElement);
+        startActivity(intent);
     }
 
     public void onClickPoint(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.POINT);
         touchView.invalidate();
-        tagIntent.putExtra(type, point);
+        intent.putExtra(TYPE, POINT);
     }
 
     public void onClickPath(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.WAY);
         touchView.invalidate();
-        tagIntent.putExtra(type, way);
+        intent.putExtra(TYPE, WAY);
     }
 
     public void onClickArea(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.AREA);
         touchView.invalidate();
-		tagIntent.putExtra(type, area);
+		intent.putExtra(TYPE, AREA);
     }
 
     public void onClickBuilding(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
         touchView.invalidate();
-        tagIntent.putExtra(type, building);
+        intent.putExtra(TYPE, BUILDING);
     }
     
     public void onClickRedo(View view) {

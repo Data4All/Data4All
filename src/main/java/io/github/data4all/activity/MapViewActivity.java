@@ -13,11 +13,17 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+/**
+ * Main Activity that shows the default mapview
+ * 
+ * @author Oliver Schwartz
+ *
+ */
 public class MapViewActivity extends MapActivity implements OnClickListener {
 
 	//Logger Tag
 	private static final String TAG = "MapViewActivity";
-
+	
 	/**
 	 * Called when the activity is first created.
 	 * 
@@ -32,18 +38,23 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map_view);
 		setUpMapView();
+		
 		// Set Overlay for the actual Position
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
+		Log.i(TAG, "Added User Location Overlay to the map");
 		mapView.getOverlays().add(myLocationOverlay);
-		// Set Overlay for the actual Position
-		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
-		mapView.getOverlays().add(myLocationOverlay);
+		
+		// Set ImageView for Loading Screen
 		view = (ImageView) findViewById(R.id.imageView1);
+		
+		//for setting the actualZoomLevel and Center Position on Orientation Change
 		if (savedInstanceState != null) {
+			//Zoom Level
 			if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
 				actualZoomLevel = (Integer) savedInstanceState
 						.getSerializable("actualZoomLevel");
 			}
+			//Center Position
 			if (savedInstanceState.getSerializable("actualCenterLongitude") != null
 					&& savedInstanceState
 							.getSerializable("actualCenterLatitude") != null) {
@@ -53,11 +64,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 						.getSerializable("actualCenterLongitude");
 				actualCenter = new GeoPoint(actualCenterLatitude,
 						actualCenterLongitude);
-				Log.i(TAG, "Set Mapcenter to" + actualCenter.toString());
-
 			}
 			view.setVisibility(View.GONE);
 		} else {
+			//fading out the loading screen
 			view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
 					.withEndAction(new Runnable() {
 						public void run() {
@@ -66,7 +76,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 					}).start();
 		}
 		
+		//Set Zoomlevel and Center Position
+		Log.i(TAG, "Set Mapcenter to "
+				+ actualZoomLevel);
 		mapController.setZoom(actualZoomLevel);
+		
+		Log.i(TAG, "Set Mapcenter to " + actualCenter.toString());
 		mapController.setCenter(actualCenter);
 
 		// Set Listener for Buttons
@@ -86,6 +101,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
 	public void onClick(View v) {
 		switch (v.getId()) {
+		//Set center to user Location
 		case R.id.return_to_actual_Position:
 			if (myLocationOverlay.isMyLocationEnabled()) {
 				Log.i(TAG, "Set Mapcenter to"
@@ -94,9 +110,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 				mapView.postInvalidate();
 			}
 			break;
+		//Upload new Data	
 		case R.id.upload_data:
 			startActivity(new Intent(this, LoginActivity.class));
 			break;
+		//switch between Maps
 		case R.id.switch_maps:
 			// switch to OSM Map
 			if (mapView.getTileProvider().getTileSource().name()
@@ -117,17 +135,28 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 				mapView.postInvalidate();
 			}
 			break;
+		// Make Photo	
 		case R.id.to_camera:
 			startActivity(new Intent(this, CameraActivity.class));
 			break;
+		// Add new POI to the Map
 		case R.id.new_point:
 			GeoPoint myPosition = myLocationOverlay.getMyLocation();
-			Intent tagIntent = new Intent(this, TagActivity.class);
+			Intent intent = new Intent(this, MapPreviewActivity.class);
 			Node poi = new Node(-1, 1, myPosition.getLatitude(),
 					myPosition.getLongitude());
-			tagIntent.putExtra("TYPE_DEF", "POINT");
-			tagIntent.putExtra("OSM_ELEMENT", poi);
-			startActivity(tagIntent);
+			
+			//Set Type Definition for Intent to Node
+			Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
+			intent.putExtra(TYPE, NODE_TYPE_DEF);
+			
+			//Set OsmElement for Intent to POI 
+			Log.i(TAG, "Set Intent Extra " + OSM + " to Node with Coordinates " + poi.toString());
+			intent.putExtra(OSM, poi);
+			
+			//Start MapPreview Activity
+			Log.i(TAG, "Start MapPreview Activity");
+			startActivity(intent);
 			break;
 		}
 	}
@@ -135,51 +164,27 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+		//Enable User Position display
+		Log.i(TAG, "Enable User Position Display");
 		myLocationOverlay.enableMyLocation();
-
-		// enable Location Listener to update the Position
-		// Log.i(TAG, "Enable Following Location Overlay");
-		// myLocationOverlay.enableFollowLocation();
-		mapController.setZoom(actualZoomLevel);
-		if (actualCenter != null) {
-			Log.i(TAG, "Set Mapcenter to"
-					+ actualCenter.toString());
-			mapController.setCenter(actualCenter);
-		} 
-
-		// if (myLocationOverlay.getMyLocation() == null) {
-		// Log.e(TAG, "LocationAAAAAAAAAAAAAAAAH!!!!!!");
-		// actualCenter = myLocationOverlay.getMyLocation();
-
-		// }
+		
 		// Start the GPS tracking
+		Log.i(TAG, "Start GPSService");
 		startService(new Intent(this, GPSservice.class));
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle state) {
-		super.onSaveInstanceState(state);
-		state.putSerializable("actualZoomLevel", actualZoomLevel);
-		state.putSerializable("actualCenterLatitude", actualCenterLatitude);
-		state.putSerializable("actualCenterLongitude", actualCenterLongitude);
-
 	}
 
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		
+		//Disable Actual Location Overlay
 		Log.i(TAG, "Disable Actual Location Overlay");
 		myLocationOverlay.disableMyLocation();
 
-		Log.i(TAG, "Disable Following Location Overlay");
-		myLocationOverlay.disableFollowLocation();
-
-		actualCenterLatitude = mapView.getMapCenter().getLatitude();
-		actualCenterLongitude = mapView.getMapCenter().getLongitude();
-		actualZoomLevel = mapView.getZoomLevel();
-
 		// Pause the GPS tracking
+		Log.i(TAG, "Stop GPSService");
 		stopService(new Intent(this, GPSservice.class));
 	}
 }
