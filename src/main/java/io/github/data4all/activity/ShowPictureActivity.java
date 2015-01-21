@@ -47,6 +47,8 @@ public class ShowPictureActivity extends BasicActivity {
     private String osmElem = "OSM_ELEMENT";
     private Button undo;
 	private Button redo;
+	
+	Bitmap bitmap;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -80,9 +82,11 @@ public class ShowPictureActivity extends BasicActivity {
             currentOrientation = getIntent().getExtras().getParcelable(
                     "current_orientation");
         }
+        //Set the display size as photo size to get a coordinate system for the drawn points
+        transformBean.setPhotoWidth(getBaseContext().getResources().getDisplayMetrics().widthPixels);
+        transformBean.setPhotoHeight(getBaseContext().getResources().getDisplayMetrics().heightPixels);
+        Log.i(getClass().getSimpleName(), "" + transformBean.getPhotoHeight() + " " + transformBean.getPhotoWidth());
         
-        transformBean.setPhotoWidth(touchView.getWidth());
-        transformBean.setPhotoHeight(touchView.getHeight());
         
         // set a new PointToCoordsTransformUtil to the touchView which includes
         // the deviceOrientation, current Location, camera angle, photo size and
@@ -92,6 +96,7 @@ public class ShowPictureActivity extends BasicActivity {
     }
 
     public void onClickOkay(View view) {
+        
         //create an osm element from the given data and pass it to the next activity
         OsmElement osmElement = touchView.create();
         tagIntent.putExtra(osmElem, osmElement);
@@ -150,7 +155,7 @@ public class ShowPictureActivity extends BasicActivity {
 	 * @param selectedImage
 	 */
 	private void setBackground(Uri selectedImage) {
-		Bitmap bitmap;
+		
 		try { // try to convert a image to a bitmap
 			bitmap = MediaStore.Images.Media.getBitmap(
 					this.getContentResolver(), selectedImage);

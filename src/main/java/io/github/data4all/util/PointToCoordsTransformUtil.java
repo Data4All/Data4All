@@ -63,9 +63,25 @@ public class PointToCoordsTransformUtil {
 	public List<Node> transform(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, List<Point> points){
 		
+	    if(tps == null ||
+                deviceOrientation == null ||
+                points == null ||
+                tps.getLocation() == null ||
+                tps.getCameraMaxPitchAngle() == 0 ||
+                tps.getCameraMaxRotationAngle()== 0 ||
+                tps.getHeight()== 0 ||
+                tps.getLocation().getLatitude()== 0 ||
+                tps.getLocation().getLongitude()== 0 ||
+                deviceOrientation.getAzimuth()== 0 ||
+                deviceOrientation.getPitch()== 0 ||
+                deviceOrientation.getRoll()== 0 ){
+            Log.d(TAG, "**********WRONG VALUES**********");;
+        }
+	    
 		List<Node> nodes = new ArrayList<Node>();
 		this.height = tps.getHeight();				
-		for(Point point : points){	
+		for(Point iter : points){	
+		    Point point = new Point(tps.getPhotoHeight() - iter.getY(),tps.getPhotoWidth()- iter.getX());
 			Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
 			Log.d(TAG, "TPS-DATA pic height;width height"+ tps.getPhotoHeight() + tps.getPhotoWidth() + tps.getHeight());
 			// first calculates local coordinates in meter

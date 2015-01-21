@@ -112,7 +112,7 @@ public abstract class MapActivity extends BasicActivity {
 				Node node = (Node) element;
 				Log.d(TAG, "Add Node with Coordinates " + node.toGeoPoint().toString());
 				addNodeToMap(node);
-			} else if (element instanceof Node) {
+			} else if (element instanceof Way) {
 				Way way = (Way) element;
 				if (way.isClosed()) {
 					Log.d(TAG, "Add Area with Coordinates " + way.toString());
