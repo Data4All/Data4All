@@ -10,6 +10,7 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -116,6 +117,11 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 			}
 			break;
 		case R.id.okay:
+			  OsmElement element = getIntent().getParcelableExtra("OSM_ELEMENT");
+			  Intent result = new Intent(this, ResultViewActivity.class);
+			  result.putExtra("OSM_ELEMENT", element);
+			  setResult(RESULT_OK, result);
+			  startActivity(result);
 			break;
 		}
 	}

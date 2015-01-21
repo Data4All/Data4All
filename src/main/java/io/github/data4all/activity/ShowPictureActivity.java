@@ -21,7 +21,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -42,7 +42,7 @@ public class ShowPictureActivity extends BasicActivity {
 	private static int way = 2;
 	private static int area = 4;
 
-    private Intent tagIntent;
+
     private String osmElem = "OSM_ELEMENT";
     private Button undo;
 	private Button redo;
@@ -88,7 +88,7 @@ public class ShowPictureActivity extends BasicActivity {
     public void onClickOkay(View view) {
         OsmElement osmElement = touchView.create();
         tagIntent.putExtra(osmElem, osmElement);
-        disableButtons();
+        //disableButtons();
         startActivity(tagIntent);
     }
 

@@ -142,4 +142,5 @@ public class LoginActivity extends BasicActivity {
         ed.commit();
         Log.i(TAG, "SharedPreferences:" + prefs.getAll());
     }
+}
 

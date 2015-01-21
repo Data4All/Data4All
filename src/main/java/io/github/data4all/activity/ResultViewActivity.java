@@ -14,13 +14,16 @@ import org.osmdroid.ResourceProxy;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Way;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-public class ResultViewActivity extends Activity {
+public class ResultViewActivity extends MapActivity {
 	
 
 	private static final String TAG = "ResultViewActivity";
@@ -40,12 +43,16 @@ public class ResultViewActivity extends Activity {
 		private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 		
 		private ListView listView;
+		
+		private OsmElement element;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_result_view);
 		mapView = (MapView) this.findViewById(R.id.mapviewResult);
+		element = getIntent().getParcelableExtra("OSM_ELEMENT");
+		addOsmElementToMap(element);
 		
 		mapView.setTileSource(OSM_TILESOURCE);
 		
@@ -56,6 +63,15 @@ public class ResultViewActivity extends Activity {
 		mapController = (MapController) this.mapView.getController();
 		
 		mapController.setZoom(DEFAULT_ZOOM_LEVEL);
+		
+		if(element instanceof Node){
+			Node node = (Node) element;
+			mapController.setCenter(node.toGeoPoint());
+			mapController.animateTo(node.toGeoPoint());
+		}else{
+			Way way = (Way) element;
+			mapController.setCenter(way.getFirstNode().toGeoPoint());
+		}
 		
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		

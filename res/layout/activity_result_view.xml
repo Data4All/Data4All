@@ -2,15 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-
-    
-       <org.osmdroid.views.MapView
-            android:id="@+id/mapviewResult"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-             >
-        </org.osmdroid.views.MapView>
         
+        <org.osmdroid.views.MapView
+            android:id="@+id/mapviewResult"
+            android:layout_width="150dp"
+            android:layout_height="1500dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" >
+        </org.osmdroid.views.MapView>
        
         <ListView
             android:id="@+id/listViewResult"
@@ -20,6 +19,5 @@
         	 >
         </ListView>
 
-     
     
 </RelativeLayout>

@@ -46,7 +46,7 @@ import android.widget.TextView;
  * @author Maurice Boyke
  *
  */
-public class TagActivity extends Activity implements OnClickListener{
+public class TagActivity extends BasicActivity implements OnClickListener{
 
     private static final int REQUEST_CODE = 1234;
     final Context context = this;
@@ -85,8 +85,8 @@ public class TagActivity extends Activity implements OnClickListener{
         speechStart.setOnClickListener(this);
         
         if(getIntent().hasExtra("TYPE_DEF")){
-        	array = Tagging.getArrayKeys((Integer) getIntent().getExtras().get("TYPE_DEF"));
-        	tagMap = Tagging.getMapKeys((Integer) getIntent().getExtras().get("TYPE_DEF"));
+        	array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
+        	tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
         }
         
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
@@ -107,7 +107,7 @@ public class TagActivity extends Activity implements OnClickListener{
                             createDialog(Tags.getAllAddressTags(), "Add Address", key.equals("building"), true);
                         }
                         else{
-                        output();
+                         finish();
                         }
 					}
 				});
@@ -162,12 +162,6 @@ public class TagActivity extends Activity implements OnClickListener{
     	}
     }
     
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -239,6 +233,7 @@ public class TagActivity extends Activity implements OnClickListener{
 		if(!but){
 		layout.addView(next);
 		}
+	}
 
 	@Override
 	public void finish() {
