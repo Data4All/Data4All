@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -64,12 +65,14 @@ public class ShowPictureActivity extends BasicActivity {
         undo = (Button) findViewById(R.id.undobtn);
         redo = (Button)findViewById(R.id.redobtn);
 
+
         if (getIntent().hasExtra("file_path")) {
             setBackground(Uri.fromFile((File) getIntent().getExtras().get(
                     "file_path")));
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
         }
+
         if (getIntent().hasExtra("transform_bean")) {
             transformBean = getIntent().getExtras().getParcelable(
                     "transform_bean");
@@ -96,12 +99,14 @@ public class ShowPictureActivity extends BasicActivity {
         startActivity(intent);
     }
 
+
     public void onClickPoint(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.POINT);
         touchView.invalidate();
         intent.putExtra(TYPE, POINT);
     }
+
 
     public void onClickPath(View view) {
         touchView.clearMotions();
@@ -162,4 +167,13 @@ public class ShowPictureActivity extends BasicActivity {
 			e.printStackTrace();
 		}
 	}
+	private void disableButtons(){
+		findViewById(R.id.imageButton1).setVisibility(View.GONE);;
+		findViewById(R.id.imageButton2).setVisibility(View.GONE);
+		findViewById(R.id.imageButton3).setVisibility(View.GONE);
+		findViewById(R.id.button1).setVisibility(View.GONE);
+		findViewById(R.id.button2).setVisibility(View.GONE);
+		
+	}
+
 }

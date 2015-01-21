@@ -38,11 +38,19 @@
         <activity android:name=".activity.SensorActivity" />
         <activity android:name=".activity.ShowPictureActivity" />
         <activity android:name=".activity.CameraActivity" />
-        <activity android:name=".activity.TagActivity" />
+        <activity android:name=".activity.ResultViewActivity" />
+        <activity android:name=".ResultViewActivity"
+        ></activity>
+        <activity
+            android:name=".activity.TagActivity"
+            android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
+     
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
+        
+        
         <activity
             android:name=".activity.PrepareRequestTokenActivity"
             android:launchMode="singleTask" >
@@ -65,6 +73,8 @@
         <service
             android:name=".service.OrientationListener"
             android:enabled="true" />
+
+       
     </application>
 
 </manifest>
