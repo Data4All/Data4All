@@ -8,6 +8,11 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+import android.os.Parcel;
 
 /**
  * Testing the main functionality of the relation and relation member objects.
@@ -16,6 +21,8 @@ import org.junit.Test;
  * @author fkirchge
  *
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
 public class RelationTest {
 
     private Relation relation;
@@ -307,5 +314,41 @@ public class RelationTest {
         assertEquals(true, relation.getMemberElements().contains(node1));
         assertEquals(true, relation.getMemberElements().contains(node2));
     }
+    
+    /**
+     * Create a new parcial to save/parcelable the testRelation, 
+     * afterwards a new relation is created from the parcel and we check if it contains all attributes.
+     */
+    @Test 
+    public void test_parcelable_relation() {
+    	Parcel newParcel = Parcel.obtain();
+    	Relation testRelation = new Relation(1, 1);
+    	
+    	testRelation.addOrUpdateTag("testtag", "test");
+    	testRelation.addOrUpdateTag("foo", "bar");
+    	
+        RelationMember member1 = new RelationMember("type", 12345, "role");
+        testRelation.addMember(member1);
+        RelationMember member2 = new RelationMember("othertype", 54321, "otherrole");    	
+        testRelation.addMember(member2);
+        
+    	testRelation.writeToParcel(newParcel, 0);
+    	newParcel.setDataPosition(0);
+    	Relation deParcelRelation = Relation.CREATOR.createFromParcel(newParcel);
+    	
+    	assertEquals("test", deParcelRelation.getTagWithKey("testtag"));
+    	assertEquals("bar", deParcelRelation.getTagWithKey("foo"));
+    	
+    	assertEquals(2, deParcelRelation.getMembers().size());
+    	
+        assertEquals(member1.getType(), deParcelRelation.getMembers().get(0).getType());
+        assertEquals(member1.getRef(), deParcelRelation.getMembers().get(0).getRef());
+        assertEquals(member1.getRole(), deParcelRelation.getMembers().get(0).getRole());
+        
+        assertEquals(member2.getType(), deParcelRelation.getMembers().get(1).getType());
+        assertEquals(member2.getRef(), deParcelRelation.getMembers().get(1).getRef());
+        assertEquals(member2.getRole(), deParcelRelation.getMembers().get(1).getRole());	
+
+    }  
 
 }

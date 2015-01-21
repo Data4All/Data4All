@@ -44,7 +44,7 @@ public class DrawingMotion {
      * List of all added Points
      */
     private List<Point> points = new ArrayList<Point>();
-
+    
     /**
      * Adds a Point to the DrawingMotion
      * 
@@ -151,6 +151,26 @@ public class DrawingMotion {
                     + points.size());
         } else {
             return points.get(index);
+        }
+    }
+
+    /**
+     * Calculates the average point over all points in this motion
+     * 
+     * @return The average point over all points or {@code null} if there is no
+     *         point in this motion
+     */
+    public Point average() {
+        if (getPathSize() == 0) {
+            return null;
+        } else {
+            float x = 0;
+            float y = 0;
+            for (Point p : getPoints()) {
+                x += p.getX();
+                y += p.getY();
+            }
+            return new Point(x / getPathSize(), y / getPathSize());
         }
     }
 

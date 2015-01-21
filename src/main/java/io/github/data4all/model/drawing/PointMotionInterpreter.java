@@ -1,5 +1,9 @@
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.util.PointToCoordsTransformUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Canvas;
@@ -14,17 +18,29 @@ import android.graphics.Paint;
  * If this motion is a path, the last Point of the path is shown
  * 
  * @author tbrose
+ * @version 2
  * @see MotionInterpreter
  */
-public class PointMotionInterpreter implements MotionInterpreter<Void> {
+public class PointMotionInterpreter implements MotionInterpreter {
     /**
      * The paint to draw the points with
      */
+    @Deprecated
     private final Paint pointPaint = new Paint();
+    
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
 
+    @Deprecated
     public PointMotionInterpreter() {
         // Draw dark blue points
         pointPaint.setColor(POINT_COLOR);
+    }
+    
+    public PointMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
 
     /*
@@ -34,13 +50,14 @@ public class PointMotionInterpreter implements MotionInterpreter<Void> {
      * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
      * .Canvas, java.util.List)
      */
+    @Deprecated
     public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
         if (drawingMotions != null && drawingMotions.size() > 0) {
             DrawingMotion lastMotion = drawingMotions
                     .get(drawingMotions.size() - 1);
             Point point;
             if (lastMotion.getPathSize() != 0 && lastMotion.isPoint()) {
-                point = average(lastMotion);
+                point = lastMotion.average();
             } else {
                 point = lastMotion.getEnd();
             }
@@ -51,24 +68,32 @@ public class PointMotionInterpreter implements MotionInterpreter<Void> {
         }
     }
 
-    /**
-     * Calculates the average point over all points in the given motion
+    /*
+     * (non-Javadoc)
      * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
+     * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        if (drawingMotion == null) {
+            return interpreted;
+        } else if (interpreted.size() > 3) {
+            return interpreted;
+        } else if (drawingMotion.getPathSize() == 0) {
+            return new ArrayList<Point>();
+        } else if (drawingMotion.isPoint()) {
+            // for dots use the average of the given points
+            List<Point> result = new ArrayList<Point>();
+            result.add(drawingMotion.average());
+            return result;
         } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
+            // for a path use the last point
+            List<Point> result = new ArrayList<Point>();
+            result.add(drawingMotion.getEnd());
+            return result;
         }
     }
 
@@ -78,8 +103,19 @@ public class PointMotionInterpreter implements MotionInterpreter<Void> {
      * @see
      * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
      */
-    public Void create(List<DrawingMotion> drawingMotions) {
-        return null;
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        return pointTrans.transform(polygon).get(0);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
+     */
+    @Override
+    public boolean isArea() {
+        return false;
     }
 
 }

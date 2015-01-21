@@ -19,18 +19,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Select Matching Tag</string>
-    <string name="return_to_position">My Position</string>
-    <string name="to_camera">Camera</string>
-    <string name="switch_to_satellite">Satellite Map</string>
-    <string name="switch_to_osm">OpenStreet Map</string>
-    <string name="upload_data">Upload</string>
     <string name="poi">POI</string>
     <string name="action_login">Login</string>
-    <string name="title_activity_login">LoginActivity</string>
     <string name="stayLoggedIn">Remember me?</string>
     <string name="loginButton">Login</string>
-    <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
-    <string name="deleteButton">delete Token</string>
     <string name="alreadyLoggedIn">Already logged in</string>
     <string name="title_activity_tag">TagActivity</string>
     <string name="tag">Start Tagging</string>
@@ -45,6 +37,22 @@
     <string name="fax">fax</string>
     <string name="website">website</string>
     <string name="email">email</string>
-    <string name="title_activity_result_view">ResultViewActivity</string>
+    <string name="title_activity_login">Login</string>
+    <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
+    <string name="deleteButton">Logout</string>
+    <string name="getUsernameButton">show Username</string>
+
+    <!-- Strings Content Description ImageButtons on MapViewActivity -->
+    <string name="returnToActualPosition">My Position</string>
+    <string name="returnToCamera">Camera</string>
+    <string name="pointOfInterest">Point of Interest</string>
+    <string name="switchMaps">Switch Maps</string>
+    <string name="upload_data">Upload</string>
+    <string name="startUpScreen">StartUpScreen</string>
+    <string name="noDescription"></string>
+    <string name="drawWay">Drawing a Way </string>
+    <string name="drawPoint">Drawing a Point </string>
+    <string name="drawArea">Drawing a Area </string>
+    <string name="drawBuilding">Drawing a Building </string>
 
 </resources>

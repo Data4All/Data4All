@@ -4,6 +4,8 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.OsmElement;
+
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
@@ -25,6 +27,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -236,15 +239,15 @@ public class TagActivity extends Activity implements OnClickListener{
 		if(!but){
 		layout.addView(next);
 		}
-		layout.addView(finish);
 
-		finish.setOnClickListener(this);
-		
-		next.setOnClickListener(this);
-		
-    		dialog1.show();       
-    }
-
-	
-
+	@Override
+	public void finish() {
+	  OsmElement element = getIntent().getParcelableExtra("OSM_ELEMENT");
+	  element.addTags(map);
+	  Intent result = new Intent(this, MapPreviewActivity.class);
+	  result.putExtra("OSM_ELEMENT", element);
+	  setResult(RESULT_OK, result);
+	  super.finish();
+	  startActivity(result);
+	}
 }
