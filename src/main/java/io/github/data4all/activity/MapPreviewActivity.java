@@ -5,6 +5,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
+import io.github.data4all.util.MapUtil;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -90,6 +91,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.return_to_actual_Position:
+			mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
 			break;
 		case R.id.switch_maps:
 			// switch to OSM Map

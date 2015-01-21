@@ -4,8 +4,10 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -43,7 +45,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		Log.i(TAG, "Added User Location Overlay to the map");
 		mapView.getOverlays().add(myLocationOverlay);
-		
 		// Set ImageView for Loading Screen
 		view = (ImageView) findViewById(R.id.imageView1);
 		
