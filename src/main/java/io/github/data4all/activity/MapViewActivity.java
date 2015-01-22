@@ -124,7 +124,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(OSM_TILESOURCE);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-				button.setImageResource(R.drawable.ic_map);
+				button.setImageResource(R.drawable.ic_sat);
 				mapView.postInvalidate();
 				// switch to Satellite Map
 			} else {
@@ -132,7 +132,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-				button.setImageResource(R.drawable.ic_sat);
+				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
 			}
 			break;

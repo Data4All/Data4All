@@ -109,7 +109,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-				button.setImageResource(R.drawable.ic_mic);
+				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
 			}
 			break;
