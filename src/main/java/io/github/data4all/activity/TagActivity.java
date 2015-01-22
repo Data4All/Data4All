@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -25,7 +24,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -76,7 +74,7 @@ public class TagActivity extends BasicActivity implements OnClickListener{
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tag);    
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(TagActivity.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(TagActivity.this,android.R.style.Theme_Holo_Dialog_MinWidth);
         LayoutInflater inflater = getLayoutInflater();
         View view=inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");;        
@@ -245,6 +243,7 @@ public class TagActivity extends BasicActivity implements OnClickListener{
 	  element.addTags(map);
 	  Intent intent = new Intent(this, ResultViewActivity.class);
 	  intent.putExtra(OSM, element);
+	  intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));		
 	  super.finish();
 	  startActivity(intent);
 	}

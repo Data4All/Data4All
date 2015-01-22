@@ -54,5 +54,10 @@
     <string name="drawPoint">Drawing a Point </string>
     <string name="drawArea">Drawing a Area </string>
     <string name="drawBuilding">Drawing a Building </string>
+    <string name="resultViewAlertDialogMessage">Upload now</string>
+    <string name="ok">Ok</string>
+    <string name="no">No</string>
+    
+    
 
 </resources>

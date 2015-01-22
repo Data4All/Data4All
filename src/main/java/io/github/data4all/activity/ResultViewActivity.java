@@ -22,20 +22,26 @@ import org.osmdroid.ResourceProxy;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
+import io.github.data4all.util.Tagging;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,7 +52,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 	
 
 	   private static final String TAG = "ResultViewActivity";
-	
+	   
 	   final Context context = this;
 	   
 	   private MapView mapView;
@@ -61,20 +67,26 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		private final int DEFAULT_ZOOM_LEVEL = 18;
 		
 		private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
-		
+		// Listview for the Dialog 
 		private ListView listView;
-		
+		// The OSM Element 
 		private OsmElement element;
-		
-		private SortedMap<String, String> map;
-		
+		// The Dialog for the unclassified tags
 		private Dialog dialog;
-
+		// The List that will be shown in the Activity
 		private List<String> endList;
-
+		// The key Value of the Tag which will be changed 
 		private String key;
-
+		// The list of all Keys
 		private ArrayList<String> keyList;
+		
+	    private CharSequence [] array;
+	    
+	    private AlertDialog alert;
+	    
+	    private AlertDialog alert1;
+
+		private Map<String, ClassifiedTag> tagMap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,16 +117,45 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		
 		mapView.getOverlays().add(myLocationOverlay);
 		
-		listView = (ListView) this.findViewById(R.id.listViewResult);
-		map = new TreeMap<String, String>();
-		map = element.getTags();
 		
+		
+		
+		listView = (ListView) this.findViewById(R.id.listViewResult);
+		// The Sorted Keys of the ShowPictureActivity
+		array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
+		tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
 		output();
 		listView.setOnItemClickListener(new OnItemClickListener() {
 		
 
 			public void onItemClick(AdapterView parent, View view, final int position, long id) {
-				dialog = new Dialog(context);
+				Log.i(TAG, Boolean.toString(Tagging.isClassifiedTag(keyList.get(position), array)));
+				Log.i(TAG, keyList.get(position));
+				Log.i(TAG, Integer.toString(endList.size()));
+				Log.i(TAG, Integer.toString(position));
+				//Change Classified Tags
+				if(Tagging.isClassifiedTag(keyList.get(position), array)){
+					Log.i(TAG, "Classified Tag");
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(ResultViewActivity.this,android.R.style.Theme_Holo_Dialog_MinWidth);
+			        alertDialog.setTitle("Select Tag");
+			        final CharSequence [] showArray;
+			        showArray =  tagMap.get(keyList.get(position)).getClassifiedValues().toArray(new String [tagMap.get(keyList.get(position)).getClassifiedValues().size()]);
+	            	alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							element.addOrUpdateTag(keyList.get(position),(String) showArray [which]);
+							output();
+						}
+					});
+	            	
+	            	alert = alertDialog.create();
+	                
+	                alert.show();
+				}
+				// Change Unclasssified Tags
+				else {
+				dialog = new Dialog(context, android.R.style.Theme_Holo_Dialog_MinWidth);
 				dialog.setContentView(R.layout.dialog_dynamic);
 				dialog.setTitle(keyList.get(position));
 				final Button okay = new Button(context);
@@ -128,7 +169,6 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 					public void onClick(View arg0) {
 					
 						element.addOrUpdateTag(keyList.get(position), text.getText().toString());
-						map = element.getTags();
 						output();
 						dialog.dismiss();
 					}
@@ -138,10 +178,17 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 				dialog.show();
 				
 			}
-		});
-		
+			
+		}
+	});
+	
+
 	Button resultButton = (Button) this.findViewById(R.id.buttonResult);	
 	resultButton.setOnClickListener(this);	
+	
+
+	Button resultButtonToCamera = (Button) this.findViewById(R.id.buttonResultToCamera);	
+	resultButtonToCamera.setOnClickListener(this);	
 		
 	}
 
@@ -164,26 +211,48 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private List<String> output(){
+	private void output(){
 		endList = new ArrayList<String>();
 		keyList = new ArrayList<String>();
-        for(Entry entry : map.entrySet()){
+        for(Entry entry : element.getTags().entrySet()){
 			String key = (String) entry.getKey();
 			keyList.add(key);
-			endList.add(key + "=" + map.get(key));
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
-                    android.R.layout.simple_list_item_1, endList);
-            listView.setAdapter(adapter);
+			endList.add(key + "=" + element.getTags().get(key));
+           
         }
-        return keyList;
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_list_item_1, endList);
+        listView.setAdapter(adapter);
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.buttonResult:
-			startActivity(new Intent(this, MapViewActivity.class));
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(ResultViewActivity.this);
+			builder.setMessage(R.string.resultViewAlertDialogMessage);
+			final Intent intent = new Intent(this, MapViewActivity.class);
+			final Intent intent1 = new Intent(this, LoginActivity.class);
+			intent.putExtra("OSM_Element", element);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		               startActivity(intent1);
+		           }
+		       });
+
+			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   startActivity(intent);
+		           }
+		       });
+			alert = builder.create();
+            
+            alert.show();
+
 			break;
+		case R.id.buttonResultToCamera:
+			startActivity(new Intent(this, CameraActivity.class));
 		}
 		
 	}
