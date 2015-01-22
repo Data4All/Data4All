@@ -67,7 +67,7 @@ public class OsmChangeParser {
 			// Ab hier wird geparst
 			
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<osmChange version=\"1\" generator=\"Data4All\"");
+			writer.println("<osmChange version=\"1\" generator=\"Data4All\">");
 			writer.println("<create>");
 			
 			for (Node n: nodes){
