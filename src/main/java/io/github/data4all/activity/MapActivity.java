@@ -12,20 +12,24 @@ import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.ImageView;
 
 /**
@@ -35,14 +39,14 @@ import android.widget.ImageView;
  *
  */
 public abstract class MapActivity extends BasicActivity {
-	
-	//Node Type Definition Number
+
+	// Node Type Definition Number
 	protected static final int NODE_TYPE_DEF = 1;
-	
-	//Type Definition Key
+
+	// Type Definition Key
 	protected static final String TYPE = "TYPE_DEF";
-	
-	//OSMElement Key
+
+	// OSMElement Key
 	protected static final String OSM = "OSM_ELEMENT";
 
 	// Logger Tag
@@ -80,31 +84,23 @@ public abstract class MapActivity extends BasicActivity {
 
 	// Maximal Zoom Level
 	protected final int MAXIMAL_ZOOM_LEVEL = 20;
-	
+
 	// Default Stroke width
 	protected final float DEFAULT_STROKE_WIDTH = 3.0f;
-	
+
 	// Default Stroke Color
 	protected final int DEFAULT_STROKE_COLOR = Color.BLUE;
-	
+
 	// Fill Color for Polygons
 	protected final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
 	// Default OpenStreetMap TileSource
 	protected final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
 
-	// BaseURL For SatelliteMap download.
-	// TODO Create Own Account
-	protected String[] aBaseUrl = {
-			"http://a.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-			"http://b.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-			"http://c.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-			"http://d.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/" };
-
 	// Default Satellite Map Tilesource
-	protected final OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new XYTileSource(
-			"MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial,
-			MINIMAL_ZOOM_LEVEL, MAXIMAL_ZOOM_LEVEL, 256, ".png", aBaseUrl);
+	protected final OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new MapBoxTileSource(
+			"MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
+			19, 256, ".png");
 	protected final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
 	@Override
@@ -120,6 +116,7 @@ public abstract class MapActivity extends BasicActivity {
 		mapView.setTileSource(OSM_TILESOURCE);
 
 		// Add Satellite Map TileSource
+		MapBoxTileSource.retrieveMapBoxMapId(this);
 		TileSourceFactory.addTileSource(MAPBOX_SATELLITE_LABELLED);
 
 		// Set Maptilesource
@@ -148,6 +145,14 @@ public abstract class MapActivity extends BasicActivity {
 			Log.i(TAG, "Set actual Center to " + getMyLocation());
 			actualCenter = getMyLocation();
 		}
+	}
+
+	protected void removeOverlayFromMap(Overlay overlay) {
+		if (mapView.getOverlays().contains(overlay)) {
+			mapView.getOverlays().remove(overlay);
+			mapView.postInvalidate();
+		}
+
 	}
 
 	/**
@@ -187,12 +192,44 @@ public abstract class MapActivity extends BasicActivity {
 	 *            the node which should be added to the map
 	 **/
 	protected void addNodeToMap(Node node) {
-		Marker poi = new Marker(mapView);
+		Marker poi = new Marker(mapView) {
+			@Override
+			public boolean onLongPress(final MotionEvent e,
+					final MapView mapView) {
+				final Overlay overlay = this;
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case DialogInterface.BUTTON_POSITIVE:
+							// Yes button clicked
+							removeOverlayFromMap(overlay);
+							break;
 
-		Log.i(TAG, "Set Node Points to " + node.toString());	
-		poi.setPosition(node.toGeoPoint());
+						case DialogInterface.BUTTON_NEGATIVE:
+							// No button clicked
+							break;
+						}
+					}
+				};
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						mapView.getContext());
+				builder.setMessage(getString(R.string.deleteDialog))
+						.setPositiveButton(getString(R.string.yes),
+								dialogClickListener)
+						.setNegativeButton(getString(R.string.no),
+								dialogClickListener).show();
+
+				return true;
+
+			}
+		};
+		Log.i(TAG, "Set Node Points to " + node.toString());
 		
-		poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+		//disable InfoWindow
+		poi.setInfoWindow(null);
+		poi.setPosition(node.toGeoPoint());
 		mapView.getOverlays().add(poi);
 		mapView.postInvalidate();
 	}
@@ -204,20 +241,52 @@ public abstract class MapActivity extends BasicActivity {
 	 *            the area which should be added to the map
 	 **/
 	protected void addAreaToMap(Way way) {
-		Polygon area = new Polygon(this);
-		
-		Log.i(TAG, "Set Area Points to " + way.toString());		
+		Polygon area = new Polygon(this) {
+			@Override
+			public boolean onLongPress(final MotionEvent e,
+					final MapView mapView) {
+				final Overlay overlay = this;
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case DialogInterface.BUTTON_POSITIVE:
+							// Yes button clicked
+							removeOverlayFromMap(overlay);
+							break;
+
+						case DialogInterface.BUTTON_NEGATIVE:
+							// No button clicked
+							break;
+						}
+					}
+				};
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						mapView.getContext());
+				builder.setMessage(getString(R.string.deleteDialog))
+						.setPositiveButton(getString(R.string.yes),
+								dialogClickListener)
+						.setNegativeButton(getString(R.string.no),
+								dialogClickListener).show();
+
+				return true;
+
+			}
+		};
+
+		Log.i(TAG, "Set Area Points to " + way.toString());
 		area.setPoints(way.getGeoPoints());
-		
+
 		Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
 		area.setFillColor(DEFAULT_FILL_COLOR);
-		
+
 		Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
 		area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-		
+
 		Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
 		area.setStrokeColor(DEFAULT_STROKE_COLOR);
-		
+
 		mapView.getOverlays().add(area);
 		mapView.postInvalidate();
 	}
@@ -228,18 +297,48 @@ public abstract class MapActivity extends BasicActivity {
 	 * @param way
 	 *            the path which should be added to the map
 	 **/
-	protected void addPathToMap(Way way) {		
-		Polyline path = new Polyline(this);
-		
+	protected void addPathToMap(Way way) {
+		Polyline path = new Polyline(this) {
+			@Override
+			public boolean onLongPress(final MotionEvent e,
+					final MapView mapView) {
+				final Overlay overlay = this;
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case DialogInterface.BUTTON_POSITIVE:
+							// Yes button clicked
+							removeOverlayFromMap(overlay);
+							break;
+
+						case DialogInterface.BUTTON_NEGATIVE:
+							// No button clicked
+							break;
+						}
+					}
+				};
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						mapView.getContext());
+				builder.setMessage(getString(R.string.deleteDialog))
+						.setPositiveButton(getString(R.string.yes),
+								dialogClickListener)
+						.setNegativeButton(getString(R.string.no),
+								dialogClickListener).show();
+
+				return true;
+
+			}
+		};
 		Log.i(TAG, "Set Path Points to " + way.toString());
 		path.setPoints(way.getGeoPoints());
-		
-		Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);	
+
+		Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
 		path.setColor(DEFAULT_STROKE_COLOR);
-		
+
 		Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
 		path.setWidth(DEFAULT_STROKE_WIDTH);
-		
 		mapView.getOverlays().add(path);
 		mapView.postInvalidate();
 	}
@@ -249,10 +348,10 @@ public abstract class MapActivity extends BasicActivity {
 		super.onSaveInstanceState(state);
 		Log.i(TAG, "Save actual zoom level: " + actualZoomLevel);
 		state.putSerializable("actualZoomLevel", actualZoomLevel);
-		
+
 		Log.i(TAG, "Save actual Center Latitude: " + actualCenterLatitude);
 		state.putSerializable("actualCenterLatitude", actualCenterLatitude);
-		
+
 		Log.i(TAG, "Save actual Center Longitude: " + actualCenterLongitude);
 		state.putSerializable("actualCenterLongitude", actualCenterLongitude);
 
@@ -261,13 +360,15 @@ public abstract class MapActivity extends BasicActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		
-		Log.i(TAG, "Set actual Center Latitude: " + mapView.getMapCenter().getLatitude());
+
+		Log.i(TAG, "Set actual Center Latitude: "
+				+ mapView.getMapCenter().getLatitude());
 		actualCenterLatitude = mapView.getMapCenter().getLatitude();
-		
-		Log.i(TAG, "Set actual Center Longitude: " + mapView.getMapCenter().getLongitude());
+
+		Log.i(TAG, "Set actual Center Longitude: "
+				+ mapView.getMapCenter().getLongitude());
 		actualCenterLongitude = mapView.getMapCenter().getLongitude();
-		
+
 		Log.i(TAG, "Set actual Zoom Level: " + mapView.getZoomLevel());
 		actualZoomLevel = mapView.getZoomLevel();
 	}
@@ -281,12 +382,12 @@ public abstract class MapActivity extends BasicActivity {
 		LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 		Criteria criteria = new Criteria();
-	    String provider = locationManager.getBestProvider(criteria, false);
+		String provider = locationManager.getBestProvider(criteria, false);
 		Location currentLocation = locationManager
 				.getLastKnownLocation(provider);
-		if(currentLocation != null){
+		if (currentLocation != null) {
 			return new GeoPoint(currentLocation.getLatitude(),
-					currentLocation.getLongitude());			
+					currentLocation.getLongitude());
 		}
 		return null;
 

@@ -6,6 +6,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Main Activity that shows the default mapview
@@ -175,7 +177,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 			Log.i(TAG, "Set Mapcenter to " + actualCenter.toString());
 			mapController.setCenter(actualCenter);			
 		}
-		
 		// Start the GPS tracking
 		Log.i(TAG, "Start GPSService");
 		startService(new Intent(this, GPSservice.class));
