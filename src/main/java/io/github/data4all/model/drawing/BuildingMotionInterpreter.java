@@ -2,6 +2,8 @@ package io.github.data4all.model.drawing;
 
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Relation;
+import io.github.data4all.model.data.RelationMember;
 import io.github.data4all.model.data.Way;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
@@ -35,7 +37,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      */
     @Deprecated
     private final Paint pathPaint = new Paint();
-    
+
     /**
      * An object for the calculation of the point transformation
      */
@@ -50,7 +52,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         pathPaint.setColor(PATH_COLOR);
         pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
     }
-    
+
     public BuildingMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
@@ -163,7 +165,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
-        Way newWay = new Way(-1, 1); 
+        Way newWay = new Way(-1, 1);
 
         List<Node> nodeList = pointTrans.transform(polygon);
         newWay.addNodes(nodeList, false);

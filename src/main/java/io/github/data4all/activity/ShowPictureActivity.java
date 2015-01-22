@@ -1,7 +1,6 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.activity.TagActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.OsmElement;
@@ -22,7 +21,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -35,15 +33,13 @@ public class ShowPictureActivity extends BasicActivity {
 
     private TouchView touchView;
     private ImageView imageView;
-    	private Intent tagIntent;
-	private String type = "TYPE_DEF";
-	private static int point = 1;
-	private static int building = 3;
-	private static int way = 2;
-	private static int area = 4;
-
-
-    private String osmElem = "OSM_ELEMENT";
+    private Intent intent;
+    private static final String TYPE = "TYPE_DEF";
+    private static final int POINT = 1;
+    private static final int BUILDING = 3;
+    private static final int WAY = 2;
+    private static final int AREA = 4;
+    private static final String OSM_ELEMENT = "OSM_ELEMENT";
     private Button undo;
 	private Button redo;
 
@@ -61,8 +57,7 @@ public class ShowPictureActivity extends BasicActivity {
         setContentView(R.layout.activity_picture);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-
-        tagIntent = new Intent(this, TagActivity.class);
+        intent = new Intent(this, MapPreviewActivity.class);
         undo = (Button) findViewById(R.id.undobtn);
         redo = (Button)findViewById(R.id.redobtn);
 
@@ -82,14 +77,22 @@ public class ShowPictureActivity extends BasicActivity {
             currentOrientation = getIntent().getExtras().getParcelable(
                     "current_orientation");
         }
-        touchView.setTransformUtil(new PointToCoordsTransformUtil(transformBean, currentOrientation));
+        
+        transformBean.setPhotoWidth(touchView.getWidth());
+        transformBean.setPhotoHeight(touchView.getHeight());
+        
+        // set a new PointToCoordsTransformUtil to the touchView which includes
+        // the deviceOrientation, current Location, camera angle, photo size and
+        // height
+        touchView.setTransformUtil(new PointToCoordsTransformUtil(
+                transformBean, currentOrientation));
     }
 
     public void onClickOkay(View view) {
+        //create an osm element from the given data and pass it to the next activity
         OsmElement osmElement = touchView.create();
-        tagIntent.putExtra(osmElem, osmElement);
-        //disableButtons();
-        startActivity(tagIntent);
+        intent.putExtra(OSM_ELEMENT, osmElement);
+        startActivity(intent);
     }
 
 
@@ -97,7 +100,7 @@ public class ShowPictureActivity extends BasicActivity {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.POINT);
         touchView.invalidate();
-        tagIntent.putExtra(type, point);
+        intent.putExtra(TYPE, POINT);
     }
 
 
@@ -105,22 +108,21 @@ public class ShowPictureActivity extends BasicActivity {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.WAY);
         touchView.invalidate();
-		tagIntent.putExtra(type, way);
-	}
+        intent.putExtra(TYPE, WAY);
+    }
 
     public void onClickArea(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.AREA);
         touchView.invalidate();
-		tagIntent.putExtra(type, area);
-
+		intent.putExtra(TYPE, AREA);
     }
 
     public void onClickBuilding(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
         touchView.invalidate();
-        tagIntent.putExtra(type, building);
+        intent.putExtra(TYPE, BUILDING);
     }
     
     public void onClickRedo(View view) {

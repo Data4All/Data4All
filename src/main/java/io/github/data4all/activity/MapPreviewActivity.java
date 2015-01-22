@@ -5,25 +5,31 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
+import io.github.data4all.util.MapUtil;
 
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+
+/**
+ * Activity to show an Osm_Element on a Preview Map
+ * 
+ * @author Oliver Schwartz
+ *
+ */
 public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	
 	// Logger Tag
 	private static final String TAG = "MapPreviewActivity";
 	
+	
+	//The OsmElement which should be added
 	private OsmElement element;
 	
 	@Override
@@ -51,18 +57,13 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 				Log.i(TAG, "Set Mapcenter to" + actualCenter.toString());
 
 			}
-			view.setVisibility(View.GONE);
-		} else {
-			view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-					.withEndAction(new Runnable() {
-						public void run() {
-							view.setVisibility(View.GONE);
-						}
-					}).start();
 		}
+		
+		view.setVisibility(View.GONE);
 		
 		mapController.setZoom(actualZoomLevel);
 		mapController.setCenter(actualCenter);
+		
 		ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
 		returnToPosition.setOnClickListener(this);
 
@@ -83,18 +84,14 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 		}else{
 			Way way = (Way) element;
 			mapController.setCenter(way.getFirstNode().toGeoPoint());
+			mapController.animateTo(way.getFirstNode().toGeoPoint());
 		}
 	}
 	
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.return_to_actual_Position:
-			if (myLocationOverlay.isMyLocationEnabled()) {
-				Log.i(TAG, "Set Mapcenter to"
-						+ myLocationOverlay.getMyLocation().toString());
-				mapController.setCenter(myLocationOverlay.getMyLocation());
-				mapView.postInvalidate();
-			}
+			mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
 			break;
 		case R.id.switch_maps:
 			// switch to OSM Map
@@ -112,31 +109,24 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 						+ mapView.getTileProvider().getTileSource().name());
 				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-				button.setImageResource(R.drawable.ic_mic);
+				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
 			}
 			break;
-		case R.id.okay:
-			  OsmElement element = getIntent().getParcelableExtra("OSM_ELEMENT");
-			  Intent result = new Intent(this, ResultViewActivity.class);
-			  result.putExtra("OSM_ELEMENT", element);
-			  setResult(RESULT_OK, result);
-			  startActivity(result);
+		case R.id.okay:			
+			Intent intent = new Intent(this, TagActivity.class);
+			
+			//Set Type Definition for Intent
+			Log.i(TAG, "Set intent extra " + TYPE + " to " + getIntent().getExtras().getInt(TYPE));
+			intent.putExtra(TYPE, getIntent().getExtras().getInt(TYPE));
+			
+			//Set OsmElement for Intent to POI 
+			Log.i(TAG, "Set Intent Extra " + OSM + " " + element.getClass().getSimpleName() + " with Coordinates " + element.toString());
+			intent.putExtra(OSM, element);
+			
+			startActivity(intent);
 			break;
 		}
 	}
-	
-	protected IGeoPoint getMyLocation() {
-		LocationManager locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-		Location currentLocation = locationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		return new GeoPoint(currentLocation.getLatitude(),
-				currentLocation.getLongitude());
-	}
-
-	
-
-
 
 }

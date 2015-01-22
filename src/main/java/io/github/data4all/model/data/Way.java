@@ -2,6 +2,7 @@ package io.github.data4all.model.data;
 
 import io.github.data4all.logger.Log;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -185,6 +186,19 @@ public class Way extends OsmElement {
 		return points;
 	}
 
+	/**
+	 * Returns all points which belong to the way.
+	 * 
+	 * @return list of points
+	 */
+	public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
+		ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
+		for (Node n : nodes){
+			points.add(n.toGeoPoint());
+		}
+		return points;
+	}
+	
 	/**
 	 * Returns true if the node is part of the way.
 	 * 
