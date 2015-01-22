@@ -7,46 +7,6 @@ package io.github.data4all.model.drawing;
  * @author tbrose
  */
 public class Point {
-    private final float x;
-    private final float y;
-
-    public Point(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    @Override
-    public int hashCode() {
-        return Float.valueOf(x).hashCode() + Float.valueOf(y).hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return (o == this)
-                || ((o instanceof Point) && x == ((Point) o).getX() && y == ((Point) o)
-                        .getY());
-    }
-
-    public boolean equalsTo(float x, float y) {
-        return this.x == x && this.y == y;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Point[x=" + x + ",y=" + y + "]";
-    }
-
     /**
      * Calculates the angle in Point b for the two lines (a,b) and (b,c)<br/>
      * If any point is {@code null} a IllegalArgumentException is thrown
@@ -74,5 +34,47 @@ public class Point {
         } else {
             throw new IllegalArgumentException("parameters cannot be null");
         }
+    }
+    private final float x;
+
+    private final float y;
+
+    public Point(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o == this)
+                || ((o instanceof Point) && x == ((Point) o).getX() && y == ((Point) o)
+                        .getY());
+    }
+
+    public boolean equalsTo(float x, float y) {
+        return this.x == x && this.y == y;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Float.valueOf(x).hashCode() + Float.valueOf(y).hashCode();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Point[x=" + x + ",y=" + y + "]";
     }
 }
