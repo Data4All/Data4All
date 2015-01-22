@@ -155,9 +155,8 @@ public class TagActivity extends BasicActivity implements OnClickListener{
 			else{
 				map = Tagging.contactToTag(tags1, map);
 			}
-			output();
 			dialog1.dismiss();
-			startActivity(new Intent(this, ResultViewActivity.class));
+			finish();
 			break;
     	}
     }
@@ -229,11 +228,16 @@ public class TagActivity extends BasicActivity implements OnClickListener{
     		edit.add(text);
     		layout.addView(text);
 		}
-
+		finish.setOnClickListener(this);
+		next.setOnClickListener(this);
 		if(!but){
 		layout.addView(next);
 		}
+		layout.addView(finish);
+		dialog1.show();
 	}
+	
+	
 
 	@Override
 	public void finish() {

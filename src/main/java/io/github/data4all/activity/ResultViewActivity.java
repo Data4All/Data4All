@@ -2,6 +2,14 @@ package io.github.data4all.activity;
 
 
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.osmdroid.ResourceProxy.string;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -18,20 +26,32 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
-public class ResultViewActivity extends MapActivity {
+public class ResultViewActivity extends BasicActivity implements OnClickListener {
 	
 
-	private static final String TAG = "ResultViewActivity";
+	   private static final String TAG = "ResultViewActivity";
 	
+	   final Context context = this;
+	   
+	   private MapView mapView;
 	
-	private MapView mapView;
-	
-	//Default OpenStreetMap TileSource
+	   //Default OpenStreetMap TileSource
 		private final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
 
 		private MapController mapController;
@@ -45,6 +65,16 @@ public class ResultViewActivity extends MapActivity {
 		private ListView listView;
 		
 		private OsmElement element;
+		
+		private SortedMap<String, String> map;
+		
+		private Dialog dialog;
+
+		private List<String> endList;
+
+		private String key;
+
+		private ArrayList<String> keyList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +82,11 @@ public class ResultViewActivity extends MapActivity {
 		setContentView(R.layout.activity_result_view);
 		mapView = (MapView) this.findViewById(R.id.mapviewResult);
 		element = getIntent().getParcelableExtra("OSM_ELEMENT");
-		addOsmElementToMap(element);
 		
 		mapView.setTileSource(OSM_TILESOURCE);
 		
 		mapView.setTileSource(DEFAULT_TILESOURCE);
 		
-		mapView.setMultiTouchControls(true);
 		
 		mapController = (MapController) this.mapView.getController();
 		
@@ -78,6 +106,42 @@ public class ResultViewActivity extends MapActivity {
 		mapView.getOverlays().add(myLocationOverlay);
 		
 		listView = (ListView) this.findViewById(R.id.listViewResult);
+		map = new TreeMap<String, String>();
+		map = element.getTags();
+		
+		output();
+		listView.setOnItemClickListener(new OnItemClickListener() {
+		
+
+			public void onItemClick(AdapterView parent, View view, final int position, long id) {
+				dialog = new Dialog(context);
+				dialog.setContentView(R.layout.dialog_dynamic);
+				dialog.setTitle(keyList.get(position));
+				final Button okay = new Button(context);
+				final EditText text = new EditText(context);
+				LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+				layout.addView(text);
+				layout.addView(okay);
+				okay.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View arg0) {
+					
+						element.addOrUpdateTag(keyList.get(position), text.getText().toString());
+						map = element.getTags();
+						output();
+						dialog.dismiss();
+					}
+					
+				});
+				
+				dialog.show();
+				
+			}
+		});
+		
+	Button resultButton = (Button) this.findViewById(R.id.buttonResult);	
+	resultButton.setOnClickListener(this);	
 		
 	}
 
@@ -99,4 +163,29 @@ public class ResultViewActivity extends MapActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	private List<String> output(){
+		endList = new ArrayList<String>();
+		keyList = new ArrayList<String>();
+        for(Entry entry : map.entrySet()){
+			String key = (String) entry.getKey();
+			keyList.add(key);
+			endList.add(key + "=" + map.get(key));
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                    android.R.layout.simple_list_item_1, endList);
+            listView.setAdapter(adapter);
+        }
+        return keyList;
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.buttonResult:
+			startActivity(new Intent(this, MapViewActivity.class));
+			break;
+		}
+		
+	}
+	
 }
