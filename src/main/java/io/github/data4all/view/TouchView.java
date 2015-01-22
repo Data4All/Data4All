@@ -189,15 +189,14 @@ public class TouchView extends View {
      * @author konerman
      */
     public PointMover movePoint(Point point) {
-        for (int i = 0; i < polygon.size() - 1; i++) {
-            if (polygon.get(i).equals(point)) {
-                Log.d(this.getClass().getSimpleName(), "new PointMover, index:"
-                        + i);
-                return new PointMover(i);
-            }
+        int i = polygon.indexOf(point);
+        if (i == -1) {
+            Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
+            return null;
+        } else {
+            Log.d(this.getClass().getSimpleName(), "PointMover for index " + i);
+            return new PointMover(i);
         }
-        Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
-        return null;
     }
 
     /**
