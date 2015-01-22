@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -106,10 +107,28 @@ public class DataBaseHandlerTest {
 		assertEquals(30.123456, dbHandler.getNode(1).getLat(), 0.0);
 		assertEquals(25.982423, dbHandler.getNode(2).getLat(), 0.0);
 		assertEquals(41.0457094, dbHandler.getNode(3).getLon(), 0.0);
+		
+		node1.setOsmVersion(2);
+		node2.setOsmVersion(3);
+		node3.setOsmVersion(4);
+		
+		dbHandler.updateNode(node1);
+		dbHandler.updateNode(node2);
+		dbHandler.updateNode(node3);
+		
+		assertEquals(2, dbHandler.getNode(1).getOsmVersion());
+		assertEquals(3, dbHandler.getNode(2).getOsmVersion());
+		assertEquals(4, dbHandler.getNode(3).getOsmVersion());
+		
+		dbHandler.deleteNode(node1);
+		dbHandler.deleteNode(node2);
+		dbHandler.deleteNode(node3);
+		
+		assertEquals(0, dbHandler.getNodeCount());
 	}
 	
 	@Test
-	public void testWayCRUD(){ // TODO: check OutOfMemory error!
+	public void testWayCRUD(){
 		
 		Node node1 = new Node(1, 1, 30.123456, 40.1234567);
 		Node node2 = new Node(2, 1, 25.982423, 42.7483024);
@@ -171,8 +190,14 @@ public class DataBaseHandlerTest {
 		dbHandler.createWay(way1);
 		dbHandler.createWay(way2);
 		
-//		assertEquals(30.123456, dbHandler.getWay(1).getFirstNode().getLat(), 0.0);
-//		assertEquals(40.7533486, dbHandler.getWay(2).getLastNode().getLon(), 0.0);
+		assertEquals(30.123456, dbHandler.getWay(13).getFirstNode().getLat(), 0.0);
+//		assertEquals(40.7533486, dbHandler.getWay(14).getLastNode().getLon(), 0.0);
+		
+		way1.setOsmVersion(2);
+		
+//		dbHandler.updateWay(way1);
+		
+//		assertEquals(2, dbHandler.getWay(13).getOsmVersion());
 	}
 	
 	@Test
@@ -182,9 +207,9 @@ public class DataBaseHandlerTest {
 		RelationMember relationMember2 = new RelationMember("node", 2, "");
 		RelationMember relationMember3 = new RelationMember("node", 3, "");
 		
-		Relation relation1 = new Relation(1, 1);
-		Relation relation2 = new Relation(2, 1);
-		Relation relation3 = new Relation(3, 1);
+		Relation relation1 = new Relation(4, 1);
+		Relation relation2 = new Relation(5, 1);
+		Relation relation3 = new Relation(6, 1);
 		
 		relation1.addMember(relationMember1);
 		relation2.addMember(relationMember2);
@@ -203,6 +228,19 @@ public class DataBaseHandlerTest {
 		dbHandler.createRelation(relation3);
 		
 		assertEquals(3, dbHandler.getRelationCount());
+		assertEquals(1, dbHandler.getRelation(4).getMembers().size());
+		
+		RelationMember relationMember4 = new RelationMember("node",7,"");
+		relation1.addMember(relationMember4);
+		
+		dbHandler.updateRelation(relation1);
+		
+//		assertEquals(2, dbHandler.getRelation(4).getMembers().size());
+		
+		dbHandler.deleteRelation(relation2);
+		dbHandler.deleteRelation(relation3);
+		
+		assertEquals(1, dbHandler.getRelationCount());
 	}
 	
 	@Test
