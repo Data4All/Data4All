@@ -167,36 +167,39 @@ public class TouchView extends View {
      * @param point
      *            The selected point
      */
-    private void deletePoint(Point point) {
+    public void deletePoint(Point point) {
         polygon.remove(point);
         newPolygon = interpreter.interprete(polygon, currentMotion);
         Log.d(this.getClass().getSimpleName(), "Point deleted");
         postInvalidate();
 
-     
     }
 
-
-    
     /**
-     * gets the position of the point
+     * gets the position of the point<br/>
+     * 
+     * use moveTo() afterwards to actually move the point
      * 
      * @param point
      *            the point you want to move
-     *     
-     * @return PointMover
-     *              the position in the polygon
+     * 
+     * @return PointMover 
+     *            the position in the polygon
+     * 
+     * @author konerman
      */
-    private PointMover movePoint(Point point){
-        for (int i = 0; i < polygon.size()-1; i++) {
-            if(polygon.get(i).equals(point)){
-                Log.d(this.getClass().getSimpleName(),"new PointMover, index:" +i);
+    public PointMover movePoint(Point point) {
+        for (int i = 0; i < polygon.size() - 1; i++) {
+            if (polygon.get(i).equals(point)) {
+                Log.d(this.getClass().getSimpleName(), "new PointMover, index:"
+                        + i);
                 return new PointMover(i);
-                }
             }
-        Log.d(this.getClass().getSimpleName(),"");
-       return null;
-   }
+        }
+        Log.d(this.getClass().getSimpleName(), "");
+        return null;
+    }
+
     /**
      * Pointer of the position of a point in the polygon
      * 
@@ -204,22 +207,24 @@ public class TouchView extends View {
      *
      */
     public class PointMover {
-        private final int idx;
+        public final int idx;
 
         public PointMover(int idx) {
             this.idx = idx;
         }
-        
+
         /**
          * moves a Point to the new coordinates
          * 
-         * @param x,y
+         * @param x/y
          *            the new coordinates
+         *            
+         * @author konerman           
          */
-        public void moveTo(float x, float y){
-            polygon.set(idx, new Point(x,y));
+        public void moveTo(float x, float y) {
+            polygon.set(idx, new Point(x, y));
         }
-        
+
     }
 
     public void setInterpretationType(InterpretationType type) {
