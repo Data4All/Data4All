@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+import android.os.Parcel;
 
 /**
  * Testing the main functionality of the node objects. Testing inherited methods
@@ -16,6 +21,8 @@ import org.junit.Test;
  * @author fkirchge
  *
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
 public class NodeTest {
 
     /**
@@ -227,6 +234,46 @@ public class NodeTest {
         testNode.removeParentRelation(3);
         assertEquals(0, testNode.getParentRelations().size());
         assertEquals(false, testNode.getParentRelations().contains(relation));
+    }
+    
+    /**
+     * Create a new parcial to save/parcelable the testNode, afterwards 
+     * a new node is created from the parcel and we check if it contains all attributes.
+     */
+	@Test 
+    public void test_parcelable_node() {
+    	Parcel newParcel = Parcel.obtain();
+    	Node testNode = new Node(1, 2, 30.123456, 40.1234567);
+    	
+    	testNode.addOrUpdateTag("testtag", "test");
+    	testNode.addOrUpdateTag("foo", "bar");
+    	
+        Relation relation1 = new Relation(3, 1);
+        testNode.addParentRelation(relation1);
+        
+        Relation relation2 = new Relation(4, 2);
+        testNode.addParentRelation(relation2);
+        
+    	testNode.writeToParcel(newParcel, 0);
+    	newParcel.setDataPosition(0);
+    	Node deParcelNode = Node.CREATOR.createFromParcel(newParcel);
+    	
+    	assertEquals(testNode.getOsmId(), deParcelNode.getOsmId()); 
+    	assertEquals(testNode.getOsmVersion(), deParcelNode.getOsmVersion());
+    	
+    	assertEquals(testNode.getLon(), deParcelNode.getLon(), 0);
+    	assertEquals(testNode.getLat(), deParcelNode.getLat(), 0);
+    	
+    	assertEquals("test", deParcelNode.getTagWithKey("testtag"));
+    	assertEquals("bar", deParcelNode.getTagWithKey("foo"));
+    	
+    	assertEquals(2, deParcelNode.getParentRelations().size());
+    	
+    	assertEquals(relation1.getOsmId(), deParcelNode.getParentRelations().get(0).getOsmId());
+    	assertEquals(relation1.getOsmVersion(), deParcelNode.getParentRelations().get(0).getOsmVersion());
+    	
+    	assertEquals(relation2.getOsmId(), deParcelNode.getParentRelations().get(1).getOsmId());
+    	assertEquals(relation2.getOsmVersion(), deParcelNode.getParentRelations().get(1).getOsmVersion());
     }
 
 }

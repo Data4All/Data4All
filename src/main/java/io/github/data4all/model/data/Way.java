@@ -2,8 +2,12 @@ package io.github.data4all.model.data;
 
 import io.github.data4all.logger.Log;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * A way is an ordered list of nodes which normally also has at least one tag or
@@ -19,7 +23,7 @@ public class Way extends OsmElement {
 	/**
 	 * List of nodes to define a way (waypoints).
 	 */
-	private final List<Node> nodes;
+	private List<Node> nodes = null;
 
 	/**
 	 * Max. number of nodes.
@@ -170,6 +174,32 @@ public class Way extends OsmElement {
 	}
 
 	/**
+	 * Returns all points which belong to the way.
+	 * 
+	 * @return list of points
+	 */
+	public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
+		List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
+		for (Node n : nodes){
+			points.add(n.toGeoPoint());
+		}
+		return points;
+	}
+
+	/**
+	 * Returns all points which belong to the way.
+	 * 
+	 * @return list of points
+	 */
+	public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
+		ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
+		for (Node n : nodes){
+			points.add(n.toGeoPoint());
+		}
+		return points;
+	}
+	
+	/**
 	 * Returns true if the node is part of the way.
 	 * 
 	 * @param node
@@ -287,5 +317,51 @@ public class Way extends OsmElement {
 	public int length() {
 		return nodes.size();
 	}
+	
+    /**
+     * Methods to write and restore a Parcel.
+     */
+    public static final Parcelable.Creator<Way> CREATOR
+            = new Parcelable.Creator<Way>() {
+    	
+        public Way createFromParcel(Parcel in) {
+            return new Way(in);
+        }
+
+        public Way[] newArray(int size) {
+            return new Way[size];
+        }
+    };
+    
+    
+    public int describeContents() {
+		return 0;
+	}
+
+    /**
+     * Writes the nodes to the given parcel.
+     */
+	public void writeToParcel(Parcel dest, int flags) {		
+		super.writeToParcel(dest, flags);
+		dest.writeTypedList(nodes);
+	}
+	
+	/**
+	 * Constructor to create a way from a parcel.
+	 * @param in
+	 */
+    private Way(Parcel in) {
+    	super(in);
+        nodes = new LinkedList<Node>();
+        in.readTypedList(nodes, Node.CREATOR);
+    }	
+    
+    public String toString(){
+    	String s = "";
+    	for(Node n : nodes){
+    		s += n.toString() + " ";
+    	}
+    	return s;
+    }
 
 }
