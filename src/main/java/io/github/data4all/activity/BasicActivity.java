@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * this class serves as a global class for all activities. It includes methods

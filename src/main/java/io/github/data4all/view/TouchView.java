@@ -79,7 +79,7 @@ public class TouchView extends View {
 	 */
 	private RedoUndo redoUndo;
 	
-	ShowPictureActivity show;
+	private ShowPictureActivity show;
 
 	public TouchView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -329,5 +329,11 @@ public class TouchView extends View {
      */
     public OsmElement create() {
         return interpreter.create(polygon);
+    }
+    
+    public boolean onLongClick(MotionEvent event){
+    	deletePoint(new Point(event.getX(),event.getY()));
+		return true;
+    	
     }
 }

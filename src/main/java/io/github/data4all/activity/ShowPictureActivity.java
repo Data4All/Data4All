@@ -4,6 +4,7 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
+import io.github.data4all.model.drawing.Point;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.model.DeviceOrientation;
@@ -18,11 +19,10 @@ import java.io.IOException;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-<<<<<<< HEAD
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -149,6 +149,11 @@ public class ShowPictureActivity extends BasicActivity {
     public void SetUndoEnable(boolean enabled){
     	undo.setEnabled(enabled);
     }
+    
+    public boolean onLongClick(View v,MotionEvent event){
+    	touchView.deletePoint(new Point(event.getX(),event.getY()));
+		return true;
+    }
 
     /**
      * Get a Uri of a Image and set this to local layout as background
@@ -156,21 +161,20 @@ public class ShowPictureActivity extends BasicActivity {
      * @param selectedImage
      */
     private void setBackground(Uri selectedImage) {
-        Bitmap bitmap;
-        try { // try to convert a image to a bitmap
-            bitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(), selectedImage);
-            BitmapDrawable bd = new BitmapDrawable(res, bitmap);
-            View view = findViewById(R.id.main_layout);
-            view.setBackground(bd);
-        } catch (FileNotFoundException e) {
-            Log.e(this.getClass().toString(), "ERROR, no file found");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.e(this.getClass().toString(), "ERROR, file is no image");
-            e.printStackTrace();
-        }
-    }
+		Bitmap bitmap;
+		try { // try to convert a image to a bitmap
+			bitmap = MediaStore.Images.Media.getBitmap(
+					this.getContentResolver(), selectedImage);
+
+			imageView.setImageBitmap(bitmap);
+		} catch (FileNotFoundException e) {
+			Log.e(this.getClass().toString(), "ERROR, no file found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.e(this.getClass().toString(), "ERROR, file is no image");
+			e.printStackTrace();
+		}
+	}
     
     private void disableButtons(){
 		findViewById(R.id.imageButton1).setVisibility(View.GONE);;
