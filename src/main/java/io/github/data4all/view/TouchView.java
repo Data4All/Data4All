@@ -222,6 +222,7 @@ public class TouchView extends View {
          */
         public void moveTo(float x, float y) {
             polygon.set(idx, new Point(x, y));
+            postInvalidate();
         }
 
     }
