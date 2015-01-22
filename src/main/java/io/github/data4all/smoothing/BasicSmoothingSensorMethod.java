@@ -1,27 +1,34 @@
 package io.github.data4all.smoothing;
 
 /**
- * this class applies a low pass filter to filter sensor data
+ * Smoothing sensor data with a low pass filter
  * 
  * @author Steeve
  *
  */
 public class BasicSmoothingSensorMethod implements SensorSmoother {
-    static final float ALPHA = 0.25f; // if ALPHA = 1 OR 0, no filter applies.
-
+	/*
+	 * time smoothing constant for low-pass filter
+	 * for more smoothing is it important that APHA been between 0 and 1 ;
+	 * @See: http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
+	 */
+	static final float ALPHA = 0.25f; // if ALPHA = 1 OR 0, no filter applies.
+   
+    
+    
     /*
      * (non-Javadoc)
      * 
      * @see io.github.data4all.smoothing.Smoother#lowPass(float[], float[])
      */
     @Override
-    public float[] filter(float[] input, float[] output) {
-        if (output == null)
-            return input;
+    public float[] filter(float[] oldValues, float[] filteredValues) {
+        if (filteredValues == null)
+            return oldValues;
 
-        for (int i = 0; i < input.length; i++) {
-            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+        for (int i = 0; i < oldValues.length; i++) {
+            filteredValues[i] = filteredValues[i] + ALPHA * (oldValues[i] - filteredValues[i]);
         }
-        return output;
+        return filteredValues;
     }
 }
