@@ -20,14 +20,14 @@ import android.widget.Button;
 
 public class MapViewActivity extends Activity implements OnClickListener {
 
-    private static final String TAG = "MapViewActivity";
-    private MapView mapView;
-    private MapController mapController;
+    private static final String  TAG                = "MapViewActivity";
+    private MapView              mapView;
+    private MapController        mapController;
     private MyLocationNewOverlay myLocationOverlay;
-    private final int DEFAULT_ZOOM_LEVEL = 18;
-    private final int MINIMAL_ZOOM_LEVEL = 10;
-    private final int MAXIMAL_ZOOM_LEVEL = 20;
-    private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+    private final int            DEFAULT_ZOOM_LEVEL = 18;
+    private final int            MINIMAL_ZOOM_LEVEL = 10;
+    private final int            MAXIMAL_ZOOM_LEVEL = 20;
+    private final ITileSource    DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
     /**
      * Called when the activity is first created.
@@ -88,6 +88,9 @@ public class MapViewActivity extends Activity implements OnClickListener {
 
         Button newPoint = (Button) findViewById(R.id.new_point);
         newPoint.setOnClickListener(this);
+
+        Button testUpload = (Button) findViewById(R.id.button1);
+        testUpload.setOnClickListener(this);
 
     }
 
