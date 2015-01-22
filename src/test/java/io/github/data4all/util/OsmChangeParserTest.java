@@ -27,8 +27,6 @@ public class OsmChangeParserTest {
 
 	@Test
 	public void parseTest(){
-		String filepath = Robolectric.buildActivity(MapViewActivity.class).get().getApplicationContext().getFilesDir().getAbsolutePath() 
-				+ "/OsmChange/upload.osc";
 		ArrayList<OsmElement> elems = new ArrayList<OsmElement>();
 		Node node1 = new Node(1,1,23,23);
 		Node node2 = new Node(2,1,24,24);
@@ -40,7 +38,7 @@ public class OsmChangeParserTest {
 		elems.add(node1);
 		elems.add(node3);
 		elems.add(way1);
-		OsmChangeParser.parse(filepath,elems,13);
+		OsmChangeParser.parse(Robolectric.buildActivity(MapViewActivity.class).get().getApplicationContext(),elems,13);
 	}
 	
 	
