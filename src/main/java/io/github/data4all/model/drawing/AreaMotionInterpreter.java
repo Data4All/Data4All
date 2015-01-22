@@ -189,7 +189,7 @@ public class AreaMotionInterpreter implements MotionInterpreter {
             }
             return combine(newPolygon);
         } else {
-            return polygon;
+            return combine(polygon);
         }
     }
 
@@ -230,15 +230,19 @@ public class AreaMotionInterpreter implements MotionInterpreter {
                 }
             }
 
-            // If the last point is not in range of the first point add him to
-            // the combined polygon
-            if (newPolygon.size() > 0) {
-                mid = newPolygon.get(0);
-                Point lastPoint = polygon.get(polygon.size() - 1);
-
-                if (Math.hypot(mid.getX() - lastPoint.getX(), mid.getY()
-                        - lastPoint.getY()) > COMBINE_VARIATION) {
-                    newPolygon.add(lastPoint);
+            // Add the last point to the combined polygon
+            if (mid != null) {
+                if (newPolygon.size() > 0) {
+                    // If the last point is not in range of the first point add
+                    // him to the combined polygon
+                    Point firstPoint = newPolygon.get(0);
+                    if (Math.hypot(mid.getX() - firstPoint.getX(), mid.getY()
+                            - firstPoint.getY()) > COMBINE_VARIATION) {
+                        newPolygon.add(mid);
+                    }
+                } else {
+                    // If this is the only point - add him also
+                    newPolygon.add(mid);
                 }
             }
 

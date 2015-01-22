@@ -136,7 +136,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
             }
             return combine(newPolygon);
         } else {
-            return polygon;
+            return combine(polygon);
         }
     }
 
@@ -178,8 +178,8 @@ public class WayMotionInterpreter implements MotionInterpreter {
             }
 
             // Add the last point to the combined polygon
-            if (newPolygon.size() > 0) {
-                newPolygon.add(polygon.get(polygon.size() - 1));
+            if (mid != null) {
+                newPolygon.add(mid);
             }
 
             return newPolygon;
