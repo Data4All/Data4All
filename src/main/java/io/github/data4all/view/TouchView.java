@@ -176,15 +176,14 @@ public class TouchView extends View {
     }
 
     /**
-     * gets the position of the point<br/>
+     * Returns a {@link PointMover} for the given {@link Point}<br/>
      * 
-     * use moveTo() afterwards to actually move the point
+     * Use moveTo() afterwards to actually move the point
      * 
      * @param point
      *            the point you want to move
      * 
-     * @return PointMover 
-     *            the position in the polygon
+     * @return A {@link PointMover} for moving this point
      * 
      * @author konerman
      */
@@ -203,7 +202,6 @@ public class TouchView extends View {
      * Pointer of the position of a point in the polygon
      * 
      * @author konerman
-     *
      */
     public class PointMover {
         public final int idx;
@@ -213,18 +211,20 @@ public class TouchView extends View {
         }
 
         /**
-         * moves a Point to the new coordinates
+         * moves the {@link Point} to the new coordinates and invalidates its
+         * {@link TouchView} afterwards
          * 
-         * @param x/y
-         *            the new coordinates
-         *            
-         * @author konerman           
+         * @param x
+         *            the new x-coordinate
+         * @param y
+         *            the new y-coordinate
+         * 
+         * @author konerman
          */
         public void moveTo(float x, float y) {
             polygon.set(idx, new Point(x, y));
             postInvalidate();
         }
-
     }
 
     public void setInterpretationType(InterpretationType type) {
