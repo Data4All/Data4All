@@ -196,7 +196,7 @@ public class TouchView extends View {
                 return new PointMover(i);
             }
         }
-        Log.d(this.getClass().getSimpleName(), "");
+        Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
         return null;
     }
 
