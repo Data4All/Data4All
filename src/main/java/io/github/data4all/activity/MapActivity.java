@@ -22,6 +22,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -279,10 +280,16 @@ public abstract class MapActivity extends BasicActivity {
 	protected IGeoPoint getMyLocation() {
 		LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
+		Criteria criteria = new Criteria();
+	    String provider = locationManager.getBestProvider(criteria, false);
 		Location currentLocation = locationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		return new GeoPoint(currentLocation.getLatitude(),
-				currentLocation.getLongitude());
+				.getLastKnownLocation(provider);
+		if(currentLocation != null){
+			return new GeoPoint(currentLocation.getLatitude(),
+					currentLocation.getLongitude());			
+		}
+		return null;
+
 	}
 
 }
