@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- This is the Data4All Theme -->
+    <!-- A theme is a style applied to an entire Activity or application,
+    	 rather than an individual View. When a style is applied as a theme, 
+    	 every View in the Activity or application will apply each style 
+    	 property that it supports. -->
+    	
+    <style name="D4ATheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+    </style>
+
+</resources>

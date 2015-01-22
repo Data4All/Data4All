@@ -38,7 +38,8 @@ public interface MotionInterpreter {
     void draw(Canvas canvas, List<DrawingMotion> drawingMotions);
 
     /**
-     * Interprets the given motion and apply it to the polygon
+     * Interprets the given motion and apply it to the polygon<br/>
+     * Please note that the returned list needs to be mutable!
      * 
      * @param interpreted
      *            the List of the previous interpreted points

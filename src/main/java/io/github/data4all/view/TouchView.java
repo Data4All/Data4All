@@ -1,14 +1,19 @@
 package io.github.data4all.view;
 
+
 import io.github.data4all.R;
+import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
 import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.Point;
+import io.github.data4all.model.drawing.RedoUndo;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +37,7 @@ import android.view.View;
  * @see MotionInterpreter
  */
 public class TouchView extends View {
+
 
     /**
      * The paint to draw the points with
@@ -57,23 +63,38 @@ public class TouchView extends View {
      * The current motion the user is typing via the screen
      */
     private DrawingMotion currentMotion;
+    
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
 
     /**
      * The currently used interpreter
      */
     private MotionInterpreter interpreter;
 
-    public TouchView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
+    /**
+	 * The current used RedoUndo object
+	 */
+	private RedoUndo redoUndo;
+	
+	ShowPictureActivity show;
 
-    public TouchView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+	public TouchView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		show = (ShowPictureActivity) context;
+	}
 
-    public TouchView(Context context) {
-        super(context);
-    }
+	public TouchView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		show = (ShowPictureActivity) context;
+	}
+
+	public TouchView(Context context) {
+		super(context);
+		show = (ShowPictureActivity) context;
+	}
 
     /**
      * Remove all recorded DrawingMotions from this TouchView
@@ -87,10 +108,11 @@ public class TouchView extends View {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        interpreter = new WayMotionInterpreter();
+        setInterpretationType(InterpretationType.WAY);
         pointPaint.setColor(MotionInterpreter.POINT_COLOR);
         pathPaint.setColor(MotionInterpreter.PATH_COLOR);
         pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
+        redoUndo = new RedoUndo();
     }
 
     @Override
@@ -117,6 +139,8 @@ public class TouchView extends View {
                 canvas.drawCircle(p.getX(), p.getY(),
                         MotionInterpreter.POINT_RADIUS, pointPaint);
             }
+            undoUseable();
+			redoUseable();
         }
     }
 
@@ -126,10 +150,10 @@ public class TouchView extends View {
         switch (action) {
         case MotionEvent.ACTION_DOWN:
             currentMotion = new DrawingMotion();
-            handleMotion(event, "start");
+            handleMotion(event, "end");
             break;
         case MotionEvent.ACTION_UP:
-            handleMotion(event, "end");
+            handleMotion(event, "start");
             polygon = newPolygon;
             break;
         case MotionEvent.ACTION_MOVE:
@@ -230,16 +254,16 @@ public class TouchView extends View {
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:
-            interpreter = new AreaMotionInterpreter();
+            interpreter = new AreaMotionInterpreter(pointTrans);
             break;
         case POINT:
-            interpreter = new PointMotionInterpreter();
+            interpreter = new PointMotionInterpreter(pointTrans);
             break;
         case BUILDING:
-            interpreter = new BuildingMotionInterpreter();
+            interpreter = new BuildingMotionInterpreter(pointTrans);
             break;
         case WAY:
-            interpreter = new WayMotionInterpreter();
+            interpreter = new WayMotionInterpreter(pointTrans);
             break;
         default:
             throw new IllegalArgumentException("'type' cannot be null");
@@ -248,5 +272,62 @@ public class TouchView extends View {
 
     public static enum InterpretationType {
         AREA, POINT, BUILDING, WAY;
+    }
+
+    	public void redo() {
+		newPolygon = redoUndo.redo();
+		polygon = newPolygon;
+		redoUseable();
+	}
+
+	public void undo() { 
+		newPolygon = redoUndo.undo();
+		polygon = newPolygon;
+		show.SetRedoEnable(true);
+		undoUseable();
+	}
+	
+	public boolean redoUseable(){
+		if(redoUndo.getCurrent() == redoUndo.getMax()){
+			Log.d(this.getClass().getSimpleName(),
+					"false redo");
+			show.SetRedoEnable(false);
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(),
+					"false redo");
+			show.SetRedoEnable(true);
+			return false;
+		}
+	}
+	
+	public boolean undoUseable(){
+		if(redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0){
+			Log.d(this.getClass().getSimpleName(),
+					"true undo");
+			show.SetUndoEnable(true);
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(),
+					"false undo");
+			show.SetUndoEnable(false);
+			return false;
+		}
+	}
+    
+    /**
+     * Set the actual PointToCoordsTransformUtil with the actual location and camera parameters
+     * @param pointTrans the actual object
+     */
+    public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
+    }
+    
+    /**
+     * Create an OsmElement from the given polygon
+     * @return the created OsmElement (with located nodes)
+     */
+    public OsmElement create() {
+        return interpreter.create(polygon);
     }
 }
