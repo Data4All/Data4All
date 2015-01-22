@@ -1,6 +1,7 @@
 package io.github.data4all.util;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
@@ -29,15 +30,15 @@ public class OsmChangeParser {
 
 	/** Parses a List of OsmElements into the OSM Change Format
 	 * 
-	 * @param filename the filename (in Activity getApplicationContext().getFilesDir().getAbsolutePath() +"/OsmChange/upload.osc")
+	 * @param Context of the Application
 	 * @param elems the List of Element which should be uploaded
 	 * @param changesetID the changesetID requiered for the upload
 	 */
 	
 	
-	public static void parse(String filename, List<OsmElement> elems, long changesetID){
+	public static void parse(Context context, List<OsmElement> elems, long changesetID){
 		try {
-			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(filename))));
+			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(context.getFilesDir().getAbsolutePath() + "/OsmChangeUpload.osc"))));
 			ArrayList<Node> nodes = new ArrayList<Node>();
 			ArrayList<Way> ways = new ArrayList<Way>();
 			ArrayList<Relation> relations = new ArrayList<Relation>();
@@ -86,7 +87,7 @@ public class OsmChangeParser {
 			writer.println("</osmChange>");
 			
 			writer.flush();
-			Log.i("OsmChangeParser", "Data is flushed to :" + filename);
+			Log.i("OsmChangeParser", "Data is flushed to :" + context.getFilesDir().getAbsolutePath() + "/OsmChangeUpload.osc");
 			writer.close();
 			Log.i("OsmChangeParser", "Writer is closed");			
 			
