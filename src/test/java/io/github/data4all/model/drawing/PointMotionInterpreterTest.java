@@ -40,7 +40,6 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
     private Canvas canvas;
 
     @Before
-    @Deprecated
     public void setUp() {
         interpreter = new PointMotionInterpreter();
         canvas = mock(Canvas.class);
