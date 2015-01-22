@@ -1,7 +1,10 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Way;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,11 @@ public class WayMotionInterpreter implements MotionInterpreter {
     @Deprecated
     private final Paint pathPaint = new Paint();
 
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
+
     @Deprecated
     public WayMotionInterpreter() {
         // Draw dark blue points
@@ -54,6 +62,10 @@ public class WayMotionInterpreter implements MotionInterpreter {
         // Draw semi-thick light blue lines
         pathPaint.setColor(PATH_COLOR);
         pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
+    }
+
+    public WayMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
 
     /*
@@ -226,8 +238,12 @@ public class WayMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
-        // TODO Auto-generated method stub
-        return null;
+        // create a new Way and copy the List of Nodes to this way
+        Way newWay = new Way(-1, 1);
+
+        List<Node> nodeList = pointTrans.transform(polygon);
+        newWay.addNodes(nodeList, false);
+        return newWay;
     }
 
     /*
