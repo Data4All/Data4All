@@ -38,6 +38,14 @@ public class Point {
     public boolean equalsTo(float x, float y) {
         return this.x == x && this.y == y;
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Point[x=" + x + ",y=" + y + "]";
+    }
 
     /**
      * Calculates the angle in Point b for the two lines (a,b) and (b,c)<br/>
