@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,7 @@ public class WayMotionInterpreterTest extends MotionInterpreterTest {
 
     @Before
     public void setUp() {
-        interpreter = new WayMotionInterpreter();
+        PointToCoordsTransformUtil pointTrans = null;
+        interpreter = new WayMotionInterpreter(pointTrans);
     }
 }

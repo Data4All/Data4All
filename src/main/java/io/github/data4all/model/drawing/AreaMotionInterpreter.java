@@ -20,6 +20,14 @@ import java.util.List;
  * @see MotionInterpreter
  */
 public class AreaMotionInterpreter implements MotionInterpreter {
+    
+    PointToCoordsTransformUtil pointTrans;
+    
+    public AreaMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
+    }
+    
+    
     /**
      * Combines the edge-points of the given polygon so that points which are
      * relatively close to each other are combined into one single point
@@ -79,7 +87,8 @@ public class AreaMotionInterpreter implements MotionInterpreter {
         }
     }
 
-    /*
+    /**
+     * @author sbollen
      * (non-Javadoc)
      * 
      * @see
@@ -90,6 +99,7 @@ public class AreaMotionInterpreter implements MotionInterpreter {
         Way newWay = new Way(-1, 1);
 
         List<Node> nodeList = pointTrans.transform(polygon);
+        
         newWay.addNodes(nodeList, false);
         return newWay;
     }

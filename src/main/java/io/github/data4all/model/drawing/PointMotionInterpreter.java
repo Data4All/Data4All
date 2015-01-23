@@ -20,6 +20,12 @@ import java.util.List;
  */
 public class PointMotionInterpreter implements MotionInterpreter {
 
+    PointToCoordsTransformUtil pointTrans;
+    
+    public PointMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -49,7 +55,8 @@ public class PointMotionInterpreter implements MotionInterpreter {
         }
     }
 
-    /*
+    /**
+     * @author sbollen
      * (non-Javadoc)
      * 
      * @see

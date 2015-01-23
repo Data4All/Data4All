@@ -23,6 +23,12 @@ import java.util.List;
  */
 public class BuildingMotionInterpreter implements MotionInterpreter {
 
+    PointToCoordsTransformUtil pointTrans;
+
+    public BuildingMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
+    }
+
     /**
      * Calculates the fourth point in dependence of the first three points of
      * the given list
@@ -79,11 +85,10 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * @author sbollen (non-Javadoc)
      * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
      */
     @Override
     public OsmElement create(List<Point> polygon) {
@@ -96,7 +101,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override

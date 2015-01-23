@@ -63,9 +63,26 @@ public class PointToCoordsTransformUtil {
 	public List<Node> transform(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, List<Point> points){
 		
+	    if(tps == null ||
+                deviceOrientation == null ||
+                points == null ||
+                tps.getLocation() == null ||
+                tps.getCameraMaxPitchAngle() == 0 ||
+                tps.getCameraMaxRotationAngle()== 0 ||
+                tps.getHeight()== 0 ||
+                tps.getLocation().getLatitude()== 0 ||
+                tps.getLocation().getLongitude()== 0 ||
+                deviceOrientation.getAzimuth()== 0 ||
+                deviceOrientation.getPitch()== 0 ||
+                deviceOrientation.getRoll()== 0 ){
+            Log.d(TAG, "**********WRONG VALUES**********");;
+        }
+	    
 		List<Node> nodes = new ArrayList<Node>();
 		this.height = tps.getHeight();				
-		for(Point point : points){	
+
+		for(Point iter : points){
+		    Point point = new Point((tps.getPhotoHeight() - iter.getY() +1),(tps.getPhotoWidth()- iter.getX()+1));
 			Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
 			Log.d(TAG, "TPS-DATA pic height;width height"+ tps.getPhotoHeight() + tps.getPhotoWidth() + tps.getHeight());
 			// first calculates local coordinates in meter
@@ -319,10 +336,10 @@ public class PointToCoordsTransformUtil {
 		double lon = Math.toRadians(location.getLongitude());
 		
 		// calculate the Length of the current Latitude with the earth Radius
-		double latLength = radius * Math.cos(lat);
-		latLength = latLength * 2 * Math.PI;
+		double lonLength = radius * Math.cos(lat);
+		lonLength = lonLength * 2 * Math.PI;
 		// add to the current Latitude the distance of the coord
-		double lat2 =lat + Math.toRadians((coord[0] * 360) / latLength);
+		double lon2 =lon + Math.toRadians((coord[0] * 360) / lonLength);
 		/*
 		if (lat2 < (-Math.PI/2)){
 			lat2 += Math.PI;
@@ -332,9 +349,9 @@ public class PointToCoordsTransformUtil {
 		}*/
 		
 		// calculate the Length of the current Longitude with the earth Radius
-		double lonLength = radius * 2 * Math.PI;
+		double latLength = radius * 2 * Math.PI;
 		// add to the current Longitude the distance of the coord
-		double lon2 = lon + Math.toRadians((coord[1] * 360) / lonLength);
+		double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
 		/*
 		if (lon2 > (Math.PI/4)){
 			lon2 = (Math.PI/2) - lon2;
