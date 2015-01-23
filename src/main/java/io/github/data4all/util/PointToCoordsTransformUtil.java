@@ -80,15 +80,16 @@ public class PointToCoordsTransformUtil {
 	    
 		List<Node> nodes = new ArrayList<Node>();
 		this.height = tps.getHeight();				
-		for(Point iter : points){	
-		    Point point = new Point(tps.getPhotoHeight() - iter.getY(),tps.getPhotoWidth()- iter.getX());
+
+		for(Point iter : points){
+		    Point point = new Point((tps.getPhotoHeight() - iter.getY() +1),(tps.getPhotoWidth()- iter.getX()+1));
 			Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
 			Log.d(TAG, "TPS-DATA pic height;width height"+ tps.getPhotoHeight() + tps.getPhotoWidth() + tps.getHeight());
 			// first calculates local coordinates in meter
 			double[] coord = calculateCoordFromPoint(tps, deviceOrientation, point);
 			// transforms local coordinates in global GPS-coordinates
-			Node node = calculateGPSPoint(tps.getLocation(), coord);
-			nodes.add(node);		
+		//	Node node = calculateGPSPoint(tps.getLocation(), coord);
+			//nodes.add(node);		
 		}	
 		return nodes;
 	}	
@@ -136,21 +137,106 @@ public class PointToCoordsTransformUtil {
 	public double[] calculateCoordFromPoint(TransformationParamBean tps, 
 			DeviceOrientation deviceOrientation, Point point){
 		this.height = tps.getHeight();
-		double[] orientation = new double[3];
-		orientation[0] = -deviceOrientation.getAzimuth();
-		orientation[1] = calculateAngleFromPixel(point.getX(), tps.getPhotoWidth(),
+		double azimuth = -deviceOrientation.getAzimuth();
+		double pitch = calculateAngleFromPixel(point.getX(), tps.getPhotoWidth(),
 				tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
-		orientation[2] = calculateAngleFromPixel(point.getY(), tps.getPhotoHeight(),
+		double roll = calculateAngleFromPixel(point.getY(), tps.getPhotoHeight(),
 				tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
 		
-		if(orientation[1] <= (float) (-Math.PI/2) || orientation[1] >= (float) (Math.PI/2)
-				|| orientation[2] <= (float) (-Math.PI/2) || orientation[2] >= (float) (Math.PI/2)){
+		if(pitch <= (float) (-Math.PI/2) || pitch >= (float) (Math.PI/2)
+				|| roll <= (float) (-Math.PI/2) || roll >= (float) (Math.PI/2)){
 			double[] fail = {0.0,0.0,-1};
 			return fail;
 		}
-		double[] vector = calculateVectorfromOrientation(orientation);
-		return calculate2dPoint(vector);
+
+		//calculate local coords without azimuth
+		double tempZ = Math.cos(pitch);
+		double y = Math.sin(-pitch); 
+		//double tempX = 0;
+		double x =   Math.sin(roll);
+		double z = tempZ * Math.cos(roll);
+		
+		
+		double tempXX = x * (height / z);
+		double tempYY = y * (height / z);
+		double[] coord = new double[3];
+		// Rotate Vector with Azimuth (Z is fix))
+		coord[0] =  ((tempXX * Math.cos(azimuth)) 
+				- (tempYY * Math.sin(azimuth)));
+		coord[1] =  ((tempXX * Math.sin(azimuth)) 
+				+ (tempYY * Math.cos(azimuth)));
+		coord[2] = 0;	
+		return coord;
 	}
+	
+	
+	/*
+	 * Calculates a Vector with the given Orientation. 
+	 * The Coordinate-System: y = North , x = West , z = Earth-Center
+	 * @param orientation
+	 * @return 
+	 *
+	public double[] calculateCoordfromOrientation(double[] orientation){
+		/
+		//calculate fix Z with Pitch
+		double z = Math.cos(orientation[1]); 
+		
+		//calculate temp.Y with Pitch
+		double y = Math.sin(-orientation[1]); 
+		double x;
+		// if the pitch is Zero, it wouldn't be possible to calculate the X-Variable
+		if (orientation[1] != 0.0){
+			//calculate a temporary X with fix Z and Roll
+			x = (Math.tan(orientation[2]) * z);
+		}
+		else{
+			//calculate new Z and X, Y is 0
+			x = Math.sin(orientation[2]);
+			z = Math.cos(orientation[2]);
+		}
+		
+		// Rotate Vector with Azimuth (Z is fix))
+		double[] vector = new double[3];
+		vector[0] =  ((x * Math.cos(orientation[0])) 
+				- (y * Math.sin(orientation[0])));
+		vector[1] =  ((x * Math.sin(orientation[0])) 
+				+ (y * Math.cos(orientation[0])));
+		vector[2] = z;	
+		
+		return vector;
+		//calculate local coords without azimuth
+		double z = Math.cos(orientation[1]);
+		double y = Math.sin(-orientation[1]); 
+		double tempY = y * (height / z);
+		double x = Math.sin(orientation[2]);
+		z = Math.cos(orientation[2]);
+		double tempX = x * (height / z);
+		double[] coord = new double[3];
+		// Rotate Vector with Azimuth (Z is fix))
+		coord[0] =  ((tempX * Math.cos(orientation[0])) 
+				- (tempY * Math.sin(orientation[0])));
+		coord[1] =  ((tempX * Math.sin(orientation[0])) 
+				+ (tempY * Math.cos(orientation[0])));
+		coord[2] = 0;	
+		return coord;
+		
+	}
+	*/
+	/*
+	 * @param orientation
+	 * @return coords in m in a System with (0,0) = Phoneposition; 
+	 * 			x = West/East Axis and y = Norh/South Axis
+	 *
+	public double[] calculate2dPoint(double[] vector){
+		double[] coord = new double[3];
+		double z = height / vector[2];
+		coord[0] = vector[0] * z;
+		coord[1] = vector[1] * z;		
+		coord[2] = 0;	
+		Log.d(TAG,"Calculated X = " + coord[0] + " and Y = " + coord[1]);
+		return coord;		
+	}*/
+	
 	
 	
 	
@@ -197,22 +283,7 @@ public class PointToCoordsTransformUtil {
 
 	
 	
-	/**
-	 * @param orientation
-	 * @return coords in m in a System with (0,0) = Phoneposition; 
-	 * 			x = West/East Axis and y = Norh/South Axis
-	 */
-	public double[] calculate2dPoint(double[] vector){
-		double[] coord = new double[3];
-		double z = height / vector[2];
-		coord[0] = vector[0] * z;
-		coord[1] = vector[1] * z;		
-		coord[2] = 0;	
-		Log.d(TAG,"Calculated X = " + coord[0] + " and Y = " + coord[1]);
-		return coord;		
-	}
-	
-	
+
 	/**
 	 * calculates 
 	 * @param tps
@@ -250,41 +321,7 @@ public class PointToCoordsTransformUtil {
 	
 	
 	
-	/**
-	 * Calculates a Vector with the given Orientation. 
-	 * The Coordinate-System: y = North , x = West , z = Earth-Center
-	 * @param orientation
-	 * @return 
-	 */
-	public double[] calculateVectorfromOrientation(double[] orientation){
-		
-		//calculate fix Z with Pitch
-		double z = Math.cos(orientation[1]); 
-		
-		//calculate temp.Y with Pitch
-		double y = Math.sin(-orientation[1]); 
-		double x;
-		// if the pitch is Zero, it wouldn't be possible to calculate the X-Variable
-		if (orientation[1] != 0.0){
-			//calculate a temporary X with fix Z and Roll
-			x = (Math.tan(orientation[2]) * z);
-		}
-		else{
-			//calculate new Z and X, Y is 0
-			x = Math.sin(orientation[2]);
-			z = Math.cos(orientation[2]);
-		}
-		
-		// Rotate Vector with Azimuth (Z is fix))
-		double[] vector = new double[3];
-		vector[0] =  ((x * Math.cos(orientation[0])) 
-				- (y * Math.sin(orientation[0])));
-		vector[1] =  ((x * Math.sin(orientation[0])) 
-				+ (y * Math.cos(orientation[0])));
-		vector[2] = z;	
-		
-		return vector;
-	}
+
 	
 	
 	/**
@@ -293,16 +330,16 @@ public class PointToCoordsTransformUtil {
 	 * @param point
 	 * @return A Node with a GPS Point
 	 */
-	public Node calculateGPSPoint(Location location, double[] coord){
+	public Node calculateGPSPoint(double lati, double loni, double[] coord){
 		double radius = 6371004.0;
-		double lat = Math.toRadians(location.getLatitude());
-		double lon = Math.toRadians(location.getLongitude());
+		double lat = Math.toRadians(lati);
+		double lon = Math.toRadians(loni);
 		
 		// calculate the Length of the current Latitude with the earth Radius
-		double latLength = radius * Math.cos(lat);
-		latLength = latLength * 2 * Math.PI;
+		double lonLength = radius * Math.cos(lat);
+		lonLength = lonLength * 2 * Math.PI;
 		// add to the current Latitude the distance of the coord
-		double lat2 =lat + Math.toRadians((coord[0] * 360) / latLength);
+		double lon2 =lon + Math.toRadians((coord[0] * 360) / lonLength);
 		/*
 		if (lat2 < (-Math.PI/2)){
 			lat2 += Math.PI;
@@ -312,9 +349,9 @@ public class PointToCoordsTransformUtil {
 		}*/
 		
 		// calculate the Length of the current Longitude with the earth Radius
-		double lonLength = radius * 2 * Math.PI;
+		double latLength = radius * 2 * Math.PI;
 		// add to the current Longitude the distance of the coord
-		double lon2 = lon + Math.toRadians((coord[1] * 360) / lonLength);
+		double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
 		/*
 		if (lon2 > (Math.PI/4)){
 			lon2 = (Math.PI/2) - lon2;

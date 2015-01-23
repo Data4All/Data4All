@@ -27,8 +27,10 @@ import android.location.Location;
 @Config(emulateSdk = 18)
 public class PointToCoordsTransformUtilTest {
 	PointToCoordsTransformUtil util = new PointToCoordsTransformUtil();
-	Location location = new Location("Test");
 	
+	
+	
+	/*
 	@Test
 	public void transformTest(){
 		location.setLatitude(0.0);
@@ -106,5 +108,27 @@ public class PointToCoordsTransformUtilTest {
 			a += (float) (Math.PI/11);			
 		}
 	}
-
+	*/
+	@Test
+	public void Test(){
+		Location location = new Location("Test");
+		location.setLatitude(53.105868);
+		location.setLongitude(8.854916);
+		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(50) ,
+		Math.toRadians(50) , 1000, 1000, location);
+		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, (float) -Math.toRadians(64) , 0.0f, 10L);
+		ArrayList<Point> point = new ArrayList<Point>();
+		point.add(new Point(1,1));
+		point.add(new Point(1,1000));
+		point.add(new Point(1000,1000));
+		point.add(new Point(1000,1));
+		point.add(new Point(500,500));
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		ArrayList<double[]> coord = new ArrayList<double[]>();
+		for(Point p : point){
+			double[] c =util.calculateCoordFromPoint(tps, deviceOrientation, p);
+			coord.add(c);
+			nodes.add(util.calculateGPSPoint(53.105868, 8.854916, c));
+		}
+	}		
 }
