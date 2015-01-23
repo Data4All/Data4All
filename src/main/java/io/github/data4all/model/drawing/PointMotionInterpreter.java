@@ -1,6 +1,7 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +27,20 @@ public class PointMotionInterpreter implements MotionInterpreter {
      */
     @Deprecated
     private final Paint pointPaint = new Paint();
+    
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
 
     @Deprecated
     public PointMotionInterpreter() {
         // Draw dark blue points
         pointPaint.setColor(POINT_COLOR);
+    }
+    
+    public PointMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
 
     /*
@@ -95,8 +105,8 @@ public class PointMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
-        // TODO Auto-generated method stub
-        return null;
+        //The list contains only one Node which then will be returned
+        return pointTrans.transform(polygon).get(0);
     }
 
     /*

@@ -85,10 +85,60 @@ public class Node extends OsmElement implements GeoPoint {
         this.lon = lon;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-        dest.writeDouble(lat);
-        dest.writeDouble(lon);
+    /**
+     * Methods to write and restore a Parcel
+     */
+    public static final Parcelable.Creator<Node> CREATOR
+            = new Parcelable.Creator<Node>() {
+    	
+        public Node createFromParcel(Parcel in) {
+            return new Node(in);
+        }
+
+        public Node[] newArray(int size) {
+            return new Node[size];
+        }
+    };
+    
+    
+    public int describeContents() {
+		return 0;
+	}
+
+    /**
+     * Writes the lat and the lon to the given parcel
+     */
+	public void writeToParcel(Parcel dest, int flags) {		
+		super.writeToParcel(dest, flags);
+		dest.writeDouble(lat);
+		dest.writeDouble(lon);
+	}
+	
+	/**
+	 * Returns the Node as a GeoPoint representation
+	 * 
+	 * @return the node as a GeoPoint representation
+	 */
+	public org.osmdroid.util.GeoPoint toGeoPoint(){
+		return new org.osmdroid.util.GeoPoint(lat,lon);
+	}
+	
+	/**
+	 * Constructor to create a node from a parcel
+	 * @param in
+	 */
+    private Node(Parcel in) {
+    	super(in);
+    	lat = in.readDouble();
+    	lon = in.readDouble();
+    }
+
+    public boolean equals(Node node){
+		return node.getLat()==lat && node.getLon()==lon;
+    	
+    }
+    
+    public String toString(){
+    	return toGeoPoint().toString();
     }
 }

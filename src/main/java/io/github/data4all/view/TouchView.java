@@ -2,6 +2,7 @@ package io.github.data4all.view;
 
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -10,6 +11,7 @@ import io.github.data4all.model.drawing.Point;
 import io.github.data4all.model.drawing.RedoUndo;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +37,6 @@ import android.view.View;
  */
 public class TouchView extends View {
 
-	/**
-	 * The paint to draw the points with
-	 */
-	private final Paint pointPaint = new Paint();
 
 	/**
 	 * The paint to draw the path with
@@ -46,25 +44,37 @@ public class TouchView extends View {
 	private final Paint pathPaint = new Paint();
 	private final Paint areaPaint = new Paint();
 
-	/**
-	 * The motion interpreted Polygon
-	 */
-	private List<Point> polygon = new ArrayList<Point>();
+    /**
+     * The paint to draw the path with
+     */
+    private final Paint pathPaint = new Paint();
 
-	/**
-	 * The Polygon with the current pending motion
-	 */
-	private List<Point> newPolygon = new ArrayList<Point>();
+    /**
+     * The motion interpreted Polygon
+     */
+    private List<Point> polygon = new ArrayList<Point>();
 
-	/**
-	 * The current motion the user is typing via the screen
-	 */
-	private DrawingMotion currentMotion;
-	/**
-	 * The currently used interpreter
-	 */
-	private MotionInterpreter interpreter;
-	/**
+    /**
+     * The Polygon with the current pending motion
+     */
+    private List<Point> newPolygon = new ArrayList<Point>();
+
+    /**
+     * The current motion the user is typing via the screen
+     */
+    private DrawingMotion currentMotion;
+    
+    /**
+     * An object for the calculation of the point transformation
+     */
+    private PointToCoordsTransformUtil pointTrans;
+
+    /**
+     * The currently used interpreter
+     */
+    private MotionInterpreter interpreter;
+
+    /**
 	 * The current used RedoUndo object
 	 */
 	private RedoUndo redoUndo;
@@ -86,14 +96,15 @@ public class TouchView extends View {
 		show = (ShowPictureActivity) context;
 	}
 
-	/**
-	 * Remove all recorded DrawingMotions from this TouchView
-	 */
-	public void clearMotions() {
-		if (polygon != null) {
-			polygon.clear();
-		}
-	}
+    /**
+     * Remove all recorded DrawingMotions from this TouchView
+     */
+    public void clearMotions() {
+        if (polygon != null) {
+            polygon.clear();
+        }
+    }
+
 
 	@Override
 	protected void onFinishInflate() {
@@ -142,75 +153,75 @@ public class TouchView extends View {
 			}
 			undoUseable();
 			redoUseable();
-		}
-	}
+        }
+    }
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		int action = event.getAction();
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			currentMotion = new DrawingMotion();
-			handleMotion(event, "start");
-			break;
-		case MotionEvent.ACTION_UP:
-			handleMotion(event, "end");
-			polygon = newPolygon;
-			redoUndo= new RedoUndo(polygon);
-			break;
-		case MotionEvent.ACTION_MOVE:
-			handleMotion(event, "move");
-			break;
-		}
-		return true;
-	}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        switch (action) {
+        case MotionEvent.ACTION_DOWN:
+            currentMotion = new DrawingMotion();
+            handleMotion(event, "end");
+            break;
+        case MotionEvent.ACTION_UP:
+            handleMotion(event, "start");
+            polygon = newPolygon;
+            redoUndo = new RedoUndo(polygon);
+            break;
+        case MotionEvent.ACTION_MOVE:
+            handleMotion(event, "move");
+            break;
+        }
+        return true;
+    }
 
-	/**
-	 * Handles the given motion:<br/>
-	 * Add the point to the current motion<br/>
-	 * Logs the motion<br/>
-	 * Causes the view to redraw itself afterwards
-	 * 
-	 * @param event
-	 *            The touch event
-	 * @param action
-	 *            the named action which is in progress
-	 */
-	private void handleMotion(MotionEvent event, String action) {
-		if (currentMotion != null) {
-			currentMotion.addPoint(event.getX(), event.getY());
-			newPolygon = interpreter.interprete(polygon, currentMotion);
-			Log.d(this.getClass().getSimpleName(),
-					"Motion " + action + ": " + currentMotion.getPathSize()
-							+ ", point: " + currentMotion.isPoint());
-			postInvalidate();
-		}
-	}
+    /**
+     * Handles the given motion:<br/>
+     * Add the point to the current motion<br/>
+     * Logs the motion<br/>
+     * Causes the view to redraw itself afterwards
+     * 
+     * @param event
+     *            The touch event
+     * @param action
+     *            the named action which is in progress
+     */
+    private void handleMotion(MotionEvent event, String action) {
+        if (currentMotion != null) {
+            currentMotion.addPoint(event.getX(), event.getY());
+            newPolygon = interpreter.interprete(polygon, currentMotion);
+            Log.d(this.getClass().getSimpleName(),
+                    "Motion " + action + ": " + currentMotion.getPathSize()
+                            + ", point: " + currentMotion.isPoint());
+            postInvalidate();
+        }
+    }
 
-	public void setInterpretationType(InterpretationType type) {
-		switch (type) {
-		case AREA:
-			interpreter = new AreaMotionInterpreter();
-			break;
-		case POINT:
-			interpreter = new PointMotionInterpreter();
-			break;
-		case BUILDING:
-			interpreter = new BuildingMotionInterpreter();
-			break;
-		case WAY:
-			interpreter = new WayMotionInterpreter();
-			break;
-		default:
-			throw new IllegalArgumentException("'type' cannot be null");
-		}
-	}
+    public void setInterpretationType(InterpretationType type) {
+        switch (type) {
+        case AREA:
+            interpreter = new AreaMotionInterpreter(pointTrans);
+            break;
+        case POINT:
+            interpreter = new PointMotionInterpreter(pointTrans);
+            break;
+        case BUILDING:
+            interpreter = new BuildingMotionInterpreter(pointTrans);
+            break;
+        case WAY:
+            interpreter = new WayMotionInterpreter(pointTrans);
+            break;
+        default:
+            throw new IllegalArgumentException("'type' cannot be null");
+        }
+    }
 
-	public static enum InterpretationType {
-		AREA, POINT, BUILDING, WAY;
-	}
+    public static enum InterpretationType {
+        AREA, POINT, BUILDING, WAY;
+    }
 
-	public void redo() {
+    	public void redo() {
 		newPolygon = redoUndo.redo();
 		polygon = newPolygon;
 		redoUseable();
@@ -250,4 +261,20 @@ public class TouchView extends View {
 			return false;
 		}
 	}
+    
+    /**
+     * Set the actual PointToCoordsTransformUtil with the actual location and camera parameters
+     * @param pointTrans the actual object
+     */
+    public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
+    }
+    
+    /**
+     * Create an OsmElement from the given polygon
+     * @return the created OsmElement (with located nodes)
+     */
+    public OsmElement create() {
+        return interpreter.create(polygon);
+    }
 }
