@@ -95,6 +95,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         Way newWay = new Way(-1, 1);
 
         List<Node> nodeList = pointTrans.transform(polygon);
+        nodeList.add(nodeList.get(0));
         newWay.addNodes(nodeList, false);
         return newWay;
     }

@@ -84,11 +84,15 @@ public class PointToCoordsTransformUtil {
 		for(Point iter : points){
 		    Point point = new Point((tps.getPhotoHeight() - iter.getY() +1),(tps.getPhotoWidth()- iter.getX()+1));
 			Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
-			Log.d(TAG, "TPS-DATA pic height;width height"+ tps.getPhotoHeight() + tps.getPhotoWidth() + tps.getHeight());
+			Log.d(TAG, "TPS-DATA pic height;width height"+ tps.getPhotoHeight() + " " +  tps.getPhotoWidth()+" " + tps.getHeight());
 			// first calculates local coordinates in meter
 			double[] coord = calculateCoordFromPoint(tps, deviceOrientation, point);
+			Log.d(TAG, "Calculated local Coords:" + coord[0] + "  " + coord[1]);
 			// transforms local coordinates in global GPS-coordinates
+			Log.d(TAG, "Local Lat Lon" + tps.getLocation().getLatitude() + "  " + tps.getLocation().getLongitude());
 			Node node = calculateGPSPoint(tps.getLocation(), coord);
+
+			Log.d(TAG, "Calculated Lat / Lon:" + node.getLat() + "  " + node.getLon());
 			nodes.add(node);		
 		}	
 		return nodes;
@@ -138,13 +142,14 @@ public class PointToCoordsTransformUtil {
 			DeviceOrientation deviceOrientation, Point point){
 		this.height = tps.getHeight();
 		double azimuth = -deviceOrientation.getAzimuth();
-		double pitch = calculateAngleFromPixel(point.getX(), tps.getPhotoWidth(),
+		double pitch = calculateAngleFromPixel(point.getX(), tps.getPhotoHeight(),
 				tps.getCameraMaxPitchAngle(),deviceOrientation.getPitch());
-		double roll = calculateAngleFromPixel(point.getY(), tps.getPhotoHeight(),
+		double roll = calculateAngleFromPixel(point.getY(), tps.getPhotoWidth(),
 				tps.getCameraMaxRotationAngle(), deviceOrientation.getRoll());
 		
 		if(pitch <= (float) (-Math.PI/2) || pitch >= (float) (Math.PI/2)
 				|| roll <= (float) (-Math.PI/2) || roll >= (float) (Math.PI/2)){
+			Log.d(TAG, "######################     FAIL     ########################");
 			double[] fail = {0.0,0.0,-1};
 			return fail;
 		}
@@ -270,8 +275,8 @@ public class PointToCoordsTransformUtil {
 	 */
 	public double calculateAngleFromPixel(double pixel, double width, 
 			double maxAngle, double oldAngle){
-
-		Log.d(TAG, "Calculate Angle, OldAngle: " + oldAngle + " maxANgle: " + maxAngle);
+		Log.d(TAG, " pixel and width" + pixel + "  " + width);
+		//Log.d(TAG, "Calculate Angle, OldAngle: " + oldAngle + " maxANgle: " + maxAngle);
 		if((pixel - (width / 2)) == 0){
 			return oldAngle;
 		}
