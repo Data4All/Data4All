@@ -153,7 +153,6 @@ public class ShowPictureActivity extends BasicActivity {
 		try { // try to convert a image to a bitmap
 			bitmap = MediaStore.Images.Media.getBitmap(
 					this.getContentResolver(), selectedImage);
-
 			imageView.setImageBitmap(bitmap);
 		} catch (FileNotFoundException e) {
 			Log.e(this.getClass().toString(), "ERROR, no file found");
