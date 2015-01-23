@@ -38,7 +38,6 @@ public class TouchViewTest {
     private Point point3;
     private Point point4;
     private Point point5;
-    private Point point6;
 
     @Before
     public void setUp() throws Exception {
@@ -49,7 +48,6 @@ public class TouchViewTest {
         point3 = new Point(43, 43);
         point4 = new Point(33, 33);
         point5 = new Point(1, 1);
-        point6 = new Point(1, 1);
 
         Field declaredField = touchview.getClass().getDeclaredField("polygon");
         declaredField.setAccessible(true);
@@ -128,14 +126,16 @@ public class TouchViewTest {
 
     @Test
     public void movePoint_getRightPositionInPolygon() {
+        polygon.add(point5);
         int idx = polygon.indexOf(point5);
-        PointMover pm = touchview.movePoint(point5);
+        touchview.movePoint(point5);
 
         assertThat(polygon.get(idx), is(polygon.get(4)));
     }
 
     @Test
     public void moveTo_PointMoved_XYchanged() {
+        polygon.add(point5);
         PointMover pm = touchview.movePoint(point5);
         int idx = polygon.indexOf(point5);
         pm.moveTo(5.0F, 6.0F);
