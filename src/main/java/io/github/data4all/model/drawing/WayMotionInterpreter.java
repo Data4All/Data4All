@@ -10,24 +10,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This WayMotionInterpreter is a MotionInterpreter for Ways<br/>
+ * This WayMotionInterpreter is a MotionInterpreter for Ways.<br/>
  * 
- * It interprets dot-wise, path-wise and single-path user input
+ * It interprets dot-wise, path-wise and single-path user input.
  * 
  * @author tbrose
  * @see MotionInterpreter
  */
 public class WayMotionInterpreter implements MotionInterpreter {
 
-    PointToCoordsTransformUtil pointTrans;
+    /**
+     * The log-tag for this class.
+     */
+    private static final String TAG = WayMotionInterpreter.class
+            .getSimpleName();
 
+    /**
+     * The maximum angle-variation where a point is reduced.
+     */
+    private static final int ANGLE_VARIATION = 15;
+
+    /**
+     * The maximum combine-variation where points were combined.
+     */
+    private static final int COMBINE_VARIATION = 25;
+
+    private PointToCoordsTransformUtil pointTrans;
+
+    /**
+     * Creates an AreaMotionInterpreter with the specified transformation
+     * utility.
+     * 
+     * @param pointTrans
+     *            the transformation utility
+     */
     public WayMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
 
     /**
      * Combines the edge-points of the given polygon so that points which are
-     * relatively close to each other are combined into one single point
+     * relatively close to each other are combined into one single point.
      * 
      * @param polygon
      *            the polygon of the area
@@ -37,20 +60,21 @@ public class WayMotionInterpreter implements MotionInterpreter {
     private static List<Point> combine(List<Point> polygon) {
         // A polygon with less than two points has no need to be combined
         if (polygon.size() > 1) {
-            List<Point> newPolygon = new ArrayList<Point>();
+            final List<Point> newPolygon = new ArrayList<Point>();
 
             // Start at the first point with the combination
             Point mid = polygon.get(0);
             int count = 1;
 
             for (int i = 1; i < polygon.size(); i++) {
-                Point p = polygon.get(i);
+                final Point p = polygon.get(i);
 
-                if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY()) <= COMBINE_VARIATION) {
+                if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY())
+                        <= COMBINE_VARIATION) {
                     // The point is in range of the current mid, add him to the
                     // combined point
-                    float midSumX = mid.getX() * count + p.getX();
-                    float midSumY = mid.getY() * count + p.getY();
+                    final float midSumX = mid.getX() * count + p.getX();
+                    final float midSumY = mid.getY() * count + p.getY();
                     count++;
                     mid = new Point(midSumX / count, midSumY / count);
                 } else {
@@ -66,7 +90,6 @@ public class WayMotionInterpreter implements MotionInterpreter {
             if (mid != null) {
                 newPolygon.add(mid);
             }
-
             return newPolygon;
         } else {
             return polygon;
@@ -88,7 +111,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
     private static List<Point> reduce(List<Point> polygon) {
         // We need at least three points to reduce the polygon
         if (polygon.size() >= 3) {
-            List<Point> newPolygon = new ArrayList<Point>();
+            final List<Point> newPolygon = new ArrayList<Point>();
             // The first point of the polygon wont be reduced
             newPolygon.add(polygon.get(0));
 
@@ -96,14 +119,14 @@ public class WayMotionInterpreter implements MotionInterpreter {
                 // Get the previous, current and next Point in the polygon
                 // The previous point is the last point added to the reduced
                 // polygon for better circle detection
-                Point a = newPolygon.get(newPolygon.size() - 1);
-                Point b = polygon.get(i + 1);
-                Point c = polygon.get((i + 2) % polygon.size());
+                final Point a = newPolygon.get(newPolygon.size() - 1);
+                final Point b = polygon.get(i + 1);
+                final Point c = polygon.get((i + 2) % polygon.size());
 
-                double alpha = Point.getBeta(a, b, c);
+                final double alpha = Point.getBeta(a, b, c);
                 Log.d(TAG, "point " + (i + 1) + ": " + Math.toDegrees(alpha)
                         + "degree");
-                double variation = Math.abs(Math.toDegrees(alpha) - 180);
+                final double variation = Math.abs(Math.toDegrees(alpha) - 180);
                 if (variation >= ANGLE_VARIATION) {
                     newPolygon.add(polygon.get(i + 1));
                 } else if (i == polygon.size() - 2 && newPolygon.size() < 2) {
@@ -118,22 +141,6 @@ public class WayMotionInterpreter implements MotionInterpreter {
         }
     }
 
-    /**
-     * The log-tag for this class
-     */
-    private static final String TAG = WayMotionInterpreter.class
-            .getSimpleName();
-
-    /**
-     * The maximum angle-variation where a point is reduced
-     */
-    private static final int ANGLE_VARIATION = 15;
-
-    /**
-     * The maximum combine-variation where points were combined
-     */
-    private static final int COMBINE_VARIATION = 25;
-
     /*
      * (non-Javadoc)
      * 
@@ -144,7 +151,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
     @Override
     public List<Point> interprete(List<Point> interpreted,
             DrawingMotion drawingMotion) {
-        ArrayList<Point> result;
+        final List<Point> result;
 
         if (drawingMotion == null) {
             return interpreted;
@@ -165,16 +172,14 @@ public class WayMotionInterpreter implements MotionInterpreter {
     }
 
     /**
-     * @author sbollen (non-Javadoc)
-     * 
-     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     * @author sbollen
      */
     @Override
     public OsmElement create(List<Point> polygon) {
         // create a new Way and copy the List of Nodes to this way
-        Way newWay = new Way(-1, 1);
+        final Way newWay = new Way(-1, 1);
 
-        List<Node> nodeList = pointTrans.transform(polygon);
+        final List<Node> nodeList = pointTrans.transform(polygon);
 
         newWay.addNodes(nodeList, false);
         return newWay;
