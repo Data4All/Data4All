@@ -59,15 +59,19 @@ public class TouchViewTest {
         polygon.add(point6);
     }
 
-
-   
+    
     @Test
-    public void testMovePoint_PointIsNotInPolygon_NullReturned() {
+    public void movePoint_PointIsNull_NullReturned() {
+        assertThat(touchview.movePoint(null), is(nullValue()));
+    }
+    
+    @Test
+    public void movePoint_PointIsNotInPolygon_NullReturned() {
         assertThat(touchview.movePoint(new Point(0,0)), is(nullValue()));
     }
     
     @Test
-    public void testMovePoint_PointMoved_XYchanged() {
+    public void movePoint_PointMoved_XYchanged() {
         PointMover pm = touchview.movePoint(point5);
         
         pm.moveTo(5.0F,6.0F);
