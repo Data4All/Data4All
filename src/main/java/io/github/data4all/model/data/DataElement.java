@@ -18,7 +18,7 @@ import android.os.Parcelable;
  * @author fkirchge
  *
  */
-public abstract class OsmElement implements Parcelable {
+public abstract class DataElement implements Parcelable {
 
     /**
      * osmId: Used for identifying the object. osmVersion: edit version of the
@@ -45,7 +45,7 @@ public abstract class OsmElement implements Parcelable {
      * @param osmVersion
      *            edit version of the osm object
      */
-    public OsmElement(final long osmId, final long osmVersion) {
+    public DataElement(final long osmId, final long osmVersion) {
         this.setOsmId(osmId);
         this.setOsmVersion(osmVersion);
         this.tags = new TreeMap<String, String>();
@@ -270,7 +270,7 @@ public abstract class OsmElement implements Parcelable {
      * Constructor to create a osm element from a parcel
      * @param in
      */
-    protected OsmElement(Parcel in) {
+    protected DataElement(Parcel in) {
     	osmId = in.readLong();
     	osmVersion = in.readLong();
     	tags = new TreeMap<String, String>();
