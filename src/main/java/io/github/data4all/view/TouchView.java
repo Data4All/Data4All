@@ -19,6 +19,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,10 +38,11 @@ import android.view.View;
 public class TouchView extends View {
 
 
-    /**
-     * The paint to draw the points with
-     */
-    private final Paint pointPaint = new Paint();
+	/**
+	 * The paint to draw the path with
+	 */
+	private final Paint pathPaint = new Paint();
+	private final Paint areaPaint = new Paint();
 
     /**
      * The paint to draw the path with
@@ -103,41 +105,53 @@ public class TouchView extends View {
         }
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        setInterpretationType(InterpretationType.WAY);
-        pointPaint.setColor(MotionInterpreter.POINT_COLOR);
-        pathPaint.setColor(MotionInterpreter.PATH_COLOR);
-        pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
-        redoUndo = new RedoUndo();
-    }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawARGB(0, 0, 0, 0);
+	@Override
+	protected void onFinishInflate() {
+		super.onFinishInflate();
+		interpreter = new WayMotionInterpreter();
+		pointPaint.setColor(MotionInterpreter.POINT_COLOR);
+		pathPaint.setColor(MotionInterpreter.PATH_COLOR);
+		pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
+		areaPaint.setColor(MotionInterpreter.AREA_COLOR);
+		areaPaint.setStyle(Paint.Style.FILL);
+		areaPaint.setAlpha(100);
+		redoUndo = new RedoUndo();
+	}
 
-        if (newPolygon != null) {
-            // first draw all lines
-            int limit = newPolygon.size();
-            // Don't draw the last line if it is not an area
-            limit -= interpreter.isArea() ? 0 : 1;
-            for (int i = 0; i < limit; i++) {
-                // The next point in the polygon
-                Point b = newPolygon.get((i + 1) % newPolygon.size());
-                Point a = newPolygon.get(i);
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+		canvas.drawARGB(0, 0, 0, 0);
+		
+		Path path = new Path();
+		path.reset();
+		
 
-                canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
-                        pathPaint);
-            }
-
-            // afterwards draw the points
-            for (Point p : newPolygon) {
-                canvas.drawCircle(p.getX(), p.getY(),
-                        MotionInterpreter.POINT_RADIUS, pointPaint);
-            }
-            undoUseable();
+		if (newPolygon != null && newPolygon.size()!=0) {
+			path.moveTo(newPolygon.get(0).getX(),newPolygon.get(0).getY());
+			// first draw all lines
+			int limit = newPolygon.size();
+			// Don't draw the last line if it is not an area
+			limit -= interpreter.isArea() ? 0 : 1;
+			for (int i = 0; i < limit; i++) {
+				// The next point in the polygon
+				Point b = newPolygon.get((i + 1) % newPolygon.size());
+				Point a = newPolygon.get(i);
+				path.lineTo(a.getX(),a.getY());
+				path.lineTo(b.getX(),b.getY());
+				canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
+						pathPaint);
+			}
+			if(interpreter instanceof AreaMotionInterpreter || interpreter instanceof BuildingMotionInterpreter){
+			canvas.drawPath(path, areaPaint);
+			}
+			// afterwards draw the points
+			for (Point p : newPolygon) {
+				canvas.drawCircle(p.getX(), p.getY(),
+						MotionInterpreter.POINT_RADIUS, pointPaint);
+			}
+			undoUseable();
 			redoUseable();
         }
     }
