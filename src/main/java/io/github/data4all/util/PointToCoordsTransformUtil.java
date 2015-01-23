@@ -65,7 +65,8 @@ public class PointToCoordsTransformUtil {
 		
 		List<Node> nodes = new ArrayList<Node>();
 		this.height = tps.getHeight();				
-		for(Point point : points){	
+		for(Point iter : points){
+			Point point = new Point(tps.g, y)
 			Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
 			Log.d(TAG, "TPS-DATA pic height;width height"+ tps.getPhotoHeight() + tps.getPhotoWidth() + tps.getHeight());
 			// first calculates local coordinates in meter
