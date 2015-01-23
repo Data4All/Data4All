@@ -72,16 +72,18 @@ public class TouchViewTest {
 
     @Test
     public void movePoint_getRightPositionInPolygon() {
+        int idx = polygon.indexOf(point5);
         PointMover pm = touchview.movePoint(point5);
         
-        assertThat(polygon.get(pm.idx),is(polygon.get(4)));
+        assertThat(polygon.get(idx),is(polygon.get(4)));
     }
 
     @Test
     public void moveTo_PointMoved_XYchanged() {
         PointMover pm = touchview.movePoint(point5);
+        int idx = polygon.indexOf(point5);
         pm.moveTo(5.0F, 6.0F);
-        assertThat(polygon.get(pm.idx).getX(), is(5.0F));
-        assertThat(polygon.get(pm.idx).getY(), is(6.0F));
+        assertThat(polygon.get(idx).getX(), is(5.0F));
+        assertThat(polygon.get(idx).getY(), is(6.0F));
     }
 }

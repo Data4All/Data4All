@@ -204,7 +204,7 @@ public class TouchView extends View {
      * @author konerman
      */
     public class PointMover {
-        public final int idx;
+        private final int idx;
 
         public PointMover(int idx) {
             this.idx = idx;
