@@ -44,7 +44,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		setUpMapView();
 		
 		// Set Overlay for the actual Position
-		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		Log.i(TAG, "Added User Location Overlay to the map");
 		mapView.getOverlays().add(myLocationOverlay);
 		// Set ImageView for Loading Screen

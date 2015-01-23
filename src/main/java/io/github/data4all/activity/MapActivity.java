@@ -145,6 +145,8 @@ public abstract class MapActivity extends BasicActivity {
 			Log.i(TAG, "Set actual Center to " + getMyLocation());
 			actualCenter = getMyLocation();
 		}
+		
+		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 	}
 
 	protected void removeOverlayFromMap(Overlay overlay) {
