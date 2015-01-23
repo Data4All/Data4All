@@ -1,6 +1,7 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +19,6 @@ import java.util.List;
  * @see MotionInterpreter
  */
 public class PointMotionInterpreter implements MotionInterpreter {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
-     */
-    @Override
-    public OsmElement create(List<Point> polygon) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     /*
      * (non-Javadoc)
@@ -63,6 +52,18 @@ public class PointMotionInterpreter implements MotionInterpreter {
     /*
      * (non-Javadoc)
      * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        //The list contains only one Node which then will be returned
+        return pointTrans.transform(polygon).get(0);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override

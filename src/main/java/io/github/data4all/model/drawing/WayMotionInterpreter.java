@@ -1,7 +1,10 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Way;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,18 +131,6 @@ public class WayMotionInterpreter implements MotionInterpreter {
      * (non-Javadoc)
      * 
      * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
-     */
-    @Override
-    public OsmElement create(List<Point> polygon) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
      * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
      * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
@@ -169,6 +160,22 @@ public class WayMotionInterpreter implements MotionInterpreter {
     /*
      * (non-Javadoc)
      * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        // create a new Way and copy the List of Nodes to this way
+        Way newWay = new Way(-1, 1);
+
+        List<Node> nodeList = pointTrans.transform(polygon);
+        newWay.addNodes(nodeList, false);
+        return newWay;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override

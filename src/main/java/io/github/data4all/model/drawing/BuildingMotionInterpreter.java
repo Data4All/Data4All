@@ -1,6 +1,11 @@
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Relation;
+import io.github.data4all.model.data.RelationMember;
+import io.github.data4all.model.data.Way;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +40,6 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
 
         Point d = new Point(x, y);
         areaPoints.add(d);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
-     */
-    @Override
-    public OsmElement create(List<Point> polygon) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     /*
@@ -89,6 +82,21 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
     /*
      * (non-Javadoc)
      * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        Way newWay = new Way(-1, 1);
+
+        List<Node> nodeList = pointTrans.transform(polygon);
+        newWay.addNodes(nodeList, false);
+        return newWay;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override

@@ -1,7 +1,12 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Relation;
+import io.github.data4all.model.data.RelationMember;
+import io.github.data4all.model.data.Way;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +79,31 @@ public class AreaMotionInterpreter implements MotionInterpreter {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        Way newWay = new Way(-1, 1);
+
+        List<Node> nodeList = pointTrans.transform(polygon);
+        newWay.addNodes(nodeList, false);
+        return newWay;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
+     */
+    @Override
+    public boolean isArea() {
+        return true;
+    }
+
     /**
      * First reduces the points of the polygon by removing points where the
      * angel between the previous and the next point is nearly 180 degrees (25
@@ -139,18 +169,6 @@ public class AreaMotionInterpreter implements MotionInterpreter {
      * (non-Javadoc)
      * 
      * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
-     */
-    @Override
-    public OsmElement create(List<Point> polygon) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
      * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
      * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
@@ -175,15 +193,5 @@ public class AreaMotionInterpreter implements MotionInterpreter {
         }
 
         return reduce(result);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
-     */
-    @Override
-    public boolean isArea() {
-        return true;
     }
 }
