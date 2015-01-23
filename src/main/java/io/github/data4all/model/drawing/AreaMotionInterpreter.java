@@ -194,14 +194,4 @@ public class AreaMotionInterpreter implements MotionInterpreter {
 
         return reduce(result);
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
-     */
-    @Override
-    public boolean isArea() {
-        return true;
-    }
 }

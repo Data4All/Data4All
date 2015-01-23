@@ -31,19 +31,6 @@ public class Way extends OsmElement {
     private final int MAX_WAY_NODES = 2000;
 
     /**
-     * CREATOR that generates instances of {@link Way} from a Parcel
-     */
-    public static final Parcelable.Creator<Way> CREATOR = new Parcelable.Creator<Way>() {
-        public Way createFromParcel(Parcel in) {
-            return new Way(in);
-        }
-
-        public Way[] newArray(int size) {
-            return new Way[size];
-        }
-    };
-
-    /**
      * Default Constructor
      * 
      * @param osmId
@@ -54,17 +41,6 @@ public class Way extends OsmElement {
         nodes = new LinkedList<Node>();
     }
 
-    /**
-     * Constructor to create a {@link Way} from a parcel.
-     * 
-     * @param in
-     *            The {@link Parcel} to read the object's data from
-     */
-    private Way(Parcel in) {
-        super(in);
-        nodes = new LinkedList<Node>();
-        in.readTypedList(nodes, Node.CREATOR);
-    }
 
     /**
      * Adds a new node to the way. If the last node equals the new node you have
@@ -235,15 +211,6 @@ public class Way extends OsmElement {
 		return points;
 	}
 	
-	/**
-	 * Returns true if the node is part of the way.
-	 * 
-	 * @param node
-	 * @return true/false
-	 */
-	public boolean hasNode(final Node node) {
-		return nodes.contains(node);
-	}
 
     /**
      * Returns the last node of this way.
@@ -363,6 +330,7 @@ public class Way extends OsmElement {
                     "replaceNode cant replace existing node, nodes does not contain existing node");
             return false;
         }
+    }
 
 	public void writeToParcel(Parcel dest, int flags) {		
 		super.writeToParcel(dest, flags);
