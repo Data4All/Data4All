@@ -11,7 +11,7 @@ import android.os.Parcelable;
  * @author fkirchge
  *
  */
-public class Node extends OsmElement {
+public class Node extends DataElement {
 
     /**
      * Latitude of the Node.
