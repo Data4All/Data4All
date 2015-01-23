@@ -90,6 +90,8 @@ public class ShowPictureActivity extends BasicActivity {
 	// height
 	touchView.setTransformUtil(new PointToCoordsTransformUtil(
 		transformBean, currentOrientation));
+	
+	onClickBuilding(null);
     }
 
     public void onClickOkay(View view) {
