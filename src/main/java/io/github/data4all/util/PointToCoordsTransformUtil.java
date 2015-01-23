@@ -72,8 +72,8 @@ public class PointToCoordsTransformUtil {
 			// first calculates local coordinates in meter
 			double[] coord = calculateCoordFromPoint(tps, deviceOrientation, point);
 			// transforms local coordinates in global GPS-coordinates
-		//	Node node = calculateGPSPoint(tps.getLocation(), coord);
-			//nodes.add(node);		
+			Node node = calculateGPSPoint(tps.getLocation(), coord);
+			nodes.add(node);		
 		}	
 		return nodes;
 	}	
@@ -314,10 +314,10 @@ public class PointToCoordsTransformUtil {
 	 * @param point
 	 * @return A Node with a GPS Point
 	 */
-	public Node calculateGPSPoint(double lati, double loni, double[] coord){
+	public Node calculateGPSPoint(Location location, double[] coord){
 		double radius = 6371004.0;
-		double lat = Math.toRadians(lati);
-		double lon = Math.toRadians(loni);
+		double lat = Math.toRadians(location.getLatitude());
+		double lon = Math.toRadians(location.getLongitude());
 		
 		// calculate the Length of the current Latitude with the earth Radius
 		double lonLength = radius * Math.cos(lat);
