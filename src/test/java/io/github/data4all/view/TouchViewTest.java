@@ -1,9 +1,10 @@
 package io.github.data4all.view;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import io.github.data4all.model.drawing.Point;
-import io.github.data4all.view.TouchView.PointMover;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -32,8 +33,6 @@ public class TouchViewTest {
     private Point point2;
     private Point point3;
     private Point point4;
-    private Point point5;
-    private Point point6;
 
     @Before
     public void setUp() throws Exception {
@@ -43,8 +42,6 @@ public class TouchViewTest {
         point2 = new Point(40, 40);
         point3 = new Point(43, 43);
         point4 = new Point(33, 33);
-        point5 = new Point(1, 1);
-        point6 = new Point(1, 1);
 
         Field declaredField = touchview.getClass().getDeclaredField("polygon");
         declaredField.setAccessible(true);
@@ -55,23 +52,59 @@ public class TouchViewTest {
         polygon.add(point2);
         polygon.add(point3);
         polygon.add(point4);
-        polygon.add(point5);
-        polygon.add(point6);
     }
 
-
-   
     @Test
-    public void testMovePoint_PointIsNotInPolygon_NullReturned() {
-        assertThat(touchview.movePoint(new Point(0,0)), is(nullValue()));
+    public void deletePoint_deleteNull_nothingChanged() {
+        List<Point> list = new ArrayList<Point>(polygon);
+        touchview.deletePoint(null);
+        for(int i = 0; i < list.size(); i++) {
+            assertEquals(list.get(i), polygon.get(i));
+        }
     }
-    
+
     @Test
-    public void testMovePoint_PointMoved_XYchanged() {
-        PointMover pm = touchview.movePoint(point5);
-        
-        pm.moveTo(5.0F,6.0F);
-        assertThat(polygon.get(pm.idx).getX(), is(5.0F));  
-        assertThat(polygon.get(pm.idx).getY(), is(6.0F));  
-      }
+    public void deletePoint_pointNotInPolygon_nothingChanged() {
+        List<Point> list = new ArrayList<Point>(polygon);
+        Point point5 = new Point(333, 333);
+        touchview.deletePoint(point5);
+
+        assertFalse(polygon.contains(point5));
+        for(int i = 0; i < list.size(); i++) {
+            assertEquals(list.get(i), polygon.get(i));
+        }
+    }
+
+    @Test
+    public void deletePoint_pointInPolygon_pointRemoved() {
+        assertTrue(polygon.contains(point4));
+        touchview.deletePoint(point4);
+        assertFalse(polygon.contains(point4));
+    }
+
+    @Test
+    public void lookUp_noPointsInPolygon_nullReturned() {
+        polygon.clear();
+        assertNull(touchview.lookUp(5, 5, 2));
+    }
+
+    @Test
+    public void lookUp_noPointAround_nullReturned() {
+        assertNull(touchview.lookUp(20, 20, 2));
+    }
+
+    @Test
+    public void lookUp_pointAround_rightPointReturned() {
+        assertEquals(point1, touchview.lookUp(1, 1, 5));
+    }
+
+    @Test
+    public void lookUp_exactLookupOnPoint_rightPointReturned() {
+        assertEquals(point1, touchview.lookUp(2, 2, 0));
+    }
+
+    @Test
+    public void lookUp_towPointsInRange_nearestPointReturned() {
+        assertEquals(point3, touchview.lookUp(42, 42, 2));
+    }
 }
