@@ -11,7 +11,7 @@ import android.os.Parcelable;
  * @author fkirchge
  *
  */
-public class Node extends OsmElement implements GeoPoint {
+public class Node extends OsmElement {
 
     /**
      * Latitude of the Node.
