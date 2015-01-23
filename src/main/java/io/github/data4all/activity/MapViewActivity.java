@@ -2,27 +2,28 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.service.GPSservice;
+import io.github.data4all.util.TrackParser;
 
+import java.util.Date;
 
-import org.osmdroid.ResourceProxy.string;
+import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-import org.osmdroid.ResourceProxy;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -171,8 +172,33 @@ public class MapViewActivity extends Activity implements OnClickListener {
 			startActivity(new Intent(this, CameraActivity.class));
 			break;
 		case R.id.new_point:
-			break;
+		    Track tmp = testMethod();
+		    TrackParser parser = new TrackParser();
+			parser.parseTrack(getApplicationContext(), tmp);
+		    break;
 		}
+	}
+	
+	private Track testMethod() {
+	    Track track = new Track(getApplicationContext());
+	    
+	    Location aloc = new Location("aloc");
+        Location bloc = new Location("bloc");
+        Location cloc = new Location("cloc");
+        Location[] locs = { aloc, bloc, cloc };
+        double startLat = 53.07929619999999;
+        double startLon = 8.801693699999987;
+
+        for (int i = 0; i < 3; i++) {
+            locs[i].setLatitude(startLat + i / 1000000000);
+            locs[i].setLongitude(startLon + i / 1000000000);
+            // loc.setAltitude(altitude);
+            locs[i].setTime(new Date().getTime() + i);
+            track.addTrackPoint(locs[i]);
+        }
+	    
+	    return track;
+	    
 	}
 
 	@Override

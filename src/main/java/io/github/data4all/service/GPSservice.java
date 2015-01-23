@@ -17,11 +17,9 @@ import android.widget.Toast;
 
 public class GPSservice extends Service implements LocationListener {
 
-    Optimizer                   optimizer          = new Optimizer();
+    Optimizer                   optimizer = new Optimizer();
 
-    Track                       track;
-
-    private static final String TAG                = "GPSservice";
+    private static final String TAG       = "GPSservice";
 
     /**
      * LocationManager
@@ -30,11 +28,7 @@ public class GPSservice extends Service implements LocationListener {
 
     private WakeLock            wakeLock;
 
-    // Flag to set if track should be generated
-    private boolean             trackableIsOn      = true;
-    
-    // Flag if Locationobjects can be obtained
-    private boolean             gpsAvailable = false;
+    //private Track               track;
 
     @Override
     public void onCreate() {
@@ -44,6 +38,8 @@ public class GPSservice extends Service implements LocationListener {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
+        
+        //track = new Track(getApplicationContext());
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -60,15 +56,6 @@ public class GPSservice extends Service implements LocationListener {
                     0, this);
         }
 
-        // Start a new track when GPSservice starts
-        if (trackableIsOn && gpsAvailable) {
-            if (!track.isOpen()) { // Only one track per service
-                track = new Track();
-            } else {
-                Log.e(TAG,
-                        "Error starting Track: Track already exist! Track not created!");
-            }
-        }
     }
 
     @Override
@@ -81,14 +68,13 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        track.saveTrack(); // when gpsservice is destroyed, save track to
-                           // internal memory
+        
         wakeLock.release();
 
     }
 
     public void onLocationChanged(Location loc) {
-        track.addTrackPoint(loc); // Add a trackpoint to an existing track
+        //track.addTrackPoint(loc);
         optimizer.putLoc(loc);
 
     }
@@ -99,11 +85,10 @@ public class GPSservice extends Service implements LocationListener {
     }
 
     public void onProviderEnabled(String provider) {
-        gpsAvailable = true;
     }
 
     public void onProviderDisabled(String provider) {
-        gpsAvailable = false;
+
         Toast.makeText(getBaseContext(),
                 "Gps turned off, GPS tracking not possible ", Toast.LENGTH_LONG)
                 .show();
