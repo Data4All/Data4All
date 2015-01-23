@@ -6,9 +6,6 @@ import io.github.data4all.util.PointToCoordsTransformUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-
 /**
  * This PointMotionInterpreter is a MotionInterpreter for Points<br/>
  * 
@@ -22,51 +19,6 @@ import android.graphics.Paint;
  * @see MotionInterpreter
  */
 public class PointMotionInterpreter implements MotionInterpreter {
-    /**
-     * The paint to draw the points with
-     */
-    @Deprecated
-    private final Paint pointPaint = new Paint();
-    
-    /**
-     * An object for the calculation of the point transformation
-     */
-    private PointToCoordsTransformUtil pointTrans;
-
-    @Deprecated
-    public PointMotionInterpreter() {
-        // Draw dark blue points
-        pointPaint.setColor(POINT_COLOR);
-    }
-    
-    public PointMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
-        this.pointTrans = pointTrans;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
-     * .Canvas, java.util.List)
-     */
-    @Deprecated
-    public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
-        if (drawingMotions != null && drawingMotions.size() > 0) {
-            DrawingMotion lastMotion = drawingMotions
-                    .get(drawingMotions.size() - 1);
-            Point point;
-            if (lastMotion.getPathSize() != 0 && lastMotion.isPoint()) {
-                point = lastMotion.average();
-            } else {
-                point = lastMotion.getEnd();
-            }
-            if (point != null) {
-                canvas.drawCircle(point.getX(), point.getY(), POINT_RADIUS,
-                        pointPaint);
-            }
-        }
-    }
 
     /*
      * (non-Javadoc)
@@ -111,7 +63,7 @@ public class PointMotionInterpreter implements MotionInterpreter {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override
