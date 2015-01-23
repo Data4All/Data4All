@@ -103,4 +103,25 @@ public class RedoUndo {
 	public int getMax() {
 		return maxCount;
 	}
+	
+	/**
+	 * A listener for events of "undo/redo-is-(un)available"
+	 * 
+	 * @author tbrose
+	 */
+	public interface UndoRedoListener {
+	    /**
+	     * Informs about the current undo state.
+	     * 
+	     * @param state The current undo state
+	     */
+        void canUndo(boolean state);
+        
+        /**
+         * Informs about the current redo state.
+         * 
+         * @param state The current redo state
+         */
+        void canRedo(boolean state);
+	}
 }
