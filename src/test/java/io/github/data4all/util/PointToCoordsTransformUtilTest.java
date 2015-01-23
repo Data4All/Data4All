@@ -29,6 +29,8 @@ public class PointToCoordsTransformUtilTest {
 	PointToCoordsTransformUtil util = new PointToCoordsTransformUtil();
 	Location location = new Location("Test");
 	
+	
+	/*
 	@Test
 	public void transformTest(){
 		location.setLatitude(0.0);
@@ -106,5 +108,24 @@ public class PointToCoordsTransformUtilTest {
 			a += (float) (Math.PI/11);			
 		}
 	}
+	*/
+	@Test
+	public void Test(){
+		location.setLatitude((float) (Math.PI/1.2));
+		location.setLongitude((float) (-Math.PI/1.3));
+		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(50) ,
+		Math.toRadians(50) , 1000, 1000, location);
+		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, (float) -Math.toRadians(64) , 0.0f, 10L);
+		ArrayList<Point> point = new ArrayList<Point>();
+		point.add(new Point(1,1));
+		point.add(new Point(1,1000));
+		point.add(new Point(1000,1000));
+		point.add(new Point(1000,1));
+		point.add(new Point(500,500));
 
+		ArrayList<double[]> coord = new ArrayList<double[]>();
+		for(Point p : point){
+			coord.add(util.calculateCoordFromPoint(tps, deviceOrientation, p));
+		}
+	}		
 }
