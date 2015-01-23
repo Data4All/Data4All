@@ -46,9 +46,8 @@ public class Node extends DataElement {
      * @param lon
      *            Longitude is a decimal number between -180.0 and 180.0.
      */
-    public Node(final long osmId, final long osmVersion, final double lat,
-            final double lon) {
-        super(osmId, osmVersion);
+    public Node(final long osmId, final double lat, final double lon) {
+        super(osmId);
         this.lat = lat;
         this.lon = lon;
     }
@@ -88,27 +87,27 @@ public class Node extends DataElement {
     /**
      * Writes the lat and the lon to the given parcel
      */
-	public void writeToParcel(Parcel dest, int flags) {		
-		super.writeToParcel(dest, flags);
-		dest.writeDouble(lat);
-		dest.writeDouble(lon);
-	}
-	
-	/**
-	 * Returns the Node as a GeoPoint representation
-	 * 
-	 * @return the node as a GeoPoint representation
-	 */
-	public org.osmdroid.util.GeoPoint toGeoPoint(){
-		return new org.osmdroid.util.GeoPoint(lat,lon);
-	}
-
-    public boolean equals(Node node){
-		return node.getLat()==lat && node.getLon()==lon;
-    	
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
     }
-    
-    public String toString(){
-    	return toGeoPoint().toString();
+
+    /**
+     * Returns the Node as a GeoPoint representation
+     * 
+     * @return the node as a GeoPoint representation
+     */
+    public org.osmdroid.util.GeoPoint toGeoPoint() {
+        return new org.osmdroid.util.GeoPoint(lat, lon);
+    }
+
+    public boolean equals(Node node) {
+        return node.getLat() == lat && node.getLon() == lon;
+
+    }
+
+    public String toString() {
+        return toGeoPoint().toString();
     }
 }

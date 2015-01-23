@@ -10,10 +10,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * A PolyElement is an ordered list of nodes which normally also has at least one tag or
- * is included within a Relation. A PolyElement can have between 2 and 2,000 nodes. A
- * PolyElement can be open or closed. A closed PolyElement is one whose last node on the PolyElement is
- * also the first on that PolyElement.
+ * A PolyElement is an ordered list of nodes which normally also has at least
+ * one tag or is included within a Relation. A PolyElement can have between 2
+ * and 2,000 nodes. A PolyElement can be open or closed. A closed PolyElement is
+ * one whose last node on the PolyElement is also the first on that PolyElement.
  * 
  * @author fkirchge
  *
@@ -36,15 +36,14 @@ public class PolyElement extends DataElement {
      * @param osmId
      * @param osmVersion
      */
-    public PolyElement(long osmId, long osmVersion) {
-        super(osmId, osmVersion);
+    public PolyElement(long osmId) {
+        super(osmId);
         nodes = new LinkedList<Node>();
     }
 
-
     /**
-     * Adds a new node to the PolyElement. If the last node equals the new node you have
-     * to use append to define a closed PolyElement.
+     * Adds a new node to the PolyElement. If the last node equals the new node
+     * you have to use append to define a closed PolyElement.
      * 
      * @param node
      */
@@ -90,8 +89,9 @@ public class PolyElement extends DataElement {
     }
 
     /**
-     * Adds multiple nodes to the PolyElement in the order in which they appear in the
-     * list. They can be either prepended or appended to the existing nodes.
+     * Adds multiple nodes to the PolyElement in the order in which they appear
+     * in the list. They can be either prepended or appended to the existing
+     * nodes.
      * 
      * @param newNodes
      *            a list of new nodes
@@ -185,32 +185,32 @@ public class PolyElement extends DataElement {
     public Node getFirstNode() {
         return nodes.get(0);
     }
-	/**
-	 * Returns all points which belong to the PolyElement.
-	 * 
-	 * @return list of points
-	 */
-	public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
-		List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
-		for (Node n : nodes){
-			points.add(n.toGeoPoint());
-		}
-		return points;
-	}
 
-	/**
-	 * Returns all points which belong to the PolyElement.
-	 * 
-	 * @return list of points
-	 */
-	public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
-		ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
-		for (Node n : nodes){
-			points.add(n.toGeoPoint());
-		}
-		return points;
-	}
-	
+    /**
+     * Returns all points which belong to the PolyElement.
+     * 
+     * @return list of points
+     */
+    public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
+        List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
+        for (Node n : nodes) {
+            points.add(n.toGeoPoint());
+        }
+        return points;
+    }
+
+    /**
+     * Returns all points which belong to the PolyElement.
+     * 
+     * @return list of points
+     */
+    public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
+        ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
+        for (Node n : nodes) {
+            points.add(n.toGeoPoint());
+        }
+        return points;
+    }
 
     /**
      * Returns the last node of this PolyElement.
@@ -231,8 +231,8 @@ public class PolyElement extends DataElement {
     }
 
     /**
-     * Returns true if the given PolyElement contains common nodes with the this PolyElement
-     * object.
+     * Returns true if the given PolyElement contains common nodes with the this
+     * PolyElement object.
      * 
      * @param PolyElement
      * @return true/false
@@ -266,8 +266,8 @@ public class PolyElement extends DataElement {
     }
 
     /**
-     * Checks if a node is an end node of the PolyElement (i.e. either the first or the
-     * last one)
+     * Checks if a node is an end node of the PolyElement (i.e. either the first
+     * or the last one)
      * 
      * @param node
      *            a node to check
@@ -335,9 +335,8 @@ public class PolyElement extends DataElement {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<PolyElement> CREATOR
-            = new Parcelable.Creator<PolyElement>() {
-    	
+    public static final Parcelable.Creator<PolyElement> CREATOR = new Parcelable.Creator<PolyElement>() {
+
         public PolyElement createFromParcel(Parcel in) {
             return new PolyElement(in);
         }
@@ -350,26 +349,27 @@ public class PolyElement extends DataElement {
     /**
      * Writes the nodes to the given parcel.
      */
-	public void writeToParcel(Parcel dest, int flags) {		
-		super.writeToParcel(dest, flags);
-		dest.writeTypedList(nodes);
-	}
-	
-	/**
-	 * Constructor to create a PolyElement from a parcel.
-	 * @param in
-	 */
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeTypedList(nodes);
+    }
+
+    /**
+     * Constructor to create a PolyElement from a parcel.
+     * 
+     * @param in
+     */
     private PolyElement(Parcel in) {
-    	super(in);
+        super(in);
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
     }
-    
-    public String toString(){
-    	String s = "";
-    	for(Node n : nodes){
-    		s += n.toString() + " ";
-    	}
-    	return s;
+
+    public String toString() {
+        String s = "";
+        for (Node n : nodes) {
+            s += n.toString() + " ";
+        }
+        return s;
     }
 }
