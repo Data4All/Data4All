@@ -332,6 +332,24 @@ public class Way extends OsmElement {
         }
     }
 
+    /**
+     * Methods to write and restore a Parcel.
+     */
+    public static final Parcelable.Creator<Way> CREATOR
+            = new Parcelable.Creator<Way>() {
+    	
+        public Way createFromParcel(Parcel in) {
+            return new Way(in);
+        }
+
+        public Way[] newArray(int size) {
+            return new Way[size];
+        }
+    };
+
+    /**
+     * Writes the nodes to the given parcel.
+     */
 	public void writeToParcel(Parcel dest, int flags) {		
 		super.writeToParcel(dest, flags);
 		dest.writeTypedList(nodes);
@@ -345,7 +363,7 @@ public class Way extends OsmElement {
     	super(in);
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
-    }	
+    }
     
     public String toString(){
     	String s = "";
