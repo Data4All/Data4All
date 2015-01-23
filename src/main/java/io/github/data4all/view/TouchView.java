@@ -8,8 +8,8 @@ import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
 import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.Point;
-import io.github.data4all.model.drawing.RedoUndo;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
+import io.github.data4all.model.drawing.RedoUndo;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
@@ -37,12 +37,11 @@ import android.view.View;
  */
 public class TouchView extends View {
 
-
-	/**
-	 * The paint to draw the path with
-	 */
-	private final Paint pathPaint = new Paint();
-	private final Paint areaPaint = new Paint();
+    /**
+     * The paint to draw the path with
+     */
+    private final Paint pathPaint = new Paint();
+    private final Paint areaPaint = new Paint();
 
     /**
      * The motion interpreted Polygon
@@ -58,7 +57,7 @@ public class TouchView extends View {
      * The current motion the user is typing via the screen
      */
     private DrawingMotion currentMotion;
-    
+
     /**
      * An object for the calculation of the point transformation
      */
@@ -70,26 +69,26 @@ public class TouchView extends View {
     private MotionInterpreter interpreter;
 
     /**
-	 * The current used RedoUndo object
-	 */
-	private RedoUndo redoUndo;
-	
-	ShowPictureActivity show;
+     * The current used RedoUndo object
+     */
+    private RedoUndo redoUndo;
 
-	public TouchView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		show = (ShowPictureActivity) context;
-	}
+    ShowPictureActivity show;
 
-	public TouchView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		show = (ShowPictureActivity) context;
-	}
+    public TouchView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        show = (ShowPictureActivity) context;
+    }
 
-	public TouchView(Context context) {
-		super(context);
-		show = (ShowPictureActivity) context;
-	}
+    public TouchView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        show = (ShowPictureActivity) context;
+    }
+
+    public TouchView(Context context) {
+        super(context);
+        show = (ShowPictureActivity) context;
+    }
 
     /**
      * Remove all recorded DrawingMotions from this TouchView
@@ -100,54 +99,53 @@ public class TouchView extends View {
         }
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        interpreter = new WayMotionInterpreter(pointTrans);
+        pathPaint.setColor(MotionInterpreter.POINT_COLOR);
+        pathPaint.setColor(MotionInterpreter.PATH_COLOR);
+        pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
+        areaPaint.setColor(MotionInterpreter.AREA_COLOR);
+        areaPaint.setStyle(Paint.Style.FILL);
+        areaPaint.setAlpha(100);
+        redoUndo = new RedoUndo();
+    }
 
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-		interpreter = new WayMotionInterpreter(pointTrans);
-		pathPaint.setColor(MotionInterpreter.POINT_COLOR);
-		pathPaint.setColor(MotionInterpreter.PATH_COLOR);
-		pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
-		areaPaint.setColor(MotionInterpreter.AREA_COLOR);
-		areaPaint.setStyle(Paint.Style.FILL);
-		areaPaint.setAlpha(100);
-		redoUndo = new RedoUndo();
-	}
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawARGB(0, 0, 0, 0);
 
-	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-		canvas.drawARGB(0, 0, 0, 0);
-		
-		Path path = new Path();
-		path.reset();
-		
+        Path path = new Path();
+        path.reset();
 
-		if (newPolygon != null && newPolygon.size()!=0) {
-			path.moveTo(newPolygon.get(0).getX(),newPolygon.get(0).getY());
-			// first draw all lines
-			int limit = newPolygon.size();
-			// Don't draw the last line if it is not an area
-			limit -= interpreter.isArea() ? 0 : 1;
-			for (int i = 0; i < limit; i++) {
-				// The next point in the polygon
-				Point b = newPolygon.get((i + 1) % newPolygon.size());
-				Point a = newPolygon.get(i);
-				path.lineTo(a.getX(),a.getY());
-				path.lineTo(b.getX(),b.getY());
-				canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
-						pathPaint);
-			}
-			if(interpreter instanceof AreaMotionInterpreter || interpreter instanceof BuildingMotionInterpreter){
-			canvas.drawPath(path, areaPaint);
-			}
-			// afterwards draw the points
-			for (Point p : newPolygon) {
-				canvas.drawCircle(p.getX(), p.getY(),
-						MotionInterpreter.POINT_RADIUS, pathPaint);
-			}
-			undoUseable();
-			redoUseable();
+        if (newPolygon != null && newPolygon.size() != 0) {
+            path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
+            // first draw all lines
+            int limit = newPolygon.size();
+            // Don't draw the last line if it is not an area
+            limit -= interpreter.isArea() ? 0 : 1;
+            for (int i = 0; i < limit; i++) {
+                // The next point in the polygon
+                Point b = newPolygon.get((i + 1) % newPolygon.size());
+                Point a = newPolygon.get(i);
+                path.lineTo(a.getX(), a.getY());
+                path.lineTo(b.getX(), b.getY());
+                canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
+                        pathPaint);
+            }
+            if (interpreter instanceof AreaMotionInterpreter
+                    || interpreter instanceof BuildingMotionInterpreter) {
+                canvas.drawPath(path, areaPaint);
+            }
+            // afterwards draw the points
+            for (Point p : newPolygon) {
+                canvas.drawCircle(p.getX(), p.getY(),
+                        MotionInterpreter.POINT_RADIUS, pathPaint);
+            }
+            undoUseable();
+            redoUseable();
         }
     }
 
@@ -246,6 +244,58 @@ public class TouchView extends View {
         return closePoint;
     }
 
+    /**
+     * Returns a {@link PointMover} for the given {@link Point}<br/>
+     * 
+     * Use moveTo() afterwards to actually move the point
+     * 
+     * @param point
+     *            the point you want to move
+     * 
+     * @return A {@link PointMover} for moving this point
+     * 
+     * @author konerman
+     */
+    public PointMover movePoint(Point point) {
+        int i = polygon.indexOf(point);
+        if (i == -1) {
+            Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
+            return null;
+        } else {
+            Log.d(this.getClass().getSimpleName(), "PointMover for index " + i);
+            return new PointMover(i);
+        }
+    }
+
+    /**
+     * Pointer of the position of a point in the polygon
+     * 
+     * @author konerman
+     */
+    public class PointMover {
+        private final int idx;
+
+        public PointMover(int idx) {
+            this.idx = idx;
+        }
+
+        /**
+         * moves the {@link Point} to the new coordinates and invalidates its
+         * {@link TouchView} afterwards
+         * 
+         * @param x
+         *            the new x-coordinate
+         * @param y
+         *            the new y-coordinate
+         * 
+         * @author konerman
+         */
+        public void moveTo(float x, float y) {
+            polygon.set(idx, new Point(x, y));
+            postInvalidate();
+        }
+    }
+
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:
@@ -269,59 +319,55 @@ public class TouchView extends View {
         AREA, POINT, BUILDING, WAY;
     }
 
-    	public void redo() {
-		newPolygon = redoUndo.redo();
-		polygon = newPolygon;
-		redoUseable();
-	}
+    public void redo() {
+        newPolygon = redoUndo.redo();
+        polygon = newPolygon;
+        redoUseable();
+    }
 
-	public void undo() { 
-		newPolygon = redoUndo.undo();
-		polygon = newPolygon;
-		show.SetRedoEnable(true);
-		undoUseable();
-	}
-	
-	public boolean redoUseable(){
-		if(redoUndo.getCurrent() == redoUndo.getMax()){
-			Log.d(this.getClass().getSimpleName(),
-					"false redo");
-			show.SetRedoEnable(false);
-			return true;
-		} else {
-			Log.d(this.getClass().getSimpleName(),
-					"false redo");
-			show.SetRedoEnable(true);
-			return false;
-		}
-	}
-	
-	public boolean undoUseable(){
-		if(redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0){
-			Log.d(this.getClass().getSimpleName(),
-					"true undo");
-			show.SetUndoEnable(true);
-			return true;
-		} else {
-			Log.d(this.getClass().getSimpleName(),
-					"false undo");
-			show.SetUndoEnable(false);
-			return false;
-		}
-	}
-    
+    public void undo() {
+        newPolygon = redoUndo.undo();
+        polygon = newPolygon;
+        show.SetRedoEnable(true);
+        undoUseable();
+    }
+
+    public boolean redoUseable() {
+        if (redoUndo.getCurrent() == redoUndo.getMax()) {
+            Log.d(this.getClass().getSimpleName(), "false redo");
+            show.SetRedoEnable(false);
+            return true;
+        } else {
+            Log.d(this.getClass().getSimpleName(), "false redo");
+            show.SetRedoEnable(true);
+            return false;
+        }
+    }
+
+    public boolean undoUseable() {
+        if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
+            Log.d(this.getClass().getSimpleName(), "true undo");
+            show.SetUndoEnable(true);
+            return true;
+        } else {
+            Log.d(this.getClass().getSimpleName(), "false undo");
+            show.SetUndoEnable(false);
+            return false;
+        }
+    }
+
     /**
-     * @author sbollen
-     * Set the actual PointToCoordsTransformUtil with the actual location and camera parameters
-     * @param pointTrans the actual object
+     * @author sbollen Set the actual PointToCoordsTransformUtil with the actual
+     *         location and camera parameters
+     * @param pointTrans
+     *            the actual object
      */
     public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
-    
+
     /**
-     * @author sbollen
-     * Create an OsmElement from the given polygon
+     * @author sbollen Create an OsmElement from the given polygon
      * @return the created OsmElement (with located nodes)
      */
     public OsmElement create() {
