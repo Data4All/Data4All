@@ -153,6 +153,7 @@ public class TouchView extends View {
         case MotionEvent.ACTION_UP:
             handleMotion(event, "start");
             polygon = newPolygon;
+            redoUndo = new RedoUndo(polygon);
             break;
         case MotionEvent.ACTION_MOVE:
             handleMotion(event, "move");
