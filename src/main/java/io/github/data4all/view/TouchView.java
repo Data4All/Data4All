@@ -10,6 +10,7 @@ import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.Point;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
 import io.github.data4all.model.drawing.RedoUndo;
+import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
@@ -72,22 +73,18 @@ public class TouchView extends View {
      * The current used RedoUndo object
      */
     private RedoUndo redoUndo;
-
-    ShowPictureActivity show;
+    private UndoRedoListener undoRedoListener;
 
     public TouchView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        show = (ShowPictureActivity) context;
     }
 
     public TouchView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        show = (ShowPictureActivity) context;
     }
 
     public TouchView(Context context) {
         super(context);
-        show = (ShowPictureActivity) context;
     }
 
     /**
@@ -328,18 +325,24 @@ public class TouchView extends View {
     public void undo() {
         newPolygon = redoUndo.undo();
         polygon = newPolygon;
-        show.SetRedoEnable(true);
+        if (undoRedoListener != null) {     
+            undoRedoListener.canRedo(true);
+        }
         undoUseable();
     }
 
     public boolean redoUseable() {
         if (redoUndo.getCurrent() == redoUndo.getMax()) {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            show.SetRedoEnable(false);
+            if (undoRedoListener != null) {     
+                undoRedoListener.canRedo(false);
+            }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            show.SetRedoEnable(true);
+            if (undoRedoListener != null) {     
+                undoRedoListener.canRedo(true);
+            }
             return false;
         }
     }
@@ -347,11 +350,15 @@ public class TouchView extends View {
     public boolean undoUseable() {
         if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
             Log.d(this.getClass().getSimpleName(), "true undo");
-            show.SetUndoEnable(true);
+            if (undoRedoListener != null) {     
+                undoRedoListener.canUndo(true);
+            }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false undo");
-            show.SetUndoEnable(false);
+            if (undoRedoListener != null) {     
+                undoRedoListener.canUndo(false);
+            }
             return false;
         }
     }
@@ -364,6 +371,10 @@ public class TouchView extends View {
      */
     public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
+    }
+    
+    public void setUndoRedoListener(UndoRedoListener undoRedoListener) {
+        this.undoRedoListener = undoRedoListener;
     }
 
     /**

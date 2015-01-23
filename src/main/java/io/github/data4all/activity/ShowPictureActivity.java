@@ -5,6 +5,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
 
@@ -63,6 +64,19 @@ public class ShowPictureActivity extends BasicActivity {
 	undo = (Button) findViewById(R.id.undobtn);
 	redo = (Button) findViewById(R.id.redobtn);
 
+	touchView.setUndoRedoListener(new UndoRedoListener() {
+        
+        @Override
+        public void canUndo(boolean state) {
+            undo.setEnabled(state);
+        }
+        
+        @Override
+        public void canRedo(boolean state) {
+            redo.setEnabled(state);
+        }
+    });
+	
 	if (getIntent().hasExtra("file_path")) {
 	    setBackground(Uri.fromFile((File) getIntent().getExtras().get(
 		    "file_path")));
