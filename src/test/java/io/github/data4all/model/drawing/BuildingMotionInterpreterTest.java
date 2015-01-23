@@ -1,10 +1,15 @@
 package io.github.data4all.model.drawing;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +44,8 @@ public class BuildingMotionInterpreterTest extends MotionInterpreterTest {
         interpreter = new BuildingMotionInterpreter();
         canvas = mock(Canvas.class);
     }
+
+    // Tests for method draw()
 
     /**
      * If the User is not typing any point, there should be nothing drawn
@@ -146,5 +153,61 @@ public class BuildingMotionInterpreterTest extends MotionInterpreterTest {
         interpreter.draw(canvas, Arrays.asList(motion1, motion2, motion3));
 
         verifyDrawLine(canvas, times(4));
+    }
+
+    // Tests for method interprete()
+
+    @Test
+    public void interprete_motionIsNull_noModification() {
+        List<Point> interprete = new ArrayList<Point>();
+        List<Point> interpreted = interpreter.interprete(interprete, null);
+        assertThat(interpreted, sameInstance(interprete));
+    }
+
+    @Test
+    public void interprete_addOnePoint_oneMorePointInList() {
+        List<Point> interprete = new ArrayList<Point>();
+        interprete.add(new Point(0, 0));
+        DrawingMotion drawingMotion = getDrawingMotion(100, 100);
+        List<Point> interpreted = interpreter.interprete(interprete,
+                drawingMotion);
+        assertThat(interpreted.size(), is(2));
+        assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
+        assertThat(interpreted.get(1), equalTo(new Point(100, 100)));
+    }
+
+    /**
+     * If the User is typing a line, there should be the last point of the line
+     * added
+     */
+    @Test
+    public void interprete_addLine_onePointInList() {
+        List<Point> interprete = new ArrayList<Point>();
+        DrawingMotion drawingMotion = getDrawingMotion(0, 0, 0, 10, 0, 20, 0,
+                30);
+        List<Point> interpreted = interpreter.interprete(interprete,
+                drawingMotion);
+        assertThat(interpreted.size(), is(1));
+        assertThat(interpreted.get(0), equalTo(new Point(0, 30)));
+    }
+
+    /**
+     * If the User is typing a line, there should be the last point of the line
+     * added, the exact position of the fourth point depends
+     */
+    @Test
+    public void interprete_addThreePoints_fourPointsInList() {
+        List<Point> interprete = new ArrayList<Point>();
+        DrawingMotion drawingMotion = getDrawingMotion(0, 0, 0, 10, 0, 20, 0,
+                30);
+        interprete.add(new Point(0, 0));
+        interprete.add(new Point(100, 0));
+        interprete.add(new Point(100, 100));
+        List<Point> interpreted = interpreter.interprete(interprete,
+                drawingMotion);
+        assertThat(interpreted.size(), is(4));
+        assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
+        assertThat(interpreted.get(1), equalTo(new Point(100, 0)));
+        assertThat(interpreted.get(2), equalTo(new Point(100, 100)));
     }
 }
