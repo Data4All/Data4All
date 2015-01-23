@@ -125,10 +125,12 @@ public class PointToCoordsTransformUtilTest {
 		point.add(new Point(500,500));
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		ArrayList<double[]> coord = new ArrayList<double[]>();
+		List<Node> n = util.transform(tps, deviceOrientation, point);
 		for(Point p : point){
 			double[] c =util.calculateCoordFromPoint(tps, deviceOrientation, p);
 			coord.add(c);
-			nodes.add(util.calculateGPSPoint(53.105868, 8.854916, c));
+			//nodes.add(util.calculateGPSPoint(53.105868, 8.854916, c));
+			
 		}
 	}		
 }
