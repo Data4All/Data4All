@@ -193,6 +193,59 @@ public class TouchView extends View {
         }
     }
 
+    /**
+     * Deletes a Point of the polygon
+     * 
+     * @param point
+     *            The point to delete
+     * 
+     * @author konerman
+     */
+    public void deletePoint(Point point) {
+        if (polygon.remove(point)) {
+            Log.d(this.getClass().getSimpleName(), "Point deleted");
+        } else {
+            Log.d(this.getClass().getSimpleName(), "Point not found");
+        }
+        postInvalidate();
+    }
+
+    /**
+     * This function determines if there is a Point of the polygon close to the
+     * given coordinates
+     * 
+     * @param x
+     *            the X-value of the point
+     * @param y
+     *            the Y-value of the point
+     * @param maxDistance
+     *            the max distance between the x/y and the Point
+     * @return the closest point to the given x/y or {@code null} if the nearest
+     *         point is more than maxDistance away
+     * 
+     * @author konerman
+     */
+    public Point lookUp(float x, float y, float maxDistance) {
+        double shortest = maxDistance;
+        Point closePoint = null;
+
+        if (!polygon.isEmpty()) {
+            // runs through the list of points in the polygon and checks which
+            // point is the closest
+            for (Point p : polygon) {
+                double distance = Math.hypot(x - p.getX(), y - p.getY());
+
+                Log.d(this.getClass().getSimpleName(), "distance:" + distance);
+                if (distance <= shortest) {
+                    shortest = distance;
+                    closePoint = p;
+                }
+            }
+        }
+        Log.d(this.getClass().getSimpleName(), "shortest distance:" + shortest);
+        return closePoint;
+    }
+
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:

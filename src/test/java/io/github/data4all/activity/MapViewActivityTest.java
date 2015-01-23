@@ -11,8 +11,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import android.content.Intent;
-
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
 public class MapViewActivityTest {
@@ -20,8 +18,7 @@ public class MapViewActivityTest {
 
     @Before
     public void setup() throws Exception{
-        this.activity = Robolectric.buildActivity(MapViewActivity.class)
-                .create().get();
+        this.activity = Robolectric.buildActivity(MapViewActivity.class).get();
     }
 
     @Test
