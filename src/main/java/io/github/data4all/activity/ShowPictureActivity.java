@@ -85,10 +85,8 @@ public class ShowPictureActivity extends BasicActivity {
         //Set the display size as photo size to get a coordinate system for the drawn points
         transformBean.setPhotoWidth(getBaseContext().getResources().getDisplayMetrics().widthPixels);
         transformBean.setPhotoHeight(getBaseContext().getResources().getDisplayMetrics().heightPixels);
-        Log.i(getClass().getSimpleName(), "" + transformBean.getPhotoHeight() + " " + transformBean.getPhotoWidth());
-        
-        
-        // set a new PointToCoordsTransformUtil to the touchView which includes
+                
+        // set a new PointToCoordsTransformUtil in the touchView which includes
         // the deviceOrientation, current Location, camera angle, photo size and
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(

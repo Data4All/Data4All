@@ -97,7 +97,8 @@ public class PointMotionInterpreter implements MotionInterpreter {
         }
     }
 
-    /*
+    /**
+     * @author sbollen
      * (non-Javadoc)
      * 
      * @see

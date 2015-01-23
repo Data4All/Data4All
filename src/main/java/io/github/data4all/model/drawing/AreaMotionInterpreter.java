@@ -140,7 +140,8 @@ public class AreaMotionInterpreter implements MotionInterpreter {
         return reduce(result);
     }
 
-    /*
+    /**
+     * @author sbollen
      * (non-Javadoc)
      * 
      * @see
@@ -151,13 +152,6 @@ public class AreaMotionInterpreter implements MotionInterpreter {
         Way newWay = new Way(-1, 1);
 
         List<Node> nodeList = pointTrans.transform(polygon);
-        
-        for(Point point : polygon) {
-            Log.i(TAG, "Point: " + point.getX() + " " + point.getY());
-        }
-        for(Node node : nodeList) {
-            Log.i(TAG, "Coordinate: " + node.getLat() + " " + node.getLon());
-        }
         
         newWay.addNodes(nodeList, false);
         return newWay;

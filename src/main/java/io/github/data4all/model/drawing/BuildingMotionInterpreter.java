@@ -157,7 +157,8 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         return result;
     }
 
-    /*
+    /**
+     * @author sbollen
      * (non-Javadoc)
      * 
      * @see

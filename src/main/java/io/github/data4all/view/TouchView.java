@@ -248,6 +248,7 @@ public class TouchView extends View {
 	}
     
     /**
+     * @author sbollen
      * Set the actual PointToCoordsTransformUtil with the actual location and camera parameters
      * @param pointTrans the actual object
      */
@@ -256,6 +257,7 @@ public class TouchView extends View {
     }
     
     /**
+     * @author sbollen
      * Create an OsmElement from the given polygon
      * @return the created OsmElement (with located nodes)
      */
