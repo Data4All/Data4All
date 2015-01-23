@@ -18,6 +18,13 @@ import java.util.List;
  * @see MotionInterpreter
  */
 public class WayMotionInterpreter implements MotionInterpreter {
+
+    PointToCoordsTransformUtil pointTrans;
+
+    public WayMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
+    }
+
     /**
      * Combines the edge-points of the given polygon so that points which are
      * relatively close to each other are combined into one single point
@@ -157,11 +164,10 @@ public class WayMotionInterpreter implements MotionInterpreter {
         return reduce(result);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * @author sbollen (non-Javadoc)
      * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
      */
     @Override
     public OsmElement create(List<Point> polygon) {
@@ -169,13 +175,14 @@ public class WayMotionInterpreter implements MotionInterpreter {
         Way newWay = new Way(-1, 1);
 
         List<Node> nodeList = pointTrans.transform(polygon);
+
         newWay.addNodes(nodeList, false);
         return newWay;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override
