@@ -1,5 +1,8 @@
 package io.github.data4all.model.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * RelationMember stores the necessary information for a relation member, if the
  * element field is null the element itself is not present (not downloaded
@@ -9,7 +12,7 @@ package io.github.data4all.model.data;
  * @author simon, fkirchge
  *
  */
-public class RelationMember {
+public class RelationMember implements Parcelable {
 
     /**
      * type can be node/way or relation
@@ -33,20 +36,29 @@ public class RelationMember {
     private OsmElement element = null;
 
     /**
-     * Default constructor Constructor for members that have not been downloaded
+     * CREATOR that generates instances of {@link RelationMember} from a Parcel
      */
-    public RelationMember(final String type, final long refId, final String role) {
-        this.type = type;
-        this.ref = refId;
-        this.role = role;
-    }
+    public static final Parcelable.Creator<RelationMember> CREATOR = new Parcelable.Creator<RelationMember>() {
+        public RelationMember createFromParcel(Parcel in) {
+            return new RelationMember(in);
+        }
+
+        public RelationMember[] newArray(int size) {
+            return new RelationMember[size];
+        }
+    };
 
     /**
-     * Constructor for members that have been downloaded
+     * Constructor to create a {@link RelationMember} from a parcel.
+     * 
+     * @param in
+     *            The {@link Parcel} to read the object's data from
      */
-    public RelationMember(final String role, final OsmElement element) {
-        this.role = role;
-        this.element = element;
+    private RelationMember(Parcel in) {
+        type = in.readString();
+        role = in.readString();
+        ref = in.readLong();
+        element = OsmElementBuilder.read(in);
     }
 
     /**
@@ -63,8 +75,29 @@ public class RelationMember {
         }
     }
 
-    public String getType() {
-        return type;
+    /**
+     * Default constructor Constructor for members that have not been downloaded
+     */
+    public RelationMember(final String type, final long refId, final String role) {
+        this.type = type;
+        this.ref = refId;
+        this.role = role;
+    }
+
+    /**
+     * Constructor for members that have been downloaded
+     */
+    public RelationMember(final String role, final OsmElement element) {
+        this.role = role;
+        this.element = element;
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public OsmElement getElement() {
+        return element;
     }
 
     public long getRef() {
@@ -78,12 +111,8 @@ public class RelationMember {
         return role;
     }
 
-    public void setRole(final String role) {
-        this.role = role;
-    }
-
-    public OsmElement getElement() {
-        return element;
+    public String getType() {
+        return type;
     }
 
     /**
@@ -95,4 +124,15 @@ public class RelationMember {
         this.element = e;
     }
 
+    public void setRole(final String role) {
+        this.role = role;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(type);
+        dest.writeString(role);
+        dest.writeLong(ref);
+        OsmElementBuilder.write(dest, element, flags);
+    }
 }

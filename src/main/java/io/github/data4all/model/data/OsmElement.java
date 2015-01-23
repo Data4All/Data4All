@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Superclass for node, way and relation objects, containing attributes osm id
  * and osm version. All parent relations and tags of the object are stored in a
@@ -15,7 +18,7 @@ import java.util.TreeMap;
  * @author fkirchge
  *
  */
-public abstract class OsmElement {
+public abstract class OsmElement implements Parcelable {
 
     /**
      * osmId: Used for identifying the object. osmVersion: edit version of the
@@ -247,6 +250,36 @@ public abstract class OsmElement {
                     parentRelations.remove(r);
             }
         }
+    }
+
+    /**
+     * Writes the osmId and the osmVersion to the given parcel
+     */
+    public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(osmId);
+		dest.writeLong(osmVersion);
+		dest.writeInt(tags.size());
+		for (String s: tags.keySet()) {
+			dest.writeString(s);
+			dest.writeString(tags.get(s));
+		}
+		dest.writeTypedList(parentRelations);
+	}
+	
+    /**
+     * Constructor to create a osm element from a parcel
+     * @param in
+     */
+    protected OsmElement(Parcel in) {
+    	osmId = in.readLong();
+    	osmVersion = in.readLong();
+    	tags = new TreeMap<String, String>();
+        int count = in.readInt();
+        for (int i = 0; i < count; i++) {
+            tags.put(in.readString(), in.readString());
+        }
+        parentRelations = new ArrayList<Relation>();
+        in.readTypedList(parentRelations, Relation.CREATOR);
     }
 
 }

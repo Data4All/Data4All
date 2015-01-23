@@ -1,5 +1,8 @@
 package io.github.data4all.model.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * A node is one of the core elements in the OpenStreetMap data model. It
  * consists of a single point in space defined by its latitude, longitude and
@@ -11,10 +14,27 @@ package io.github.data4all.model.data;
 public class Node extends OsmElement implements GeoPoint {
 
     /**
-     * Latitude and Longitude of the Node.
+     * Latitude of the Node.
      */
     private double lat;
+
+    /**
+     * Longitude of the Node.
+     */
     private double lon;
+
+    /**
+     * CREATOR that generates instances of {@link Node} from a Parcel
+     */
+    public static final Parcelable.Creator<Node> CREATOR = new Parcelable.Creator<Node>() {
+        public Node createFromParcel(Parcel in) {
+            return new Node(in);
+        }
+
+        public Node[] newArray(int size) {
+            return new Node[size];
+        }
+    };
 
     /**
      * Default Constructor
@@ -33,6 +53,22 @@ public class Node extends OsmElement implements GeoPoint {
         this.lon = lon;
     }
 
+    /**
+     * Constructor to create a {@link Node} from a parcel
+     * 
+     * @param in
+     *            The {@link Parcel} to read the object's data from
+     */
+    private Node(Parcel in) {
+        super(in);
+        lat = in.readDouble();
+        lon = in.readDouble();
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
     public double getLat() {
         return lat;
     }
@@ -49,4 +85,10 @@ public class Node extends OsmElement implements GeoPoint {
         this.lon = lon;
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
+    }
 }
