@@ -10,25 +10,25 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * A way is an ordered list of nodes which normally also has at least one tag or
- * is included within a Relation. A way can have between 2 and 2,000 nodes. A
- * way can be open or closed. A closed way is one whose last node on the way is
- * also the first on that way.
+ * A PolyElement is an ordered list of nodes which normally also has at least one tag or
+ * is included within a Relation. A PolyElement can have between 2 and 2,000 nodes. A
+ * PolyElement can be open or closed. A closed PolyElement is one whose last node on the PolyElement is
+ * also the first on that PolyElement.
  * 
  * @author fkirchge
  *
  */
-public class Way extends OsmElement {
+public class PolyElement extends DataElement {
 
     /**
-     * List of nodes to define a way (waypoints).
+     * List of nodes to define a PolyElement (PolyElementpoints).
      */
     private List<Node> nodes = null;
 
     /**
      * Max. number of nodes.
      */
-    private final int MAX_WAY_NODES = 2000;
+    private final int MAX_PolyElement_NODES = 2000;
 
     /**
      * Default Constructor
@@ -36,15 +36,15 @@ public class Way extends OsmElement {
      * @param osmId
      * @param osmVersion
      */
-    public Way(long osmId, long osmVersion) {
+    public PolyElement(long osmId, long osmVersion) {
         super(osmId, osmVersion);
         nodes = new LinkedList<Node>();
     }
 
 
     /**
-     * Adds a new node to the way. If the last node equals the new node you have
-     * to use append to define a closed way.
+     * Adds a new node to the PolyElement. If the last node equals the new node you have
+     * to use append to define a closed PolyElement.
      * 
      * @param node
      */
@@ -54,7 +54,7 @@ public class Way extends OsmElement {
                     "addNode attempt to add same node, use appendNode instead");
             return false;
         }
-        if (nodes.size() >= MAX_WAY_NODES) {
+        if (nodes.size() >= MAX_PolyElement_NODES) {
             Log.d(getClass().getSimpleName(),
                     "addNode attempt to add more than 2000 nodes");
             return false;
@@ -77,7 +77,7 @@ public class Way extends OsmElement {
                     "addNodeAfter unable to add new node, refNode equals newNode");
             return false;
         }
-        if (nodes.size() >= MAX_WAY_NODES) {
+        if (nodes.size() >= MAX_PolyElement_NODES) {
             Log.d(getClass().getSimpleName(),
                     "addNodeAfter attempt to add more than 2000 nodes");
             return false;
@@ -90,7 +90,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Adds multiple nodes to the way in the order in which they appear in the
+     * Adds multiple nodes to the PolyElement in the order in which they appear in the
      * list. They can be either prepended or appended to the existing nodes.
      * 
      * @param newNodes
@@ -99,7 +99,7 @@ public class Way extends OsmElement {
      *            if true, nodes are prepended, otherwise, they are appended
      */
     public void addNodes(List<Node> newNodes, boolean atBeginning) {
-        if (newNodes.size() < MAX_WAY_NODES) {
+        if (newNodes.size() < MAX_PolyElement_NODES) {
             if (atBeginning) {
                 if ((nodes.size() > 0)
                         && nodes.get(0) == newNodes.get(newNodes.size() - 1)) { // user
@@ -150,7 +150,7 @@ public class Way extends OsmElement {
                     "appendNode unable to add new node, refNode equals newNode");
             return false;
         }
-        if (nodes.size() >= MAX_WAY_NODES) {
+        if (nodes.size() >= MAX_PolyElement_NODES) {
             Log.d(getClass().getSimpleName(),
                     "appendNode attempt to add more than 2000 nodes");
             return false;
@@ -160,14 +160,14 @@ public class Way extends OsmElement {
             Log.i(getClass().getSimpleName(),
                     "appendNode successfully added new node: "
                             + newNode.getOsmId()
-                            + "  at the begin of the waypoint list");
+                            + "  at the begin of the PolyElementpoint list");
             return true;
         } else if (nodes.get(nodes.size() - 1) == refNode) {
             nodes.add(newNode);
             Log.i(getClass().getSimpleName(),
                     "appendNode successfully added new node: "
                             + newNode.getOsmId()
-                            + " at the end of the waypoint list");
+                            + " at the end of the PolyElementpoint list");
             return true;
         }
         return false;
@@ -178,7 +178,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Returns the first node of this way.
+     * Returns the first node of this PolyElement.
      * 
      * @return node
      */
@@ -186,7 +186,7 @@ public class Way extends OsmElement {
         return nodes.get(0);
     }
 	/**
-	 * Returns all points which belong to the way.
+	 * Returns all points which belong to the PolyElement.
 	 * 
 	 * @return list of points
 	 */
@@ -199,7 +199,7 @@ public class Way extends OsmElement {
 	}
 
 	/**
-	 * Returns all points which belong to the way.
+	 * Returns all points which belong to the PolyElement.
 	 * 
 	 * @return list of points
 	 */
@@ -213,7 +213,7 @@ public class Way extends OsmElement {
 	
 
     /**
-     * Returns the last node of this way.
+     * Returns the last node of this PolyElement.
      * 
      * @return node
      */
@@ -222,7 +222,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Returns all nodes which belong to the way.
+     * Returns all nodes which belong to the PolyElement.
      * 
      * @return list of nodes
      */
@@ -231,15 +231,15 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Returns true if the given way contains common nodes with the this way
+     * Returns true if the given PolyElement contains common nodes with the this PolyElement
      * object.
      * 
-     * @param way
+     * @param PolyElement
      * @return true/false
      */
-    public boolean hasCommonNode(final Way way) {
+    public boolean hasCommonNode(final PolyElement PolyElement) {
         for (Node n : this.nodes) {
-            if (way.hasNode(n)) {
+            if (PolyElement.hasNode(n)) {
                 return true;
             }
         }
@@ -247,7 +247,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Returns true if the node is part of the way.
+     * Returns true if the node is part of the PolyElement.
      * 
      * @param node
      * @return true/false
@@ -266,7 +266,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Checks if a node is an end node of the way (i.e. either the first or the
+     * Checks if a node is an end node of the PolyElement (i.e. either the first or the
      * last one)
      * 
      * @param node
@@ -278,7 +278,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * return the number of nodes in the is way
+     * return the number of nodes in the is PolyElement
      * 
      * @return int
      */
@@ -287,7 +287,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Removes a node from the way.
+     * Removes a node from the PolyElement.
      * 
      * @param node
      */
@@ -307,7 +307,7 @@ public class Way extends OsmElement {
     }
 
     /**
-     * Replace an existing node in a way with a different node.
+     * Replace an existing node in a PolyElement with a different node.
      * 
      * @param existing
      *            The existing node to be replaced.
@@ -335,15 +335,15 @@ public class Way extends OsmElement {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<Way> CREATOR
-            = new Parcelable.Creator<Way>() {
+    public static final Parcelable.Creator<PolyElement> CREATOR
+            = new Parcelable.Creator<PolyElement>() {
     	
-        public Way createFromParcel(Parcel in) {
-            return new Way(in);
+        public PolyElement createFromParcel(Parcel in) {
+            return new PolyElement(in);
         }
 
-        public Way[] newArray(int size) {
-            return new Way[size];
+        public PolyElement[] newArray(int size) {
+            return new PolyElement[size];
         }
     };
 
@@ -356,10 +356,10 @@ public class Way extends OsmElement {
 	}
 	
 	/**
-	 * Constructor to create a way from a parcel.
+	 * Constructor to create a PolyElement from a parcel.
 	 * @param in
 	 */
-    private Way(Parcel in) {
+    private PolyElement(Parcel in) {
     	super(in);
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
