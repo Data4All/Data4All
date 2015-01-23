@@ -108,5 +108,15 @@ public abstract class Tagging {
         return map;
 
     }
+    
+    public static Boolean isClassifiedTag(String key, CharSequence [] array){
+    	
+    	for (int i = 0; i < array.length; i++) {
+			if(array [i].equals(key)){
+				return true;
+			}
+				
+		}return false;
+    }
 
 }

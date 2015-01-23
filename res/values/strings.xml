@@ -59,4 +59,10 @@
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    
+    <string name="resultViewAlertDialogMessage">Upload now</string>
+    <string name="ok">Ok</string>
+    <string name="no">No</string>
+
 </resources>
