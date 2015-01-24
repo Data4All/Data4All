@@ -1,6 +1,5 @@
 package io.github.data4all.service;
 
-//import io.github.data4all.model.DevicePosition;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.util.Optimizer;
@@ -13,19 +12,22 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 
 /**
+ * A service for listening for orientation changes. Whenever the sensor changes
+ * the accelerometer and magnetic field values are checked out.
  * 
  * @author Steeve
+ * @author sbollen
  * 
  */
 public class OrientationListener extends Service implements SensorEventListener {
 
-    /** sensor accelerometer */
+    /* sensor accelerometer */
     Sensor accelerometer;
-    /** sensor magnetic_field */
+    /* sensor magnetic_field */
     Sensor magnetometer;
-    /** sensorManager */
+    /* sensorManager */
     private SensorManager sManager;
-    
+
     private static final String TAG = "OrientationListener";
 
     // RotationmatrixR
@@ -67,29 +69,26 @@ public class OrientationListener extends Service implements SensorEventListener 
     /**
      * (non-Javadoc)
      * 
-     * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware
-     *      .SensorEvent)
      * @param event
      *            when the two Sensors data are available then saved this in
      *            model
+     * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware
+     *      .SensorEvent)
      */
     public void onSensorChanged(SensorEvent event) {
 
         // check sensor type
-        switch (event.sensor.getType()) {
-        case Sensor.TYPE_ACCELEROMETER:
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             System.arraycopy(event.values, 0, mGravity, 0, 3);
-            break;
-        case Sensor.TYPE_MAGNETIC_FIELD:
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             System.arraycopy(event.values, 0, mGeomagnetic, 0, 3);
-            break;
         }
 
         // when the 2 Sensors data are available
         if (mGravity != null && mGeomagnetic != null) {
 
-            boolean success = SensorManager.getRotationMatrix(mR, mI, mGravity,
-                    mGeomagnetic);
+            final boolean success = SensorManager.getRotationMatrix(mR, mI,
+                    mGravity, mGeomagnetic);
 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);

@@ -14,12 +14,18 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.widget.Toast;
 
+/**
+ * A service for listening for location changes.
+ * 
+ * @author konermann
+ * 
+ */
 public class GPSservice extends Service implements LocationListener {
-    
+
     private static final String TAG = "GPSservice";
 
-     /**
-     * LocationManager
+    /**
+     * LocationManager.
      */
     private LocationManager lmgr;
 
@@ -38,10 +44,9 @@ public class GPSservice extends Service implements LocationListener {
 
         if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, // minimum
-                                                                            // of
-                                                                            // time
-                    0, this); // minimum of meters
+            // second value is minimum of time, third value is minimum of meters
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0,
+                    this);
         }
 
         if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
@@ -61,11 +66,11 @@ public class GPSservice extends Service implements LocationListener {
     public void onDestroy() {
         super.onDestroy();
         wakeLock.release();
- 
+
     }
 
     public void onLocationChanged(Location loc) {
-             
+
         Optimizer.putLoc(loc);
 
     }
@@ -76,6 +81,7 @@ public class GPSservice extends Service implements LocationListener {
     }
 
     public void onProviderEnabled(String provider) {
+        // TODO Auto-generated method stub
     }
 
     public void onProviderDisabled(String provider) {
@@ -90,5 +96,5 @@ public class GPSservice extends Service implements LocationListener {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
 }

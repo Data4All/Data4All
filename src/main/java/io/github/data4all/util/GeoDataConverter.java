@@ -34,7 +34,7 @@ public class GeoDataConverter {
         deg *= 60;
         deg -= (minute * 60.0d);
         final int second = (int) (deg * 1000.0d);
-        StringBuilder sb = new StringBuilder(20);
+        final StringBuilder sb = new StringBuilder(20);
         sb.setLength(0);
         sb.append(degree);
         sb.append("/1,");
@@ -46,7 +46,7 @@ public class GeoDataConverter {
     }
 
     /**
-     * Convert the latitude or latitude from DMS into degrees
+     * Convert the latitude or latitude from DMS into degrees.
      * 
      * @param stringDMS the given latitude or longitude in DMS
      * 

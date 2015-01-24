@@ -19,17 +19,7 @@ public class CaptureShutterListener implements OnClickListener {
 
     // Camera Object
     private Camera camera;
-
-    /**
-     * constructor
-     * 
-     * @param c
-     *         the used camera
-     */
-    public CaptureShutterListener(Camera c) {
-        this.camera = c;
-    }
-
+    
     private ShutterCallback shutterCallback = new ShutterCallback() {
 
         public void onShutter() {
@@ -44,6 +34,16 @@ public class CaptureShutterListener implements OnClickListener {
             Log.i(getClass().getSimpleName(), "compress jpeg");
         }
     };
+
+    /**
+     * constructor.
+     * 
+     * @param c
+     *         the used camera
+     */
+    public CaptureShutterListener(Camera c) {
+        this.camera = c;
+    }
 
     @Override
     public void onClick(View v) {
