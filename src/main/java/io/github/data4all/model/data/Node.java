@@ -11,7 +11,7 @@ import android.os.Parcelable;
  * @author fkirchge
  *
  */
-public class Node extends DataElement {
+public class Node extends AbstractDataElement {
 
     /**
      * Latitude of the Node.
@@ -68,6 +68,18 @@ public class Node extends DataElement {
         return 0;
     }
 
+    /**
+     * Checks if this node equals another Node object.
+     * 
+     * @param node
+     *            the Node object to compare with
+     * @return true or false
+     */
+    public boolean equals(Node node) {
+        return node.getLat() == lat && node.getLon() == lon;
+
+    }
+
     public double getLat() {
         return lat;
     }
@@ -85,15 +97,6 @@ public class Node extends DataElement {
     }
 
     /**
-     * Writes the lat and the lon to the given parcel
-     */
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-        dest.writeDouble(lat);
-        dest.writeDouble(lon);
-    }
-
-    /**
      * Returns the Node as a GeoPoint representation
      * 
      * @return the node as a GeoPoint representation
@@ -102,12 +105,25 @@ public class Node extends DataElement {
         return new org.osmdroid.util.GeoPoint(lat, lon);
     }
 
-    public boolean equals(Node node) {
-        return node.getLat() == lat && node.getLon() == lon;
-
-    }
-
+    /**
+     * Created a new GeoPoint and calls the toString method.
+     * @return returns a geopoint and calls the to string method
+     */
+    @Override
     public String toString() {
-        return toGeoPoint().toString();
+        return this.toGeoPoint().toString();
     }
+
+    /**
+     * Writes the lat and the lon to the given parcel.
+     * @param dest destination oparcel
+     * @param flags additional flags
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
+    }
+
 }
