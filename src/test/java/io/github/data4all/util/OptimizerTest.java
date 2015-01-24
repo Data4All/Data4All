@@ -19,9 +19,6 @@ import android.location.Location;
 @Config(emulateSdk = 18)
 public class OptimizerTest {
 
-    //The instance for testing
-    Optimizer optimizer;
-
     //different locations for comparing
     Location newLocation;
     Location oldLocation;
@@ -37,8 +34,7 @@ public class OptimizerTest {
 
     @Before
     public void setUp() throws Exception {
-        optimizer = new Optimizer();
-
+        
         newLocation = new Location("provider");
         oldLocation = new Location("provider");
         location1 = new Location("provider");
@@ -49,7 +45,7 @@ public class OptimizerTest {
 
         // get the time difference for comparing locations here because this
         // value can change in the further progress
-        timeDiff = optimizer.TIME_DIFFERENCE;
+        timeDiff = Optimizer.TIME_DIFFERENCE;
         // set a time
         time = System.currentTimeMillis();
 
@@ -78,34 +74,34 @@ public class OptimizerTest {
     @Test
     public void testCalculateBestLoc() {
 //        // if there is no location
-//        assertNull(optimizer.calculateBestLoc());
+//        assertNull(Optimizer.calculateBestLoc());
 //        // put one location in the buffer and this has to be the best location
-//        optimizer.putLoc(oldLocation);
-//        assertEquals(oldLocation, optimizer.calculateBestLoc());
+//        Optimizer.putLoc(oldLocation);
+//        assertEquals(oldLocation, Optimizer.calculateBestLoc());
 //        // put another location in the buffer which is better than the first one
-//        optimizer.putLoc(newLocation);
-//        assertEquals(newLocation, optimizer.calculateBestLoc());
+//        Optimizer.putLoc(newLocation);
+//        assertEquals(newLocation, Optimizer.calculateBestLoc());
 //        // put another location in the buffer which is not better than the one
 //        // before
-//        optimizer.putLoc(oldLocation);
-//        assertEquals(newLocation, optimizer.calculateBestLoc());
+//        Optimizer.putLoc(oldLocation);
+//        assertEquals(newLocation, Optimizer.calculateBestLoc());
     }
 
     //test for isBetterLocation
     @Test
     public void testIsBetterLocation() {
 //        // if the second location is a null location
-//        assertTrue(optimizer.isBetterLocation(location1, nullLocation));
+//        assertTrue(Optimizer.isBetterLocation(location1, nullLocation));
 //
 //        // if the first location is a significantly newer location
-//        assertTrue(optimizer.isBetterLocation(newLocation, oldLocation));
+//        assertTrue(Optimizer.isBetterLocation(newLocation, oldLocation));
 //
 //        // if the first location is a significantly older location
-//        assertFalse(optimizer.isBetterLocation(oldLocation, newLocation));
+//        assertFalse(Optimizer.isBetterLocation(oldLocation, newLocation));
 //
 //        // if the first location is more accurate and there is no significant
 //        // time difference
-//        assertTrue(optimizer.isBetterLocation(accurateLocation, location1));
+//        assertTrue(Optimizer.isBetterLocation(accurateLocation, location1));
 //
 //        // set the time of the second location down so that it is older
 //        location1.setTime(time - 1);
@@ -113,22 +109,22 @@ public class OptimizerTest {
 //        // first location so that the first one is not less accurate
 //        location1.setAccuracy(1);
 //        // if the first location is newer and not less accurate
-//        assertTrue(optimizer.isBetterLocation(accurateLocation, location1));
+//        assertTrue(Optimizer.isBetterLocation(accurateLocation, location1));
 //
 //        // if the first location is newer, not significantly less accurate and
 //        // from the same provider
-//        assertTrue(optimizer.isBetterLocation(location3, location2));
+//        assertTrue(Optimizer.isBetterLocation(location3, location2));
 //
 //        // if the first location is newer, not significantly less accurate and
 //        // from the same provider (in this case there is no provider
 //        location2.setProvider(null);
 //        location3.setProvider(null);
-//        assertTrue(optimizer.isBetterLocation(location3, location2));
+//        assertTrue(Optimizer.isBetterLocation(location3, location2));
 //
 //        // if the first location is older but not significantly older and not
 //        // less or more accurate
 //        location3.setTime(time - 1);
 //        location3.setAccuracy(4);
-//        assertFalse(optimizer.isBetterLocation(location3, location2));
+//        assertFalse(Optimizer.isBetterLocation(location3, location2));
     }
 }

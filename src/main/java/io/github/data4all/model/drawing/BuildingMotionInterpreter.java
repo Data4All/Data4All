@@ -24,7 +24,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
     private PointToCoordsTransformUtil pointTrans;
 
     /**
-     * Creates an AreaMotionInterpreter with the specified transformation
+     * Creates an BuildingMotionInterpreter with the specified transformation
      * utility.
      * 
      * @param pointTrans the transformation utility

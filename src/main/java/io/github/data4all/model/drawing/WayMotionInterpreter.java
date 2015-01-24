@@ -38,7 +38,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
     private PointToCoordsTransformUtil pointTrans;
 
     /**
-     * Creates an AreaMotionInterpreter with the specified transformation
+     * Creates an WayMotionInterpreter with the specified transformation
      * utility.
      * 
      * @param pointTrans

@@ -23,7 +23,7 @@ public class PointMotionInterpreter implements MotionInterpreter {
     private PointToCoordsTransformUtil pointTrans;
     
     /**
-     * Creates an AreaMotionInterpreter with the specified transformation
+     * Creates an PointMotionInterpreter with the specified transformation
      * utility.
      * 
      * @param pointTrans the transformation utility
