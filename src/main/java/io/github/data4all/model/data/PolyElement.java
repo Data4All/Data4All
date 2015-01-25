@@ -31,14 +31,24 @@ public class PolyElement extends AbstractDataElement {
     private final int MAX_POLYELEMENT_NODES = 2000;
 
     /**
+     * type of the PolyElement.
+     */
+    public enum PolyElementType {
+        WAY, AREA, BUILDING
+    };
+
+    private PolyElementType type;
+
+    /**
      * Default Constructor.
      * 
      * @param osmId
      * @param osmVersion
      */
-    public PolyElement(long osmId) {
+    public PolyElement(long osmId, PolyElementType type) {
         super(osmId);
-        nodes = new LinkedList<Node>();
+        this.type = type;
+        this.nodes = new LinkedList<Node>();
     }
 
     /**
@@ -145,7 +155,7 @@ public class PolyElement extends AbstractDataElement {
      * @param newNode
      */
     public boolean appendNode(final Node refNode, final Node newNode) {
-        if (refNode == newNode) { 
+        if (refNode == newNode) {
             Log.i(getClass().getSimpleName(),
                     "appendNode unable to add new node, refNode equals newNode");
             return false;
@@ -229,6 +239,14 @@ public class PolyElement extends AbstractDataElement {
      */
     public List<Node> getNodes() {
         return nodes;
+    }
+
+    public PolyElementType getType() {
+        return type;
+    }
+
+    public void setType(PolyElementType type) {
+        this.type = type;
     }
 
     /**
@@ -354,6 +372,18 @@ public class PolyElement extends AbstractDataElement {
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeTypedList(nodes);
+        switch (type) {
+        case WAY:
+            dest.writeInt(1);
+            break;
+        case AREA:
+            dest.writeInt(2);
+            break;
+        case BUILDING:
+            dest.writeInt(3);
+            break;
+        }
+
     }
 
     /**
@@ -365,6 +395,18 @@ public class PolyElement extends AbstractDataElement {
         super(in);
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
+        int typeInt = in.readInt();
+        switch (typeInt) {
+        case 1: 
+            type = PolyElementType.WAY;
+            break;
+        case 2: 
+            type = PolyElementType.AREA;
+            break;
+        case 3: 
+            type = PolyElementType.BUILDING;
+            break;
+        }
     }
 
     @Override
