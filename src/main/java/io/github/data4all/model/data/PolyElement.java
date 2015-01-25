@@ -18,7 +18,7 @@ import android.os.Parcelable;
  * @author fkirchge
  *
  */
-public class PolyElement extends DataElement {
+public class PolyElement extends AbstractDataElement {
 
     /**
      * List of nodes to define a PolyElement (PolyElementpoints).
@@ -28,10 +28,10 @@ public class PolyElement extends DataElement {
     /**
      * Max. number of nodes.
      */
-    private final int MAX_PolyElement_NODES = 2000;
+    private final int MAX_POLYELEMENT_NODES = 2000;
 
     /**
-     * Default Constructor
+     * Default Constructor.
      * 
      * @param osmId
      * @param osmVersion
@@ -53,7 +53,7 @@ public class PolyElement extends DataElement {
                     "addNode attempt to add same node, use appendNode instead");
             return false;
         }
-        if (nodes.size() >= MAX_PolyElement_NODES) {
+        if (nodes.size() >= MAX_POLYELEMENT_NODES) {
             Log.d(getClass().getSimpleName(),
                     "addNode attempt to add more than 2000 nodes");
             return false;
@@ -76,7 +76,7 @@ public class PolyElement extends DataElement {
                     "addNodeAfter unable to add new node, refNode equals newNode");
             return false;
         }
-        if (nodes.size() >= MAX_PolyElement_NODES) {
+        if (nodes.size() >= MAX_POLYELEMENT_NODES) {
             Log.d(getClass().getSimpleName(),
                     "addNodeAfter attempt to add more than 2000 nodes");
             return false;
@@ -99,7 +99,7 @@ public class PolyElement extends DataElement {
      *            if true, nodes are prepended, otherwise, they are appended
      */
     public void addNodes(List<Node> newNodes, boolean atBeginning) {
-        if (newNodes.size() < MAX_PolyElement_NODES) {
+        if (newNodes.size() < MAX_POLYELEMENT_NODES) {
             if (atBeginning) {
                 if ((nodes.size() > 0)
                         && nodes.get(0) == newNodes.get(newNodes.size() - 1)) { // user
@@ -145,12 +145,12 @@ public class PolyElement extends DataElement {
      * @param newNode
      */
     public boolean appendNode(final Node refNode, final Node newNode) {
-        if (refNode == newNode) { // user error
+        if (refNode == newNode) { 
             Log.i(getClass().getSimpleName(),
                     "appendNode unable to add new node, refNode equals newNode");
             return false;
         }
-        if (nodes.size() >= MAX_PolyElement_NODES) {
+        if (nodes.size() >= MAX_POLYELEMENT_NODES) {
             Log.d(getClass().getSimpleName(),
                     "appendNode attempt to add more than 2000 nodes");
             return false;
@@ -173,6 +173,7 @@ public class PolyElement extends DataElement {
         return false;
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -349,6 +350,7 @@ public class PolyElement extends DataElement {
     /**
      * Writes the nodes to the given parcel.
      */
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeTypedList(nodes);
@@ -365,6 +367,7 @@ public class PolyElement extends DataElement {
         in.readTypedList(nodes, Node.CREATOR);
     }
 
+    @Override
     public String toString() {
         String s = "";
         for (Node n : nodes) {
