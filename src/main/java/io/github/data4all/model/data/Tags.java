@@ -16,13 +16,6 @@ import java.util.List;
  *
  */
 public final class Tags {
-
-    /**
-     * Private Constructor.
-     */
-    private Tags() {
-        
-    }
     
 	/**
 	 * returns an arraylist containing all address tags.

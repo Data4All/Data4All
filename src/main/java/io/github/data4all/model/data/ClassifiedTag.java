@@ -20,6 +20,7 @@ public class ClassifiedTag extends Tag {
     /**
      * Default constructor.
      * 
+     * @param id
      * @param key
      * @param type
      * @param classifiedValues
