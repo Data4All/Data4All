@@ -1,6 +1,7 @@
 package io.github.data4all.model.data;
 
 import static org.junit.Assert.assertEquals;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class PolyElementTest {
      */
     @Before
     public void setUp() throws Exception {
-        this.PolyElement = new PolyElement(10);
+        this.PolyElement = new PolyElement(10, PolyElementType.WAY);
         this.testNode1 = new Node(10, 10.1234567, 20.1234567);
         this.testNode2 = new Node(11, 10.1234567, 20.1234567);
         this.testNode3 = new Node(12, 10.1234567, 20.1234567);
@@ -141,7 +142,7 @@ public class PolyElementTest {
     @Test
     public void test_hasCommonNode() {
         PolyElement.addNode(testNode1);
-        PolyElement secondPolyElement = new PolyElement(1);
+        PolyElement secondPolyElement = new PolyElement(1, PolyElementType.WAY);
         secondPolyElement.addNode(testNode1);
         assertEquals(true, PolyElement.hasCommonNode(secondPolyElement));
     }
@@ -221,6 +222,19 @@ public class PolyElementTest {
         PolyElement.addNode(testNode2);
         assertEquals(testNode2, PolyElement.getLastNode());
     }
+    
+    /**
+     * Test if the PolyElement can set different types.
+     */
+    @Test 
+    public void test_PolyElementType() {
+        PolyElement testPolyElement1 = new PolyElement(1, PolyElementType.WAY);
+        assertEquals(PolyElementType.WAY, testPolyElement1.getType());
+        PolyElement testPolyElement2 = new PolyElement(1, PolyElementType.AREA);
+        assertEquals(PolyElementType.AREA, testPolyElement2.getType());
+        PolyElement testPolyElement3 = new PolyElement(1, PolyElementType.BUILDING);
+        assertEquals(PolyElementType.BUILDING, testPolyElement3.getType());
+    }
 
     /**
      * Create a new Parcel to save/parcelable the testPolyElement, afterwards a new PolyElement
@@ -229,7 +243,7 @@ public class PolyElementTest {
     @Test
     public void test_parcelable_PolyElement() {
         Parcel newParcel = Parcel.obtain();
-        PolyElement testPolyElement = new PolyElement(1);
+        PolyElement testPolyElement = new PolyElement(1, PolyElementType.BUILDING);
 
         testPolyElement.addOrUpdateTag(Tags.getAllAddressTags().get(0), "foo");
         testPolyElement.addOrUpdateTag(Tags.getAllAddressTags().get(1), "bar");
@@ -257,6 +271,8 @@ public class PolyElementTest {
                 .getOsmId());
         assertEquals(testNode3.getOsmId(), deParcelPolyElement.getNodes().get(2)
                 .getOsmId());
+        
+        assertEquals(PolyElementType.BUILDING, deParcelPolyElement.getType());
 
     }
 }
