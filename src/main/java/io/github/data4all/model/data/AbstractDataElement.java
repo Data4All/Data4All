@@ -46,10 +46,10 @@ public abstract class AbstractDataElement implements Parcelable {
     protected AbstractDataElement(Parcel in) {
         osmId = in.readLong();
         tags = new LinkedHashMap<Tag, String>();
-        // final int count = in.readInt();
-        // for (int i = 0; i < count; i++) {
-        // tags.put(in.readString(), in.readString());
-        // }
+        int count = in.readInt();
+        for (int i = 0; i < count; i++) {
+            tags.put(Tags.getTagWithId(in.readInt()), in.readString());
+        }
     }
 
     /**
@@ -170,11 +170,11 @@ public abstract class AbstractDataElement implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(osmId);
-        // dest.writeInt(tags.size());
-        // for (String s : tags.keySet()) {
-        // dest.writeString(s);
-        // dest.writeString(tags.get(s));
-        // }
+        dest.writeInt(tags.size());
+        for (Tag t : tags.keySet()) {
+           dest.writeInt(t.getId());
+           dest.writeString(tags.get(t));
+        }
     }
 
 }

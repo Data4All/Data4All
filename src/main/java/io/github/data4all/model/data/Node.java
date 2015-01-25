@@ -37,7 +37,7 @@ public class Node extends AbstractDataElement {
     };
 
     /**
-     * Default Constructor
+     * Default Constructor.
      * 
      * @param osmId
      * @param osmVersion
@@ -53,7 +53,7 @@ public class Node extends AbstractDataElement {
     }
 
     /**
-     * Constructor to create a {@link Node} from a parcel
+     * Constructor to create a {@link Node} from a parcel.
      * 
      * @param in
      *            The {@link Parcel} to read the object's data from
@@ -97,7 +97,7 @@ public class Node extends AbstractDataElement {
     }
 
     /**
-     * Returns the Node as a GeoPoint representation
+     * Returns the Node as a GeoPoint representation.
      * 
      * @return the node as a GeoPoint representation
      */
