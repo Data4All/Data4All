@@ -17,6 +17,34 @@ import java.util.List;
  */
 public final class Tags {
     
+    /**
+     * list of all classified and unclassified tags
+     */
+    public static final List<Tag> tagList = new ArrayList<Tag>();
+
+    /**
+     * list of all address tags
+     */
+    public static final List<Tag> addressTagList = new ArrayList<Tag>();
+
+    /**
+     * list of all contact tags
+     */
+    public static final List<Tag> contactTagList = new ArrayList<Tag>();
+
+    /**
+     * Returns a Tag with the passed id.
+     * @param id
+     */
+    public static Tag getTagWithId(int id) {
+        for (Tag t : tagList) {
+            if (t.getId() == id) {
+                return t; 
+            }
+        }
+        return null;
+    }
+    
 	/**
 	 * returns an arraylist containing all address tags.
 	 */
@@ -145,21 +173,6 @@ public final class Tags {
 		}
 		return result;
 	}
-
-	/**
-	 * list of all classified and unclassified tags
-	 */
-	public static final List<Tag> tagList = new ArrayList<Tag>();
-
-	/**
-	 * list of all address tags
-	 */
-	public static final List<Tag> addressTagList = new ArrayList<Tag>();
-
-	/**
-	 * list of all contact tags
-	 */
-	public static final List<Tag> contactTagList = new ArrayList<Tag>();
 
 	/**
 	 * fills the addressTagList arraylist with address tags
