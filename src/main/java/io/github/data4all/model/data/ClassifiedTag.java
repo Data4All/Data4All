@@ -25,9 +25,9 @@ public class ClassifiedTag extends Tag {
      * @param classifiedValues
      * @param osmObjects
      */
-    public ClassifiedTag(String key, InputType type,
+    public ClassifiedTag(int id, String key, InputType type,
             List<String> classifiedValues, int... osmObjects) {
-        super(key, type, osmObjects);
+        super(id, key, type, osmObjects);
         this.classifiedValues = classifiedValues;
     }
 
