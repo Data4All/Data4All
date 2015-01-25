@@ -1,11 +1,10 @@
 package io.github.data4all.model.data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +29,7 @@ public class NodeTest {
 
     @Before
     public void setUp() {
-        testNode = new Node(1, 2, 30.123456, 40.1234567);
+        testNode = new Node(1, 30.123456, 40.1234567);
     }
 
     /**
@@ -40,21 +39,21 @@ public class NodeTest {
      */
     @Test
     public void test_setTags() {
-        Map<String, String> tags = new TreeMap<String, String>();
-        tags.put("highway", "motorway");
-        tags.put("barrier", "fence");
-        tags.put("amenity", "bar");
-        tags.put("building", "farm");
+        Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
+        tags.put(Tags.getAllAddressTags().get(0), "foo");
+        tags.put(Tags.getAllAddressTags().get(1), "bar");
+        tags.put(Tags.getAllAddressTags().get(2), "test");
         testNode.addTags(tags);
+        assertEquals(tags.size(), testNode.getTags().size());
         assertEquals(tags, testNode.getTags());
-        assertEquals(4, testNode.getTags().size());
-        Map<String, String> newTags = new TreeMap<String, String>();
-        newTags.put("landuse", "commercial");
-        newTags.put("building", "hotel");
-        newTags.put("amenity", "restaurant");
-        assertEquals(true, testNode.setTags(newTags));
+
+        Map<Tag, String> newTags = new LinkedHashMap<Tag, String>();
+        newTags.put(Tags.getTagWithId(10), "motorway");
+        newTags.put(Tags.getTagWithId(11), "fence");
+        newTags.put(Tags.getTagWithId(12), "restaurant");
+        assertTrue(testNode.setTags(newTags));
         assertEquals(newTags, testNode.getTags());
-        assertEquals(3, testNode.getTags().size());
+        assertEquals(newTags.size(), testNode.getTags().size());
     }
 
     /**
@@ -63,11 +62,11 @@ public class NodeTest {
      */
     @Test
     public void test_addOrUpdateTag() {
-        testNode.addOrUpdateTag("highway", "motorway");
-        assertEquals("motorway", testNode.getTagWithKey("highway"));
+        testNode.addOrUpdateTag(Tags.getTagWithId(10), "motorway");
+        assertEquals("motorway", testNode.getTagValueWithKey(Tags.getTagWithId(10)));
         assertEquals(1, testNode.getTags().size());
-        testNode.addOrUpdateTag("highway", "service");
-        assertEquals("service", testNode.getTagWithKey("highway"));
+        testNode.addOrUpdateTag(Tags.getTagWithId(10), "service");
+        assertEquals("service", testNode.getTagValueWithKey(Tags.getTagWithId(10)));
         assertEquals(1, testNode.getTags().size());
     }
 
@@ -77,11 +76,10 @@ public class NodeTest {
      */
     @Test
     public void test_addTags() {
-        Map<String, String> tags = new TreeMap<String, String>();
-        tags.put("highway", "motorway");
-        tags.put("barrier", "fence");
-        tags.put("amenity", "bar");
-        tags.put("building", "farm");
+        Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
+        tags.put(Tags.getTagWithId(10), "motorway");
+        tags.put(Tags.getTagWithId(11), "fence");
+        tags.put(Tags.getTagWithId(12), "restaurant");
         testNode.addTags(tags);
         assertEquals(tags, testNode.getTags());
     }
@@ -91,10 +89,10 @@ public class NodeTest {
      */
     @Test
     public void test_hasTag() {
-        Map<String, String> tags = new TreeMap<String, String>();
-        tags.put("highway", "motorway");
+        Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
+        tags.put(Tags.getTagWithId(10), "motorway");
         testNode.addTags(tags);
-        assertEquals(true, testNode.hasTag("highway", "motorway"));
+        assertTrue(testNode.hasTag(Tags.getTagWithId(10), "motorway"));
     }
 
     /**
@@ -102,10 +100,10 @@ public class NodeTest {
      */
     @Test
     public void test_getTagWithKey() {
-        Map<String, String> tags = new TreeMap<String, String>();
-        tags.put("highway", "motorway");
+        Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
+        tags.put(Tags.getTagWithId(10), "motorway");
         testNode.addTags(tags);
-        assertEquals("motorway", testNode.getTagWithKey("highway"));
+        assertEquals("motorway", testNode.getTagValueWithKey(Tags.getTagWithId(10)));
     }
 
     /**
@@ -113,10 +111,10 @@ public class NodeTest {
      */
     @Test
     public void test_hasTagKey() {
-        Map<String, String> tags = new TreeMap<String, String>();
-        tags.put("highway", "motorway");
+        Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
+        tags.put(Tags.getTagWithId(10), "motorway");
         testNode.addTags(tags);
-        assertEquals(true, testNode.hasTagKey("highway"));
+        assertTrue(testNode.hasTagKey(Tags.getTagWithId(10)));
     }
 
     /**
@@ -124,109 +122,10 @@ public class NodeTest {
      */
     @Test
     public void test_isTagged() {
-        Map<String, String> tags = new TreeMap<String, String>();
-        tags.put("highway", "motorway");
+        Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
+        tags.put(Tags.getTagWithId(10), "motorway");
         testNode.addTags(tags);
-        assertEquals(true, testNode.isTagged());
-    }
-
-    /**
-     * Tests the addParentRelation() method.
-     */
-    @Test
-    public void test_addParentRelation() {
-        Relation relation = new Relation(3, 1);
-        testNode.addParentRelation(relation);
-        assertEquals(true, testNode.getParentRelations().contains(relation));
-        assertEquals(true, testNode.hasParentRelation(relation));
-    }
-
-    /**
-     * Tests if the relation is contained in the list of parent relations. Using
-     * the relation as identifier.
-     */
-    @Test
-    public void test_relation_hasParentRelation() {
-        Relation relation = new Relation(3, 1);
-        testNode.addParentRelation(relation);
-        assertEquals(true, testNode.hasParentRelation(relation));
-    }
-
-    /**
-     * Test if the relation is contained in the list of parent relations. Using
-     * the osmId as identifier.
-     * 
-     */
-    @Test
-    public void test_osmid_hasParentRelation() {
-        Relation relation = new Relation(3, 1);
-        testNode.addParentRelation(relation);
-        assertEquals(true, testNode.hasParentRelation(3));
-    }
-
-    /**
-     * Tests if the node has a parent relation.
-     */
-    @Test
-    public void test_osmid_hasParentRelation1() {
-        assertEquals(false, testNode.hasParentRelation(3));
-    }
-
-    /**
-     * Adds a list of relations to as parent relations of the node. Tests if all
-     * list elements are stored.
-     */
-    @Test
-    public void test_addParentRelations() {
-        List<Relation> relationList = new ArrayList<Relation>();
-        relationList.add(new Relation(3, 1));
-        relationList.add(new Relation(4, 1));
-        relationList.add(new Relation(5, 1));
-        testNode.addParentRelations(relationList);
-        assertEquals(3, testNode.getParentRelations().size());
-        assertEquals(relationList, testNode.getParentRelations());
-    }
-
-    /**
-     * Tests if the node has parent relations.
-     */
-    @Test
-    public void test_hasParentRelations() {
-        Relation relation = new Relation(3, 1);
-        testNode.addParentRelation(relation);
-        assertEquals(true, testNode.hasParentRelations());
-    }
-
-    /**
-     * Tests if parent relations can be removed from the list by relation
-     * identifier.
-     */
-    @Test
-    public void test_relation_removeParentRelation() {
-        Relation relation = new Relation(3, 1);
-        testNode.addParentRelation(relation);
-        assertEquals(true, testNode.hasParentRelations());
-        assertEquals(true, testNode.getParentRelations().contains(relation));
-        assertEquals(1, testNode.getParentRelations().size());
-        testNode.removeParentRelation(relation);
-        assertEquals(0, testNode.getParentRelations().size());
-        assertEquals(false, testNode.getParentRelations().contains(relation));
-    }
-
-    /**
-     * Tests if parent relations can be removed from the list by osmId as
-     * identifier.
-     */
-    @Test
-    public void test_osmid_removeParentRelation() {
-        Relation relation = new Relation(3, 1);
-        testNode.addParentRelation(relation);
-        assertEquals(true, testNode.hasParentRelations());
-        assertEquals(true, testNode.getParentRelations().contains(relation));
-        assertEquals(1, testNode.getParentRelations().size());
-        testNode.removeParentRelation(3);
-        assertEquals(0, testNode.getParentRelations().size());
-        assertEquals(false, testNode.getParentRelations().contains(relation));
+        assertTrue(testNode.isTagged());
     }
 
     /**
@@ -238,41 +137,23 @@ public class NodeTest {
     public void test_parcelable_node() {
         Parcel newParcel = Parcel.obtain();
 
-        testNode.addOrUpdateTag("testtag", "test");
-        testNode.addOrUpdateTag("foo", "bar");
-
-        Relation relation1 = new Relation(3, 1);
-        testNode.addParentRelation(relation1);
-
-        Relation relation2 = new Relation(4, 2);
-        testNode.addParentRelation(relation2);
+        testNode.addOrUpdateTag(Tags.getAllAddressTags().get(0), "foo");
+        testNode.addOrUpdateTag(Tags.getAllAddressTags().get(1), "bar");
 
         testNode.writeToParcel(newParcel, 0);
         newParcel.setDataPosition(0);
         Node deParcelNode = Node.CREATOR.createFromParcel(newParcel);
 
         assertEquals(testNode.getOsmId(), deParcelNode.getOsmId());
-        assertEquals(testNode.getOsmVersion(), deParcelNode.getOsmVersion());
 
         assertEquals(testNode.getLon(), deParcelNode.getLon(), 0);
         assertEquals(testNode.getLat(), deParcelNode.getLat(), 0);
 
-        assertEquals(testNode.getTagWithKey("testtag"),
-                deParcelNode.getTagWithKey("testtag"));
-        assertEquals(testNode.getTagWithKey("foo"),
-                deParcelNode.getTagWithKey("foo"));
+        assertEquals(testNode.getTagValueWithKey(Tags.getAllAddressTags().get(0)),
+                deParcelNode.getTagValueWithKey(Tags.getAllAddressTags().get(0)));
+        assertEquals(testNode.getTagValueWithKey(Tags.getAllAddressTags().get(1)),
+                deParcelNode.getTagValueWithKey(Tags.getAllAddressTags().get(1)));
 
-        assertEquals(testNode.getParentRelations().size(), deParcelNode
-                .getParentRelations().size());
-
-        assertEquals(relation1.getOsmId(), deParcelNode.getParentRelations()
-                .get(0).getOsmId());
-        assertEquals(relation1.getOsmVersion(), deParcelNode
-                .getParentRelations().get(0).getOsmVersion());
-
-        assertEquals(relation2.getOsmId(), deParcelNode.getParentRelations()
-                .get(1).getOsmId());
-        assertEquals(relation2.getOsmVersion(), deParcelNode
-                .getParentRelations().get(1).getOsmVersion());
     }
+    
 }
