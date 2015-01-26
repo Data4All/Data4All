@@ -30,6 +30,9 @@ public class SensorReactionActivity extends Activity implements
     // jump value, which detected if phone is moving
     private static final double JUMP_VALUE = 2;
 
+	// check if user touching the screen
+	private boolean isTouched = false;
+
     private String TAG = this.getClass().getSimpleName();
 
     /** The last x position. */
@@ -41,6 +44,10 @@ public class SensorReactionActivity extends Activity implements
     /** The last z position. */
     private float lastZ = 0;
 
+	/** show a AlertDialog, when phone moving or when user touching the screen */
+	AlertDialog showDialog = null;
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("BLUB", "sensorReactionActivity started");
@@ -73,55 +80,93 @@ public class SensorReactionActivity extends Activity implements
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d("BLUB", "" + System.currentTimeMillis());
+
+		Log.d("BLUB", "" + System.nanoTime());
         /*
          * if user has touching the screen, then store the time, when he has
          * touching the screen
          */
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            startTime = System.currentTimeMillis();
-            Log.i(TAG, "startTime " + startTime);
-        }
-        return super.onTouchEvent(event);
-    }
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			isTouched = true;
+			touchTime = System.nanoTime();
+			Log.i(TAG, "touchTime " + touchTime);
+		}
+		return true;
+	}
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware.SensorEvent)
-     * 
-     */
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        Log.d("BLUB", "onSensorChanged");
-        // calculate movement
-        float totalMovement = Math.abs(event.values[0] + event.values[1]
-                + event.values[2] - lastX - lastY - lastZ);
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware.SensorEvent)
+	 * 
+	 */
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		Log.d("BLUB", "onSensorChanged");
 
-        Log.i("BLUB", "totalMovement: " + totalMovement + " " + event.values[0]
-                + " " + event.values[1] + " " + event.values[2]);
-        if (totalMovement > JUMP_VALUE) {
-            // Jump detected .....
-            long millis = System.currentTimeMillis();
-            reactionTime = millis - startTime;
+		float actualX = event.values[0];
+		float actualY = event.values[1];
+		float actualZ = event.values[2];
 
-            lastX = event.values[0];
-            lastY = event.values[1];
-            lastZ = event.values[2];
+		if (lastX == 0 && lastY == 0 && lastZ == 0) {
+			lastX = actualX;
+			lastY = actualY;
+			lastZ = actualZ;
+			return;
+		}
 
-            AlertDialog ad = new AlertDialog.Builder(this).setTitle("Delay:")
-                    .setMessage("" + reactionTime)
-                    .setPositiveButton("Okay", null).create();
+		//when a movement is detected
+		if (Math.abs(actualX - lastX) > JUMP_VALUE
+				|| Math.abs(actualY - lastY) > JUMP_VALUE
+				|| Math.abs(actualZ - lastZ) > JUMP_VALUE) {
+			long nano = System.nanoTime();
+			String message = "";
+			// compute the reactionTime when user touching on the screen
+			if (isTouched) {
+				message = "touchevent: ";
+				reactionTime = nano - touchTime;
+				isTouched = false;
+			} else {
+				// compute the reactionTime when user moving the phone
+				message = "shakeEvent: ";
+				reactionTime = nano - event.timestamp;
+			}
 
-            ad.show();
-            Log.i(TAG, "reactionTime: " + reactionTime);
-        }
+			if (showDialog == null) {
+				showDialog = new AlertDialog.Builder(this).setTitle("Delay:")
+						.setMessage(message + reactionTime)
+						.setPositiveButton("Okay", null).create();
+			} else {
+				showDialog.setMessage(message + reactionTime);
+			}
+			showDialog.show();
+			Log.i(TAG, "reactionTime: " + reactionTime);
+		}
 
-    }
+		lastX = actualX;
+		lastY = actualY;
+		lastZ = actualZ;
+	}
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // TODO Auto-generated method stub
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
 
-    }
+	}
+	
+	public boolean getIsTouched(){
+		return isTouched;
+	}
+
+	public float getLastX() {
+		return lastX;
+	}
+
+	public float getLastY() {
+		return lastY;
+	}
+
+	public float getLastZ() {
+		return lastZ;
+	}
 }
