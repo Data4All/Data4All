@@ -53,4 +53,6 @@
     <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
     <string name="deleteButton">Logout</string>
     <string name="getUsernameButton">show Username</string>
+    
+    <string name="noCamSupported">Sorry Your device doesnt support camera</string>
 </resources>

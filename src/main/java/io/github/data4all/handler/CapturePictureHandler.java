@@ -27,7 +27,8 @@ import android.widget.Toast;
 public class CapturePictureHandler implements PictureCallback {
 
     // Actual Activity for the context
-    private Context context;
+    private final Context context;
+    
     // The file into which the picture is saved
     private File photoFile;
     // An ExifInterface for the exif data of a file
@@ -41,9 +42,7 @@ public class CapturePictureHandler implements PictureCallback {
     // activity
     private final String filepath = "file_path";
 
-    public CapturePictureHandler() {
-    }
-
+    
     public CapturePictureHandler(Context context) {
         this.context = context;
     }
