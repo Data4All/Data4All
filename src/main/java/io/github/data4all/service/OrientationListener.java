@@ -21,25 +21,25 @@ import android.os.IBinder;
  */
 public class OrientationListener extends Service implements SensorEventListener {
 
-    /* sensor accelerometer */
-    Sensor accelerometer;
-    /* sensor magnetic_field */
-    Sensor magnetometer;
-    /* sensorManager */
+    // sensor accelerometer 
+    private Sensor accelerometer;
+    // sensor magnetic_field 
+    private Sensor magnetometer;
+    // sensorManager 
     private SensorManager sManager;
 
     private static final String TAG = "OrientationListener";
 
     // RotationmatrixR
-    float[] mR = new float[16];
+   private float[] mR = new float[16];
     // RotationmatrixI
-    float[] mI = new float[16];
+    private float[] mI = new float[16];
     // accelerometer sensor data
-    float[] mGravity = new float[3];
+   private float[] mGravity = new float[3];
     // magnetic field sensor data
-    float[] mGeomagnetic = new float[3];
+    private float[] mGeomagnetic = new float[3];
     // orientation values
-    float[] orientation = new float[3];
+    private float[] orientation = new float[3];
 
     public void onCreate() {
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -54,27 +54,27 @@ public class OrientationListener extends Service implements SensorEventListener 
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    /**
-     * start recording data from accelerometer and magnetic_field, register the
-     * SensorListener in The Service and when Android kill the sensor to free up
-     * valuable resources, then use Start_STICKY to restart the Service when
-     * Resource become available again
-     */
+/**
+* start recording data from accelerometer and magnetic_field, register the
+* SensorListener in The Service and when Android kill the sensor to free up
+* valuable resources, then use Start_STICKY to restart the Service when
+* Resource become available again
+*/
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "Service started");
         return START_STICKY;
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @param event
-     *            when the two Sensors data are available then saved this in
-     *            model
-     * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware
-     *      .SensorEvent)
-     */
+/**
+* (non-Javadoc)
+* 
+* @param event
+*            when the two Sensors data are available then saved this in
+*            model
+* @see android.hardware.SensorEventListener#onSensorChanged(android.hardware
+*      .SensorEvent)
+*/
     public void onSensorChanged(SensorEvent event) {
 
         // check sensor type
@@ -100,10 +100,10 @@ public class OrientationListener extends Service implements SensorEventListener 
         }
     }
 
-    /**
-     * stop to recording data from accelerometer and magnetic_field and
-     * unregister the SensorListener in The Service
-     **/
+/**
+* stop to recording data from accelerometer and magnetic_field and
+* unregister the SensorListener in The Service
+**/
     @Override
     public void onDestroy() {
         sManager.unregisterListener(this, accelerometer);
@@ -111,22 +111,22 @@ public class OrientationListener extends Service implements SensorEventListener 
         Log.i(TAG, "Service Destroyed");
     }
 
-    /**
-     * (non-Javadoc) description
-     * 
-     * @see android.hardware.SensorEventListener#onAccuracyChanged(android.hardware.Sensor,
-     *      int)
-     */
+/**
+* (non-Javadoc) description
+* 
+* @see android.hardware.SensorEventListener#onAccuracyChanged(android.hardware.Sensor,
+*      int)
+*/
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // TODO Auto-generated method stub
 
     }
 
-    /**
-     * (non-Javadoc) description
-     * 
-     * @see android.app.Service#onBind(android.content.Intent)
-     */
+/**
+* (non-Javadoc) description
+* 
+* @see android.app.Service#onBind(android.content.Intent)
+*/
     @Override
     public IBinder onBind(Intent intent) {
         return null;
