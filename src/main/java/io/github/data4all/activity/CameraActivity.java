@@ -120,6 +120,9 @@ public class CameraActivity extends Activity {
 			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
 		}
 
+        // Start the Device Orientation listener
+        startService(new Intent(this, OrientationListener.class));
+
 	}
 
 	@Override
@@ -133,6 +136,8 @@ public class CameraActivity extends Activity {
 			mCamera.release(); // release the camera for other applications
 			mCamera = null;
 		}
+        stopService(new Intent(this, OrientationListener.class));
+        
 	}
 
 	/*

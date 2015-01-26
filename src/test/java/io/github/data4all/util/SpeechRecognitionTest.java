@@ -76,7 +76,6 @@ public class SpeechRecognitionTest {
         list1.add("Motorway");
         list1.add("hotel");
         map.put("highway", "motorway");
-        map.put("building", "hotel");
         assertEquals(map, SpeechRecognition.speechToTag(list1));
     }
 

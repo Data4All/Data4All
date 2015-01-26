@@ -19,19 +19,7 @@ public class CaptureShutterListener implements OnClickListener {
 
     // Camera Object
     private Camera camera;
-
-    public CaptureShutterListener(Camera c) {
-        this.camera = c;
-    }
-
-    public void onClick(View v) {
-        // Get the actual context
-        CameraActivity myContext = (CameraActivity) v.getContext();
-        // Take a picture with the handled data
-        camera.takePicture(shutterCallback, pictureCallback,
-                new CapturePictureHandler(myContext));
-    }
-
+    
     private ShutterCallback shutterCallback = new ShutterCallback() {
 
         public void onShutter() {
@@ -46,5 +34,24 @@ public class CaptureShutterListener implements OnClickListener {
             Log.i(getClass().getSimpleName(), "compress jpeg");
         }
     };
+
+    /**
+     * constructor.
+     * 
+     * @param c
+     *         the used camera
+     */
+    public CaptureShutterListener(Camera c) {
+        this.camera = c;
+    }
+
+    @Override
+    public void onClick(View v) {
+        // Get the actual context
+        final CameraActivity myContext = (CameraActivity) v.getContext();
+        // Take a picture with the handled data
+        camera.takePicture(shutterCallback, pictureCallback,
+                new CapturePictureHandler(myContext));
+    }
 
 }

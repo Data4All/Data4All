@@ -3,26 +3,26 @@ package io.github.data4all.util;
 /**
  * Class RingBuffer.
  * 
- * generic RingBuffer for temporary storage of Locations and Devicepositions
+ * generic RingBuffer for temporary storage of Locations and Devicepositions.
  * 
  * @author konerman
  *
  */
 public class RingBuffer<T> {
 
-    /** the buffer that contains the data */
+    /* the buffer that contains the data */
     private T[] buffer;
 
-    /** head of the ringbuffer. the first free position */
+    /* head of the ringbuffer. the first free position */
     private int head;
 
-    /** the newest entry */
+    /* the newest entry */
     private int index;
 
-    /** fill level of the buffer */
+    /* fill level of the buffer */
     private int entries;
 
-    /** the capacity of the Buffer */
+    /* the capacity of the buffer */
     private int buffercapacity;
 
     /**
@@ -49,11 +49,11 @@ public class RingBuffer<T> {
     public void put(T value) {
         if (buffer.length > 0) {
             buffer[head] = value;
-          
-            index=head;
-            
+
+            index = head;
+
             head = (head + 1) % buffer.length;
-            
+
             if (entries < buffer.length) {
                 ++entries;
             }
@@ -104,8 +104,8 @@ public class RingBuffer<T> {
      * @return the last added entry of the buffer.
      */
     public T getLast() {
-        if(getSize()>0){
-        return buffer[index];
+        if (getSize() > 0) {
+            return buffer[index];
         }
         return null;
     }
@@ -117,5 +117,4 @@ public class RingBuffer<T> {
     public void setBuffercapacity(int buffercapacity) {
         this.buffercapacity = buffercapacity;
     }
-
 }

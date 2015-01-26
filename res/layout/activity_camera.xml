@@ -9,11 +9,12 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="1" />
+    <ImageButton
 
     <ImageButton
         android:id="@+id/btnCaptureImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/imageButtonCamAction"
+        android:contentDescription="@string/noDescription" />
         android:layout_gravity="center_horizontal|center"
         android:background="@null"
         android:src="@drawable/ic_camaction" />
