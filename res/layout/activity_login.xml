@@ -35,5 +35,16 @@
         android:layout_centerInParent="false"
         android:layout_marginBottom="26dp"
         android:text="@string/deleteButton" />
+    
+
+    <Button
+        android:id="@+id/getUsernameButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/deleteButton"
+        android:layout_alignLeft="@+id/deleteButton"
+        android:layout_marginBottom="30dp"
+        android:text="Username" />
 
 </RelativeLayout>
