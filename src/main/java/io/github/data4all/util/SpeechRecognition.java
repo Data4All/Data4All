@@ -26,12 +26,12 @@ public abstract class SpeechRecognition {
     	Map<String, String> map = new HashMap <String, String>();
 		ArrayList<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
 		Tags tags = new Tags();
-		tagData = tags.getAllClassifiedTags();
+		tagData = (ArrayList<ClassifiedTag>) tags.getAllClassifiedTags();
 		for(ClassifiedTag entry : tagData){
 			String key = (String) entry.getKey();
 			// split is the Array from the Key Values
-			if(compareStringTag(entry.getClassifiedValues(), matchesText) != null){
-				map.put(key, compareStringTag(entry.getClassifiedValues(), matchesText));
+			if(compareStringTag((ArrayList<String>) entry.getClassifiedValues(), matchesText) != null){
+				map.put(key, compareStringTag((ArrayList<String>) entry.getClassifiedValues(), matchesText));
 				break;
 			}
 		}
