@@ -8,51 +8,30 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/return_to_actual_Position"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/return_to_position"
-        android:textSize="12sp" />
+        style="@style/imageButtonReturnToActualPosition"
+        android:contentDescription="@string/returnToActualPosition" />
 
-    <Button
-        android:id="@+id/switch_to_satellite_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/switch_to_satellite"
-        android:textSize="12sp" />
+    <ImageButton
+        android:id="@+id/switch_maps"
+        style="@style/imageButtonSwitchMaps"
+        android:contentDescription="@string/switchMaps" />
 
-    <Button
-        android:id="@+id/upload_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/upload_data"
-        android:textSize="12sp" />
-
-    <Button
+    <ImageButton
         android:id="@+id/new_point"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="@string/poi"
-        android:textSize="12sp" />
+        style="@style/imageButtonNewPointOfInterest"
+        android:contentDescription="@string/pointOfInterest" />
 
-    <Button
+    <ImageButton
         android:id="@+id/to_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/new_point"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="46dp"
-        android:text="@string/to_camera"
-        android:textSize="12sp" />
+        style="@style/imageButtonToCamera"
+        android:contentDescription="@string/returnToCamera" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        style="@style/startUpScreen"
+        android:contentDescription="@string/startUpScreen" />
 
     <Button
         android:id="@+id/button1"
