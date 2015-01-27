@@ -32,7 +32,7 @@ public class TagsTest {
 	  */
 	 @Test
 	 public void test_getAllRelationTags() {
-		 assertEquals(3, Tags.getAllRelationTags().size());
+		 assertEquals(3, Tags.getAllBuildingTags().size());
 	 }
 	 
 	 /**
@@ -59,4 +59,12 @@ public class TagsTest {
 		 assertEquals(4, Tags.getAllContactTags().size());
 	 }
 
+	 
+	   /**
+      * Tests if the getAllContactTags() method return the correct number of contact tags.
+      */
+     @Test
+     public void test_getTagWithId() {
+         assertEquals("addr:street", Tags.getTagWithId(1).getKey());
+     }
 }
