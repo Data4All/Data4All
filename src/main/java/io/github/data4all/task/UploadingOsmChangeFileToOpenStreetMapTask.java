@@ -108,20 +108,20 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends AsyncTask<Void, V
         switch (statusCode) {
         case -1:
             // Internal error, the request didn't start at all
-            Toast.makeText(context,
-                    R.string.uploadToOsmRequestInternalTaskError,
-                    Toast.LENGTH_LONG).show();
+//            Toast.makeText(context,
+//                    R.string.uploadToOsmRequestInternalTaskError,
+//                    Toast.LENGTH_LONG).show();
             Log.d(TAG, "Internal error, the request did not start at all");
             break;
         case HttpStatus.SC_OK:
             // Success ! Update database and close activity
-            Toast.makeText(context, R.string.success, Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, R.string.success, Toast.LENGTH_LONG).show();
             Log.d(TAG, "Success");
             break;
         case HttpStatus.SC_UNAUTHORIZED:
             // Does not have authorization
-            Toast.makeText(context, R.string.uploadToOsmRequestTaskAuthError,
-                    Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, R.string.uploadToOsmRequestTaskAuthError,
+//                    Toast.LENGTH_LONG).show();
             Log.d(TAG, "Does not have authorization");
             break;
         case HttpStatus.SC_INTERNAL_SERVER_ERROR:
@@ -132,8 +132,8 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends AsyncTask<Void, V
 
         default:
             // unknown error
-            Toast.makeText(context, R.string.unkownError, Toast.LENGTH_LONG)
-                    .show();
+            // Toast.makeText(context, R.string.unkownError, Toast.LENGTH_LONG)
+            //        .show();
             Log.d(TAG, "Unknown error");
         }
     }
