@@ -125,7 +125,7 @@ public final class Tags {
 	 * 
 	 * @return tagList
 	 */
-	public static List<Tag> getAllRelationTags() {
+	public static List<Tag> getAllBuildingTags() {
 		List<Tag> result = new ArrayList<Tag>();
 		for (Tag t : tagList) {
 			if (t instanceof ClassifiedTag) {
@@ -180,15 +180,15 @@ public final class Tags {
 	static {
 		// address tags
 		addressTagList.add(new Tag(1, "addr:street", InputType.KEYBOARD, NODE_TAG,
-				WAY_TAG, RELATION_TAG, AREA_TAG));
+				WAY_TAG, BUILDING_TAG, AREA_TAG));
 		addressTagList.add(new Tag(2, "addr:housenumber", InputType.NUMPAD,
-				NODE_TAG, WAY_TAG, RELATION_TAG, AREA_TAG));
+				NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
 		addressTagList.add(new Tag(3, "addr:postcode", InputType.NUMPAD, NODE_TAG,
-				WAY_TAG, RELATION_TAG, AREA_TAG));
+				WAY_TAG, BUILDING_TAG, AREA_TAG));
 		addressTagList.add(new Tag(4, "addr:city", InputType.KEYBOARD, NODE_TAG,
-				WAY_TAG, RELATION_TAG, AREA_TAG));
+				WAY_TAG, BUILDING_TAG, AREA_TAG));
 		addressTagList.add(new Tag(5, "addr:country", InputType.KEYBOARD,
-				NODE_TAG, WAY_TAG, RELATION_TAG, AREA_TAG));
+				NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
 	}	
 	
 	/**
@@ -197,13 +197,13 @@ public final class Tags {
 	static {
 		// contact tags
 		contactTagList.add(new Tag(6, "contact:phone", InputType.NUMPAD, NODE_TAG,
-				RELATION_TAG));
+				BUILDING_TAG));
 		contactTagList.add(new Tag(7, "contact:fax", InputType.NUMPAD, NODE_TAG,
-				RELATION_TAG));
+				BUILDING_TAG));
 		contactTagList.add(new Tag(8, "contact:website", InputType.KEYBOARD,
-				NODE_TAG, RELATION_TAG));
+				NODE_TAG, BUILDING_TAG));
 		contactTagList.add(new Tag(9, "contact:email", InputType.KEYBOARD,
-				NODE_TAG, RELATION_TAG));
+				NODE_TAG, BUILDING_TAG));
 	}
 
 	/**
@@ -240,7 +240,7 @@ public final class Tags {
 				"marketplace", "police", "post_office", "toilets",
 				"water_point", "fire_station", "public_building"));
 		tagList.add(new ClassifiedTag(12, "amenity", null, amenityValues,
-				new int[] { NODE_TAG, RELATION_TAG }));
+				new int[] { NODE_TAG, BUILDING_TAG }));
 
 		// classified tag: building
 		List<String> buildingValues = new ArrayList<String>(Arrays.asList(
@@ -248,14 +248,14 @@ public final class Tags {
 				"industrial", "retail", "warehouse", "church", "hospital",
 				"train_station", "university"));
 		tagList.add(new ClassifiedTag(13, "building", null, buildingValues,
-				new int[] { NODE_TAG, RELATION_TAG }));
+				new int[] { NODE_TAG, BUILDING_TAG }));
 
 		// classified tag: landuse
 		List<String> landuseValues = new ArrayList<String>(Arrays.asList(
 				"commercial", "construction", "farmland", "forest", "grass",
 				"industrial", "millitary", "residential"));
 		tagList.add(new ClassifiedTag(14, "landuse", null, landuseValues,
-				new int[] { RELATION_TAG, AREA_TAG }));
+				new int[] { BUILDING_TAG, AREA_TAG }));
 
 	}
 
