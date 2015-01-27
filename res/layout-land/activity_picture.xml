@@ -3,7 +3,6 @@
     android:id="@+id/main_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/android"
     android:orientation="vertical" >
 
     <ImageView
@@ -26,40 +25,35 @@
         android:layout_alignParentRight="true" >
 
         <ImageButton
-            android:id="@+id/imageButton3"
-            style="@style/imageButtonDrawWay"
-            android:onClick="onClickPath"
-        	android:contentDescription="@string/drawWay" />
-      
-
-        <ImageButton
             android:id="@+id/imageButton1"
             style="@style/imageButtonDrawPoint"
-            android:onClick="onClickPoint"
-        	android:contentDescription="@string/drawPoint" />            
+            android:contentDescription="@string/drawPoint"
+            android:onClick="onClickPoint" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickBuilding"
-            android:text="Gebäude" />
+        <ImageButton
+            android:id="@+id/imageButton2"
+            style="@style/imageButtonDrawWay"
+            android:contentDescription="@string/drawWay"
+            android:onClick="onClickPath" />
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickArea"
-            android:text="Fläche" />
+        <ImageButton
+            android:id="@+id/imageButton3"
+            style="@style/imageButtonDrawArea"
+            android:contentDescription="@string/drawArea"
+            android:onClick="onClickArea" />
+
+        <ImageButton
+            android:id="@+id/imageButton4"
+            style="@style/imageButtonDrawBuilding"
+            android:contentDescription="@string/drawBuilding"
+            android:onClick="onClickBuilding" />
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/imageButton2"
+     <ImageButton
+        android:id="@+id/imageButton5"
         style="@style/imageButtonOkay"
-        android:onClick="onClickOkay"
-        android:contentDescription="@string/noDescription" />
+        android:contentDescription="@string/noDescription"
+        android:onClick="onClickOkay" />
     
     <Button
         android:id="@+id/redobtn"

@@ -194,7 +194,7 @@ public class Tags {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * returns an arraylist containing all classified and unclassified tags
 	 * which are relevant for relation objects

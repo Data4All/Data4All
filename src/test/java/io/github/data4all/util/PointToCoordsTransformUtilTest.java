@@ -27,8 +27,10 @@ import android.location.Location;
 @Config(emulateSdk = 18)
 public class PointToCoordsTransformUtilTest {
 	PointToCoordsTransformUtil util = new PointToCoordsTransformUtil();
-	Location location = new Location("Test");
 	
+	
+	
+	/*
 	@Test
 	public void transformTest(){
 		location.setLatitude(0.0);
@@ -75,7 +77,9 @@ public class PointToCoordsTransformUtilTest {
 		float b = (float) -(Math.PI/2);
 		float c = (float) -(Math.PI/2);
 		while(a <= (float) Math.PI){
+			b = (float) -(Math.PI/2);
 			while(b <= (float) (Math.PI/2)){
+				c = (float) -(Math.PI/2);
 				while(c <= (float) (Math.PI/2)){
 					DeviceOrientation deviceOrientation = new DeviceOrientation(a,b,c, 10L);
 					int x=1;
@@ -85,20 +89,48 @@ public class PointToCoordsTransformUtilTest {
 							Point point = new Point(x,y);
 							double[] coord = util.calculateCoordFromPoint(tps, deviceOrientation, point);
 							if(coord[2] == 0){
-								Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord);							
+								Node node = util.calculateGPSPoint(location, coord);
+								double[] coord2 = util.calculateCoordFromGPS(location, node);
+								Point test = util.calculatePointFromCoords(tps, deviceOrientation, coord2);	
 								assertThat((double) point.getX(), closeTo(test.getX() , 1));
 								assertThat((double) point.getY(), closeTo(test.getY() , 1));
 							}
-							y += 13;
+							else{
+							}
+							y += 113;
 						}
-						x += 13;
+						x += 113;
 					}
-					c += (float) (Math.PI/21);
+					c += (float) (Math.PI/11);
 				}
-				b += (float) (Math.PI/21);
+				b += (float) (Math.PI/11);
 			}
-			a += (float) (Math.PI/21);			
+			a += (float) (Math.PI/11);			
 		}
 	}
-
+	*/
+	@Test
+	public void Test(){
+		Location location = new Location("Test");
+		location.setLatitude(53.105868);
+		location.setLongitude(8.854916);
+		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(50) ,
+		Math.toRadians(50) , 1000, 1000, location);
+		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, (float) -Math.toRadians(64) , 0.0f, 10L);
+		ArrayList<Point> point = new ArrayList<Point>();
+		point.add(new Point(1,1));
+		point.add(new Point(1,1000));
+		point.add(new Point(1000,1000));
+		point.add(new Point(1000,1));
+		point.add(new Point(500,500));
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		ArrayList<double[]> coord = new ArrayList<double[]>();
+		List<Node> n = util.transform(tps, deviceOrientation, point);
+		for(Point p : point){
+			double[] c =util.calculateCoordFromPoint(tps, deviceOrientation, p);
+			coord.add(c);
+			//nodes.add(util.calculateGPSPoint(53.105868, 8.854916, c));
+			
+		}
+	}		
 }

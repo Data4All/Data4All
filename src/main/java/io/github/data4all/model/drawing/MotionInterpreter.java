@@ -4,7 +4,6 @@ import io.github.data4all.model.data.OsmElement;
 
 import java.util.List;
 
-import android.graphics.Canvas;
 import android.graphics.Color;
 
 /**
@@ -23,19 +22,18 @@ import android.graphics.Color;
 public interface MotionInterpreter {
     public static final int POINT_COLOR = Color.BLUE;
     public static final int POINT_RADIUS = 10;
-    public static final int PATH_COLOR = 0xFFBEEEEF;
+    public static final int PATH_COLOR = Color.BLUE;
+    public static final int AREA_COLOR = Color.BLUE;
     public static final float PATH_STROKE_WIDTH = 5f;
-    
+
     /**
-     * Interprets the given motions and draws the result on the given canvas
+     * Interprets the given motions and creates an OsmElement which represents
+     * the content of the interpreted motions
      * 
-     * @param canvas
-     *            the canvas on which the interpreted motions will be drawn
-     * @param drawingMotions
-     *            the motions to interpret
+     * @param polygon
+     *            the interpreted polygon
      */
-    @Deprecated
-    void draw(Canvas canvas, List<DrawingMotion> drawingMotions);
+    OsmElement create(List<Point> polygon);
 
     /**
      * Interprets the given motion and apply it to the polygon<br/>
@@ -48,15 +46,6 @@ public interface MotionInterpreter {
      * @return the
      */
     List<Point> interprete(List<Point> interpreted, DrawingMotion drawingMotion);
-
-    /**
-     * Interprets the given motions and creates an OsmElement which represents
-     * the content of the interpreted motions
-     * 
-     * @param polygon
-     *            the interpreted polygon
-     */
-    OsmElement create(List<Point> polygon);
 
     /**
      * Used by the drawing component to determine if the first and the last

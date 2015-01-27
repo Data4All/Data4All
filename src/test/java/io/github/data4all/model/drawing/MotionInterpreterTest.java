@@ -17,52 +17,6 @@ import android.graphics.Paint;
  */
 public abstract class MotionInterpreterTest {
     /**
-     * Verify if the drawCircle method is called mode-often with the given
-     * coordinates
-     * 
-     * @param canvas
-     *            The canvas mock
-     * @param mode
-     *            The verification mode
-     * @param x
-     *            The x coordinate to verify
-     * @param y
-     *            The y coordinate to verify
-     */
-    protected static void verifyDrawCircle(Canvas canvas,
-            VerificationMode mode, float x, float y) {
-        verify(canvas, mode).drawCircle(eq(x), eq(y), anyFloat(),
-                (Paint) anyObject());
-    }
-
-    /**
-     * Verify if the drawCircle method is called mode-often with the any
-     * coordinates
-     * 
-     * @param canvas
-     *            The canvas mock
-     * @param mode
-     *            The verification mode
-     */
-    protected static void verifyDrawCircle(Canvas canvas, VerificationMode mode) {
-        verify(canvas, mode).drawCircle(anyFloat(), anyFloat(), anyFloat(),
-                (Paint) anyObject());
-    }
-
-    /**
-     * Verify if the drawLine method is called mode-often
-     * 
-     * @param canvas
-     *            The canvas mock
-     * @param mode
-     *            The verification mode
-     */
-    protected static void verifyDrawLine(Canvas canvas, VerificationMode mode) {
-        verify(canvas, mode).drawLine(anyFloat(), anyFloat(), anyFloat(),
-                anyFloat(), (Paint) anyObject());
-    }
-
-    /**
      * Constructs a DrawingMotion with the given coordinate-pairs <br/>
      * 
      * The length of points <b>needs to be even</b>, but <b>is NOT checked</b>
@@ -83,5 +37,51 @@ public abstract class MotionInterpreterTest {
             motion.addPoint(points[i], points[i + 1]);
         }
         return motion;
+    }
+
+    /**
+     * Verify if the drawCircle method is called mode-often with the any
+     * coordinates
+     * 
+     * @param canvas
+     *            The canvas mock
+     * @param mode
+     *            The verification mode
+     */
+    protected static void verifyDrawCircle(Canvas canvas, VerificationMode mode) {
+        verify(canvas, mode).drawCircle(anyFloat(), anyFloat(), anyFloat(),
+                (Paint) anyObject());
+    }
+
+    /**
+     * Verify if the drawCircle method is called mode-often with the given
+     * coordinates
+     * 
+     * @param canvas
+     *            The canvas mock
+     * @param mode
+     *            The verification mode
+     * @param x
+     *            The x coordinate to verify
+     * @param y
+     *            The y coordinate to verify
+     */
+    protected static void verifyDrawCircle(Canvas canvas,
+            VerificationMode mode, float x, float y) {
+        verify(canvas, mode).drawCircle(eq(x), eq(y), anyFloat(),
+                (Paint) anyObject());
+    }
+
+    /**
+     * Verify if the drawLine method is called mode-often
+     * 
+     * @param canvas
+     *            The canvas mock
+     * @param mode
+     *            The verification mode
+     */
+    protected static void verifyDrawLine(Canvas canvas, VerificationMode mode) {
+        verify(canvas, mode).drawLine(anyFloat(), anyFloat(), anyFloat(),
+                anyFloat(), (Paint) anyObject());
     }
 }

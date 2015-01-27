@@ -6,6 +6,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Main Activity that shows the default mapview
@@ -42,7 +44,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		setUpMapView();
 		
 		// Set Overlay for the actual Position
-		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		Log.i(TAG, "Added User Location Overlay to the map");
 		mapView.getOverlays().add(myLocationOverlay);
 		// Set ImageView for Loading Screen
@@ -81,9 +82,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		Log.i(TAG, "Set Mapcenter to "
 				+ actualZoomLevel);
 		mapController.setZoom(actualZoomLevel);
-		
-		Log.i(TAG, "Set Mapcenter to " + actualCenter.toString());
-		mapController.setCenter(actualCenter);
 
 		// Set Listener for Buttons
         ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
@@ -104,7 +102,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		switch (v.getId()) {
 		//Set center to user Location
 		case R.id.return_to_actual_Position:
-			if (myLocationOverlay.isMyLocationEnabled()) {
+			if (myLocationOverlay.getMyLocation() != null) {
 				Log.i(TAG, "Set Mapcenter to"
 						+ myLocationOverlay.getMyLocation().toString());
 				mapController.setCenter(myLocationOverlay.getMyLocation());
@@ -170,6 +168,14 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		Log.i(TAG, "Enable User Position Display");
 		myLocationOverlay.enableMyLocation();
 		
+		if(actualCenter!=null){
+			Log.i(TAG, "Set Mapcenter to " + actualCenter.toString());
+			mapController.setCenter(actualCenter);
+		}else if(myLocationOverlay.getMyLocation() != null){
+			actualCenter = myLocationOverlay.getMyLocation();
+			Log.i(TAG, "Set Mapcenter to " + actualCenter.toString());
+			mapController.setCenter(actualCenter);			
+		}
 		// Start the GPS tracking
 		Log.i(TAG, "Start GPSService");
 		startService(new Intent(this, GPSservice.class));

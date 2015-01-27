@@ -42,13 +42,12 @@ import android.widget.TextView;
  * @author Maurice Boyke
  *
  */
-public class TagActivity extends BasicActivity implements OnClickListener{
+public class TagActivity extends BasicActivity implements OnClickListener {
 
 	//OSMElement Key
 	protected static final String OSM = "OSM_ELEMENT";
     private static final int REQUEST_CODE = 1234;
     final Context context = this;
-    private ArrayList<String> keys;
     private String key;
     private Map<String, String> map;
     private List <EditText> edit;
@@ -171,8 +170,8 @@ public class TagActivity extends BasicActivity implements OnClickListener{
             Map<String, String> map = SpeechRecognition
                     .speechToTag(matchesText);
             matchesText.clear();
-            for(Entry entry : map.entrySet()){
-    			String key = (String) entry.getKey();
+            for (Entry entry : map.entrySet()) {
+    			final String key = (String) entry.getKey();
     			matchesText.add(key + "=" + map.get(key));
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -180,25 +179,6 @@ public class TagActivity extends BasicActivity implements OnClickListener{
             textList.setAdapter(adapter);
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * create the dialog for the address
-     */
-
-    /**
-     * to show the tags in the listview
-     */
-
-    private void output() {
-        List<String> endList = new ArrayList<String>();
-        for(Entry entry : map.entrySet()){
-			String key = (String) entry.getKey();endList.add(key + "=" + map.get(key));
-            ListView textList = (ListView) findViewById(R.id.listView1);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
-                    android.R.layout.simple_list_item_1, endList);
-            textList.setAdapter(adapter);
-        }
     }
 
 
@@ -239,9 +219,9 @@ public class TagActivity extends BasicActivity implements OnClickListener{
 
 	@Override
 	public void finish() {
-	  OsmElement element = getIntent().getParcelableExtra(OSM);
+	  final OsmElement element = getIntent().getParcelableExtra(OSM);
 	  element.addTags(map);
-	  Intent intent = new Intent(this, ResultViewActivity.class);
+	  final Intent intent = new Intent(this, ResultViewActivity.class);
 	  intent.putExtra(OSM, element);
 	  intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));		
 	  super.finish();
