@@ -281,29 +281,56 @@ public class PointToCoordsTransformUtil {
         if (coord[2] == -1) {
             return null;
         }
+        double pitch = deviceOrientation.getPitch();
+        double roll = -deviceOrientation.getRoll();
+        double azimuth = deviceOrientation.getAzimuth();
         // rotates the vector with azimuth
-        double x = ((coord[0] * Math.cos(deviceOrientation.getAzimuth())) - (coord[1] * Math
-                .sin(deviceOrientation.getAzimuth())));
-        double y = ((coord[0] * Math.sin(deviceOrientation.getAzimuth())) + (coord[1] * Math
-                .cos(deviceOrientation.getAzimuth())));
-        double h = tps.getHeight();
-        double p = (x*x*y*y)/2;
-        double root = Math.sqrt(p*p - (x*x*y*y)+h*h);
-        double xx1 = Math.sqrt(p + root);
-        double xx2 = p - root;
-        double pitch = -Math.asin(y / xx1)+ deviceOrientation.getPitch(); 
-        double rotation = -Math.asin(x / xx1) + deviceOrientation.getRoll();
-   
+        double[] vector = new double[3];
+        vector[0] = ((coord[0] * Math.cos(azimuth)) - (coord[1] * Math
+                .sin(azimuth)));
+        vector[1] = ((coord[0] * Math.sin(azimuth)) + (coord[1] * Math
+                .cos(azimuth)));
+        vector[2] = - tps.getHeight();
+        //rotate around line through origin with pitch angle
+        double[] vector2 = new double[3];
+        vector2[0] = vector[0] * Math.cos(roll) 
+                - vector[1] * Math.sin(pitch) * Math.sin(roll) 
+                + vector[2] * Math.cos(pitch) * Math.sin(roll);       
+        vector2[1] = vector[0] * Math.sin(roll) * Math.sin(pitch) 
+                + vector[1] * ( Math.cos(pitch) * Math.cos(pitch) * (1- Math.cos(roll)) + Math.cos(roll))
+                + vector[2] * Math.cos(pitch) * Math.sin(pitch) * (1- Math.cos(roll));
+        vector2[2] = - vector[0] * Math.cos(pitch) * Math.sin(roll) 
+                + vector[1] * Math.sin(pitch) * Math.cos(pitch) * (1- Math.cos(roll)) 
+                + vector[2] * (Math.sin(pitch) * Math.sin(pitch) * (1-Math.cos(roll)) + Math.cos(roll));
+  
 
-        // calculates the multiplier of the Pixel
-        double x2 = (pitch + (tps.getCameraMaxPitchAngle() / 2))
-                / tps.getCameraMaxPitchAngle();
-        double y2 = -((rotation - (tps.getCameraMaxRotationAngle() / 2)) / tps
-                .getCameraMaxRotationAngle());
+        //rotate around X-Achse with pitch
+        double[] finalVector = new double[3];
+        finalVector[0] = vector2[0]; 
+        finalVector[1] = vector2[1] * Math.cos(-pitch) 
+                - vector2[2] * Math.sin(-pitch);
+        finalVector[2] = vector2[1] * Math.sin(-pitch) 
+                + vector2[2] * Math.cos(-pitch);
+
+        double x = Math.atan(- finalVector[1] / finalVector[2]); 
+        double y = Math.atan( finalVector[0] / finalVector[2]); 
+        x = Math.sin(x);
+        x = x / Math.sin(tps.getCameraMaxPitchAngle()/2);
+        x = (tps.getPhotoWidth() / 2) + (x * (tps.getPhotoWidth() / 2)); 
+        
+        y = Math.sin(y);     
+        y = y / Math.sin(tps.getCameraMaxRotationAngle()/2);
+        y = (tps.getPhotoHeight() / 2) + (y * (tps.getPhotoHeight() / 2)); 
+/*
+        double percent = (2*pixel-width) / width;
+        double z = Math.sin(maxAngle/2);
+        double angle = Math.asin(z * percent);
+        return angle;
+  */      
 
         // multiply with the Width and Height of the Photo
-        float xx = (float) ((int) (x2 * tps.getPhotoWidth()));
-        float yy = (float) ((int) (y2 * tps.getPhotoHeight()));
+        float xx = (float) (Math.round(x) );
+        float yy = (float) (Math.round(y) );
         Point point = new Point(xx, yy);
         return point;
     }
