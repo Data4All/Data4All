@@ -123,16 +123,16 @@ public class PointToCoordsTransformUtilTest {
 	public void Test(){
 		location.setLatitude(53.105868);
 		location.setLongitude(8.854916);
-		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(90) ,
-		Math.toRadians(90) , 1000, 1000, location);
-		DeviceOrientation deviceOrientation = new DeviceOrientation((float) Math.toRadians(90), 
-		        (float) Math.toRadians(45) , 0.0f, 10L);
+		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(40) ,
+		Math.toRadians(40) , 1000, 1000, location);
+		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 
+		        (float) Math.toRadians(25) , 0.0f, 10L);
 		ArrayList<Point> point = new ArrayList<Point>();
 		/*point.add(new Point(1,1));
 		point.add(new Point(1,1000));
 		point.add(new Point(1000,1000));
 		point.add(new Point(1000,1));*/
-		point.add(new Point(500,500));
+		point.add(new Point(1000,500));
 		
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		ArrayList<double[]> coord = new ArrayList<double[]>();

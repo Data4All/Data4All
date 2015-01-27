@@ -261,8 +261,7 @@ public class PointToCoordsTransformUtil {
         if ((pixel - (width / 2)) == 0) {
             return 0;
         }
-        double percent = pixel / width;
-        percent = percent - 0.5;
+        double percent = (2*pixel-width) / width;
         double z = Math.sin(maxAngle/2);
         double angle = Math.asin(z * percent);
         return angle;
