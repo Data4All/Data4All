@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
@@ -73,6 +74,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tag);    
+        getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(TagActivity.this,android.R.style.Theme_Holo_Dialog_MinWidth);
         LayoutInflater inflater = getLayoutInflater();
         View view=inflater.inflate(R.drawable.header_listview, null);
@@ -80,7 +82,6 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         alertDialog.setCustomTitle(view);
         ImageButton speechStart = (ImageButton) view.findViewById(R.id.speech); 
         speechStart.setOnClickListener(this);
-        
         if(getIntent().hasExtra("TYPE_DEF")){
         	array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
         	tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
@@ -108,12 +109,16 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                         }
 					}
 				});
-
+            	
                  alert1 = alertDialogBuilder.create();
+                 alert1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+	                
                  alert1.show();
             }
             
-        });alert = alertDialog.create();
+        });
+        alert = alertDialog.create();
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         
         alert.show();
         
@@ -184,7 +189,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 
 
 	public void createDialog(ArrayList<Tag> arrayList, String title, final Boolean but, final Boolean first1){
-    	dialog1 = new Dialog(this);
+    	dialog1 = new Dialog(this,android.R.style.Theme_Holo_Dialog_MinWidth);
 		dialog1.setContentView(R.layout.dialog_dynamic);
 		dialog1.setTitle(title);
 		//dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
