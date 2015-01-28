@@ -3,7 +3,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
@@ -91,14 +91,15 @@ public class ShowPictureActivity extends BasicActivity {
 	touchView.setTransformUtil(new PointToCoordsTransformUtil(
 		transformBean, currentOrientation));
 	
+	//at the beginning, the object to draw is set to a building
 	onClickBuilding(null);
     }
 
     public void onClickOkay(View view) {
 
-	// create an osm element from the given data and pass it to the next
+	// create an abstract data element from the given data and pass it to the next
 	// activity
-	OsmElement osmElement = touchView.create();
+	AbstractDataElement osmElement = touchView.create();
 	intent.putExtra(OSM_ELEMENT, osmElement);
 	startActivity(intent);
     }

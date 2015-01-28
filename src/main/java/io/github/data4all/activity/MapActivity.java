@@ -2,9 +2,9 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+import io.github.data4all.model.data.PolyElement;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
@@ -163,7 +163,7 @@ public abstract class MapActivity extends BasicActivity {
 	 * @param element
 	 *            the OsmElement which should be added to the map
 	 **/
-	protected void addOsmElementToMap(OsmElement element) {
+	protected void addOsmElementToMap(AbstractDataElement element) {
 		if (element != null) {
 			// if the Element is a Node
 			if (element instanceof Node) {
@@ -172,16 +172,16 @@ public abstract class MapActivity extends BasicActivity {
 						+ node.toGeoPoint().toString());
 				addNodeToMap(node);
 				// if the Element is Way
-			} else if (element instanceof Way) {
-				Way way = (Way) element;
+			} else if (element instanceof PolyElement) {
+			    PolyElement polyElement = (PolyElement) element;
 				// if the Element is an Area
-				if (way.isClosed()) {
-					Log.i(TAG, "Add Area with Coordinates " + way.toString());
-					addAreaToMap(way);
+				if (polyElement.isClosed()) {
+					Log.i(TAG, "Add Area with Coordinates " + polyElement.toString());
+					addAreaToMap(polyElement);
 					// if the Element is an Path
 				} else {
-					Log.i(TAG, "Add Path with Coordinates " + way.toString());
-					addPathToMap(way);
+					Log.i(TAG, "Add Path with Coordinates " + polyElement.toString());
+					addPathToMap(polyElement);
 				}
 			}
 		}
@@ -239,10 +239,10 @@ public abstract class MapActivity extends BasicActivity {
 	/**
 	 * Adds an area as an Overlay to the Map
 	 *
-	 * @param way
+	 * @param polyElement
 	 *            the area which should be added to the map
 	 **/
-	protected void addAreaToMap(Way way) {
+	protected void addAreaToMap(PolyElement polyElement) {
 		Polygon area = new Polygon(this) {
 			@Override
 			public boolean onLongPress(final MotionEvent e,
@@ -277,8 +277,8 @@ public abstract class MapActivity extends BasicActivity {
 			}
 		};
 
-		Log.i(TAG, "Set Area Points to " + way.toString());
-		area.setPoints(way.getGeoPoints());
+		Log.i(TAG, "Set Area Points to " + polyElement.toString());
+		area.setPoints(polyElement.getGeoPoints());
 
 		Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
 		area.setFillColor(DEFAULT_FILL_COLOR);
@@ -296,10 +296,10 @@ public abstract class MapActivity extends BasicActivity {
 	/**
 	 * Adds an Path as an Overlay to the Map
 	 *
-	 * @param way
+	 * @param polyElement
 	 *            the path which should be added to the map
 	 **/
-	protected void addPathToMap(Way way) {
+	protected void addPathToMap(PolyElement polyElement) {
 		Polyline path = new Polyline(this) {
 			@Override
 			public boolean onLongPress(final MotionEvent e,
@@ -333,8 +333,8 @@ public abstract class MapActivity extends BasicActivity {
 
 			}
 		};
-		Log.i(TAG, "Set Path Points to " + way.toString());
-		path.setPoints(way.getGeoPoints());
+		Log.i(TAG, "Set Path Points to " + polyElement.toString());
+		path.setPoints(polyElement.getGeoPoints());
 
 		Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
 		path.setColor(DEFAULT_STROKE_COLOR);

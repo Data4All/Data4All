@@ -1,7 +1,6 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.OsmElement;
 
 import java.util.List;
 
