@@ -24,23 +24,25 @@ import android.widget.Toast;
 public class GPSservice extends Service implements LocationListener {
 
     private static final String TAG = "GPSservice";
-
-    /**
-     * LocationManager.
-     */
     private LocationManager lmgr;
-
     private WakeLock wakeLock;
-    private Location lastKnownLocation;
-    // Binder given to clients
+    private PowerManager powerManager;
     private final IBinder mBinder = new LocalBinder();
+    /*
+     * the minimum of time after we get a new locationupdate
+     */
+    private final long minTime = 1000;
+    /*
+     * the minimum of Distance after we get a new locationupdate
+     */
+    private final float minDistance = 0;
 
     @Override
     public void onCreate() {
         Log.d("GPSSERVICE", "service started");
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "GPSservice");
         wakeLock.acquire();
@@ -48,30 +50,39 @@ public class GPSservice extends Service implements LocationListener {
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Optimizer.putLoc(findLastKnownLocation());
-        
+
         if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             // second value is minimum of time, third value is minimum of meters
-            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0,
-                    this);
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime,
+                    minDistance, this);
         }
 
         if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000,
-                    0, this);
+            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    minTime, minDistance, this);
         }
     }
+
+    /**
+     * Returns the last known location. <br/>
+     *
+     * first from GPS-Provider, if it does not have a location we check the
+     * networkprovider for a location.
+     * 
+     * @return Location the last known location
+     */
 
     public Location findLastKnownLocation() {
         Location loc = lmgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if (loc != null) {
-            Log.d(this.getClass().getSimpleName(), "lastknownloc gps");
+            Log.d(this.getClass().getSimpleName(), "lastknownloc from gps");
             return loc;
         }
         loc = lmgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (loc != null) {
-            Log.d(this.getClass().getSimpleName(), "lastknownloc network");
+            Log.d(this.getClass().getSimpleName(), "lastknownloc from network");
             return loc;
         }
         Log.d(this.getClass().getSimpleName(), "lastknownloc is null");
@@ -92,21 +103,25 @@ public class GPSservice extends Service implements LocationListener {
 
     }
 
+    @Override
     public void onLocationChanged(Location loc) {
 
         Optimizer.putLoc(loc);
 
     }
 
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // Not interested in provider status
 
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
+        // Not interested in provider status
     }
 
+    @Override
     public void onProviderDisabled(String provider) {
 
         Toast.makeText(getBaseContext(),
@@ -114,18 +129,12 @@ public class GPSservice extends Service implements LocationListener {
                 .show();
     }
 
-    public Location getLastKnownLocation() {
-        return lastKnownLocation;
-    }
-
-    
     public class LocalBinder extends Binder {
         public GPSservice getService() {
-            // Return this instance of LocalService so clients can call public methods
             return GPSservice.this;
         }
-    }   
-    
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
