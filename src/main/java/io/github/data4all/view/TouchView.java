@@ -45,11 +45,6 @@ public class TouchView extends View {
 	private final Paint areaPaint = new Paint();
 
     /**
-     * The paint to draw the path with
-     */
-    private final Paint pathPaint = new Paint();
-
-    /**
      * The motion interpreted Polygon
      */
     private List<Point> polygon = new ArrayList<Point>();
@@ -110,7 +105,6 @@ public class TouchView extends View {
 	protected void onFinishInflate() {
 		super.onFinishInflate();
 		interpreter = new WayMotionInterpreter();
-		pointPaint.setColor(MotionInterpreter.POINT_COLOR);
 		pathPaint.setColor(MotionInterpreter.PATH_COLOR);
 		pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
 		areaPaint.setColor(MotionInterpreter.AREA_COLOR);
@@ -149,7 +143,7 @@ public class TouchView extends View {
 			// afterwards draw the points
 			for (Point p : newPolygon) {
 				canvas.drawCircle(p.getX(), p.getY(),
-						MotionInterpreter.POINT_RADIUS, pointPaint);
+						MotionInterpreter.POINT_RADIUS, pathPaint);
 			}
 			undoUseable();
 			redoUseable();
