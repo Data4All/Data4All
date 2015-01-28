@@ -14,112 +14,132 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-@SuppressLint("ClickableViewAccessibility")
+/**
+ * 
+ * @author Steeve
+ *
+ */
+
 public class SensorReactionActivity extends Activity implements
-        OnTouchListener, SensorEventListener {
+		OnTouchListener, SensorEventListener {
 
-    // variable for storing the time of first click
-   private long startTime;
+	// variable for storing the time of first click
+	private long touchTime;
 
-    // delay time for sensor
-    private long reactionTime;
+	// delay time for sensor
+	private long reactionTime;
 
-    // sensor Manager
-    private SensorManager sManager;
+	// sensor Manager
+	private SensorManager sManager;
 
-    // jump value, which detected if phone is moving
-    private static final double JUMP_VALUE = 2;
+	// jump value, which detected if phone is moving
+	private static final double JUMP_VALUE = 2;
 
 	// check if user touching the screen
-	private boolean isTouched = false;
+	private boolean isTouched;
 
-    private String TAG = this.getClass().getSimpleName();
+	private String tag = this.getClass().getSimpleName();
 
-    /** The last x position. */
-    private float lastX = 0;
+	// the actual x position
+	private float actualX;
 
-    /** The last y position. */
-    private float lastY = 0;
+	// the actual y position
+	private float actualY;
 
-    /** The last z position. */
-    private float lastZ = 0;
+	// the actual z position
+	private float actualZ;
 
-	/** show a AlertDialog, when phone moving or when user touching the screen */
-	AlertDialog showDialog = null;
+	// The last x position.
+	private float lastX;
+
+	// The last y position.
+	private float lastY;
+
+	// The last z position.
+	private float lastZ;
+
+	// current time in nanos seconds
+	private long nano;
+	
+	// last index of event.values
+	public	static final int LAST_INDEX = 2;
+
+	// show a AlertDialog, when phone moving or when user touching the screen
+	private AlertDialog showDialog;
 
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d("BLUB", "sensorReactionActivity started");
-        setContentView(R.layout.activity_reaction_sensor);
-        findViewById(R.id.main).setOnTouchListener(this);
-        sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-    }
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Log.d("BLUB", "sensorReactionActivity started");
+		setContentView(R.layout.activity_reaction_sensor);
+		findViewById(R.id.main).setOnTouchListener(this);
+		sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+	}
 
-    /*
-     * register the SensorListener in the Activity
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sManager.registerListener(this,
-                sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-    }
+	/*
+	 * register the SensorListener in the Activity
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		sManager.registerListener(this,
+				sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				SensorManager.SENSOR_DELAY_NORMAL);
+	}
 
-    /*
-     * When this Activity isn't visible anymore then it is important to
-     * unregister the SensorListener in The Activity
-     */
-    @Override
-    protected void onStop() {
-        super.onStop();
-        sManager.unregisterListener(this,
-                sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
-    }
+	/*
+	 * When this Activity isn't visible anymore then it is important to
+	 * unregister the SensorListener in The Activity
+	 */
+	@Override
+	protected void onStop() {
+		super.onStop();
+		sManager.unregisterListener(this,
+				sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+	}
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
+	@SuppressLint("ClickableViewAccessibility")
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
 
 		Log.d("BLUB", "" + System.nanoTime());
-        /*
-         * if user has touching the screen, then store the time, when he has
-         * touching the screen
-         */
+		/*
+		 * if user has touching the screen, then store the time, when he has
+		 * touching the screen
+		 */
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			isTouched = true;
 			touchTime = System.nanoTime();
-			Log.i(TAG, "touchTime " + touchTime);
+			Log.i(tag, "touchTime " + touchTime);
 		}
 		return true;
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware.SensorEvent)
-	 * 
+	/*
+	 * if a movement is detected,then compute the reactionTime
 	 */
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		Log.d("BLUB", "onSensorChanged");
+       
+		
+		actualX = event.values[0];
+		actualY = event.values[1];
+		actualZ = event.values[LAST_INDEX];
 
-		float actualX = event.values[0];
-		float actualY = event.values[1];
-		float actualZ = event.values[2];
-
-		if (lastX == 0 && lastY == 0 && lastZ == 0) {
+		if ((Float.compare(this.lastX, 0) == 0) && (Float.compare(this.lastY, 0) == 0) 
+				&& (Float.compare(this.lastZ, 0) == 0)) {
 			lastX = actualX;
 			lastY = actualY;
 			lastZ = actualZ;
 			return;
 		}
 
-		//when a movement is detected
+		// when a movement is detected
 		if (Math.abs(actualX - lastX) > JUMP_VALUE
 				|| Math.abs(actualY - lastY) > JUMP_VALUE
 				|| Math.abs(actualZ - lastZ) > JUMP_VALUE) {
-			long nano = System.nanoTime();
+			nano = System.nanoTime();
 			String message = "";
 			// compute the reactionTime when user touching on the screen
 			if (isTouched) {
@@ -140,7 +160,7 @@ public class SensorReactionActivity extends Activity implements
 				showDialog.setMessage(message + reactionTime);
 			}
 			showDialog.show();
-			Log.i(TAG, "reactionTime: " + reactionTime);
+			Log.i(tag, "reactionTime: " + reactionTime);
 		}
 
 		lastX = actualX;
@@ -148,13 +168,19 @@ public class SensorReactionActivity extends Activity implements
 		lastZ = actualZ;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.hardware.SensorEventListener#onAccuracyChanged(android.hardware
+	 * .Sensor, int)
+	 */
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-
+         //		Not implemented
 	}
-	
-	public boolean getIsTouched(){
+
+	public boolean getIsTouched() {
 		return isTouched;
 	}
 
