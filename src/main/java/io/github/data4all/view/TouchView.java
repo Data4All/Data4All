@@ -1,8 +1,8 @@
 package io.github.data4all.view;
 
-import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.drawing.Analyzer;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -38,6 +38,7 @@ import android.view.View;
  */
 public class TouchView extends View {
 
+    private static final int CATCH_DISTANCE = 0;
     /**
      * The paint to draw the path with
      */
@@ -74,6 +75,7 @@ public class TouchView extends View {
      */
     private RedoUndo redoUndo;
     private UndoRedoListener undoRedoListener;
+    private List<Point> catchPoints;
 
     public TouchView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -181,10 +183,28 @@ public class TouchView extends View {
         if (currentMotion != null) {
             currentMotion.addPoint(event.getX(), event.getY());
             newPolygon = interpreter.interprete(polygon, currentMotion);
+            catchPolygonPoints();
             Log.d(this.getClass().getSimpleName(),
                     "Motion " + action + ": " + currentMotion.getPathSize()
                             + ", point: " + currentMotion.isPoint());
             postInvalidate();
+        }
+    }
+
+    /**
+     * Catches the points of the polygon to the pre-set catch-points.
+     */
+    private void catchPolygonPoints() {
+        if (catchPoints != null && newPolygon != null) {
+            for (int i = 0; i < newPolygon.size(); i++) {
+                final Point polygonPoint = newPolygon.get(i);
+                for (Point catchPoint : catchPoints) {
+                    if (polygonPoint.distance(catchPoint) < CATCH_DISTANCE) {
+                        newPolygon.set(i, new Point(catchPoint));
+                        continue;
+                    }
+                }
+            }
         }
     }
 
@@ -293,6 +313,10 @@ public class TouchView extends View {
         }
     }
 
+    public void setCatchPoints(List<Point> catchPoints) {
+        this.catchPoints = catchPoints;
+    }
+
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:
@@ -325,7 +349,7 @@ public class TouchView extends View {
     public void undo() {
         newPolygon = redoUndo.undo();
         polygon = newPolygon;
-        if (undoRedoListener != null) {     
+        if (undoRedoListener != null) {
             undoRedoListener.canRedo(true);
         }
         undoUseable();
@@ -334,13 +358,13 @@ public class TouchView extends View {
     public boolean redoUseable() {
         if (redoUndo.getCurrent() == redoUndo.getMax()) {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canRedo(false);
             }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canRedo(true);
             }
             return false;
@@ -350,13 +374,13 @@ public class TouchView extends View {
     public boolean undoUseable() {
         if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
             Log.d(this.getClass().getSimpleName(), "true undo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canUndo(true);
             }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false undo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canUndo(false);
             }
             return false;
@@ -372,7 +396,7 @@ public class TouchView extends View {
     public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
-    
+
     public void setUndoRedoListener(UndoRedoListener undoRedoListener) {
         this.undoRedoListener = undoRedoListener;
     }
