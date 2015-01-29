@@ -3,9 +3,10 @@ package io.github.data4all.util;
 import java.util.ArrayList;
 
 import io.github.data4all.activity.MapViewActivity;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,18 +28,18 @@ public class OsmChangeParserTest {
 
 	@Test
 	public void parseTest(){
-		ArrayList<OsmElement> elems = new ArrayList<OsmElement>();
-		Node node1 = new Node(1,1,23,23);
-		Node node2 = new Node(2,1,24,24);
-		Node node3 = new Node(3,1,25,25);
-		Way way1 = new Way(4,1);
+		ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
+		Node node1 = new Node(1,23,23);
+		Node node2 = new Node(2,24,24);
+		Node node3 = new Node(3,25,25);
+		PolyElement way1 = new PolyElement(4,PolyElementType.WAY);
 		way1.addNode(node1);
 		way1.addNode(node2);
 		
 		elems.add(node1);
 		elems.add(node3);
 		elems.add(way1);
-		OsmChangeParser.parse(Robolectric.buildActivity(MapViewActivity.class).get().getApplicationContext(),elems,13);
+		OsmChangeParser.parseElements(Robolectric.buildActivity(MapViewActivity.class).get().getApplicationContext(),elems,13);
 	}
 	
 	
