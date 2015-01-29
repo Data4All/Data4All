@@ -107,7 +107,7 @@ public class MapPreviewActivity extends AbstractMapActivity implements OnClickLi
 			} else {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
+				mapView.setTileSource(MAPBOX_SAT);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
