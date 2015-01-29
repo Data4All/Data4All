@@ -6,6 +6,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
 
+import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -33,7 +34,7 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 
 /**
- * Super Class for all Map Activitys
+ * Super Class for all Map Activities.
  * 
  * @author Oliver Schwartz
  *
@@ -77,31 +78,31 @@ public abstract class AbstractMapActivity extends BasicActivity {
 	protected IGeoPoint actualCenter;
 
 	// Default Zoom Level
-	protected final static int DEFAULT_ZOOM_LEVEL = 18;
+	protected static final int DEFAULT_ZOOM_LEVEL = 18;
 
 	// Minimal Zoom Level
-	protected final static int MINIMAL_ZOOM_LEVEL = 10;
+	protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
 	// Maximal Zoom Level
-	protected final static int MAXIMAL_ZOOM_LEVEL = 20;
+	protected static final int MAXIMAL_ZOOM_LEVEL = 20;
 
 	// Default Stroke width
-	protected final static float DEFAULT_STROKE_WIDTH = 3.0f;
+	protected static final float DEFAULT_STROKE_WIDTH = 3.0f;
 
 	// Default Stroke Color
-	protected final static int DEFAULT_STROKE_COLOR = Color.BLUE;
+	protected static final int DEFAULT_STROKE_COLOR = Color.BLUE;
 
 	// Fill Color for Polygons
-	protected final static int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
+	protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
 	// Default OpenStreetMap TileSource
-	protected final static ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
+	protected static final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
 
 	// Default Satellite Map Tilesource
-	protected final static OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new MapBoxTileSource(
+	protected static final OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new MapBoxTileSource(
 			"MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
 			19, 256, ".png");
-	protected final static ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+	protected static final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
 	protected void setUpMapView() {
 		mapView = (MapView) this.findViewById(R.id.mapview);
@@ -182,6 +183,128 @@ public abstract class AbstractMapActivity extends BasicActivity {
 		}
 	}
 
+	class MapMarker extends Marker {
+		
+		public MapMarker(MapView mapView) {
+	        super(mapView, new DefaultResourceProxyImpl(mapView.getContext()));
+	    }
+		
+		class DialogClickListener implements DialogInterface.OnClickListener{
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					// Yes button clicked
+					removeOverlayFromMap(MapMarker.this);
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					// No button clicked
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		@Override
+		public boolean onLongPress(final MotionEvent e,
+				final MapView mapView) {
+			final DialogInterface.OnClickListener dialogClickListener = new DialogClickListener();
+			final AlertDialog.Builder builder = new AlertDialog.Builder(
+					mapView.getContext());
+			builder.setMessage(getString(R.string.deleteDialog))
+					.setPositiveButton(getString(R.string.yes),
+							dialogClickListener)
+					.setNegativeButton(getString(R.string.no),
+							dialogClickListener).show();
+
+			return true;
+
+		}
+	}
+
+	class MapLine extends Polyline {
+		
+        public MapLine(Context ctx){
+            super(ctx);
+        }
+
+		
+		class DialogClickListener implements DialogInterface.OnClickListener{
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					// Yes button clicked
+					removeOverlayFromMap(MapLine.this);
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					// No button clicked
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		@Override
+		public boolean onLongPress(final MotionEvent e,
+				final MapView mapView) {
+			final DialogInterface.OnClickListener dialogClickListener = new DialogClickListener();
+			final AlertDialog.Builder builder = new AlertDialog.Builder(
+					mapView.getContext());
+			builder.setMessage(getString(R.string.deleteDialog))
+					.setPositiveButton(getString(R.string.yes),
+							dialogClickListener)
+					.setNegativeButton(getString(R.string.no),
+							dialogClickListener).show();
+
+			return true;
+
+		}
+	}
+
+	class MapPolygon extends Polygon {
+		
+        public MapPolygon(Context ctx){
+            super(ctx);
+        }
+
+		
+		class DialogClickListener implements DialogInterface.OnClickListener{
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					// Yes button clicked
+					removeOverlayFromMap(MapPolygon.this);
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					// No button clicked
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		@Override
+		public boolean onLongPress(final MotionEvent e,
+				final MapView mapView) {
+			final DialogInterface.OnClickListener dialogClickListener = new DialogClickListener();
+			final AlertDialog.Builder builder = new AlertDialog.Builder(
+					mapView.getContext());
+			builder.setMessage(getString(R.string.deleteDialog))
+					.setPositiveButton(getString(R.string.yes),
+							dialogClickListener)
+					.setNegativeButton(getString(R.string.no),
+							dialogClickListener).show();
+
+			return true;
+
+		}
+	}
+	
 	/**
 	 * Adds an Node as an Overlay to the Map.
 	 *
@@ -189,42 +312,9 @@ public abstract class AbstractMapActivity extends BasicActivity {
 	 *            the node which should be added to the map
 	 **/
 	protected void addNodeToMap(Node node) {
-		Marker poi = new Marker(mapView) {
-			@Override
-			public boolean onLongPress(final MotionEvent e,
-					final MapView mapView) {
-				final Overlay overlay = this;
-				final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case DialogInterface.BUTTON_POSITIVE:
-							// Yes button clicked
-							removeOverlayFromMap(overlay);
-							break;
-						case DialogInterface.BUTTON_NEGATIVE:
-							// No button clicked
-							break;
-						default:
-							break;
-						}
-					}
-				};
-
-				final AlertDialog.Builder builder = new AlertDialog.Builder(
-						mapView.getContext());
-				builder.setMessage(getString(R.string.deleteDialog))
-						.setPositiveButton(getString(R.string.yes),
-								dialogClickListener)
-						.setNegativeButton(getString(R.string.no),
-								dialogClickListener).show();
-
-				return true;
-
-			}
-		};
+		Marker poi = new MapMarker(mapView);
+		
 		Log.i(TAG, "Set Node Points to " + node.toString());
-
 		// disable InfoWindow
 		poi.setInfoWindow(null);
 		poi.setPosition(node.toGeoPoint());
@@ -239,42 +329,8 @@ public abstract class AbstractMapActivity extends BasicActivity {
 	 *            the area which should be added to the map
 	 **/
 	protected void addAreaToMap(Way way) {
-		Polygon area = new Polygon(this) {
-			@Override
-			public boolean onLongPress(final MotionEvent e,
-					final MapView mapView) {
-				final Overlay overlay = this;
-				 final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case DialogInterface.BUTTON_POSITIVE:
-							// Yes button clicked
-							removeOverlayFromMap(overlay);
-							break;
-
-						case DialogInterface.BUTTON_NEGATIVE:
-							// No button clicked
-							break;
-						default:
-							break;
-						}
-					}
-				};
-
-				final AlertDialog.Builder builder = new AlertDialog.Builder(
-						mapView.getContext());
-				builder.setMessage(getString(R.string.deleteDialog))
-						.setPositiveButton(getString(R.string.yes),
-								dialogClickListener)
-						.setNegativeButton(getString(R.string.no),
-								dialogClickListener).show();
-
-				return true;
-
-			}
-		};
-
+		Polygon area = new MapPolygon(this);
+		
 		Log.i(TAG, "Set Area Points to " + way.toString());
 		area.setPoints(way.getGeoPoints());
 
@@ -298,39 +354,8 @@ public abstract class AbstractMapActivity extends BasicActivity {
 	 *            the path which should be added to the map
 	 **/
 	protected void addPathToMap(Way way) {
-		Polyline path = new Polyline(this) {
-			@Override
-			public boolean onLongPress(final MotionEvent e,
-					final MapView mapView) {
-				final Overlay overlay = this;
-				final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case DialogInterface.BUTTON_POSITIVE:
-							// Yes button clicked
-							removeOverlayFromMap(overlay);
-							break;
-
-						case DialogInterface.BUTTON_NEGATIVE:
-							// No button clicked
-							break;
-						}
-					}
-				};
-
-				final AlertDialog.Builder builder = new AlertDialog.Builder(
-						mapView.getContext());
-				builder.setMessage(getString(R.string.deleteDialog))
-						.setPositiveButton(getString(R.string.yes),
-								dialogClickListener)
-						.setNegativeButton(getString(R.string.no),
-								dialogClickListener).show();
-
-				return true;
-
-			}
-		};
+		Polyline path = new MapLine(this);
+		
 		Log.i(TAG, "Set Path Points to " + way.toString());
 		path.setPoints(way.getGeoPoints());
 
