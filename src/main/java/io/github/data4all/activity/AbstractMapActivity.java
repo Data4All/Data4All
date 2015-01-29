@@ -183,14 +183,38 @@ public abstract class AbstractMapActivity extends BasicActivity {
 		}
 	}
 
+	/**
+	 * With LongClick deletable Map Marker.
+	 * 
+	 * @author Oliver Schwartz
+	 *
+	 */
 	class MapMarker extends Marker {
-		
+
+		/**
+		 * Default constructor
+		 * 
+		 * @param mapView the Mapview for the Overlay
+		 */
 		public MapMarker(MapView mapView) {
-	        super(mapView, new DefaultResourceProxyImpl(mapView.getContext()));
-	    }
-		
-		class DialogClickListener implements DialogInterface.OnClickListener{
-			
+			super(mapView, new DefaultResourceProxyImpl(mapView.getContext()));
+		}
+
+		/**
+		 * DialogListener for Overlay.
+		 * 
+		 * @author Oliver Schwartz
+		 *
+		 */
+		class DialogClickListener implements DialogInterface.OnClickListener {
+
+			/**
+			 * Default constructor
+			 */
+			public DialogClickListener() {
+
+			}
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
@@ -206,9 +230,9 @@ public abstract class AbstractMapActivity extends BasicActivity {
 				}
 			}
 		}
+
 		@Override
-		public boolean onLongPress(final MotionEvent e,
-				final MapView mapView) {
+		public boolean onLongPress(final MotionEvent e, final MapView mapView) {
 			final DialogInterface.OnClickListener dialogClickListener = new DialogClickListener();
 			final AlertDialog.Builder builder = new AlertDialog.Builder(
 					mapView.getContext());
@@ -223,15 +247,38 @@ public abstract class AbstractMapActivity extends BasicActivity {
 		}
 	}
 
+	/**
+	 * With LongClick deletable Polyline.
+	 * 
+	 * @author Oliver Schwartz
+	 *
+	 */
 	class MapLine extends Polyline {
-		
-        public MapLine(Context ctx){
-            super(ctx);
-        }
 
-		
-		class DialogClickListener implements DialogInterface.OnClickListener{
-			
+		/**
+		 * Default constructor
+		 * 
+		 * @param ctx the Context for the Overlay
+		 */
+		public MapLine(Context ctx) {
+			super(ctx);
+		}
+
+		/**
+		 * DialogListener for Overlay.
+		 * 
+		 * @author Oliver Schwartz
+		 *
+		 */
+		class DialogClickListener implements DialogInterface.OnClickListener {
+
+			/**
+			 * Default constructor
+			 */
+			public DialogClickListener() {
+
+			}
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
@@ -247,9 +294,9 @@ public abstract class AbstractMapActivity extends BasicActivity {
 				}
 			}
 		}
+
 		@Override
-		public boolean onLongPress(final MotionEvent e,
-				final MapView mapView) {
+		public boolean onLongPress(final MotionEvent e, final MapView mapView) {
 			final DialogInterface.OnClickListener dialogClickListener = new DialogClickListener();
 			final AlertDialog.Builder builder = new AlertDialog.Builder(
 					mapView.getContext());
@@ -264,15 +311,38 @@ public abstract class AbstractMapActivity extends BasicActivity {
 		}
 	}
 
+	/**
+	 * With LongClick deletable Polygon.
+	 * 
+	 * @author Oliver Schwartz
+	 *
+	 */
 	class MapPolygon extends Polygon {
-		
-        public MapPolygon(Context ctx){
-            super(ctx);
-        }
 
-		
-		class DialogClickListener implements DialogInterface.OnClickListener{
-			
+		/**
+		 * Default constructor
+		 * 
+		 * @param ctx the Context for the Overlay
+		 */
+		public MapPolygon(Context ctx) {
+			super(ctx);
+		}
+
+		/**
+		 * DialogListener for Overlay.
+		 * 
+		 * @author Oliver Schwartz
+		 *
+		 */
+		class DialogClickListener implements DialogInterface.OnClickListener {
+
+			/**
+			 * Default constructor
+			 */
+			public DialogClickListener() {
+
+			}
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
@@ -288,9 +358,9 @@ public abstract class AbstractMapActivity extends BasicActivity {
 				}
 			}
 		}
+
 		@Override
-		public boolean onLongPress(final MotionEvent e,
-				final MapView mapView) {
+		public boolean onLongPress(final MotionEvent e, final MapView mapView) {
 			final DialogInterface.OnClickListener dialogClickListener = new DialogClickListener();
 			final AlertDialog.Builder builder = new AlertDialog.Builder(
 					mapView.getContext());
@@ -304,7 +374,7 @@ public abstract class AbstractMapActivity extends BasicActivity {
 
 		}
 	}
-	
+
 	/**
 	 * Adds an Node as an Overlay to the Map.
 	 *
@@ -313,7 +383,7 @@ public abstract class AbstractMapActivity extends BasicActivity {
 	 **/
 	protected void addNodeToMap(Node node) {
 		Marker poi = new MapMarker(mapView);
-		
+
 		Log.i(TAG, "Set Node Points to " + node.toString());
 		// disable InfoWindow
 		poi.setInfoWindow(null);
@@ -330,7 +400,7 @@ public abstract class AbstractMapActivity extends BasicActivity {
 	 **/
 	protected void addAreaToMap(Way way) {
 		Polygon area = new MapPolygon(this);
-		
+
 		Log.i(TAG, "Set Area Points to " + way.toString());
 		area.setPoints(way.getGeoPoints());
 
@@ -355,7 +425,7 @@ public abstract class AbstractMapActivity extends BasicActivity {
 	 **/
 	protected void addPathToMap(Way way) {
 		Polyline path = new MapLine(this);
-		
+
 		Log.i(TAG, "Set Path Points to " + way.toString());
 		path.setPoints(way.getGeoPoints());
 
@@ -407,7 +477,8 @@ public abstract class AbstractMapActivity extends BasicActivity {
 		final LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 		final Criteria criteria = new Criteria();
-		final String provider = locationManager.getBestProvider(criteria, false);
+		final String provider = locationManager
+				.getBestProvider(criteria, false);
 		final Location currentLocation = locationManager
 				.getLastKnownLocation(provider);
 		if (currentLocation != null) {
