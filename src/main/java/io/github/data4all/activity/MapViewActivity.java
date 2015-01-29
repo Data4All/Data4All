@@ -6,8 +6,6 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Main Activity that shows the default mapview

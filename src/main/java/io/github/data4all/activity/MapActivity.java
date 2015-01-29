@@ -5,6 +5,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
@@ -145,7 +146,7 @@ public abstract class MapActivity extends BasicActivity {
 			Log.i(TAG, "Set actual Center to " + getMyLocation());
 			actualCenter = getMyLocation();
 		}
-		
+
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 	}
 
@@ -173,15 +174,20 @@ public abstract class MapActivity extends BasicActivity {
 				addNodeToMap(node);
 				// if the Element is Way
 			} else if (element instanceof PolyElement) {
-			    PolyElement polyElement = (PolyElement) element;
-				// if the Element is an Area
-				if (polyElement.isClosed()) {
-					Log.i(TAG, "Add Area with Coordinates " + polyElement.toString());
-					addAreaToMap(polyElement);
-					// if the Element is an Path
-				} else {
-					Log.i(TAG, "Add Path with Coordinates " + polyElement.toString());
+				PolyElement polyElement = (PolyElement) element;
+
+				// if the Element is an Path
+				if (polyElement.getType() == PolyElementType.WAY) {
+					Log.i(TAG,
+							"Add Path with Coordinates "
+									+ polyElement.toString());
 					addPathToMap(polyElement);
+					// if the Element is an Area
+				} else {
+					Log.i(TAG,
+							"Add Area with Coordinates "
+									+ polyElement.toString());
+					addAreaToMap(polyElement);
 				}
 			}
 		}
@@ -228,8 +234,8 @@ public abstract class MapActivity extends BasicActivity {
 			}
 		};
 		Log.i(TAG, "Set Node Points to " + node.toString());
-		
-		//disable InfoWindow
+
+		// disable InfoWindow
 		poi.setInfoWindow(null);
 		poi.setPosition(node.toGeoPoint());
 		mapView.getOverlays().add(poi);
