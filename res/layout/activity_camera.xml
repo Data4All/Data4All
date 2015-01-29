@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <FrameLayout
-        android:id="@+id/camera_preview"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="1" />
-    <ImageButton
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ImageButton
         android:id="@+id/btnCaptureImage"
         style="@style/imageButtonCamAction"
-        android:contentDescription="@string/noDescription" />
-        android:layout_gravity="center_horizontal|center"
+        android:layout_gravity="center_horizontal|bottom"
         android:background="@null"
+        android:contentDescription="@string/noDescription"
         android:src="@drawable/ic_camaction" />
-    
 
-</LinearLayout>
+</FrameLayout>

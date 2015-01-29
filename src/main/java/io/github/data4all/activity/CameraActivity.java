@@ -5,69 +5,92 @@ import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.util.CameraPreview;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.hardware.Camera.ShutterCallback;
 import android.os.Bundle;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 /**
- * An Activity for the camera preview and taking a photo
+ * This class serves as acitivity for the camera . This class creates the Camera
+ * with all associated views and handles the control of the camera in
+ * cooperation with the CameraPreview Class
  * 
- * @author: sbollen
+ * @author: Andre Koch
  */
 
 public class CameraActivity extends Activity {
 
-	// Logger Tag
-	private static final String TAG = "CameraActivity";
-
-	// Camera Preview View
-	private CameraPreview mCameraPreview;
-
-	// Camera Preview View
-	private CapturePictureHandler mPicture;
-
-	// Camera Object
-	private Camera mCamera;
-
-	private FrameLayout preview;
-
-	// Camera action Button
-	private Button btnCaptureImage;
+	private static final String TAG = "CamTestActivity";
+	CameraPreview preview;
+	ImageButton buttonClick;
+	Camera camera;
+	Activity act;
+	Context ctx;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.i(TAG, "Start to create Camera @ CameraActivity");
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		// Inflate the UI layout
+		ctx = this;
+		act = this;
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		setContentView(R.layout.activity_camera);
 
 		// Checking camera availability
 		if (!isDeviceSupportCamera()) {
-			Toast.makeText(getApplicationContext(), "@string/noCamSupported",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(),
+					getString(R.string.noCamSupported), Toast.LENGTH_LONG)
+					.show();
 			// will close the app if the device does't have camera
 			finish();
 		}
 
-		initUIComponents();
+		preview = new CameraPreview(this,
+				(SurfaceView) findViewById(R.id.surfaceView));
+		preview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT));
+		((FrameLayout) findViewById(R.id.layout)).addView(preview);
+		preview.setKeepScreenOn(true);
+
+		// Autofocus Message
+		Toast.makeText(ctx, getString(R.string.CamWithAutoFocus),
+				Toast.LENGTH_LONG).show();
+
+		buttonClick = (ImageButton) findViewById(R.id.btnCaptureImage);
+
+		buttonClick.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				camera.takePicture(shutterCallback, null,
+						new CapturePictureHandler(getApplicationContext()));
+			}
+		});
 
 	}
 
+	/**
+	 * This method looks whether the device has a camera and then returns a
+	 * boolean.
+	 * 
+	 * @return boolean true if device has a camera, false otherwise
+	 */
 	private boolean isDeviceSupportCamera() {
 		if (getApplicationContext().getPackageManager().hasSystemFeature(
 				PackageManager.FEATURE_CAMERA)) {
 			// this device has a camera
 			return true;
 		} else {
-			// no camera on this device
 			return false;
 		}
 	}
@@ -78,95 +101,49 @@ public class CameraActivity extends Activity {
 	 * 
 	 * @return
 	 */
-	/** A safe way to get an instance of the Camera object. */
-	public static Camera getCameraInstance() {
-		Camera cam = null;
-		try {
-			cam = Camera.open(); // attempt to get a Camera instance
-		} catch (Exception e) {
-			// Camera is not available (in use or does not exist)
+	private Camera getCameraInstance() {
+		Camera camera = null;
+		int numCams = Camera.getNumberOfCameras();
+		if (numCams > 0) {
+			try {
+				camera = Camera.open(0);
+			} catch (Exception e) {
+				// cannot get camera or does not exist
+			}
 		}
-		return cam; // returns null if camera is unavailable
+		return camera;
 	}
 
-	/*
-	 * Called when the Activity is no longer visible at all.
-	 */
-	@Override
-	public void onStop() {
-		super.onStop();
-	}
-
-	/*
-	 * Called when the Activity is restarted, even before it becomes visible.
-	 */
-	@Override
-	public void onStart() {
-		super.onStart();
-	}
-
+	
 	@Override
 	protected void onResume() {
-
 		super.onResume();
 		try {
-			mCamera = Camera.open();
-			mCamera = getCameraInstance();
-			mCamera.setPreviewCallback(null);
-			mCameraPreview = new CameraPreview(this, mCamera);// set preview
-			preview.addView(mCameraPreview);
-			mCamera.startPreview();
-		} catch (Exception e) {
-			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+			camera = getCameraInstance();
+			camera.startPreview();
+			preview.setCamera(camera);
+		} catch (RuntimeException ex) {
+			Toast.makeText(ctx, getString(R.string.noCamSupported),
+					Toast.LENGTH_LONG).show();
 		}
-
-        // Start the Device Orientation listener
-        startService(new Intent(this, OrientationListener.class));
-
 	}
 
 	@Override
 	protected void onPause() {
-		super.onPause();
-		releaseCamera();
-	}
-
-	private void releaseCamera() {
-		if (mCamera != null) {
-			mCamera.release(); // release the camera for other applications
-			mCamera = null;
+		if (camera != null) {
+			camera.stopPreview();
+			preview.setCamera(null);
+			camera.release();
+			camera = null;
 		}
-        stopService(new Intent(this, OrientationListener.class));
-        
+		super.onPause();
 	}
 
-	/*
-	 * Initialize the UI Components (trigger and cameraPreview)
-	 */
-	private void initUIComponents() {
-
-		// Create an instance of Camera
-		mCamera = getCameraInstance();
-
-		// initialise a new Preview
-		mCameraPreview = new CameraPreview(this, mCamera);
-
-		// create a new Layout
-		preview = (FrameLayout) findViewById(R.id.camera_preview);
-
-		// add camera to preview
-		preview.addView(mCameraPreview);
-
-		// Retrieve the ImageButton of Camera Trigger
-		btnCaptureImage = (Button) findViewById(R.id.btnCaptureImage);
-		btnCaptureImage.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// get an image from the camera
-				mCamera.takePicture(null, null, mPicture);
-			}
-		});
-
-	}
+	
+	ShutterCallback shutterCallback = new ShutterCallback() {
+		public void onShutter() {
+			// Log.d(TAG, "onShutter'd");
+		}
+	};
 
 }

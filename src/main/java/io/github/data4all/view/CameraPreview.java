@@ -1,4 +1,4 @@
-package io.github.data4all.util;
+package io.github.data4all.view;
 
 import io.github.data4all.logger.Log;
 
@@ -13,8 +13,16 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * This class serves as Previewclass for the camera . This class creates the
+ * preview with all associated views and handles the control of the camera in
+ * cooperation with the CameraActivity.
+ * 
+ * @author: Andre Koch
+ */
+
 public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
-	private final String TAG = "Preview";
+	private final String TAG = "CameraPreview";
 
 	SurfaceView mSurfaceView;
 	SurfaceHolder mHolder;
@@ -22,7 +30,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 	List<Size> mSupportedPreviewSizes;
 	Camera mCamera;
 
-	public CameraPreview(Context context, SurfaceView sv) {
+	CameraPreview(Context context, SurfaceView sv) {
 		super(context);
 
 		mSurfaceView = sv;
@@ -30,7 +38,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 		mHolder = mSurfaceView.getHolder();
 		mHolder.addCallback(this);
-		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 
 	public void setCamera(Camera camera) {
@@ -48,17 +55,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 				// set the focus mode
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 				// set Camera parameters
-
+				mCamera.setParameters(params);
 			}
-			List<String> flashModes = params.getSupportedFlashModes();
-			if (flashModes.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
-				// set the focus mode
-				params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
-				// set Camera parameters
-
-			}
-
-			mCamera.setParameters(params);
 		}
 	}
 

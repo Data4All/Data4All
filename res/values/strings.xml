@@ -41,7 +41,6 @@
     <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
     <string name="deleteButton">Logout</string>
     <string name="getUsernameButton">show Username</string>
-
     <!-- Strings Content Description ImageButtons on MapViewActivity -->
     <string name="returnToActualPosition">My Position</string>
     <string name="returnToCamera">Camera</string>
@@ -54,17 +53,14 @@
     <string name="drawPoint">Drawing a Point </string>
     <string name="drawArea">Drawing a Area </string>
     <string name="drawBuilding">Drawing a Building </string>
-    
+
     <!-- Delete Dialog -->
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-
-    
     <string name="resultViewAlertDialogMessage">Upload now</string>
     <string name="ok">Ok</string>
-    
     <string name="noCamSupported">Sorry Your device doesnt support camera</string>
-
+    <string name="CamWithAutoFocus">This Camera use Autofocus</string>
 
 </resources>
