@@ -19,6 +19,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
@@ -85,8 +87,11 @@ public class RequestChangesetIDFromOpenStreetMapTask extends AsyncTask<Void, Voi
 
         try {
             // Prepare request
-        	request = new HttpPut (Constants.SCOPE + "/api/0.6/changeset/create");
-        	request.setEntity(new FileEntity(changeSetXML, null));
+        	request = new HttpPut (Constants.SCOPE + "api/0.6/changeset/create");
+
+        	MultipartEntity entity = new MultipartEntity();
+        	entity.addPart("xml", new FileBody(changeSetXML));
+        	request.setEntity(entity);
             // Sign the request with oAuth
             consumer.sign(request);
 
