@@ -325,7 +325,7 @@ public class TouchView extends View {
     public void undo() {
         newPolygon = redoUndo.undo();
         polygon = newPolygon;
-        if (undoRedoListener != null) {     
+        if (undoRedoListener != null) {
             undoRedoListener.canRedo(true);
         }
         undoUseable();
@@ -334,13 +334,13 @@ public class TouchView extends View {
     public boolean redoUseable() {
         if (redoUndo.getCurrent() == redoUndo.getMax()) {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canRedo(false);
             }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canRedo(true);
             }
             return false;
@@ -350,13 +350,13 @@ public class TouchView extends View {
     public boolean undoUseable() {
         if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
             Log.d(this.getClass().getSimpleName(), "true undo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canUndo(true);
             }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false undo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canUndo(false);
             }
             return false;
@@ -364,22 +364,51 @@ public class TouchView extends View {
     }
 
     /**
-     * @author sbollen Set the actual PointToCoordsTransformUtil with the actual
-     *         location and camera parameters
+     * checks if the Polygon has the minimum amount of Nodes
+     * 
+     * @author konerman
+     */
+    public boolean hasEnoughNodes() {
+        if (interpreter instanceof AreaMotionInterpreter && polygon.size() >= 3) {
+            return true;
+        }
+        if (interpreter instanceof BuildingMotionInterpreter
+                && polygon.size() >= 4) {
+            return true;
+        }
+        if (interpreter instanceof PointMotionInterpreter
+                && polygon.size() == 1) {
+            return true;
+        }
+        if (interpreter instanceof WayMotionInterpreter && polygon.size() >= 2) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set the actual PointToCoordsTransformUtil with the actual location and
+     * camera parameters
+     * 
      * @param pointTrans
      *            the actual object
+     * 
+     * @author sbollen
      */
     public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
-    
+
     public void setUndoRedoListener(UndoRedoListener undoRedoListener) {
         this.undoRedoListener = undoRedoListener;
     }
 
     /**
-     * @author sbollen Create an OsmElement from the given polygon
+     * Create an OsmElement from the given polygon
+     * 
      * @return the created OsmElement (with located nodes)
+     *
+     * @author sbollen
      */
     public OsmElement create() {
         return interpreter.create(polygon);
