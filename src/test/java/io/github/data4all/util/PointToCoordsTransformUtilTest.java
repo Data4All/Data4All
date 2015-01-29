@@ -125,7 +125,8 @@ public class PointToCoordsTransformUtilTest {
 		point.add(new Point(500,500));
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		ArrayList<double[]> coord = new ArrayList<double[]>();
-		List<Node> n = util.transform(tps, deviceOrientation, point);
+		int rotation = 0;
+		List<Node> n = util.transform(tps, deviceOrientation, point, rotation);
 		for(Point p : point){
 			double[] c =util.calculateCoordFromPoint(tps, deviceOrientation, p);
 			coord.add(c);

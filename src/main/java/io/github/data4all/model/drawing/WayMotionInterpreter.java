@@ -175,11 +175,11 @@ public class WayMotionInterpreter implements MotionInterpreter {
      * @author sbollen
      */
     @Override
-    public OsmElement create(List<Point> polygon) {
+    public OsmElement create(List<Point> polygon, int rotation) {
         // create a new Way and copy the List of Nodes to this way
         final Way newWay = new Way(-1, 1);
 
-        final List<Node> nodeList = pointTrans.transform(polygon);
+        final List<Node> nodeList = pointTrans.transform(polygon, rotation);
 
         newWay.addNodes(nodeList, false);
         return newWay;

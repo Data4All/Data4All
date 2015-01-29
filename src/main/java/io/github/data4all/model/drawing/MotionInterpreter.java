@@ -33,7 +33,7 @@ public interface MotionInterpreter {
      * @param polygon
      *            the interpreted polygon
      */
-    OsmElement create(List<Point> polygon);
+    OsmElement create(List<Point> polygon, int rotation);
 
     /**
      * Interprets the given motion and apply it to the polygon<br/>

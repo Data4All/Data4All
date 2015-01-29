@@ -381,7 +381,7 @@ public class TouchView extends View {
      * @author sbollen Create an OsmElement from the given polygon
      * @return the created OsmElement (with located nodes)
      */
-    public OsmElement create() {
-        return interpreter.create(polygon);
+    public OsmElement create(int rotation) {
+        return interpreter.create(polygon, rotation);
     }
 }
