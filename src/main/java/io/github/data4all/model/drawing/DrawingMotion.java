@@ -5,10 +5,10 @@ import java.util.List;
 
 /**
  * The DrawingMotion stores the path of a motion and provides methods to
- * determine the behavior to the motion<br/>
- * <br/>
- * It is used by the painting component to store the user input<br/>
- * Also its used by the MotionInterpreters to interpret the user input
+ * determine the behavior to the motion.<br/>
+ * <p/>
+ * It is used by the painting component to store the user input.<br/>
+ * Also its used by the MotionInterpreters to interpret the user input.
  * 
  * An activity can easily implement the usage of DrawingMotion by overwriting
  * the onTouchEvent-method as following:
@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class DrawingMotion {
     /**
-     * Calculates the euclidean distance between point a and point b
+     * Calculates the euclidean distance between point a and point b.
      * 
      * @param a
      *            the first point
@@ -57,7 +57,7 @@ public class DrawingMotion {
      * List of all added Points
      */
     private List<Point> points = new ArrayList<Point>();
-    
+
     /**
      * Adds a Point to the DrawingMotion
      * 
@@ -113,10 +113,11 @@ public class DrawingMotion {
     /**
      * Returns a copy of the point at the given index
      * 
+     * @param index
+     *            the given index
+     * @return a copy of the point at the given index
      * @throws IndexOutOfBoundsException
      *             if the given index is out of the bounds
-     * 
-     * @return a copy of the point at the given index
      */
     public Point getPoint(int index) {
         if (index < 0 || index >= points.size()) {
