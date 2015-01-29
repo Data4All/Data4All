@@ -5,19 +5,15 @@
     android:orientation="horizontal"
     android:weightSum="100" >
 
-        <io.github.data4all.view.CaptureCameraSurfaceView
-            android:id="@+id/cameraPreview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
-        </io.github.data4all.view.CaptureCameraSurfaceView>
+    <io.github.data4all.view.CaptureCameraSurfaceView
+        android:id="@+id/cameraPreview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </io.github.data4all.view.CaptureCameraSurfaceView>
 
-        <ImageButton
-            android:id="@+id/btnTrigger"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="81dp"
-            android:layout_height="74dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:background="#0101DF"/>
+    <ImageButton
+        android:id="@+id/btnTrigger"
+        style="@style/imageButtonCamAction"
+        android:contentDescription="@string/noDescription" />
 
 </RelativeLayout>

@@ -7,7 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+import android.os.Parcel;
 
 /**
  * Testing the main functionality of the node objects. Testing inherited methods
@@ -16,7 +22,16 @@ import org.junit.Test;
  * @author fkirchge
  *
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
 public class NodeTest {
+
+    private Node testNode;
+
+    @Before
+    public void setUp() {
+        testNode = new Node(1, 2, 30.123456, 40.1234567);
+    }
 
     /**
      * Tests if the setTags() methods works correctly. Add tags, check if tags
@@ -25,7 +40,6 @@ public class NodeTest {
      */
     @Test
     public void test_setTags() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Map<String, String> tags = new TreeMap<String, String>();
         tags.put("highway", "motorway");
         tags.put("barrier", "fence");
@@ -49,7 +63,6 @@ public class NodeTest {
      */
     @Test
     public void test_addOrUpdateTag() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         testNode.addOrUpdateTag("highway", "motorway");
         assertEquals("motorway", testNode.getTagWithKey("highway"));
         assertEquals(1, testNode.getTags().size());
@@ -64,7 +77,6 @@ public class NodeTest {
      */
     @Test
     public void test_addTags() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Map<String, String> tags = new TreeMap<String, String>();
         tags.put("highway", "motorway");
         tags.put("barrier", "fence");
@@ -79,7 +91,6 @@ public class NodeTest {
      */
     @Test
     public void test_hasTag() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Map<String, String> tags = new TreeMap<String, String>();
         tags.put("highway", "motorway");
         testNode.addTags(tags);
@@ -91,7 +102,6 @@ public class NodeTest {
      */
     @Test
     public void test_getTagWithKey() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Map<String, String> tags = new TreeMap<String, String>();
         tags.put("highway", "motorway");
         testNode.addTags(tags);
@@ -103,7 +113,6 @@ public class NodeTest {
      */
     @Test
     public void test_hasTagKey() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Map<String, String> tags = new TreeMap<String, String>();
         tags.put("highway", "motorway");
         testNode.addTags(tags);
@@ -115,7 +124,6 @@ public class NodeTest {
      */
     @Test
     public void test_isTagged() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Map<String, String> tags = new TreeMap<String, String>();
         tags.put("highway", "motorway");
         testNode.addTags(tags);
@@ -127,7 +135,6 @@ public class NodeTest {
      */
     @Test
     public void test_addParentRelation() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Relation relation = new Relation(3, 1);
         testNode.addParentRelation(relation);
         assertEquals(true, testNode.getParentRelations().contains(relation));
@@ -140,7 +147,6 @@ public class NodeTest {
      */
     @Test
     public void test_relation_hasParentRelation() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Relation relation = new Relation(3, 1);
         testNode.addParentRelation(relation);
         assertEquals(true, testNode.hasParentRelation(relation));
@@ -153,7 +159,6 @@ public class NodeTest {
      */
     @Test
     public void test_osmid_hasParentRelation() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Relation relation = new Relation(3, 1);
         testNode.addParentRelation(relation);
         assertEquals(true, testNode.hasParentRelation(3));
@@ -164,7 +169,6 @@ public class NodeTest {
      */
     @Test
     public void test_osmid_hasParentRelation1() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         assertEquals(false, testNode.hasParentRelation(3));
     }
 
@@ -174,7 +178,6 @@ public class NodeTest {
      */
     @Test
     public void test_addParentRelations() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         List<Relation> relationList = new ArrayList<Relation>();
         relationList.add(new Relation(3, 1));
         relationList.add(new Relation(4, 1));
@@ -189,7 +192,6 @@ public class NodeTest {
      */
     @Test
     public void test_hasParentRelations() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Relation relation = new Relation(3, 1);
         testNode.addParentRelation(relation);
         assertEquals(true, testNode.hasParentRelations());
@@ -201,7 +203,6 @@ public class NodeTest {
      */
     @Test
     public void test_relation_removeParentRelation() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Relation relation = new Relation(3, 1);
         testNode.addParentRelation(relation);
         assertEquals(true, testNode.hasParentRelations());
@@ -218,7 +219,6 @@ public class NodeTest {
      */
     @Test
     public void test_osmid_removeParentRelation() {
-        Node testNode = new Node(1, 2, 30.123456, 40.1234567);
         Relation relation = new Relation(3, 1);
         testNode.addParentRelation(relation);
         assertEquals(true, testNode.hasParentRelations());
@@ -229,4 +229,50 @@ public class NodeTest {
         assertEquals(false, testNode.getParentRelations().contains(relation));
     }
 
+    /**
+     * Create a new Parcel to save/parcelable the testNode, afterwards a new
+     * node is created from the parcel and we check if it contains all
+     * attributes.
+     */
+    @Test
+    public void test_parcelable_node() {
+        Parcel newParcel = Parcel.obtain();
+
+        testNode.addOrUpdateTag("testtag", "test");
+        testNode.addOrUpdateTag("foo", "bar");
+
+        Relation relation1 = new Relation(3, 1);
+        testNode.addParentRelation(relation1);
+
+        Relation relation2 = new Relation(4, 2);
+        testNode.addParentRelation(relation2);
+
+        testNode.writeToParcel(newParcel, 0);
+        newParcel.setDataPosition(0);
+        Node deParcelNode = Node.CREATOR.createFromParcel(newParcel);
+
+        assertEquals(testNode.getOsmId(), deParcelNode.getOsmId());
+        assertEquals(testNode.getOsmVersion(), deParcelNode.getOsmVersion());
+
+        assertEquals(testNode.getLon(), deParcelNode.getLon(), 0);
+        assertEquals(testNode.getLat(), deParcelNode.getLat(), 0);
+
+        assertEquals(testNode.getTagWithKey("testtag"),
+                deParcelNode.getTagWithKey("testtag"));
+        assertEquals(testNode.getTagWithKey("foo"),
+                deParcelNode.getTagWithKey("foo"));
+
+        assertEquals(testNode.getParentRelations().size(), deParcelNode
+                .getParentRelations().size());
+
+        assertEquals(relation1.getOsmId(), deParcelNode.getParentRelations()
+                .get(0).getOsmId());
+        assertEquals(relation1.getOsmVersion(), deParcelNode
+                .getParentRelations().get(0).getOsmVersion());
+
+        assertEquals(relation2.getOsmId(), deParcelNode.getParentRelations()
+                .get(1).getOsmId());
+        assertEquals(relation2.getOsmVersion(), deParcelNode
+                .getParentRelations().get(1).getOsmVersion());
+    }
 }

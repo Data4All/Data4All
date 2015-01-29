@@ -1,12 +1,12 @@
 package io.github.data4all.util;
 
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import android.location.Location;
 
 /**
  * Optimize the position and location data of the device. Save the latest data
  * in a RingBuffer and optimize these to have one perfect location and position
+ * object
  * 
  * @author sbollen
  *
@@ -14,98 +14,113 @@ import android.location.Location;
 
 public class Optimizer {
 
- 
     // a new Ringbuffer for saving the location objects
-    static RingBuffer<Location> locRB = new RingBuffer<Location>(10);
+    static RingBuffer<Location> locRB = new RingBuffer<Location>(20);
     // a new Ringbuffer for saving the DevicePosition objects
-    static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(10);
+    static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(
+            20);
 
-    public Optimizer() {
-        // TODO Auto-generated constructor stub
+    // The timeDifference at which one location should be significant older
+    // or newer than another one, 1000 is one second
+    static final double TIME_DIFFERENCE = 1000;
+
+    // The accuracy difference at which one location should be significant more
+    // accurate than another one
+    static final int ACCURACY_DIFFERENCE = 50;
+
+    /**
+     * Put a Location object to the Location RingBuffer.
+     * 
+     * @param loc
+     *            the new location
+     */
+    public static void putLoc(Location loc) {
+        locRB.put(loc);
     }
 
-    /*
-     * Put a location object to the location RingBuffer
+    /**
+     * Put a DeviceOrientation object to the DeviceOrientation RingBuffer.
+     * 
+     * @param pos
+     *            the new device orientation
      */
-    public void putLoc(Location loc) {
-        locRB.put(loc);
-        }
-
-    /*
-     * Put a DevicePosition object to the DevicePosition RingBuffer
-     */
-    public void putPos(DeviceOrientation pos) {
+    public static void putPos(DeviceOrientation pos) {
         posRB.put(pos);
     }
 
-    /*
-     * Give the current best location
+    /**
+     * Give the last location.
+     * 
+     * @return the last location
+     */
+    public static Location currentLocation() {
+        return locRB.getLast();
+    }
+
+    /**
+     * Give the current best location.
      * 
      * @return the current best location
      */
-    public Location currentLoc() {
-        return locRB.get(locRB.index());
+    public static Location currentBestLoc() {
+        return calculateBestLoc();
     }
 
-    /*
-     * Give the best current DevicePosition
+    /**
+     * Give the current DevicePosition.
      * 
      * @return the current best DevicePosition
      */
-    public DeviceOrientation currentPos() {
-        return posRB.get(posRB.index());
+    public static DeviceOrientation currentBestPos() {
+        return posRB.get(posRB.getIndex());
     }
 
-    // 
-    // double allLat = 0;
-    // double allLong = 0;
-    // Location newestLoc = /*Ringbuffer.getLastLocation */;
-    // Location loc = newestLoc;
-    //
-    // for(Location loc : /*Ringbuffer*/) {
-    // if (loc.distanceTo(nextLocation) > 10 && loc.distanceTo(previousLocation)
-    // > 10) {//Distance in meter
-    // deleteLocation();
-    // }
-    // allLat += devPos.getLocation().getLatitude();
-    // allLong += devPos.getLocation().getLongitude();
-    // }
-    // double midLat = allLat / /*Anzahl Elemente im Ringbuffer*/;
-    // double midLong = allLong / /*Anzahl Elemente im Ringbuffer*/;
-    //
-    // loc.setLatitude(midLat);
-    // loc.setLongitude(midLong);
-    //
-    // if(Math.abs(loc.getLatitude()-newestLoc.getLatitude()) > 0.0001) {
-    // currentBestLocation = loc;
-    // return loc;
-    // } else {
-    // currentBestLocation = newestLoc;
-    // return newestLoc;
-    // }
-    // }
-
-    /*
-     * Determines whether one Location reading is better than the current
-     * Location fix
+    /**
+     * Calculate from all saved locations in the ringbuffer the best one.
      * 
-     * @param location The new Location that you want to evaluate
-     * 
-     * @param currentBestLocation The current Location fix, to which you want to
-     * compare the new one
+     * @return the best location of all saved locations
      */
-    protected boolean isBetterLocation(Location location,
+    public static Location calculateBestLoc() {
+        final Location lastLoc = locRB.getLast();
+        Location bestLoc = lastLoc;
+        for (Object location : locRB.getAll()) {
+            final Location loc = (Location) location;
+            // this location must be better than the actual best and last one
+            if (loc != null && isBetterLocation(loc, lastLoc)
+                    && isBetterLocation(loc, bestLoc)) {
+                bestLoc = loc;
+            }
+        }
+        return bestLoc;
+    }
+
+    /**
+     * Determines whether one Location reading is better than the current
+     * Location fix.
+     * 
+     * @param location
+     *            The new Location that you want to evaluate
+     * 
+     * @param currentBestLocation
+     *            The current Location fix, to which you want to compare the new
+     *            one
+     * 
+     * @return true if the first location is better than the second
+     */
+    protected static boolean isBetterLocation(Location location,
             Location currentBestLocation) {
+
         if (currentBestLocation == null) {
             // A new location is always better than no location
             return true;
         }
 
         // Check whether the new location fix is newer or older
-        long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > (1000 * 60); //One minute
-        boolean isSignificantlyOlder = timeDelta < -(1000 * 60); //One minute
-        boolean isNewer = timeDelta > 0;
+        final long timeDelta = location.getTime()
+                - currentBestLocation.getTime();
+        final boolean isSignificantlyNewer = timeDelta > (TIME_DIFFERENCE);
+        final boolean isSignificantlyOlder = timeDelta < -(TIME_DIFFERENCE);
+        final boolean isNewer = timeDelta > 0;
 
         // If it's been more than two minutes since the current location, use
         // the new location
@@ -119,15 +134,15 @@ public class Optimizer {
         }
 
         // Check whether the new location fix is more or less accurate
-        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation
+        final int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation
                 .getAccuracy());
-        boolean isLessAccurate = accuracyDelta > 0;
-        boolean isMoreAccurate = accuracyDelta < 0;
-        boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+        final boolean isLessAccurate = accuracyDelta > 0;
+        final boolean isMoreAccurate = accuracyDelta < 0;
+        final boolean isSignificantlyLessAccurate = accuracyDelta > ACCURACY_DIFFERENCE;
 
         // Check if the old and new location are from the same provider
-        boolean isFromSameProvider = isSameProvider(location.getProvider(),
-                currentBestLocation.getProvider());
+        final boolean isFromSameProvider = isSameProvider(
+                location.getProvider(), currentBestLocation.getProvider());
 
         // Determine location quality using a combination of timeliness and
         // accuracy
@@ -142,8 +157,16 @@ public class Optimizer {
         return false;
     }
 
-    /* Checks whether two providers are the same */
-    private boolean isSameProvider(String provider1, String provider2) {
+    /**
+     * checks whether two providers are the same.
+     * 
+     * @param provider1
+     *            one provider
+     * @param provider2
+     *            the other provider
+     * @return true if the two providers are the same
+     */
+    private static boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
             return provider2 == null;
         }

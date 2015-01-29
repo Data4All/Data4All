@@ -36,13 +36,15 @@
         android:layout_marginBottom="26dp"
         android:text="@string/deleteButton" />
     
-    <TextView
-        android:id="@+id/editText1"
+
+    <Button
+        android:id="@+id/getUsernameButton"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/loginButton"
-        android:layout_marginTop="78dp"
-        android:text="@string/X" />
-    
+        android:layout_above="@+id/deleteButton"
+        android:layout_alignLeft="@+id/deleteButton"
+        android:layout_marginBottom="30dp"
+        android:text="Username" />
 
 </RelativeLayout>

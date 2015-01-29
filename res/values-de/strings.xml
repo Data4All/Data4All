@@ -27,6 +27,7 @@
     <string name="return_to_position">Meine Position</string>
     <string name="to_camera">Kamera</string>
     <string name="switch_to_satellite">Satellitenkarte</string>
+    <string name="switch_to_osm">OpenStreetMap</string>
     <string name="upload_data">Hochladen</string>
     <string name="poi">POI</string>
     
@@ -40,5 +41,9 @@
     
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Passenden Tag auswählen</string>
-
+    
+        <!-- Delete Dialog -->
+    <string name="deleteDialog">Wollen sie dieses Objekt wirklich löschen?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
 </resources>

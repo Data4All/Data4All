@@ -1,85 +1,81 @@
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.util.PointToCoordsTransformUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-
 /**
- * This PointMotionInterpreter is a MotionInterpreter for Points<br/>
+ * This PointMotionInterpreter is a MotionInterpreter for Points.<br/>
  * 
  * It interprets the last motion in the given List.<br/>
  * 
- * If this motion is a dot, the average is calculated and shown<br/>
- * If this motion is a path, the last Point of the path is shown
+ * If this motion is a dot, the average is calculated and shown.<br/>
+ * If this motion is a path, the last Point of the path is shown.
  * 
  * @author tbrose
+ * @version 2
  * @see MotionInterpreter
  */
-public class PointMotionInterpreter implements MotionInterpreter<Void> {
+public class PointMotionInterpreter implements MotionInterpreter {
+
+    private PointToCoordsTransformUtil pointTrans;
+    
     /**
-     * The paint to draw the points with
+     * Creates an PointMotionInterpreter with the specified transformation
+     * utility.
+     * 
+     * @param pointTrans the transformation utility
      */
-    private final Paint pointPaint = new Paint();
-
-    public PointMotionInterpreter() {
-        // Draw dark blue points
-        pointPaint.setColor(POINT_COLOR);
+    public PointMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
-
+    
     /*
      * (non-Javadoc)
      * 
      * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
-     * .Canvas, java.util.List)
+     * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
+     * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
-        if (drawingMotions != null && drawingMotions.size() > 0) {
-            DrawingMotion lastMotion = drawingMotions
-                    .get(drawingMotions.size() - 1);
-            Point point;
-            if (lastMotion.getPathSize() != 0 && lastMotion.isPoint()) {
-                point = average(lastMotion);
-            } else {
-                point = lastMotion.getEnd();
-            }
-            if (point != null) {
-                canvas.drawCircle(point.getX(), point.getY(), POINT_RADIUS,
-                        pointPaint);
-            }
-        }
-    }
-
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
-     */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        if (drawingMotion == null || interpreted.size() > 3) {
+            return interpreted;
+        } else if (drawingMotion.getPathSize() == 0) {
+            return new ArrayList<Point>();
         } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
+            final List<Point> result = new ArrayList<Point>();
+            if (drawingMotion.isPoint()) {
+                // for dots use the average of the given points
+                result.add(drawingMotion.average());
+            } else {
+                // for a path use the last point
+                result.add(drawingMotion.getEnd());
             }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
+            return result;
         }
+    }
+
+    /**
+     * @author sbollen
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        //The list contains only one Node which then will be returned
+        return pointTrans.transform(polygon).get(0);
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     *
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
-    public Void create(List<DrawingMotion> drawingMotions) {
-        return null;
+    @Override
+    public boolean isArea() {
+        return false;
     }
 
 }
