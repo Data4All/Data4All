@@ -38,7 +38,7 @@ import android.widget.ImageView;
  * @author Oliver Schwartz
  *
  */
-public abstract class MapActivity extends BasicActivity {
+public abstract class AbstractMapActivity extends BasicActivity {
 
 	// Node Type Definition Number
 	protected static final int NODE_TYPE_DEF = 1;
@@ -64,7 +64,7 @@ public abstract class MapActivity extends BasicActivity {
 	// Overlay for actual Position
 	protected MyLocationNewOverlay myLocationOverlay;
 
-	// Last known ZoomLevel;
+	// Last known ZoomLevel
 	protected int actualZoomLevel;
 
 	// Last known Center Latitude
@@ -77,36 +77,31 @@ public abstract class MapActivity extends BasicActivity {
 	protected IGeoPoint actualCenter;
 
 	// Default Zoom Level
-	protected final int DEFAULT_ZOOM_LEVEL = 18;
+	protected final static int DEFAULT_ZOOM_LEVEL = 18;
 
 	// Minimal Zoom Level
-	protected final int MINIMAL_ZOOM_LEVEL = 10;
+	protected final static int MINIMAL_ZOOM_LEVEL = 10;
 
 	// Maximal Zoom Level
-	protected final int MAXIMAL_ZOOM_LEVEL = 20;
+	protected final static int MAXIMAL_ZOOM_LEVEL = 20;
 
 	// Default Stroke width
-	protected final float DEFAULT_STROKE_WIDTH = 3.0f;
+	protected final static float DEFAULT_STROKE_WIDTH = 3.0f;
 
 	// Default Stroke Color
-	protected final int DEFAULT_STROKE_COLOR = Color.BLUE;
+	protected final static int DEFAULT_STROKE_COLOR = Color.BLUE;
 
 	// Fill Color for Polygons
-	protected final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
+	protected final static int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
 	// Default OpenStreetMap TileSource
-	protected final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
+	protected final static ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
 
 	// Default Satellite Map Tilesource
-	protected final OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new MapBoxTileSource(
+	protected final static OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new MapBoxTileSource(
 			"MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
 			19, 256, ".png");
-	protected final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+	protected final static ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
 	protected void setUpMapView() {
 		mapView = (MapView) this.findViewById(R.id.mapview);
@@ -141,11 +136,11 @@ public abstract class MapActivity extends BasicActivity {
 		actualZoomLevel = DEFAULT_ZOOM_LEVEL;
 
 		// Set actual Center
-		if (getMyLocation() != null) {
-			Log.i(TAG, "Set actual Center to " + getMyLocation());
-			actualCenter = getMyLocation();
+		if (this.getMyLocation() != null) {
+			Log.i(TAG, "Set actual Center to " + this.getMyLocation());
+			actualCenter = this.getMyLocation();
 		}
-		
+
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 	}
 
@@ -158,7 +153,7 @@ public abstract class MapActivity extends BasicActivity {
 	}
 
 	/**
-	 * Adds an OsmElement as an Overlay to the Map
+	 * Adds an OsmElement as an Overlay to the Map.
 	 *
 	 * @param element
 	 *            the OsmElement which should be added to the map
@@ -167,28 +162,28 @@ public abstract class MapActivity extends BasicActivity {
 		if (element != null) {
 			// if the Element is a Node
 			if (element instanceof Node) {
-				Node node = (Node) element;
+				final Node node = (Node) element;
 				Log.i(TAG, "Add Node with Coordinates "
 						+ node.toGeoPoint().toString());
-				addNodeToMap(node);
+				this.addNodeToMap(node);
 				// if the Element is Way
 			} else if (element instanceof Way) {
-				Way way = (Way) element;
+				final Way way = (Way) element;
 				// if the Element is an Area
 				if (way.isClosed()) {
 					Log.i(TAG, "Add Area with Coordinates " + way.toString());
-					addAreaToMap(way);
+					this.addAreaToMap(way);
 					// if the Element is an Path
 				} else {
 					Log.i(TAG, "Add Path with Coordinates " + way.toString());
-					addPathToMap(way);
+					this.addPathToMap(way);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Adds an Node as an Overlay to the Map
+	 * Adds an Node as an Overlay to the Map.
 	 *
 	 * @param node
 	 *            the node which should be added to the map
@@ -199,7 +194,7 @@ public abstract class MapActivity extends BasicActivity {
 			public boolean onLongPress(final MotionEvent e,
 					final MapView mapView) {
 				final Overlay overlay = this;
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+				final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
@@ -207,15 +202,16 @@ public abstract class MapActivity extends BasicActivity {
 							// Yes button clicked
 							removeOverlayFromMap(overlay);
 							break;
-
 						case DialogInterface.BUTTON_NEGATIVE:
 							// No button clicked
+							break;
+						default:
 							break;
 						}
 					}
 				};
 
-				AlertDialog.Builder builder = new AlertDialog.Builder(
+				final AlertDialog.Builder builder = new AlertDialog.Builder(
 						mapView.getContext());
 				builder.setMessage(getString(R.string.deleteDialog))
 						.setPositiveButton(getString(R.string.yes),
@@ -228,8 +224,8 @@ public abstract class MapActivity extends BasicActivity {
 			}
 		};
 		Log.i(TAG, "Set Node Points to " + node.toString());
-		
-		//disable InfoWindow
+
+		// disable InfoWindow
 		poi.setInfoWindow(null);
 		poi.setPosition(node.toGeoPoint());
 		mapView.getOverlays().add(poi);
@@ -237,7 +233,7 @@ public abstract class MapActivity extends BasicActivity {
 	}
 
 	/**
-	 * Adds an area as an Overlay to the Map
+	 * Adds an area as an Overlay to the Map.
 	 *
 	 * @param way
 	 *            the area which should be added to the map
@@ -248,7 +244,7 @@ public abstract class MapActivity extends BasicActivity {
 			public boolean onLongPress(final MotionEvent e,
 					final MapView mapView) {
 				final Overlay overlay = this;
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+				 final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
@@ -260,11 +256,13 @@ public abstract class MapActivity extends BasicActivity {
 						case DialogInterface.BUTTON_NEGATIVE:
 							// No button clicked
 							break;
+						default:
+							break;
 						}
 					}
 				};
 
-				AlertDialog.Builder builder = new AlertDialog.Builder(
+				final AlertDialog.Builder builder = new AlertDialog.Builder(
 						mapView.getContext());
 				builder.setMessage(getString(R.string.deleteDialog))
 						.setPositiveButton(getString(R.string.yes),
@@ -294,7 +292,7 @@ public abstract class MapActivity extends BasicActivity {
 	}
 
 	/**
-	 * Adds an Path as an Overlay to the Map
+	 * Adds an Path as an Overlay to the Map.
 	 *
 	 * @param way
 	 *            the path which should be added to the map
@@ -305,7 +303,7 @@ public abstract class MapActivity extends BasicActivity {
 			public boolean onLongPress(final MotionEvent e,
 					final MapView mapView) {
 				final Overlay overlay = this;
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+				final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
@@ -321,7 +319,7 @@ public abstract class MapActivity extends BasicActivity {
 					}
 				};
 
-				AlertDialog.Builder builder = new AlertDialog.Builder(
+				final AlertDialog.Builder builder = new AlertDialog.Builder(
 						mapView.getContext());
 				builder.setMessage(getString(R.string.deleteDialog))
 						.setPositiveButton(getString(R.string.yes),
@@ -376,16 +374,16 @@ public abstract class MapActivity extends BasicActivity {
 	}
 
 	/**
-	 * Returns the actual Position
+	 * Returns the actual Position.
 	 *
 	 * @return the actual position
 	 **/
 	protected IGeoPoint getMyLocation() {
-		LocationManager locationManager = (LocationManager) this
+		final LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
-		Criteria criteria = new Criteria();
-		String provider = locationManager.getBestProvider(criteria, false);
-		Location currentLocation = locationManager
+		final Criteria criteria = new Criteria();
+		final String provider = locationManager.getBestProvider(criteria, false);
+		final Location currentLocation = locationManager
 				.getLastKnownLocation(provider);
 		if (currentLocation != null) {
 			return new GeoPoint(currentLocation.getLatitude(),
