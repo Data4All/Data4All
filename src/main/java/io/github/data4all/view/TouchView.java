@@ -2,7 +2,7 @@ package io.github.data4all.view;
 
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -367,10 +367,10 @@ public class TouchView extends View {
     }
 
     /**
-     * @author sbollen Create an OsmElement from the given polygon
-     * @return the created OsmElement (with located nodes)
+     * @author sbollen Create an AbstractDataElement from the given polygon
+     * @return the created AbstractDataElement (with located nodes)
      */
-    public OsmElement create() {
+    public AbstractDataElement create() {
         return interpreter.create(polygon);
     }
 }

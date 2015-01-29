@@ -51,7 +51,7 @@ public class Tag {
      */
     public static final int NODE_TAG = 1;
     public static final int WAY_TAG = 2;
-    public static final int RELATION_TAG = 3;
+    public static final int BUILDING_TAG = 3;
     public static final int AREA_TAG = 4;
 
     /**

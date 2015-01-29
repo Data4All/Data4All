@@ -1,9 +1,10 @@
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
@@ -165,19 +166,15 @@ public class WayMotionInterpreter implements MotionInterpreter {
     }
 
     /**
-     * @author sbollen (non-Javadoc)
-     * 
-     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     * @author sbollen (edited by tbrose)
      */
     @Override
-    public OsmElement create(List<Point> polygon) {
-        // create a new Way and copy the List of Nodes to this way
-        Way newWay = new Way(-1, 1);
+    public AbstractDataElement create(List<Point> polygon) {
+        final PolyElement element = new PolyElement(-1, PolyElementType.WAY);
 
         List<Node> nodeList = pointTrans.transform(polygon);
-
-        newWay.addNodes(nodeList, false);
-        return newWay;
+        element.addNodes(nodeList, false);
+        return element;
     }
 
     /*
