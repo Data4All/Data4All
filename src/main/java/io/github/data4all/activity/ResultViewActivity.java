@@ -22,10 +22,12 @@ import org.osmdroid.ResourceProxy;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+
+import io.github.data4all.model.data.PolyElement;
+
 import io.github.data4all.util.Tagging;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -70,7 +72,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		// Listview for the Dialog 
 		private ListView listView;
 		// The OSM Element 
-		private OsmElement element;
+		private AbstractDataElement element;
 		// The Dialog for the unclassified tags
 		private Dialog dialog;
 		// The List that will be shown in the Activity
@@ -109,7 +111,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 			mapController.setCenter(node.toGeoPoint());
 			mapController.animateTo(node.toGeoPoint());
 		}else{
-			Way way = (Way) element;
+			PolyElement way = (PolyElement) element;
 			mapController.setCenter(way.getFirstNode().toGeoPoint());
 		}
 		
@@ -144,7 +146,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							element.addOrUpdateTag(keyList.get(position),(String) showArray [which]);
+							element.addOrUpdateTag(tagMap.get(keyList.get(position)),(String) showArray [which]);
 							output();
 						}
 					});
@@ -168,7 +170,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 					@Override
 					public void onClick(View arg0) {
 					
-						element.addOrUpdateTag(keyList.get(position), text.getText().toString());
+						element.addOrUpdateTag(tagMap.get(keyList.get(position)), text.getText().toString());
 						output();
 						dialog.dismiss();
 					}

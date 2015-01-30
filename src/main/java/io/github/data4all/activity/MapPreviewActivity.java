@@ -2,9 +2,9 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
 
 import org.osmdroid.util.GeoPoint;
@@ -29,8 +29,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	private static final String TAG = "MapPreviewActivity";
 	
 	
-	//The OsmElement which should be added
-	private OsmElement element;
+	//The AbstractDataElement which should be added
+	private AbstractDataElement element;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -82,9 +82,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 			mapController.setCenter(node.toGeoPoint());
 			mapController.animateTo(node.toGeoPoint());
 		}else{
-			Way way = (Way) element;
-			mapController.setCenter(way.getFirstNode().toGeoPoint());
-			mapController.animateTo(way.getFirstNode().toGeoPoint());
+			PolyElement polyElement = (PolyElement) element;
+			mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
+			mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
 		}
 	}
 	
