@@ -55,21 +55,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         addOsmElementToMap(element);
         view = (ImageView) findViewById(R.id.imageView1);
         if (savedInstanceState != null) {
-            if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
-                actualZoomLevel = (Integer) savedInstanceState
-                        .getSerializable("actualZoomLevel");
-            }
-            if (savedInstanceState.getSerializable("actualCenterLongitude") != null
-                    && savedInstanceState
-                            .getSerializable("actualCenterLatitude") != null) {
-                actCentLat = (Double) savedInstanceState
-                        .getSerializable("actualCenterLatitude");
-                actCentLong = (Double) savedInstanceState
-                        .getSerializable("actualCenterLongitude");
-                actualCenter = new GeoPoint(actCentLat, actCentLong);
-                Log.i(TAG, "Set Mapcenter to" + actualCenter.toString());
-
-            }
+            loadState(savedInstanceState);
         }
 
         view.setVisibility(View.GONE);
@@ -94,11 +80,11 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     protected void onStart() {
         super.onStart();
         if (element instanceof Node) {
-            Node node = (Node) element;
+            final Node node = (Node) element;
             mapController.setCenter(node.toGeoPoint());
             mapController.animateTo(node.toGeoPoint());
         } else {
-            Way way = (Way) element;
+            final Way way = (Way) element;
             mapController.setCenter(way.getFirstNode().toGeoPoint());
             mapController.animateTo(way.getFirstNode().toGeoPoint());
         }
@@ -114,7 +100,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             switchMaps();
             break;
         case R.id.okay:
-            accept();
+            this.accept();
             break;
         default:
             break;

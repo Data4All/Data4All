@@ -68,20 +68,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // for setting the actualZoomLevel and Center Position on Orientation
         // Change
         if (savedInstanceState != null) {
-            // Zoom Level
-            if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
-                actualZoomLevel = (Integer) savedInstanceState
-                        .getSerializable("actualZoomLevel");
-            }
-            // Center Position
-            if (savedInstanceState.getSerializable("actCentLong") != null
-                    && savedInstanceState.getSerializable("actCentLat") != null) {
-                actCentLat = (Double) savedInstanceState
-                        .getSerializable("actCentLat");
-                actCentLong = (Double) savedInstanceState
-                        .getSerializable("actCentLong");
-                actualCenter = new GeoPoint(actCentLat, actCentLong);
-            }
+            loadState(savedInstanceState);
             view.setVisibility(View.GONE);
         } else {
             // fading out the loading screen

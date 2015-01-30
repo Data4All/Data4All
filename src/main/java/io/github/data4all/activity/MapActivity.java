@@ -361,4 +361,19 @@ public class MapActivity extends BasicActivity {
         }
     }
 
+    protected void loadState(Bundle savedInstanceState) {
+        if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
+            actualZoomLevel = (Integer) savedInstanceState
+                    .getSerializable("actualZoomLevel");
+        }
+        if (savedInstanceState.getSerializable("actCentLong") != null
+                && savedInstanceState.getSerializable("actCentLat") != null) {
+            actCentLat = (Double) savedInstanceState
+                    .getSerializable("actCentLat");
+            actCentLong = (Double) savedInstanceState
+                    .getSerializable("actCentLong");
+            actualCenter = new GeoPoint(actCentLat, actCentLong);
+        }
+    }
+
 }
