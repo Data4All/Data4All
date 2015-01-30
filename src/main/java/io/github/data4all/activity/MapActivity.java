@@ -17,9 +17,9 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
-import io.github.data4all.model.map.MapLine; 
-import io.github.data4all.model.map.MapMarker; 
-import io.github.data4all.model.map.MapPolygon; 
+import io.github.data4all.model.map.MapLine;
+import io.github.data4all.model.map.MapMarker;
+import io.github.data4all.model.map.MapPolygon;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
@@ -42,6 +42,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -115,6 +116,10 @@ public class MapActivity extends BasicActivity {
             19, 256, ".png");
     protected static final ITileSource DEF_TILESRC = TileSourceFactory.MAPNIK;
 
+    public MapActivity() {
+        super();
+    }
+
     protected void setUpMapView() {
         mapView = (MapView) this.findViewById(R.id.mapview);
 
@@ -160,7 +165,7 @@ public class MapActivity extends BasicActivity {
      * Removes an Overlay from the Map.
      *
      * @param overlay
-     *            the Overlay which should be removed  from the map
+     *            the Overlay which should be removed from the map
      **/
     public void removeOverlayFromMap(Overlay overlay) {
         if (mapView.getOverlays().contains(overlay)) {
@@ -311,6 +316,52 @@ public class MapActivity extends BasicActivity {
         }
         return null;
 
+    }
+
+    /**
+     * Set the Zoom Level of the MapView.
+     *
+     * @param zoom the Zoomlevel which should be set
+     **/
+    protected void setZoomLevel(int zoom) {
+        // Set Zoomlevel
+        Log.i(TAG, "Set Zoomlevel to " + zoom);
+        mapController.setZoom(zoom);
+    }
+
+    /**
+     * Set the Center of the MapView.
+     *
+     * @param point the Center which should be set
+     **/
+    protected void setCenter(GeoPoint point) {
+        // Set ZoomCenter
+        Log.i(TAG, "Set Mapcenter to " + point.toString());
+        mapController.setCenter(point);
+    }
+    
+    /**
+     * Switch between Satellite Map and OSM Map.
+     **/
+    protected void switchMaps(){
+     // switch to OSM Map
+        if (mapView.getTileProvider().getTileSource().name()
+                .equals("MapBoxSatelliteLabelled")) {
+            Log.i(TAG, "Set Maptilesource to "
+                    + mapView.getTileProvider().getTileSource().name());
+            mapView.setTileSource(OSM_TILESRC);
+            ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+            button.setImageResource(R.drawable.ic_sat);
+            mapView.postInvalidate();
+            // switch to Satellite Map
+        } else {
+            Log.i(TAG, "Set Maptilesource to "
+                    + mapView.getTileProvider().getTileSource().name());
+            mapView.setTileSource(SAT_MAP);
+            ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+            button.setImageResource(R.drawable.ic_map);
+            mapView.postInvalidate();
+        }
     }
 
 }
