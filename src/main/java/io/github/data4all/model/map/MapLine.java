@@ -15,7 +15,7 @@ import android.view.MotionEvent;
  * @author Oliver Schwartz
  *
  */
-class MapLine extends Polyline implements DialogInterface.OnClickListener {
+public class MapLine extends Polyline implements DialogInterface.OnClickListener {
 
     AbstractMapActivity mapActivity;
 
@@ -27,6 +27,7 @@ class MapLine extends Polyline implements DialogInterface.OnClickListener {
      */
     public MapLine(AbstractMapActivity ctx) {
         super(ctx);
+        mapActivity = ctx;
 
     }
 
