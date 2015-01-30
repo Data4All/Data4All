@@ -242,7 +242,7 @@ public class TouchView extends View {
     }
 
     /**
-     * Returns a {@link PointMover} for the given {@link Point}<br/>
+     * Returns a {@link PointMover} for the given {@link Point}.<br/>
      * 
      * Use moveTo() afterwards to actually move the point
      * 
@@ -278,7 +278,7 @@ public class TouchView extends View {
 
         /**
          * moves the {@link Point} to the new coordinates and invalidates its
-         * {@link TouchView} afterwards
+         * {@link TouchView} afterwards.
          * 
          * @param x
          *            the new x-coordinate
@@ -370,19 +370,28 @@ public class TouchView extends View {
      */
     public boolean hasEnoughNodes() {
         if (interpreter instanceof AreaMotionInterpreter && polygon.size() >= 3) {
+            Log.d(this.getClass().getSimpleName(),
+                    "has enough Nodes for an area");
             return true;
         }
         if (interpreter instanceof BuildingMotionInterpreter
                 && polygon.size() >= 4) {
-            return true;
-        }
-        if (interpreter instanceof PointMotionInterpreter
-                && polygon.size() == 1) {
+            Log.d(this.getClass().getSimpleName(),
+                    "has enough Nodes for a building");
             return true;
         }
         if (interpreter instanceof WayMotionInterpreter && polygon.size() >= 2) {
+            Log.d(this.getClass().getSimpleName(), "has enough Nodes for a way");
+            return true;
+
+        }
+        if (interpreter instanceof PointMotionInterpreter
+                && polygon.size() == 1) {
+            Log.d(this.getClass().getSimpleName(),
+                    "has enough Nodes for a point");
             return true;
         }
+
         return false;
     }
 
