@@ -79,13 +79,22 @@ public class MapActivity extends BasicActivity {
 
     // Last known ZoomLevel
     protected int actualZoomLevel;
+    
+    // Last known ZoomLevel Variable name
+    protected static final String ZOOM_LEVEL_NAME = "actualZoomLevel";
 
     // Last known Center Latitude
     protected double actCentLat;
 
+    // Last known Center Latitude Variable Name
+    protected static final String CENT_LAT = "actCentLat";
+
     // Last known Center Longitude
     protected double actCentLong;
 
+    // Last known Center Longitude Variable Name
+    protected static final String CENT_LON = "actCentLon";
+    
     // Last known Center Geopoint
     protected IGeoPoint actualCenter;
 
@@ -267,13 +276,13 @@ public class MapActivity extends BasicActivity {
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         Log.i(TAG, "Save actual zoom level: " + actualZoomLevel);
-        state.putSerializable("actualZoomLevel", actualZoomLevel);
+        state.putSerializable(ZOOM_LEVEL_NAME, actualZoomLevel);
 
         Log.i(TAG, "Save actual Center Latitude: " + actCentLat);
-        state.putSerializable("actCentLat", actCentLat);
+        state.putSerializable(CENT_LAT, actCentLat);
 
         Log.i(TAG, "Save actual Center Longitude: " + actCentLong);
-        state.putSerializable("actCentLong", actCentLong);
+        state.putSerializable(CENT_LON, actCentLong);
 
     }
 
@@ -362,16 +371,16 @@ public class MapActivity extends BasicActivity {
     }
 
     protected void loadState(Bundle savedInstanceState) {
-        if (savedInstanceState.getSerializable("actualZoomLevel") != null) {
+        if (savedInstanceState.getSerializable(ZOOM_LEVEL_NAME) != null) {
             actualZoomLevel = (Integer) savedInstanceState
-                    .getSerializable("actualZoomLevel");
+                    .getSerializable(ZOOM_LEVEL_NAME);
         }
-        if (savedInstanceState.getSerializable("actCentLong") != null
-                && savedInstanceState.getSerializable("actCentLat") != null) {
+        if (savedInstanceState.getSerializable(CENT_LON) != null
+                && savedInstanceState.getSerializable(CENT_LAT) != null) {
             actCentLat = (Double) savedInstanceState
-                    .getSerializable("actCentLat");
+                    .getSerializable(CENT_LAT);
             actCentLong = (Double) savedInstanceState
-                    .getSerializable("actCentLong");
+                    .getSerializable(CENT_LON);
             actualCenter = new GeoPoint(actCentLat, actCentLong);
         }
     }
