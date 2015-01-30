@@ -23,7 +23,7 @@ import android.widget.ImageView;
  * @author Oliver Schwartz
  *
  */
-public class MapPreviewActivity extends MapActivity implements OnClickListener {
+public class MapPreviewActivity extends AbstractMapActivity implements OnClickListener {
 	
 	// Logger Tag
 	private static final String TAG = "MapPreviewActivity";
@@ -107,7 +107,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 			} else {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
+				mapView.setTileSource(MAPBOX_SAT);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
