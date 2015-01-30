@@ -24,23 +24,24 @@ public class Node extends AbstractDataElement {
     private double lon;
 
     /**
-     * CREATOR that generates instances of {@link Node} from a Parcel
+     * CREATOR that generates instances of {@link Node} from a Parcel.
      */
-    public static final Parcelable.Creator<Node> CREATOR = new Parcelable.Creator<Node>() {
-        public Node createFromParcel(Parcel in) {
-            return new Node(in);
-        }
+    public static final Parcelable.Creator<Node> CREATOR =
+            new Parcelable.Creator<Node>() {
+                public Node createFromParcel(Parcel in) {
+                    return new Node(in);
+                }
 
-        public Node[] newArray(int size) {
-            return new Node[size];
-        }
-    };
+                public Node[] newArray(int size) {
+                    return new Node[size];
+                }
+            };
 
     /**
      * Default Constructor.
      * 
      * @param osmId
-     * @param osmVersion
+     *            the id of the osm element
      * @param lat
      *            Latitude is a decimal number between -90.0 and 90.0.
      * @param lon
@@ -64,20 +65,42 @@ public class Node extends AbstractDataElement {
         lon = in.readDouble();
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
-    /**
-     * Checks if this node equals another Node object.
-     * 
-     * @param node
-     *            the Node object to compare with
-     * @return true or false
-     */
-    public boolean equals(Node node) {
-        return node.getLat() == lat && node.getLon() == lon;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(lat);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(lon);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 
+    /**
+     * Checks if two Nodes are equal.
+     * 
+     * @return true if the objects are equal
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final Node other = (Node) obj;
+        return (Double.doubleToLongBits(lat) == Double
+                .doubleToLongBits(other.lat))
+                && (Double.doubleToLongBits(lon) == Double
+                        .doubleToLongBits(other.lon))
+                && getOsmId() == other.getOsmId();
     }
 
     public double getLat() {
@@ -107,6 +130,7 @@ public class Node extends AbstractDataElement {
 
     /**
      * Created a new GeoPoint and calls the toString method.
+     * 
      * @return returns a geopoint and calls the to string method
      */
     @Override
@@ -116,8 +140,11 @@ public class Node extends AbstractDataElement {
 
     /**
      * Writes the lat and the lon to the given parcel.
-     * @param dest destination oparcel
-     * @param flags additional flags
+     * 
+     * @param dest
+     *            destination oparcel
+     * @param flags
+     *            additional flags
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
