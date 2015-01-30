@@ -15,7 +15,10 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 /**
- * 
+ * the class SensorReactionActivity 
+ * compute the reaction-time for sensors when a user touching the screen
+ * or when he move the phone. then it get a Dialog, when a move is detected
+ *  
  * @author Steeve
  *
  */
@@ -58,7 +61,7 @@ public class SensorReactionActivity extends Activity implements
 	// The last z position.
 	private float lastZ;
 
-	// current time in nanos seconds
+	// current time in nanoseconds
 	private long nano;
 	
 	// last index of event.values
@@ -120,15 +123,15 @@ public class SensorReactionActivity extends Activity implements
 	 */
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		Log.d("BLUB", "onSensorChanged");
-       
 		
+		Log.d("BLUB", "onSensorChanged");
+      
 		actualX = event.values[0];
 		actualY = event.values[1];
 		actualZ = event.values[LAST_INDEX];
 
-		if ((Float.compare(this.lastX, 0) == 0) && (Float.compare(this.lastY, 0) == 0) 
-				&& (Float.compare(this.lastZ, 0) == 0)) {
+		if ((Float.compare(this.lastX, 0) == 0) && (Float.compare(this.lastY, 0) 
+				== 0) && (Float.compare(this.lastZ, 0) == 0)) {
 			lastX = actualX;
 			lastY = actualY;
 			lastZ = actualZ;
@@ -194,5 +197,9 @@ public class SensorReactionActivity extends Activity implements
 
 	public float getLastZ() {
 		return lastZ;
+	}
+
+	public AlertDialog getShowDialog() {
+		return showDialog;
 	}
 }
