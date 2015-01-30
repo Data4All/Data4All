@@ -367,7 +367,7 @@ public class PointToCoordsTransformUtil {
 		lat2 = Math.toDegrees(lat2);
 		lon2 = Math.toDegrees(lon2);		
 		
-		Node node = new Node(osmID, osmVersion, lat2, lon2);
+		Node node = new Node(osmID, lat2, lon2);
 		osmID--;
 		return node;
 	}

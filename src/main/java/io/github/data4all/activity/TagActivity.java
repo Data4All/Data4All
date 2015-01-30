@@ -2,9 +2,9 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
-import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
@@ -50,7 +50,7 @@ public class TagActivity extends BasicActivity implements OnClickListener{
     final Context context = this;
     private ArrayList<String> keys;
     private String key;
-    private Map<String, String> map;
+    private Map<Tag, String> map;
     private List <EditText> edit;
     private Boolean first;
     private Dialog dialog1;
@@ -82,9 +82,9 @@ public class TagActivity extends BasicActivity implements OnClickListener{
         ImageButton speechStart = (ImageButton) view.findViewById(R.id.speech); 
         speechStart.setOnClickListener(this);
         
-        if(getIntent().hasExtra("TYPE_DEF")){
-        	array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
-        	tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
+        if (getIntent().hasExtra("TYPE_DEF")) {
+        	array = Tagging.getArrayKeys(getIntent().getExtras().getInt("TYPE_DEF"));
+        	tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"));
         }
         
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
@@ -98,8 +98,8 @@ public class TagActivity extends BasicActivity implements OnClickListener{
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String value = (String) array [which];
-                        map = new LinkedHashMap<String, String>();
-                        map.put(key, value);
+                        map = new LinkedHashMap<Tag, String>();
+                        map.put(tagMap.get(key), value);
                         if (key.equals("building")
                                 || key.equals("amenity")) {                                  
                             createDialog(Tags.getAllAddressTags(), "Add Address", key.equals("building"), true);
@@ -203,7 +203,7 @@ public class TagActivity extends BasicActivity implements OnClickListener{
 
 
 
-	public void createDialog(ArrayList<Tag> arrayList, String title, final Boolean but, final Boolean first1){
+	public void createDialog(List<Tag> arrayList, String title, final Boolean but, final Boolean first1){
     	dialog1 = new Dialog(this);
 		dialog1.setContentView(R.layout.dialog_dynamic);
 		dialog1.setTitle(title);
@@ -239,7 +239,7 @@ public class TagActivity extends BasicActivity implements OnClickListener{
 
 	@Override
 	public void finish() {
-	  OsmElement element = getIntent().getParcelableExtra(OSM);
+	  AbstractDataElement element = getIntent().getParcelableExtra(OSM);
 	  element.addTags(map);
 	  Intent intent = new Intent(this, ResultViewActivity.class);
 	  intent.putExtra(OSM, element);

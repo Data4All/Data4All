@@ -136,7 +136,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * @return true is the object has tags
      */
     public boolean isTagged() {
-        return tags.isEmpty();
+        return (tags != null) && (tags.size() > 0);
     }
 
     public void setOsmId(long osmId) {

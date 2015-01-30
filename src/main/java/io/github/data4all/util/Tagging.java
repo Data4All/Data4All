@@ -28,7 +28,7 @@ public abstract class Tagging {
 		case 2:
 			return Tags.getAllWayTags();
 		case 3:
-			return Tags.getAllRelationTags();
+			return Tags.getAllAreaTags();
 		case 4: 
 			return Tags.getAllAreaTags();
 		}
@@ -37,8 +37,8 @@ public abstract class Tagging {
     }
     
     public static String []  getArrayKeys(int type){
-    	String [] array = new String [getKeys(type).size()];
-    	for (int i = 0; i<getKeys(type).size(); i++) {
+    	final String [] array = new String [getKeys(type).size()];
+    	for (int i = 0; i < getKeys(type).size(); i++) {
 			array [i] = getKeys(type).get(i).getKey();
 		}
 		
@@ -83,26 +83,26 @@ public abstract class Tagging {
         return map;
     }
 
-    public static Map<String, String> addressToTag(List<String> addressTags,
-            Map<String, String> map) {
+    public static Map<Tag, String> addressToTag(List<String> addressTags,
+            Map<Tag, String> map) {
         ArrayList<Tag> tag;
-        tag = Tags.getAllAddressTags();
+        tag = (ArrayList<Tag>) Tags.getAllAddressTags();
         for (int i = 0; i < tag.size(); i++) {
             if (!addressTags.get(i).equals("")) {
-                map.put(tag.get(i).getKey(), addressTags.get(i));
+                map.put(tag.get(i), addressTags.get(i));
             }
         }
         return map;
 
     }
 
-    public static Map<String, String> contactToTag(List<String> contactTags,
-            Map<String, String> map) {
+    public static Map<Tag, String> contactToTag(List<String> contactTags,
+            Map<Tag, String> map) {
         ArrayList<Tag> tag;
-       tag = Tags.getAllContactTags();
+       tag = (ArrayList<Tag>) Tags.getAllContactTags();
         for (int i = 0; i < tag.size(); i++) {
             if (!contactTags.get(i).equals("")) {
-                map.put(tag.get(i).getKey(), contactTags.get(i));
+                map.put(tag.get(i), contactTags.get(i));
             }
         }
         return map;

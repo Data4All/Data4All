@@ -6,8 +6,6 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Main Activity that shows the default mapview
@@ -142,7 +139,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 		case R.id.new_point:
 			GeoPoint myPosition = myLocationOverlay.getMyLocation();
 			Intent intent = new Intent(this, MapPreviewActivity.class);
-			Node poi = new Node(-1, 1, myPosition.getLatitude(),
+			Node poi = new Node(-1, myPosition.getLatitude(),
 					myPosition.getLongitude());
 			
 			//Set Type Definition for Intent to Node
