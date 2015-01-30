@@ -28,6 +28,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
 	private TextView x;
 	private TextView y;
 	private TextView z;
+	
+	// last index of event.values
+	public	static final int LAST_INDEX = 2;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
      
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		final int  last_index = 2; 
+		 
 		synchronized (this) {
 
 			// check sensor type and assign directions
@@ -70,7 +73,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 				yCoor.setText("Acceleration y:"
 						+ Float.toString(event.values[1]));
 				zCoor.setText("Acceleration z:"
-						+ Float.toString(event.values[last_index]));
+						+ Float.toString(event.values[LAST_INDEX]));
 			} else {
 				if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
 					x.setText("Gyroscope x in rad/s:"
@@ -78,7 +81,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 					y.setText("Gyroscope y in rad/s:"
 							+ Float.toString(event.values[1]));
 					z.setText("Gyroscope z in rad/s:"
-							+ Float.toString(event.values[last_index]));
+							+ Float.toString(event.values[LAST_INDEX]));
 				} else {
 					return;
 				}
