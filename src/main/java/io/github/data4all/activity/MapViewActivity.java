@@ -38,7 +38,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private static final String TAG = "MapViewActivity";
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public MapViewActivity() {
         super();
@@ -74,15 +74,15 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
                         .getSerializable("actualZoomLevel");
             }
             // Center Position
-            if (savedInstanceState.getSerializable("actualCenterLongitude") != null
+            if (savedInstanceState.getSerializable("actCentLong") != null
                     && savedInstanceState
-                            .getSerializable("actualCenterLatitude") != null) {
-                actualCenterLatitude = (Double) savedInstanceState
-                        .getSerializable("actualCenterLatitude");
-                actualCenterLongitude = (Double) savedInstanceState
-                        .getSerializable("actualCenterLongitude");
-                actualCenter = new GeoPoint(actualCenterLatitude,
-                        actualCenterLongitude);
+                            .getSerializable("actCentLat") != null) {
+                actCentLat = (Double) savedInstanceState
+                        .getSerializable("actCentLat");
+                actCentLong = (Double) savedInstanceState
+                        .getSerializable("actCentLong");
+                actualCenter = new GeoPoint(actCentLat,
+                        actCentLong);
             }
             view.setVisibility(View.GONE);
         } else {
@@ -99,16 +99,21 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setZoomLevel(actualZoomLevel);
 
         // Set Listener for Buttons
-        final ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
+        
+        int id = R.id.return_to_actual_Position;
+        final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
 
-        final ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
+        id = R.id.switch_maps;
+        final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
 
-        final ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
+        id = R.id.to_camera;
+        final ImageButton camera = (ImageButton) findViewById(id);
         camera.setOnClickListener(this);
 
-        final ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
+        id = R.id.new_point;
+        final ImageButton newPoint = (ImageButton) findViewById(id);
         newPoint.setOnClickListener(this);
 
     }
@@ -118,7 +123,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         switch (v.getId()) {
         // Set center to user Location
         case R.id.return_to_actual_Position:
-            returnToActualPosition();
+            this.returnToActualPosition();
             break;
         // Upload new Data
         case R.id.upload_data:
@@ -134,7 +139,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         // Add new POI to the Map
         case R.id.new_point:
-            createNewPOI();
+            this.createNewPOI();
             break;
         default:
             break;
@@ -177,9 +182,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
      * Creates new POI on the actual Position.
      **/
     private void createNewPOI() {
-        GeoPoint myPosition = myLocationOverlay.getMyLocation();
-        Intent intent = new Intent(this, MapPreviewActivity.class);
-        Node poi = new Node(-1, 1, myPosition.getLatitude(),
+        final GeoPoint myPosition = myLocationOverlay.getMyLocation();
+        final Intent intent = new Intent(this, MapPreviewActivity.class);
+        final Node poi = new Node(-1, 1, myPosition.getLatitude(),
                 myPosition.getLongitude());
 
         // Set Type Definition for Intent to Node

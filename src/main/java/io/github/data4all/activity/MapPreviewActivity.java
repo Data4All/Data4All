@@ -63,12 +63,12 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 			if (savedInstanceState.getSerializable("actualCenterLongitude") != null
 					&& savedInstanceState
 							.getSerializable("actualCenterLatitude") != null) {
-				actualCenterLatitude = (Double) savedInstanceState
+				actCentLat = (Double) savedInstanceState
 						.getSerializable("actualCenterLatitude");
-				actualCenterLongitude = (Double) savedInstanceState
+				actCentLong = (Double) savedInstanceState
 						.getSerializable("actualCenterLongitude");
-				actualCenter = new GeoPoint(actualCenterLatitude,
-						actualCenterLongitude);
+				actualCenter = new GeoPoint(actCentLat,
+						actCentLong);
 				Log.i(TAG, "Set Mapcenter to" + actualCenter.toString());
 
 			}
@@ -102,7 +102,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 			mapController.animateTo(way.getFirstNode().toGeoPoint());
 		}
 	}
-	
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.return_to_actual_Position:
@@ -114,7 +114,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 					.equals("MapBoxSatelliteLabelled")) {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(OSM_TILESRC);
+				mapView.setTileSource(DEF_TILESRC);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				button.setImageResource(R.drawable.ic_sat);
 				mapView.postInvalidate();

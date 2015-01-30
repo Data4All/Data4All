@@ -81,10 +81,10 @@ public class MapActivity extends BasicActivity {
     protected int actualZoomLevel;
 
     // Last known Center Latitude
-    protected double actualCenterLatitude;
+    protected double actCentLat;
 
     // Last known Center Longitude
-    protected double actualCenterLongitude;
+    protected double actCentLong;
 
     // Last known Center Geopoint
     protected IGeoPoint actualCenter;
@@ -107,17 +107,15 @@ public class MapActivity extends BasicActivity {
     // Fill Color for Polygons
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
-    // Default OpenStreetMap TileSource
-    protected static final ITileSource OSM_TILESRC = TileSourceFactory.MAPNIK;
-
     // Default Satellite Map Tilesource
     protected static final OnlineTileSourceBase SAT_MAP = new MapBoxTileSource(
             "MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
             19, 256, ".png");
+ // Default OpenStreetMap TileSource
     protected static final ITileSource DEF_TILESRC = TileSourceFactory.MAPNIK;
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public MapActivity() {
         super();
@@ -125,10 +123,6 @@ public class MapActivity extends BasicActivity {
 
     protected void setUpMapView() {
         mapView = (MapView) this.findViewById(R.id.mapview);
-
-        // Set Maptilesource
-        Log.i(TAG, "Set Maptilesource to " + OSM_TILESRC.name());
-        mapView.setTileSource(OSM_TILESRC);
 
         // Add Satellite Map TileSource
         MapBoxTileSource.retrieveMapBoxMapId(this);
@@ -157,7 +151,6 @@ public class MapActivity extends BasicActivity {
 
         // Set actual Center
         if (this.getMyLocation() != null) {
-            Log.i(TAG, "Set actual Center to " + this.getMyLocation());
             actualCenter = this.getMyLocation();
         }
 
@@ -276,11 +269,11 @@ public class MapActivity extends BasicActivity {
         Log.i(TAG, "Save actual zoom level: " + actualZoomLevel);
         state.putSerializable("actualZoomLevel", actualZoomLevel);
 
-        Log.i(TAG, "Save actual Center Latitude: " + actualCenterLatitude);
-        state.putSerializable("actualCenterLatitude", actualCenterLatitude);
+        Log.i(TAG, "Save actual Center Latitude: " + actCentLat);
+        state.putSerializable("actCentLat", actCentLat);
 
-        Log.i(TAG, "Save actual Center Longitude: " + actualCenterLongitude);
-        state.putSerializable("actualCenterLongitude", actualCenterLongitude);
+        Log.i(TAG, "Save actual Center Longitude: " + actCentLong);
+        state.putSerializable("actCentLong", actCentLong);
 
     }
 
@@ -290,11 +283,11 @@ public class MapActivity extends BasicActivity {
 
         Log.i(TAG, "Set actual Center Latitude: "
                 + mapView.getMapCenter().getLatitude());
-        actualCenterLatitude = mapView.getMapCenter().getLatitude();
+        actCentLat = mapView.getMapCenter().getLatitude();
 
         Log.i(TAG, "Set actual Center Longitude: "
                 + mapView.getMapCenter().getLongitude());
-        actualCenterLongitude = mapView.getMapCenter().getLongitude();
+        actCentLong = mapView.getMapCenter().getLongitude();
 
         Log.i(TAG, "Set actual Zoom Level: " + mapView.getZoomLevel());
         actualZoomLevel = mapView.getZoomLevel();
@@ -350,19 +343,19 @@ public class MapActivity extends BasicActivity {
      **/
     protected void switchMaps() {
         // switch to OSM Map
-        String mvp = mapView.getTileProvider().getTileSource().name();
+        final String mvp = mapView.getTileProvider().getTileSource().name();
         if ("MapBoxSatelliteLabelled".equals(mvp)) {
             Log.i(TAG, "Set Maptilesource to " + mvp);
-            mapView.setTileSource(OSM_TILESRC);
-            final ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-            button.setImageResource(R.drawable.ic_sat);
+            mapView.setTileSource(DEF_TILESRC);
+            final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
+            bt.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
             // switch to Satellite Map
         } else {
             Log.i(TAG, "Set Maptilesource to "
                     + mapView.getTileProvider().getTileSource().name());
             mapView.setTileSource(SAT_MAP);
-            ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+            final ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
             button.setImageResource(R.drawable.ic_map);
             mapView.postInvalidate();
         }
