@@ -16,16 +16,16 @@ import org.osmdroid.util.GeoPoint;
  * @author Oliver Schwartz
  *
  */
-public class MapUtil {
+public final class MapUtil {
 
     /**
-     * Private Default Constructor
+     * Private Default Constructor.
      **/
     private MapUtil() {
     }
 
     /**
-     * Returns the Center of the given OsmElement
+     * Returns the Center of the given OsmElement.
      *  
      * @param element
      *            the OsmElement whose center should be calculated 
@@ -36,20 +36,20 @@ public class MapUtil {
     }
 
     /**
-     * Returns the BoundingBox of the given OsmElement
+     * Returns the BoundingBox of the given OsmElement.
      * 
-     * @param element
+     * @param elem
      *            the OsmElement whose BoundingBox should be calculated
      * @return the BoundingBox for the given OsmElement
      */
-    public static BoundingBoxE6 getBoundingBoxForOsmElement(OsmElement element) {
-        if (element instanceof Node) {
-            final Node node = (Node) element;
+    public static BoundingBoxE6 getBoundingBoxForOsmElement(OsmElement elem) {
+        if (elem instanceof Node) {
+            final Node node = (Node) elem;
             final List<GeoPoint> array = new ArrayList<GeoPoint>();
             array.add(node.toGeoPoint());
             return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) array);
-        } else if (element instanceof Way) {
-             final Way way = (Way) element;
+        } else if (elem instanceof Way) {
+             final Way way = (Way) elem;
             return BoundingBoxE6.fromGeoPoints(way.getUnsortedGeoPoints());
         }
         return null;
