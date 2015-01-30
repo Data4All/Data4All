@@ -38,7 +38,7 @@ import android.widget.Toast;
  * @author Oliver Schwartz
  *
  */
-public class MapViewActivity extends AbstractMapActivity implements OnClickListener {
+public class MapViewActivity extends MapActivity implements OnClickListener {
 
 	//Logger Tag
 	private static final String TAG = "MapViewActivity";

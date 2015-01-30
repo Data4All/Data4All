@@ -38,7 +38,7 @@ import android.widget.ImageView;
  * @author Oliver Schwartz
  *
  */
-public class MapPreviewActivity extends AbstractMapActivity implements OnClickListener {
+public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	
 	// Logger Tag
 	private static final String TAG = "MapPreviewActivity";
