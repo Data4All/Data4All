@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2015 Data4All
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package io.github.data4all.util;
 
 
@@ -27,16 +42,15 @@ import android.location.Location;
 @Config(emulateSdk = 18)
 public class PointToCoordsTransformUtilTest {
 	PointToCoordsTransformUtil util = new PointToCoordsTransformUtil();
+    Location location = new Location("Test");
 	
-	
-	
-	/*
 	@Test
 	public void transformTest(){
 		location.setLatitude(0.0);
 		location.setLongitude(0.0);
-		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(45) ,
-		Math.toRadians(45) , 1000, 1000, location);
+		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(90) ,
+		Math.toRadians(90) , 1000, 1000, location);
+        List<Node> test;
 		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.0f, 0.0f, 10L);
 		ArrayList<Point> points = new ArrayList<Point>();
 		points.add(new Point(500, 500));
@@ -44,29 +58,37 @@ public class PointToCoordsTransformUtilTest {
 		points.add(new Point(500, 1000));
 		points.add(new Point(1 , 500));
 		points.add(new Point(500,1));
-		List<Node> test = util.transform(tps, deviceOrientation, points);
-		assertThat(test.get(0).getLat(), is(0.0));
-		assertThat(test.get(0).getLon(), is(0.0));
-		assertThat(test.get(1).getLat(), is(0.0));
-		assertThat(test.get(1).getLon(), greaterThan(0.0));
-		assertThat(test.get(2).getLat(), lessThan(0.0));
-		assertThat(test.get(2).getLon(), is(0.0));
-		assertThat(test.get(3).getLat(), is(0.0));
-		assertThat(test.get(3).getLon(), lessThan(0.0));
-		assertThat(test.get(4).getLat(), greaterThan(0.0));
-		assertThat(test.get(4).getLon(), is(0.0));
-		
-		
-		deviceOrientation = new DeviceOrientation((float) (Math.PI/2), 0.0f, 0.0f, 10L);
-		test = util.transform(tps, deviceOrientation, points);
+		 test = util.transform(tps, deviceOrientation, points,4);
 		assertThat(test.get(0).getLat(), is(0.0));
 		assertThat(test.get(0).getLon(), is(0.0));
 		assertThat(test.get(1).getLat(), greaterThan(0.0));
-		assertThat(test.get(1).getLon(), closeTo(0.0, 0.0000001));	
-		assertThat(test.get(2).getLat(), closeTo(0.0, 0.0000001));
-		assertThat(test.get(2).getLon(), greaterThan(0.0) );
+		assertThat(test.get(1).getLon(), is(0.0));
+		assertThat(test.get(2).getLat(), is(0.0));
+		assertThat(test.get(2).getLon(), lessThan(0.0));
+		assertThat(test.get(3).getLat(), lessThan(0.0));
+		assertThat(test.get(3).getLon(), is(0.0));
+		assertThat(test.get(4).getLat(), is(0.0));
+		assertThat(test.get(4).getLon(), greaterThan(0.0));
+		
+		
+        deviceOrientation = new DeviceOrientation((float) (Math.PI/2), 0.0f, 0.0f, 10L);
+        test = util.transform(tps, deviceOrientation, points,4);
+        assertThat(test.get(0).getLat(), is(0.0));
+        assertThat(test.get(0).getLon(), is(0.0));
+        assertThat(test.get(1).getLat(), closeTo(0.0, 0.00000000001));
+        assertThat(test.get(1).getLon(), greaterThan(0.0)); 
+        assertThat(test.get(2).getLat(), greaterThan(0.0));
+        assertThat(test.get(2).getLon(), closeTo(0.0, 0.00000000001) );
+        
+        deviceOrientation = new DeviceOrientation((float) Math.toRadians(-45), (float)Math.toRadians(45),
+                (float)Math.toRadians(45), 10L);
+        ArrayList<Point> points2 = new ArrayList<Point>();
+        points2.add(new Point(500, 500));
+        test = util.transform(tps, deviceOrientation, points2,4);
+        assertThat(test.get(0).getLon(), greaterThan(0.0));  
+        assertThat(test.get(0).getLat(), greaterThan(0.0));
 	}
-	
+	/*
 	@Test
 	public void calculateCoordFromPointTest(){
 		location.setLatitude((float) (Math.PI/1.2));
@@ -108,29 +130,6 @@ public class PointToCoordsTransformUtilTest {
 			a += (float) (Math.PI/11);			
 		}
 	}
+	
 	*/
-	@Test
-	public void Test(){
-		Location location = new Location("Test");
-		location.setLatitude(53.105868);
-		location.setLongitude(8.854916);
-		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(50) ,
-		Math.toRadians(50) , 1000, 1000, location);
-		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, (float) -Math.toRadians(64) , 0.0f, 10L);
-		ArrayList<Point> point = new ArrayList<Point>();
-		point.add(new Point(1,1));
-		point.add(new Point(1,1000));
-		point.add(new Point(1000,1000));
-		point.add(new Point(1000,1));
-		point.add(new Point(500,500));
-		ArrayList<Node> nodes = new ArrayList<Node>();
-		ArrayList<double[]> coord = new ArrayList<double[]>();
-		List<Node> n = util.transform(tps, deviceOrientation, point);
-		for(Point p : point){
-			double[] c =util.calculateCoordFromPoint(tps, deviceOrientation, p);
-			coord.add(c);
-			//nodes.add(util.calculateGPSPoint(53.105868, 8.854916, c));
-			
-		}
-	}		
 }
