@@ -70,6 +70,10 @@ public class Node extends AbstractDataElement {
         return 0;
     }
 
+    /**
+     * Returns an integer as hashCode for Node objects.
+     * @return integer hashCode 
+     */
     @Override
     public int hashCode() {
         final int prime = 31;

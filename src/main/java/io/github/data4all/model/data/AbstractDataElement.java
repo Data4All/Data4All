@@ -46,7 +46,7 @@ public abstract class AbstractDataElement implements Parcelable {
     protected AbstractDataElement(Parcel in) {
         osmId = in.readLong();
         tags = new LinkedHashMap<Tag, String>();
-        int count = in.readInt();
+        final int count = in.readInt();
         for (int i = 0; i < count; i++) {
             tags.put(Tags.getTagWithId(in.readInt()), in.readString());
         }
@@ -136,7 +136,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * @return true is the object has tags
      */
     public boolean isTagged() {
-        return (tags != null) && (tags.size() > 0);
+        return (tags != null) && (!tags.isEmpty());
     }
 
     public void setOsmId(long osmId) {
@@ -172,8 +172,8 @@ public abstract class AbstractDataElement implements Parcelable {
         dest.writeLong(osmId);
         dest.writeInt(tags.size());
         for (Tag t : tags.keySet()) {
-           dest.writeInt(t.getId());
-           dest.writeString(tags.get(t));
+            dest.writeInt(t.getId());
+            dest.writeString(tags.get(t));
         }
     }
 
