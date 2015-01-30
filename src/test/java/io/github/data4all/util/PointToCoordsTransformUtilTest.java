@@ -43,7 +43,7 @@ public class PointToCoordsTransformUtilTest {
 		points.add(new Point(500, 1000));
 		points.add(new Point(1 , 500));
 		points.add(new Point(500,1));
-		 test = util.transform(tps, deviceOrientation, points);
+		 test = util.transform(tps, deviceOrientation, points,4);
 		assertThat(test.get(0).getLat(), is(0.0));
 		assertThat(test.get(0).getLon(), is(0.0));
 		assertThat(test.get(1).getLat(), greaterThan(0.0));
@@ -57,7 +57,7 @@ public class PointToCoordsTransformUtilTest {
 		
 		
         deviceOrientation = new DeviceOrientation((float) (Math.PI/2), 0.0f, 0.0f, 10L);
-        test = util.transform(tps, deviceOrientation, points);
+        test = util.transform(tps, deviceOrientation, points,4);
         assertThat(test.get(0).getLat(), is(0.0));
         assertThat(test.get(0).getLon(), is(0.0));
         assertThat(test.get(1).getLat(), closeTo(0.0, 0.00000000001));
@@ -69,7 +69,7 @@ public class PointToCoordsTransformUtilTest {
                 (float)Math.toRadians(45), 10L);
         ArrayList<Point> points2 = new ArrayList<Point>();
         points2.add(new Point(500, 500));
-        test = util.transform(tps, deviceOrientation, points2);
+        test = util.transform(tps, deviceOrientation, points2,4);
         assertThat(test.get(0).getLon(), greaterThan(0.0));  
         assertThat(test.get(0).getLat(), greaterThan(0.0));
 	}

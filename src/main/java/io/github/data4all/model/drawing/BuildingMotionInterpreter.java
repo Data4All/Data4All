@@ -93,10 +93,10 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      * @author sbollen
      */
     @Override
-    public OsmElement create(List<Point> polygon) {
+    public OsmElement create(List<Point> polygon, int rotation) {
         final Way newWay = new Way(-1, 1);
 
-        final List<Node> nodeList = pointTrans.transform(polygon);
+        final List<Node> nodeList = pointTrans.transform(polygon, rotation);
         nodeList.add(nodeList.get(0));
         newWay.addNodes(nodeList, false);
         return newWay;

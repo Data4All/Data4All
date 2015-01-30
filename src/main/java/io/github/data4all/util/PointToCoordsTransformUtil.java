@@ -48,8 +48,8 @@ public class PointToCoordsTransformUtil {
      * @param List of Point
      * @return List of Node
      */
-    public List<Node> transform(List<Point> points) {
-        return transform(tps, deviceOrientation, points);
+    public List<Node> transform(List<Point> points, int rotation) {
+        return transform(tps, deviceOrientation, points, rotation);
     }
 
     /**
@@ -59,16 +59,36 @@ public class PointToCoordsTransformUtil {
      * @return List of Node
      */
     public List<Node> transform(TransformationParamBean tps,
-            DeviceOrientation deviceOrientation, List<Point> points) {
+            DeviceOrientation deviceOrientation, List<Point> points,
+            int rotation) {
 
         List<Node> nodes = new ArrayList<Node>();
         this.height = tps.getHeight();
-        for (Point point : points) {
 
-            //Log.d(TAG, "ITER X:" + iter.getX() + " Y: " + iter.getY());
-            //Point point = new Point((tps.getPhotoHeight() - iter.getY() + 1),
-            //        (tps.getPhotoWidth() - iter.getX() + 1));
-            Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
+
+        for (Point iter : points) {
+            Point point = iter;
+            
+            //change the point value in dependency of the rotated coordinate system for drawing
+            if (rotation == 0) {
+                // device was in portrait mode
+                point = new Point(
+                        (tps.getPhotoHeight() - iter.getY() + 1),
+                        (tps.getPhotoWidth() - iter.getX() + 1));
+            } else if (rotation == 1) {
+                // device was in landscape mode and the home-button to the right
+                point = new Point(
+                        (tps.getPhotoWidth() - iter.getX() + 1),
+                        (iter.getY()));
+            } else if (rotation == 3) {
+                // device was in landscape mode and the home-button to the left
+                point = new Point(
+                        (iter.getX()),
+                        (tps.getPhotoHeight() - iter.getY() + 1));
+            } 
+            
+            Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
+
             Log.d(TAG,
                     "TPS-DATA pic height: " + tps.getPhotoHeight() + " width "
                             + tps.getPhotoWidth() + " height "
