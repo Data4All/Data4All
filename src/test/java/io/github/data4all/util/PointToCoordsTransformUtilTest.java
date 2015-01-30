@@ -27,10 +27,7 @@ import android.location.Location;
 @Config(emulateSdk = 18)
 public class PointToCoordsTransformUtilTest {
 	PointToCoordsTransformUtil util = new PointToCoordsTransformUtil();
-
     Location location = new Location("Test");
-	
-	
 	
 	@Test
 	public void transformTest(){
@@ -68,12 +65,12 @@ public class PointToCoordsTransformUtilTest {
         assertThat(test.get(2).getLat(), greaterThan(0.0));
         assertThat(test.get(2).getLon(), closeTo(0.0, 0.00000000001) );
         
-        deviceOrientation = new DeviceOrientation((float) Math.toRadians(45), (float)Math.toRadians(45),
+        deviceOrientation = new DeviceOrientation((float) Math.toRadians(-45), (float)Math.toRadians(45),
                 (float)Math.toRadians(45), 10L);
         ArrayList<Point> points2 = new ArrayList<Point>();
         points2.add(new Point(500, 500));
         test = util.transform(tps, deviceOrientation, points2);
-        assertThat(test.get(0).getLon(), lessThan(0.0));  
+        assertThat(test.get(0).getLon(), greaterThan(0.0));  
         assertThat(test.get(0).getLat(), greaterThan(0.0));
 	}
 	/*
@@ -118,31 +115,6 @@ public class PointToCoordsTransformUtilTest {
 			a += (float) (Math.PI/11);			
 		}
 	}
+	
 	*/
-	@Test
-	public void Test(){
-		location.setLatitude(53.105868);
-		location.setLongitude(8.854916);
-		TransformationParamBean tps = new TransformationParamBean(2.0, Math.toRadians(40) ,
-		Math.toRadians(40) , 1000, 1000, location);
-		DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 
-		        0.0f , 0.0f, 10L);
-		ArrayList<Point> point = new ArrayList<Point>();
-		point.add(new Point(1,1));
-		point.add(new Point(1,1000));
-		point.add(new Point(1000,1000));
-		point.add(new Point(1000,1));
-		point.add(new Point(500,500));
-		
-		ArrayList<Node> nodes = new ArrayList<Node>();
-		ArrayList<double[]> coord = new ArrayList<double[]>();
-		List<Node> n = util.transform(tps, deviceOrientation, point);
-		List<Point> points = new ArrayList<Point>();
-		for(Point p : point){
-			double[] c =util.calculateCoordFromPoint(tps, deviceOrientation, p);
-			coord.add(c);
-			Point pp = util.calculatePointFromCoords(tps, deviceOrientation, c);
-			points.add(pp);
-		}
-	}		
 }
