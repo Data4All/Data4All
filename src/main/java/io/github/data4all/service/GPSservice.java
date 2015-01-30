@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2015 Data4All
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
@@ -23,19 +38,23 @@ import android.widget.Toast;
 public class GPSservice extends Service implements LocationListener {
 
     private static final String TAG = "GPSservice";
-
-    /**
-     * LocationManager.
-     */
     private LocationManager lmgr;
-
     private WakeLock wakeLock;
+    private PowerManager powerManager;
+    /*
+     * the minimum of time after we get a new locationupdate in ms.
+     */
+    private final long minTime = 1000;
+    /*
+     * the minimum of Distance after we get a new locationupdate.
+     */
+    private final float minDistance = 0;
 
     @Override
     public void onCreate() {
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
@@ -45,13 +64,13 @@ public class GPSservice extends Service implements LocationListener {
         if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             // second value is minimum of time, third value is minimum of meters
-            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0,
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance,
                     this);
         }
 
         if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000,
-                    0, this);
+            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime,
+                    minDistance, this);
         }
     }
 
@@ -68,24 +87,24 @@ public class GPSservice extends Service implements LocationListener {
         wakeLock.release();
 
     }
-
+    
+    @Override
     public void onLocationChanged(Location loc) {
-
         Optimizer.putLoc(loc);
-
     }
-
+    
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // Not interested in provider status
-
     }
-
+    
+    @Override
     public void onProviderEnabled(String provider) {
         // TODO Auto-generated method stub
     }
-
+    
+    @Override
     public void onProviderDisabled(String provider) {
-
         Toast.makeText(getBaseContext(),
                 "Gps turned off, GPS tracking not possible ", Toast.LENGTH_LONG)
                 .show();
@@ -96,5 +115,4 @@ public class GPSservice extends Service implements LocationListener {
         // TODO Auto-generated method stub
         return null;
     }
-
 }

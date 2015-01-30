@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2015 Data4All
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
@@ -23,7 +38,7 @@ import android.widget.ImageView;
  * @author Oliver Schwartz
  *
  */
-public class MapPreviewActivity extends AbstractMapActivity implements OnClickListener {
+public class MapPreviewActivity extends MapActivity implements OnClickListener {
 	
 	// Logger Tag
 	private static final String TAG = "MapPreviewActivity";
@@ -99,7 +114,7 @@ public class MapPreviewActivity extends AbstractMapActivity implements OnClickLi
 					.equals("MapBoxSatelliteLabelled")) {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(OSM_TILESOURCE);
+				mapView.setTileSource(OSM_TILESRC);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				button.setImageResource(R.drawable.ic_sat);
 				mapView.postInvalidate();
@@ -107,7 +122,7 @@ public class MapPreviewActivity extends AbstractMapActivity implements OnClickLi
 			} else {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(MAPBOX_SAT);
+				mapView.setTileSource(SAT_MAP);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();

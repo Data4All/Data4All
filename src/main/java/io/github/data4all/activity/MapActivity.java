@@ -1,3 +1,15 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
@@ -5,8 +17,10 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
+import io.github.data4all.model.map.MapLine; 
+import io.github.data4all.model.map.MapMarker; 
+import io.github.data4all.model.map.MapPolygon; 
 
-import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -22,15 +36,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.widget.ImageView;
 
 /**
@@ -39,7 +50,7 @@ import android.widget.ImageView;
  * @author Oliver Schwartz
  *
  */
-public abstract class AbstractMapActivity extends BasicActivity {
+public class MapActivity extends BasicActivity {
 
     // Node Type Definition Number
     protected static final int NODE_TYPE_DEF = 1;
@@ -96,28 +107,28 @@ public abstract class AbstractMapActivity extends BasicActivity {
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
     // Default OpenStreetMap TileSource
-    protected static final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
+    protected static final ITileSource OSM_TILESRC = TileSourceFactory.MAPNIK;
 
     // Default Satellite Map Tilesource
-    protected static final OnlineTileSourceBase MAPBOX_SAT = new MapBoxTileSource(
+    protected static final OnlineTileSourceBase SAT_MAP = new MapBoxTileSource(
             "MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
             19, 256, ".png");
-    protected static final ITileSource DEF_TILESOURCE = TileSourceFactory.MAPNIK;
+    protected static final ITileSource DEF_TILESRC = TileSourceFactory.MAPNIK;
 
     protected void setUpMapView() {
         mapView = (MapView) this.findViewById(R.id.mapview);
 
         // Set Maptilesource
-        Log.i(TAG, "Set Maptilesource to " + OSM_TILESOURCE.name());
-        mapView.setTileSource(OSM_TILESOURCE);
+        Log.i(TAG, "Set Maptilesource to " + OSM_TILESRC.name());
+        mapView.setTileSource(OSM_TILESRC);
 
         // Add Satellite Map TileSource
         MapBoxTileSource.retrieveMapBoxMapId(this);
-        TileSourceFactory.addTileSource(MAPBOX_SAT);
+        TileSourceFactory.addTileSource(SAT_MAP);
 
         // Set Maptilesource
-        Log.i(TAG, "Set Maptilesource to " + DEF_TILESOURCE.name());
-        mapView.setTileSource(DEF_TILESOURCE);
+        Log.i(TAG, "Set Maptilesource to " + DEF_TILESRC.name());
+        mapView.setTileSource(DEF_TILESRC);
 
         // Activate Multi Touch Control
         Log.i(TAG, "Activate Multi Touch Controls");
@@ -145,7 +156,13 @@ public abstract class AbstractMapActivity extends BasicActivity {
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
 
-    protected void removeOverlayFromMap(Overlay overlay) {
+    /**
+     * Removes an Overlay from the Map.
+     *
+     * @param overlay
+     *            the Overlay which should be removed  from the map
+     **/
+    public void removeOverlayFromMap(Overlay overlay) {
         if (mapView.getOverlays().contains(overlay)) {
             mapView.getOverlays().remove(overlay);
             mapView.postInvalidate();
@@ -190,8 +207,7 @@ public abstract class AbstractMapActivity extends BasicActivity {
      *            the node which should be added to the map
      **/
     protected void addNodeToMap(Node node) {
-        final Marker poi = new MapMarker(mapView);
-
+        final Marker poi = new MapMarker(this, mapView);
         Log.i(TAG, "Set Node Points to " + node.toString());
         // disable InfoWindow
         poi.setInfoWindow(null);
@@ -295,195 +311,6 @@ public abstract class AbstractMapActivity extends BasicActivity {
         }
         return null;
 
-    }
-
-    /**
-     * With LongClick deletable Map Marker.
-     * 
-     * @author Oliver Schwartz
-     *
-     */
-    class MapMarker extends Marker {
-
-        /**
-         * Default constructor.
-         * 
-         * @param mapView
-         *            the Mapview for the Overlay
-         */
-        public MapMarker(MapView mapView) {
-            super(mapView, new DefaultResourceProxyImpl(mapView.getContext()));
-        }
-
-        @Override
-        public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-            final DialogInterface.OnClickListener listener = new DialogClickListener();
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    mapView.getContext());
-            builder.setMessage(getString(R.string.deleteDialog))
-                    .setPositiveButton(getString(R.string.yes), listener)
-                    .setNegativeButton(getString(R.string.no), listener).show();
-
-            return true;
-
-        }
-
-        /**
-         * DialogListener for Overlay.
-         * 
-         * @author Oliver Schwartz
-         *
-         */
-        class DialogClickListener implements DialogInterface.OnClickListener {
-
-            /**
-             * Default constructor.
-             */
-            public DialogClickListener() {
-
-            }
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    // Yes button clicked
-                    removeOverlayFromMap(MapMarker.this);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    // No button clicked
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * With LongClick deletable Polyline.
-     * 
-     * @author Oliver Schwartz
-     *
-     */
-    class MapLine extends Polyline {
-
-        /**
-         * Default constructor.
-         * 
-         * @param ctx
-         *            the Context for the Overlay
-         */
-        public MapLine(Context ctx) {
-            super(ctx);
-        }
-
-        @Override
-        public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-            final DialogInterface.OnClickListener listener = new DialogClickListener();
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    mapView.getContext());
-            builder.setMessage(getString(R.string.deleteDialog))
-                    .setPositiveButton(getString(R.string.yes), listener)
-                    .setNegativeButton(getString(R.string.no), listener).show();
-
-            return true;
-
-        }
-
-        /**
-         * DialogListener for Overlay.
-         * 
-         * @author Oliver Schwartz
-         *
-         */
-        class DialogClickListener implements DialogInterface.OnClickListener {
-
-            /**
-             * Default constructor.
-             */
-            public DialogClickListener() {
-
-            }
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    // Yes button clicked
-                    removeOverlayFromMap(MapLine.this);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    // No button clicked
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * With LongClick deletable Polygon.
-     * 
-     * @author Oliver Schwartz
-     *
-     */
-    class MapPolygon extends Polygon {
-
-        /**
-         * Default constructor.
-         * 
-         * @param ctx
-         *            the Context for the Overlay
-         */
-        public MapPolygon(Context ctx) {
-            super(ctx);
-        }
-
-        @Override
-        public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-            final DialogInterface.OnClickListener listener = new DialogClickListener();
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    mapView.getContext());
-            builder.setMessage(getString(R.string.deleteDialog))
-                    .setPositiveButton(getString(R.string.yes), listener)
-                    .setNegativeButton(getString(R.string.no), listener).show();
-
-            return true;
-
-        }
-
-        /**
-         * DialogListener for Overlay.
-         * 
-         * @author Oliver Schwartz
-         *
-         */
-        class DialogClickListener implements DialogInterface.OnClickListener {
-
-            /**
-             * Default constructor.
-             */
-            public DialogClickListener() {
-
-            }
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    // Yes button clicked
-                    removeOverlayFromMap(MapPolygon.this);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    // No button clicked
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
     }
 
 }
