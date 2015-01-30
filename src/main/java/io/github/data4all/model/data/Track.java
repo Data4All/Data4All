@@ -1,13 +1,11 @@
 package io.github.data4all.model.data;
 
 import io.github.data4all.logger.Log;
-import io.github.data4all.util.TrackParser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -17,11 +15,10 @@ import android.location.Location;
  * A track is the represenation of a .gpx file. It has a name and a list of
  * trackpoints.
  * 
- * A track is initialized when the app is started and the GPSservice starts.
- * There should be only one track for a whole GPSservice lifecycle.
- * GPSservice.onCreate() starts a new track. GPSservice.onDestroy() should start
- * the parsing in to a file on the handheld. This object is parsed to a .gpx
- * file
+ * A track is initialized when the GPSservice starts. There should be only one
+ * track for a whole GPSservice lifecycle. GPSservice.onCreate() starts a new
+ * track. GPSservice.onDestroy() should start the parsing in to a file. This
+ * object is parsed to a .gpx file
  * 
  * @author sbrede
  *
@@ -36,10 +33,8 @@ public class Track {
 
     // a list of trackpoints
     private final ArrayList<TrackPoint> tracklist;
-    
-    private TrackParser parser = new TrackParser();
-    
-    public Context context;
+
+    public Context                      context;
 
     public Track(Context context) {
         context = this.context;
@@ -48,15 +43,6 @@ public class Track {
         Log.d(TAG, "New Track with name: " + trackName + " created.");
     }
 
-    public void saveTrack(Track track) {
-        Log.d(TAG, "Try to save a track");
-        try {
-            parser.parseTrack(context, track);   
-        } catch (Exception e) {
-            Log.e(TAG, "Error while saving");
-        }
-    }
-    
     public String getTrackName() {
         return trackName;
     }
@@ -84,55 +70,4 @@ public class Track {
         }
         return str;
     }
-
-    /**
-     * Represents a single point in a track. A list of trackpoints could be a
-     * tracksegment in .gpx file.
-     * 
-     * @author sbrede
-     *
-     */
-    public class TrackPoint implements GeoPoint {
-
-        public final double latitude;
-        public final double longitude;
-        public final double altitude;
-        public final long   time;
-
-        public TrackPoint(Location original) {
-            latitude = original.getLatitude();
-            longitude = original.getLongitude();
-            altitude = original.hasAltitude() ? original.getAltitude()
-                    : Double.NaN;
-            time = original.getTime();
-        }
-
-        @Override
-        public double getLat() {
-            return latitude;
-        }
-
-        @Override
-        public double getLon() {
-            return longitude;
-        }
-
-        public long getTime() {
-            return time;
-        }
-
-        public boolean hasAltitude() {
-            return !Double.isNaN(altitude);
-        }
-
-        public double getAlt() {
-            return !Double.isNaN(altitude) ? altitude : 0d;
-        }
-
-        @Override
-        public String toString() {
-            return String.format(Locale.US, "%f, %f", latitude, longitude);
-        }
-    }
-
 }
