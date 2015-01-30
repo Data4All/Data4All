@@ -99,7 +99,7 @@ public class MapPreviewActivity extends AbstractMapActivity implements OnClickLi
 					.equals("MapBoxSatelliteLabelled")) {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(OSM_TILESOURCE);
+				mapView.setTileSource(OSM_TILESRC);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				button.setImageResource(R.drawable.ic_sat);
 				mapView.postInvalidate();
@@ -107,7 +107,7 @@ public class MapPreviewActivity extends AbstractMapActivity implements OnClickLi
 			} else {
 				Log.i(TAG, "Set Maptilesource to "
 						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(MAPBOX_SAT);
+				mapView.setTileSource(SAT_MAP);
 				ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
 				button.setImageResource(R.drawable.ic_map);
 				mapView.postInvalidate();
