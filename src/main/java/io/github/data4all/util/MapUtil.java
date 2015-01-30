@@ -38,10 +38,10 @@ public final class MapUtil {
 
     /**
      * Returns the Center of the given OsmElement.
-     *  
+     * 
      * @param element
-     *            the OsmElement whose center should be calculated 
-     * @return the Center of the OsmElement 
+     *            the OsmElement whose center should be calculated
+     * @return the Center of the OsmElement
      */
     public static GeoPoint getCenterFromOsmElement(OsmElement element) {
         return getBoundingBoxForOsmElement(element).getCenter();
@@ -61,7 +61,7 @@ public final class MapUtil {
             array.add(node.toGeoPoint());
             return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) array);
         } else if (elem instanceof Way) {
-             final Way way = (Way) elem;
+            final Way way = (Way) elem;
             return BoundingBoxE6.fromGeoPoints(way.getUnsortedGeoPoints());
         }
         return null;

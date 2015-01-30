@@ -47,10 +47,11 @@ public class CameraActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // Inflate the UI layout
         setContentView(R.layout.activity_camera);
-        
+
         // Initialize the UI components
         initUIComponents();
     }
@@ -86,7 +87,7 @@ public class CameraActivity extends Activity {
         // Calculate the camera previews
         cameraPreview.setCamera(mCamera);
         mCamera.startPreview();
-        
+
         // Start the Device Orientation listener
         startService(new Intent(this, OrientationListener.class));
 
@@ -107,7 +108,7 @@ public class CameraActivity extends Activity {
             mCamera = null;
         }
         stopService(new Intent(this, OrientationListener.class));
-        
+
         btnTrigger.setOnClickListener(null);
     }
 
@@ -129,6 +130,5 @@ public class CameraActivity extends Activity {
         // Retrieve the Camera Preview Component
         cameraPreview = (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
     }
-    
-    
+
 }

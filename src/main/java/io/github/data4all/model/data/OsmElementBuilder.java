@@ -58,8 +58,7 @@ public final class OsmElementBuilder {
     /**
      * Maps integer ids to subclasses of OsmElement.
      */
-    private static final SparseArray<Class<? extends OsmElement>> IDS =
-            new SparseArray<Class<? extends OsmElement>>();
+    private static final SparseArray<Class<? extends OsmElement>> IDS = new SparseArray<Class<? extends OsmElement>>();
 
     /**
      * Prepares the sparse array.
@@ -69,7 +68,7 @@ public final class OsmElementBuilder {
         IDS.put(ID_WAY, Way.class);
         IDS.put(ID_RELATION, Relation.class);
     }
-    
+
     /**
      * Private constructor, prevents this class from being instantiated.
      */

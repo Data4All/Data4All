@@ -41,9 +41,9 @@ import android.widget.Toast;
  */
 public class LoginActivity extends BasicActivity {
 
-    final String              TAG = getClass().getSimpleName();
+    final String TAG = getClass().getSimpleName();
     private SharedPreferences prefs;
-    protected String          xml;
+    protected String xml;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class LoginActivity extends BasicActivity {
         Button deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v) {                
+            public void onClick(View v) {
                 deleteTokenFromSharedPreferences();
             }
         });
@@ -114,7 +114,6 @@ public class LoginActivity extends BasicActivity {
             }
         });
     }
-
 
     @Override
     protected void onDestroy() {
@@ -158,4 +157,3 @@ public class LoginActivity extends BasicActivity {
         Log.i(TAG, "SharedPreferences:" + prefs.getAll());
     }
 }
-

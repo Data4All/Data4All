@@ -38,7 +38,6 @@ import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-
 /**
  * Prepares a OAuthConsumer and OAuthProvider
  * 
@@ -60,8 +59,8 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
     private OAuthConsumer consumer;
     private OAuthProvider provider;
-    private WebView       webView;
-    private boolean       handled;
+    private WebView webView;
+    private boolean handled;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +83,7 @@ public class PrepareRequestTokenActivity extends BasicActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        webView = new WebView(this);        
+        webView = new WebView(this);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setVisibility(View.VISIBLE);
         setContentView(webView);
@@ -96,18 +95,17 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
     }
 
-    
     /**
      * Do the oAuth dance to get request token
      *
      */
     private class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
 
-        final String          TAG = getClass().getName();
-        private Context       context;
+        final String TAG = getClass().getName();
+        private Context context;
         private OAuthProvider provider;
         private OAuthConsumer consumer;
-        private String        url;
+        private String url;
 
         /**
          * 
@@ -153,7 +151,6 @@ public class PrepareRequestTokenActivity extends BasicActivity {
             return null;
         }
 
-        
         @Override
         protected void onPostExecute(Void result) {
 
@@ -206,10 +203,10 @@ public class PrepareRequestTokenActivity extends BasicActivity {
      */
     private class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
 
-        final String              TAG = getClass().getName();
+        final String TAG = getClass().getName();
 
-        private OAuthProvider     provider;
-        private OAuthConsumer     consumer;
+        private OAuthProvider provider;
+        private OAuthConsumer consumer;
         private SharedPreferences prefs;
 
         public RetrieveAccessTokenTask(OAuthConsumer consumer,
@@ -233,7 +230,7 @@ public class PrepareRequestTokenActivity extends BasicActivity {
             try {
                 provider.retrieveAccessToken(consumer, oauth_verifier);
 
-                //Store tokens in SharedPreferences
+                // Store tokens in SharedPreferences
                 final Editor edit = prefs.edit();
                 edit.putString(OAuth.OAUTH_TOKEN, consumer.getToken());
                 edit.putString(OAuth.OAUTH_TOKEN_SECRET,
@@ -263,7 +260,7 @@ public class PrepareRequestTokenActivity extends BasicActivity {
             Log.i(TAG, "Starting Loginscreen again");
             startActivity(new Intent(PrepareRequestTokenActivity.this,
                     MapViewActivity.class));
-            //Remove sessioncookie before moving on
+            // Remove sessioncookie before moving on
             CookieManager.getInstance().removeSessionCookie();
             finish();
         }

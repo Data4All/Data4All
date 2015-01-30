@@ -34,7 +34,7 @@ public class CaptureShutterListener implements OnClickListener {
 
     // Camera Object
     private Camera camera;
-    
+
     private ShutterCallback shutterCallback = new ShutterCallback() {
 
         public void onShutter() {
@@ -54,7 +54,7 @@ public class CaptureShutterListener implements OnClickListener {
      * constructor.
      * 
      * @param c
-     *         the used camera
+     *            the used camera
      */
     public CaptureShutterListener(Camera c) {
         this.camera = c;

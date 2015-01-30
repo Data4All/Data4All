@@ -111,7 +111,7 @@ public class MapActivity extends BasicActivity {
     protected static final OnlineTileSourceBase SAT_MAP = new MapBoxTileSource(
             "MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
             19, 256, ".png");
- // Default OpenStreetMap TileSource
+    // Default OpenStreetMap TileSource
     protected static final ITileSource DEF_TILESRC = TileSourceFactory.MAPNIK;
 
     /**
@@ -355,8 +355,8 @@ public class MapActivity extends BasicActivity {
             Log.i(TAG, "Set Maptilesource to "
                     + mapView.getTileProvider().getTileSource().name());
             mapView.setTileSource(SAT_MAP);
-            final ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
-            button.setImageResource(R.drawable.ic_map);
+            final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
+            bt.setImageResource(R.drawable.ic_map);
             mapView.postInvalidate();
         }
     }

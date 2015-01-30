@@ -75,14 +75,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             }
             // Center Position
             if (savedInstanceState.getSerializable("actCentLong") != null
-                    && savedInstanceState
-                            .getSerializable("actCentLat") != null) {
+                    && savedInstanceState.getSerializable("actCentLat") != null) {
                 actCentLat = (Double) savedInstanceState
                         .getSerializable("actCentLat");
                 actCentLong = (Double) savedInstanceState
                         .getSerializable("actCentLong");
-                actualCenter = new GeoPoint(actCentLat,
-                        actCentLong);
+                actualCenter = new GeoPoint(actCentLat, actCentLong);
             }
             view.setVisibility(View.GONE);
         } else {
@@ -99,7 +97,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setZoomLevel(actualZoomLevel);
 
         // Set Listener for Buttons
-        
+
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);

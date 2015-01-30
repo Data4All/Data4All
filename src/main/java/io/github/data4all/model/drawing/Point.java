@@ -50,6 +50,7 @@ public class Point {
             throw new IllegalArgumentException("parameters cannot be null");
         }
     }
+
     private final float x;
 
     private final float y;

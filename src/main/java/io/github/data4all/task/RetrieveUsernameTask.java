@@ -36,20 +36,21 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 /**
- * AsyncTask to retrieve the username over http-connection
- * Stores username in SharedPreferences
+ * AsyncTask to retrieve the username over http-connection Stores username in
+ * SharedPreferences
+ * 
  * @author sb
  *
  */
 public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
 
-    private String               TAG = getClass().getSimpleName();
+    private String TAG = getClass().getSimpleName();
 
     private XmlPullParserFactory xmlParserFactory;
 
-    private String               url;
-    private OAuthConsumer        consumer;
-    private SharedPreferences    prefs;
+    private String url;
+    private OAuthConsumer consumer;
+    private SharedPreferences prefs;
 
     public RetrieveUsernameTask(String url, OAuthConsumer consumer,
             SharedPreferences prefs) {
@@ -73,18 +74,18 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
         try {
-            //make a GET request
+            // make a GET request
             HttpGet request = new HttpGet(url);
             Log.i(TAG, "Requesting URL : " + url);
-            
-            //sign the request with oAuth
+
+            // sign the request with oAuth
             consumer.sign(request);
-            
-            //execute request and get the response
+
+            // execute request and get the response
             HttpResponse response = httpclient.execute(request);
             Log.i(TAG, "Statusline : " + response.getStatusLine());
-            
-            //write content of response in InputStream
+
+            // write content of response in InputStream
             InputStream data = response.getEntity().getContent();
 
             parseXmlUserInfo(data);
@@ -109,7 +110,9 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
 
     /**
      * Parse a given InputStream to retrieve the username
-     * @param inputStream an xml as InputStream
+     * 
+     * @param inputStream
+     *            an xml as InputStream
      */
     public void parseXmlUserInfo(InputStream inputStream) {
         XmlPullParser parser;
