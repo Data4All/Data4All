@@ -116,6 +116,9 @@ public class MapActivity extends BasicActivity {
             19, 256, ".png");
     protected static final ITileSource DEF_TILESRC = TileSourceFactory.MAPNIK;
 
+    /**
+     * Default constructor
+     */
     public MapActivity() {
         super();
     }
@@ -321,7 +324,8 @@ public class MapActivity extends BasicActivity {
     /**
      * Set the Zoom Level of the MapView.
      *
-     * @param zoom the Zoomlevel which should be set
+     * @param zoom
+     *            the Zoomlevel which should be set
      **/
     protected void setZoomLevel(int zoom) {
         // Set Zoomlevel
@@ -332,25 +336,25 @@ public class MapActivity extends BasicActivity {
     /**
      * Set the Center of the MapView.
      *
-     * @param point the Center which should be set
+     * @param point
+     *            the Center which should be set
      **/
-    protected void setCenter(GeoPoint point) {
+    protected void setCenter(IGeoPoint point) {
         // Set ZoomCenter
         Log.i(TAG, "Set Mapcenter to " + point.toString());
         mapController.setCenter(point);
     }
-    
+
     /**
      * Switch between Satellite Map and OSM Map.
      **/
-    protected void switchMaps(){
-     // switch to OSM Map
-        if (mapView.getTileProvider().getTileSource().name()
-                .equals("MapBoxSatelliteLabelled")) {
-            Log.i(TAG, "Set Maptilesource to "
-                    + mapView.getTileProvider().getTileSource().name());
+    protected void switchMaps() {
+        // switch to OSM Map
+        String mvp = mapView.getTileProvider().getTileSource().name();
+        if ("MapBoxSatelliteLabelled".equals(mvp)) {
+            Log.i(TAG, "Set Maptilesource to " + mvp);
             mapView.setTileSource(OSM_TILESRC);
-            ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
+            final ImageButton button = (ImageButton) findViewById(R.id.switch_maps);
             button.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
             // switch to Satellite Map

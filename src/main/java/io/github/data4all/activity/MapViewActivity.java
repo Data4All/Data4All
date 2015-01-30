@@ -38,6 +38,13 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private static final String TAG = "MapViewActivity";
 
     /**
+     * Default constructor
+     */
+    public MapViewActivity() {
+        super();
+    }
+
+    /**
      * Called when the activity is first created.
      * 
      * @param savedInstanceState
@@ -143,12 +150,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         myLocationOverlay.enableMyLocation();
 
         if (actualCenter != null) {
-            Log.i(TAG, "Set Mapcenter to " + actualCenter.toString());
-            mapController.setCenter(actualCenter);
+            setCenter(actualCenter);
         } else if (myLocationOverlay.getMyLocation() != null) {
             actualCenter = myLocationOverlay.getMyLocation();
-            Log.i(TAG, "Set Mapcenter to " + actualCenter.toString());
-            mapController.setCenter(actualCenter);
+            setCenter(actualCenter);
         }
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
@@ -196,8 +201,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
      **/
     private void returnToActualPosition() {
         if (myLocationOverlay.getMyLocation() != null) {
-            mapController.setCenter(myLocationOverlay.getMyLocation());
-            mapView.postInvalidate();
+            setCenter(myLocationOverlay.getMyLocation());
         }
     }
 }
