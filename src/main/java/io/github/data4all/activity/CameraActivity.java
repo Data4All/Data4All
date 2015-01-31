@@ -3,21 +3,26 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.util.CameraPreview;
+import io.github.data4all.view.CameraPreview;
+import io.github.data4all.view.CaptureCameraSurfaceView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.ShutterCallback;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.SurfaceView;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 /**
@@ -30,21 +35,24 @@ import android.widget.Toast;
 
 public class CameraActivity extends Activity {
 
-	private static final String TAG = "CamTestActivity";
-	CameraPreview preview;
-	ImageButton buttonClick;
-	Camera camera;
-	Activity act;
-	Context ctx;
+	private Camera mCamera;
+	private CameraPreview mPreview;
+	private SensorManager sensorManager = null;
+	private int deviceHeight;
+	private ImageButton btnCapture;
+
+	private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mCamera.takePicture(shutterCallback, null,
+					new CapturePictureHandler(getApplicationContext()));
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "Start to create Camera @ CameraActivity");
 		super.onCreate(savedInstanceState);
-		ctx = this;
-		act = this;
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.activity_camera);
 
@@ -57,25 +65,46 @@ public class CameraActivity extends Activity {
 			finish();
 		}
 
-		preview = new CameraPreview(this,
-				(SurfaceView) findViewById(R.id.surfaceView));
-		preview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
-		((FrameLayout) findViewById(R.id.layout)).addView(preview);
-		preview.setKeepScreenOn(true);
+		Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+				.getDefaultDisplay();
+		deviceHeight = display.getHeight();
 
-		// Autofocus Message
-		Toast.makeText(ctx, getString(R.string.CamWithAutoFocus),
-				Toast.LENGTH_LONG).show();
+		btnCapture = (ImageButton) findViewById(R.id.btnCapture);
+		btnCapture.setOnClickListener(btnCaptureOnClickListener);
 
-		buttonClick = (ImageButton) findViewById(R.id.btnCaptureImage);
+		// Getting the sensor service.
+		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-		buttonClick.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				camera.takePicture(shutterCallback, null,
-						new CapturePictureHandler(getApplicationContext()));
-			}
-		});
+		createCamera();
+	}
+
+	private void createCamera() {
+		// Create an instance of Camera
+		if (mCamera == null) {
+            mCamera = getCameraInstance();
+        }
+
+		// Create our Preview view and set it as the content of our activity.
+		if (mPreview == null) {
+			mPreview = new CameraPreview(this, mCamera);
+		}
+
+		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+
+		// Calculating the width of the preview so it is proportional.
+		float widthFloat = (float) (deviceHeight) * 4 / 3;
+		int width = Math.round(widthFloat);
+
+		// Resizing the LinearLayout so we can make a proportional preview. This
+		// approach is not 100% perfect because on devices with a really small
+		// screen the the image will still be distorted - there is place for
+		// improvment.
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+				width, deviceHeight);
+		preview.setLayoutParams(layoutParams);
+
+		// Adding the camera preview
+		preview.addView(mPreview);
 
 	}
 
@@ -95,51 +124,60 @@ public class CameraActivity extends Activity {
 		}
 	}
 
-	/**
-	 * Helper method to access the camera returns null if it cannot get the
-	 * camera or does not exist
-	 * 
-	 * @return
-	 */
-	private Camera getCameraInstance() {
-		Camera camera = null;
-		int numCams = Camera.getNumberOfCameras();
-		if (numCams > 0) {
-			try {
-				camera = Camera.open(0);
-			} catch (Exception e) {
-				// cannot get camera or does not exist
-			}
-		}
-		return camera;
-	}
-
-	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		try {
-			camera = getCameraInstance();
-			camera.startPreview();
-			preview.setCamera(camera);
-		} catch (RuntimeException ex) {
-			Toast.makeText(ctx, getString(R.string.noCamSupported),
-					Toast.LENGTH_LONG).show();
-		}
+
+		// Creating the camera
+		createCamera();
+
 	}
 
 	@Override
 	protected void onPause() {
-		if (camera != null) {
-			camera.stopPreview();
-			preview.setCamera(null);
-			camera.release();
-			camera = null;
-		}
+		
+
+		// release the camera immediately on pause event
+		releaseCamera();
+
+		// removing the inserted view - so when we come back to the app we
+		// won't have the views on top of each other.
+		
+			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+			preview.removeAllViews();
+		
+		
+		if (mCamera != null) {
+	        mCamera.setPreviewCallback(null);
+	        mPreview.getHolder().removeCallback(mPreview);
+	        mCamera.release();
+	    }
+
 		super.onPause();
 	}
 
-	
+	private void releaseCamera() {
+		if (mCamera != null) {
+			mCamera.stopPreview();
+			mPreview.setCamera(null);
+			mCamera.release(); // release the camera for other applications
+			mCamera = null;
+		}
+	}
+
+	/**
+	 * A safe way to get an instance of the Camera object.
+	 */
+	public static Camera getCameraInstance() {
+		Camera camera = null;
+		try {
+			camera = Camera.open();
+		} catch (Exception e) {
+
+		}
+		return camera;
+	}
+
 	ShutterCallback shutterCallback = new ShutterCallback() {
 		public void onShutter() {
 			// Log.d(TAG, "onShutter'd");

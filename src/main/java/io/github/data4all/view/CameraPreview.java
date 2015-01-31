@@ -10,8 +10,6 @@ import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * This class serves as Previewclass for the camera . This class creates the
@@ -21,23 +19,22 @@ import android.view.ViewGroup;
  * @author: Andre Koch
  */
 
-public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
+public class CameraPreview extends SurfaceView implements
+		SurfaceHolder.Callback {
 	private final String TAG = "CameraPreview";
+	private SurfaceHolder mHolder;
+	private Camera mCamera;
+	private boolean previewIsRunning;
 
-	SurfaceView mSurfaceView;
-	SurfaceHolder mHolder;
 	Size mPreviewSize;
 	List<Size> mSupportedPreviewSizes;
-	Camera mCamera;
 
-	CameraPreview(Context context, SurfaceView sv) {
+	public CameraPreview(Context context, Camera camera) {
 		super(context);
-
-		mSurfaceView = sv;
-		// addView(mSurfaceView);
-
-		mHolder = mSurfaceView.getHolder();
-		mHolder.addCallback(this);
+		this.mCamera = camera;
+		this.mHolder = this.getHolder();
+		this.mHolder.addCallback(this);
+		this.mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 
 	public void setCamera(Camera camera) {
@@ -77,54 +74,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		}
 	}
 
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		if (changed && getChildCount() > 0) {
-			final View child = getChildAt(0);
-
-			final int width = r - l;
-			final int height = b - t;
-
-			int previewWidth = width;
-			int previewHeight = height;
-			if (mPreviewSize != null) {
-				previewWidth = mPreviewSize.width;
-				previewHeight = mPreviewSize.height;
-			}
-
-			// Center the child SurfaceView within the parent.
-			if (width * previewHeight > height * previewWidth) {
-				final int scaledChildWidth = previewWidth * height
-						/ previewHeight;
-				child.layout((width - scaledChildWidth) / 2, 0,
-						(width + scaledChildWidth) / 2, height);
-			} else {
-				final int scaledChildHeight = previewHeight * width
-						/ previewWidth;
-				child.layout(0, (height - scaledChildHeight) / 2, width,
-						(height + scaledChildHeight) / 2);
-			}
-		}
-	}
-
-	public void surfaceCreated(SurfaceHolder holder) {
-		// The Surface has been created, acquire the camera and tell it where
-		// to draw.
-		try {
-			if (mCamera != null) {
-				mCamera.setPreviewDisplay(holder);
-			}
-		} catch (IOException exception) {
-			Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
-		}
-	}
-
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		// Surface will be destroyed when we return, so stop the preview.
-		if (mCamera != null) {
-			mCamera.stopPreview();
-		}
-	}
 
 	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
 		final double ASPECT_TOLERANCE = 0.1;
@@ -161,15 +110,82 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		return optimalSize;
 	}
 
-	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-		if (mCamera != null) {
-			Camera.Parameters parameters = mCamera.getParameters();
-			parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-			requestLayout();
+	public void surfaceCreated(SurfaceHolder holder) {
+		// The Surface has been created, now tell the camera where to draw the
+		// preview.
+		try {
+			this.mCamera.setPreviewDisplay(holder);
+		} catch (IOException exception) {
+			Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
+		}
 
-			mCamera.setParameters(parameters);
-			mCamera.startPreview();
+	}
+	
+	
+	
+	
+
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// If your preview can change or rotate, take care of those events here.
+		// Make sure to stop the preview before resizing or reformatting it.
+
+		if (mHolder.getSurface() == null) {
+			// preview surface does not exist
+			return;
+		}
+
+		// stop preview before making changes
+		try {
+			mCamera.stopPreview();
+		} catch (Exception e) {
+			// ignore: tried to stop a non-existent preview
+		}
+
+		// make any resize, rotate or reformatting changes here
+
+		// start preview with new settings
+		try {
+			if (mCamera != null) {
+				Camera.Parameters parameters = mCamera.getParameters();
+				parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
+				requestLayout();
+
+				mCamera.setParameters(parameters);
+				mCamera.startPreview();
+			}
+
+		} catch (Exception e) {
+			Log.d("DG_DEBUG",
+					"Error starting camera preview: " + e.getMessage());
 		}
 	}
+	
+	
+	
+	public void surfaceDestroyed(SurfaceHolder holder) {
+        myStopPreview();
+        mCamera.release();
+        mCamera = null;
+    }
+	
+	
+	// safe call to start the preview
+	   // if this is called in onResume, the surface might not have been created yet
+	   // so check that the camera has been set up too.
+	   public void myStartPreview() {
+	       if (!previewIsRunning && (mCamera != null)) {
+	           mCamera.startPreview();
+	           previewIsRunning = true;
+	       }
+	   }
+
+	   // same for stopping the preview
+	   public void myStopPreview() {
+	       if (previewIsRunning && (mCamera != null)) {
+	           mCamera.stopPreview();
+	           previewIsRunning = false;
+	       }
+	   }
 
 }

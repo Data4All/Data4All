@@ -1,12 +1,14 @@
 package io.github.data4all.util;
 
-import io.github.data4all.logger.Log;
-
 import java.io.IOException;
 import java.util.List;
 
+import io.github.data4all.logger.Log;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
