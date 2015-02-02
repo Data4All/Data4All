@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2015 Data4All
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
@@ -9,24 +24,30 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
-/*
- * this activity will measures the tilting motion and orientation of a mobile phone(accelerometer)
- * and the rate or rotation in rad/s around a device's x, y, and z axis(Gyroscope).
- */
+/**
+* this activity will measures the tilting motion and 
+* orientation of a mobile phone(accelerometer) and 
+* the rate or rotation in rad/s around a device's
+*  x, y, and z axis(Gyroscope).
+*/
 public class SensorActivity extends Activity implements SensorEventListener {
 
 	private SensorManager sManager;
 
 	// for accelerometer values
-	TextView xCoor;
-	TextView yCoor;
-	TextView zCoor;
+	private TextView xCoor;
+	private TextView yCoor;
+	private TextView zCoor;
 
 	// for gyroscope values
-	TextView x;
-	TextView y;
-	TextView z;
+	private TextView x;
+	private TextView y;
+	private TextView z;
+	
+	// last index of event.values
+	public	static final int LAST_INDEX = 2;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sensor);
@@ -44,34 +65,43 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		z = (TextView) findViewById(R.id.z);
 
 	}
-
+	
+    /*
+     * (non-Javadoc)
+     * @see android.hardware.
+     * SensorEventListener#onAccuracyChanged(android.hardware.Sensor, int)
+     */
+	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// do something here, if sensor accuracy change
+		// do something here, if sensor accuracy change(not implemented)
 	}
-
+     
+	@Override
 	public void onSensorChanged(SensorEvent event) {
+		 
 		synchronized (this) {
 
 			// check sensor type and assign directions
-			switch (event.sensor.getType()) {
-			case Sensor.TYPE_ACCELEROMETER:
+			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 				xCoor.setText("Acceleration x :"
 						+ Float.toString(event.values[0]));
 				yCoor.setText("Acceleration y:"
 						+ Float.toString(event.values[1]));
 				zCoor.setText("Acceleration z:"
-						+ Float.toString(event.values[2]));
-				break;
-			case Sensor.TYPE_GYROSCOPE:
-				x.setText("Gyroscope x in rad/s:"
-						+ Float.toString(event.values[0]));
-				y.setText("Gyroscope y in rad/s:"
-						+ Float.toString(event.values[1]));
-				z.setText("Gyroscope z in rad/s:"
-						+ Float.toString(event.values[2]));
-				break;
-
+						+ Float.toString(event.values[LAST_INDEX]));
+			} else {
+				if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+					x.setText("Gyroscope x in rad/s:"
+							+ Float.toString(event.values[0]));
+					y.setText("Gyroscope y in rad/s:"
+							+ Float.toString(event.values[1]));
+					z.setText("Gyroscope z in rad/s:"
+							+ Float.toString(event.values[LAST_INDEX]));
+				} else {
+					return;
+				}
 			}
+			
 		}
 	}
 
