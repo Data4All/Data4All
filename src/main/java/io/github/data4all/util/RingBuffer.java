@@ -23,7 +23,7 @@ package io.github.data4all.util;
  * @author konerman
  *
  * @param T
- *          the 
+ *            the
  */
 public class RingBuffer<T> {
 
@@ -46,7 +46,7 @@ public class RingBuffer<T> {
      * creates the ringpuffer.
      * 
      * @param capacity
-     *          the maximum of items in the Ringbuffer
+     *            the maximum of items in the Ringbuffer
      */
     @SuppressWarnings("unchecked")
     public RingBuffer(int capacity) {
@@ -61,7 +61,7 @@ public class RingBuffer<T> {
      * adds a new Element.
      * 
      * @param value
-     *          the element that is added.
+     *            the element that is added.
      */
     public void put(T value) {
         if (buffer.length > 0) {
@@ -78,15 +78,13 @@ public class RingBuffer<T> {
 
     }
 
-    
     /**
      * get the object of the given position.
      * 
      * @param position
-     *              the position of the object you want to get 
-     * @return T
-     *              the object at the position
-     */             
+     *            the position of the object you want to get
+     * @return T the object at the position
+     */
 
     public T get(int position) {
         if (getSize() > 0) {

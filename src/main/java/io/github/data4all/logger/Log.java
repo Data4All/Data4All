@@ -165,6 +165,5 @@ public class Log {
         result.append(tag);
         return result.toString();
     }
-    
-  
+
 }

@@ -32,6 +32,9 @@ public class DeviceOrientation implements Parcelable {
     /** rotation around Y axis. */
     private float roll;
 
+    /** constants for comparison */
+    private final static double EPSILON = 0.00001;
+
     private long timestamp;
 
     /**
@@ -86,19 +89,20 @@ public class DeviceOrientation implements Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        return (o == this)
-                || ((o instanceof DeviceOrientation)
-                        && azimuth == ((DeviceOrientation) o).getAzimuth()
-                        && pitch == ((DeviceOrientation) o).getPitch()
-                        && roll == ((DeviceOrientation) o).getRoll()
-                        && timestamp == ((DeviceOrientation) o).getTimestamp() && this
-                        .hashCode() == o.hashCode());
-    }
+        if (o == this) {
+            return true;
+        }
+        if ((o instanceof DeviceOrientation)
+                && (Math.abs(azimuth - ((DeviceOrientation) o).getAzimuth()) < EPSILON)
+                && (Math.abs(pitch - ((DeviceOrientation) o).getPitch()) < EPSILON)
+                && (Math.abs(roll - ((DeviceOrientation) o).getRoll()) < EPSILON)
+                && timestamp == ((DeviceOrientation) o).getTimestamp()
+                && this.hashCode() == o.hashCode()) {
+            return true;
 
-    public boolean equalsTo(float azimuth, float pitch, float roll,
-            long timestamp) {
-        return this.azimuth == azimuth && this.pitch == pitch
-                && this.timestamp == timestamp && this.roll == roll;
+        } else {
+            return false;
+        }
     }
 
     @Override

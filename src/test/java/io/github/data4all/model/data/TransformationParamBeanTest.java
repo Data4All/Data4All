@@ -36,9 +36,9 @@ import android.os.Parcel;
 public class TransformationParamBeanTest {
 
     /**
-     * Create a new Parcel to save/parcelable the testRelationMember,
-     * afterwards a new relation member is created from the parcel and we check
-     * if it contains all attributes.
+     * Create a new Parcel to save/parcelable the testRelationMember, afterwards
+     * a new relation member is created from the parcel and we check if it
+     * contains all attributes.
      */
     @Test
     public void test_parcelable_transformationbean() {

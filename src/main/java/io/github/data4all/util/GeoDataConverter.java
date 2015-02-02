@@ -36,7 +36,8 @@ public class GeoDataConverter {
      * minute second) format. For example -79.948862 becomes
      * 79/1,56/1,55903/1000
      * 
-     * @param deg the given latitude or longitude in degrees
+     * @param deg
+     *            the given latitude or longitude in degrees
      * 
      * @return the given latitude or longitude in DMS
      */
@@ -63,7 +64,8 @@ public class GeoDataConverter {
     /**
      * Convert the latitude or latitude from DMS into degrees.
      * 
-     * @param stringDMS the given latitude or longitude in DMS
+     * @param stringDMS
+     *            the given latitude or longitude in DMS
      * 
      * @return the given latitude or longitude in degrees
      */
@@ -84,7 +86,8 @@ public class GeoDataConverter {
         // Get the second value
         final String[] stringS = dms[2].split("/", 2);
         final Double s0 = Double.valueOf(stringS[0]);
-        final Double s1 = Double.valueOf(stringS[1].substring(0, stringS[1].length()));
+        final Double s1 = Double.valueOf(stringS[1].substring(0,
+                stringS[1].length()));
         final Double floatS = s0 / s1;
 
         result = Double.valueOf(floatD + (floatM / 60) + (floatS / 3600));

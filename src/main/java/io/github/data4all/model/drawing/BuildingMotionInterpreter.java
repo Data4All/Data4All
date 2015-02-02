@@ -42,7 +42,8 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      * Creates an BuildingMotionInterpreter with the specified transformation
      * utility.
      * 
-     * @param pointTrans the transformation utility
+     * @param pointTrans
+     *            the transformation utility
      */
     public BuildingMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;

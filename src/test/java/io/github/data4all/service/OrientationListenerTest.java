@@ -25,11 +25,10 @@ import org.robolectric.annotation.Config;
 
 import android.content.Intent;
 
-
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
 public class OrientationListenerTest {
-	
+
     /**
      * Test basic startup/shutdown of Service
      */
@@ -41,10 +40,9 @@ public class OrientationListenerTest {
         OrientationListener orientationListener = new OrientationListener();
         orientationListener.onStartCommand(startIntent, 0, 0);
 
-        assertEquals("io.github.data4all.service.OrientationListener", startIntent
-                .getComponent().getClassName());
+        assertEquals("io.github.data4all.service.OrientationListener",
+                startIntent.getComponent().getClassName());
 
     }
-    
-    
+
 }

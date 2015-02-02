@@ -1,18 +1,15 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.util;
 
 import java.util.ArrayList;
@@ -41,10 +38,10 @@ public final class MapUtil {
 
     /**
      * Returns the Center of the given OsmElement.
-     *  
+     * 
      * @param element
-     *            the OsmElement whose center should be calculated 
-     * @return the Center of the OsmElement 
+     *            the OsmElement whose center should be calculated
+     * @return the Center of the OsmElement
      */
     public static GeoPoint getCenterFromOsmElement(OsmElement element) {
         return getBoundingBoxForOsmElement(element).getCenter();
@@ -64,7 +61,7 @@ public final class MapUtil {
             array.add(node.toGeoPoint());
             return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) array);
         } else if (elem instanceof Way) {
-             final Way way = (Way) elem;
+            final Way way = (Way) elem;
             return BoundingBoxE6.fromGeoPoints(way.getUnsortedGeoPoints());
         }
         return null;

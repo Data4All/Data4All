@@ -271,24 +271,25 @@ public abstract class OsmElement implements Parcelable {
      * Writes the osmId and the osmVersion to the given parcel
      */
     public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(osmId);
-		dest.writeLong(osmVersion);
-		dest.writeInt(tags.size());
-		for (String s: tags.keySet()) {
-			dest.writeString(s);
-			dest.writeString(tags.get(s));
-		}
-		dest.writeTypedList(parentRelations);
-	}
-	
+        dest.writeLong(osmId);
+        dest.writeLong(osmVersion);
+        dest.writeInt(tags.size());
+        for (String s : tags.keySet()) {
+            dest.writeString(s);
+            dest.writeString(tags.get(s));
+        }
+        dest.writeTypedList(parentRelations);
+    }
+
     /**
      * Constructor to create a osm element from a parcel
+     * 
      * @param in
      */
     protected OsmElement(Parcel in) {
-    	osmId = in.readLong();
-    	osmVersion = in.readLong();
-    	tags = new TreeMap<String, String>();
+        osmId = in.readLong();
+        osmVersion = in.readLong();
+        tags = new TreeMap<String, String>();
         int count = in.readInt();
         for (int i = 0; i < count; i++) {
             tags.put(in.readString(), in.readString());

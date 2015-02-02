@@ -64,13 +64,13 @@ public class GPSservice extends Service implements LocationListener {
         if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             // second value is minimum of time, third value is minimum of meters
-            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance,
-                    this);
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime,
+                    minDistance, this);
         }
 
         if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime,
-                    minDistance, this);
+            lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    minTime, minDistance, this);
         }
     }
 
@@ -87,22 +87,22 @@ public class GPSservice extends Service implements LocationListener {
         wakeLock.release();
 
     }
-    
+
     @Override
     public void onLocationChanged(Location loc) {
         Optimizer.putLoc(loc);
     }
-    
+
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // Not interested in provider status
     }
-    
+
     @Override
     public void onProviderEnabled(String provider) {
         // TODO Auto-generated method stub
     }
-    
+
     @Override
     public void onProviderDisabled(String provider) {
         Toast.makeText(getBaseContext(),

@@ -84,8 +84,7 @@ public class WayMotionInterpreter implements MotionInterpreter {
             for (int i = 1; i < polygon.size(); i++) {
                 final Point p = polygon.get(i);
 
-                if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY())
-                        <= COMBINE_VARIATION) {
+                if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY()) <= COMBINE_VARIATION) {
                     // The point is in range of the current mid, add him to the
                     // combined point
                     final float midSumX = mid.getX() * count + p.getX();

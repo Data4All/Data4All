@@ -45,11 +45,10 @@ public final class NetworkState {
         if (context == null) {
             throw new IllegalArgumentException("context is null");
         } else {
-            final ConnectivityManager connectivityManager =
-                    (ConnectivityManager) context
-                            .getSystemService(Context.CONNECTIVITY_SERVICE);
-            final NetworkInfo activeNetworkInfo =
-                    connectivityManager.getActiveNetworkInfo();
+            final ConnectivityManager connectivityManager = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            final NetworkInfo activeNetworkInfo = connectivityManager
+                    .getActiveNetworkInfo();
             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
     }

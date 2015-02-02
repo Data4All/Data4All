@@ -42,7 +42,6 @@ public class User {
         this.setOauthTokenSecret(oauthTokenSecret);
     }
 
- 
     public User(String username, String oauthToken, String oauthTokenSecret) {
         this.username = username;
         this.oauthToken = oauthToken;
@@ -85,7 +84,7 @@ public class User {
     public void setLoggedIn(boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
     }
-     
+
     public String getOAuthToken() {
         return oauthToken;
     }

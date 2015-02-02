@@ -36,17 +36,18 @@ import java.util.List;
 public class PointMotionInterpreter implements MotionInterpreter {
 
     private PointToCoordsTransformUtil pointTrans;
-    
+
     /**
      * Creates an PointMotionInterpreter with the specified transformation
      * utility.
      * 
-     * @param pointTrans the transformation utility
+     * @param pointTrans
+     *            the transformation utility
      */
     public PointMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -79,13 +80,13 @@ public class PointMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public OsmElement create(List<Point> polygon) {
-        //The list contains only one Node which then will be returned
+        // The list contains only one Node which then will be returned
         return pointTrans.transform(polygon).get(0);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
     @Override

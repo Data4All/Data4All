@@ -32,7 +32,7 @@ public class MapViewActivityTest {
     MapViewActivity activity;
 
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         this.activity = Robolectric.buildActivity(MapViewActivity.class).get();
     }
 

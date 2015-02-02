@@ -17,9 +17,9 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
-import io.github.data4all.model.map.MapLine; 
-import io.github.data4all.model.map.MapMarker; 
-import io.github.data4all.model.map.MapPolygon; 
+import io.github.data4all.model.map.MapLine;
+import io.github.data4all.model.map.MapMarker;
+import io.github.data4all.model.map.MapPolygon;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
@@ -42,6 +42,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -78,13 +79,22 @@ public class MapActivity extends BasicActivity {
 
     // Last known ZoomLevel
     protected int actualZoomLevel;
+    
+    // Last known ZoomLevel Variable name
+    protected static final String ZOOM_LEVEL_NAME = "actualZoomLevel";
 
     // Last known Center Latitude
-    protected double actualCenterLatitude;
+    protected double actCentLat;
+
+    // Last known Center Latitude Variable Name
+    protected static final String CENT_LAT = "actCentLat";
 
     // Last known Center Longitude
-    protected double actualCenterLongitude;
+    protected double actCentLong;
 
+    // Last known Center Longitude Variable Name
+    protected static final String CENT_LON = "actCentLon";
+    
     // Last known Center Geopoint
     protected IGeoPoint actualCenter;
 
@@ -106,21 +116,22 @@ public class MapActivity extends BasicActivity {
     // Fill Color for Polygons
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
-    // Default OpenStreetMap TileSource
-    protected static final ITileSource OSM_TILESRC = TileSourceFactory.MAPNIK;
-
     // Default Satellite Map Tilesource
     protected static final OnlineTileSourceBase SAT_MAP = new MapBoxTileSource(
             "MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
             19, 256, ".png");
+    // Default OpenStreetMap TileSource
     protected static final ITileSource DEF_TILESRC = TileSourceFactory.MAPNIK;
+
+    /**
+     * Default constructor.
+     */
+    public MapActivity() {
+        super();
+    }
 
     protected void setUpMapView() {
         mapView = (MapView) this.findViewById(R.id.mapview);
-
-        // Set Maptilesource
-        Log.i(TAG, "Set Maptilesource to " + OSM_TILESRC.name());
-        mapView.setTileSource(OSM_TILESRC);
 
         // Add Satellite Map TileSource
         MapBoxTileSource.retrieveMapBoxMapId(this);
@@ -149,7 +160,6 @@ public class MapActivity extends BasicActivity {
 
         // Set actual Center
         if (this.getMyLocation() != null) {
-            Log.i(TAG, "Set actual Center to " + this.getMyLocation());
             actualCenter = this.getMyLocation();
         }
 
@@ -160,7 +170,7 @@ public class MapActivity extends BasicActivity {
      * Removes an Overlay from the Map.
      *
      * @param overlay
-     *            the Overlay which should be removed  from the map
+     *            the Overlay which should be removed from the map
      **/
     public void removeOverlayFromMap(Overlay overlay) {
         if (mapView.getOverlays().contains(overlay)) {
@@ -266,13 +276,13 @@ public class MapActivity extends BasicActivity {
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         Log.i(TAG, "Save actual zoom level: " + actualZoomLevel);
-        state.putSerializable("actualZoomLevel", actualZoomLevel);
+        state.putSerializable(ZOOM_LEVEL_NAME, actualZoomLevel);
 
-        Log.i(TAG, "Save actual Center Latitude: " + actualCenterLatitude);
-        state.putSerializable("actualCenterLatitude", actualCenterLatitude);
+        Log.i(TAG, "Save actual Center Latitude: " + actCentLat);
+        state.putSerializable(CENT_LAT, actCentLat);
 
-        Log.i(TAG, "Save actual Center Longitude: " + actualCenterLongitude);
-        state.putSerializable("actualCenterLongitude", actualCenterLongitude);
+        Log.i(TAG, "Save actual Center Longitude: " + actCentLong);
+        state.putSerializable(CENT_LON, actCentLong);
 
     }
 
@@ -282,11 +292,11 @@ public class MapActivity extends BasicActivity {
 
         Log.i(TAG, "Set actual Center Latitude: "
                 + mapView.getMapCenter().getLatitude());
-        actualCenterLatitude = mapView.getMapCenter().getLatitude();
+        actCentLat = mapView.getMapCenter().getLatitude();
 
         Log.i(TAG, "Set actual Center Longitude: "
                 + mapView.getMapCenter().getLongitude());
-        actualCenterLongitude = mapView.getMapCenter().getLongitude();
+        actCentLong = mapView.getMapCenter().getLongitude();
 
         Log.i(TAG, "Set actual Zoom Level: " + mapView.getZoomLevel());
         actualZoomLevel = mapView.getZoomLevel();
@@ -311,6 +321,68 @@ public class MapActivity extends BasicActivity {
         }
         return null;
 
+    }
+
+    /**
+     * Set the Zoom Level of the MapView.
+     *
+     * @param zoom
+     *            the Zoomlevel which should be set
+     **/
+    protected void setZoomLevel(int zoom) {
+        // Set Zoomlevel
+        Log.i(TAG, "Set Zoomlevel to " + zoom);
+        mapController.setZoom(zoom);
+    }
+
+    /**
+     * Set the Center of the MapView.
+     *
+     * @param point
+     *            the Center which should be set
+     **/
+    protected void setCenter(IGeoPoint point) {
+        // Set ZoomCenter
+        Log.i(TAG, "Set Mapcenter to " + point.toString());
+        mapController.setCenter(point);
+    }
+
+    /**
+     * Switch between Satellite Map and OSM Map.
+     **/
+    protected void switchMaps() {
+        // switch to OSM Map
+        final String mvp = mapView.getTileProvider().getTileSource().name();
+        if ("MapBoxSatelliteLabelled".equals(mvp)) {
+            Log.i(TAG, "Set Maptilesource to " + mvp);
+            mapView.setTileSource(DEF_TILESRC);
+            final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
+            bt.setImageResource(R.drawable.ic_sat);
+            mapView.postInvalidate();
+            // switch to Satellite Map
+        } else {
+            Log.i(TAG, "Set Maptilesource to "
+                    + mapView.getTileProvider().getTileSource().name());
+            mapView.setTileSource(SAT_MAP);
+            final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
+            bt.setImageResource(R.drawable.ic_map);
+            mapView.postInvalidate();
+        }
+    }
+
+    protected void loadState(Bundle savedInstanceState) {
+        if (savedInstanceState.getSerializable(ZOOM_LEVEL_NAME) != null) {
+            actualZoomLevel = (Integer) savedInstanceState
+                    .getSerializable(ZOOM_LEVEL_NAME);
+        }
+        if (savedInstanceState.getSerializable(CENT_LON) != null
+                && savedInstanceState.getSerializable(CENT_LAT) != null) {
+            actCentLat = (Double) savedInstanceState
+                    .getSerializable(CENT_LAT);
+            actCentLong = (Double) savedInstanceState
+                    .getSerializable(CENT_LON);
+            actualCenter = new GeoPoint(actCentLat, actCentLong);
+        }
     }
 
 }

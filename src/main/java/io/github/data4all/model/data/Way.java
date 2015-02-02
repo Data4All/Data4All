@@ -56,7 +56,6 @@ public class Way extends OsmElement {
         nodes = new LinkedList<Node>();
     }
 
-
     /**
      * Adds a new node to the way. If the last node equals the new node you have
      * to use append to define a closed way.
@@ -200,32 +199,32 @@ public class Way extends OsmElement {
     public Node getFirstNode() {
         return nodes.get(0);
     }
-	/**
-	 * Returns all points which belong to the way.
-	 * 
-	 * @return list of points
-	 */
-	public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
-		List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
-		for (Node n : nodes){
-			points.add(n.toGeoPoint());
-		}
-		return points;
-	}
 
-	/**
-	 * Returns all points which belong to the way.
-	 * 
-	 * @return list of points
-	 */
-	public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
-		ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
-		for (Node n : nodes){
-			points.add(n.toGeoPoint());
-		}
-		return points;
-	}
-	
+    /**
+     * Returns all points which belong to the way.
+     * 
+     * @return list of points
+     */
+    public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
+        List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
+        for (Node n : nodes) {
+            points.add(n.toGeoPoint());
+        }
+        return points;
+    }
+
+    /**
+     * Returns all points which belong to the way.
+     * 
+     * @return list of points
+     */
+    public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
+        ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
+        for (Node n : nodes) {
+            points.add(n.toGeoPoint());
+        }
+        return points;
+    }
 
     /**
      * Returns the last node of this way.
@@ -350,9 +349,8 @@ public class Way extends OsmElement {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<Way> CREATOR
-            = new Parcelable.Creator<Way>() {
-    	
+    public static final Parcelable.Creator<Way> CREATOR = new Parcelable.Creator<Way>() {
+
         public Way createFromParcel(Parcel in) {
             return new Way(in);
         }
@@ -365,26 +363,27 @@ public class Way extends OsmElement {
     /**
      * Writes the nodes to the given parcel.
      */
-	public void writeToParcel(Parcel dest, int flags) {		
-		super.writeToParcel(dest, flags);
-		dest.writeTypedList(nodes);
-	}
-	
-	/**
-	 * Constructor to create a way from a parcel.
-	 * @param in
-	 */
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeTypedList(nodes);
+    }
+
+    /**
+     * Constructor to create a way from a parcel.
+     * 
+     * @param in
+     */
     private Way(Parcel in) {
-    	super(in);
+        super(in);
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
     }
-    
-    public String toString(){
-    	String s = "";
-    	for(Node n : nodes){
-    		s += n.toString() + " ";
-    	}
-    	return s;
+
+    public String toString() {
+        String s = "";
+        for (Node n : nodes) {
+            s += n.toString() + " ";
+        }
+        return s;
     }
 }
