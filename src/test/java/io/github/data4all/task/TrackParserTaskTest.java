@@ -27,17 +27,16 @@ import android.os.AsyncTask;
 public class TrackParserTaskTest {
 
     public Context context;
-    public Track   track;
-    public Track   tracki;
+    public Track track;
+    public Track emptyTrack;
 
     @Before
     public void init() {
         context = Robolectric.application.getApplicationContext();
         track = setUpTrack();
-        tracki = new Track();
+        emptyTrack = new Track();
     }
 
-    // TODO check if this test makes sense ;)
     @Test
     public void trackParserAsyncTaskExecutionTest()
             throws InterruptedException, ExecutionException {
@@ -54,9 +53,31 @@ public class TrackParserTaskTest {
         // can run asserts on result now
         Assert.assertTrue("Should be 1, was: " + asyncTask.get(),
                 asyncTask.get() == 1);
-        Assert.assertTrue("Toast was not the same", ShadowToast.getTextOfLatestToast().equals(
-                "Saved a track"));
+        Assert.assertTrue("Toast was not the same", ShadowToast
+                .getTextOfLatestToast().equals("Saved a track"));
 
+    }
+
+    @Test
+    public void emptyTrackParserAsyncTaskExecutionTest()
+            throws InterruptedException, ExecutionException {
+
+        AsyncTask<Void, Void, Integer> asyncTask = new TrackParserTask(context,
+                emptyTrack);
+
+        // start task
+        asyncTask.execute();
+
+        // wait for task code
+        Robolectric.runBackgroundTasks();
+
+        // can run asserts on result now
+        Assert.assertTrue("Should be 0, was: " + asyncTask.get(),
+                asyncTask.get() == 0);
+        Assert.assertTrue(
+                "Toast was not the same",
+                ShadowToast.getTextOfLatestToast().equals(
+                        "Did not save track. Empty Track."));
     }
 
     @Test
@@ -64,10 +85,16 @@ public class TrackParserTaskTest {
         int i = new TrackParserTask(context, track).parseTrack(context, track);
         Assert.assertTrue("Should be 1, was: " + i, i == 1);
     }
+    
+    @Test
+    public void parseEmptyTrackMethodTest() {
+        int i = new TrackParserTask(context, emptyTrack).parseTrack(context, emptyTrack);
+        Assert.assertTrue("Should be 0, was: " + i, i == 0);
+    }
 
     // method for to create example track
     private Track setUpTrack() {
-        Track track = new Track(context);
+        Track track = new Track();
 
         Location aloc = new Location("provider");
         Location bloc = new Location("provider");
