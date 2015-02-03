@@ -1,5 +1,7 @@
 package io.github.data4all.util;
 
+import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
@@ -19,16 +21,39 @@ public abstract class Tagging {
      * 
      * @return the Keys of Tags
      */
-    public static List<String> getKeys() {
-        List<String> list = new ArrayList<String>();
-        Map<String, String> map = new HashMap<String, String>();
-        map = Tags.getClassifiedTags();
-        Iterator<String> keySetIterator = map.keySet().iterator();
-        while (keySetIterator.hasNext()) {
-            String key = keySetIterator.next();
-            list.add(key);
-        }
-        return list;
+    public static List<Tag> getKeys(int type) {
+        switch (type) {
+		case 1:
+			return Tags.getAllNodeTags();
+		case 2:
+			return Tags.getAllWayTags();
+		case 3:
+			return Tags.getAllAreaTags();
+		case 4: 
+			return Tags.getAllAreaTags();
+		}
+		return null;
+       
+    }
+    
+    public static String []  getArrayKeys(int type){
+    	final String [] array = new String [getKeys(type).size()];
+    	for (int i = 0; i < getKeys(type).size(); i++) {
+			array [i] = getKeys(type).get(i).getKey();
+		}
+		
+    	return array;
+    	
+    }
+    
+    public static Map<String, ClassifiedTag>  getMapKeys(int type){
+    	Map<String, ClassifiedTag>  map = new HashMap<String, ClassifiedTag>();
+    	for (int i = 0; i<getKeys(type).size(); i++) {
+			map.put(getKeys(type).get(i).getKey(), (ClassifiedTag) getKeys(type).get(i));
+		}
+		
+    	return map;
+    	
     }
 
     /**
@@ -39,7 +64,7 @@ public abstract class Tagging {
      */
     public static List<String> getValues(String key) {
         Map<String, String> map = new HashMap<String, String>();
-        map = Tags.getClassifiedTags();
+        //map = Tags.getClassifiedTags();
         String[] split;
         split = map.get(key).split(",");
         List<String> list = new ArrayList<String>(Arrays.asList(split));
@@ -58,30 +83,40 @@ public abstract class Tagging {
         return map;
     }
 
-    public static Map<String, String> addressToTag(List<String> addressTags,
-            Map<String, String> map) {
-        String[] [] tag;
-        tag = Tags.getAddressTags();
-        for (int i = 0; i < tag.length; i++) {
+    public static Map<Tag, String> addressToTag(List<String> addressTags,
+            Map<Tag, String> map) {
+        ArrayList<Tag> tag;
+        tag = (ArrayList<Tag>) Tags.getAllAddressTags();
+        for (int i = 0; i < tag.size(); i++) {
             if (!addressTags.get(i).equals("")) {
-                map.put(tag[i] [0], addressTags.get(i));
+                map.put(tag.get(i), addressTags.get(i));
             }
         }
         return map;
 
     }
 
-    public static Map<String, String> contactToTag(List<String> contactTags,
-            Map<String, String> map) {
-        String[] [] tag;
-        tag = Tags.getContactTags();
-        for (int i = 0; i < tag.length; i++) {
+    public static Map<Tag, String> contactToTag(List<String> contactTags,
+            Map<Tag, String> map) {
+        ArrayList<Tag> tag;
+       tag = (ArrayList<Tag>) Tags.getAllContactTags();
+        for (int i = 0; i < tag.size(); i++) {
             if (!contactTags.get(i).equals("")) {
-                map.put(tag[i] [0], contactTags.get(i));
+                map.put(tag.get(i), contactTags.get(i));
             }
         }
         return map;
 
+    }
+    
+    public static Boolean isClassifiedTag(String key, CharSequence [] array){
+    	
+    	for (int i = 0; i < array.length; i++) {
+			if(array [i].equals(key)){
+				return true;
+			}
+				
+		}return false;
     }
 
 }

@@ -3,17 +3,12 @@
     android:id="@+id/main_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/android"
     android:orientation="vertical" >
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/android" />
+        style="@style/imageViewTakedPicture"
+        android:contentDescription="@string/returnToActualPosition" />
 
     <io.github.data4all.view.TouchView
         android:id="@+id/touchView1"
@@ -27,52 +22,58 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true">
-
-        <ImageButton
-            android:id="@+id/imageButton3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
-            android:onClick="onClickPath"
-            android:src="@drawable/ic_way" />
+        android:layout_alignParentRight="true" >
 
         <ImageButton
             android:id="@+id/imageButton1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@null"
-            android:onClick="onClickPoint"
-            android:src="@drawable/ic_point" />
+            style="@style/imageButtonDrawPoint"
+            android:contentDescription="@string/drawPoint"
+            android:onClick="onClickPoint" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickBuilding"
-            android:text="Gebäude" />
+        <ImageButton
+            android:id="@+id/imageButton2"
+            style="@style/imageButtonDrawWay"
+            android:contentDescription="@string/drawWay"
+            android:onClick="onClickPath" />
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickArea"
-            android:text="Fläche" />
+        <ImageButton
+            android:id="@+id/imageButton3"
+            style="@style/imageButtonDrawArea"
+            android:contentDescription="@string/drawArea"
+            android:onClick="onClickArea" />
 
+        <ImageButton
+            android:id="@+id/imageButton4"
+            style="@style/imageButtonDrawBuilding"
+            android:contentDescription="@string/drawBuilding"
+            android:onClick="onClickBuilding" />
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="wrap_content"
+        android:id="@+id/imageButton5"
+        style="@style/imageButtonOkay"
+        android:contentDescription="@string/noDescription"
+        android:onClick="onClickOkay" />
+    
+    <Button
+        android:id="@+id/redobtn"
+        style="?android:attr/buttonStyleSmall"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/undobtn"
+        android:onClick="onClickRedo"
+        android:enabled="false"
+        android:text="Redo" />
+
+    <Button
+        android:id="@+id/undobtn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="@null"
-        android:onClick="onClickOkay"
-        android:src="@drawable/ic_ok" />
+        android:onClick="onClickUndo"
+        android:enabled="false"
+        android:text="Undo" />
 
 </RelativeLayout>

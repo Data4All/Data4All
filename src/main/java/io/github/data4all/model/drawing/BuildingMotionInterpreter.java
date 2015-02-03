@@ -1,10 +1,13 @@
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.util.PointToCoordsTransformUtil;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import android.graphics.Canvas;
-import android.graphics.Paint;
 
 /**
  * This BuildingMotionInterpreter is a MotionInterpreter for buildings<br/>
@@ -14,70 +17,15 @@ import android.graphics.Paint;
  * If a motion is not a dot, the end point is used
  * 
  * @author tbrose
+ * @version 2
  * @see MotionInterpreter
  */
-public class BuildingMotionInterpreter implements MotionInterpreter<Void> {
+public class BuildingMotionInterpreter implements MotionInterpreter {
 
-    /**
-     * The paint to draw the points with
-     */
-    private final Paint pointPaint = new Paint();
+    PointToCoordsTransformUtil pointTrans;
 
-    /**
-     * The paint to draw the path with
-     */
-    private final Paint pathPaint = new Paint();
-
-    public BuildingMotionInterpreter() {
-        // Draw dark blue points
-        pointPaint.setColor(POINT_COLOR);
-
-        // Draw semi-thick light blue lines
-        pathPaint.setColor(PATH_COLOR);
-        pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
-     * .Canvas, java.util.List)
-     */
-    public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
-        List<Point> areaPoints = new ArrayList<Point>();
-
-        // Collect the first three motions
-        for (DrawingMotion motion : drawingMotions) {
-            if (motion.getPathSize() != 0 && motion.isPoint()) {
-                // for dots calculate the average of the given points
-                areaPoints.add(average(motion));
-            } else {
-                // for a path use the last point
-                areaPoints.add(motion.getEnd());
-            }
-            if (areaPoints.size() > 2) {
-                break;
-            }
-        }
-
-        if (areaPoints.size() == 3) {
-            addFourthPoint(areaPoints);
-        }
-
-        // first draw all lines
-        for (int i = 0; i < areaPoints.size(); i++) {
-            // The next point in the polygon
-            Point b = areaPoints.get((i + 1) % areaPoints.size());
-            Point a = areaPoints.get(i);
-
-            canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(), pathPaint);
-        }
-
-        // afterwards draw the points
-        for (Point p : areaPoints) {
-            canvas.drawCircle(p.getX(), p.getY(), POINT_RADIUS, pointPaint);
-        }
+    public BuildingMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
 
     /**
@@ -99,35 +47,64 @@ public class BuildingMotionInterpreter implements MotionInterpreter<Void> {
         areaPoints.add(d);
     }
 
-    /**
-     * Calculates the average point over all points in the given motion
+    /*
+     * (non-Javadoc)
      * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
+     * @see
+     * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
+     * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        ArrayList<Point> result;
+
+        if (drawingMotion == null) {
+            return interpreted;
+        } else if (interpreted == null) {
+            result = new ArrayList<Point>();
+        } else if (interpreted.size() > 3) {
+            return interpreted;
         } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
+            result = new ArrayList<Point>(interpreted);
         }
+
+        if (drawingMotion.getPathSize() != 0 && drawingMotion.isPoint()) {
+            // for dots use the average of the given points
+            result.add(drawingMotion.average());
+        } else {
+            // for a path use the last point
+            result.add(drawingMotion.getEnd());
+        }
+
+        if (result.size() == 3) {
+            addFourthPoint(result);
+        }
+
+        return result;
+    }
+
+    /**
+     * @author sbollen (edited by tbrose)
+     */
+    @Override
+    public AbstractDataElement create(List<Point> polygon) {
+        final PolyElement element = new PolyElement(-1, PolyElementType.BUILDING);
+
+        List<Node> nodeList = pointTrans.transform(polygon);
+        nodeList.add(nodeList.get(0));
+        element.addNodes(nodeList, false);
+        return element;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
      */
-    public Void create(List<DrawingMotion> drawingMotions) {
-        return null;
+    @Override
+    public boolean isArea() {
+        return true;
     }
 
 }

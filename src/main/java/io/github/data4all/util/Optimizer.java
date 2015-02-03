@@ -5,7 +5,8 @@ import android.location.Location;
 
 /**
  * Optimize the position and location data of the device. Save the latest data
- * in a RingBuffer and optimize these to have one perfect location and position object
+ * in a RingBuffer and optimize these to have one perfect location and position
+ * object
  * 
  * @author sbollen
  *
@@ -18,25 +19,22 @@ public class Optimizer {
     // a new Ringbuffer for saving the DevicePosition objects
     static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(
             20);
-    
+
     // The timeDifference at which one location should be significant older
     // or newer than another one, 1000 is one second
-    final double TIME_DIFFERENCE = 1000;
-
-    public Optimizer() {
-    }
+    static final double TIME_DIFFERENCE = 1000;
 
     /*
      * Put a Location object to the Location RingBuffer
      */
-    public void putLoc(Location loc) {
+    public static void putLoc(Location loc) {
         locRB.put(loc);
     }
 
     /*
      * Put a DeviceOrientation object to the DeviceOrientation RingBuffer
      */
-    public void putPos(DeviceOrientation pos) {
+    public static void putPos(DeviceOrientation pos) {
         posRB.put(pos);
     }
 
@@ -45,7 +43,7 @@ public class Optimizer {
      * 
      * @return the current best location
      */
-    public Location currentBestLoc() {
+    public static Location currentBestLoc() {
         return calculateBestLoc();
     }
 
@@ -54,7 +52,7 @@ public class Optimizer {
      * 
      * @return the current best DevicePosition
      */
-    public DeviceOrientation currentBestPos() {
+    public static DeviceOrientation currentBestPos() {
         return posRB.get(posRB.getIndex());
     }
 
@@ -63,13 +61,14 @@ public class Optimizer {
      * 
      * @return the best location of all saved locations
      */
-    public Location calculateBestLoc() {
+    public static Location calculateBestLoc() {
         Location lastLoc = locRB.getLast();
         Location bestLoc = lastLoc;
         for (Object location : locRB.getAll()) {
             Location loc = (Location) location;
-            //this location must be better than the actual best and last one
-            if (loc != null && isBetterLocation(loc, lastLoc) && isBetterLocation(loc, bestLoc)) {
+            // this location must be better than the actual best and last one
+            if (loc != null && isBetterLocation(loc, lastLoc)
+                    && isBetterLocation(loc, bestLoc)) {
                 bestLoc = loc;
             }
         }
@@ -85,7 +84,7 @@ public class Optimizer {
      * @param currentBestLocation The current Location fix, to which you want to
      * compare the new one
      */
-    protected boolean isBetterLocation(Location location,
+    protected static boolean isBetterLocation(Location location,
             Location currentBestLocation) {
 
         if (currentBestLocation == null) {
@@ -135,7 +134,7 @@ public class Optimizer {
     }
 
     /* Checks whether two providers are the same */
-    private boolean isSameProvider(String provider1, String provider2) {
+    private static boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
             return provider2 == null;
         }

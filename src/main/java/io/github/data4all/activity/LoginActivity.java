@@ -7,14 +7,12 @@ import io.github.data4all.task.RetrieveUsernameTask;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,7 +24,7 @@ import android.widget.Toast;
  * @author sb
  *
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends BasicActivity {
 
     final String              TAG = getClass().getSimpleName();
     private SharedPreferences prefs;
@@ -102,12 +100,6 @@ public class LoginActivity extends Activity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
     @Override
     protected void onDestroy() {
@@ -150,5 +142,5 @@ public class LoginActivity extends Activity {
         ed.commit();
         Log.i(TAG, "SharedPreferences:" + prefs.getAll());
     }
-
 }
+
