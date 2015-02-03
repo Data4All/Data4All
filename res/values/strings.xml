@@ -63,4 +63,12 @@
     <string name="noCamSupported">Sorry Your device doesnt support camera</string>
     <string name="CamWithAutoFocus">This Camera use Autofocus</string>
 
+    
+    <string name="start_image_capture">Take a New Picture</string>
+    <string name="capture_image">Snap it!</string>
+    <string name="save_image">Save Picture</string>
+    <string name="recapture_image">Retake Picture</string>
+    <string name="capturing_image">Taking New Picture</string>
+    <string name="done">Done</string>
+    
 </resources>

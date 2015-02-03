@@ -2,19 +2,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
 
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    
     <ImageButton
-        android:id="@+id/btnCaptureImage"
+        android:id="@+id/btnCapture"
         style="@style/imageButtonCamAction"
         android:layout_gravity="center_horizontal|bottom"
         android:background="@null"
         android:contentDescription="@string/noDescription"
         android:src="@drawable/ic_camaction" />
+    
 
 </FrameLayout>
