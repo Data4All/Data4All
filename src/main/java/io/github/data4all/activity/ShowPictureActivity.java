@@ -1,18 +1,18 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -56,8 +57,8 @@ public class ShowPictureActivity extends BasicActivity {
     private static final int WAY = 2;
     private static final int AREA = 4;
     private static final String OSM_ELEMENT = "OSM_ELEMENT";
-    private Button undo;
-    private Button redo;
+    private ImageButton undo;
+    private ImageButton redo;
 
     Bitmap bitmap;
 
@@ -76,8 +77,8 @@ public class ShowPictureActivity extends BasicActivity {
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
         intent = new Intent(this, MapPreviewActivity.class);
-        undo = (Button) findViewById(R.id.undobtn);
-        redo = (Button) findViewById(R.id.redobtn);
+        undo = (ImageButton) findViewById(R.id.undobtn);
+        redo = (ImageButton) findViewById(R.id.redobtn);
 
         touchView.setUndoRedoListener(new UndoRedoListener() {
 

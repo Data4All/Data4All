@@ -131,19 +131,19 @@
 
     
      <style name="imageButtonUndoPictureActivity" parent="imageButtonStyle">
-        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentLeft">true</item>
-        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:src">@drawable/ic_undo</item>
     </style>
     
      
       <style name="imageButtonRedoPictureActivity" parent="imageButtonStyle">
-        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentLeft">true</item>
-        <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">120dp</item>
         <item name="android:src">@drawable/ic_redo</item>
     </style>
     

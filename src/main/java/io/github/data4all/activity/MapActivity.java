@@ -1,10 +1,13 @@
 /* 
  * Copyright (c) 2014, 2015 Data4All
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -79,7 +82,7 @@ public class MapActivity extends BasicActivity {
 
     // Last known ZoomLevel
     protected int actualZoomLevel;
-    
+
     // Last known ZoomLevel Variable name
     protected static final String ZOOM_LEVEL_NAME = "actualZoomLevel";
 
@@ -94,7 +97,7 @@ public class MapActivity extends BasicActivity {
 
     // Last known Center Longitude Variable Name
     protected static final String CENT_LON = "actCentLon";
-    
+
     // Last known Center Geopoint
     protected IGeoPoint actualCenter;
 
@@ -377,10 +380,8 @@ public class MapActivity extends BasicActivity {
         }
         if (savedInstanceState.getSerializable(CENT_LON) != null
                 && savedInstanceState.getSerializable(CENT_LAT) != null) {
-            actCentLat = (Double) savedInstanceState
-                    .getSerializable(CENT_LAT);
-            actCentLong = (Double) savedInstanceState
-                    .getSerializable(CENT_LON);
+            actCentLat = (Double) savedInstanceState.getSerializable(CENT_LAT);
+            actCentLong = (Double) savedInstanceState.getSerializable(CENT_LON);
             actualCenter = new GeoPoint(actCentLat, actCentLong);
         }
     }
