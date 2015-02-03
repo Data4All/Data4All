@@ -95,7 +95,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + " TEXT NOT NULL," + KEY_VALUE + " TEXT," + " PRIMARY KEY ("
                 + KEY_OSMID + ", " + KEY_KEY + "))";
         String CREATE_POLYELEMENT_TABLE = "CREATE TABLE " + TABLE_POLYELEMENT
-                + " (" + KEY_OSMID + " TEXT PRIMARY KEY," + KEY_TYPE + " TEXT,"
+                + " (" + KEY_OSMID + " TEXT PRIMARY KEY," + KEY_TYPE + " TEXT"
                 + ")";
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
@@ -273,7 +273,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db.close();
 
-        createTagMap(node.getOsmId(), node.getTags());
+//        createTagMap(node.getOsmId(), node.getTags());
     }
 
     /**
@@ -360,7 +360,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
 
         // count += updateOsmElement(node.getOsmId(), node.getOsmVersion());
-        count += updateTagSortedMap(node.getOsmId(), node.getTags());
+//        count += updateTagSortedMap(node.getOsmId(), node.getTags());
 
         return count;
     }
@@ -401,24 +401,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param way
      *            the {@link Way} object from which the data will be taken
      */
-    public void createWay(Way way) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-
-        values.put(KEY_OSMID, way.getOsmId());
-
-        for (Node n : way.getNodes()) {
-            values.put(KEY_NODEID, n.getOsmId());
-            db.insert(TABLE_WAY, null, values);
-        }
-
-        createOsmElement(way.getOsmId(), way.getOsmVersion());
-        createParentRelation(way.getOsmId(), way.getParentRelations());
-        createTagSortedMap(way.getOsmId(), way.getTags());
-
-        db.close();
-    }
+//    public void createWay(Way way) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//
+//        values.put(KEY_OSMID, way.getOsmId());
+//
+//        for (Node n : way.getNodes()) {
+//            values.put(KEY_NODEID, n.getOsmId());
+//            db.insert(TABLE_WAY, null, values);
+//        }
+//
+//        createOsmElement(way.getOsmId(), way.getOsmVersion());
+//        createParentRelation(way.getOsmId(), way.getParentRelations());
+//        createTagSortedMap(way.getOsmId(), way.getTags());
+//
+//        db.close();
+//    }
 
     /**
      * This method returns the data for a specific way stored in the database
@@ -428,43 +428,43 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the id of the desired way
      * @return a {@link Way} object for the desired way
      */
-    public Way getWay(long id) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        Cursor cursor = db.query(TABLE_WAY, new String[] { KEY_OSMID,
-                KEY_NODEID }, KEY_OSMID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
-
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        List<Node> allNodes = getAllNode();
-        List<Node> wayNodes = new ArrayList<Node>();
-
-        for (Node n : allNodes) {
-
-            if (!cursor.isFirst()) {
-                cursor.moveToNext();
-            }
-            if (Long.parseLong(cursor.getString(1)) == n.getOsmId()) {
-                wayNodes.add(n);
-            }
-
-        }
-
-        Way way = new Way(Long.parseLong(cursor.getString(0)),
-                getOsmElementOsmVersion(id));
-        way.addNodes(wayNodes, false);
-
-        cursor.close();
-
-        way.setTags(getTagSortedMap(id));
-        way.addParentRelations(getParentRelationList(id));
-
-        db.close();
-
-        return way;
-    }
+//    public Way getWay(long id) {
+//        SQLiteDatabase db = getReadableDatabase();
+//
+//        Cursor cursor = db.query(TABLE_WAY, new String[] { KEY_OSMID,
+//                KEY_NODEID }, KEY_OSMID + "=?",
+//                new String[] { String.valueOf(id) }, null, null, null, null);
+//
+//        if (cursor != null)
+//            cursor.moveToFirst();
+//
+//        List<Node> allNodes = getAllNode();
+//        List<Node> wayNodes = new ArrayList<Node>();
+//
+//        for (Node n : allNodes) {
+//
+//            if (!cursor.isFirst()) {
+//                cursor.moveToNext();
+//            }
+//            if (Long.parseLong(cursor.getString(1)) == n.getOsmId()) {
+//                wayNodes.add(n);
+//            }
+//
+//        }
+//
+//        Way way = new Way(Long.parseLong(cursor.getString(0)),
+//                getOsmElementOsmVersion(id));
+//        way.addNodes(wayNodes, false);
+//
+//        cursor.close();
+//
+//        way.setTags(getTagSortedMap(id));
+//        way.addParentRelations(getParentRelationList(id));
+//
+//        db.close();
+//
+//        return way;
+//    }
 
     /**
      * This method deletes a specific way from the database.
@@ -472,19 +472,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param way
      *            the {@link Way} object whose data should be deleted
      */
-    public void deleteWay(Way way) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        db.delete(TABLE_WAY, KEY_OSMID + "=?",
-                new String[] { String.valueOf(way.getOsmId()) });
-
-        db.close();
-
-        deleteOsmElement(way.getOsmId());
-        deleteParentRelationList(way.getOsmId());
-        deleteTagSortedMap(way.getOsmId());
-        deleteRelationMemberByRefId(way.getOsmId());
-    }
+//    public void deleteWay(Way way) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        db.delete(TABLE_WAY, KEY_OSMID + "=?",
+//                new String[] { String.valueOf(way.getOsmId()) });
+//
+//        db.close();
+//
+//        deleteOsmElement(way.getOsmId());
+//        deleteParentRelationList(way.getOsmId());
+//        deleteTagSortedMap(way.getOsmId());
+//        deleteRelationMemberByRefId(way.getOsmId());
+//    }
 
     /**
      * This method returns the number of ways currently stored in the database.
@@ -509,29 +509,29 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link Way} object for which the data should be updated
      * @return the number of rows that have been updated
      */
-    public int updateWay(Way way) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-
-        int count = 0;
-
-        values.put(KEY_OSMID, way.getOsmId());
-
-        for (Node n : way.getNodes()) {
-            values.put(KEY_NODEID, n.getOsmId());
-            count += db.update(TABLE_WAY, values, KEY_OSMID + "=?",
-                    new String[] { String.valueOf(way.getOsmId()) });
-        }
-
-        db.close();
-
-        count += updateOsmElement(way.getOsmId(), way.getOsmVersion());
-        count += updateParentRelation(way.getOsmId(), way.getParentRelations());
-        count += updateTagSortedMap(way.getOsmId(), way.getTags());
-
-        return count;
-    }
+//    public int updateWay(Way way) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//
+//        int count = 0;
+//
+//        values.put(KEY_OSMID, way.getOsmId());
+//
+//        for (Node n : way.getNodes()) {
+//            values.put(KEY_NODEID, n.getOsmId());
+//            count += db.update(TABLE_WAY, values, KEY_OSMID + "=?",
+//                    new String[] { String.valueOf(way.getOsmId()) });
+//        }
+//
+//        db.close();
+//
+//        count += updateOsmElement(way.getOsmId(), way.getOsmVersion());
+//        count += updateParentRelation(way.getOsmId(), way.getParentRelations());
+//        count += updateTagSortedMap(way.getOsmId(), way.getTags());
+//
+//        return count;
+//    }
 
     /**
      * This method returns a list of all ways stored in the database and creates
@@ -539,35 +539,35 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * 
      * @return a list of ways
      */
-    public List<Way> getAllWay() {
-        List<Way> ways = new ArrayList<Way>();
-
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_WAY, null);
-
-        List<Node> allNodes = getAllNode();
-        List<Node> wayNodes = new ArrayList<Node>();
-
-        if (cursor.moveToFirst()) {
-            do {
-                for (Node n : allNodes) {
-                    if (Long.parseLong(cursor.getString(1)) == n.getOsmId()) {
-                        wayNodes.add(n);
-                    }
-                }
-                Way way = new Way(Long.parseLong(cursor.getString(0)),
-                        getOsmElementOsmVersion(Long.parseLong(cursor
-                                .getString(0))));
-                way.addNodes(wayNodes, false);
-                way.setTags(getTagSortedMap(way.getOsmId()));
-                way.addParentRelations(getParentRelationList(way.getOsmId()));
-                ways.add(way);
-            } while (cursor.moveToNext());
-        }
-
-        db.close();
-        return ways;
-    }
+//    public List<Way> getAllWay() {
+//        List<Way> ways = new ArrayList<Way>();
+//
+//        SQLiteDatabase db = getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_WAY, null);
+//
+//        List<Node> allNodes = getAllNode();
+//        List<Node> wayNodes = new ArrayList<Node>();
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                for (Node n : allNodes) {
+//                    if (Long.parseLong(cursor.getString(1)) == n.getOsmId()) {
+//                        wayNodes.add(n);
+//                    }
+//                }
+//                Way way = new Way(Long.parseLong(cursor.getString(0)),
+//                        getOsmElementOsmVersion(Long.parseLong(cursor
+//                                .getString(0))));
+//                way.addNodes(wayNodes, false);
+//                way.setTags(getTagSortedMap(way.getOsmId()));
+//                way.addParentRelations(getParentRelationList(way.getOsmId()));
+//                ways.add(way);
+//            } while (cursor.moveToNext());
+//        }
+//
+//        db.close();
+//        return ways;
+//    }
 
     // -------------------------------------------------------------------------
     // POLY ELEMENT CRUD
