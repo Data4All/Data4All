@@ -9,6 +9,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.User;
 import android.content.ContentValues;
 import android.content.Context;
@@ -36,6 +38,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_NODE = "nodes";
     private static final String TABLE_OSMELEMENT = "osmelements";
     private static final String TABLE_OSMTAGMAP = "osmtagmap";
+    private static final String TABLE_POLYELEMENT = "polyelements";
     private static final String TABLE_USER = "users";
     private static final String TABLE_WAY = "ways";
 
@@ -52,6 +55,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     // OSMTagMap Column Names
     private static final String KEY_KEY = "key";
     private static final String KEY_VALUE = "value";
+
+    // PolyElement Column Names
+    private static final String KEY_TYPE = "type";
 
     // User Column Names
     private static final String KEY_USERNAME = "username";
@@ -88,6 +94,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + " (" + KEY_OSMID + " INTEGER NOT NULL," + KEY_KEY
                 + " TEXT NOT NULL," + KEY_VALUE + " TEXT," + " PRIMARY KEY ("
                 + KEY_OSMID + ", " + KEY_KEY + "))";
+        String CREATE_POLYELEMENT_TABLE = "CREATE TABLE " + TABLE_POLYELEMENT
+                + " (" + KEY_OSMID + " TEXT PRIMARY KEY," + KEY_TYPE + " TEXT,"
+                + ")";
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                 + KEY_TOKENSECRET + " TEXT" + ")";
@@ -96,6 +105,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_NODES_TABLE);
         db.execSQL(CREATE_WAYS_TABLE);
         db.execSQL(CREATE_OSMTAGMAPS_TABLE);
+        db.execSQL(CREATE_POLYELEMENT_TABLE);
         db.execSQL(CREATE_USERS_TABLE);
     }
 
@@ -108,6 +118,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WAY);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_OSMELEMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
 
         // Recreate tables
         onCreate(db);
@@ -262,7 +273,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db.close();
 
-        // createTagSortedMap(node.getOsmId(), node.getTags());
+        createTagMap(node.getOsmId(), node.getTags());
     }
 
     /**
@@ -309,7 +320,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db.close();
 
-        // deleteTagSortedMap(node.getOsmId());
+        deleteTagSortedMap(node.getOsmId());
         // deleteNodeInWay(node.getOsmId());
     }
 
@@ -349,7 +360,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
 
         // count += updateOsmElement(node.getOsmId(), node.getOsmVersion());
-        // count += updateTagSortedMap(node.getOsmId(), node.getTags());
+        count += updateTagSortedMap(node.getOsmId(), node.getTags());
 
         return count;
     }
@@ -558,19 +569,119 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return ways;
     }
 
+    // -------------------------------------------------------------------------
+    // POLY ELEMENT CRUD
+
+    public void createPolyElement(PolyElement polyElement) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_OSMID, polyElement.getOsmId());
+        values.put(KEY_TYPE, polyElement.getType().toString());
+
+        db.insert(TABLE_POLYELEMENT, null, values);
+
+        db.close();
+    }
+
+    public PolyElement getPolyElement(long id) {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_POLYELEMENT, new String[] { KEY_OSMID,
+                KEY_TYPE }, KEY_OSMID + "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        PolyElement polyElement = new PolyElement(Long.parseLong(cursor
+                .getString(0)), PolyElementType.valueOf(cursor.getString(1)));
+
+        cursor.close();
+        db.close();
+
+        return polyElement;
+    }
+
+    public void deletePolyElement(PolyElement polyElement) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
+                new String[] { String.valueOf(polyElement.getOsmId()) });
+
+        db.close();
+
+        deleteTagSortedMap(polyElement.getOsmId());
+
+    }
+
+    public int getPolyElementCount() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT, null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count;
+    }
+
+    public int updatePolyElement(PolyElement polyElement) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_OSMID, polyElement.getOsmId());
+        values.put(KEY_TYPE, polyElement.getType().toString());
+
+        int count = db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
+                new String[] { String.valueOf(polyElement.getOsmId()) });
+        db.close();
+
+        // count += updateTagSortedMap(node.getOsmId(), node.getTags());
+
+        return count;
+    }
+
+    public List<PolyElement> getAllPolyElements() {
+
+        List<PolyElement> polyElements = new ArrayList<PolyElement>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                PolyElement polyElement = new PolyElement(Long.parseLong(cursor
+                        .getString(0)), PolyElementType.valueOf(cursor
+                        .getString(1)));
+                // node.setTags(getTagSortedMap(node.getOsmId()));
+                polyElements.add(polyElement);
+            } while (cursor.moveToNext());
+        }
+
+        db.close();
+        return polyElements;
+    }
+
     // ---Hilfsfunktionen----------------------------------------------------------------
 
     /**
-     * This method creates and stores the SortedMap of Tags of an OsmElement in
-     * the database.
+     * This method creates and stores a Map of Tags that belongs to a
+     * PolyElement in the database.
      * 
      * @param osmId
-     *            the id of the OsmElement object
+     *            the id of the PolyElement object
      * @param tags
      *            the SortedMap of tags of the OsmElement object
      * 
      */
-    private void createTagSortedMap(long osmId, SortedMap<String, String> tags) {
+    private void createTagMap(long osmId, SortedMap<String, String> tags) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
