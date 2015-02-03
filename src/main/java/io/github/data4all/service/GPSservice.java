@@ -1,9 +1,9 @@
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.DataBaseHandler;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
-import io.github.data4all.task.TrackParserTask;
 import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Context;
@@ -11,8 +11,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -22,6 +20,8 @@ import android.widget.Toast;
 public class GPSservice extends Service implements LocationListener {
 
     Optimizer optimizer = new Optimizer();
+    
+    DataBaseHandler dbHandler = new DataBaseHandler(this.getApplicationContext());
 
     private static final String TAG = "GPSservice";
 
@@ -32,7 +32,6 @@ public class GPSservice extends Service implements LocationListener {
 
     private WakeLock wakeLock;
 
-    // record gps for
     private Track track;
 
     @Override
@@ -47,7 +46,8 @@ public class GPSservice extends Service implements LocationListener {
 
         // new track is initialized and gets timestamp.
         // Does not contain any trackpoints yet
-        track = new Track(getApplicationContext());
+        track = new Track();
+        dbHandler.createTrack(track);
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -75,35 +75,44 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // when there is an existing track and it contains trackpoints, start
-        // the task to parse and save it
-        if (track != null && !track.getTrackPoints().isEmpty()) {
-            Log.d(TAG, "execute TrackParserTask");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                new TrackParserTask(getApplicationContext(), track)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            } else {
-                new TrackParserTask(getApplicationContext(), track).execute();
-            }
-        }
 
-        // Remove registratiuon for location updates
+        // Remove registration for location updates
         lmgr.removeUpdates(this);
 
         wakeLock.release();
     }
 
     public void onLocationChanged(Location loc) {
-        optimizer.putLoc(loc);
+        Optimizer.putLoc(loc);
 
-        // TODO check only for different lat lon values
-        // prevent from duplicate trackpoints
-        if (!track.getTrackPoints().contains(
-                new TrackPoint(optimizer.currentBestLoc()))) {
-            track.addTrackPoint(optimizer.currentBestLoc()); // add a trackpoint
-                                                             // to
-                                                             // a current track
+        Location tp = Optimizer.currentBestLoc();
+
+        // check if new Location is already stored
+        if (sameTrackPoints(track.getLastTrackPoint(), tp)) {
+            track.addTrackPoint(tp);
+            // After ten trackpoints updateDatabase
+            if ((track.getTrackPoints().size() % 10) == 0) {
+                dbHandler.updateTrack(track);
+            }
         }
+    }
+
+    /**
+     * Easy comparison of two TrackPoints. Only compares longitude and latitude.
+     * 
+     * @param point1
+     *            The first trackpoint
+     * @param point2
+     *            The second trackpoint
+     * @return true if lon and lat of the trackpoints are the same, else false
+     */
+    private boolean sameTrackPoints(TrackPoint point1, Location loc) {
+        TrackPoint point2 = new TrackPoint(loc);
+        if (point1.getLat() == point2.getLat()
+                && point1.getLon() == point2.getLon()) {
+            return true;
+        }
+        return false;
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -113,24 +122,28 @@ public class GPSservice extends Service implements LocationListener {
     public void onProviderEnabled(String provider) {
         if (track == null) {
             // start new track
-            track = new Track(getApplicationContext());
+            track = new Track();
+            dbHandler.createTrack(track);
         } else {
             // overrides old track with null and start a new track everytime gps
             // is enabled
             track = null;
-            track = new Track(getApplicationContext());
+            track = new Track();
+            dbHandler.createTrack(track);
         }
     }
 
     public void onProviderDisabled(String provider) {
+        // Remove registration for location updates
+        lmgr.removeUpdates(this);
         if (track.getTrackPoints().isEmpty()) {
             // track does not contain any trackpoints and gps is not available,
             // so clear track
+            dbHandler.deleteTrack(track);
             track = null;
         } else {
-            // Track with trackpoints exist, so start task to parse and save it
-            new TrackParserTask(getApplicationContext(), track).execute();
-
+            // Track with trackpoints exist, so save it to database
+            dbHandler.updateTrack(track);
             track = null; // override current track with null
         }
         // TODO localization

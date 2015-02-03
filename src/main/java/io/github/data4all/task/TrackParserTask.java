@@ -20,7 +20,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 /**
- * AsyncTask to save a Track to the internal memory Opens file and a
+ * AsyncTask to save a Track to the internal memory. Opens file and a
  * FileInputStream and writes as xml to this file.
  * 
  * @author sbrede
@@ -116,42 +116,6 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
         return str;
     }
 
-    private boolean checkOutputFile(Context context, Track track) {
-        String file = readData(context, track);
-        String end = file.substring(file.lastIndexOf("\n"));
-        if (end == "</gpx>") {
-            return true;
-        }
-        return false;
-    }
-    
-    private void appendEndToFile() {
-        String filename = track.getTrackName() + ".gpx";        
-        try {
-            FileOutputStream file = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            
-            PrintWriter writer = new PrintWriter(file);
-            String tmp = readData(context, track);
-            writer.print(tmp);
-            writer.print("\t\t</trkseg>\n");
-            writer.print("\t</trk>\n");
-            writer.print("</gpx>");
-            
-            writer.flush();
-            Log.i("TrackParser", "Data is flushed to :" + filename);
-            writer.close();
-            Log.i("TrackParser", "Writer is closed");
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "FileNotFoundException in appenEndToFile()");
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onPreExecute() {
-        super.onPreExecute();
-    }
-
     /*
      * Method to parse a Track to xml and save it as .gpx
      * 
@@ -159,8 +123,8 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
      * 
      * @param Track the track to parse
      * 
-     * @return -1 if something bad happens, 0 if track contains no trackpoints,
-     * 1 else
+     * @return -1 if something bad happens, 0 if track contains no {@link
+     * TrackPoint}, 1 else
      */
     public int parseTrack(Context context, Track track) {
         if (track.getTrackPoints().isEmpty()) {
@@ -210,6 +174,7 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
 
             writer.flush();
             Log.i("TrackParser", "Data is flushed to :" + filename);
+            Log.i("TrackParser", "File contains " + points.size() + " elements");
             writer.close();
             Log.i("TrackParser", "Writer is closed");
             return 1;
@@ -226,7 +191,6 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
         return parseTrack(context, track);
     }
 
-    // TODO not sure if this makes sense. depends on where the task is called
     @Override
     protected void onPostExecute(Integer result) {
         Log.d(TAG, "onPostExecute()");
@@ -246,17 +210,11 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
             Log.d(TAG, "Did not save track. Empty Track.");
             break;
         case 1:
-            if (checkOutputFile(context, track)) {
-                // TODO localization
-                Toast.makeText(context.getApplicationContext(),
-                        "Saved a track", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, readData(context, track));
-            } else {
-                appendEndToFile();
-                Log.e(TAG, "Saved incorrect Track. Incomplete file. Try again");
-            }
+            // TODO localization
+            Toast.makeText(context.getApplicationContext(), "Saved a track",
+                    Toast.LENGTH_SHORT).show();
+            Log.d(TAG, readData(context, track));
             break;
-
         default:
             break;
         }

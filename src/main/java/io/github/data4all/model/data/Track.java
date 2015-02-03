@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -63,9 +62,8 @@ public class Track implements Parcelable {
     }
 
     /**
-     * Constructor to create a Track.
-     * Name of the track will be the creation time.
-     * "yyyy_MM_dd_HH_mm_ss"
+     * Constructor to create a Track. Name of the track will be the creation
+     * time. "yyyy_MM_dd_HH_mm_ss"
      */
     public Track() {
         tracklist = new ArrayList<TrackPoint>();
@@ -81,10 +79,11 @@ public class Track implements Parcelable {
         return (new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()));
     }
 
-    
     /**
      * Adds a TrackPoint to the ArrayList of TrackPoints.
-     * @param location The Location
+     * 
+     * @param location
+     *            The Location
      */
     public void addTrackPoint(final Location location) {
         if (location != null) {
@@ -95,6 +94,18 @@ public class Track implements Parcelable {
 
     public List<TrackPoint> getTrackPoints() {
         return new ArrayList<TrackPoint>(tracklist);
+    }
+
+    /**
+     * Returns the latest trakpoint from this track
+     * 
+     * @return trackpoint The latest trackpoint in the list
+     */
+    public TrackPoint getLastTrackPoint() {
+        if (tracklist.isEmpty()) {
+            return null;
+        }
+        return tracklist.get(tracklist.size());
     }
 
     @Override
