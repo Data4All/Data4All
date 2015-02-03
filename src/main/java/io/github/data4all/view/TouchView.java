@@ -143,6 +143,7 @@ public class TouchView extends View {
             }
             undoUseable();
             redoUseable();
+            hasEnoughNodes();
         }
     }
 
@@ -364,35 +365,16 @@ public class TouchView extends View {
     }
 
     /**
-     * checks if the Polygon has the minimum amount of Nodes
+     * Returns <code>true</code> if the drawing has the minimum of nodes for its
+     * InterpretationType.
      * 
      * @author konerman
+     * 
+     * @return <code>true</code> if the polygon has enough nodes;
+     *         <code>false</code> otherwise
      */
     public boolean hasEnoughNodes() {
-        if (interpreter instanceof AreaMotionInterpreter && polygon.size() >= 3) {
-            Log.d(this.getClass().getSimpleName(),
-                    "has enough Nodes for an area");
-            return true;
-        }
-        if (interpreter instanceof BuildingMotionInterpreter
-                && polygon.size() >= 4) {
-            Log.d(this.getClass().getSimpleName(),
-                    "has enough Nodes for a building");
-            return true;
-        }
-        if (interpreter instanceof WayMotionInterpreter && polygon.size() >= 2) {
-            Log.d(this.getClass().getSimpleName(), "has enough Nodes for a way");
-            return true;
-
-        }
-        if (interpreter instanceof PointMotionInterpreter
-                && polygon.size() == 1) {
-            Log.d(this.getClass().getSimpleName(),
-                    "has enough Nodes for a point");
-            return true;
-        }
-
-        return false;
+        return interpreter.minNodes() <= polygon.size();
     }
 
     /**

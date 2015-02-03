@@ -24,6 +24,8 @@ public class AreaMotionInterpreter implements MotionInterpreter {
      */
     private static final String TAG = AreaMotionInterpreter.class
             .getSimpleName();
+    
+    public static final int MIN_NODES = 3;
 
     /**
      * The maximum angle-variation where a point is reduced.
@@ -202,5 +204,15 @@ public class AreaMotionInterpreter implements MotionInterpreter {
             result.addAll(drawingMotion.getPoints());
         }
         return reduce(result);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#minNodes()
+     */
+    @Override
+    public int minNodes() {
+        return MIN_NODES;
     }
 }

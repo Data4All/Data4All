@@ -8,6 +8,8 @@ import io.github.data4all.util.PointToCoordsTransformUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Color;
+
 /**
  * This BuildingMotionInterpreter is a MotionInterpreter for buildings.<br/>
  * 
@@ -22,7 +24,8 @@ import java.util.List;
 public class BuildingMotionInterpreter implements MotionInterpreter {
 
     private PointToCoordsTransformUtil pointTrans;
-
+    private final int MIN_NODES = 4;
+    
     /**
      * Creates an BuildingMotionInterpreter with the specified transformation
      * utility.
@@ -110,6 +113,16 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
     @Override
     public boolean isArea() {
         return true;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#minNodes()
+     */
+    @Override
+    public int minNodes() {
+        return MIN_NODES;
     }
 
 }

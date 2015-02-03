@@ -54,4 +54,14 @@ public interface MotionInterpreter {
      * @return if the polygon should be drawn as an area
      */
     boolean isArea();
+
+    /**
+     * Returns the specific number of nodes a Motion has to have to be a valid
+     * construct
+     * 
+     * @author konerman
+     * 
+     * @return the minimum of nodes
+     */
+    int minNodes();
 }
