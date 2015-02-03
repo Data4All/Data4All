@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import io.github.data4all.model.drawing.Point;
+import io.github.data4all.view.TouchView.InterpretationType;
 import io.github.data4all.view.TouchView.PointMover;
 
 import java.lang.reflect.Field;
@@ -142,4 +143,69 @@ public class TouchViewTest {
         assertThat(polygon.get(idx).getX(), is(5.0F));
         assertThat(polygon.get(idx).getY(), is(6.0F));
     }
+
+    @Test
+    public void hasEnoughNodes_BUILDING_false() {
+        polygon.clear();
+        touchview.setInterpretationType(InterpretationType.BUILDING);
+        polygon.add(point1);
+        assertThat(touchview.hasEnoughNodes(), is(false));
+    }
+
+    @Test
+    public void hasEnoughNodes_BUILDING_true() {
+        polygon.clear();
+        touchview.setInterpretationType(InterpretationType.BUILDING);
+        polygon.add(point1);
+        polygon.add(point2);
+        polygon.add(point3);
+        polygon.add(point4);
+        assertThat(touchview.hasEnoughNodes(), is(true));
+    }
+
+    @Test
+    public void hasEnoughNodes_AREA_false() {
+        polygon.clear();
+        touchview.setInterpretationType(InterpretationType.AREA);
+        assertThat(touchview.hasEnoughNodes(), is(false));
+    }
+
+    @Test
+    public void hasEnoughNodes_AREA_true() {
+        touchview.setInterpretationType(InterpretationType.AREA);
+        polygon.add(point1);
+        polygon.add(point2);
+        polygon.add(point3);
+        assertThat(touchview.hasEnoughNodes(), is(true));
+    }
+    
+    @Test
+    public void hasEnoughNodes_WAY_false() {
+        polygon.clear();
+        polygon.add(point1);
+        touchview.setInterpretationType(InterpretationType.WAY);
+        assertThat(touchview.hasEnoughNodes(), is(false));
+    }
+
+    @Test
+    public void hasEnoughNodes_WAY_true() {
+        touchview.setInterpretationType(InterpretationType.WAY);
+        polygon.add(point2);
+        assertThat(touchview.hasEnoughNodes(), is(true));
+    }
+    
+    @Test
+    public void hasEnoughNodes_POINT_false() {
+        polygon.clear();
+        touchview.setInterpretationType(InterpretationType.POINT);
+        assertThat(touchview.hasEnoughNodes(), is(false));
+    }
+
+    @Test
+    public void hasEnoughNodes_POINT_true() {
+        touchview.setInterpretationType(InterpretationType.POINT);
+        polygon.add(point1);
+        assertThat(touchview.hasEnoughNodes(), is(true));
+    }
+
 }
