@@ -20,8 +20,8 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 /**
- * AsyncTask to save a Track to the internal memory
- * Opens file and a FileInputStream and writes as xml to this file.
+ * AsyncTask to save a Track to the internal memory Opens file and a
+ * FileInputStream and writes as xml to this file.
  * 
  * @author sbrede
  *
@@ -38,7 +38,7 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
      * For conversion from UNIX epoch time and back
      */
     private static final SimpleDateFormat ISO8601FORMAT;
-    
+
     static {
         // Hardcode 'Z' timezone marker as otherwise '+0000' will be used, which
         // is invalid in GPX
@@ -49,17 +49,28 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
     /**
      * XML header.
      */
-    private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+    private static final String XML_HEADER = "<?xml "
+            + "version=\"1.0\" encoding=\"UTF-8\" ?>";
 
     /**
      * GPX opening tag
      */
-    private static final String OPENING_TAG = "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" "
+    private static final String OPENING_TAG = "<gpx "
+            + "xmlns=\"http://www.topografix.com/GPX/1/1\" "
             + "version=\"1.1\" "
             + "creator=\"Data4All - https://data4all.github.io/\" "
             + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-            + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd \">";
+            + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 "
+            + "http://www.topografix.com/GPX/1/1/gpx.xsd \">";
 
+    /**
+     * Constructor for this Task.
+     * 
+     * @param context
+     *            The context the task is started from
+     * @param track
+     *            The track which should be parsed
+     */
     public TrackParserTask(Context context, Track track) {
         this.context = context;
         this.track = track;
@@ -69,12 +80,11 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
      * Method for reading a track from memory. Return a string representation of
      * a saved track.
      * 
-     * @param Context context
+     * @param context The context of the application
      * 
-     * @param Track a track
+     * @param track A track
      * 
-     * @return String a track as string TODO Move to better place / not used
-     * here
+     * @return str A track as string
      */
     private String readData(Context context, Track track) {
         FileInputStream input = null;
@@ -106,10 +116,42 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
         return str;
     }
 
+    private boolean checkOutputFile(Context context, Track track) {
+        String file = readData(context, track);
+        String end = file.substring(file.lastIndexOf("\n"));
+        if (end == "</gpx>") {
+            return true;
+        }
+        return false;
+    }
+    
+    private void appendEndToFile() {
+        String filename = track.getTrackName() + ".gpx";        
+        try {
+            FileOutputStream file = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            
+            PrintWriter writer = new PrintWriter(file);
+            String tmp = readData(context, track);
+            writer.print(tmp);
+            writer.print("\t\t</trkseg>\n");
+            writer.print("\t</trk>\n");
+            writer.print("</gpx>");
+            
+            writer.flush();
+            Log.i("TrackParser", "Data is flushed to :" + filename);
+            writer.close();
+            Log.i("TrackParser", "Writer is closed");
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "FileNotFoundException in appenEndToFile()");
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onPreExecute() {
         super.onPreExecute();
     }
+
     /*
      * Method to parse a Track to xml and save it as .gpx
      * 
@@ -204,10 +246,15 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
             Log.d(TAG, "Did not save track. Empty Track.");
             break;
         case 1:
-            // TODO localization
-            Toast.makeText(context.getApplicationContext(), "Saved a track",
-                    Toast.LENGTH_SHORT).show();
-            Log.d(TAG, readData(context, track));
+            if (checkOutputFile(context, track)) {
+                // TODO localization
+                Toast.makeText(context.getApplicationContext(),
+                        "Saved a track", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, readData(context, track));
+            } else {
+                appendEndToFile();
+                Log.e(TAG, "Saved incorrect Track. Incomplete file. Try again");
+            }
             break;
 
         default:

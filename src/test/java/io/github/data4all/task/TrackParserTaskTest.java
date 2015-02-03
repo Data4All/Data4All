@@ -34,7 +34,7 @@ public class TrackParserTaskTest {
     public void init() {
         context = Robolectric.application.getApplicationContext();
         track = setUpTrack();
-        tracki = new Track(context);
+        tracki = new Track();
     }
 
     // TODO check if this test makes sense ;)
