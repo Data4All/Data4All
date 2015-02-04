@@ -124,10 +124,10 @@ public class TagActivity extends BasicActivity implements OnClickListener {
              * @return alertDialogBuilder
              * 
              * this method create a Item view Dialog. when ALL is a value, then
-             * create dialog with all classifiedTag or add a new suggestion
-             * to classifiedTag. when key was a building or a amenity,
-             * so create a new Dialog which contains more informations about the
-             * building
+             * create dialog with all classifiedTag. 
+             * when key was a building or a amenity,so create a new Dialog which 
+             * contains more informations about the building
+             * add a new suggestion
              * 
              */
             private AlertDialog.Builder createItemViewDialog(
