@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
@@ -49,6 +53,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     // Node Column Names
     private static final String KEY_LAT = "lat";
     private static final String KEY_LON = "lon";
+    private static final String KEY_NODEIDS = "nodeids";
 
     // OSMTagMap Column Names
     private static final String KEY_KEY = "key";
@@ -79,7 +84,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_DATAELEMENTS_TABLE = "CREATE TABLE " + TABLE_DATAELEMENT
-                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + ")";
+                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY" + ")";
         String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
                 + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
                 + KEY_LON + " REAL" + ")";
@@ -93,7 +98,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + KEY_OSMID + ", " + KEY_KEY + "))";
         String CREATE_POLYELEMENT_TABLE = "CREATE TABLE " + TABLE_POLYELEMENT
                 + " (" + KEY_OSMID + " TEXT PRIMARY KEY," + KEY_TYPE + " TEXT"
-                + ")";
+                + KEY_NODEID + " TEXT" + ")";
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                 + KEY_TOKENSECRET + " TEXT" + ")";
@@ -389,184 +394,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     // -------------------------------------------------------------------------
-    // WAY CRUD
-
-    /**
-     * This method creates and stores a new way in the database. The data is
-     * taken from the {@link Way} object that is passed to the method.
-     * 
-     * @param way
-     *            the {@link Way} object from which the data will be taken
-     */
-    // public void createWay(Way way) {
-    // SQLiteDatabase db = getWritableDatabase();
-    //
-    // ContentValues values = new ContentValues();
-    //
-    // values.put(KEY_OSMID, way.getOsmId());
-    //
-    // for (Node n : way.getNodes()) {
-    // values.put(KEY_NODEID, n.getOsmId());
-    // db.insert(TABLE_WAY, null, values);
-    // }
-    //
-    // createOsmElement(way.getOsmId(), way.getOsmVersion());
-    // createParentRelation(way.getOsmId(), way.getParentRelations());
-    // createTagSortedMap(way.getOsmId(), way.getTags());
-    //
-    // db.close();
-    // }
-
-    /**
-     * This method returns the data for a specific way stored in the database
-     * and creates the corresponding {@link Way} object.
-     * 
-     * @param id
-     *            the id of the desired way
-     * @return a {@link Way} object for the desired way
-     */
-    // public Way getWay(long id) {
-    // SQLiteDatabase db = getReadableDatabase();
-    //
-    // Cursor cursor = db.query(TABLE_WAY, new String[] { KEY_OSMID,
-    // KEY_NODEID }, KEY_OSMID + "=?",
-    // new String[] { String.valueOf(id) }, null, null, null, null);
-    //
-    // if (cursor != null)
-    // cursor.moveToFirst();
-    //
-    // List<Node> allNodes = getAllNode();
-    // List<Node> wayNodes = new ArrayList<Node>();
-    //
-    // for (Node n : allNodes) {
-    //
-    // if (!cursor.isFirst()) {
-    // cursor.moveToNext();
-    // }
-    // if (Long.parseLong(cursor.getString(1)) == n.getOsmId()) {
-    // wayNodes.add(n);
-    // }
-    //
-    // }
-    //
-    // Way way = new Way(Long.parseLong(cursor.getString(0)),
-    // getOsmElementOsmVersion(id));
-    // way.addNodes(wayNodes, false);
-    //
-    // cursor.close();
-    //
-    // way.setTags(getTagSortedMap(id));
-    // way.addParentRelations(getParentRelationList(id));
-    //
-    // db.close();
-    //
-    // return way;
-    // }
-
-    /**
-     * This method deletes a specific way from the database.
-     * 
-     * @param way
-     *            the {@link Way} object whose data should be deleted
-     */
-    // public void deleteWay(Way way) {
-    // SQLiteDatabase db = getWritableDatabase();
-    //
-    // db.delete(TABLE_WAY, KEY_OSMID + "=?",
-    // new String[] { String.valueOf(way.getOsmId()) });
-    //
-    // db.close();
-    //
-    // deleteOsmElement(way.getOsmId());
-    // deleteParentRelationList(way.getOsmId());
-    // deleteTagSortedMap(way.getOsmId());
-    // deleteRelationMemberByRefId(way.getOsmId());
-    // }
-
-    /**
-     * This method returns the number of ways currently stored in the database.
-     * 
-     * @return the number of ways
-     */
-    public int getWayCount() {
-        SQLiteDatabase db = getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_WAY, null);
-        int count = cursor.getCount();
-        cursor.close();
-        db.close();
-
-        return count;
-    }
-
-    /**
-     * This method updates the data for a specific way stored in the database.
-     * 
-     * @param way
-     *            the {@link Way} object for which the data should be updated
-     * @return the number of rows that have been updated
-     */
-    // public int updateWay(Way way) {
-    // SQLiteDatabase db = getWritableDatabase();
-    //
-    // ContentValues values = new ContentValues();
-    //
-    // int count = 0;
-    //
-    // values.put(KEY_OSMID, way.getOsmId());
-    //
-    // for (Node n : way.getNodes()) {
-    // values.put(KEY_NODEID, n.getOsmId());
-    // count += db.update(TABLE_WAY, values, KEY_OSMID + "=?",
-    // new String[] { String.valueOf(way.getOsmId()) });
-    // }
-    //
-    // db.close();
-    //
-    // count += updateOsmElement(way.getOsmId(), way.getOsmVersion());
-    // count += updateParentRelation(way.getOsmId(), way.getParentRelations());
-    // count += updateTagSortedMap(way.getOsmId(), way.getTags());
-    //
-    // return count;
-    // }
-
-    /**
-     * This method returns a list of all ways stored in the database and creates
-     * corresponding {@link Way} objects.
-     * 
-     * @return a list of ways
-     */
-    // public List<Way> getAllWay() {
-    // List<Way> ways = new ArrayList<Way>();
-    //
-    // SQLiteDatabase db = getReadableDatabase();
-    // Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_WAY, null);
-    //
-    // List<Node> allNodes = getAllNode();
-    // List<Node> wayNodes = new ArrayList<Node>();
-    //
-    // if (cursor.moveToFirst()) {
-    // do {
-    // for (Node n : allNodes) {
-    // if (Long.parseLong(cursor.getString(1)) == n.getOsmId()) {
-    // wayNodes.add(n);
-    // }
-    // }
-    // Way way = new Way(Long.parseLong(cursor.getString(0)),
-    // getOsmElementOsmVersion(Long.parseLong(cursor
-    // .getString(0))));
-    // way.addNodes(wayNodes, false);
-    // way.setTags(getTagSortedMap(way.getOsmId()));
-    // way.addParentRelations(getParentRelationList(way.getOsmId()));
-    // ways.add(way);
-    // } while (cursor.moveToNext());
-    // }
-    //
-    // db.close();
-    // return ways;
-    // }
-
-    // -------------------------------------------------------------------------
     // POLY ELEMENT CRUD
 
     /**
@@ -577,8 +404,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param polyElement
      *            the {@link PolyElement} object from which the data will be
      *            taken
+     * @throws JSONException
+     *             if JSON object can't be initialized
      */
-    public void createPolyElement(PolyElement polyElement) {
+    public void createPolyElement(PolyElement polyElement) throws JSONException { // TODO:
+                                                                                  // check
+        List<Long> nodeIDs = new ArrayList<Long>();
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -586,6 +417,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         values.put(KEY_OSMID, polyElement.getOsmId());
         values.put(KEY_TYPE, polyElement.getType().toString());
+
+        for (Node node : polyElement.getNodes()) {
+            nodeIDs.add(node.getOsmId());
+            createNode(node);
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("nodeIDarray", nodeIDs);
+        String arrayList = json.toString();
+
+        values.put(KEY_NODEIDS, arrayList);
 
         db.insert(TABLE_POLYELEMENT, null, values);
 
@@ -599,13 +441,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param id
      *            the id of the desired poly element
      * @return a {@link PolyElement} object for the desired poly element
+     * @throws JSONException
+     *             if JSON object can't be initialized
      */
-    public PolyElement getPolyElement(long id) {
+    public PolyElement getPolyElement(long id) throws JSONException { // TODO:
+                                                                      // check
 
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_POLYELEMENT, new String[] { KEY_OSMID,
-                KEY_TYPE }, KEY_OSMID + "=?",
+                KEY_TYPE, KEY_NODEIDS }, KEY_OSMID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor != null)
@@ -613,6 +458,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         PolyElement polyElement = new PolyElement(Long.parseLong(cursor
                 .getString(0)), PolyElementType.valueOf(cursor.getString(1)));
+
+        JSONObject json = new JSONObject(cursor.getString(2));
+        JSONArray jArray = json.optJSONArray("nodeIDarray");
+
+        ArrayList<Node> nodes = new ArrayList<Node>();
+
+        for (int i = 0; i < jArray.length(); i++) {
+            long nodeID = jArray.optLong(i);
+            Node node = getNode(nodeID);
+            nodes.add(node);
+        }
+
+        polyElement.addNodes(nodes, false);
 
         cursor.close();
         db.close();
@@ -626,12 +484,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param polyElement
      *            the {@link PolyElement} object whose data should be deleted
      */
-    public void deletePolyElement(PolyElement polyElement) {
+    public void deletePolyElement(PolyElement polyElement) { // TODO: check
 
         SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
                 new String[] { String.valueOf(polyElement.getOsmId()) });
+
+        for (Node node : polyElement.getNodes()) {
+            deleteNode(node);
+        }
 
         db.close();
 
@@ -664,8 +526,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link PolyElement} object for which the data should be
      *            updated
      * @return the number of rows that have been updated
+     * @throws JSONException
+     *             if JSON object can't be initialized
      */
-    public int updatePolyElement(PolyElement polyElement) {
+    public int updatePolyElement(PolyElement polyElement) throws JSONException { // TODO:
+                                                                                 // check
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -673,6 +538,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         values.put(KEY_OSMID, polyElement.getOsmId());
         values.put(KEY_TYPE, polyElement.getType().toString());
+
+        List<Long> nodeIDs = new ArrayList<Long>();
+
+        for (Node node : polyElement.getNodes()) {
+            nodeIDs.add(node.getOsmId());
+            if (checkIfRecordExists(TABLE_NODE, KEY_OSMID, node.getOsmId())) {
+                updateNode(node);
+            } else {
+                createNode(node);
+            }
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("nodeIDarray", nodeIDs);
+        String arrayList = json.toString();
+
+        values.put(KEY_NODEIDS, arrayList);
 
         int count = db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
                 new String[] { String.valueOf(polyElement.getOsmId()) });
@@ -688,8 +570,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * and creates corresponding {@link PolyElement} objects.
      * 
      * @return a list of poly elements
+     * @throws JSONException
+     *             if the JSON object can't be initialized
      */
-    public List<PolyElement> getAllPolyElements() {
+    public List<PolyElement> getAllPolyElements() throws JSONException {
 
         List<PolyElement> polyElements = new ArrayList<PolyElement>();
 
@@ -701,8 +585,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 PolyElement polyElement = new PolyElement(Long.parseLong(cursor
                         .getString(0)), PolyElementType.valueOf(cursor
                         .getString(1)));
-                // node.setTags(getTagSortedMap(node.getOsmId()));
+
+                JSONObject json = new JSONObject(cursor.getString(2));
+                JSONArray jArray = json.optJSONArray("nodeIDarray");
+
+                ArrayList<Node> nodes = new ArrayList<Node>();
+
+                for (int i = 0; i < jArray.length(); i++) {
+                    long nodeID = jArray.optLong(i);
+                    Node node = getNode(nodeID);
+                    nodes.add(node);
+                }
+                polyElement.addNodes(nodes, false);
+
                 polyElements.add(polyElement);
+                // node.setTags(getTagSortedMap(node.getOsmId()));
             } while (cursor.moveToNext());
         }
 
@@ -971,5 +868,30 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return tagMap;
+    }
+
+    /**
+     * This method checks if a given record exists in a table.
+     * 
+     * @param tableName
+     *            the name of the table
+     * @param field
+     *            the column that will be searched
+     * @param value
+     *            the given record
+     * @return true if the given record exists, false otherwise
+     */
+    public boolean checkIfRecordExists(String tableName, String field,
+            long value) {
+
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM " + tableName + " WHERE " + field + " = "
+                + value;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.getCount() <= 0) {
+            return false;
+        }
+        return true;
     }
 }
