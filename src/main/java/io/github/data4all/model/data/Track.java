@@ -105,7 +105,7 @@ public class Track implements Parcelable {
         if (tracklist.isEmpty()) {
             return null;
         }
-        return tracklist.get(tracklist.size());
+        return tracklist.get(tracklist.size()-1);
     }
 
     @Override
