@@ -16,10 +16,9 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.ClassifiedTag;
-import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
@@ -40,9 +39,9 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,7 +53,7 @@ import android.widget.TextView;
 
 /**
  * 
- * @author Maurice Boyke
+ * @author Maurice Boyke,Steeve
  *
  */
 public class TagActivity extends BasicActivity implements OnClickListener {
@@ -109,12 +108,30 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 key = (String) array[which];
-                array = tagMap
-                        .get(key)
-                        .getClassifiedValues()
-                        .toArray(
-                                new String[tagMap.get(key)
-                                        .getClassifiedValues().size()]);
+                final ClassifiedTag classifiedTag = tagMap.get(key);
+                ArrayList<String> classifiedValues = classifiedTag
+                        .getClassifiedValues();
+                array = classifiedValues.toArray(new String[classifiedValues
+                        .size()]);
+                AlertDialog.Builder alertDialogBuilder = createItemViewDialog(classifiedTag);
+
+                alert1 = alertDialogBuilder.create();
+                alert1.show();
+            }
+
+            /**
+             * @param classifiedTag
+             * @return alertDialogBuilder
+             * 
+             * this method create a Item view Dialog. when ALL is a value, then
+             * create dialog with all classifiedTag or add a new suggestion
+             * to classifiedTag. when key was a building or a amenity,
+             * so create a new Dialog which contains more informations about the
+             * building
+             * 
+             */
+            private AlertDialog.Builder createItemViewDialog(
+                    final ClassifiedTag classifiedTag) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                         TagActivity.this);
                 alertDialogBuilder.setTitle("Select Tag");
@@ -125,6 +142,19 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                             public void onClick(DialogInterface dialog,
                                     int which) {
                                 String value = (String) array[which];
+                                if ("ALL".equals(value)) {
+                                    array = classifiedTag
+                                            .getAllClassifiedValues()
+                                            .toArray(
+                                                    new String[classifiedTag
+                                                            .getAllClassifiedValues()
+                                                            .size()]);
+                                    AlertDialog.Builder alertDialogBuilder = createItemViewDialog(classifiedTag);
+
+                                    alert1 = alertDialogBuilder.create();
+                                    alert1.show();
+                                    return;
+                                }
                                 map = new LinkedHashMap<String, String>();
                                 map.put(key, value);
                                 if (key.equals("building")
@@ -135,11 +165,10 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                 } else {
                                     finish();
                                 }
+                                classifiedTag.addSuggestion(value);
                             }
                         });
-
-                alert1 = alertDialogBuilder.create();
-                alert1.show();
+                return alertDialogBuilder;
             }
 
         });
