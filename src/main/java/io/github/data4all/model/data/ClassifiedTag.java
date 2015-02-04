@@ -16,13 +16,15 @@
 package io.github.data4all.model.data;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * This class represents a classified tag. A classified tag is a subclass of
  * tag. classifiedTags are tags where the user can choose input/value from
  * listed values.
  * 
- * @author fkirchge
+ * @author fkirchge, Steeve
  *
  */
 public class ClassifiedTag extends Tag {
@@ -31,7 +33,12 @@ public class ClassifiedTag extends Tag {
      * stores all classified values for the specific tag
      */
     private ArrayList<String> classifiedValues;
-
+    
+    /**
+     * stores the last classifiedValue Suggestion for the specific tag
+     */
+    private Set<String> classifiedValuesSuggestion; 
+    
     /**
      * Default constructor.
      * 
@@ -44,14 +51,55 @@ public class ClassifiedTag extends Tag {
             ArrayList<String> classifiedValues, int... osmObjects) {
         super(key, type, osmObjects);
         this.classifiedValues = classifiedValues;
+        classifiedValuesSuggestion = new LinkedHashSet<String>();
     }
 
+    /**
+     * when the list of suggestion Values is empty ,
+     * then get the classifiedValues
+     * when not then get classifiedValuesSuggestion
+     * @return classifiedValues or classifiedValuesSuggestion
+     */
     public ArrayList<String> getClassifiedValues() {
-        return classifiedValues;
+        if(classifiedValuesSuggestion.isEmpty()){
+            return classifiedValues;
+        }
+        return new ArrayList<String>(classifiedValuesSuggestion);
     }
 
+    /**
+     * @param classifiedValues
+     * 
+     */
     public void setClassifiedValues(ArrayList<String> classifiedValues) {
         this.classifiedValues = classifiedValues;
     }
-
+     
+    /**
+     * get the list of all classifiedValuesSuggestion
+     */
+    public Set<String> getClassifiedValuesSuggestion() {
+        return classifiedValuesSuggestion;
+    }
+    
+    /**
+     * @param suggestion
+     * add a suggestion to the list
+     * or get all elements from list, when the user don't want a suggestion 
+     */
+    public void addSuggestion(String suggestion){
+        classifiedValuesSuggestion.add(suggestion);
+        if(classifiedValuesSuggestion.contains("ALL")){
+            classifiedValuesSuggestion.remove("ALL");
+        }
+        classifiedValuesSuggestion.add("ALL");
+        
+    }
+     
+    /**
+     * get all classifiedValues
+     */
+    public ArrayList<String> getAllClassifiedValues() {
+        return classifiedValues;
+    }
 }
