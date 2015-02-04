@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -36,7 +37,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     // Table Names
     private static final String TABLE_NODE = "nodes";
-    private static final String TABLE_OSMELEMENT = "osmelements";
+    private static final String TABLE_DATAELEMENT = "dataelements";
     private static final String TABLE_OSMTAGMAP = "osmtagmap";
     private static final String TABLE_POLYELEMENT = "polyelements";
     private static final String TABLE_USER = "users";
@@ -48,9 +49,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     // Node Column Names
     private static final String KEY_LAT = "lat";
     private static final String KEY_LON = "lon";
-
-    // OSMElement Column Names
-    private static final String KEY_OSMVERSION = "osmversion";
 
     // OSMTagMap Column Names
     private static final String KEY_KEY = "key";
@@ -80,9 +78,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_OSMELEMENTS_TABLE = "CREATE TABLE " + TABLE_OSMELEMENT
-                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_OSMVERSION
-                + " INTEGER" + ")";
+        String CREATE_DATAELEMENTS_TABLE = "CREATE TABLE " + TABLE_DATAELEMENT
+                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + ")";
         String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
                 + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
                 + KEY_LON + " REAL" + ")";
@@ -101,7 +98,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                 + KEY_TOKENSECRET + " TEXT" + ")";
 
-        db.execSQL(CREATE_OSMELEMENTS_TABLE);
+        db.execSQL(CREATE_DATAELEMENTS_TABLE);
         db.execSQL(CREATE_NODES_TABLE);
         db.execSQL(CREATE_WAYS_TABLE);
         db.execSQL(CREATE_OSMTAGMAPS_TABLE);
@@ -117,7 +114,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_OSMTAGMAP);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WAY);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NODE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OSMELEMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATAELEMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
 
         // Recreate tables
@@ -713,7 +710,154 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return polyElements;
     }
 
-    // ---auxiliary functions----------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // DATA ELEMENT CRUD
+
+    /**
+     * This method creates and stores a new data element in the database. The
+     * data is taken from the {@link AbstractDataElement} object that is passed
+     * to the method.
+     * 
+     * @param dataElement
+     *            the {@link AbstractDataElement} object from which the data
+     *            will be taken
+     */
+    public void createDataElement(AbstractDataElement dataElement) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_OSMID, dataElement.getOsmId());
+
+        db.insert(TABLE_POLYELEMENT, null, values);
+
+        db.close();
+    }
+
+    /**
+     * This method returns the data for a specific data element stored in the
+     * database and creates the corresponding {@link AbstractDataElement}
+     * object.
+     * 
+     * @param id
+     *            the id of the desired data element
+     * @return a {@link AbstractDataElement} object for the desired data element
+     */
+    public AbstractDataElement getDataElement(long id) { // TODO: determine if
+                                                         // node or poly element
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_DATAELEMENT, new String[] { KEY_OSMID },
+                KEY_OSMID + "=?", new String[] { String.valueOf(id) }, null,
+                null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        AbstractDataElement dataElement = new PolyElement(Long.parseLong(cursor
+                .getString(0)), PolyElementType.WAY); // just a proxy for now
+
+        cursor.close();
+        db.close();
+
+        return dataElement;
+    }
+
+    /**
+     * This method deletes a specific data element from the database.
+     * 
+     * @param dataElement
+     *            the {@link AbstractDataElement} object whose data should be
+     *            deleted
+     */
+    public void deleteDataElement(AbstractDataElement dataElement) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
+                new String[] { String.valueOf(dataElement.getOsmId()) });
+
+        db.close();
+
+        deleteTagSortedMap(dataElement.getOsmId()); // necessary?
+    }
+
+    /**
+     * This method returns the number of data elements currently stored in the
+     * database.
+     * 
+     * @return the number of data elements
+     */
+    public int getDataElementCount() {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_DATAELEMENT, null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count;
+    }
+
+    /**
+     * This method updates the data for a specific data element stored in the
+     * database.
+     * 
+     * @param dataElement
+     *            the {@link AbstractDataElement} object for which the data
+     *            should be updated
+     * @return the number of rows that have been updated
+     */
+    public int updateDataElement(AbstractDataElement dataElement) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_OSMID, dataElement.getOsmId());
+
+        int count = db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
+                new String[] { String.valueOf(dataElement.getOsmId()) });
+        db.close();
+
+        // count += updateTagSortedMap(node.getOsmId(), node.getTags());
+
+        return count;
+    }
+
+    /**
+     * This method returns a list of all data elements stored in the database
+     * and creates corresponding {@link AbstractDataElement} objects.
+     * 
+     * @return a list of data elements
+     */
+    public List<AbstractDataElement> getAllDataElements() { // TODO: determine
+                                                            // if node or poly
+                                                            // element
+
+        List<AbstractDataElement> dataElements = new ArrayList<AbstractDataElement>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_DATAELEMENT, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                AbstractDataElement polyElement = new PolyElement(
+                        Long.parseLong(cursor.getString(0)),
+                        PolyElementType.valueOf(cursor.getString(1)));
+                // node.setTags(getTagSortedMap(node.getOsmId()));
+                dataElements.add(polyElement);
+            } while (cursor.moveToNext());
+        }
+
+        db.close();
+        return dataElements;
+    }
+
+    // ---auxiliary functions---------------------------------------------------
 
     /**
      * This method creates and stores a Map of Tags that belongs to a
