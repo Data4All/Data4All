@@ -193,6 +193,17 @@ public class ResultViewActivity extends BasicActivity implements
 
             }
 
+            /**
+             * this method create a item view dialog which help the user to
+             * choose a Tag. when user map for the first time, then he receive a
+             * dialog with a list of all classifiedTag. when the user want after
+             * directly mapping a object which belong to the same Category then
+             * he receive a list with 2 suggestions: the first is the last Tag
+             * which was selected and he can choose this last Tag. But when he
+             * don't want so he can choose ALL which get a dialog with all
+             * ClassifiedTag and then he can choose a new Tag.
+             * 
+             */
             private AlertDialog.Builder createItemViewDialog(
                     final int position, final CharSequence[] showArray,
                     final ClassifiedTag classifiedTag) {
