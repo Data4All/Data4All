@@ -149,13 +149,13 @@ public class ResultViewActivity extends BasicActivity implements
                     final CharSequence[] showArray;
                     final ClassifiedTag classifiedTag = tagMap.get(keyList
                             .get(position));
-                    ArrayList<String> classifiedValues = classifiedTag
+                    final ArrayList<String> classifiedValues = classifiedTag
                             .getClassifiedValues();
 
                     showArray = classifiedValues
                             .toArray(new String[classifiedValues.size()]);
 
-                    AlertDialog.Builder alertDialog = createItemViewDialog(
+                   final AlertDialog.Builder alertDialog = createItemViewDialog(
                             position, showArray, classifiedTag);
 
                     alert = alertDialog.create();
@@ -207,26 +207,26 @@ public class ResultViewActivity extends BasicActivity implements
             private AlertDialog.Builder createItemViewDialog(
                     final int position, final CharSequence[] showArray,
                     final ClassifiedTag classifiedTag) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+               final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
                         ResultViewActivity.this,
                         android.R.style.Theme_Holo_Dialog_MinWidth);
                 alertDialog.setTitle("Select Tag");
 
                 alertDialog.setItems(showArray,
-                        new DialogInterface.OnClickListener() {
+                  new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog,
                                     int which) {
                                 if ("ALL".equals(showArray[which])) {
-                                    CharSequence showArrayALL[] = classifiedTag
+                                  final  CharSequence showArrayALL[] = classifiedTag
                                             .getAllClassifiedValues()
                                             .toArray(
                                                     new String[classifiedTag
-                                                            .getAllClassifiedValues()
-                                                            .size()]);
+                                                      .getAllClassifiedValues()
+                                                      .size()]);
 
-                                    AlertDialog.Builder alertDialog = createItemViewDialog(
+                               final AlertDialog.Builder alertDialog = createItemViewDialog(
                                             position, showArrayALL,
                                             classifiedTag);
                                     alert = alertDialog.create();
