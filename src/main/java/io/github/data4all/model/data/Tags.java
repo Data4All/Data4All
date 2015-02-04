@@ -53,15 +53,15 @@ public class Tags {
     static {
         // address tags
         addressTagList.add(new Tag("addr:street", InputType.KEYBOARD, NODE_TAG,
-                WAY_TAG, RELATION_TAG, AREA_TAG));
+                getWayTag(), RELATION_TAG, AREA_TAG));
         addressTagList.add(new Tag("addr:housenumber", InputType.NUMPAD,
-                NODE_TAG, WAY_TAG, RELATION_TAG, AREA_TAG));
+                NODE_TAG, getWayTag(), RELATION_TAG, AREA_TAG));
         addressTagList.add(new Tag("addr:postcode", InputType.NUMPAD, NODE_TAG,
-                WAY_TAG, RELATION_TAG, AREA_TAG));
+                getWayTag(), RELATION_TAG, AREA_TAG));
         addressTagList.add(new Tag("addr:city", InputType.KEYBOARD, NODE_TAG,
-                WAY_TAG, RELATION_TAG, AREA_TAG));
+                getWayTag(), RELATION_TAG, AREA_TAG));
         addressTagList.add(new Tag("addr:country", InputType.KEYBOARD,
-                NODE_TAG, WAY_TAG, RELATION_TAG, AREA_TAG));
+                NODE_TAG, getWayTag(), RELATION_TAG, AREA_TAG));
     }
 
     /**
@@ -97,13 +97,13 @@ public class Tags {
         ArrayList<String> highwayValues = new ArrayList<String>(Arrays.asList(
                 "motorway", "residential", "service", "track", "footway",
                 "road", "path"));
-        tagList.add(new ClassifiedTag("highway", null, highwayValues, WAY_TAG));
+        tagList.add(new ClassifiedTag("highway", null, highwayValues, getWayTag()));
 
         // classified tag: barrier
         ArrayList<String> barrierValues = new ArrayList<String>(Arrays.asList(
                 "citywall", "fence", "wall", "bollard", "gate"));
         tagList.add(new ClassifiedTag("barrier", null, barrierValues, NODE_TAG,
-                WAY_TAG, AREA_TAG));
+                getWayTag(), AREA_TAG));
 
         // classified tag: amenity
         ArrayList<String> amenityValues = new ArrayList<String>(Arrays.asList(

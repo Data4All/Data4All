@@ -53,7 +53,7 @@ public class Tag {
      * constant values to define which osmObject the tag refers to
      */
     public static final int NODE_TAG = 1;
-    public static final int WAY_TAG = 2;
+    private static final int WAY_TAG = 2;
     public static final int RELATION_TAG = 3;
     public static final int AREA_TAG = 4;
 
@@ -164,6 +164,10 @@ public class Tag {
         return "key: " + key + " nameRessource: " + nameRessource
                 + " hintRessource: " + hintRessource + " osmObjects: "
                 + Arrays.toString(osmObjects);
+    }
+
+    public static int getWayTag() {
+        return WAY_TAG;
     }
 
 }
