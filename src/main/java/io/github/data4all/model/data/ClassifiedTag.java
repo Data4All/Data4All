@@ -37,7 +37,7 @@ public class ClassifiedTag extends Tag {
     /**
      * stores the last classifiedValue Suggestion for the specific tag
      */
-    private Set<String> classifiedValuesSuggestion; 
+    private ArrayList<String> classifiedValuesSuggestion; 
     
     /**
      * Default constructor.
@@ -51,7 +51,7 @@ public class ClassifiedTag extends Tag {
             ArrayList<String> classifiedValues, int... osmObjects) {
         super(key, type, osmObjects);
         this.classifiedValues = classifiedValues;
-        classifiedValuesSuggestion = new LinkedHashSet<String>();
+        classifiedValuesSuggestion = new ArrayList<String>();
     }
 
     /**
@@ -78,7 +78,7 @@ public class ClassifiedTag extends Tag {
     /**
      * get the list of all classifiedValuesSuggestion
      */
-    public Set<String> getClassifiedValuesSuggestion() {
+    public ArrayList<String> getClassifiedValuesSuggestion() {
         return classifiedValuesSuggestion;
     }
     
