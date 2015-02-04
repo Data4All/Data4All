@@ -15,24 +15,6 @@
  *******************************************************************************/
 package io.github.data4all.activity;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.osmdroid.ResourceProxy.string;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-import org.osmdroid.ResourceProxy;
-
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.ClassifiedTag;
@@ -40,26 +22,41 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
 import io.github.data4all.util.Tagging;
-import android.app.Activity;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+/**
+ * 
+ * @author Maurice Boyke,Steeve
+ *
+ */
 
 public class ResultViewActivity extends BasicActivity implements
         OnClickListener {
@@ -148,30 +145,18 @@ public class ResultViewActivity extends BasicActivity implements
                 // Change Classified Tags
                 if (Tagging.isClassifiedTag(keyList.get(position), array)) {
                     Log.i(TAG, "Classified Tag");
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                            ResultViewActivity.this,
-                            android.R.style.Theme_Holo_Dialog_MinWidth);
-                    alertDialog.setTitle("Select Tag");
-                    final CharSequence[] showArray;
-                    showArray = tagMap
-                            .get(keyList.get(position))
-                            .getClassifiedValues()
-                            .toArray(
-                                    new String[tagMap
-                                            .get(keyList.get(position))
-                                            .getClassifiedValues().size()]);
-                    alertDialog.setItems(showArray,
-                            new DialogInterface.OnClickListener() {
 
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                        int which) {
-                                    element.addOrUpdateTag(
-                                            keyList.get(position),
-                                            (String) showArray[which]);
-                                    output();
-                                }
-                            });
+                    final CharSequence[] showArray;
+                    final ClassifiedTag classifiedTag = tagMap.get(keyList
+                            .get(position));
+                    ArrayList<String> classifiedValues = classifiedTag
+                            .getClassifiedValues();
+
+                    showArray = classifiedValues
+                            .toArray(new String[classifiedValues.size()]);
+
+                    AlertDialog.Builder alertDialog = createItemViewDialog(
+                            position, showArray, classifiedTag);
 
                     alert = alertDialog.create();
 
@@ -207,6 +192,48 @@ public class ResultViewActivity extends BasicActivity implements
                 }
 
             }
+
+            private AlertDialog.Builder createItemViewDialog(
+                    final int position, final CharSequence[] showArray,
+                    final ClassifiedTag classifiedTag) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                        ResultViewActivity.this,
+                        android.R.style.Theme_Holo_Dialog_MinWidth);
+                alertDialog.setTitle("Select Tag");
+
+                alertDialog.setItems(showArray,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                if ("ALL".equals(showArray[which])) {
+                                    CharSequence showArrayALL[] = classifiedTag
+                                            .getAllClassifiedValues()
+                                            .toArray(
+                                                    new String[classifiedTag
+                                                            .getAllClassifiedValues()
+                                                            .size()]);
+
+                                    AlertDialog.Builder alertDialog = createItemViewDialog(
+                                            position, showArrayALL,
+                                            classifiedTag);
+                                    alert = alertDialog.create();
+
+                                    alert.show();
+                                    return;
+                                }
+                                element.addOrUpdateTag(keyList.get(position),
+                                        (String) showArray[which]);
+
+                                element.addOrUpdateTag(keyList.get(position),
+                                        (String) showArray[which],
+                                        classifiedTag);
+                                output();
+                            }
+                        });
+                return alertDialog;
+            }
         });
 
         Button resultButton = (Button) this.findViewById(R.id.buttonResult);
@@ -237,7 +264,7 @@ public class ResultViewActivity extends BasicActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void output() {
+    public void output() {
         endList = new ArrayList<String>();
         keyList = new ArrayList<String>();
         for (Entry entry : element.getTags().entrySet()) {
