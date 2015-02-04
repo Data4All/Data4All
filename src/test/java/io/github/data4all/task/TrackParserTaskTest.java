@@ -92,7 +92,7 @@ public class TrackParserTaskTest {
         Assert.assertTrue("Should be 0, was: " + i, i == 0);
     }
 
-    // method for to create example track
+    // method to create example track
     private Track setUpTrack() {
         Track track = new Track();
 
