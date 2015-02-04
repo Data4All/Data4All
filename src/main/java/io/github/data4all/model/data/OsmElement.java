@@ -30,7 +30,7 @@ import android.os.Parcelable;
  * and osm version. All parent relations and tags of the object are stored in a
  * list.
  * 
- * @author fkirchge
+ * @author fkirchge, Steeve
  *
  */
 public abstract class OsmElement implements Parcelable {
@@ -296,6 +296,18 @@ public abstract class OsmElement implements Parcelable {
         }
         parentRelations = new ArrayList<Relation>();
         in.readTypedList(parentRelations, Relation.CREATOR);
+    }
+    
+    /**
+     * Adds a new tag or updates an existing tag of the element
+     * 
+     * @param key
+     * @param value
+     * @param classifiedTag
+     */
+    public void addOrUpdateTag(String key, String value,
+            ClassifiedTag classifiedTag) {
+        classifiedTag.addSuggestion(value);
     }
 
 }
