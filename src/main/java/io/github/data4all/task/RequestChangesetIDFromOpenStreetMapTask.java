@@ -3,10 +3,13 @@ package io.github.data4all.task;
 import io.github.data4all.Constants;
 import io.github.data4all.R;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import oauth.signpost.OAuthConsumer;
@@ -19,90 +22,81 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Task to request a changeset id from OpenStreetMap 
+ * Task to request a changeset id from OpenStreetMap
  * 
  * @author Richard
  *
  */
 
-public class RequestChangesetIDFromOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
+public class RequestChangesetIDFromOpenStreetMapTask extends
+        AsyncTask<Void, Void, Void> {
 
-    private final String  TAG        = getClass().getSimpleName();
-    private Context       context;
+    private final String TAG = getClass().getSimpleName();
+    private Context context;
 
-    private HttpPut     request;
+    private HttpPut request;
 
     private OAuthConsumer consumer;
-    private File          changeSetXML;
-
+    private File changeSetXML;
 
     /**
      * HTTP result code or -1 in case of internal error
      */
-    private int           statusCode = -1;
+    private int statusCode = -1;
 
-
-    public RequestChangesetIDFromOpenStreetMapTask(Context context, OAuthConsumer consumer,
-           String comment) {
+    public RequestChangesetIDFromOpenStreetMapTask(Context context,
+            OAuthConsumer consumer, String comment) {
 
         this.context = context;
         this.consumer = consumer;
-        changeSetXML = new File(context.getFilesDir().getAbsolutePath() + "/getChangesetID.xml");
-        
+        changeSetXML =
+                new File(Environment.getExternalStorageDirectory()
+                        .getAbsolutePath() + "/getChangesetID.xml");
+
         try {
-			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(changeSetXML)));
-			
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<osm>");
-			writer.println("<changeset>");
-			writer.println("<tag k=\"created_by\" v=\"Data4All\"/>");
-			writer.println("<tag k=\"comment\" v=\"" + comment + "\"/>");
-			writer.println("</changeset>");
-			writer.println("</osm>");
-			
-			writer.flush();
-			writer.close();
-			
-			  
+            PrintWriter writer =
+                    new PrintWriter(new BufferedWriter(new FileWriter(
+                            changeSetXML)));
+
+            // writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            writer.println("<osm>");
+            writer.println("<changeset>");
+            writer.println("<tag k=\"created_by\" v=\"Data4All\"/>");
+            writer.println("<tag k=\"comment\" v=\"" + comment + "\"/>");
+            writer.println("</changeset>");
+            writer.println("</osm>");
+
+            writer.flush();
+            writer.close();
+
         } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-       
-        
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
+
     @Override
     protected void onPreExecute() {
 
         try {
             // Prepare request
-        	request = new HttpPut (Constants.SCOPE + "api/0.6/changeset/create");
-        	
+            request = new HttpPut(Constants.SCOPE + "api/0.6/changeset/create");
+
             // Sign the request with oAuth
             consumer.sign(request);
-            
 
-//            BasicHttpParams params = new BasicHttpParams();
-//            params.setParameter("file", changeSetXML);
-//            request.setParams(params);
-            
-            MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-            entity.addPart("XML", new FileBody(changeSetXML));
+            HttpEntity entity = new FileEntity(changeSetXML, "text/plain");
             request.setEntity(entity);
-
 
         } catch (OAuthMessageSignerException e) {
             // TODO Auto-generated catch block
@@ -121,20 +115,21 @@ public class RequestChangesetIDFromOpenStreetMapTask extends AsyncTask<Void, Voi
         switch (statusCode) {
         case -1:
             // Internal error, the request didn't start at all
-//            Toast.makeText(context,
-//                    R.string.uploadToOsmRequestInternalTaskError,
-//                    Toast.LENGTH_LONG).show();
+            // Toast.makeText(context,
+            // R.string.uploadToOsmRequestInternalTaskError,
+            // Toast.LENGTH_LONG).show();
             Log.d(TAG, "Internal error, the request did not start at all");
             break;
         case HttpStatus.SC_OK:
             // Success ! Update database and close activity
-//            Toast.makeText(context, R.string.success, Toast.LENGTH_LONG).show();
+            // Toast.makeText(context, R.string.success,
+            // Toast.LENGTH_LONG).show();
             Log.d(TAG, "Success");
             break;
         case HttpStatus.SC_UNAUTHORIZED:
             // Does not have authorization
-//            Toast.makeText(context, R.string.uploadToOsmRequestTaskAuthError,
-//                    Toast.LENGTH_LONG).show();
+            // Toast.makeText(context, R.string.uploadToOsmRequestTaskAuthError,
+            // Toast.LENGTH_LONG).show();
             Log.d(TAG, "Does not have authorization");
             break;
         case HttpStatus.SC_INTERNAL_SERVER_ERROR:
@@ -146,7 +141,7 @@ public class RequestChangesetIDFromOpenStreetMapTask extends AsyncTask<Void, Voi
         default:
             // unknown error
             // Toast.makeText(context, R.string.unkownError, Toast.LENGTH_LONG)
-            //        .show();
+            // .show();
             Log.d(TAG, "Unknown error");
         }
     }
@@ -158,10 +153,15 @@ public class RequestChangesetIDFromOpenStreetMapTask extends AsyncTask<Void, Voi
 
             HttpResponse response = httpClient.execute(request);
             statusCode = response.getStatusLine().getStatusCode();
-            HttpEntity responseEntity =response.getEntity();
-            
-            //TODO: aus der Response Entity die changeSetID herauslesen
+            HttpEntity responseEntity = response.getEntity();
+
+            InputStream is = responseEntity.getContent();
+            BufferedReader in = new BufferedReader(new InputStreamReader(is));
+            String line = in.readLine();
+            Integer changesetId = Integer.parseInt(line);
+
             Log.d(TAG, "OSM ChangeSetID response Entity: " + responseEntity);
+            Log.d(TAG, "OSM ChangeSetID response: " + changesetId);
             Log.d(TAG, "OSM ChangeSetID statusCode: " + statusCode);
         } catch (Exception e) {
             Log.e(TAG, "doInBackground failed", e);
