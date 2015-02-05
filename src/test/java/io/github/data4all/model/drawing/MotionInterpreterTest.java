@@ -1,3 +1,18 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.model.drawing;
 
 import static org.mockito.Matchers.anyFloat;
@@ -16,52 +31,6 @@ import android.graphics.Paint;
  * @author tbrose
  */
 public abstract class MotionInterpreterTest {
-    /**
-     * Verify if the drawCircle method is called mode-often with the given
-     * coordinates
-     * 
-     * @param canvas
-     *            The canvas mock
-     * @param mode
-     *            The verification mode
-     * @param x
-     *            The x coordinate to verify
-     * @param y
-     *            The y coordinate to verify
-     */
-    protected static void verifyDrawCircle(Canvas canvas,
-            VerificationMode mode, float x, float y) {
-        verify(canvas, mode).drawCircle(eq(x), eq(y), anyFloat(),
-                (Paint) anyObject());
-    }
-
-    /**
-     * Verify if the drawCircle method is called mode-often with the any
-     * coordinates
-     * 
-     * @param canvas
-     *            The canvas mock
-     * @param mode
-     *            The verification mode
-     */
-    protected static void verifyDrawCircle(Canvas canvas, VerificationMode mode) {
-        verify(canvas, mode).drawCircle(anyFloat(), anyFloat(), anyFloat(),
-                (Paint) anyObject());
-    }
-
-    /**
-     * Verify if the drawLine method is called mode-often
-     * 
-     * @param canvas
-     *            The canvas mock
-     * @param mode
-     *            The verification mode
-     */
-    protected static void verifyDrawLine(Canvas canvas, VerificationMode mode) {
-        verify(canvas, mode).drawLine(anyFloat(), anyFloat(), anyFloat(),
-                anyFloat(), (Paint) anyObject());
-    }
-
     /**
      * Constructs a DrawingMotion with the given coordinate-pairs <br/>
      * 
@@ -83,5 +52,51 @@ public abstract class MotionInterpreterTest {
             motion.addPoint(points[i], points[i + 1]);
         }
         return motion;
+    }
+
+    /**
+     * Verify if the drawCircle method is called mode-often with the any
+     * coordinates
+     * 
+     * @param canvas
+     *            The canvas mock
+     * @param mode
+     *            The verification mode
+     */
+    protected static void verifyDrawCircle(Canvas canvas, VerificationMode mode) {
+        verify(canvas, mode).drawCircle(anyFloat(), anyFloat(), anyFloat(),
+                (Paint) anyObject());
+    }
+
+    /**
+     * Verify if the drawCircle method is called mode-often with the given
+     * coordinates
+     * 
+     * @param canvas
+     *            The canvas mock
+     * @param mode
+     *            The verification mode
+     * @param x
+     *            The x coordinate to verify
+     * @param y
+     *            The y coordinate to verify
+     */
+    protected static void verifyDrawCircle(Canvas canvas,
+            VerificationMode mode, float x, float y) {
+        verify(canvas, mode).drawCircle(eq(x), eq(y), anyFloat(),
+                (Paint) anyObject());
+    }
+
+    /**
+     * Verify if the drawLine method is called mode-often
+     * 
+     * @param canvas
+     *            The canvas mock
+     * @param mode
+     *            The verification mode
+     */
+    protected static void verifyDrawLine(Canvas canvas, VerificationMode mode) {
+        verify(canvas, mode).drawLine(anyFloat(), anyFloat(), anyFloat(),
+                anyFloat(), (Paint) anyObject());
     }
 }

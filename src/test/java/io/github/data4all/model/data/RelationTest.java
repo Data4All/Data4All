@@ -1,3 +1,18 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.model.data;
 
 import static org.junit.Assert.assertEquals;
@@ -5,9 +20,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+import android.os.Parcel;
 
 /**
  * Testing the main functionality of the relation and relation member objects.
@@ -16,6 +35,8 @@ import org.junit.Test;
  * @author fkirchge
  *
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
 public class RelationTest {
 
     private Relation relation;
@@ -30,17 +51,6 @@ public class RelationTest {
     public void setUp() throws Exception {
         relation = new Relation(1, 1);
         node = new Node(1, 1, 10.1234567, 20.1234567);
-    }
-
-    /**
-     * Executed after each test case.
-     * 
-     * @throws Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-        relation = null;
-        node = null;
     }
 
     /**
@@ -308,4 +318,49 @@ public class RelationTest {
         assertEquals(true, relation.getMemberElements().contains(node2));
     }
 
+    /**
+     * Create a new Parcel to save/parcelable the testRelation, afterwards a new
+     * relation is created from the parcel and we check if it contains all
+     * attributes.
+     */
+    @Test
+    public void test_parcelable_relation() {
+        Parcel newParcel = Parcel.obtain();
+
+        relation.addOrUpdateTag("testtag", "test");
+        relation.addOrUpdateTag("foo", "bar");
+
+        RelationMember member1 = new RelationMember("type", 12345, "role");
+        relation.addMember(member1);
+        RelationMember member2 = new RelationMember("othertype", 54321,
+                "otherrole");
+        relation.addMember(member2);
+
+        relation.writeToParcel(newParcel, 0);
+        newParcel.setDataPosition(0);
+        Relation deParcelRelation = Relation.CREATOR
+                .createFromParcel(newParcel);
+
+        assertEquals(relation.getTagWithKey("testtag"),
+                deParcelRelation.getTagWithKey("testtag"));
+        assertEquals(relation.getTagWithKey("foo"),
+                deParcelRelation.getTagWithKey("foo"));
+
+        assertEquals(relation.getMembers().size(), deParcelRelation
+                .getMembers().size());
+
+        assertEquals(member1.getType(), deParcelRelation.getMembers().get(0)
+                .getType());
+        assertEquals(member1.getRef(), deParcelRelation.getMembers().get(0)
+                .getRef());
+        assertEquals(member1.getRole(), deParcelRelation.getMembers().get(0)
+                .getRole());
+
+        assertEquals(member2.getType(), deParcelRelation.getMembers().get(1)
+                .getType());
+        assertEquals(member2.getRef(), deParcelRelation.getMembers().get(1)
+                .getRef());
+        assertEquals(member2.getRole(), deParcelRelation.getMembers().get(1)
+                .getRole());
+    }
 }

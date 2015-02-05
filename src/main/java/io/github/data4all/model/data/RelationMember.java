@@ -1,4 +1,22 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.model.data;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * RelationMember stores the necessary information for a relation member, if the
@@ -9,7 +27,7 @@ package io.github.data4all.model.data;
  * @author simon, fkirchge
  *
  */
-public class RelationMember {
+public class RelationMember implements Parcelable {
 
     /**
      * type can be node/way or relation
@@ -33,20 +51,29 @@ public class RelationMember {
     private OsmElement element = null;
 
     /**
-     * Default constructor Constructor for members that have not been downloaded
+     * CREATOR that generates instances of {@link RelationMember} from a Parcel
      */
-    public RelationMember(final String type, final long refId, final String role) {
-        this.type = type;
-        this.ref = refId;
-        this.role = role;
-    }
+    public static final Parcelable.Creator<RelationMember> CREATOR = new Parcelable.Creator<RelationMember>() {
+        public RelationMember createFromParcel(Parcel in) {
+            return new RelationMember(in);
+        }
+
+        public RelationMember[] newArray(int size) {
+            return new RelationMember[size];
+        }
+    };
 
     /**
-     * Constructor for members that have been downloaded
+     * Constructor to create a {@link RelationMember} from a parcel.
+     * 
+     * @param in
+     *            The {@link Parcel} to read the object's data from
      */
-    public RelationMember(final String role, final OsmElement element) {
-        this.role = role;
-        this.element = element;
+    private RelationMember(Parcel in) {
+        type = in.readString();
+        role = in.readString();
+        ref = in.readLong();
+        element = OsmElementBuilder.read(in);
     }
 
     /**
@@ -63,8 +90,29 @@ public class RelationMember {
         }
     }
 
-    public String getType() {
-        return type;
+    /**
+     * Default constructor Constructor for members that have not been downloaded
+     */
+    public RelationMember(final String type, final long refId, final String role) {
+        this.type = type;
+        this.ref = refId;
+        this.role = role;
+    }
+
+    /**
+     * Constructor for members that have been downloaded
+     */
+    public RelationMember(final String role, final OsmElement element) {
+        this.role = role;
+        this.element = element;
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public OsmElement getElement() {
+        return element;
     }
 
     public long getRef() {
@@ -78,12 +126,8 @@ public class RelationMember {
         return role;
     }
 
-    public void setRole(final String role) {
-        this.role = role;
-    }
-
-    public OsmElement getElement() {
-        return element;
+    public String getType() {
+        return type;
     }
 
     /**
@@ -95,4 +139,15 @@ public class RelationMember {
         this.element = e;
     }
 
+    public void setRole(final String role) {
+        this.role = role;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(type);
+        dest.writeString(role);
+        dest.writeLong(ref);
+        OsmElementBuilder.write(dest, element, flags);
+    }
 }

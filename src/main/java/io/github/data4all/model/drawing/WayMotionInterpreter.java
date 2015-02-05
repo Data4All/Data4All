@@ -1,92 +1,112 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.model.drawing;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.Way;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-
 /**
- * This WayMotionInterpreter is a MotionInterpreter for Ways<br/>
+ * This WayMotionInterpreter is a MotionInterpreter for Ways.<br/>
  * 
- * It interprets dot-wise, path-wise and single-path user input
+ * It interprets dot-wise, path-wise and single-path user input.
  * 
  * @author tbrose
  * @see MotionInterpreter
  */
-public class WayMotionInterpreter implements MotionInterpreter<Void> {
+public class WayMotionInterpreter implements MotionInterpreter {
+
     /**
-     * The log-tag for this class
+     * The log-tag for this class.
      */
     private static final String TAG = WayMotionInterpreter.class
             .getSimpleName();
 
     /**
-     * The maximum angle-variation where a point is reduced
+     * The maximum angle-variation where a point is reduced.
      */
     private static final int ANGLE_VARIATION = 15;
 
     /**
-     * The maximum combine-variation where points were combined
+     * The maximum combine-variation where points were combined.
      */
     private static final int COMBINE_VARIATION = 25;
 
-    /**
-     * The paint to draw the points with
-     */
-    private final Paint pointPaint = new Paint();
+    private PointToCoordsTransformUtil pointTrans;
 
     /**
-     * The paint to draw the path with
+     * Creates an WayMotionInterpreter with the specified transformation
+     * utility.
+     * 
+     * @param pointTrans
+     *            the transformation utility
      */
-    private final Paint pathPaint = new Paint();
-
-    public WayMotionInterpreter() {
-        // Draw dark blue points
-        pointPaint.setColor(POINT_COLOR);
-
-        // Draw semi-thick light blue lines
-        pathPaint.setColor(PATH_COLOR);
-        pathPaint.setStrokeWidth(PATH_STROKE_WIDTH);
+    public WayMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
+        this.pointTrans = pointTrans;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Combines the edge-points of the given polygon so that points which are
+     * relatively close to each other are combined into one single point.
      * 
-     * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#draw(android.graphics
-     * .Canvas, java.util.List)
+     * @param polygon
+     *            the polygon of the area
+     * @return a reduced polygon which approximates the input polygon with a
+     *         minimum of points
      */
-    public void draw(Canvas canvas, List<DrawingMotion> drawingMotions) {
-        List<Point> areaPoints = new ArrayList<Point>();
+    private static List<Point> combine(List<Point> polygon) {
+        // A polygon with less than two points has no need to be combined
+        if (polygon.size() > 1) {
+            final List<Point> newPolygon = new ArrayList<Point>();
 
-        // Calculate all way points of the area
-        for (DrawingMotion motion : drawingMotions) {
-            if (motion.getPathSize() != 0 && motion.isPoint()) {
-                // for dots calculate the average of the given points
-                areaPoints.add(average(motion));
-            } else {
-                areaPoints.addAll(motion.getPoints());
+            // Start at the first point with the combination
+            Point mid = polygon.get(0);
+            int count = 1;
+
+            for (int i = 1; i < polygon.size(); i++) {
+                final Point p = polygon.get(i);
+
+                if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY()) <= COMBINE_VARIATION) {
+                    // The point is in range of the current mid, add him to the
+                    // combined point
+                    final float midSumX = mid.getX() * count + p.getX();
+                    final float midSumY = mid.getY() * count + p.getY();
+                    count++;
+                    mid = new Point(midSumX / count, midSumY / count);
+                } else {
+                    // The point is to far away, add the 'old' combined point
+                    // and start a new combination at this point
+                    newPolygon.add(mid);
+                    mid = p;
+                    count = 1;
+                }
             }
-        }
 
-        // reduce the polygon
-        areaPoints = reduce(areaPoints);
-        Log.d(TAG, "Drawing " + areaPoints.size() + " Points");
-
-        // first draw all lines
-        for (int i = 0; i < areaPoints.size() - 1; i++) {
-            Point a = areaPoints.get(i);
-            Point b = areaPoints.get(i + 1);
-
-            canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(), pathPaint);
-        }
-
-        // afterwards draw the points
-        for (Point p : areaPoints) {
-            canvas.drawCircle(p.getX(), p.getY(), POINT_RADIUS, pointPaint);
+            // Add the last point to the combined polygon
+            if (mid != null) {
+                newPolygon.add(mid);
+            }
+            return newPolygon;
+        } else {
+            return polygon;
         }
     }
 
@@ -105,7 +125,7 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
     private static List<Point> reduce(List<Point> polygon) {
         // We need at least three points to reduce the polygon
         if (polygon.size() >= 3) {
-            List<Point> newPolygon = new ArrayList<Point>();
+            final List<Point> newPolygon = new ArrayList<Point>();
             // The first point of the polygon wont be reduced
             newPolygon.add(polygon.get(0));
 
@@ -113,14 +133,14 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
                 // Get the previous, current and next Point in the polygon
                 // The previous point is the last point added to the reduced
                 // polygon for better circle detection
-                Point a = newPolygon.get(newPolygon.size() - 1);
-                Point b = polygon.get(i + 1);
-                Point c = polygon.get((i + 2) % polygon.size());
+                final Point a = newPolygon.get(newPolygon.size() - 1);
+                final Point b = polygon.get(i + 1);
+                final Point c = polygon.get((i + 2) % polygon.size());
 
-                double alpha = getBeta(a, b, c);
+                final double alpha = Point.getBeta(a, b, c);
                 Log.d(TAG, "point " + (i + 1) + ": " + Math.toDegrees(alpha)
                         + "degree");
-                double variation = Math.abs(Math.toDegrees(alpha) - 180);
+                final double variation = Math.abs(Math.toDegrees(alpha) - 180);
                 if (variation >= ANGLE_VARIATION) {
                     newPolygon.add(polygon.get(i + 1));
                 } else if (i == polygon.size() - 2 && newPolygon.size() < 2) {
@@ -131,97 +151,7 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
             }
             return combine(newPolygon);
         } else {
-            return polygon;
-        }
-    }
-
-    /**
-     * Combines the edge-points of the given polygon so that points which are
-     * relatively close to each other are combined into one single point
-     * 
-     * @param polygon
-     *            the polygon of the area
-     * @return a reduced polygon which approximates the input polygon with a
-     *         minimum of points
-     */
-    private static List<Point> combine(List<Point> polygon) {
-        // A polygon with less than two points has no need to be combined
-        if (polygon.size() > 1) {
-            List<Point> newPolygon = new ArrayList<Point>();
-
-            // Start at the first point with the combination
-            Point mid = polygon.get(0);
-            int count = 1;
-
-            for (int i = 1; i < polygon.size(); i++) {
-                Point p = polygon.get(i);
-
-                if (Math.hypot(mid.getX() - p.getX(), mid.getY() - p.getY()) <= COMBINE_VARIATION) {
-                    // The point is in range of the current mid, add him to the
-                    // combined point
-                    float midSumX = mid.getX() * count + p.getX();
-                    float midSumY = mid.getY() * count + p.getY();
-                    count++;
-                    mid = new Point(midSumX / count, midSumY / count);
-                } else {
-                    // The point is to far away, add the 'old' combined point
-                    // and start a new combination at this point
-                    newPolygon.add(mid);
-                    mid = p;
-                    count = 1;
-                }
-            }
-
-            // Add the last point to the combined polygon
-            if (newPolygon.size() > 0) {
-                newPolygon.add(polygon.get(polygon.size() - 1));
-            }
-
-            return newPolygon;
-        } else {
-            return polygon;
-        }
-    }
-
-    /**
-     * Calculates the angle in Point b for the two lines (a,b) and (b,c)
-     * 
-     * @param a
-     *            The first Point
-     * @param b
-     *            The second Point
-     * @param c
-     *            The third Point
-     * @return The angle in Point b
-     */
-    private static double getBeta(Point a, Point b, Point c) {
-        // Calculate the two vectors
-        Point x = new Point(a.getX() - b.getX(), a.getY() - b.getY());
-        Point y = new Point(c.getX() - b.getX(), c.getY() - b.getY());
-
-        return Math.acos((x.getX() * y.getX() + x.getY() * y.getY())
-                / (Math.hypot(x.getX(), x.getY()) * Math.hypot(y.getX(),
-                        y.getY())));
-    }
-
-    /**
-     * Calculates the average point over all points in the given motion
-     * 
-     * @param motion
-     *            The motion to calculate the average point from
-     * @return The average point over all points in the motion
-     */
-    private static Point average(DrawingMotion motion) {
-        if (motion.getPathSize() == 0) {
-            return null;
-        } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : motion.getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / motion.getPathSize(), y / motion.getPathSize());
+            return combine(polygon);
         }
     }
 
@@ -229,10 +159,54 @@ public class WayMotionInterpreter implements MotionInterpreter<Void> {
      * (non-Javadoc)
      * 
      * @see
-     * io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List)
+     * io.github.data4all.model.drawing.MotionInterpreter#interprete(java.util
+     * .List, io.github.data4all.model.drawing.DrawingMotion)
      */
-    public Void create(List<DrawingMotion> drawingMotions) {
-        return null;
+    @Override
+    public List<Point> interprete(List<Point> interpreted,
+            DrawingMotion drawingMotion) {
+        final List<Point> result;
+
+        if (drawingMotion == null) {
+            return interpreted;
+        } else if (interpreted == null) {
+            result = new ArrayList<Point>();
+        } else {
+            result = new ArrayList<Point>(interpreted);
+        }
+
+        if (drawingMotion.isPoint()) {
+            result.add(drawingMotion.average());
+        } else {
+            // for a path use the last point
+            result.addAll(drawingMotion.getPoints());
+        }
+
+        return reduce(result);
+    }
+
+    /**
+     * @author sbollen
+     */
+    @Override
+    public OsmElement create(List<Point> polygon) {
+        // create a new Way and copy the List of Nodes to this way
+        final Way newWay = new Way(-1, 1);
+
+        final List<Node> nodeList = pointTrans.transform(polygon);
+
+        newWay.addNodes(nodeList, false);
+        return newWay;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#isArea()
+     */
+    @Override
+    public boolean isArea() {
+        return false;
     }
 
 }

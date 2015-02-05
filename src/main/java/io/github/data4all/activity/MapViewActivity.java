@@ -1,214 +1,200 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 
+import org.osmdroid.util.GeoPoint;
 
-import org.osmdroid.ResourceProxy.string;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-import org.osmdroid.ResourceProxy;
-
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-public class MapViewActivity extends Activity implements OnClickListener {
+/**
+ * Main Activity that shows the default MapView.
+ * 
+ * @author Oliver Schwartz
+ *
+ */
+public class MapViewActivity extends MapActivity implements OnClickListener {
 
+    // Logger Tag
+    private static final String TAG = "MapViewActivity";
 
-	//Logger Tag
-	private static final String TAG = "MapViewActivity";
-	
-	private MapView mapView;
-	private ImageView view;
-	private MapController mapController;
-	private MyLocationNewOverlay myLocationOverlay;
-	
-	//Default Zoom Level
-	private final int DEFAULT_ZOOM_LEVEL = 18;
-	
-	//Minimal Zoom Level
-	private final int MINIMAL_ZOOM_LEVEL = 10;
-	
-	//Maximal Zoom Level
-	private final int MAXIMAL_ZOOM_LEVEL = 20;
-	
-	//Default OpenStreetMap TileSource
-	private final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
-	
-	//BaseURL For SatelliteMap download. 
-	//TODO Create Own Account
-	private String[] aBaseUrl = { "http://a.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-            "http://b.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-            "http://c.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/",
-            "http://d.tiles.mapbox.com/v3/dennisl.map-6g3jtnzm/"};
-	
-	//Default Satellite Map Tilesource
-	private final OnlineTileSourceBase MAPBOX_SATELLITE_LABELLED = new XYTileSource(
-			"MapBoxSatelliteLabelled",
-			ResourceProxy.string.mapquest_aerial, MINIMAL_ZOOM_LEVEL,
-			MAXIMAL_ZOOM_LEVEL, 256, ".png", aBaseUrl);
-	private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+    /**
+     * Default constructor.
+     */
+    public MapViewActivity() {
+        super();
+    }
 
-	/**
-	 * Called when the activity is first created.
-	 * 
-	 * @param savedInstanceState
-	 *            If the activity is being re-initialized after previously being
-	 *            shut down then this Bundle contains the data it most recently
-	 *            supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it
-	 *            is null.</b>
-	 */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_map_view);
-		mapView = (MapView) this.findViewById(R.id.mapview);
+    /**
+     * Called when the activity is first created.
+     * 
+     * @param savedInstanceState
+     *            If the activity is being re-initialized after previously being
+     *            shut down then this Bundle contains the data it most recently
+     *            supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it
+     *            is null.</b>
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map_view);
+        setUpMapView();
 
-		// Set Maptilesource
-		Log.i(TAG, "Set Maptilesource to " + OSM_TILESOURCE.name());
-		mapView.setTileSource(OSM_TILESOURCE);
+        // Set Overlay for the actual Position
+        Log.i(TAG, "Added User Location Overlay to the map");
+        mapView.getOverlays().add(myLocationOverlay);
+        // Set ImageView for Loading Screen
+        view = (ImageView) findViewById(R.id.imageView1);
 
-		//Add Satellite Map TileSource
-		TileSourceFactory.addTileSource(MAPBOX_SATELLITE_LABELLED);
-		view = (ImageView) findViewById(R.id.imageView1);
-		view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-				.withEndAction(new Runnable() {
-					public void run() {
-						view.setVisibility(View.GONE);
-					}
-				}).start();
+        // for setting the actualZoomLevel and Center Position on Orientation
+        // Change
+        if (savedInstanceState != null) {
+            loadState(savedInstanceState);
+            view.setVisibility(View.GONE);
+        } else {
+            // fading out the loading screen
+            view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+                    .withEndAction(new Runnable() {
+                        public void run() {
+                            view.setVisibility(View.GONE);
+                        }
+                    }).start();
+        }
 
-		// Set Maptilesource
-		Log.i(TAG, "Set Maptilesource to " + DEFAULT_TILESOURCE.name());
-		mapView.setTileSource(DEFAULT_TILESOURCE);
+        // Set Zoomlevel
+        setZoomLevel(actualZoomLevel);
 
+        // Set Listener for Buttons
 
-		// Activate Multi Touch Control
-		Log.i(TAG, "Activate Multi Touch Controls");
-		mapView.setMultiTouchControls(true);
+        int id = R.id.return_to_actual_Position;
+        final ImageButton returnToPosition = (ImageButton) findViewById(id);
+        returnToPosition.setOnClickListener(this);
 
-		// Set Min/Max Zoom Level
-		Log.i(TAG, "Set minimal Zoomlevel to " + MINIMAL_ZOOM_LEVEL);
-		mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
+        id = R.id.switch_maps;
+        final ImageButton satelliteMap = (ImageButton) findViewById(id);
+        satelliteMap.setOnClickListener(this);
 
-		Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_ZOOM_LEVEL);
-		mapView.setMaxZoomLevel(MAXIMAL_ZOOM_LEVEL);
+        id = R.id.to_camera;
+        final ImageButton camera = (ImageButton) findViewById(id);
+        camera.setOnClickListener(this);
 
-		mapController = (MapController) this.mapView.getController();
+        id = R.id.new_point;
+        final ImageButton newPoint = (ImageButton) findViewById(id);
+        newPoint.setOnClickListener(this);
 
-		// Set Default Zoom Level
-		Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
-		mapController.setZoom(DEFAULT_ZOOM_LEVEL);
+    }
 
-		// Set Overlay for the actual Position
-		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
-		mapView.getOverlays().add(myLocationOverlay);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+        // Set center to user Location
+        case R.id.return_to_actual_Position:
+            this.returnToActualPosition();
+            break;
+        // Upload new Data
+        case R.id.upload_data:
+            startActivity(new Intent(this, LoginActivity.class));
+            break;
+        // switch between Maps
+        case R.id.switch_maps:
+            switchMaps();
+            break;
+        // Make Photo
+        case R.id.to_camera:
+            startActivity(new Intent(this, CameraActivity.class));
+            break;
+        // Add new POI to the Map
+        case R.id.new_point:
+            this.createNewPOI();
+            break;
+        default:
+            break;
+        }
+    }
 
-		// Set Listener for Buttons
+    @Override
+    public void onResume() {
+        super.onResume();
 
-        ImageButton returnToPosition = (ImageButton) findViewById(R.id.return_to_actual_Position);
-		returnToPosition.setOnClickListener(this);
+        // Enable User Position display
+        Log.i(TAG, "Enable User Position Display");
+        myLocationOverlay.enableMyLocation();
 
-        ImageButton uploadData = (ImageButton) findViewById(R.id.upload_data);
-		uploadData.setOnClickListener(this);
-
-        ImageButton satelliteMap = (ImageButton) findViewById(R.id.switch_maps);
-		satelliteMap.setOnClickListener(this);
-
-        ImageButton camera = (ImageButton) findViewById(R.id.to_camera);
-		camera.setOnClickListener(this);
-
-        ImageButton newPoint = (ImageButton) findViewById(R.id.new_point);
-		newPoint.setOnClickListener(this);
-
-	}
-
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.return_to_actual_Position:
-			if (myLocationOverlay.isMyLocationEnabled()) {
-				Log.i(TAG, "Set Mapcenter to"
-						+ myLocationOverlay.getMyLocation().toString());
-				mapController.setCenter(myLocationOverlay.getMyLocation());
-				mapView.postInvalidate();
-			}
-			break;
-		case R.id.upload_data:
-			startActivity(new Intent(this, LoginActivity.class));
-			break;
-		case R.id.switch_maps:
-			//switch to OSM Map
-			if(mapView.getTileProvider().getTileSource().name().equals("MapBoxSatelliteLabelled")){
-				Log.i(TAG, "Set Maptilesource to "
-						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(OSM_TILESOURCE);
-				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
-				mapView.postInvalidate();
-			//switch to Satellite Map
-			}else{
-				Log.i(TAG, "Set Maptilesource to "
-						+ mapView.getTileProvider().getTileSource().name());
-				mapView.setTileSource(MAPBOX_SATELLITE_LABELLED);
-				ImageButton button = (ImageButton)findViewById(R.id.switch_maps);
-				mapView.postInvalidate();		
-			}
-			break;
-		case R.id.to_camera:
-			startActivity(new Intent(this, CameraActivity.class));
-			break;
-		case R.id.new_point:
-			break;
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		// enable Overlay for actual Position
-		Log.i(TAG, "Enable Actual Location Overlay");
-		myLocationOverlay.enableMyLocation();
-
-		// enable Location Listener to update the Position
-		Log.i(TAG, "Enable Following Location Overlay");
-		myLocationOverlay.enableFollowLocation();
-		mapView.postInvalidate();
-
+        if (actualCenter != null) {
+            setCenter(actualCenter);
+        } else if (myLocationOverlay.getMyLocation() != null) {
+            actualCenter = myLocationOverlay.getMyLocation();
+            setCenter(actualCenter);
+        }
         // Start the GPS tracking
+        Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
-	}
+    }
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		Log.i(TAG, "Disable Actual Location Overlay");
-		myLocationOverlay.disableMyLocation();
+    @Override
+    public void onPause() {
+        super.onPause();
 
-		Log.i(TAG, "Disable Following Location Overlay");
-		myLocationOverlay.disableFollowLocation();
+        // Disable Actual Location Overlay
+        Log.i(TAG, "Disable Actual Location Overlay");
+        myLocationOverlay.disableMyLocation();
 
-		// Pause the GPS tracking
-		stopService(new Intent(this, GPSservice.class));
-	}
+        // Pause the GPS tracking
+        Log.i(TAG, "Stop GPSService");
+        stopService(new Intent(this, GPSservice.class));
+    }
+
+    /**
+     * Creates new POI on the actual Position.
+     **/
+    private void createNewPOI() {
+        final GeoPoint myPosition = myLocationOverlay.getMyLocation();
+        final Intent intent = new Intent(this, MapPreviewActivity.class);
+        final Node poi = new Node(-1, 1, myPosition.getLatitude(),
+                myPosition.getLongitude());
+
+        // Set Type Definition for Intent to Node
+        Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
+        intent.putExtra(TYPE, NODE_TYPE_DEF);
+
+        // Set OsmElement for Intent to POI
+        Log.i(TAG, "Set Intent Extra " + OSM + " to Node with Coordinates "
+                + poi.toString());
+        intent.putExtra(OSM, poi);
+
+        // Start MapPreview Activity
+        Log.i(TAG, "Start MapPreview Activity");
+        startActivity(intent);
+    }
+
+    /**
+     * Set the Center to the User Position.
+     **/
+    private void returnToActualPosition() {
+        if (myLocationOverlay.getMyLocation() != null) {
+            setCenter(myLocationOverlay.getMyLocation());
+        }
+    }
 }
-
