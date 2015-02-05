@@ -17,7 +17,6 @@ package io.github.data4all.view;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.drawing.Analyzer;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -210,14 +209,15 @@ public class TouchView extends View {
      * Catches the points of the polygon to the pre-set catch-points.
      */
     private void catchPolygonPoints() {
-        if (catchPoints != null && newPolygon != null) {
-            for (int i = 0; i < newPolygon.size(); i++) {
-                final Point polygonPoint = newPolygon.get(i);
-                for (Point catchPoint : catchPoints) {
-                    if (polygonPoint.distance(catchPoint) < CATCH_DISTANCE) {
-                        newPolygon.set(i, new Point(catchPoint));
-                        continue;
-                    }
+        if (catchPoints == null || newPolygon == null) {
+            return;
+        }
+        for (int i = 0; i < newPolygon.size(); i++) {
+            final Point polygonPoint = newPolygon.get(i);
+            for (Point catchPoint : catchPoints) {
+                if (polygonPoint.distance(catchPoint) < CATCH_DISTANCE) {
+                    newPolygon.set(i, new Point(catchPoint));
+                    continue;
                 }
             }
         }
@@ -226,10 +226,10 @@ public class TouchView extends View {
     /**
      * Deletes a Point of the polygon.
      * 
+     * @author konerman
+     * 
      * @param point
      *            The point to delete
-     * 
-     * @author konerman
      */
     public void deletePoint(Point point) {
         if (polygon.remove(point)) {
