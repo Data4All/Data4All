@@ -44,13 +44,17 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 public class ResultViewActivity extends BasicActivity implements OnClickListener {
 	
@@ -88,16 +92,14 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		private Dialog dialog;
 		// The List that will be shown in the Activity
 		private List<String> endList;
-		// The key Value of the Tag which will be changed 
-		private String key;
 		// The list of all Keys
 		private ArrayList<String> keyList;
 		
-	    private CharSequence [] array;
+		private String [] valueArray;
+		
+	    private String [] array;
 	    
 	    private AlertDialog alert;
-	    
-	    private AlertDialog alert1;
 
 		private Map<String, ClassifiedTag> tagMap;
 
@@ -119,11 +121,12 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		
 		mapView.setMinZoomLevel(10);
 		
-		mapView.setMaxZoomLevel(40);
+		mapView.setMaxZoomLevel(20);
+		
+		mapView.setClickable(false);
 		
 		mapController.setZoom(DEFAULT_ZOOM_LEVEL);
 		
-		//mapView.zoomToBoundingBox(MapUtil.getBoundingBoxForOsmElement(element));
 		
 		if(element instanceof Node){
 			Node node = (Node) element;
@@ -136,12 +139,66 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		
 		myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 		mapView.getOverlays().add(myLocationOverlay);
+		
 		addOsmElementToMap(element);
 		
 		
 		
+		array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
+		tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
 		
-		listView = (ListView) this.findViewById(R.id.listViewResult);
+		Spinner spinnerClassifiedTagKey = (Spinner) this.findViewById(R.id.spinnerClassifiedTagKey);
+		Log.i(TAG, "spinner");
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+				android.R.layout.simple_spinner_item, array);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinnerClassifiedTagKey.setAdapter(adapter);
+		spinnerClassifiedTagKey.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				Log.i(TAG, "onITEM");
+				Log.i(TAG, (String) parent.getItemAtPosition(position));
+				final String key = (String) parent.getItemAtPosition(position);
+				valueArray = tagMap.get(key).getClassifiedValues().toArray(new String [tagMap.get(key).getClassifiedValues().size()]);
+				Spinner spinnerClassifiedTagValues = (Spinner) findViewById(R.id.spinnerClassifiedTagValue);
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+						android.R.layout.simple_spinner_item, valueArray);
+				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				spinnerClassifiedTagValues.setAdapter(adapter);
+				spinnerClassifiedTagValues.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+					@Override
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int position, long id) {
+						Log.i(TAG, "Key Value Pair: " +key + (String) parent.getItemAtPosition(position));
+						element.addOrUpdateTag(key,(String) parent.getItemAtPosition(position));
+						
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+
+		
+		
+		
+		
+	/**	listView = (ListView) this.findViewById(R.id.listViewResult);
 		// The Sorted Keys of the ShowPictureActivity
 		array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
 		tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
@@ -149,75 +206,29 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		listView.setOnItemClickListener(new OnItemClickListener() {
 		
 			public void onItemClick(AdapterView parent, View view, final int position, long id) {
-				Log.i(TAG, Boolean.toString(Tagging.isClassifiedTag(keyList.get(position), array)));
 				Log.i(TAG, keyList.get(position));
 				Log.i(TAG, Integer.toString(endList.size()));
 				Log.i(TAG, Integer.toString(position));
-				//Change Classified Tags
 				if(Tagging.isClassifiedTag(keyList.get(position), array)){
-					Log.i(TAG, "Classified Tag");
-					AlertDialog.Builder alertDialog = new AlertDialog.Builder(ResultViewActivity.this,android.R.style.Theme_Holo_Dialog_MinWidth);
-			        alertDialog.setTitle("Select Tag");
-			        final CharSequence [] showArray;
-			        showArray =  tagMap.get(keyList.get(position)).getClassifiedValues().toArray(new String [tagMap.get(keyList.get(position)).getClassifiedValues().size()]);
-	            	alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							element.addOrUpdateTag(keyList.get(position),(String) showArray [which]);
-							output();
-						}
-					});
-	            	
-	            	alert = alertDialog.create();
-	            	alert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-	                
-	                alert.show();
+					changeClassifiedTags(position);
 				}
-				// Change Unclasssified Tags
 				else {
-				dialog = new Dialog(context, android.R.style.Theme_Holo_Dialog_MinWidth);
-				dialog.setContentView(R.layout.dialog_dynamic);
-				dialog.setTitle(keyList.get(position));
-				final ImageButton okay = new ImageButton(context);
-				final EditText text = new EditText(context);
-				LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
-				layout.addView(text);
-				layout.addView(okay);
-				okay.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View arg0) {
-						element.addOrUpdateTag(keyList.get(position), text.getText().toString());
-						output();
-						dialog.dismiss();
-					}
-					
-				});
-				
-				dialog.show();
-				
+					changeUnclassifiedTags(position);
 			}
 			
 		}
 	});
-	
-
+	*/
+	// Set the setonclicklistener of the resultButton	
 	ImageButton resultButton = (ImageButton) this.findViewById(R.id.buttonResult);	
 	resultButton.setOnClickListener(this);	
 	
-
+	// Set the setonclicklistener of the resultButtonToCamera
 	ImageButton resultButtonToCamera = (ImageButton) this.findViewById(R.id.buttonResultToCamera);	
 	resultButtonToCamera.setOnClickListener(this);	
 		
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.result_view, menu);
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -230,14 +241,17 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+	/**
+	 * The Method to show the Tags in the Listview 
+	 * 
+	 */
 	private void output(){
 		endList = new ArrayList<String>();
 		keyList = new ArrayList<String>();
         for(Entry entry : element.getTags().entrySet()){
 			String key = (String) entry.getKey();
 			keyList.add(key);
-			endList.add(key + "=" + element.getTags().get(key));
+			endList.add(element.getTags().get(key));
            
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
@@ -272,13 +286,71 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 
 			break;
 		case R.id.buttonResultToCamera:
-			startActivity(new Intent(this, CameraActivity.class));
+			mapView.zoomToBoundingBox(MapUtil.getBoundingBoxForOsmElement(element));
 		}
 		
 	}
+	/**
+	 * Starts the Dialog to change the Unclassifiedtag
+	 * 
+	 * @param position of the item in the List
+	 *
+	 */
+	private void changeUnclassifiedTags(final int position){
+		dialog = new Dialog(context, android.R.style.Theme_Holo_Dialog_MinWidth);
+		dialog.setContentView(R.layout.dialog_dynamic);
+		dialog.setTitle(keyList.get(position));
+		final ImageButton okay = new ImageButton(context);
+		final EditText text = new EditText(context);
+		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+		layout.addView(text);
+		layout.addView(okay);
+		okay.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				element.addOrUpdateTag(keyList.get(position), text.getText().toString());
+				output();
+				dialog.dismiss();
+			}
+			
+		});
+		
+		dialog.show();
+	}
 	
+	/**
+	 * Changes the Classified Tag 
+	 * 
+	 * @param position  of the item in the List 
+	 */
 	
+	private void changeClassifiedTags(final int position){
+		Log.i(TAG, "Classified Tag");
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(ResultViewActivity.this,android.R.style.Theme_Holo_Dialog_MinWidth);
+        alertDialog.setTitle("Select Tag");
+        final CharSequence [] showArray;
+        showArray =  tagMap.get(keyList.get(position)).getClassifiedValues().toArray(new String [tagMap.get(keyList.get(position)).getClassifiedValues().size()]);
+    	alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				element.addOrUpdateTag(keyList.get(position),(String) showArray [which]);
+				output();
+			}
+		});
+    	
+    	alert = alertDialog.create();
+    	alert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        
+        alert.show();
+	}
 	
+	/**
+	 * adds the OSM Elemnt to the Map
+	 * 
+	 * @param element of the OSM Object 
+	 */
 	
 	private void addOsmElementToMap(OsmElement element) {
 		if (element != null) {
@@ -374,8 +446,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		mapView.postInvalidate();
 	}
 
-	
-	
-	
+
+
 	
 }

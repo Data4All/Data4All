@@ -1,35 +1,45 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayoutResultView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-        
-        <org.osmdroid.views.MapView
-            android:id="@+id/mapviewResult"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="10dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" >
-        </org.osmdroid.views.MapView>
-       
-        <ListView
-            android:id="@+id/listViewResult"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/mapviewResult" >
 
-        </ListView>
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapviewResult"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" >
+    </org.osmdroid.views.MapView>
 
-        <ImageButton
-            android:id="@+id/buttonResult"
-            style="@style/imageButtonOkay"
-            android:contentDescription="@string/return_to_position"
-           />
+    <ImageButton
+        android:id="@+id/buttonResult"
+        style="@style/imageButtonOkay"
+        android:contentDescription="@string/return_to_position" />
 
-        <ImageButton
-            android:id="@+id/buttonResultToCamera"
-            style="@style/imageButtonReturnToCamera"
-            android:contentDescription="@string/returnToCamera" />
-    
+    <ImageButton
+        android:id="@+id/buttonResultToCamera"
+        style="@style/imageButtonReturnToCamera"
+        android:contentDescription="@string/returnToCamera" />
+
+    <Spinner
+        android:id="@+id/spinnerClassifiedTagKey"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+     	android:layout_below="@+id/mapviewResult"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/spinnerClassifiedTagValue" 
+        android:layout_marginTop="10dp"
+        />
+
+    <Spinner
+        android:id="@+id/spinnerClassifiedTagValue"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mapviewResult"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+         />
+
 </RelativeLayout>

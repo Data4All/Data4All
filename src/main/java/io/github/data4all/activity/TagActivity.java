@@ -19,11 +19,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -75,6 +77,15 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tag);    
         getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        createAlertDialogKey();
+        
+
+        
+
+    }
+    
+    private void createAlertDialogKey(){
+    	
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(TagActivity.this,android.R.style.Theme_Holo_Dialog_MinWidth);
         LayoutInflater inflater = getLayoutInflater();
         View view=inflater.inflate(R.drawable.header_listview, null);
@@ -90,38 +101,65 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             	key = (String) array [which];
-            	array =  tagMap.get(key).getClassifiedValues().toArray(new String [tagMap.get(key).getClassifiedValues().size()]);
-            	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TagActivity.this);
-            	alertDialogBuilder.setTitle("Select Tag");
-            	alertDialogBuilder.setItems(array, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						String value = (String) array [which];
-                        map = new LinkedHashMap<String, String>();
-                        map.put(key, value);
-                        if (key.equals("building")
-                                || key.equals("amenity")) {                                  
-                            createDialog(Tags.getAllAddressTags(), "Add Address", key.equals("building"), true);
-                        }
-                        else{
-                         finish();
-                        }
-					}
-				});
-            	
-                 alert1 = alertDialogBuilder.create();
-                 alert1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-	                
-                 alert1.show();
+            	createAlertDialogValue();
             }
             
         });
         alert = alertDialog.create();
         alert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        
+        alert.setOnKeyListener(new OnKeyListener() {
+			
+    			@Override
+    			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+    				if(keyCode == KeyEvent.KEYCODE_BACK){
+    					    					
+    				}
+    				return true;
+    			}
+    		});
         alert.show();
         
+
+        
+    }
+    
+    
+    private void createAlertDialogValue(){
+    	array =  tagMap.get(key).getClassifiedValues().toArray(new String [tagMap.get(key).getClassifiedValues().size()]);
+    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TagActivity.this);
+    	alertDialogBuilder.setTitle("Select Tag");
+    	alertDialogBuilder.setItems(array, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String value = (String) array [which];
+                map = new LinkedHashMap<String, String>();
+                map.put(key, value);
+                if (key.equals("building")
+                        || key.equals("amenity")) {                                  
+                    createDialog(Tags.getAllAddressTags(), "Add Address", key.equals("building"), true);
+                }
+                else{
+                 finish();
+                }
+			}
+		});
+    	
+         alert1 = alertDialogBuilder.create();
+         alert1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+         alert1.setOnKeyListener(new OnKeyListener() {
+ 			
+     			@Override
+     			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+     				if(keyCode == KeyEvent.KEYCODE_BACK){
+     					 alert1.dismiss();
+     					 createAlertDialogKey();
+     				}
+     				return true;
+     			}
+     		});
+         alert1.show();
+
     }
 
     public void onClick(View v) {
@@ -185,14 +223,22 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
+    
+    
+    /**
+     * Creates the Dialog of the Address and Contact tags
+     * 
+     * @param arrayList List of Tags
+     * @param title The title of the Dialog
+     * @param but False to add the contacts 
+     * @param first1 true if the Method is called the first time 
+     */
 
 
 	public void createDialog(ArrayList<Tag> arrayList, String title, final Boolean but, final Boolean first1){
     	dialog1 = new Dialog(this,android.R.style.Theme_Holo_Dialog_MinWidth);
 		dialog1.setContentView(R.layout.dialog_dynamic);
 		dialog1.setTitle(title);
-		//dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E6808080")));
 		LinearLayout layout = (LinearLayout) dialog1.findViewById(R.id.dialogDynamic);
 		final Button next = new Button(this);
 		final Button finish = new Button(this);
@@ -207,7 +253,6 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 			text.setHint(arrayList.get(i).getHintRessource());
 			text.setHintTextColor(Color.DKGRAY);
     		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-    		//text.setInputType(arrayList.get(i).getType());
     		edit.add(text);
     		layout.addView(text);
 		}
@@ -217,6 +262,23 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 		layout.addView(next);
 		}
 		layout.addView(finish);
+        dialog1.setOnKeyListener(new OnKeyListener() {
+			
+   			@Override
+   			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+   				if(keyCode == KeyEvent.KEYCODE_BACK){
+   					if(!but || first){
+   						dialog1.dismiss();
+   						createAlertDialogValue();
+   					}else{
+   						dialog1.dismiss();
+   						createDialog(Tags.getAllAddressTags(), "Add Address", key.equals("building"), true);
+   					}
+   					
+   				}
+   				return true;
+   			}
+   		});
 		dialog1.show();
 	}
 	
