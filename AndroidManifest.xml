@@ -39,6 +39,7 @@
         <activity android:name=".activity.ShowPictureActivity" />
         <activity android:name=".activity.CameraActivity" />
         <activity android:name=".activity.ResultViewActivity" />
+        <activity android:name=".activity.MapActivity" />
         <activity android:name=".ResultViewActivity"
         ></activity>
         <activity
@@ -50,6 +51,7 @@
             android:label="@string/title_activity_login" >
         </activity>
         
+        <activity android:name=".activity.BasicActivity" />
         
         <activity
             android:name=".activity.PrepareRequestTokenActivity"

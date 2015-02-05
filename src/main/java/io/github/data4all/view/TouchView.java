@@ -1,3 +1,18 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.view;
 
 import io.github.data4all.logger.Log;
@@ -40,38 +55,38 @@ public class TouchView extends View {
 
     private static final int CATCH_DISTANCE = 0;
     /**
-     * The paint to draw the path with
+     * The paint to draw the path with.
      */
     private final Paint pathPaint = new Paint();
     private final Paint areaPaint = new Paint();
 
     /**
-     * The motion interpreted Polygon
+     * The motion interpreted Polygon.
      */
     private List<Point> polygon = new ArrayList<Point>();
 
     /**
-     * The Polygon with the current pending motion
+     * The Polygon with the current pending motion.
      */
     private List<Point> newPolygon = new ArrayList<Point>();
 
     /**
-     * The current motion the user is typing via the screen
+     * The current motion the user is typing via the screen.
      */
     private DrawingMotion currentMotion;
 
     /**
-     * An object for the calculation of the point transformation
+     * An object for the calculation of the point transformation.
      */
     private PointToCoordsTransformUtil pointTrans;
 
     /**
-     * The currently used interpreter
+     * The currently used interpreter.
      */
     private MotionInterpreter interpreter;
 
     /**
-     * The current used RedoUndo object
+     * The current used RedoUndo object.
      */
     private RedoUndo redoUndo;
     private UndoRedoListener undoRedoListener;
@@ -90,7 +105,7 @@ public class TouchView extends View {
     }
 
     /**
-     * Remove all recorded DrawingMotions from this TouchView
+     * Remove all recorded DrawingMotions from this TouchView.
      */
     public void clearMotions() {
         if (polygon != null) {
@@ -209,7 +224,7 @@ public class TouchView extends View {
     }
 
     /**
-     * Deletes a Point of the polygon
+     * Deletes a Point of the polygon.
      * 
      * @param point
      *            The point to delete
@@ -227,7 +242,8 @@ public class TouchView extends View {
 
     /**
      * This function determines if there is a Point of the polygon close to the
-     * given coordinates
+     * given coordinates.
+     * 
      * 
      * @param x
      *            the X-value of the point
@@ -237,8 +253,7 @@ public class TouchView extends View {
      *            the max distance between the x/y and the Point
      * @return the closest point to the given x/y or {@code null} if the nearest
      *         point is more than maxDistance away
-     * 
-     * @author konerman
+     *
      */
     public Point lookUp(float x, float y, float maxDistance) {
         double shortest = maxDistance;
@@ -262,9 +277,9 @@ public class TouchView extends View {
     }
 
     /**
-     * Returns a {@link PointMover} for the given {@link Point}<br/>
+     * Returns a {@link PointMover} for the given {@link Point}.<br/>
      * 
-     * Use moveTo() afterwards to actually move the point
+     * Use moveTo() afterwards to actually move the point.
      * 
      * @param point
      *            the point you want to move
@@ -281,35 +296,6 @@ public class TouchView extends View {
         } else {
             Log.d(this.getClass().getSimpleName(), "PointMover for index " + i);
             return new PointMover(i);
-        }
-    }
-
-    /**
-     * Pointer of the position of a point in the polygon
-     * 
-     * @author konerman
-     */
-    public class PointMover {
-        private final int idx;
-
-        public PointMover(int idx) {
-            this.idx = idx;
-        }
-
-        /**
-         * moves the {@link Point} to the new coordinates and invalidates its
-         * {@link TouchView} afterwards
-         * 
-         * @param x
-         *            the new x-coordinate
-         * @param y
-         *            the new y-coordinate
-         * 
-         * @author konerman
-         */
-        public void moveTo(float x, float y) {
-            polygon.set(idx, new Point(x, y));
-            postInvalidate();
         }
     }
 
@@ -407,5 +393,35 @@ public class TouchView extends View {
      */
     public OsmElement create() {
         return interpreter.create(polygon);
+    }
+
+    /**
+     * Pointer of the position of a point in the polygon.
+     * 
+     * @author konerman
+     */
+    public class PointMover {
+        private final int idx;
+
+        public PointMover(int idx) {
+            this.idx = idx;
+        }
+
+        /**
+         * moves the {@link Point} to the new coordinates and invalidates its
+         * {@link TouchView} afterwards.
+         * 
+         * @author konerman
+         * 
+         * @param x
+         *            the new x-coordinate
+         * @param y
+         *            the new y-coordinate
+         * 
+         */
+        public void moveTo(float x, float y) {
+            polygon.set(idx, new Point(x, y));
+            postInvalidate();
+        }
     }
 }

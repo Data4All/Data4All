@@ -1,3 +1,18 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.model.data;
 
 import android.os.Parcel;
@@ -88,27 +103,27 @@ public class Node extends OsmElement implements GeoPoint {
     /**
      * Writes the lat and the lon to the given parcel
      */
-	public void writeToParcel(Parcel dest, int flags) {		
-		super.writeToParcel(dest, flags);
-		dest.writeDouble(lat);
-		dest.writeDouble(lon);
-	}
-	
-	/**
-	 * Returns the Node as a GeoPoint representation
-	 * 
-	 * @return the node as a GeoPoint representation
-	 */
-	public org.osmdroid.util.GeoPoint toGeoPoint(){
-		return new org.osmdroid.util.GeoPoint(lat,lon);
-	}
-
-    public boolean equals(Node node){
-		return node.getLat()==lat && node.getLon()==lon;
-    	
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
     }
-    
-    public String toString(){
-    	return toGeoPoint().toString();
+
+    /**
+     * Returns the Node as a GeoPoint representation
+     * 
+     * @return the node as a GeoPoint representation
+     */
+    public org.osmdroid.util.GeoPoint toGeoPoint() {
+        return new org.osmdroid.util.GeoPoint(lat, lon);
+    }
+
+    public boolean equals(Node node) {
+        return node.getLat() == lat && node.getLon() == lon;
+
+    }
+
+    public String toString() {
+        return toGeoPoint().toString();
     }
 }

@@ -1,3 +1,18 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.model.data;
 
 import io.github.data4all.logger.Log;
@@ -40,7 +55,6 @@ public class Way extends OsmElement {
         super(osmId, osmVersion);
         nodes = new LinkedList<Node>();
     }
-
 
     /**
      * Adds a new node to the way. If the last node equals the new node you have
@@ -185,32 +199,32 @@ public class Way extends OsmElement {
     public Node getFirstNode() {
         return nodes.get(0);
     }
-	/**
-	 * Returns all points which belong to the way.
-	 * 
-	 * @return list of points
-	 */
-	public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
-		List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
-		for (Node n : nodes){
-			points.add(n.toGeoPoint());
-		}
-		return points;
-	}
 
-	/**
-	 * Returns all points which belong to the way.
-	 * 
-	 * @return list of points
-	 */
-	public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
-		ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
-		for (Node n : nodes){
-			points.add(n.toGeoPoint());
-		}
-		return points;
-	}
-	
+    /**
+     * Returns all points which belong to the way.
+     * 
+     * @return list of points
+     */
+    public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
+        List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
+        for (Node n : nodes) {
+            points.add(n.toGeoPoint());
+        }
+        return points;
+    }
+
+    /**
+     * Returns all points which belong to the way.
+     * 
+     * @return list of points
+     */
+    public ArrayList<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
+        ArrayList<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
+        for (Node n : nodes) {
+            points.add(n.toGeoPoint());
+        }
+        return points;
+    }
 
     /**
      * Returns the last node of this way.
@@ -335,9 +349,8 @@ public class Way extends OsmElement {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<Way> CREATOR
-            = new Parcelable.Creator<Way>() {
-    	
+    public static final Parcelable.Creator<Way> CREATOR = new Parcelable.Creator<Way>() {
+
         public Way createFromParcel(Parcel in) {
             return new Way(in);
         }
@@ -350,26 +363,27 @@ public class Way extends OsmElement {
     /**
      * Writes the nodes to the given parcel.
      */
-	public void writeToParcel(Parcel dest, int flags) {		
-		super.writeToParcel(dest, flags);
-		dest.writeTypedList(nodes);
-	}
-	
-	/**
-	 * Constructor to create a way from a parcel.
-	 * @param in
-	 */
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeTypedList(nodes);
+    }
+
+    /**
+     * Constructor to create a way from a parcel.
+     * 
+     * @param in
+     */
     private Way(Parcel in) {
-    	super(in);
+        super(in);
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
     }
-    
-    public String toString(){
-    	String s = "";
-    	for(Node n : nodes){
-    		s += n.toString() + " ";
-    	}
-    	return s;
+
+    public String toString() {
+        String s = "";
+        for (Node n : nodes) {
+            s += n.toString() + " ";
+        }
+        return s;
     }
 }

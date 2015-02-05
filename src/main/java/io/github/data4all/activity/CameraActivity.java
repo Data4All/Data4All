@@ -1,3 +1,18 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
@@ -32,10 +47,11 @@ public class CameraActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // Inflate the UI layout
         setContentView(R.layout.activity_camera);
-        
+
         // Initialize the UI components
         initUIComponents();
     }
@@ -71,7 +87,7 @@ public class CameraActivity extends Activity {
         // Calculate the camera previews
         cameraPreview.setCamera(mCamera);
         mCamera.startPreview();
-        
+
         // Start the Device Orientation listener
         startService(new Intent(this, OrientationListener.class));
 
@@ -92,7 +108,7 @@ public class CameraActivity extends Activity {
             mCamera = null;
         }
         stopService(new Intent(this, OrientationListener.class));
-        
+
         btnTrigger.setOnClickListener(null);
     }
 
@@ -114,6 +130,5 @@ public class CameraActivity extends Activity {
         // Retrieve the Camera Preview Component
         cameraPreview = (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
     }
-    
-    
+
 }

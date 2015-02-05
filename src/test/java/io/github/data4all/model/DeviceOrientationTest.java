@@ -1,3 +1,18 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.model;
 
 import static org.junit.Assert.assertEquals;
@@ -28,33 +43,6 @@ public class DeviceOrientationTest {
     @Before
     public void setup() {
         deviceOrientation = new DeviceOrientation(100.10f, -20.40f, 1.71f, 1);
-    }
-
-    // Tests for equals(float, float,float,long)
-
-    @Test
-    public void equals_sameCoordinates_resultIsTrue() {
-        assertTrue(deviceOrientation.equalsTo(100.10f, -20.40f, 1.71f, 1));
-    }
-
-    @Test
-    public void equals_otherAzimuthCoordinate_resultIsFalse() {
-        assertFalse(deviceOrientation.equalsTo(10.10f, -20.02f, 1.71f, 1));
-    }
-
-    @Test
-    public void equals_otherPitchCoordinate_resultIsFalse() {
-        assertFalse(deviceOrientation.equalsTo(100.10f, 2f, 1.71f, 1));
-    }
-
-    @Test
-    public void equals_othersRollCoordinate_resultIsFalse() {
-        assertFalse(deviceOrientation.equalsTo(100.10f, 2f, 1.0f, 1));
-    }
-
-    @Test
-    public void equals_otherTimeCoordinate_resultIsFalse() {
-        assertFalse(deviceOrientation.equalsTo(100.10f, 2f, 1.71f, 2));
     }
 
     // Tests for equals(Object)
