@@ -61,7 +61,7 @@ public class ClassifiedTag extends Tag {
      * @return classifiedValues or classifiedValuesSuggestion
      */
     public ArrayList<String> getClassifiedValues() {
-        if(classifiedValuesSuggestion.isEmpty()){
+        if(classifiedValuesSuggestion.isEmpty()) {
             return classifiedValues;
         }
         return new ArrayList<String>(classifiedValuesSuggestion);
@@ -87,17 +87,18 @@ public class ClassifiedTag extends Tag {
      * add a suggestion to the list
      * or get all elements from list, when the user don't want a suggestion 
      */
-    public void addSuggestion(String suggestion){
+    public void addSuggestion(String suggestion) {
         classifiedValuesSuggestion.add(suggestion);
-        if(classifiedValuesSuggestion.contains("ALL")){
+        if(classifiedValuesSuggestion.contains("ALL")) {
             classifiedValuesSuggestion.remove("ALL");
         }
         classifiedValuesSuggestion.add("ALL");
         
     }
      
-    /**
+    /** 
      * get all classifiedValues
+     * 
      */
     public ArrayList<String> getAllClassifiedValues() {
         return classifiedValues;

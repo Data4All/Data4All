@@ -304,6 +304,8 @@ public abstract class OsmElement implements Parcelable {
      * @param key
      * @param value
      * @param classifiedTag
+     * 
+     * @author Steeve
      */
     public void addOrUpdateTag(String key, String value,
             ClassifiedTag classifiedTag) {
