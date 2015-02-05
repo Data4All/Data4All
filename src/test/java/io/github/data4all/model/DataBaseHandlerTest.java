@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -16,7 +17,9 @@ import org.robolectric.annotation.Config;
 
 import io.github.data4all.model.DataBaseHandler;
 import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.User;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 /**
  * This class tests the DataBaseHandler.
  * 
@@ -96,76 +99,39 @@ public class DataBaseHandlerTest {
 		assertEquals(0, dbHandler.getNodeCount());
 	}
 	
-//	@Test
-//	public void testWayCRUD(){
-//		
-//		Node node1 = new Node(1, 1, 30.123456, 40.1234567);
-//		Node node2 = new Node(2, 1, 25.982423, 42.7483024);
-//		Node node3 = new Node(3, 1, 34.096897, 42.6598236);
-//		Node node4 = new Node(4, 1, 27.082759, 40.7533486);
-//		
-//		RelationMember relationMember1 = new RelationMember("node", 5, "");
-//		RelationMember relationMember2 = new RelationMember("node", 6, "");
-//		RelationMember relationMember3 = new RelationMember("node", 7, "");
-//		RelationMember relationMember4 = new RelationMember("node", 8, "");
-//		
-//		Relation relation1 = new Relation(9, 1);
-//		relation1.addMember(relationMember1);
-//		node1.addParentRelation(relation1);
-//		
-//		Relation relation2 = new Relation(10, 1);
-//		relation2.addMember(relationMember2);
-//		node2.addParentRelation(relation2);
-//		
-//		Relation relation3 = new Relation(11, 1);
-//		relation3.addMember(relationMember3);
-//		node3.addParentRelation(relation3);
-//		
-//		Relation relation4 = new Relation(12, 1);
-//		relation4.addMember(relationMember4);
-//		node4.addParentRelation(relation4);
-//		
-//		relation1.addParentRelation(relation2);
-//		relation2.addParentRelation(relation3);
-//		relation3.addParentRelation(relation4);
-//		
-//		Way way1 = new Way(13, 1);
-//		way1.addNode(node1);
-//		way1.addNode(node2);
-//		way1.addParentRelation(relation1);
-//		way1.addParentRelation(relation2);
-//		
-//		Way way2 = new Way(14, 1);
-//		way2.addNode(node3);
-//		way2.addNode(node4);
-//		way2.addParentRelation(relation3);
-//		way2.addParentRelation(relation4);
-//		
-//		dbHandler.createRelationMember(relationMember1);
-//		dbHandler.createRelationMember(relationMember2);
-//		dbHandler.createRelationMember(relationMember3);
-//		dbHandler.createRelationMember(relationMember4);
-//		
-//		dbHandler.createRelation(relation1);
-//		dbHandler.createRelation(relation2);
-//		dbHandler.createRelation(relation3);
-//		dbHandler.createRelation(relation4);
-//		
-//		dbHandler.createNode(node1);
-//		dbHandler.createNode(node2);
-//		dbHandler.createNode(node3);
-//		dbHandler.createNode(node4);
-//		
-//		dbHandler.createWay(way1);
-//		dbHandler.createWay(way2);
-//		
-//		assertEquals(30.123456, dbHandler.getWay(13).getFirstNode().getLat(), 0.0);
-////		assertEquals(40.7533486, dbHandler.getWay(14).getLastNode().getLon(), 0.0);
-//		
-//		way1.setOsmVersion(2);
-//		
-////		dbHandler.updateWay(way1);
-//		
-////		assertEquals(2, dbHandler.getWay(13).getOsmVersion());
-//	}
+	@Test
+	public void testPolyElementCRUD() throws JSONException{
+	    
+	    PolyElement polyElement1 = new PolyElement(1, PolyElementType.AREA);
+	    PolyElement polyElement2 = new PolyElement(2, PolyElementType.BUILDING);
+	    PolyElement polyElement3 = new PolyElement(3, PolyElementType.WAY);
+	    
+	    Node node1 = new Node(4, 30.123456, 40.1234567);
+        Node node2 = new Node(5, 25.982423, 42.7483024);
+        Node node3 = new Node(6, 23.325786, 41.0457094);
+        Node node4 = new Node(7, 34.744587, 41.0937468);
+        Node node5 = new Node(8, 28.935876, 45.6767676);
+        Node node6 = new Node(9, 33.333333, 44.4444444);
+        
+        polyElement1.addNode(node1);
+        polyElement1.addNode(node2);
+        
+        polyElement2.addNode(node3);
+        polyElement2.addNode(node4);
+        
+        polyElement3.addNode(node5);
+        polyElement3.addNode(node6);
+        
+        dbHandler.createPolyElement(polyElement1);
+        dbHandler.createPolyElement(polyElement2);
+        dbHandler.createPolyElement(polyElement3);
+        
+//        assertEquals(3, dbHandler.getPolyElementCount());
+        
+	}
+	
+	@After
+	public void tearDown(){
+	    dbHandler.close();
+	}
 }
