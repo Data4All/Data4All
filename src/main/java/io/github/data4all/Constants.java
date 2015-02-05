@@ -31,7 +31,7 @@ public class Constants {
                                                              + "://"
                                                              + OAUTH_CALLBACK_HOST;
 
-    public static final String API_URL               = "http://apis.dev.openstreetmap.org/";
+    public static final String API_URL               = "http://master.apis.dev.openstreetmap.org/";
     public static final String API_USERDETAILS       = API_URL
                                                              + "api/0.6/user/details";
 
@@ -39,9 +39,9 @@ public class Constants {
     public static final String CONSUMER_KEY          = "pXTyQeCIqpXN3FrHc3lsDQoZbmaH3wnhMANrRNyH";
     public static final String CONSUMER_SECRET       = "4vN5TU43n7JlGRjBKxZ18VZZXj8XLy9kKvlAkcPl";
 
-    public static final String SCOPE                 = "http://apis.dev.openstreetmap.org/.";
-    public static final String REQUEST_URL           = "http://apis.dev.openstreetmap.org/oauth/request_token";
-    public static final String ACCESS_URL            = "http://apis.dev.openstreetmap.org/oauth/access_token";
-    public static final String AUTHORIZE_URL         = "http://apis.dev.openstreetmap.org/oauth/authorize";
+    public static final String SCOPE                 = "http://master.apis.dev.openstreetmap.org/";
+    public static final String REQUEST_URL           = "http://master.apis.dev.openstreetmap.org/oauth/request_token";
+    public static final String ACCESS_URL            = "http://master.apis.dev.openstreetmap.org/oauth/access_token";
+    public static final String AUTHORIZE_URL         = "http://master.apis.dev.openstreetmap.org/oauth/authorize";
 
 }

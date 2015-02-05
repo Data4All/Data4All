@@ -19,9 +19,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -88,12 +90,18 @@ public class RequestChangesetIDFromOpenStreetMapTask extends AsyncTask<Void, Voi
         try {
             // Prepare request
         	request = new HttpPut (Constants.SCOPE + "api/0.6/changeset/create");
-
-        	MultipartEntity entity = new MultipartEntity();
-        	entity.addPart("xml", new FileBody(changeSetXML));
-        	request.setEntity(entity);
+        	
             // Sign the request with oAuth
             consumer.sign(request);
+            
+
+//            BasicHttpParams params = new BasicHttpParams();
+//            params.setParameter("file", changeSetXML);
+//            request.setParams(params);
+            
+            MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+            entity.addPart("XML", new FileBody(changeSetXML));
+            request.setEntity(entity);
 
 
         } catch (OAuthMessageSignerException e) {

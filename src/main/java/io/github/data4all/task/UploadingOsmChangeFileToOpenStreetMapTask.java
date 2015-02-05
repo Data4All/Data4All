@@ -66,13 +66,13 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends AsyncTask<Void, V
         try {
             // Prepare request
         	request = new HttpPost (Constants.SCOPE + "/api/0.6/changeset/" + id + "/upload");
-        	BasicHttpParams params = new BasicHttpParams();
-        	params.setParameter("id", id);
-        	params.setParameter("POST data ", oscFile);
-        	request.setParams(params);
+  
             // Sign the request with oAuth
             consumer.sign(request);
-
+            BasicHttpParams params = new BasicHttpParams();
+            params.setParameter("id", id);
+            params.setParameter("POST data ", oscFile);
+            request.setParams(params);
 
         } catch (OAuthMessageSignerException e) {
             // TODO Auto-generated catch block
