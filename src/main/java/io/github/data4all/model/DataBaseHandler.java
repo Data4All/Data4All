@@ -4,9 +4,9 @@
 package io.github.data4all.model;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +16,8 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.User;
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,7 +29,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * This class handles all database requests for the OSM objects that have to be
  * saved, such as create, read, update and delete.
  * 
- * @author Richard Rohde, Kristin Dahnken
+ * @author Kristin Dahnken
  * 
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
@@ -42,33 +44,33 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     // Table Names
     private static final String TABLE_NODE = "nodes";
     private static final String TABLE_DATAELEMENT = "dataelements";
-    private static final String TABLE_OSMTAGMAP = "osmtagmap";
+    private static final String TABLE_TAGMAP = "tagmap";
     private static final String TABLE_POLYELEMENT = "polyelements";
     private static final String TABLE_USER = "users";
     private static final String TABLE_WAY = "ways";
 
-    // Columns Names
+    // General Column Names
     private static final String KEY_OSMID = "osmid";
+
+    // DataElement Column Names
+    private static final String KEY_TAGIDS = "tagids";
 
     // Node Column Names
     private static final String KEY_LAT = "lat";
     private static final String KEY_LON = "lon";
-    private static final String KEY_NODEIDS = "nodeids";
 
-    // OSMTagMap Column Names
-    private static final String KEY_KEY = "key";
+    // TagMap Column Names
+    private static final String KEY_TAGID = "tagid";
     private static final String KEY_VALUE = "value";
 
     // PolyElement Column Names
     private static final String KEY_TYPE = "type";
+    private static final String KEY_NODEIDS = "nodeids";
 
     // User Column Names
     private static final String KEY_USERNAME = "username";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_TOKENSECRET = "tokensecret";
-
-    // Way Column Names
-    private static final String KEY_NODEID = "nodeid";
 
     /**
      * Default constructor for the database handler.
@@ -84,29 +86,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_DATAELEMENTS_TABLE = "CREATE TABLE " + TABLE_DATAELEMENT
-                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY" + ")";
+                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_TAGIDS
+                + " TEXT" + ")";
         String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
                 + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
                 + KEY_LON + " REAL" + ")";
-        String CREATE_WAYS_TABLE = "CREATE TABLE " + TABLE_WAY + " ("
-                + KEY_OSMID + " INTEGER NOT NULL," + KEY_NODEID
-                + " INTEGER NOT NULL," + " PRIMARY KEY (" + KEY_OSMID + ", "
-                + KEY_NODEID + "))";
-        String CREATE_OSMTAGMAPS_TABLE = "CREATE TABLE " + TABLE_OSMTAGMAP
-                + " (" + KEY_OSMID + " INTEGER NOT NULL," + KEY_KEY
-                + " TEXT NOT NULL," + KEY_VALUE + " TEXT," + " PRIMARY KEY ("
-                + KEY_OSMID + ", " + KEY_KEY + "))";
+        String CREATE_TAGMAP_TABLE = "CREATE TABLE " + TABLE_TAGMAP + " ("
+                + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE + " TEXT"
+                + ")";
         String CREATE_POLYELEMENT_TABLE = "CREATE TABLE " + TABLE_POLYELEMENT
                 + " (" + KEY_OSMID + " TEXT PRIMARY KEY," + KEY_TYPE + " TEXT"
-                + KEY_NODEID + " TEXT" + ")";
+                + KEY_NODEIDS + " TEXT" + ")";
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                 + KEY_TOKENSECRET + " TEXT" + ")";
 
         db.execSQL(CREATE_DATAELEMENTS_TABLE);
         db.execSQL(CREATE_NODES_TABLE);
-        db.execSQL(CREATE_WAYS_TABLE);
-        db.execSQL(CREATE_OSMTAGMAPS_TABLE);
+        db.execSQL(CREATE_TAGMAP_TABLE);
         db.execSQL(CREATE_POLYELEMENT_TABLE);
         db.execSQL(CREATE_USERS_TABLE);
     }
@@ -116,7 +113,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OSMTAGMAP);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAGMAP);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WAY);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATAELEMENT);
@@ -274,8 +271,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.insert(TABLE_NODE, null, values);
 
         db.close();
-
-        // createTagMap(node.getOsmId(), node.getTags());
     }
 
     /**
@@ -303,8 +298,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        // node.setTags(getTagSortedMap(id));
-
         return node;
     }
 
@@ -321,9 +314,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(node.getOsmId()) });
 
         db.close();
-
-        deleteTagSortedMap(node.getOsmId());
-        // deleteNodeInWay(node.getOsmId());
     }
 
     /**
@@ -361,9 +351,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(node.getOsmId()) });
         db.close();
 
-        // count += updateOsmElement(node.getOsmId(), node.getOsmVersion());
-        // count += updateTagSortedMap(node.getOsmId(), node.getTags());
-
         return count;
     }
 
@@ -384,7 +371,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 Node node = new Node(Long.parseLong(cursor.getString(0)),
                         Double.parseDouble(cursor.getString(1)),
                         Double.parseDouble(cursor.getString(2)));
-                // node.setTags(getTagSortedMap(node.getOsmId()));
                 nodes.add(node);
             } while (cursor.moveToNext());
         }
@@ -496,9 +482,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
 
         db.close();
-
-        deleteTagSortedMap(polyElement.getOsmId());
-
     }
 
     /**
@@ -560,8 +543,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(polyElement.getOsmId()) });
         db.close();
 
-        // count += updateTagSortedMap(node.getOsmId(), node.getTags());
-
         return count;
     }
 
@@ -599,7 +580,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 polyElement.addNodes(nodes, false);
 
                 polyElements.add(polyElement);
-                // node.setTags(getTagSortedMap(node.getOsmId()));
             } while (cursor.moveToNext());
         }
 
@@ -618,16 +598,30 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param dataElement
      *            the {@link AbstractDataElement} object from which the data
      *            will be taken
+     * @throws JSONException
+     *             if the JSON object can't be initialized
      */
-    public void createDataElement(AbstractDataElement dataElement) {
+    public void createDataElement(AbstractDataElement dataElement)
+            throws JSONException {
 
         SQLiteDatabase db = getWritableDatabase();
 
+        List<Integer> tagIDs = new ArrayList<Integer>();
         ContentValues values = new ContentValues();
 
         values.put(KEY_OSMID, dataElement.getOsmId());
 
-        db.insert(TABLE_POLYELEMENT, null, values);
+        for (Map.Entry<Tag, String> tag : dataElement.getTags().entrySet()) {
+            tagIDs.add(tag.getKey().getId());
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("tagIDarray", tagIDs);
+        String arrayList = json.toString();
+
+        values.put(KEY_TAGIDS, arrayList);
+
+        db.insert(TABLE_DATAELEMENT, null, values);
 
         db.close();
     }
@@ -640,21 +634,38 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param id
      *            the id of the desired data element
      * @return a {@link AbstractDataElement} object for the desired data element
+     * @throws JSONException
+     *             if the JSON object can't be initialized
      */
-    public AbstractDataElement getDataElement(long id) { // TODO: determine if
-                                                         // node or poly element
+    public AbstractDataElement getDataElement(long id) throws JSONException { // TODO:
+                                                                              // determine
+                                                                              // if
+        // node or poly element
 
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_DATAELEMENT, new String[] { KEY_OSMID },
-                KEY_OSMID + "=?", new String[] { String.valueOf(id) }, null,
-                null, null, null);
+        Cursor cursor = db.query(TABLE_DATAELEMENT, new String[] { KEY_OSMID,
+                KEY_TAGIDS }, KEY_OSMID + "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor != null)
             cursor.moveToFirst();
 
         AbstractDataElement dataElement = new PolyElement(Long.parseLong(cursor
                 .getString(0)), PolyElementType.WAY); // just a proxy for now
+
+        JSONObject json = new JSONObject(cursor.getString(1));
+        JSONArray jArray = json.optJSONArray("tagIDarray");
+
+        ArrayList<Tag> tags = new ArrayList<Tag>();
+
+        for (int i = 0; i < jArray.length(); i++) {
+            int tagID = jArray.optInt(i);
+            Tag tag = Tags.getTagWithId(tagID);
+            tags.add(tag);
+        }
+
+        // TODO: add tags and values to data element
 
         cursor.close();
         db.close();
@@ -669,16 +680,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link AbstractDataElement} object whose data should be
      *            deleted
      */
-    public void deleteDataElement(AbstractDataElement dataElement) {
+    public void deleteDataElement(AbstractDataElement dataElement) { // TODO:
+                                                                     // write
+                                                                     // delete
+                                                                     // methods??
 
         SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
                 new String[] { String.valueOf(dataElement.getOsmId()) });
 
-        db.close();
+        if (checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID,
+                dataElement.getOsmId())) {
+            db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
+                    new String[] { String.valueOf(dataElement.getOsmId()) });
+        } else {
+            db.delete(TABLE_NODE, KEY_OSMID + "=?",
+                    new String[] { String.valueOf(dataElement.getOsmId()) });
+        }
 
-        deleteTagSortedMap(dataElement.getOsmId()); // necessary?
+        db.close();
     }
 
     /**
@@ -744,8 +765,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             do {
                 AbstractDataElement polyElement = new PolyElement(
                         Long.parseLong(cursor.getString(0)),
-                        PolyElementType.valueOf(cursor.getString(1)));
-                // node.setTags(getTagSortedMap(node.getOsmId()));
+                        PolyElementType.valueOf(cursor.getString(1))); // proxy
+                                                                       // so far
                 dataElements.add(polyElement);
             } while (cursor.moveToNext());
         }
@@ -754,121 +775,118 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return dataElements;
     }
 
-    // ---auxiliary functions---------------------------------------------------
+    // -------------------------------------------------------------------------
+    // TAG MAP CRUD
 
     /**
-     * This method creates and stores a Map of Tags that belongs to a
-     * PolyElement in the database.
+     * This method creates and stores a new tag map in the database. The data is
+     * taken from the {@link Map} object that is passed to the method.
      * 
-     * @param osmId
-     *            the id of the PolyElement object
-     * @param tags
-     *            the SortedMap of tags of the OsmElement object
-     * 
+     * @param tagMap
+     *            the {@link Map} object from which the data will be taken
      */
-    private void createTagMap(long osmId, SortedMap<String, String> tags) {
+    public void createTagMap(Map<Tag, String> tagMap) {
+
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
-        values.put(KEY_OSMID, osmId);
-
-        for (String key : tags.keySet()) {
-            values.put(KEY_KEY, key);
-            values.put(KEY_VALUE, tags.get(key));
-            db.insert(TABLE_OSMTAGMAP, null, values);
+        for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
+            values.put(KEY_TAGID, tag.getKey().getId());
+            values.put(KEY_VALUE, tag.getValue());
+            db.insert(TABLE_TAGMAP, null, values);
         }
 
         db.close();
     }
 
     /**
-     * This method updates and stores the SortedMap of Tags of an OsmElement in
-     * the database.
+     * This method returns the data for specific tags stored in the database and
+     * creates the corresponding {@link Map} object.
      * 
-     * @param osmId
-     *            the id of the OsmElement object
-     * @param tags
-     *            the SortedMap of tags of the OsmElement object
-     * @return the number of rows that have been updated
+     * @param tagIDs
+     *            the ids of the desired tags
+     * @return a {@link Map} object for the desired tags
      */
-    private int updateTagSortedMap(long osmId, SortedMap<String, String> tags) {
+    public Map<Tag, String> getTagMap(ArrayList<Integer> tagIDs) {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Map<Tag, String> tagMap = new Hashtable<Tag, String>();
+
+        for (int id : tagIDs) {
+            Cursor cursor = db
+                    .query(TABLE_TAGMAP, new String[] { KEY_TAGID, KEY_VALUE },
+                            KEY_TAGID + "=?",
+                            new String[] { String.valueOf(id) }, null, null,
+                            null, null);
+            tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
+            cursor.close();
+        }
+        db.close();
+        return tagMap;
+    }
+
+    /**
+     * This method deletes specific tags from the database.
+     * 
+     * @param tagIDs
+     *            the tags whose data should be deleted
+     */
+    public void deleteTagMap(ArrayList<Integer> tagIDs) {
         SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-
-        values.put(KEY_OSMID, osmId);
-        int count = 0;
-        for (String key : tags.keySet()) {
-            values.put(KEY_KEY, key);
-            values.put(KEY_VALUE, tags.get(key));
-            count += db.update(TABLE_OSMTAGMAP, values, KEY_OSMID + "=?",
-                    new String[] { String.valueOf(osmId) });
+        for (int id : tagIDs) {
+            db.delete(TABLE_TAGMAP, KEY_TAGID + "=?",
+                    new String[] { String.valueOf(id) });
         }
+        db.close();
+    }
 
+    /**
+     * This method returns the number of tags currently stored in the database.
+     * 
+     * @return the number of tags
+     */
+    public int getTagMapCount() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TAGMAP, null);
+        int count = cursor.getCount();
+        cursor.close();
         db.close();
 
         return count;
     }
 
     /**
-     * This method deletes a specific TagSortedMap of an OsmElement from the
+     * This method updates the data for a specific tag map stored in the
      * database.
      * 
-     * @param osmId
-     *            the id of the OsmElement object whose Map data should be
-     *            deleted
+     * @param tagMap
+     *            the {@link map} object for which the data should be updated
+     * @return the number of rows that have been updated
      */
-    private void deleteTagSortedMap(long osmId) {
+    public int updateTagMap(Map<Tag, String> tagMap) {
         SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(TABLE_OSMTAGMAP, KEY_OSMID + "=?",
-                new String[] { String.valueOf(osmId) });
+        ContentValues values = new ContentValues();
 
-        db.close();
-    }
+        int count = 0;
 
-    /**
-     * This method deletes a specific Node in an Way from the database.
-     * 
-     * @param nodeId
-     *            the id of Node object in an Way whose data should be deleted
-     */
-    private void deleteNodeInWay(long nodeId) {
-        SQLiteDatabase db = getWritableDatabase();
+        for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
+            values.put(KEY_TAGID, tag.getKey().getId());
+            values.put(KEY_VALUE, tag.getValue());
 
-        db.delete(TABLE_WAY, KEY_NODEID + "=?",
-                new String[] { String.valueOf(nodeId) });
-
-        db.close();
-    }
-
-    /**
-     * This method returns the data for a specific way stored in the database
-     * and creates the corresponding Map object.
-     * 
-     * @param osmId
-     *            the id of the OsmElement
-     * @return a Map object for the OsmElement
-     */
-    private SortedMap<String, String> getTagSortedMap(long osmId) {
-        SortedMap<String, String> tagMap = new TreeMap<String, String>();
-
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_OSMTAGMAP, new String[] { KEY_OSMID,
-                KEY_KEY, KEY_VALUE }, KEY_OSMID + "=?",
-                new String[] { String.valueOf(osmId) }, null, null, null, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                tagMap.put(cursor.getString(1), cursor.getString(2));
-            } while (cursor.moveToNext());
+            count += db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
+                    new String[] { String.valueOf(tag.getKey().getId()) });
         }
-
-        cursor.close();
         db.close();
-        return tagMap;
+
+        return count;
     }
+
+    // ---auxiliary functions---------------------------------------------------
 
     /**
      * This method checks if a given record exists in a table.
