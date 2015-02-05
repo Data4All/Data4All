@@ -98,23 +98,18 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
         } catch (OAuthMessageSignerException e) {
             // TODO Auto-generated catch block
             Log.e(tag, e.getMessage());
-            e.printStackTrace();
         } catch (OAuthExpectationFailedException e) {
             // TODO Auto-generated catch block
             Log.e(tag, e.getMessage());
-            e.printStackTrace();
         } catch (OAuthCommunicationException e) {
             // TODO Auto-generated catch block
             Log.e(tag, e.getMessage());
-            e.printStackTrace();
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             Log.e(tag, e.getMessage());
-            e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             Log.e(tag, e.getMessage());
-            e.printStackTrace();
         }
 
     }
@@ -149,11 +144,9 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
         } catch (XmlPullParserException e) {
             // TODO Auto-generated catch block
             Log.d(tag, e.getMessage());
-            e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             Log.d(tag, e.getMessage());
-            e.printStackTrace();
         }
     }
 
