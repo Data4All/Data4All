@@ -107,8 +107,22 @@ public class HorizonCalculationUtil {
             double maxAngle) {
 
         double z = Math.sin(maxAngle / 2);
-        float pixel = (float) ((Math.sin(angle) * width / z) + width) / 2;
+        float pixel = (float) ((width / 2) * ( Math.sin(angle) / (Math.sin(maxAngle)/2)));
         return pixel;
+
+    }
+    
+    
+    public double calculateAngleFromPixel(double pixel, double width,
+            double maxAngle) {
+
+        if ((pixel - (width / 2)) == 0) {
+            return 0;
+        }
+        double percent = (2 * pixel - width) / width;
+        double z = Math.sin(maxAngle / 2);
+        double angle = Math.asin(z * percent);
+        return angle;
 
     }
 

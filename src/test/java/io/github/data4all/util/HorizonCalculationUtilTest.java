@@ -28,6 +28,8 @@ public class HorizonCalculationUtilTest {
         DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 
                 (float) Math.toRadians(80), 0.0f, 10L);
         float[] test;
+        
+        util.calculatePixelFromAngle((float) Math.toRadians(0), 1000, (float) Math.toRadians(40));
         test = util.calcHorizontalPoints((float) Math.toRadians(40), (float) Math.toRadians(40), 1000, 1000,(float) Math.toRadians(85), deviceOrientation);
         
         
