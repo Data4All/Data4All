@@ -1,18 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2014 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.view;
 
 import io.github.data4all.logger.Log;
@@ -89,13 +89,13 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
             // Center the child SurfaceView within the parent.
             if (width * previewHeight > height * previewWidth) {
-                final int scaledChildWidth = previewWidth * height
-                        / previewHeight;
+                final int scaledChildWidth =
+                        previewWidth * height / previewHeight;
                 child.layout((width - scaledChildWidth) / 2, 0,
                         (width + scaledChildWidth) / 2, height);
             } else {
-                final int scaledChildHeight = previewHeight * width
-                        / previewWidth;
+                final int scaledChildHeight =
+                        previewHeight * width / previewWidth;
                 child.layout(0, (height - scaledChildHeight) / 2, width,
                         (height + scaledChildHeight) / 2);
             }
@@ -142,8 +142,9 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
-        WindowManager winManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
+        WindowManager winManager =
+                (WindowManager) context
+                        .getSystemService(Context.WINDOW_SERVICE);
         int rotation = winManager.getDefaultDisplay().getRotation();
 
         int degrees = 0;

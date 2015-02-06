@@ -1,18 +1,18 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.util;
 
 /**
@@ -22,6 +22,8 @@ package io.github.data4all.util;
  * 
  * @author konerman
  *
+ * @param T
+ *            the
  */
 public class RingBuffer<T> {
 
@@ -43,8 +45,8 @@ public class RingBuffer<T> {
     /**
      * creates the ringpuffer.
      * 
-     * @param type
      * @param capacity
+     *            the maximum of items in the Ringbuffer
      */
     @SuppressWarnings("unchecked")
     public RingBuffer(int capacity) {
@@ -58,8 +60,8 @@ public class RingBuffer<T> {
     /**
      * adds a new Element.
      * 
-     * @param the
-     *            element that is added.
+     * @param value
+     *            the element that is added.
      */
     public void put(T value) {
         if (buffer.length > 0) {
@@ -77,19 +79,22 @@ public class RingBuffer<T> {
     }
 
     /**
+     * get the object of the given position.
+     * 
      * @param position
-     * @return T
+     *            the position of the object you want to get
+     * @return T the object at the position
      */
 
     public T get(int position) {
         if (getSize() > 0) {
-
             return buffer[position];
         }
         return null;
     }
 
     /**
+     * get an array of all objects in the ringbuffer.
      * 
      * @return the array with all Data.
      */
@@ -106,7 +111,6 @@ public class RingBuffer<T> {
     }
 
     /**
-     * 
      * @return the index of the newest entry in the buffer.
      */
 
@@ -115,6 +119,7 @@ public class RingBuffer<T> {
     }
 
     /**
+     * get the last object that was added.
      * 
      * @return the last added entry of the buffer.
      */

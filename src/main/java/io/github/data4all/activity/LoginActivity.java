@@ -1,18 +1,18 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.Constants;
@@ -41,9 +41,9 @@ import android.widget.Toast;
  */
 public class LoginActivity extends BasicActivity {
 
-    final String              TAG = getClass().getSimpleName();
+    final String TAG = getClass().getSimpleName();
     private SharedPreferences prefs;
-    protected String          xml;
+    protected String xml;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,18 +88,21 @@ public class LoginActivity extends BasicActivity {
         Button deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v) {                
+            public void onClick(View v) {
                 deleteTokenFromSharedPreferences();
             }
         });
 
-        Button getUsernameButton = (Button) findViewById(R.id.getUsernameButton);
+        Button getUsernameButton =
+                (Button) findViewById(R.id.getUsernameButton);
         getUsernameButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 if (!prefs.contains("USERNAME")) {
-                    OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
-                            Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
+                    OAuthConsumer consumer =
+                            new CommonsHttpOAuthConsumer(
+                                    Constants.CONSUMER_KEY,
+                                    Constants.CONSUMER_SECRET);
                     consumer.setTokenWithSecret(
                             prefs.getString(OAuth.OAUTH_TOKEN, null),
                             prefs.getString(OAuth.OAUTH_TOKEN_SECRET, null));
@@ -115,7 +118,6 @@ public class LoginActivity extends BasicActivity {
         });
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -127,8 +129,9 @@ public class LoginActivity extends BasicActivity {
     }
 
     protected User returnUser() {
-        User user = new User(prefs.getString("USERNAME", null),
-                prefs.getString(OAuth.OAUTH_TOKEN, null), prefs.getString(
+        User user =
+                new User(prefs.getString("USERNAME", null), prefs.getString(
+                        OAuth.OAUTH_TOKEN, null), prefs.getString(
                         OAuth.OAUTH_TOKEN_SECRET, null));
         return user;
 
@@ -158,4 +161,3 @@ public class LoginActivity extends BasicActivity {
         Log.i(TAG, "SharedPreferences:" + prefs.getAll());
     }
 }
-

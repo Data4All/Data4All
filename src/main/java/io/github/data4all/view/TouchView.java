@@ -1,23 +1,22 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.view;
 
-import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -54,38 +53,39 @@ import android.view.View;
 public class TouchView extends View {
 
     /**
-     * The paint to draw the path with
+     * The paint to draw the path with.
      */
     private final Paint pathPaint = new Paint();
     private final Paint areaPaint = new Paint();
+    private final Path path = new Path();
 
     /**
-     * The motion interpreted Polygon
+     * The motion interpreted Polygon.
      */
     private List<Point> polygon = new ArrayList<Point>();
 
     /**
-     * The Polygon with the current pending motion
+     * The Polygon with the current pending motion.
      */
     private List<Point> newPolygon = new ArrayList<Point>();
 
     /**
-     * The current motion the user is typing via the screen
+     * The current motion the user is typing via the screen.
      */
     private DrawingMotion currentMotion;
 
     /**
-     * An object for the calculation of the point transformation
+     * An object for the calculation of the point transformation.
      */
     private PointToCoordsTransformUtil pointTrans;
 
     /**
-     * The currently used interpreter
+     * The currently used interpreter.
      */
     private MotionInterpreter interpreter;
 
     /**
-     * The current used RedoUndo object
+     * The current used RedoUndo object.
      */
     private RedoUndo redoUndo;
     private UndoRedoListener undoRedoListener;
@@ -103,11 +103,14 @@ public class TouchView extends View {
     }
 
     /**
-     * Remove all recorded DrawingMotions from this TouchView
+     * Remove all recorded DrawingMotions from this TouchView.
      */
     public void clearMotions() {
         if (polygon != null) {
             polygon.clear();
+            redoUndo = new RedoUndo();
+            this.undoUseable();
+            this.redoUseable();
         }
     }
 
@@ -128,8 +131,6 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-
-        Path path = new Path();
         path.reset();
 
         if (newPolygon != null && newPolygon.size() != 0) {
@@ -156,8 +157,6 @@ public class TouchView extends View {
                 canvas.drawCircle(p.getX(), p.getY(),
                         MotionInterpreter.POINT_RADIUS, pathPaint);
             }
-            undoUseable();
-            redoUseable();
         }
     }
 
@@ -173,6 +172,8 @@ public class TouchView extends View {
             handleMotion(event, "start");
             polygon = newPolygon;
             redoUndo = new RedoUndo(polygon);
+            undoUseable();
+            redoUseable();
             break;
         case MotionEvent.ACTION_MOVE:
             handleMotion(event, "move");
@@ -204,12 +205,12 @@ public class TouchView extends View {
     }
 
     /**
-     * Deletes a Point of the polygon
+     * Deletes a Point of the polygon.
+     * 
+     * @author konerman
      * 
      * @param point
      *            The point to delete
-     * 
-     * @author konerman
      */
     public void deletePoint(Point point) {
         if (polygon.remove(point)) {
@@ -222,7 +223,9 @@ public class TouchView extends View {
 
     /**
      * This function determines if there is a Point of the polygon close to the
-     * given coordinates
+     * given coordinates.
+     * 
+     * @author konerman
      * 
      * @param x
      *            the X-value of the point
@@ -232,8 +235,7 @@ public class TouchView extends View {
      *            the max distance between the x/y and the Point
      * @return the closest point to the given x/y or {@code null} if the nearest
      *         point is more than maxDistance away
-     * 
-     * @author konerman
+     *
      */
     public Point lookUp(float x, float y, float maxDistance) {
         double shortest = maxDistance;
@@ -257,9 +259,9 @@ public class TouchView extends View {
     }
 
     /**
-     * Returns a {@link PointMover} for the given {@link Point}<br/>
+     * Returns a {@link PointMover} for the given {@link Point}.<br/>
      * 
-     * Use moveTo() afterwards to actually move the point
+     * Use moveTo() afterwards to actually move the point.
      * 
      * @param point
      *            the point you want to move
@@ -276,35 +278,6 @@ public class TouchView extends View {
         } else {
             Log.d(this.getClass().getSimpleName(), "PointMover for index " + i);
             return new PointMover(i);
-        }
-    }
-
-    /**
-     * Pointer of the position of a point in the polygon
-     * 
-     * @author konerman
-     */
-    public class PointMover {
-        private final int idx;
-
-        public PointMover(int idx) {
-            this.idx = idx;
-        }
-
-        /**
-         * moves the {@link Point} to the new coordinates and invalidates its
-         * {@link TouchView} afterwards
-         * 
-         * @param x
-         *            the new x-coordinate
-         * @param y
-         *            the new y-coordinate
-         * 
-         * @author konerman
-         */
-        public void moveTo(float x, float y) {
-            polygon.set(idx, new Point(x, y));
-            postInvalidate();
         }
     }
 
@@ -340,7 +313,7 @@ public class TouchView extends View {
     public void undo() {
         newPolygon = redoUndo.undo();
         polygon = newPolygon;
-        if (undoRedoListener != null) {     
+        if (undoRedoListener != null) {
             undoRedoListener.canRedo(true);
         }
         undoUseable();
@@ -349,13 +322,13 @@ public class TouchView extends View {
     public boolean redoUseable() {
         if (redoUndo.getCurrent() == redoUndo.getMax()) {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canRedo(false);
             }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false redo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canRedo(true);
             }
             return false;
@@ -365,13 +338,13 @@ public class TouchView extends View {
     public boolean undoUseable() {
         if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
             Log.d(this.getClass().getSimpleName(), "true undo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canUndo(true);
             }
             return true;
         } else {
             Log.d(this.getClass().getSimpleName(), "false undo");
-            if (undoRedoListener != null) {     
+            if (undoRedoListener != null) {
                 undoRedoListener.canUndo(false);
             }
             return false;
@@ -387,16 +360,46 @@ public class TouchView extends View {
     public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
-    
+
     public void setUndoRedoListener(UndoRedoListener undoRedoListener) {
         this.undoRedoListener = undoRedoListener;
     }
 
     /**
-     * @author sbollen Create an OsmElement from the given polygon
-     * @return the created OsmElement (with located nodes)
+     * @author sbollen Create an AbstractDataElement from the given polygon
+     * @return the created AbstractDataElement (with located nodes)
      */
-    public OsmElement create(int rotation) {
+    public AbstractDataElement create(int rotation) {
         return interpreter.create(polygon, rotation);
+    }
+
+    /**
+     * Pointer of the position of a point in the polygon.
+     * 
+     * @author konerman
+     */
+    public class PointMover {
+        private final int idx;
+
+        public PointMover(int idx) {
+            this.idx = idx;
+        }
+
+        /**
+         * moves the {@link Point} to the new coordinates and invalidates its
+         * {@link TouchView} afterwards.
+         * 
+         * @author konerman
+         * 
+         * @param x
+         *            the new x-coordinate
+         * @param y
+         *            the new y-coordinate
+         * 
+         */
+        public void moveTo(float x, float y) {
+            polygon.set(idx, new Point(x, y));
+            postInvalidate();
+        }
     }
 }
