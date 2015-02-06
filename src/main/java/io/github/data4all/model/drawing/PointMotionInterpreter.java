@@ -79,9 +79,9 @@ public class PointMotionInterpreter implements MotionInterpreter {
      * @author sbollen (edited by tbrose)
      */
     @Override
-    public AbstractDataElement create(List<Point> polygon) {
+    public AbstractDataElement create(List<Point> polygon, int rotation) {
         // The list contains only one Node which then will be returned
-        return pointTrans.transform(polygon).get(0);
+        return pointTrans.transform(polygon, rotation).get(0);
     }
 
     /*

@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -148,11 +149,16 @@ public class ShowPictureActivity extends BasicActivity {
      * @param view
      */
     public void onClickOkay(View view) {
+        // 0 or Rotation0 if portrait
+        // 90 or Rotation1 if home-button to the right
+        // 270 or Rotation3 if home-button to the left
+        int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getRotation();
 
         // create an abstract data element from the given data and pass it to
         // the next
         // activity
-        final AbstractDataElement osmElement = touchView.create();
+        final AbstractDataElement osmElement = touchView.create(rotation);
         intent.putExtra(OSM_ELEMENT, osmElement);
         startActivity(intent);
     }
@@ -270,5 +276,4 @@ public class ShowPictureActivity extends BasicActivity {
 			Log.e(this.getClass().toString(), "ERROR, file is no image" + e);
 		}
 	}
-
 }
