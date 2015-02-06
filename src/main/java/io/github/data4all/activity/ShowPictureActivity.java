@@ -20,6 +20,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.model.drawing.CornerAnalyser;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
@@ -30,13 +31,14 @@ import java.io.IOException;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -79,6 +81,8 @@ public class ShowPictureActivity extends BasicActivity {
         intent = new Intent(this, MapPreviewActivity.class);
         undo = (ImageButton) findViewById(R.id.undobtn);
         redo = (ImageButton) findViewById(R.id.redobtn);
+        
+        
 
         touchView.setUndoRedoListener(new UndoRedoListener() {
 
@@ -94,8 +98,15 @@ public class ShowPictureActivity extends BasicActivity {
         });
 
         if (getIntent().hasExtra("file_path")) {
-            setBackground(Uri.fromFile((File) getIntent().getExtras().get(
-                    "file_path")));
+            File image = (File) getIntent().getExtras().get("file_path");
+            setBackground(Uri.fromFile(image));
+            
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            
+            touchView.setCatchPoints(new CornerAnalyser(image,size.x, size.y).analyze());
+            
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
         }
