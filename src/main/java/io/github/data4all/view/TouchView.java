@@ -42,13 +42,21 @@ import android.view.View;
 /**
  * This TouchView listen to MotionEvents from the user, saves them into
  * DrawingMotions, uses MotionInterpreters to interpret the input and draws the
- * interpreted polygons.
+ * interpreted polygons.<br/>
+ * The shown polygon can be modified via deletion, {@link PointMover} or
+ * {@link io.github.data4all.model.drawing.RedoUndo UndoRedo} and obtained as a
+ * {@link AbstractDataElement}.
+ * 
  * 
  * @author tbrose
  *
  * @see MotionEvent
  * @see DrawingMotion
  * @see MotionInterpreter
+ * @see UndoRedoListener
+ * @see PointToCoordsTransformUtil
+ * @see AbstractDataElement
+ * @see PointMover
  */
 public class TouchView extends View {
 
@@ -56,7 +64,15 @@ public class TouchView extends View {
      * The paint to draw the path with.
      */
     private final Paint pathPaint = new Paint();
+
+    /**
+     * The paint to draw the area with.
+     */
     private final Paint areaPaint = new Paint();
+
+    /**
+     * The path to draw.
+     */
     private final Path path = new Path();
 
     /**
@@ -88,18 +104,73 @@ public class TouchView extends View {
      * The current used RedoUndo object.
      */
     private RedoUndo redoUndo;
+
+    /**
+     * The current used RedoUndo listener.
+     */
     private UndoRedoListener undoRedoListener;
 
-    public TouchView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    /**
+     * All types of interpretation that are provided by this {@link TouchView}.
+     * 
+     * @author tbrose
+     */
+    public static enum InterpretationType {
+        AREA, POINT, BUILDING, WAY;
     }
 
+    /**
+     * Simple constructor to use when creating a view from code.
+     * 
+     * @param context
+     *            The Context the view is running in, through which it can
+     *            access the current theme, resources, etc.
+     */
+    public TouchView(Context context) {
+        super(context);
+    }
+
+    /**
+     * Constructor that is called when inflating a view from XML. This is called
+     * when a view is being constructed from an XML file, supplying attributes
+     * that were specified in the XML file. This version uses a default style of
+     * 0, so the only attribute values applied are those in the Context's Theme
+     * and the given AttributeSet.<br/>
+     * <br/>
+     * The method onFinishInflate() will be called after all children have been
+     * added.
+     * 
+     * @param context
+     *            The Context the view is running in, through which it can
+     *            access the current theme, resources, etc.
+     * @param attrs
+     *            The attributes of the XML tag that is inflating the view.
+     */
     public TouchView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public TouchView(Context context) {
-        super(context);
+    /**
+     * Perform inflation from XML and apply a class-specific base style from a
+     * theme attribute. This constructor of View allows subclasses to use their
+     * own base style when they are inflating. For example, a Button class's
+     * constructor would call this version of the super class constructor and
+     * supply {@code R.attr.buttonStyle} for defStyleAttr; this allows the
+     * theme's button style to modify all of the base view attributes (in
+     * particular its background) as well as the Button class's attributes.
+     * 
+     * @param context
+     *            The Context the view is running in, through which it can
+     *            access the current theme, resources, etc.
+     * @param attrs
+     *            The attributes of the XML tag that is inflating the view.
+     * @param defStyleAttr
+     *            An attribute in the current theme that contains a reference to
+     *            a style resource that supplies default values for the view.
+     *            Can be 0 to not look for defaults.
+     */
+    public TouchView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
     /**
@@ -114,6 +185,11 @@ public class TouchView extends View {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View#onFinishInflate()
+     */
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -127,6 +203,11 @@ public class TouchView extends View {
         redoUndo = new RedoUndo();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View#onDraw(android.graphics.Canvas)
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -160,6 +241,11 @@ public class TouchView extends View {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View#onTouchEvent(android.view.MotionEvent)
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
@@ -281,6 +367,14 @@ public class TouchView extends View {
         }
     }
 
+    /**
+     * Sets the type of interpretation for this {@link TouchView}.
+     * 
+     * @param type
+     *            The {@link InterpretationType} to set
+     * @throws IllegalArgumentException
+     *             if {@code type} is {@code null}
+     */
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:
@@ -300,16 +394,22 @@ public class TouchView extends View {
         }
     }
 
-    public static enum InterpretationType {
-        AREA, POINT, BUILDING, WAY;
-    }
-
+    /**
+     * Adds the last removed point to the current polygon
+     * 
+     * @author vkochno
+     */
     public void redo() {
         newPolygon = redoUndo.redo();
         polygon = newPolygon;
         redoUseable();
     }
 
+    /**
+     * Removes the last point in the current polygon
+     * 
+     * @author vkochno
+     */
     public void undo() {
         newPolygon = redoUndo.undo();
         polygon = newPolygon;
@@ -319,6 +419,11 @@ public class TouchView extends View {
         undoUseable();
     }
 
+    /**
+     * @author vkochno
+     * 
+     * @return If redo can be used
+     */
     public boolean redoUseable() {
         if (redoUndo.getCurrent() == redoUndo.getMax()) {
             Log.d(this.getClass().getSimpleName(), "false redo");
@@ -327,7 +432,7 @@ public class TouchView extends View {
             }
             return true;
         } else {
-            Log.d(this.getClass().getSimpleName(), "false redo");
+            Log.d(this.getClass().getSimpleName(), "true redo");
             if (undoRedoListener != null) {
                 undoRedoListener.canRedo(true);
             }
@@ -335,6 +440,11 @@ public class TouchView extends View {
         }
     }
 
+    /**
+     * @author vkochno
+     * 
+     * @return If undo can be used
+     */
     public boolean undoUseable() {
         if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
             Log.d(this.getClass().getSimpleName(), "true undo");
@@ -352,8 +462,10 @@ public class TouchView extends View {
     }
 
     /**
-     * @author sbollen Set the actual PointToCoordsTransformUtil with the actual
-     *         location and camera parameters
+     * Set the actual PointToCoordsTransformUtil with the actual location and
+     * camera parameters.
+     * 
+     * @author sbollen
      * @param pointTrans
      *            the actual object
      */
@@ -361,12 +473,20 @@ public class TouchView extends View {
         this.pointTrans = pointTrans;
     }
 
+    /**
+     * Sets the {@link UndoRedoListener} to use.
+     * 
+     * @param undoRedoListener
+     *            The {@link UndoRedoListener} to set
+     */
     public void setUndoRedoListener(UndoRedoListener undoRedoListener) {
         this.undoRedoListener = undoRedoListener;
     }
 
     /**
-     * @author sbollen Create an AbstractDataElement from the given polygon
+     * Create an AbstractDataElement from the given polygon.
+     * 
+     * @author sbollen
      * @return the created AbstractDataElement (with located nodes)
      */
     public AbstractDataElement create(int rotation) {
@@ -381,12 +501,18 @@ public class TouchView extends View {
     public class PointMover {
         private final int idx;
 
+        /**
+         * Constructs a PointMover for the given index.
+         * 
+         * @param idx
+         *            The index of the point in the polygon
+         */
         public PointMover(int idx) {
             this.idx = idx;
         }
 
         /**
-         * moves the {@link Point} to the new coordinates and invalidates its
+         * Moves the {@link Point} to the new coordinates and invalidates its
          * {@link TouchView} afterwards.
          * 
          * @author konerman
