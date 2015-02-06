@@ -76,11 +76,16 @@
 			<artifactId>tls</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>obp</groupId>
-			<artifactId>osmbonuspack</artifactId>
-			<version>5.1</version>
-		</dependency>
+        <dependency>
+            <groupId>obp</groupId>
+            <artifactId>osmbonuspack</artifactId>
+            <version>5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>unseen-labs</groupId>
+            <artifactId>harrisdetection</artifactId>
+            <version>1.2</version>
+        </dependency>
 		<dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
