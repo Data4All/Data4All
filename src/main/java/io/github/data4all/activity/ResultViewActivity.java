@@ -83,7 +83,7 @@ public class ResultViewActivity extends BasicActivity implements
     // Listview for the Dialog
     private ListView listView;
     // The OSM Element
-    private OsmElement element;
+    private AbstractDataElement element;
     // The Dialog for the unclassified tags
     private Dialog dialog;
     // The List that will be shown in the Activity
@@ -121,7 +121,7 @@ public class ResultViewActivity extends BasicActivity implements
             mapController.setCenter(node.toGeoPoint());
             mapController.animateTo(node.toGeoPoint());
         } else {
-            Way way = (Way) element;
+            PolyElement way = (PolyElement) element;
             mapController.setCenter(way.getFirstNode().toGeoPoint());
         }
 

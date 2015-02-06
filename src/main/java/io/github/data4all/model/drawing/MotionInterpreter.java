@@ -15,7 +15,7 @@
  */
 package io.github.data4all.model.drawing;
 
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.AbstractDataElement;
 
 import java.util.List;
 
@@ -24,10 +24,10 @@ import android.graphics.Color;
 /**
  * A MotionInterpreter uses {@link DrawingMotion DrawingMotions} to interpret
  * the motions in the context of the specific interpreter and generates a
- * polygon that matches the user input.<br/>
+ * polygon that matches the user input<br/>
  * This means that e.g. an interpreter for areas may interpret a single elliptic
- * motion as a ellipse and tries to smooth it.<br/>
- * Also you can create an OsmElement from the interpreted polygon.
+ * motion as a ellipse and tries to smooth it<br/>
+ * Also you can create an AbstractDataElement from the interpreted polygon
  * 
  * @author tbrose
  * 
@@ -42,14 +42,14 @@ public interface MotionInterpreter {
     public static final float PATH_STROKE_WIDTH = 5f;
 
     /**
-     * Interprets the given motions and creates an OsmElement which represents
+     * Interprets the given motions and creates an AbstractDataElement which represents
      * the content of the interpreted motions
      * 
      * @param polygon
      *            the interpreted polygon
      * @return the created AbstractDataModel
      */
-    OsmElement create(List<Point> polygon);
+    AbstractDataElement create(List<Point> polygon);
 
     /**
      * Interprets the given motion and apply it to the polygon<br/>

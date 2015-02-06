@@ -17,10 +17,11 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
-import io.github.data4all.model.map.MapLine;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
 
@@ -189,7 +190,7 @@ public class MapActivity extends BasicActivity {
      * @param element
      *            the OsmElement which should be added to the map
      **/
-    protected void addOsmElementToMap(OsmElement element) {
+    protected void addOsmElementToMap(AbstractDataElement element) {
         if (element != null) {
             // if the Element is a Node
             if (element instanceof Node) {
@@ -198,16 +199,21 @@ public class MapActivity extends BasicActivity {
                         + node.toGeoPoint().toString());
                 this.addNodeToMap(node);
                 // if the Element is Way
-            } else if (element instanceof Way) {
-                final Way way = (Way) element;
-                // if the Element is an Area
-                if (way.isClosed()) {
-                    Log.i(TAG, "Add Area with Coordinates " + way.toString());
-                    this.addAreaToMap(way);
-                    // if the Element is an Path
+            } else if (element instanceof PolyElement) {
+				final PolyElement polyElement = (PolyElement) element;
+
+				// if the Element is an Path
+				if (polyElement.getType() == PolyElementType.WAY) {
+					Log.i(TAG,
+							"Add Path with Coordinates "
+									+ polyElement.toString());
+					this.addPathToMap(polyElement);
+					// if the Element is an Area
                 } else {
-                    Log.i(TAG, "Add Path with Coordinates " + way.toString());
-                    this.addPathToMap(way);
+					Log.i(TAG,
+							"Add Area with Coordinates "
+									+ polyElement.toString());
+					this.addAreaToMap(polyElement);
                 }
             }
         }
@@ -229,17 +235,17 @@ public class MapActivity extends BasicActivity {
         mapView.postInvalidate();
     }
 
-    /**
-     * Adds an area as an Overlay to the Map.
-     *
-     * @param way
-     *            the area which should be added to the map
-     **/
-    protected void addAreaToMap(Way way) {
-        final Polygon area = new MapPolygon(this);
+	/**
+	 * Adds an area as an Overlay to the Map.
+	 *
+	 * @param polyElement
+	 *            the area which should be added to the map
+	 **/
+	protected void addAreaToMap(PolyElement polyElement) {
+		Polygon area = new MapPolygon(this) {
 
-        Log.i(TAG, "Set Area Points to " + way.toString());
-        area.setPoints(way.getGeoPoints());
+		Log.i(TAG, "Set Area Points to " + polyElement.toString());
+		area.setPoints(polyElement.getGeoPoints());
 
         Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
         area.setFillColor(DEFAULT_FILL_COLOR);
@@ -254,17 +260,17 @@ public class MapActivity extends BasicActivity {
         mapView.postInvalidate();
     }
 
-    /**
-     * Adds an Path as an Overlay to the Map.
-     *
-     * @param way
-     *            the path which should be added to the map
-     **/
-    protected void addPathToMap(Way way) {
-        final Polyline path = new MapLine(this);
-
-        Log.i(TAG, "Set Path Points to " + way.toString());
-        path.setPoints(way.getGeoPoints());
+	/**
+	 * Adds an Path as an Overlay to the Map.
+	 *
+	 * @param polyElement
+	 *            the path which should be added to the map
+	 **/
+	protected void addPathToMap(PolyElement polyElement) {
+		Polyline path = new Mapline(this) {
+.
+		Log.i(TAG, "Set Path Points to " + polyElement.toString());
+		path.setPoints(polyElement.getGeoPoints());
 
         Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
         path.setColor(DEFAULT_STROKE_COLOR);

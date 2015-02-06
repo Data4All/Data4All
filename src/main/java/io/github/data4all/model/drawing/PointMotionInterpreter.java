@@ -15,7 +15,7 @@
  */
 package io.github.data4all.model.drawing;
 
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
@@ -76,11 +76,11 @@ public class PointMotionInterpreter implements MotionInterpreter {
     }
 
     /**
-     * @author sbollen
+     * @author sbollen (edited by tbrose)
      */
     @Override
-    public OsmElement create(List<Point> polygon) {
-        // The list contains only one Node which then will be returned
+    public AbstractDataElement create(List<Point> polygon) {
+        //The list contains only one Node which then will be returned
         return pointTrans.transform(polygon).get(0);
     }
 

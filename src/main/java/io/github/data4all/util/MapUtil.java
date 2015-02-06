@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Way;
 
 import org.osmdroid.util.BoundingBoxE6;
@@ -46,7 +46,7 @@ public final class MapUtil {
      *            the OsmElement whose center should be calculated
      * @return the Center of the OsmElement
      */
-    public static GeoPoint getCenterFromOsmElement(OsmElement element) {
+    public static GeoPoint getCenterFromOsmElement(AbstractDataElement element) {
         return getBoundingBoxForOsmElement(element).getCenter();
     }
 
@@ -57,15 +57,15 @@ public final class MapUtil {
      *            the OsmElement whose BoundingBox should be calculated
      * @return the BoundingBox for the given OsmElement
      */
-    public static BoundingBoxE6 getBoundingBoxForOsmElement(OsmElement elem) {
-        if (elem instanceof Node) {
-            final Node node = (Node) elem;
-            final List<GeoPoint> array = new ArrayList<GeoPoint>();
+    public static BoundingBoxE6 getBoundingBoxForOsmElement(AbstractDataElement element){
+        if(element instanceof Node){
+            Node node = (Node) element;
+			List<GeoPoint> array = new ArrayList<GeoPoint>();
             array.add(node.toGeoPoint());
-            return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) array);
-        } else if (elem instanceof Way) {
-            final Way way = (Way) elem;
-            return BoundingBoxE6.fromGeoPoints(way.getUnsortedGeoPoints());
+            return BoundingBoxE6.fromGeoPoints(array);
+        }else if (element instanceof PolyElement){
+            PolyElement polyElement = (PolyElement) element;
+            return BoundingBoxE6.fromGeoPoints(polyElement.getUnsortedGeoPoints());
         }
         return null;
     }

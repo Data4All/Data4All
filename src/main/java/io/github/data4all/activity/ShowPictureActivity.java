@@ -18,7 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.PointToCoordsTransformUtil;
@@ -126,11 +126,11 @@ public class ShowPictureActivity extends BasicActivity {
 
     public void onClickOkay(View view) {
 
-        // create an osm element from the given data and pass it to the next
-        // activity
-        OsmElement osmElement = touchView.create();
-        intent.putExtra(OSM_ELEMENT, osmElement);
-        startActivity(intent);
+	// create an abstract data element from the given data and pass it to the next
+	// activity
+	AbstractDataElement osmElement = touchView.create();
+	intent.putExtra(OSM_ELEMENT, osmElement);
+	startActivity(intent);
     }
 
     public void onClickPoint(View view) {
