@@ -107,6 +107,9 @@ public class TouchView extends View {
     public void clearMotions() {
         if (polygon != null) {
             polygon.clear();
+            redoUndo = new RedoUndo();
+            this.undoUseable();
+            this.redoUseable();
         }
     }
 
