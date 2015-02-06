@@ -23,6 +23,7 @@ import io.github.data4all.model.map.MapPolygon;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.bonuspack.cachemanager.CacheManager;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.bonuspack.overlays.Polyline;
@@ -34,6 +35,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
@@ -42,6 +44,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -77,9 +80,15 @@ public class MapActivity extends BasicActivity {
     // Overlay for actual Position
     protected MyLocationNewOverlay myLocationOverlay;
 
+    // Last known MapTileSource
+    protected ITileSource mapTileSource;
+
+    // Last known MapTileProvider Variable name
+    protected static final String M_T_P = "mapTileProvider";
+
     // Last known ZoomLevel
     protected int actualZoomLevel;
-    
+
     // Last known ZoomLevel Variable name
     protected static final String ZOOM_LEVEL_NAME = "actualZoomLevel";
 
@@ -94,7 +103,7 @@ public class MapActivity extends BasicActivity {
 
     // Last known Center Longitude Variable Name
     protected static final String CENT_LON = "actCentLon";
-    
+
     // Last known Center Geopoint
     protected IGeoPoint actualCenter;
 
@@ -117,11 +126,14 @@ public class MapActivity extends BasicActivity {
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
     // Default Satellite Map Tilesource
-    protected static final OnlineTileSourceBase SAT_MAP = new MapBoxTileSource(
-            "MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1,
-            19, 256, ".png");
+    protected OnlineTileSourceBase satMap;
+
+    protected static final String SAT_MAP_NAME = "MapBoxSatelliteLabelled";
+
     // Default OpenStreetMap TileSource
-    protected static final ITileSource DEF_TILESRC = TileSourceFactory.MAPNIK;
+    protected static final ITileSource OSM_TILESRC = TileSourceFactory.MAPQUESTOSM;
+
+    CacheManager cacheManager;
 
     /**
      * Default constructor.
@@ -130,16 +142,14 @@ public class MapActivity extends BasicActivity {
         super();
     }
 
-    protected void setUpMapView() {
+    protected void setUpMapView(Bundle savedInstanceState) {
         mapView = (MapView) this.findViewById(R.id.mapview);
 
         // Add Satellite Map TileSource
         MapBoxTileSource.retrieveMapBoxMapId(this);
-        TileSourceFactory.addTileSource(SAT_MAP);
-
-        // Set Maptilesource
-        Log.i(TAG, "Set Maptilesource to " + DEF_TILESRC.name());
-        mapView.setTileSource(DEF_TILESRC);
+        satMap = new MapBoxTileSource(SAT_MAP_NAME,
+                ResourceProxy.string.mapquest_osm , 1, 19, 256, ".png");
+        TileSourceFactory.addTileSource(satMap);
 
         // Activate Multi Touch Control
         Log.i(TAG, "Activate Multi Touch Controls");
@@ -154,18 +164,49 @@ public class MapActivity extends BasicActivity {
 
         mapController = (MapController) this.mapView.getController();
 
-        // Set Default Zoom Level
-        Log.i(TAG, "Set default Zoomlevel to " + DEFAULT_ZOOM_LEVEL);
-        actualZoomLevel = DEFAULT_ZOOM_LEVEL;
+        // for setting the actualZoomLevel and Center Position on Orientation
+        // Change
+        loadState(savedInstanceState);
 
-        // Set actual Center
-        if (this.getMyLocation() != null) {
-            actualCenter = this.getMyLocation();
-        }
+        
+        cacheManager = new CacheManager(mapView);
+
+        // Set MapTileSource
+        setMapTileSource(mapTileSource);
+
+        // Set Zoomlevel
+        setZoomLevel(actualZoomLevel);
+
+        // Set Zoomlevel
+        setCenter(actualCenter);
 
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
 
+    
+    protected void setUpLoadingScreen() {
+        // Set ImageView for Loading Screen
+        view = (ImageView) findViewById(R.id.imageView1);
+
+        // fading out the loading screen
+        // view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+        // .withEndAction(new Runnable() {
+        // public void run() {
+        // view.setVisibility(View.GONE);
+        // }
+        // }).start();
+        view.setVisibility(View.GONE);
+    }
+
+    /**
+     * Downloades the Maptiles for the Actual Bounding Box.
+     **/
+    protected void downloadMapTiles(){
+        cacheManager.downloadAreaAsync(this, mapView.getBoundingBox(),
+                actualZoomLevel, actualZoomLevel+4);
+
+    }
+    
     /**
      * Removes an Overlay from the Map.
      *
@@ -284,6 +325,9 @@ public class MapActivity extends BasicActivity {
         Log.i(TAG, "Save actual Center Longitude: " + actCentLong);
         state.putSerializable(CENT_LON, actCentLong);
 
+        final String mTS = mapView.getTileProvider().getTileSource().name();
+        Log.i(TAG, "Save actual Maptilesource: " + mTS);
+        state.putSerializable(M_T_P, mTS);
     }
 
     @Override
@@ -300,6 +344,10 @@ public class MapActivity extends BasicActivity {
 
         Log.i(TAG, "Set actual Zoom Level: " + mapView.getZoomLevel());
         actualZoomLevel = mapView.getZoomLevel();
+
+        final String mTS = mapView.getTileProvider().getTileSource().name();
+        Log.i(TAG, "Set actual MapTileSource: " + mTS);
+        mapTileSource = mapView.getTileProvider().getTileSource();
     }
 
     /**
@@ -352,36 +400,70 @@ public class MapActivity extends BasicActivity {
      **/
     protected void switchMaps() {
         // switch to OSM Map
-        final String mvp = mapView.getTileProvider().getTileSource().name();
-        if ("MapBoxSatelliteLabelled".equals(mvp)) {
-            Log.i(TAG, "Set Maptilesource to " + mvp);
-            mapView.setTileSource(DEF_TILESRC);
+        final String mts = mapView.getTileProvider().getTileSource().name();
+        if ("MapBoxSatelliteLabelled".equals(mts)) {
+            setMapTileSource(OSM_TILESRC);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
             // switch to Satellite Map
         } else {
-            Log.i(TAG, "Set Maptilesource to "
-                    + mapView.getTileProvider().getTileSource().name());
-            mapView.setTileSource(SAT_MAP);
+            setMapTileSource(satMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_map);
             mapView.postInvalidate();
         }
     }
 
-    protected void loadState(Bundle savedInstanceState) {
-        if (savedInstanceState.getSerializable(ZOOM_LEVEL_NAME) != null) {
+    /**
+     * Set the Maptilesource for the mapview.
+     * 
+     * @param src
+     *            the Maptilesource wich should be set
+     **/
+    protected void setMapTileSource(ITileSource src) {
+        if (src != null) {
+            Log.i(TAG, "Set Maptilesource to " + src.name());
+            mapTileSource = src;
+            mapView.setTileSource(src);
+            downloadMapTiles();
+        }
+
+    }
+
+    /**
+     * Load the last known Zoomlevel, Center and Maptilesource.
+     * 
+     * @param savedInstanceState
+     *            the last known State
+     **/
+    private void loadState(Bundle savedInstanceState) {
+        if (savedInstanceState != null
+                && savedInstanceState.getSerializable(ZOOM_LEVEL_NAME) != null) {
             actualZoomLevel = (Integer) savedInstanceState
                     .getSerializable(ZOOM_LEVEL_NAME);
+        } else {
+            actualZoomLevel = DEFAULT_ZOOM_LEVEL;
         }
-        if (savedInstanceState.getSerializable(CENT_LON) != null
+        if (savedInstanceState != null
+                && savedInstanceState.getSerializable(CENT_LON) != null
                 && savedInstanceState.getSerializable(CENT_LAT) != null) {
-            actCentLat = (Double) savedInstanceState
-                    .getSerializable(CENT_LAT);
-            actCentLong = (Double) savedInstanceState
-                    .getSerializable(CENT_LON);
+            actCentLat = (Double) savedInstanceState.getSerializable(CENT_LAT);
+            actCentLong = (Double) savedInstanceState.getSerializable(CENT_LON);
             actualCenter = new GeoPoint(actCentLat, actCentLong);
+        } else if (this.getMyLocation() != null) {
+            actualCenter = this.getMyLocation();
+        }
+        if (savedInstanceState != null
+                && savedInstanceState.getSerializable(M_T_P) != null) {
+            String mTS = (String) savedInstanceState.getSerializable(M_T_P);
+            if (mTS.equals(SAT_MAP_NAME)) {
+                mapTileSource = satMap;
+                final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
+                bt.setImageResource(R.drawable.ic_map);
+            }
+        } else {
+            mapTileSource = OSM_TILESRC;
         }
     }
 

@@ -25,34 +25,33 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/D4ATheme" >
-        <activity
-            android:name=".activity.MapViewActivity">
+        <meta-data
+            android:name="MAPBOX_MAPID"
+            android:value="dennisl.map-6g3jtnzm" />  
+
+        <activity android:name=".activity.MapViewActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.MapPreviewActivity"/>
+        <activity android:name=".activity.MapPreviewActivity" />
         <activity android:name=".activity.SensorActivity" />
         <activity android:name=".activity.ShowPictureActivity" />
         <activity android:name=".activity.CameraActivity" />
         <activity android:name=".activity.ResultViewActivity" />
         <activity android:name=".activity.MapActivity" />
-        <activity android:name=".ResultViewActivity"
-        ></activity>
+        <activity android:name=".ResultViewActivity" >
+        </activity>
         <activity
             android:name=".activity.TagActivity"
             android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
-     
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
-        
         <activity android:name=".activity.BasicActivity" />
-        
         <activity
             android:name=".activity.PrepareRequestTokenActivity"
             android:launchMode="singleTask" >
@@ -75,8 +74,6 @@
         <service
             android:name=".service.OrientationListener"
             android:enabled="true" />
-
-       
     </application>
 
 </manifest>

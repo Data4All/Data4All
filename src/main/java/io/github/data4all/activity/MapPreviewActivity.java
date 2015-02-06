@@ -18,15 +18,11 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.Way;
 import io.github.data4all.util.MapUtil;
-
-import org.osmdroid.util.GeoPoint;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 /**
  * Activity to show an Osm_Element on a Preview Map.
@@ -50,19 +46,12 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
-        setUpMapView();
+        setUpMapView(savedInstanceState);
+        setUpLoadingScreen();
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
         addOsmElementToMap(element);
-        view = (ImageView) findViewById(R.id.imageView1);
-        if (savedInstanceState != null) {
-            loadState(savedInstanceState);
-        }
-
-        view.setVisibility(View.GONE);
-
         mapController.setZoom(actualZoomLevel);
         mapController.setCenter(actualCenter);
-
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
