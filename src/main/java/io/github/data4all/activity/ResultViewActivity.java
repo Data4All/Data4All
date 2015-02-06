@@ -241,10 +241,11 @@ public class ResultViewActivity extends BasicActivity implements
                                 element.addOrUpdateTag(keyList.get(position),
                                         (String) showArray[which]);
 
-                                element.addOrUpdateTag(keyList.get(position),
+                                element.addOrUpdateSuggestionTag(keyList.get(position),
                                         (String) showArray[which],
                                         classifiedTag);
                                 output();
+                                
                             }
                         });
                 return alertDialog;

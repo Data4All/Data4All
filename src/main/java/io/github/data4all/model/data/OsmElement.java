@@ -30,7 +30,7 @@ import android.os.Parcelable;
  * and osm version. All parent relations and tags of the object are stored in a
  * list.
  * 
- * @author fkirchge, Steeve
+ * @author fkirchge
  *
  */
 public abstract class OsmElement implements Parcelable {
@@ -102,7 +102,7 @@ public abstract class OsmElement implements Parcelable {
     public boolean setTags(final Map<String, String> tags) {
         if (!this.tags.equals(tags)) {
             this.tags.clear();
-            addTags(tags);
+            this.addTags(tags);
             return true;
         }
         return false;
@@ -307,7 +307,7 @@ public abstract class OsmElement implements Parcelable {
      * 
      * @author Steeve
      */
-    public void addOrUpdateTag(String key, String value,
+    public void addOrUpdateSuggestionTag(String key, String value,
             ClassifiedTag classifiedTag) {
         classifiedTag.addSuggestion(value);
     }

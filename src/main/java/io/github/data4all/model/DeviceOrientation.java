@@ -83,6 +83,7 @@ public class DeviceOrientation implements Parcelable {
         timestamp = in.readLong();
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }

@@ -109,7 +109,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             public void onClick(DialogInterface dialog, int which) {
                 key = (String) array[which];
                 final ClassifiedTag classifiedTag = tagMap.get(key);
-                final ArrayList<String> classifiedValues = classifiedTag
+                final List<String> classifiedValues = classifiedTag
                         .getClassifiedValues();
                 array = classifiedValues.toArray(new String[classifiedValues
                         .size()]);

@@ -16,8 +16,8 @@
 package io.github.data4all.model.data;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class represents a classified tag. A classified tag is a subclass of
@@ -32,12 +32,12 @@ public class ClassifiedTag extends Tag {
     /**
      * stores all classified values for the specific tag
      */
-    private ArrayList<String> classifiedValues;
+    private List<String> classifiedValues;
     
     /**
      * stores the last classifiedValue Suggestion for the specific tag
      */
-    private ArrayList<String> classifiedValuesSuggestion; 
+    private List<String> classifiedValuesSuggestion; 
     
     /**
      * Default constructor.
@@ -48,20 +48,22 @@ public class ClassifiedTag extends Tag {
      * @param osmObjects
      */
     public ClassifiedTag(String key, InputType type,
-            ArrayList<String> classifiedValues, int... osmObjects) {
+            List<String> classifiedValues, int... osmObjects) {
         super(key, type, osmObjects);
         this.classifiedValues = classifiedValues;
-        classifiedValuesSuggestion = new ArrayList<String>();
+        classifiedValuesSuggestion = new LinkedList<String>();
     }
 
     /**
+     * @return classifiedValues or classifiedValuesSuggestion
+     * 
      * when the list of suggestion Values is empty ,
      * then get the classifiedValues
      * when not then get classifiedValuesSuggestion
-     * @return classifiedValues or classifiedValuesSuggestion
+     * 
      */
-    public ArrayList<String> getClassifiedValues() {
-        if(classifiedValuesSuggestion.isEmpty()) {
+    public List<String> getClassifiedValues() {
+        if (classifiedValuesSuggestion.isEmpty()) {
             return classifiedValues;
         }
         return new ArrayList<String>(classifiedValuesSuggestion);
@@ -71,14 +73,15 @@ public class ClassifiedTag extends Tag {
      * @param classifiedValues
      * 
      */
-    public void setClassifiedValues(ArrayList<String> classifiedValues) {
+    public void setClassifiedValues(List<String> classifiedValues) {
         this.classifiedValues = classifiedValues;
     }
      
     /**
-     * get the list of all classifiedValuesSuggestion
+     * @param classifiedValuesSuggestion
+     * get the list of all classifiedValuesSuggestion 
      */
-    public ArrayList<String> getClassifiedValuesSuggestion() {
+    public List<String> getClassifiedValuesSuggestion() {
         return classifiedValuesSuggestion;
     }
     
@@ -89,18 +92,19 @@ public class ClassifiedTag extends Tag {
      */
     public void addSuggestion(String suggestion) {
         classifiedValuesSuggestion.add(suggestion);
-        if(classifiedValuesSuggestion.contains("ALL")) {
+        if (classifiedValuesSuggestion.contains("ALL")) {
             classifiedValuesSuggestion.remove("ALL");
         }
         classifiedValuesSuggestion.add("ALL");
         
     }
      
-    /** 
-     * get all classifiedValues
+    /**
+     * @return classifiedValues 
+     *                   get all classifiedValues
      * 
      */
-    public ArrayList<String> getAllClassifiedValues() {
+    public List<String> getAllClassifiedValues() {
         return classifiedValues;
     }
 }

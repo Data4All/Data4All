@@ -79,17 +79,17 @@ public abstract class SpeechRecognition {
      * It Compares the list of the Google Speechrecognition and the array of key
      * Values
      * 
-     * @param arrayList
+     * @param list
      * @param matchesText
      * @return the String that matches with the tagValue
      */
-    private static String compareStringTag(ArrayList<String> arrayList,
+    private static String compareStringTag(List<String> list,
             List<String> matchesText) {
         for (int i = 0; i < matchesText.size(); i++) {
-            for (int j = 0; j < arrayList.size(); j++) {
+            for (int j = 0; j < list.size(); j++) {
                 // Compares the String of matchesText with split
-                if (matchesText.get(i).equalsIgnoreCase(arrayList.get(j))) {
-                    return arrayList.get(j);
+                if (matchesText.get(i).equalsIgnoreCase(list.get(j))) {
+                    return list.get(j);
                 }
             }
         }
