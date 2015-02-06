@@ -16,19 +16,21 @@
 package io.github.data4all.smoothing;
 
 /**
+ * An interface for sensor smoothing providing the {@code filter()} method.
+ * 
  * @author tbrose
- *
  */
 public interface SensorSmoother {
 
     /**
-     * this method filters the input values, applies low pass filter and outputs
-     * the filtered signals
+     * This method filters the input values, applies low pass filter and outputs
+     * the filtered signals.
      * 
      * @param input
+     *            The input values
      * @param output
-     * @return
+     *            The output values
+     * @return The filtered data
      */
-    public abstract float[] filter(float[] input, float[] output);
-
+     float[] filter(float[] input, float[] output);
 }
