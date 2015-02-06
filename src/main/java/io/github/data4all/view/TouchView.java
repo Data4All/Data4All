@@ -1,23 +1,22 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.view;
 
-import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.OsmElement;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -58,6 +57,7 @@ public class TouchView extends View {
      */
     private final Paint pathPaint = new Paint();
     private final Paint areaPaint = new Paint();
+    private final Path path = new Path();
 
     /**
      * The motion interpreted Polygon.
@@ -108,6 +108,9 @@ public class TouchView extends View {
     public void clearMotions() {
         if (polygon != null) {
             polygon.clear();
+            redoUndo = new RedoUndo();
+            this.undoUseable();
+            this.redoUseable();
         }
     }
 
@@ -128,8 +131,6 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-
-        Path path = new Path();
         path.reset();
 
         if (newPolygon != null && newPolygon.size() != 0) {
@@ -156,8 +157,6 @@ public class TouchView extends View {
                 canvas.drawCircle(p.getX(), p.getY(),
                         MotionInterpreter.POINT_RADIUS, pathPaint);
             }
-            undoUseable();
-            redoUseable();
         }
     }
 
@@ -173,6 +172,8 @@ public class TouchView extends View {
             handleMotion(event, "start");
             polygon = newPolygon;
             redoUndo = new RedoUndo(polygon);
+            undoUseable();
+            redoUseable();
             break;
         case MotionEvent.ACTION_MOVE:
             handleMotion(event, "move");
@@ -365,10 +366,10 @@ public class TouchView extends View {
     }
 
     /**
-     * @author sbollen Create an OsmElement from the given polygon
-     * @return the created OsmElement (with located nodes)
+     * @author sbollen Create an AbstractDataElement from the given polygon
+     * @return the created AbstractDataElement (with located nodes)
      */
-    public OsmElement create() {
+    public AbstractDataElement create() {
         return interpreter.create(polygon);
     }
 

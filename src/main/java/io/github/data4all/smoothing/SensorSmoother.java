@@ -13,33 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.data4all.util;
+package io.github.data4all.smoothing;
 
-import static org.junit.Assert.assertTrue;
+/**
+ * @author tbrose
+ *
+ */
+public interface SensorSmoother {
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-public class TaggingTest {
-    private List<String> list;
-
-    @Before
-    public void setUp() throws Exception {
-        list = new ArrayList<String>();
-        list.add("highway");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    @Test
-    public void test() {
-        assertTrue(true);
-    }
+    /**
+     * this method filters the input values, applies low pass filter and outputs
+     * the filtered signals
+     * 
+     * @param input
+     * @param output
+     * @return
+     */
+    public abstract float[] filter(float[] input, float[] output);
 
 }

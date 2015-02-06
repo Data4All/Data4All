@@ -1,10 +1,13 @@
 /* 
  * Copyright (c) 2014, 2015 Data4All
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -143,8 +146,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void createNewPOI() {
         final GeoPoint myPosition = myLocationOverlay.getMyLocation();
         final Intent intent = new Intent(this, MapPreviewActivity.class);
-        final Node poi = new Node(-1, 1, myPosition.getLatitude(),
-                myPosition.getLongitude());
+        final Node poi =
+                new Node(-1, myPosition.getLatitude(),
+                        myPosition.getLongitude());
 
         // Set Type Definition for Intent to Node
         Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);

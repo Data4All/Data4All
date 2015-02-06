@@ -1,22 +1,23 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.Constants;
 import io.github.data4all.logger.Log;
+
 import java.net.URLEncoder;
 
 import oauth.signpost.OAuth;
@@ -69,12 +70,15 @@ public class PrepareRequestTokenActivity extends BasicActivity {
         try {
 
             System.setProperty("debug", "true");
-            this.consumer = new CommonsHttpOAuthConsumer(
-                    Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
-            this.provider = new CommonsHttpOAuthProvider(Constants.REQUEST_URL
-                    + "?scope="
-                    + URLEncoder.encode(Constants.SCOPE, Constants.ENCODING),
-                    Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
+            this.consumer =
+                    new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY,
+                            Constants.CONSUMER_SECRET);
+            this.provider =
+                    new CommonsHttpOAuthProvider(Constants.REQUEST_URL
+                            + "?scope="
+                            + URLEncoder.encode(Constants.SCOPE,
+                                    Constants.ENCODING), Constants.ACCESS_URL,
+                            Constants.AUTHORIZE_URL);
         } catch (Exception e) {
             Log.e(TAG, "Error creating consumer / provider", e);
         }
@@ -137,8 +141,9 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
             try {
                 Log.i(TAG, "Retrieving request token from OSM servers");
-                url = provider.retrieveRequestToken(consumer,
-                        Constants.OAUTH_CALLBACK_URL);
+                url =
+                        provider.retrieveRequestToken(consumer,
+                                Constants.OAUTH_CALLBACK_URL);
 
                 handled = false;
             } catch (Exception e) {
@@ -224,8 +229,8 @@ public class PrepareRequestTokenActivity extends BasicActivity {
         protected Void doInBackground(Uri... params) {
             final Uri uri = params[0];
 
-            final String oauth_verifier = uri
-                    .getQueryParameter(OAuth.OAUTH_VERIFIER);
+            final String oauth_verifier =
+                    uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
 
             try {
                 provider.retrieveAccessToken(consumer, oauth_verifier);

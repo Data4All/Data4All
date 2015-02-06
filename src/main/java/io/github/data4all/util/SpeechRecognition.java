@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package io.github.data4all.util;
 
 import io.github.data4all.model.data.ClassifiedTag;
@@ -20,10 +5,8 @@ import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Maurice Boyke
@@ -40,14 +23,16 @@ public abstract class SpeechRecognition {
     public static Map<String, String> speechToTag(List<String> matchesText) {
         Map<String, String> map = new HashMap<String, String>();
         ArrayList<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
-        Tags tags = new Tags();
-        tagData = tags.getAllClassifiedTags();
+        tagData = (ArrayList<ClassifiedTag>) Tags.getAllClassifiedTags();
         for (ClassifiedTag entry : tagData) {
             String key = (String) entry.getKey();
             // split is the Array from the Key Values
-            if (compareStringTag(entry.getClassifiedValues(), matchesText) != null) {
+            if (compareStringTag(
+                    (ArrayList<String>) entry.getClassifiedValues(),
+                    matchesText) != null) {
                 map.put(key,
-                        compareStringTag(entry.getClassifiedValues(),
+                        compareStringTag(
+                                (ArrayList<String>) entry.getClassifiedValues(),
                                 matchesText));
                 break;
             }
@@ -61,7 +46,6 @@ public abstract class SpeechRecognition {
      * @param matchesText
      *            is a Array List from the results of the SpeechRecognition
      */
-
     public static void splitStrings(List<String> matchesText) {
         for (int j = 0; j < matchesText.size(); j++) {
             String[] split;
@@ -72,7 +56,6 @@ public abstract class SpeechRecognition {
                 }
             }
         }
-
     }
 
     /**
@@ -95,5 +78,4 @@ public abstract class SpeechRecognition {
         }
         return null;
     }
-
 }

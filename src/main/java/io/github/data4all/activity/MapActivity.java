@@ -1,10 +1,13 @@
 /* 
  * Copyright (c) 2014, 2015 Data4All
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -14,9 +17,10 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
@@ -227,7 +231,7 @@ public class MapActivity extends BasicActivity {
      * @param element
      *            the OsmElement which should be added to the map
      **/
-    protected void addOsmElementToMap(OsmElement element) {
+    protected void addOsmElementToMap(AbstractDataElement element) {
         if (element != null) {
             // if the Element is a Node
             if (element instanceof Node) {
@@ -236,16 +240,21 @@ public class MapActivity extends BasicActivity {
                         + node.toGeoPoint().toString());
                 this.addNodeToMap(node);
                 // if the Element is Way
-            } else if (element instanceof Way) {
-                final Way way = (Way) element;
-                // if the Element is an Area
-                if (way.isClosed()) {
-                    Log.i(TAG, "Add Area with Coordinates " + way.toString());
-                    this.addAreaToMap(way);
-                    // if the Element is an Path
+            } else if (element instanceof PolyElement) {
+                final PolyElement polyElement = (PolyElement) element;
+
+                // if the Element is an Path
+                if (polyElement.getType() == PolyElementType.WAY) {
+                    Log.i(TAG,
+                            "Add Path with Coordinates "
+                                    + polyElement.toString());
+                    this.addPathToMap(polyElement);
+                    // if the Element is an Area
                 } else {
-                    Log.i(TAG, "Add Path with Coordinates " + way.toString());
-                    this.addPathToMap(way);
+                    Log.i(TAG,
+                            "Add Area with Coordinates "
+                                    + polyElement.toString());
+                    this.addAreaToMap(polyElement);
                 }
             }
         }
@@ -270,14 +279,14 @@ public class MapActivity extends BasicActivity {
     /**
      * Adds an area as an Overlay to the Map.
      *
-     * @param way
+     * @param polyElement
      *            the area which should be added to the map
      **/
-    protected void addAreaToMap(Way way) {
-        final Polygon area = new MapPolygon(this);
+    protected void addAreaToMap(PolyElement polyElement) {
+        Polygon area = new MapPolygon(this);
 
-        Log.i(TAG, "Set Area Points to " + way.toString());
-        area.setPoints(way.getGeoPoints());
+        Log.i(TAG, "Set Area Points to " + polyElement.toString());
+        area.setPoints(polyElement.getGeoPoints());
 
         Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
         area.setFillColor(DEFAULT_FILL_COLOR);
@@ -295,14 +304,14 @@ public class MapActivity extends BasicActivity {
     /**
      * Adds an Path as an Overlay to the Map.
      *
-     * @param way
+     * @param polyElement
      *            the path which should be added to the map
      **/
-    protected void addPathToMap(Way way) {
-        final Polyline path = new MapLine(this);
+    protected void addPathToMap(PolyElement polyElement) {
+        Polyline path = new MapLine(this);
 
-        Log.i(TAG, "Set Path Points to " + way.toString());
-        path.setPoints(way.getGeoPoints());
+        Log.i(TAG, "Set Path Points to " + polyElement.toString());
+        path.setPoints(polyElement.getGeoPoints());
 
         Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
         path.setColor(DEFAULT_STROKE_COLOR);
@@ -356,13 +365,14 @@ public class MapActivity extends BasicActivity {
      * @return the actual position
      **/
     protected IGeoPoint getMyLocation() {
-        final LocationManager locationManager = (LocationManager) this
-                .getSystemService(Context.LOCATION_SERVICE);
+        final LocationManager locationManager =
+                (LocationManager) this
+                        .getSystemService(Context.LOCATION_SERVICE);
         final Criteria criteria = new Criteria();
-        final String provider = locationManager
-                .getBestProvider(criteria, false);
-        final Location currentLocation = locationManager
-                .getLastKnownLocation(provider);
+        final String provider =
+                locationManager.getBestProvider(criteria, false);
+        final Location currentLocation =
+                locationManager.getLastKnownLocation(provider);
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());

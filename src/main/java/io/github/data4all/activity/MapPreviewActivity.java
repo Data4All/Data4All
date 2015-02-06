@@ -1,10 +1,13 @@
 /* 
  * Copyright (c) 2014, 2015 Data4All
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -14,9 +17,9 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,7 +39,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private static final String TAG = "MapPreviewActivity";
 
     // The OsmElement which should be added
-    private OsmElement element;
+    private AbstractDataElement element;
 
     public MapPreviewActivity() {
 
@@ -73,9 +76,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             mapController.setCenter(node.toGeoPoint());
             mapController.animateTo(node.toGeoPoint());
         } else {
-            final Way way = (Way) element;
-            mapController.setCenter(way.getFirstNode().toGeoPoint());
-            mapController.animateTo(way.getFirstNode().toGeoPoint());
+            PolyElement polyElement = (PolyElement) element;
+            mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
+            mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
         }
     }
 

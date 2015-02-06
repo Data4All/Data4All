@@ -1,18 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2014 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all;
 
 import io.github.data4all.exceptions.OsmException;
@@ -49,8 +49,9 @@ public class OAuthHelper {
         Log.d("OAuthHelper", "Using " + Constants.REQUEST_URL + " "
                 + Constants.ACCESS_URL + " " + Constants.AUTHORIZE_URL);
         Log.d("OAuthHelper", "With key " + key + " secret " + secret);
-        mProvider = new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
-                Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
+        mProvider =
+                new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
+                        Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
         mProvider.setOAuth10a(true);
         setmCallbackUrl(OAuth.OUT_OF_BAND);
 
@@ -63,8 +64,9 @@ public class OAuthHelper {
             String consumerSecret, String callbackUrl)
             throws UnsupportedEncodingException {
         setmConsumer(new CommonsHttpOAuthConsumer(consumerKey, consumerSecret));
-        mProvider = new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
-                Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
+        mProvider =
+                new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
+                        Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
         mProvider.setOAuth10a(true);
         setmCallbackUrl((callbackUrl == null ? OAuth.OUT_OF_BAND : callbackUrl));
     }

@@ -1,40 +1,36 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.util;
 
-import static org.junit.Assert.assertThat;
-//import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.*;
+import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.model.drawing.Point;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.TransformationParamBean;
-import io.github.data4all.model.drawing.Point;
-import io.github.data4all.util.PointToCoordsTransformUtil;
-
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.location.Location;
+
+//import static org.hamcrest.CoreMatchers.*;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
@@ -97,10 +93,12 @@ public class PointToCoordsTransformUtilTest {
         Location location = new Location("Test");
         location.setLatitude(53.105868);
         location.setLongitude(8.854916);
-        TransformationParamBean tps = new TransformationParamBean(2.0,
-                Math.toRadians(50), Math.toRadians(50), 1000, 1000, location);
-        DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f,
-                (float) -Math.toRadians(64), 0.0f, 10L);
+        TransformationParamBean tps =
+                new TransformationParamBean(2.0, Math.toRadians(50),
+                        Math.toRadians(50), 1000, 1000, location);
+        DeviceOrientation deviceOrientation =
+                new DeviceOrientation(0.0f, (float) -Math.toRadians(64), 0.0f,
+                        10L);
         ArrayList<Point> point = new ArrayList<Point>();
         point.add(new Point(1, 1));
         point.add(new Point(1, 1000));
@@ -111,8 +109,8 @@ public class PointToCoordsTransformUtilTest {
         ArrayList<double[]> coord = new ArrayList<double[]>();
         List<Node> n = util.transform(tps, deviceOrientation, point);
         for (Point p : point) {
-            double[] c = util
-                    .calculateCoordFromPoint(tps, deviceOrientation, p);
+            double[] c =
+                    util.calculateCoordFromPoint(tps, deviceOrientation, p);
             coord.add(c);
             // nodes.add(util.calculateGPSPoint(53.105868, 8.854916, c));
 

@@ -1,18 +1,18 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.util;
 
 /**
@@ -95,15 +95,16 @@ public class PointToCoordsTransformUtil {
         this.height = tps.getHeight();
 
         for (Point iter : points) {
-            Point point = new Point((tps.getPhotoHeight() - iter.getY() + 1),
-                    (tps.getPhotoWidth() - iter.getX() + 1));
+            Point point =
+                    new Point((tps.getPhotoHeight() - iter.getY() + 1),
+                            (tps.getPhotoWidth() - iter.getX() + 1));
             Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
             Log.d(TAG,
                     "TPS-DATA pic height;width height" + tps.getPhotoHeight()
                             + " " + tps.getPhotoWidth() + " " + tps.getHeight());
             // first calculates local coordinates in meter
-            double[] coord = calculateCoordFromPoint(tps, deviceOrientation,
-                    point);
+            double[] coord =
+                    calculateCoordFromPoint(tps, deviceOrientation, point);
             Log.d(TAG, "Calculated local Coords:" + coord[0] + "  " + coord[1]);
             // transforms local coordinates in global GPS-coordinates
             Log.d(TAG, "Local Lat Lon" + tps.getLocation().getLatitude() + "  "
@@ -161,12 +162,14 @@ public class PointToCoordsTransformUtil {
             DeviceOrientation deviceOrientation, Point point) {
         this.height = tps.getHeight();
         double azimuth = -deviceOrientation.getAzimuth();
-        double pitch = calculateAngleFromPixel(point.getX(),
-                tps.getPhotoHeight(), tps.getCameraMaxPitchAngle(),
-                deviceOrientation.getPitch());
-        double roll = calculateAngleFromPixel(point.getY(),
-                tps.getPhotoWidth(), tps.getCameraMaxRotationAngle(),
-                deviceOrientation.getRoll());
+        double pitch =
+                calculateAngleFromPixel(point.getX(), tps.getPhotoHeight(),
+                        tps.getCameraMaxPitchAngle(),
+                        deviceOrientation.getPitch());
+        double roll =
+                calculateAngleFromPixel(point.getY(), tps.getPhotoWidth(),
+                        tps.getCameraMaxRotationAngle(),
+                        deviceOrientation.getRoll());
 
         if (pitch <= (float) (-Math.PI / 2) || pitch >= (float) (Math.PI / 2)
                 || roll <= (float) (-Math.PI / 2)
@@ -188,8 +191,10 @@ public class PointToCoordsTransformUtil {
         double tempYY = y * (height / z);
         double[] coord = new double[3];
         // Rotate Vector with Azimuth (Z is fix))
-        coord[0] = ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
-        coord[1] = ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
+        coord[0] =
+                ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
+        coord[1] =
+                ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
         coord[2] = 0;
         return coord;
     }
@@ -295,22 +300,26 @@ public class PointToCoordsTransformUtil {
             return null;
         }
         // rotates the vector with azimuth
-        double x = ((coord[0] * Math.cos(deviceOrientation.getAzimuth())) - (coord[1] * Math
-                .sin(deviceOrientation.getAzimuth())));
-        double y = ((coord[0] * Math.sin(deviceOrientation.getAzimuth())) + (coord[1] * Math
-                .cos(deviceOrientation.getAzimuth())));
+        double x =
+                ((coord[0] * Math.cos(deviceOrientation.getAzimuth())) - (coord[1] * Math
+                        .sin(deviceOrientation.getAzimuth())));
+        double y =
+                ((coord[0] * Math.sin(deviceOrientation.getAzimuth())) + (coord[1] * Math
+                        .cos(deviceOrientation.getAzimuth())));
         // calculates the rotation and pitch of the Pixel given the approximate
         // height and orientation of the phone
-        double rotation = Math.atan(x / tps.getHeight())
-                - deviceOrientation.getRoll();
-        double pitch = Math.atan(y / tps.getHeight())
-                + deviceOrientation.getPitch();
+        double rotation =
+                Math.atan(x / tps.getHeight()) - deviceOrientation.getRoll();
+        double pitch =
+                Math.atan(y / tps.getHeight()) + deviceOrientation.getPitch();
 
         // calculates the multiplier of the Pixel
-        double x2 = (pitch + (tps.getCameraMaxPitchAngle() / 2))
-                / tps.getCameraMaxPitchAngle();
-        double y2 = -((rotation - (tps.getCameraMaxRotationAngle() / 2)) / tps
-                .getCameraMaxRotationAngle());
+        double x2 =
+                (pitch + (tps.getCameraMaxPitchAngle() / 2))
+                        / tps.getCameraMaxPitchAngle();
+        double y2 =
+                -((rotation - (tps.getCameraMaxRotationAngle() / 2)) / tps
+                        .getCameraMaxRotationAngle());
 
         // multiply with the Width and Height of the Photo
         float xx = (float) ((int) (x2 * tps.getPhotoWidth()));
@@ -353,7 +362,7 @@ public class PointToCoordsTransformUtil {
         lat2 = Math.toDegrees(lat2);
         lon2 = Math.toDegrees(lon2);
 
-        Node node = new Node(osmID, osmVersion, lat2, lon2);
+        Node node = new Node(osmID, lat2, lon2);
         osmID--;
         return node;
     }
