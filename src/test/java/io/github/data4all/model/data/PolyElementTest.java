@@ -68,7 +68,8 @@ public class PolyElementTest {
     }
 
     /**
-     * Tests if a node is appended correctly at the begin or end of the PolyElement.
+     * Tests if a node is appended correctly at the begin or end of the
+     * PolyElement.
      */
     @Test
     public void test_appendNode() {
@@ -149,15 +150,15 @@ public class PolyElementTest {
     /**
      * Tests if existing node gets replaced by the given node.
      */
-    @Test(timeout=5000)
+    @Test(timeout = 5000)
     public void test_replaceNode() {
         PolyElement.addNode(testNode1);
         PolyElement.addNode(testNode2);
         PolyElement.addNode(testNode3);
         Node replaceNode = new Node(99, 10.1234567, 20.1234567);
         PolyElement.replaceNode(testNode2, replaceNode);
-        //assertEquals(3, PolyElement.getNodes().size());
-        //assertEquals(true, PolyElement.hasNode(replaceNode));
+        // assertEquals(3, PolyElement.getNodes().size());
+        // assertEquals(true, PolyElement.hasNode(replaceNode));
     }
 
     /**
@@ -201,28 +202,31 @@ public class PolyElementTest {
         PolyElement.addNode(testNode2);
         assertEquals(testNode2, PolyElement.getLastNode());
     }
-    
+
     /**
      * Test if the PolyElement can set different types.
      */
-    @Test 
+    @Test
     public void test_PolyElementType() {
         PolyElement testPolyElement1 = new PolyElement(1, PolyElementType.WAY);
         assertEquals(PolyElementType.WAY, testPolyElement1.getType());
         PolyElement testPolyElement2 = new PolyElement(1, PolyElementType.AREA);
         assertEquals(PolyElementType.AREA, testPolyElement2.getType());
-        PolyElement testPolyElement3 = new PolyElement(1, PolyElementType.BUILDING);
+        PolyElement testPolyElement3 =
+                new PolyElement(1, PolyElementType.BUILDING);
         assertEquals(PolyElementType.BUILDING, testPolyElement3.getType());
     }
 
     /**
-     * Create a new Parcel to save/parcelable the testPolyElement, afterwards a new PolyElement
-     * is created from the parcel and we check if it contains all attributes.
+     * Create a new Parcel to save/parcelable the testPolyElement, afterwards a
+     * new PolyElement is created from the parcel and we check if it contains
+     * all attributes.
      */
     @Test
     public void test_parcelable_PolyElement() {
         Parcel newParcel = Parcel.obtain();
-        PolyElement testPolyElement = new PolyElement(1, PolyElementType.BUILDING);
+        PolyElement testPolyElement =
+                new PolyElement(1, PolyElementType.BUILDING);
 
         testPolyElement.addOrUpdateTag(Tags.getAllAddressTags().get(0), "foo");
         testPolyElement.addOrUpdateTag(Tags.getAllAddressTags().get(1), "bar");
@@ -233,24 +237,30 @@ public class PolyElementTest {
 
         testPolyElement.writeToParcel(newParcel, 0);
         newParcel.setDataPosition(0);
-        PolyElement deParcelPolyElement = PolyElement.CREATOR.createFromParcel(newParcel);
+        PolyElement deParcelPolyElement =
+                PolyElement.CREATOR.createFromParcel(newParcel);
 
         assertEquals(testPolyElement.getOsmId(), deParcelPolyElement.getOsmId());
 
-        assertEquals(testPolyElement.getTagValueWithKey(Tags.getAllAddressTags().get(0)),
-                deParcelPolyElement.getTagValueWithKey(Tags.getAllAddressTags().get(0)));
-        assertEquals(testPolyElement.getTagValueWithKey(Tags.getAllAddressTags().get(1)),
-                deParcelPolyElement.getTagValueWithKey(Tags.getAllAddressTags().get(1)));
+        assertEquals(testPolyElement.getTagValueWithKey(Tags
+                .getAllAddressTags().get(0)),
+                deParcelPolyElement.getTagValueWithKey(Tags.getAllAddressTags()
+                        .get(0)));
+        assertEquals(testPolyElement.getTagValueWithKey(Tags
+                .getAllAddressTags().get(1)),
+                deParcelPolyElement.getTagValueWithKey(Tags.getAllAddressTags()
+                        .get(1)));
 
-        assertEquals(testPolyElement.getNodes().size(), deParcelPolyElement.getNodes().size());
+        assertEquals(testPolyElement.getNodes().size(), deParcelPolyElement
+                .getNodes().size());
 
-        assertEquals(testNode1.getOsmId(), deParcelPolyElement.getNodes().get(0)
-                .getOsmId());
-        assertEquals(testNode2.getOsmId(), deParcelPolyElement.getNodes().get(1)
-                .getOsmId());
-        assertEquals(testNode3.getOsmId(), deParcelPolyElement.getNodes().get(2)
-                .getOsmId());
-        
+        assertEquals(testNode1.getOsmId(), deParcelPolyElement.getNodes()
+                .get(0).getOsmId());
+        assertEquals(testNode2.getOsmId(), deParcelPolyElement.getNodes()
+                .get(1).getOsmId());
+        assertEquals(testNode3.getOsmId(), deParcelPolyElement.getNodes()
+                .get(2).getOsmId());
+
         assertEquals(PolyElementType.BUILDING, deParcelPolyElement.getType());
 
     }

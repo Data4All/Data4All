@@ -82,15 +82,16 @@ public class CapturePictureHandler implements PictureCallback {
 
         // get the current data which is necessary for creating an osm element
         final Camera.Parameters params = camera.getParameters();
-        final double horizontalViewAngle = Math.toRadians(params
-                .getHorizontalViewAngle());
-        final double verticalViewAngle = Math.toRadians(params
-                .getVerticalViewAngle());
+        final double horizontalViewAngle =
+                Math.toRadians(params.getHorizontalViewAngle());
+        final double verticalViewAngle =
+                Math.toRadians(params.getVerticalViewAngle());
         final Size pictureSize = params.getSupportedPictureSizes().get(0);
         final Location currentLocation = Optimizer.currentBestLoc();
-        transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
-                verticalViewAngle, pictureSize.width, pictureSize.height,
-                currentLocation);
+        transformBean =
+                new TransformationParamBean(1.7, horizontalViewAngle,
+                        verticalViewAngle, pictureSize.width,
+                        pictureSize.height, currentLocation);
         currentOrientation = Optimizer.currentBestPos();
 
         // Start a thread to save the Raw Image in JPEG into SDCard
@@ -109,7 +110,8 @@ public class CapturePictureHandler implements PictureCallback {
 
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
-                FileOutputStream fos = new FileOutputStream(photoFile.getPath());
+                FileOutputStream fos =
+                        new FileOutputStream(photoFile.getPath());
                 fos.write(photoData[0]);
                 fos.flush();
                 fos.close();
@@ -153,8 +155,8 @@ public class CapturePictureHandler implements PictureCallback {
         // Image Type is JPEG
 
         // Create a new folder on the internal storage named Data4all
-        final File folder = new File(Environment.getExternalStorageDirectory()
-                + DIRECTORY);
+        final File folder =
+                new File(Environment.getExternalStorageDirectory() + DIRECTORY);
         if (!folder.exists() && folder.mkdirs()) {
             Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
                     .show();

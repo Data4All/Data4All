@@ -32,8 +32,8 @@ public class Optimizer {
     // a new Ringbuffer for saving the location objects
     static RingBuffer<Location> locRB = new RingBuffer<Location>(20);
     // a new Ringbuffer for saving the DevicePosition objects
-    static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(
-            20);
+    static RingBuffer<DeviceOrientation> posRB =
+            new RingBuffer<DeviceOrientation>(20);
 
     // The timeDifference at which one location should be significant older
     // or newer than another one, 1000 is one second
@@ -131,8 +131,8 @@ public class Optimizer {
         }
 
         // Check whether the new location fix is newer or older
-        final long timeDelta = location.getTime()
-                - currentBestLocation.getTime();
+        final long timeDelta =
+                location.getTime() - currentBestLocation.getTime();
         final boolean isSignificantlyNewer = timeDelta > (TIME_DIFFERENCE);
         final boolean isSignificantlyOlder = timeDelta < -(TIME_DIFFERENCE);
         final boolean isNewer = timeDelta > 0;
@@ -149,15 +149,18 @@ public class Optimizer {
         }
 
         // Check whether the new location fix is more or less accurate
-        final int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation
-                .getAccuracy());
+        final int accuracyDelta =
+                (int) (location.getAccuracy() - currentBestLocation
+                        .getAccuracy());
         final boolean isLessAccurate = accuracyDelta > 0;
         final boolean isMoreAccurate = accuracyDelta < 0;
-        final boolean isSignificantlyLessAccurate = accuracyDelta > ACCURACY_DIFFERENCE;
+        final boolean isSignificantlyLessAccurate =
+                accuracyDelta > ACCURACY_DIFFERENCE;
 
         // Check if the old and new location are from the same provider
-        final boolean isFromSameProvider = isSameProvider(
-                location.getProvider(), currentBestLocation.getProvider());
+        final boolean isFromSameProvider =
+                isSameProvider(location.getProvider(),
+                        currentBestLocation.getProvider());
 
         // Determine location quality using a combination of timeliness and
         // accuracy

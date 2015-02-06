@@ -56,8 +56,9 @@ public class CapturePictureHandlerTest {
 
         try {
             // Reflect the private method convertToDMS for testing
-            convertToDMS = CapturePictureHandler.class.getDeclaredMethod(
-                    "convertToDMS", Double.class);
+            convertToDMS =
+                    CapturePictureHandler.class.getDeclaredMethod(
+                            "convertToDMS", Double.class);
             convertToDMS.setAccessible(true);
 
             // normal positive input
@@ -108,8 +109,9 @@ public class CapturePictureHandlerTest {
 
         try {
             // Reflect the private method convertToDegree for testing
-            convertToDegree = CapturePictureHandler.class.getDeclaredMethod(
-                    "convertToDegree", String.class);
+            convertToDegree =
+                    CapturePictureHandler.class.getDeclaredMethod(
+                            "convertToDegree", String.class);
             convertToDegree.setAccessible(true);
 
             // normal positive input

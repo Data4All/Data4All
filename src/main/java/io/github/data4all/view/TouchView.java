@@ -15,7 +15,6 @@
  */
 package io.github.data4all.view;
 
-import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;

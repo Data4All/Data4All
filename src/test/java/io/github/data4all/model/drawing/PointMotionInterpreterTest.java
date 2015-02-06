@@ -57,11 +57,12 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
 
     @Test
     public void interprete_onePoint_replacePointsInList() {
-        List<Point> interprete = Arrays.asList(new Point(100, 100), new Point(
-                200, 200), new Point(300, 300));
+        List<Point> interprete =
+                Arrays.asList(new Point(100, 100), new Point(200, 200),
+                        new Point(300, 300));
         DrawingMotion drawingMotion = getDrawingMotion(0, 0);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
     }
@@ -70,8 +71,8 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
     public void interprete_onePoint_thisPointInList() {
         List<Point> interprete = new ArrayList<Point>();
         DrawingMotion drawingMotion = getDrawingMotion(0, 0);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
     }
@@ -79,10 +80,10 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
     @Test
     public void interprete_twoNearPoints_averageInList() {
         List<Point> interprete = new ArrayList<Point>();
-        DrawingMotion drawingMotion = getDrawingMotion(0, 0,
-                DrawingMotion.POINT_TOLERANCE, 0);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        DrawingMotion drawingMotion =
+                getDrawingMotion(0, 0, DrawingMotion.POINT_TOLERANCE, 0);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(
                 DrawingMotion.POINT_TOLERANCE / 2, 0)));
@@ -91,10 +92,11 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
     @Test
     public void interprete_twoPoints_lastPointIsInList() {
         List<Point> interprete = new ArrayList<Point>();
-        DrawingMotion drawingMotion = getDrawingMotion(0, 0,
-                DrawingMotion.POINT_TOLERANCE, DrawingMotion.POINT_TOLERANCE);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        DrawingMotion drawingMotion =
+                getDrawingMotion(0, 0, DrawingMotion.POINT_TOLERANCE,
+                        DrawingMotion.POINT_TOLERANCE);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(
                 DrawingMotion.POINT_TOLERANCE, DrawingMotion.POINT_TOLERANCE)));

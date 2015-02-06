@@ -49,8 +49,9 @@ public class OAuthHelper {
         Log.d("OAuthHelper", "Using " + Constants.REQUEST_URL + " "
                 + Constants.ACCESS_URL + " " + Constants.AUTHORIZE_URL);
         Log.d("OAuthHelper", "With key " + key + " secret " + secret);
-        mProvider = new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
-                Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
+        mProvider =
+                new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
+                        Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
         mProvider.setOAuth10a(true);
         setmCallbackUrl(OAuth.OUT_OF_BAND);
 
@@ -63,8 +64,9 @@ public class OAuthHelper {
             String consumerSecret, String callbackUrl)
             throws UnsupportedEncodingException {
         setmConsumer(new CommonsHttpOAuthConsumer(consumerKey, consumerSecret));
-        mProvider = new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
-                Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
+        mProvider =
+                new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
+                        Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
         mProvider.setOAuth10a(true);
         setmCallbackUrl((callbackUrl == null ? OAuth.OUT_OF_BAND : callbackUrl));
     }

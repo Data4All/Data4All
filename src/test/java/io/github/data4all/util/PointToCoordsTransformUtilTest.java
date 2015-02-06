@@ -15,26 +15,22 @@
  */
 package io.github.data4all.util;
 
-import static org.junit.Assert.assertThat;
-//import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.*;
+import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.model.drawing.Point;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.TransformationParamBean;
-import io.github.data4all.model.drawing.Point;
-import io.github.data4all.util.PointToCoordsTransformUtil;
-
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.location.Location;
+
+//import static org.hamcrest.CoreMatchers.*;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
@@ -97,10 +93,12 @@ public class PointToCoordsTransformUtilTest {
         Location location = new Location("Test");
         location.setLatitude(53.105868);
         location.setLongitude(8.854916);
-        TransformationParamBean tps = new TransformationParamBean(2.0,
-                Math.toRadians(50), Math.toRadians(50), 1000, 1000, location);
-        DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f,
-                (float) -Math.toRadians(64), 0.0f, 10L);
+        TransformationParamBean tps =
+                new TransformationParamBean(2.0, Math.toRadians(50),
+                        Math.toRadians(50), 1000, 1000, location);
+        DeviceOrientation deviceOrientation =
+                new DeviceOrientation(0.0f, (float) -Math.toRadians(64), 0.0f,
+                        10L);
         ArrayList<Point> point = new ArrayList<Point>();
         point.add(new Point(1, 1));
         point.add(new Point(1, 1000));
@@ -111,8 +109,8 @@ public class PointToCoordsTransformUtilTest {
         ArrayList<double[]> coord = new ArrayList<double[]>();
         List<Node> n = util.transform(tps, deviceOrientation, point);
         for (Point p : point) {
-            double[] c = util
-                    .calculateCoordFromPoint(tps, deviceOrientation, p);
+            double[] c =
+                    util.calculateCoordFromPoint(tps, deviceOrientation, p);
             coord.add(c);
             // nodes.add(util.calculateGPSPoint(53.105868, 8.854916, c));
 

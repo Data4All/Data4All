@@ -35,8 +35,8 @@ public class ShowPictureActivityTest {
 
     @Before
     public void setup() {
-        this.activity = Robolectric.buildActivity(ShowPictureActivity.class)
-                .get();
+        this.activity =
+                Robolectric.buildActivity(ShowPictureActivity.class).get();
         Intent intent = new Intent();
         File test = new File("@drawable/android3");
         intent.putExtra("file_path", test);

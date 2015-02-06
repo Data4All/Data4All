@@ -50,8 +50,8 @@ public class MapPolygon extends Polygon implements
 
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(
-                mapView.getContext());
+        final AlertDialog.Builder builder =
+                new AlertDialog.Builder(mapView.getContext());
         builder.setMessage(mapActivity.getString(R.string.deleteDialog))
                 .setPositiveButton(mapActivity.getString(R.string.yes), this)
                 .setNegativeButton(mapActivity.getString(R.string.no), this)

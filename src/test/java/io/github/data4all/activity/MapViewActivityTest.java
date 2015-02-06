@@ -17,8 +17,6 @@ package io.github.data4all.activity;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

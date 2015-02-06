@@ -87,7 +87,8 @@ public class Node extends AbstractDataElement {
 
     /**
      * Returns an integer as hashCode for Node objects.
-     * @return integer hashCode 
+     * 
+     * @return integer hashCode
      */
     @Override
     public int hashCode() {

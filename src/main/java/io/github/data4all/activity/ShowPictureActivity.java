@@ -36,7 +36,6 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -101,12 +100,13 @@ public class ShowPictureActivity extends BasicActivity {
         }
 
         if (getIntent().hasExtra("transform_bean")) {
-            transformBean = getIntent().getExtras().getParcelable(
-                    "transform_bean");
+            transformBean =
+                    getIntent().getExtras().getParcelable("transform_bean");
         }
         if (getIntent().hasExtra("current_orientation")) {
-            currentOrientation = getIntent().getExtras().getParcelable(
-                    "current_orientation");
+            currentOrientation =
+                    getIntent().getExtras()
+                            .getParcelable("current_orientation");
         }
         // Set the display size as photo size to get a coordinate system for the
         // drawn points
@@ -126,11 +126,12 @@ public class ShowPictureActivity extends BasicActivity {
 
     public void onClickOkay(View view) {
 
-	// create an abstract data element from the given data and pass it to the next
-	// activity
-	AbstractDataElement osmElement = touchView.create();
-	intent.putExtra(OSM_ELEMENT, osmElement);
-	startActivity(intent);
+        // create an abstract data element from the given data and pass it to
+        // the next
+        // activity
+        AbstractDataElement osmElement = touchView.create();
+        intent.putExtra(OSM_ELEMENT, osmElement);
+        startActivity(intent);
     }
 
     public void onClickPoint(View view) {
@@ -188,8 +189,9 @@ public class ShowPictureActivity extends BasicActivity {
     private void setBackground(Uri selectedImage) {
 
         try { // try to convert a image to a bitmap
-            bitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(), selectedImage);
+            bitmap =
+                    MediaStore.Images.Media.getBitmap(
+                            this.getContentResolver(), selectedImage);
             imageView.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             Log.e(this.getClass().toString(), "ERROR, no file found");

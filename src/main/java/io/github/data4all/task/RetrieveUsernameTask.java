@@ -54,9 +54,13 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
 
     /**
      * Constructor for this task.
-     * @param url The url to retrieve the data
-     * @param consumer The {@link OAuthConsumer}
-     * @param prefs The SharedPreferences
+     * 
+     * @param url
+     *            The url to retrieve the data
+     * @param consumer
+     *            The {@link OAuthConsumer}
+     * @param prefs
+     *            The SharedPreferences
      */
     public RetrieveUsernameTask(String url, OAuthConsumer consumer,
             SharedPreferences prefs) {

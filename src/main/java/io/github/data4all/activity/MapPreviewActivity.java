@@ -21,9 +21,6 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
-
-import org.osmdroid.util.GeoPoint;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -88,8 +85,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             mapController.animateTo(node.toGeoPoint());
         } else {
             PolyElement polyElement = (PolyElement) element;
-			mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
-			mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
+            mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
+            mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
         }
     }
 

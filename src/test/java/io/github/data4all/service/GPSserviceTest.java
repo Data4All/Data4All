@@ -32,8 +32,8 @@ public class GPSserviceTest {
     @Test
     public void testGPSservice() throws Exception {
 
-        Intent startIntent = new Intent(Robolectric.application,
-                GPSservice.class);
+        Intent startIntent =
+                new Intent(Robolectric.application, GPSservice.class);
         GPSservice service = new GPSservice();
 
         service.onStartCommand(startIntent, 0, 0);

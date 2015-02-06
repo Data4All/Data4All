@@ -60,8 +60,8 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
     protected Void doInBackground(Uri... params) {
         final Uri uri = params[0];
 
-        final String oauth_verifier = uri
-                .getQueryParameter(OAuth.OAUTH_VERIFIER);
+        final String oauth_verifier =
+                uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
 
         try {
             provider.retrieveAccessToken(consumer, oauth_verifier);

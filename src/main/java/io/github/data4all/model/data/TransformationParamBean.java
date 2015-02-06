@@ -32,15 +32,16 @@ public class TransformationParamBean implements Parcelable {
      * CREATOR that generates instances of {@link TransformationParamBean} from
      * a Parcel
      */
-    public static final Parcelable.Creator<TransformationParamBean> CREATOR = new Parcelable.Creator<TransformationParamBean>() {
-        public TransformationParamBean createFromParcel(Parcel in) {
-            return new TransformationParamBean(in);
-        }
+    public static final Parcelable.Creator<TransformationParamBean> CREATOR =
+            new Parcelable.Creator<TransformationParamBean>() {
+                public TransformationParamBean createFromParcel(Parcel in) {
+                    return new TransformationParamBean(in);
+                }
 
-        public TransformationParamBean[] newArray(int size) {
-            return new TransformationParamBean[size];
-        }
-    };
+                public TransformationParamBean[] newArray(int size) {
+                    return new TransformationParamBean[size];
+                }
+            };
 
     public TransformationParamBean(double height,
             double cameraMaxRotationAngle, double cameraMaxPitchAngle,

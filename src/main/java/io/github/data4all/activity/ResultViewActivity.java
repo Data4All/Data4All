@@ -15,484 +15,376 @@
  */
 package io.github.data4all.activity;
 
-import java.util.ArrayList;
-
-import java.util.LinkedHashMap;
-
-import java.util.List;
-
-import java.util.Map;
-
-import java.util.Map.Entry;
-
-import java.util.SortedMap;
-
-import java.util.TreeMap;
-
-import org.osmdroid.ResourceProxy.string;
-
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-
-import org.osmdroid.views.MapController;
-
-import org.osmdroid.views.MapView;
-
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-
-import org.osmdroid.ResourceProxy;
-
 import io.github.data4all.R;
-
 import io.github.data4all.logger.Log;
-
 import io.github.data4all.model.data.AbstractDataElement;
-
 import io.github.data4all.model.data.ClassifiedTag;
-
 import io.github.data4all.model.data.Node;
-
 import io.github.data4all.model.data.PolyElement;
-
 import io.github.data4all.util.Tagging;
 
-import android.app.Activity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.app.AlertDialog;
-
 import android.app.Dialog;
-
 import android.content.Context;
-
 import android.content.DialogInterface;
-
 import android.content.Intent;
-
 import android.os.Bundle;
-
-import android.view.LayoutInflater;
-
 import android.view.Menu;
-
 import android.view.MenuItem;
-
 import android.view.View;
-
 import android.view.View.OnClickListener;
-
 import android.widget.AdapterView;
-
 import android.widget.AdapterView.OnItemClickListener;
-
-import android.widget.AdapterView.OnItemLongClickListener;
-
 import android.widget.ArrayAdapter;
-
 import android.widget.Button;
-
 import android.widget.EditText;
-
 import android.widget.LinearLayout;
-
 import android.widget.ListView;
 
-public class ResultViewActivity extends BasicActivity implements OnClickListener {
+public class ResultViewActivity extends BasicActivity implements
+        OnClickListener {
 
-        
+    private static final String TAG = "ResultViewActivity";
 
-           private static final String TAG = "ResultViewActivity";
+    final Context context = this;
 
-           
+    private MapView mapView;
 
-           final Context context = this;
+    // Default OpenStreetMap TileSource
 
-           
+    private final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
 
-           private MapView mapView;
+    private MapController mapController;
 
-        
+    private MyLocationNewOverlay myLocationOverlay;
 
-           //Default OpenStreetMap TileSource
+    // Default Zoom Level
 
-                private final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
+    private final int DEFAULT_ZOOM_LEVEL = 18;
 
-                private MapController mapController;
+    private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
-                
+    // Listview for the Dialog
 
-                private MyLocationNewOverlay myLocationOverlay;
+    private ListView listView;
 
-                //Default Zoom Level
+    // The OSM Element
 
-                private final int DEFAULT_ZOOM_LEVEL = 18;
+    private AbstractDataElement element;
 
-                
+    // The Dialog for the unclassified tags
 
-                private final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+    private Dialog dialog;
 
-                // Listview for the Dialog 
+    // The List that will be shown in the Activity
 
-                private ListView listView;
+    private List<String> endList;
 
-                // The OSM Element 
+    // The key Value of the Tag which will be changed
 
-                private AbstractDataElement element;
+    private String key;
 
-                // The Dialog for the unclassified tags
+    // The list of all Keys
 
-                private Dialog dialog;
+    private ArrayList<String> keyList;
 
-                // The List that will be shown in the Activity
+    private CharSequence[] array;
 
-                private List<String> endList;
+    private AlertDialog alert;
 
-                // The key Value of the Tag which will be changed 
+    private AlertDialog alert1;
 
-                private String key;
+    private Map<String, ClassifiedTag> tagMap;
 
-                // The list of all Keys
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-                private ArrayList<String> keyList;
+        super.onCreate(savedInstanceState);
 
-                
+        setContentView(R.layout.activity_result_view);
 
-            private CharSequence [] array;
+        mapView = (MapView) this.findViewById(R.id.mapviewResult);
 
-            
+        element = getIntent().getParcelableExtra("OSM_ELEMENT");
 
-            private AlertDialog alert;
+        mapView.setTileSource(OSM_TILESOURCE);
 
-            
+        mapView.setTileSource(DEFAULT_TILESOURCE);
 
-            private AlertDialog alert1;
+        mapController = (MapController) this.mapView.getController();
 
-                private Map<String, ClassifiedTag> tagMap;
+        mapController.setZoom(DEFAULT_ZOOM_LEVEL);
 
-        @Override
+        if (element instanceof Node) {
 
-        protected void onCreate(Bundle savedInstanceState) {
+            Node node = (Node) element;
 
-                super.onCreate(savedInstanceState);
+            mapController.setCenter(node.toGeoPoint());
 
-                setContentView(R.layout.activity_result_view);
+            mapController.animateTo(node.toGeoPoint());
 
-                mapView = (MapView) this.findViewById(R.id.mapviewResult);
+        } else {
 
-                element = getIntent().getParcelableExtra("OSM_ELEMENT");
+            PolyElement way = (PolyElement) element;
 
-                
+            mapController.setCenter(way.getFirstNode().toGeoPoint());
 
-                mapView.setTileSource(OSM_TILESOURCE);
+        }
 
-                
+        myLocationOverlay = new MyLocationNewOverlay(this, mapView);
 
-                mapView.setTileSource(DEFAULT_TILESOURCE);
+        mapView.getOverlays().add(myLocationOverlay);
 
-                
+        listView = (ListView) this.findViewById(R.id.listViewResult);
 
-                
+        // The Sorted Keys of the ShowPictureActivity
 
-                mapController = (MapController) this.mapView.getController();
+        array =
+                Tagging.getArrayKeys(getIntent().getExtras().getInt("TYPE_DEF"));
 
-                
+        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"));
 
-                mapController.setZoom(DEFAULT_ZOOM_LEVEL);
+        output();
 
-                
+        listView.setOnItemClickListener(new OnItemClickListener() {
 
-                if(element instanceof Node){
+            public void onItemClick(AdapterView parent, View view,
+                    final int position, long id) {
 
-                        Node node = (Node) element;
+                Log.i(TAG,
+                        Boolean.toString(Tagging.isClassifiedTag(
+                                keyList.get(position), array)));
 
-                        mapController.setCenter(node.toGeoPoint());
+                Log.i(TAG, keyList.get(position));
 
-                        mapController.animateTo(node.toGeoPoint());
+                Log.i(TAG, Integer.toString(endList.size()));
 
-                }else{
+                Log.i(TAG, Integer.toString(position));
 
-                        PolyElement way = (PolyElement) element;
+                // Change Classified Tags
 
-                        mapController.setCenter(way.getFirstNode().toGeoPoint());
+                if (Tagging.isClassifiedTag(keyList.get(position), array)) {
 
-                }
+                    Log.i(TAG, "Classified Tag");
 
-                
+                    AlertDialog.Builder alertDialog =
+                            new AlertDialog.Builder(ResultViewActivity.this,
+                                    android.R.style.Theme_Holo_Dialog_MinWidth);
 
-                myLocationOverlay = new MyLocationNewOverlay(this, mapView);
+                    alertDialog.setTitle("Select Tag");
 
-                
+                    final CharSequence[] showArray;
 
-                mapView.getOverlays().add(myLocationOverlay);
+                    showArray =
+                            tagMap.get(keyList.get(position))
+                                    .getClassifiedValues()
+                                    .toArray(
+                                            new String[tagMap
+                                                    .get(keyList.get(position))
+                                                    .getClassifiedValues()
+                                                    .size()]);
 
-                
+                    alertDialog.setItems(showArray,
+                            new DialogInterface.OnClickListener() {
 
-                
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                        int which) {
 
-                
+                                    element.addOrUpdateTag(
+                                            tagMap.get(keyList.get(position)),
+                                            (String) showArray[which]);
 
-                
-
-                listView = (ListView) this.findViewById(R.id.listViewResult);
-
-                // The Sorted Keys of the ShowPictureActivity
-
-                array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
-
-                tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
-
-                output();
-
-                listView.setOnItemClickListener(new OnItemClickListener() {
-
-                
-
-                        public void onItemClick(AdapterView parent, View view, final int position, long id) {
-
-                                Log.i(TAG, Boolean.toString(Tagging.isClassifiedTag(keyList.get(position), array)));
-
-                                Log.i(TAG, keyList.get(position));
-
-                                Log.i(TAG, Integer.toString(endList.size()));
-
-                                Log.i(TAG, Integer.toString(position));
-
-                                //Change Classified Tags
-
-                                if(Tagging.isClassifiedTag(keyList.get(position), array)){
-
-                                        Log.i(TAG, "Classified Tag");
-
-                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ResultViewActivity.this,android.R.style.Theme_Holo_Dialog_MinWidth);
-
-                                alertDialog.setTitle("Select Tag");
-
-                                final CharSequence [] showArray;
-
-                                showArray =  tagMap.get(keyList.get(position)).getClassifiedValues().toArray(new String [tagMap.get(keyList.get(position)).getClassifiedValues().size()]);
-
-                            alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
-
-                                                
-
-                                                @Override
-
-                                                public void onClick(DialogInterface dialog, int which) {
-
-                                                        element.addOrUpdateTag(tagMap.get(keyList.get(position)),(String) showArray [which]);
-
-                                                        output();
-
-                                                }
-
-                                        });
-
-                            
-
-                            alert = alertDialog.create();
-
-                        
-
-                        alert.show();
+                                    output();
 
                                 }
 
-                                // Change Unclasssified Tags
+                            });
 
-                                else {
+                    alert = alertDialog.create();
 
-                                dialog = new Dialog(context, android.R.style.Theme_Holo_Dialog_MinWidth);
+                    alert.show();
 
-                                dialog.setContentView(R.layout.dialog_dynamic);
+                }
 
-                                dialog.setTitle(keyList.get(position));
+                // Change Unclasssified Tags
 
-                                final Button okay = new Button(context);
+                else {
 
-                                final EditText text = new EditText(context);
+                    dialog =
+                            new Dialog(context,
+                                    android.R.style.Theme_Holo_Dialog_MinWidth);
 
-                                LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+                    dialog.setContentView(R.layout.dialog_dynamic);
 
-                                layout.addView(text);
+                    dialog.setTitle(keyList.get(position));
 
-                                layout.addView(okay);
+                    final Button okay = new Button(context);
 
-                                okay.setOnClickListener(new OnClickListener() {
+                    final EditText text = new EditText(context);
 
-                                        
+                    LinearLayout layout =
+                            (LinearLayout) dialog
+                                    .findViewById(R.id.dialogDynamic);
 
-                                        @Override
+                    layout.addView(text);
 
-                                        public void onClick(View arg0) {
+                    layout.addView(okay);
 
-                                        
+                    okay.setOnClickListener(new OnClickListener() {
 
-                                                element.addOrUpdateTag(tagMap.get(keyList.get(position)), text.getText().toString());
+                        @Override
+                        public void onClick(View arg0) {
 
-                                                output();
+                            element.addOrUpdateTag(tagMap.get(keyList
+                                    .get(position)), text.getText().toString());
 
-                                                dialog.dismiss();
+                            output();
 
-                                        }
-
-                                        
-
-                                });
-
-                                
-
-                                dialog.show();
-
-                                
+                            dialog.dismiss();
 
                         }
 
-                        
+                    });
+
+                    dialog.show();
 
                 }
+
+            }
 
         });
 
-        
+        Button resultButton = (Button) this.findViewById(R.id.buttonResult);
 
-        Button resultButton = (Button) this.findViewById(R.id.buttonResult);        
+        resultButton.setOnClickListener(this);
 
-        resultButton.setOnClickListener(this);        
+        Button resultButtonToCamera =
+                (Button) this.findViewById(R.id.buttonResultToCamera);
 
-        
+        resultButtonToCamera.setOnClickListener(this);
 
-        Button resultButtonToCamera = (Button) this.findViewById(R.id.buttonResultToCamera);        
+    }
 
-        resultButtonToCamera.setOnClickListener(this);        
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-                
+        // Inflate the menu; this adds items to the action bar if it is present.
 
-        }
+        getMenuInflater().inflate(R.menu.result_view, menu);
 
-        @Override
+        return true;
 
-        public boolean onCreateOptionsMenu(Menu menu) {
+    }
 
-                // Inflate the menu; this adds items to the action bar if it is present.
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-                getMenuInflater().inflate(R.menu.result_view, menu);
+        // Handle action bar item clicks here. The action bar will
 
-                return true;
+        // automatically handle clicks on the Home/Up button, so long
 
-        }
+        // as you specify a parent activity in AndroidManifest.xml.
 
-        @Override
+        int id = item.getItemId();
 
-        public boolean onOptionsItemSelected(MenuItem item) {
+        if (id == R.id.action_settings) {
 
-                // Handle action bar item clicks here. The action bar will
-
-                // automatically handle clicks on the Home/Up button, so long
-
-                // as you specify a parent activity in AndroidManifest.xml.
-
-                int id = item.getItemId();
-
-                if (id == R.id.action_settings) {
-
-                        return true;
-
-                }
-
-                return super.onOptionsItemSelected(item);
+            return true;
 
         }
 
-        
+        return super.onOptionsItemSelected(item);
 
-        private void output(){
+    }
 
-                endList = new ArrayList<String>();
+    private void output() {
 
-                keyList = new ArrayList<String>();
+        endList = new ArrayList<String>();
 
-        for(Entry entry : element.getTags().entrySet()){
+        keyList = new ArrayList<String>();
 
-                        String key = (String) entry.getKey();
+        for (Entry entry : element.getTags().entrySet()) {
 
-                        keyList.add(key);
+            String key = (String) entry.getKey();
 
-                        endList.add(key + "=" + element.getTags().get(key));
+            keyList.add(key);
 
-           
+            endList.add(key + "=" + element.getTags().get(key));
 
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
 
-                android.R.layout.simple_list_item_1, endList);
+        android.R.layout.simple_list_item_1, endList);
 
         listView.setAdapter(adapter);
 
-        }
+    }
 
-        @Override
+    @Override
+    public void onClick(View v) {
 
-        public void onClick(View v) {
+        switch (v.getId()) {
 
-                switch (v.getId()) {
+        case R.id.buttonResult:
 
-                case R.id.buttonResult:
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(ResultViewActivity.this);
 
-                        
+            builder.setMessage(R.string.resultViewAlertDialogMessage);
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ResultViewActivity.this);
+            final Intent intent = new Intent(this, MapViewActivity.class);
 
-                        builder.setMessage(R.string.resultViewAlertDialogMessage);
+            final Intent intent1 = new Intent(this, LoginActivity.class);
 
-                        final Intent intent = new Intent(this, MapViewActivity.class);
+            intent.putExtra("OSM_Element", element);
 
-                        final Intent intent1 = new Intent(this, LoginActivity.class);
+            builder.setPositiveButton(R.string.ok,
+                    new DialogInterface.OnClickListener() {
 
-                        intent.putExtra("OSM_Element", element);
+                        public void onClick(DialogInterface dialog, int id) {
 
-                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            startActivity(intent1);
 
-                           public void onClick(DialogInterface dialog, int id) {
+                        }
 
-                               startActivity(intent1);
+                    });
 
-                           }
+            builder.setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
 
-                       });
+                        public void onClick(DialogInterface dialog, int id) {
 
-                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            startActivity(intent);
 
-                           public void onClick(DialogInterface dialog, int id) {
+                        }
 
-                                   startActivity(intent);
+                    });
 
-                           }
-
-                       });
-
-                        alert = builder.create();
-
-            
+            alert = builder.create();
 
             alert.show();
 
-                        break;
+            break;
 
-                case R.id.buttonResultToCamera:
+        case R.id.buttonResultToCamera:
 
-                        startActivity(new Intent(this, CameraActivity.class));
-
-                }
-
-                
+            startActivity(new Intent(this, CameraActivity.class));
 
         }
 
-        
+    }
 
 }

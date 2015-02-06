@@ -52,10 +52,10 @@ public class BuildingMotionInterpreterTest extends MotionInterpreterTest {
     @Test
     public void interprete_addLine_onePointInList() {
         List<Point> interprete = new ArrayList<Point>();
-        DrawingMotion drawingMotion = getDrawingMotion(0, 0, 0, 10, 0, 20, 0,
-                30);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        DrawingMotion drawingMotion =
+                getDrawingMotion(0, 0, 0, 10, 0, 20, 0, 30);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(0, 30)));
     }
@@ -67,8 +67,8 @@ public class BuildingMotionInterpreterTest extends MotionInterpreterTest {
         List<Point> interprete = new ArrayList<Point>();
         interprete.add(new Point(0, 0));
         DrawingMotion drawingMotion = getDrawingMotion(100, 100);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(2));
         assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
         assertThat(interpreted.get(1), equalTo(new Point(100, 100)));
@@ -81,13 +81,13 @@ public class BuildingMotionInterpreterTest extends MotionInterpreterTest {
     @Test
     public void interprete_addThreePoints_fourPointsInList() {
         List<Point> interprete = new ArrayList<Point>();
-        DrawingMotion drawingMotion = getDrawingMotion(0, 0, 0, 10, 0, 20, 0,
-                30);
+        DrawingMotion drawingMotion =
+                getDrawingMotion(0, 0, 0, 10, 0, 20, 0, 30);
         interprete.add(new Point(0, 0));
         interprete.add(new Point(100, 0));
         interprete.add(new Point(100, 100));
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(4));
         assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
         assertThat(interpreted.get(1), equalTo(new Point(100, 0)));

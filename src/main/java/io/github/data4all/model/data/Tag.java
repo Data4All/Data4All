@@ -60,7 +60,7 @@ public class Tag {
      * numpad as input method.
      */
     private InputType type;
-    
+
     /**
      * constant values to define which osmObject the tag refers to.
      */
@@ -74,7 +74,6 @@ public class Tag {
      */
     private int[] osmObjects;
 
-
     /**
      * Constructor to create nameRessource and hintRessource from the key
      * 
@@ -86,11 +85,13 @@ public class Tag {
         this.id = id;
         this.key = key;
         try {
-            this.nameRessource = (Integer) R.string.class.getDeclaredField(
-                    "name_" + key.replaceAll(":", "_")).get(null);
+            this.nameRessource =
+                    (Integer) R.string.class.getDeclaredField(
+                            "name_" + key.replaceAll(":", "_")).get(null);
             if (type != null) {
-                this.hintRessource = (Integer) R.string.class.getDeclaredField(
-                        "hint_" + key.replaceAll(":", "_")).get(null);
+                this.hintRessource =
+                        (Integer) R.string.class.getDeclaredField(
+                                "hint_" + key.replaceAll(":", "_")).get(null);
             }
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block

@@ -114,8 +114,9 @@ public class OrientationListener extends Service implements SensorEventListener 
         // when the 2 Sensors data are available
         if (mGravity != null && mGeomagnetic != null) {
 
-            final boolean success = SensorManager.getRotationMatrix(mR, mI,
-                    mGravity, mGeomagnetic);
+            final boolean success =
+                    SensorManager.getRotationMatrix(mR, mI, mGravity,
+                            mGeomagnetic);
 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);

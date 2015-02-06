@@ -55,8 +55,9 @@ public class GPSservice extends Service implements LocationListener {
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
         powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "MyWakelockTag");
+        wakeLock =
+                powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                        "MyWakelockTag");
         wakeLock.acquire();
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

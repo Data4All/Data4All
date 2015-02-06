@@ -13,132 +13,108 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.github.data4all.util;
 
 import io.github.data4all.model.data.ClassifiedTag;
-
 import io.github.data4all.model.data.Tag;
-
 import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
-
 import java.util.HashMap;
-
-import java.util.Iterator;
-
 import java.util.List;
-
 import java.util.Map;
 
 /**
-
  * 
-
+ * 
+ * 
  * @author Maurice Boyke
-
+ * 
  *
-
  */
 
 public abstract class Tagging {
 
     /**
-
      * 
-
+     * 
+     * 
      * @return the Keys of Tags
-
      */
 
     public static List<Tag> getKeys(int type) {
 
         switch (type) {
 
-                case 1:
+        case 1:
 
-                        return Tags.getAllNodeTags();
+            return Tags.getAllNodeTags();
 
-                case 2:
+        case 2:
 
-                        return Tags.getAllWayTags();
+            return Tags.getAllWayTags();
 
-                case 3:
+        case 3:
 
-                        return Tags.getAllAreaTags();
+            return Tags.getAllAreaTags();
 
-                case 4: 
+        case 4:
 
-                        return Tags.getAllAreaTags();
+            return Tags.getAllAreaTags();
 
-                }
+        }
 
-                return null;
-
-       
+        return null;
 
     }
 
-    
+    public static String[] getArrayKeys(int type) {
 
-    public static String []  getArrayKeys(int type){
+        final String[] array = new String[getKeys(type).size()];
 
-            final String [] array = new String [getKeys(type).size()];
+        for (int i = 0; i < getKeys(type).size(); i++) {
 
-            for (int i = 0; i < getKeys(type).size(); i++) {
+            array[i] = getKeys(type).get(i).getKey();
 
-                        array [i] = getKeys(type).get(i).getKey();
+        }
 
-                }
-
-                
-
-            return array;
-
-            
+        return array;
 
     }
 
-    
+    public static Map<String, ClassifiedTag> getMapKeys(int type) {
 
-    public static Map<String, ClassifiedTag>  getMapKeys(int type){
+        Map<String, ClassifiedTag> map = new HashMap<String, ClassifiedTag>();
 
-            Map<String, ClassifiedTag>  map = new HashMap<String, ClassifiedTag>();
+        for (int i = 0; i < getKeys(type).size(); i++) {
 
-            for (int i = 0; i<getKeys(type).size(); i++) {
+            map.put(getKeys(type).get(i).getKey(),
+                    (ClassifiedTag) getKeys(type).get(i));
 
-                        map.put(getKeys(type).get(i).getKey(), (ClassifiedTag) getKeys(type).get(i));
+        }
 
-                }
-
-                
-
-            return map;
-
-            
+        return map;
 
     }
 
     /**
-
      * 
-
+     * 
+     * 
      * @param key
-
+     * 
      *            the Key of the Hashmap
-
+     * 
      * @return the Values of the Key
-
      */
 
     public static List<String> getValues(String key) {
 
         Map<String, String> map = new HashMap<String, String>();
 
-        //map = Tags.getClassifiedTags();
+        // map = Tags.getClassifiedTags();
 
         String[] split;
 
@@ -151,15 +127,14 @@ public abstract class Tagging {
     }
 
     /**
-
      * 
-
+     * 
+     * 
      * @param key
-
+     * 
      * @param value
-
+     * 
      * @return a HashMap with the Keys and Values
-
      */
 
     public static Map<String, String> hashMapTag(String key, String value) {
@@ -174,7 +149,7 @@ public abstract class Tagging {
 
     public static Map<Tag, String> addressToTag(List<String> addressTags,
 
-            Map<Tag, String> map) {
+    Map<Tag, String> map) {
 
         ArrayList<Tag> tag;
 
@@ -196,11 +171,11 @@ public abstract class Tagging {
 
     public static Map<Tag, String> contactToTag(List<String> contactTags,
 
-            Map<Tag, String> map) {
+    Map<Tag, String> map) {
 
         ArrayList<Tag> tag;
 
-       tag = (ArrayList<Tag>) Tags.getAllContactTags();
+        tag = (ArrayList<Tag>) Tags.getAllContactTags();
 
         for (int i = 0; i < tag.size(); i++) {
 
@@ -216,23 +191,18 @@ public abstract class Tagging {
 
     }
 
-    
+    public static Boolean isClassifiedTag(String key, CharSequence[] array) {
 
-    public static Boolean isClassifiedTag(String key, CharSequence [] array){
+        for (int i = 0; i < array.length; i++) {
 
-            
+            if (array[i].equals(key)) {
 
-            for (int i = 0; i < array.length; i++) {
+                return true;
 
-                        if(array [i].equals(key)){
+            }
 
-                                return true;
-
-                        }
-
-                                
-
-                }return false;
+        }
+        return false;
 
     }
 

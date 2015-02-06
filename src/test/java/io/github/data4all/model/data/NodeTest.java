@@ -78,10 +78,12 @@ public class NodeTest {
     @Test
     public void test_addOrUpdateTag() {
         testNode.addOrUpdateTag(Tags.getTagWithId(10), "motorway");
-        assertEquals("motorway", testNode.getTagValueWithKey(Tags.getTagWithId(10)));
+        assertEquals("motorway",
+                testNode.getTagValueWithKey(Tags.getTagWithId(10)));
         assertEquals(1, testNode.getTags().size());
         testNode.addOrUpdateTag(Tags.getTagWithId(10), "service");
-        assertEquals("service", testNode.getTagValueWithKey(Tags.getTagWithId(10)));
+        assertEquals("service",
+                testNode.getTagValueWithKey(Tags.getTagWithId(10)));
         assertEquals(1, testNode.getTags().size());
     }
 
@@ -118,7 +120,8 @@ public class NodeTest {
         Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
         tags.put(Tags.getTagWithId(10), "motorway");
         testNode.addTags(tags);
-        assertEquals("motorway", testNode.getTagValueWithKey(Tags.getTagWithId(10)));
+        assertEquals("motorway",
+                testNode.getTagValueWithKey(Tags.getTagWithId(10)));
     }
 
     /**
@@ -164,11 +167,13 @@ public class NodeTest {
         assertEquals(testNode.getLon(), deParcelNode.getLon(), 0);
         assertEquals(testNode.getLat(), deParcelNode.getLat(), 0);
 
-        assertEquals(testNode.getTagValueWithKey(Tags.getAllAddressTags().get(0)),
-                deParcelNode.getTagValueWithKey(Tags.getAllAddressTags().get(0)));
-        assertEquals(testNode.getTagValueWithKey(Tags.getAllAddressTags().get(1)),
-                deParcelNode.getTagValueWithKey(Tags.getAllAddressTags().get(1)));
+        assertEquals(testNode.getTagValueWithKey(Tags.getAllAddressTags()
+                .get(0)), deParcelNode.getTagValueWithKey(Tags
+                .getAllAddressTags().get(0)));
+        assertEquals(testNode.getTagValueWithKey(Tags.getAllAddressTags()
+                .get(1)), deParcelNode.getTagValueWithKey(Tags
+                .getAllAddressTags().get(1)));
 
     }
-    
+
 }

@@ -200,20 +200,20 @@ public class MapActivity extends BasicActivity {
                 this.addNodeToMap(node);
                 // if the Element is Way
             } else if (element instanceof PolyElement) {
-				final PolyElement polyElement = (PolyElement) element;
+                final PolyElement polyElement = (PolyElement) element;
 
-				// if the Element is an Path
-				if (polyElement.getType() == PolyElementType.WAY) {
-					Log.i(TAG,
-							"Add Path with Coordinates "
-									+ polyElement.toString());
-					this.addPathToMap(polyElement);
-					// if the Element is an Area
+                // if the Element is an Path
+                if (polyElement.getType() == PolyElementType.WAY) {
+                    Log.i(TAG,
+                            "Add Path with Coordinates "
+                                    + polyElement.toString());
+                    this.addPathToMap(polyElement);
+                    // if the Element is an Area
                 } else {
-					Log.i(TAG,
-							"Add Area with Coordinates "
-									+ polyElement.toString());
-					this.addAreaToMap(polyElement);
+                    Log.i(TAG,
+                            "Add Area with Coordinates "
+                                    + polyElement.toString());
+                    this.addAreaToMap(polyElement);
                 }
             }
         }
@@ -235,17 +235,17 @@ public class MapActivity extends BasicActivity {
         mapView.postInvalidate();
     }
 
-	/**
-	 * Adds an area as an Overlay to the Map.
-	 *
-	 * @param polyElement
-	 *            the area which should be added to the map
-	 **/
-	protected void addAreaToMap(PolyElement polyElement) {
-		Polygon area = new MapPolygon(this);
+    /**
+     * Adds an area as an Overlay to the Map.
+     *
+     * @param polyElement
+     *            the area which should be added to the map
+     **/
+    protected void addAreaToMap(PolyElement polyElement) {
+        Polygon area = new MapPolygon(this);
 
-		Log.i(TAG, "Set Area Points to " + polyElement.toString());
-		area.setPoints(polyElement.getGeoPoints());
+        Log.i(TAG, "Set Area Points to " + polyElement.toString());
+        area.setPoints(polyElement.getGeoPoints());
 
         Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
         area.setFillColor(DEFAULT_FILL_COLOR);
@@ -260,17 +260,17 @@ public class MapActivity extends BasicActivity {
         mapView.postInvalidate();
     }
 
-	/**
-	 * Adds an Path as an Overlay to the Map.
-	 *
-	 * @param polyElement
-	 *            the path which should be added to the map
-	 **/
-	protected void addPathToMap(PolyElement polyElement) {
-		Polyline path = new MapLine(this);
+    /**
+     * Adds an Path as an Overlay to the Map.
+     *
+     * @param polyElement
+     *            the path which should be added to the map
+     **/
+    protected void addPathToMap(PolyElement polyElement) {
+        Polyline path = new MapLine(this);
 
-		Log.i(TAG, "Set Path Points to " + polyElement.toString());
-		path.setPoints(polyElement.getGeoPoints());
+        Log.i(TAG, "Set Path Points to " + polyElement.toString());
+        path.setPoints(polyElement.getGeoPoints());
 
         Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
         path.setColor(DEFAULT_STROKE_COLOR);
@@ -317,13 +317,14 @@ public class MapActivity extends BasicActivity {
      * @return the actual position
      **/
     protected IGeoPoint getMyLocation() {
-        final LocationManager locationManager = (LocationManager) this
-                .getSystemService(Context.LOCATION_SERVICE);
+        final LocationManager locationManager =
+                (LocationManager) this
+                        .getSystemService(Context.LOCATION_SERVICE);
         final Criteria criteria = new Criteria();
-        final String provider = locationManager
-                .getBestProvider(criteria, false);
-        final Location currentLocation = locationManager
-                .getLastKnownLocation(provider);
+        final String provider =
+                locationManager.getBestProvider(criteria, false);
+        final Location currentLocation =
+                locationManager.getLastKnownLocation(provider);
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
@@ -381,8 +382,9 @@ public class MapActivity extends BasicActivity {
 
     protected void loadState(Bundle savedInstanceState) {
         if (savedInstanceState.getSerializable(ZOOM_LEVEL_NAME) != null) {
-            actualZoomLevel = (Integer) savedInstanceState
-                    .getSerializable(ZOOM_LEVEL_NAME);
+            actualZoomLevel =
+                    (Integer) savedInstanceState
+                            .getSerializable(ZOOM_LEVEL_NAME);
         }
         if (savedInstanceState.getSerializable(CENT_LON) != null
                 && savedInstanceState.getSerializable(CENT_LAT) != null) {

@@ -15,12 +15,12 @@
  */
 package io.github.data4all.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
@@ -57,15 +57,18 @@ public final class MapUtil {
      *            the OsmElement whose BoundingBox should be calculated
      * @return the BoundingBox for the given OsmElement
      */
-    public static BoundingBoxE6 getBoundingBoxForOsmElement(AbstractDataElement element){
-        if(element instanceof Node){
+    public static BoundingBoxE6 getBoundingBoxForOsmElement(
+            AbstractDataElement element) {
+        if (element instanceof Node) {
             Node node = (Node) element;
-			List<GeoPoint> array = new ArrayList<GeoPoint>();
+            List<GeoPoint> array = new ArrayList<GeoPoint>();
             array.add(node.toGeoPoint());
             return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) array);
-        }else if (element instanceof PolyElement){
+        } else if (element instanceof PolyElement) {
             PolyElement polyElement = (PolyElement) element;
-            return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) polyElement.getUnsortedGeoPoints());
+            return BoundingBoxE6
+                    .fromGeoPoints((ArrayList<GeoPoint>) polyElement
+                            .getUnsortedGeoPoints());
         }
         return null;
     }

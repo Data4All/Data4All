@@ -42,8 +42,8 @@ public interface MotionInterpreter {
     public static final float PATH_STROKE_WIDTH = 5f;
 
     /**
-     * Interprets the given motions and creates an AbstractDataElement which represents
-     * the content of the interpreted motions
+     * Interprets the given motions and creates an AbstractDataElement which
+     * represents the content of the interpreted motions
      * 
      * @param polygon
      *            the interpreted polygon

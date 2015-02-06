@@ -35,8 +35,8 @@ public class OrientationListenerTest {
     @Test
     public void testOrientationListener() throws Exception {
 
-        Intent startIntent = new Intent(Robolectric.application,
-                OrientationListener.class);
+        Intent startIntent =
+                new Intent(Robolectric.application, OrientationListener.class);
         OrientationListener orientationListener = new OrientationListener();
         orientationListener.onStartCommand(startIntent, 0, 0);
 

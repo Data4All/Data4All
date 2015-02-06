@@ -128,7 +128,8 @@ public class CameraActivity extends Activity {
         btnTrigger = (ImageButton) findViewById(R.id.btnTrigger);
 
         // Retrieve the Camera Preview Component
-        cameraPreview = (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
+        cameraPreview =
+                (CaptureCameraSurfaceView) findViewById(R.id.cameraPreview);
     }
 
 }

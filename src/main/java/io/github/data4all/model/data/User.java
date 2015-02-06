@@ -15,10 +15,6 @@
  */
 package io.github.data4all.model.data;
 
-import io.github.data4all.model.data.PolyElement.PolyElementType;
-
-import java.util.LinkedList;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -76,7 +72,7 @@ public class User implements Parcelable {
     public void setLoginToken(String loginToken) {
         this.oauthToken = loginToken;
     }
-     
+
     public String getOAuthToken() {
         return oauthToken;
     }
@@ -92,7 +88,7 @@ public class User implements Parcelable {
     public void setOauthTokenSecret(String oauthTokenSecret) {
         this.oauthTokenSecret = oauthTokenSecret;
     }
-    
+
     /**
      * Constructor to create a User from a parcel.
      * 
@@ -103,20 +99,21 @@ public class User implements Parcelable {
         this.oauthToken = in.readString();
         this.oauthTokenSecret = in.readString();
     }
-    
+
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR =
+            new Parcelable.Creator<User>() {
 
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
+                public User createFromParcel(Parcel in) {
+                    return new User(in);
+                }
 
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
+                public User[] newArray(int size) {
+                    return new User[size];
+                }
+            };
 
     /**
      * Writes the nodes to the given parcel.
@@ -127,13 +124,10 @@ public class User implements Parcelable {
         dest.writeString(oauthToken);
         dest.writeString(oauthTokenSecret);
     }
-    
 
     @Override
     public int describeContents() {
         return 0;
     }
-
-
 
 }

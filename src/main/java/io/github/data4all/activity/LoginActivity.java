@@ -93,13 +93,16 @@ public class LoginActivity extends BasicActivity {
             }
         });
 
-        Button getUsernameButton = (Button) findViewById(R.id.getUsernameButton);
+        Button getUsernameButton =
+                (Button) findViewById(R.id.getUsernameButton);
         getUsernameButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 if (!prefs.contains("USERNAME")) {
-                    OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
-                            Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
+                    OAuthConsumer consumer =
+                            new CommonsHttpOAuthConsumer(
+                                    Constants.CONSUMER_KEY,
+                                    Constants.CONSUMER_SECRET);
                     consumer.setTokenWithSecret(
                             prefs.getString(OAuth.OAUTH_TOKEN, null),
                             prefs.getString(OAuth.OAUTH_TOKEN_SECRET, null));
@@ -126,8 +129,9 @@ public class LoginActivity extends BasicActivity {
     }
 
     protected User returnUser() {
-        User user = new User(prefs.getString("USERNAME", null),
-                prefs.getString(OAuth.OAUTH_TOKEN, null), prefs.getString(
+        User user =
+                new User(prefs.getString("USERNAME", null), prefs.getString(
+                        OAuth.OAUTH_TOKEN, null), prefs.getString(
                         OAuth.OAUTH_TOKEN_SECRET, null));
         return user;
 
