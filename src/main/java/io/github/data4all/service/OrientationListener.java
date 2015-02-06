@@ -17,6 +17,8 @@ package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.smoothing.BasicSensorSmoother;
+import io.github.data4all.smoothing.SensorSmoother;
 import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Intent;
@@ -36,12 +38,15 @@ import android.os.IBinder;
  */
 public class OrientationListener extends Service implements SensorEventListener {
 
-    // sensor accelerometer
-    private Sensor accelerometer;
-    // sensor magnetic_field
-    private Sensor magnetometer;
-    // sensorManager
+    /** sensor accelerometer */
+    Sensor accelerometer;
+    /** sensor magnetic_field */
+    Sensor magnetometer;
+    /** sensorManager */
     private SensorManager sManager;
+
+    /** object of SensorSmoother for smoothing the sensor data*/
+    private SensorSmoother smoothing = new BasicSensorSmoother();
 
     private static final String TAG = "OrientationListener";
 
@@ -106,8 +111,12 @@ public class OrientationListener extends Service implements SensorEventListener 
 
         // check sensor type
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            // smoothing sensor data
+            mGravity = smoothing.filter(event.values.clone(), mGravity);
             System.arraycopy(event.values, 0, mGravity, 0, ARRAYLENGTH);
         } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            // smooting sensor data
+            mGeomagnetic = smoothing.filter(event.values.clone(), mGeomagnetic);
             System.arraycopy(event.values, 0, mGeomagnetic, 0, ARRAYLENGTH);
         }
 

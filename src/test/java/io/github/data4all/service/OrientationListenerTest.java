@@ -16,7 +16,11 @@
 package io.github.data4all.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+import org.hamcrest.core.IsNull;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -24,10 +28,46 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.media.MediaScannerConnection;
+
+/**
+ * test cases for the OrientationListener class
+ * 
+ * @author Steeve
+ *
+ */
 
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
 public class OrientationListenerTest {
+
+    // the service to test
+    private OrientationListener service;
+
+    public static final String SERVICE = "io.github.data4all.service.OrientationListener";
+
+    @Before
+    public void setUp() throws Exception {
+        service = null;
+        try {
+            service = new OrientationListener();
+
+        } catch (Exception e) {
+            assertNotNull(service);
+        }
+    }
+
+    /**
+     * Shut down the Service under Test and make sure that all resources are
+     * cleaned up
+     * 
+     * @throws Exception
+     */
+    @After
+    public void tearDown() throws Exception {
+        service = null;
+    }
 
     /**
      * Test basic startup/shutdown of Service
@@ -42,7 +82,5 @@ public class OrientationListenerTest {
 
         assertEquals("io.github.data4all.service.OrientationListener",
                 startIntent.getComponent().getClassName());
-
     }
-
 }
