@@ -325,18 +325,34 @@ public class PointToCoordsTransformUtil {
         }
     }
 
+    /**
+     * @return
+     *      Size of xAxis
+     */
     public int getxAxis() {
         return xAxis;
     }
 
+    /**
+     * @param xAxis
+     *      Size of xAxis
+     */
     public void setxAxis(int xAxis) {
         this.xAxis = xAxis;
     }
 
+    /**
+     * @return
+     *      Size of yAxis
+     */
     public int getyAxis() {
         return yAxis;
     }
 
+    /**
+     * @param yAxis
+     *      Size of yAxis
+     */
     public void setyAxis(int yAxis) {
         this.yAxis = yAxis;
     }
