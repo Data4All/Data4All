@@ -26,8 +26,6 @@ public class HorizonCalculationUtil {
     public float[] calcHorizontalPoints(float maxPitch, float maxRoll,
             float maxWidth, float maxHeight, float maxhorizon,
             DeviceOrientation deviceOrientation) {
-      //  float missPitch = maxhorizon - Math.abs(deviceOrientation.getPitch());
-        //float missRoll = maxhorizon - Math.abs(deviceOrientation.getRoll());
         float skylook = 0;
 
         double pitch = -deviceOrientation.getPitch();
@@ -67,7 +65,7 @@ public class HorizonCalculationUtil {
                         .cos(roll));
         double vectorLength = Math.sqrt((vector3[0] * vector3[0])
                 + (vector3[1] * vector3[1]) + (vector3[2] * vector3[2]));
-        double angle = Math.acos(vector3[2] / vectorLength);
+        double angle = Math.acos(-vector3[2]);
         double alpha = maxhorizon - angle;
         if (alpha < 0) {
             skylook = 1;
@@ -79,8 +77,8 @@ public class HorizonCalculationUtil {
         vector4[1] = -(rotateVector[0] * Math.sin(alpha));
         vector4[2] = Math.cos(alpha);
 
-        double horizonPitch = Math.atan(vector4[0] / vector[2]);
-        double horizonRoll = Math.atan(vector4[1] / vector[2]);
+        double horizonPitch = Math.atan(vector4[1] / (-vector[2]));
+        double horizonRoll = Math.atan(vector4[0] / (-vector[2]));
         float[] point = {calculatePixelFromAngle(horizonPitch, maxWidth,
                 maxPitch), calculatePixelFromAngle(horizonRoll, maxHeight,
                 maxRoll), skylook};
@@ -106,8 +104,13 @@ public class HorizonCalculationUtil {
     public float calculatePixelFromAngle(double angle, double width,
             double maxAngle) {
 
-        double z = Math.sin(maxAngle / 2);
-        float pixel = (float) ((width / 2) * ( Math.sin(angle) / (Math.sin(maxAngle)/2)));
+        double mid = width/2 ;
+        double angle2 = maxAngle / 2;
+        
+        double a = Math.tan(angle2);
+        double b = Math.tan(angle);
+        
+        float pixel = (float) ((b/a) * mid + mid);
         return pixel;
 
     }
