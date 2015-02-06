@@ -262,7 +262,7 @@ public final class Tags {
         // classified tag: amenity
         final List<String> amenityValues =
                 new ArrayList<String>(Arrays.asList("bar", "cafe",
-                        "restaurant", "fast_food", "pub", "collage", "library",
+                        "restaurant", "fast_food", "pub", "college", "library",
                         "school", "university", "parking", "taxi", "fuel",
                         "bank", "hospital", "pharmacy", "cinema", "bench",
                         "embassy", "marketplace", "police", "post_office",
