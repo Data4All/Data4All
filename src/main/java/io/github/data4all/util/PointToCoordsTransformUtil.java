@@ -115,7 +115,7 @@ public class PointToCoordsTransformUtil {
 
         for (Point point : points) {
 
-            // change point coordinates to match the set coordinate system
+            // change point coordinates to match the set coordinate system.
             point = changePixelCoordSystem(point, rotation);
 
             Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
@@ -124,8 +124,8 @@ public class PointToCoordsTransformUtil {
             double[] coord = calculateCoordFromPoint(tps, deviceOrientation,
                     point);
             Log.d(TAG, "Calculated local Coords:" + coord[0] + "  " + coord[1]);
-            // transforms local coordinates in global GPS-coordinates set to
-            // Node
+            // transforms local coordinates in global GPS-coordinates set to.
+            // Node.
             if (coord != null) {
                 Node node = calculateGPSPoint(tps.getLocation(), coord);
 
@@ -318,14 +318,14 @@ public class PointToCoordsTransformUtil {
         double pitch = deviceOrientation.getPitch();
         double roll = -deviceOrientation.getRoll();
         double azimuth = deviceOrientation.getAzimuth();
-        // rotates the vector with azimuth
+        // rotates the vector with azimuth.
         double[] vector = new double[3];
         vector[0] = ((coord[0] * Math.cos(azimuth)) - (coord[1] * Math
                 .sin(azimuth)));
         vector[1] = ((coord[0] * Math.sin(azimuth)) + (coord[1] * Math
                 .cos(azimuth)));
         vector[2] = -tps.getHeight();
-        // rotate around line through origin with pitch angle
+        // rotate around line through origin with pitch angle.
         double[] vector2 = new double[3];
         vector2[0] = vector[0] * Math.cos(roll) - vector[1] * Math.sin(pitch)
                 * Math.sin(roll) + vector[2] * Math.cos(pitch) * Math.sin(roll);
@@ -347,7 +347,7 @@ public class PointToCoordsTransformUtil {
                 * (Math.sin(pitch) * Math.sin(pitch) * (1 - Math.cos(roll)) + Math
                         .cos(roll));
 
-        // rotate around x-axis with pitch
+        // rotate around x-axis with pitch.
         double[] finalVector = new double[3];
         finalVector[0] = vector2[0];
         finalVector[1] = vector2[1] * Math.cos(-pitch) - vector2[2]
