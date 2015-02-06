@@ -211,7 +211,7 @@ public class ResultViewActivity extends BasicActivity implements
             endList.add(key + "=" + element.getTags().get(key));
         }
         final ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(context,
+                new ArrayAdapter<String>(this,
                         android.R.layout.simple_list_item_1, endList);
         listView.setAdapter(adapter);
     }
