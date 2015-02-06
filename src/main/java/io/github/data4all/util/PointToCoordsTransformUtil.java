@@ -107,7 +107,7 @@ public class PointToCoordsTransformUtil {
             point = this.changePixelCoordSystem(point, rotation);
             Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
             // calculates local coordinates in meter first
-            double[] coord =
+            final double[] coord =
                     this.calculateCoordFromPoint(tps, deviceOrientation, point);
             Log.d(TAG, "Calculated local Coords:" + coord[0] + "  " + coord[1]);
             // transforms local coordinates in global GPS-coordinates set to.
@@ -224,7 +224,7 @@ public class PointToCoordsTransformUtil {
         }
         double percent = (2 * pixel - axis) / axis;
         final double z = Math.sin(maxAngle / 2);
-        double angle = Math.asin(z * percent);
+        final double angle = Math.asin(z * percent);
         return angle;
     }
 
