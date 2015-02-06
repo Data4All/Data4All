@@ -19,9 +19,9 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
 
@@ -242,7 +242,7 @@ public class MapActivity extends BasicActivity {
 	 *            the area which should be added to the map
 	 **/
 	protected void addAreaToMap(PolyElement polyElement) {
-		Polygon area = new MapPolygon(this) {
+		Polygon area = new MapPolygon(this);
 
 		Log.i(TAG, "Set Area Points to " + polyElement.toString());
 		area.setPoints(polyElement.getGeoPoints());
@@ -267,8 +267,8 @@ public class MapActivity extends BasicActivity {
 	 *            the path which should be added to the map
 	 **/
 	protected void addPathToMap(PolyElement polyElement) {
-		Polyline path = new Mapline(this) {
-.
+		Polyline path = new MapLine(this);
+
 		Log.i(TAG, "Set Path Points to " + polyElement.toString());
 		path.setPoints(polyElement.getGeoPoints());
 

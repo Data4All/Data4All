@@ -172,7 +172,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void createNewPOI() {
         final GeoPoint myPosition = myLocationOverlay.getMyLocation();
         final Intent intent = new Intent(this, MapPreviewActivity.class);
-        final Node poi = new Node(-1, 1, myPosition.getLatitude(),
+        final Node poi = new Node(-1, myPosition.getLatitude(),
                 myPosition.getLongitude());
 
         // Set Type Definition for Intent to Node

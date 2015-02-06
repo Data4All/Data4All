@@ -43,7 +43,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private static final String TAG = "MapPreviewActivity";
 
     // The OsmElement which should be added
-    private OsmElement element;
+    private AbstractDataElement element;
 
     public MapPreviewActivity() {
 

@@ -18,9 +18,9 @@ package io.github.data4all.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Way;
 
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
@@ -62,10 +62,10 @@ public final class MapUtil {
             Node node = (Node) element;
 			List<GeoPoint> array = new ArrayList<GeoPoint>();
             array.add(node.toGeoPoint());
-            return BoundingBoxE6.fromGeoPoints(array);
+            return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) array);
         }else if (element instanceof PolyElement){
             PolyElement polyElement = (PolyElement) element;
-            return BoundingBoxE6.fromGeoPoints(polyElement.getUnsortedGeoPoints());
+            return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) polyElement.getUnsortedGeoPoints());
         }
         return null;
     }

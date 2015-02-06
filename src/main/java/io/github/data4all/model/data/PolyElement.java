@@ -148,6 +148,52 @@ public class PolyElement extends AbstractDataElement {
     }
 
     /**
+     * Adds multiple nodes to the way in the order in which they appear in the
+     * list. They can be either prepended or appended to the existing nodes.
+     *
+     * @param newNodes
+     *            a list of new nodes
+     * @param atBeginning
+     *            if true, nodes are prepended, otherwise, they are appended
+     */
+    public void addNodes(List<Node> newNodes, boolean atBeginning) {
+        if (newNodes.size() < MAX_POLYELEMENT_NODES) {
+            if (atBeginning) {
+                if ((nodes.size() > 0)
+                        && nodes.get(0) == newNodes.get(newNodes.size() - 1)) { // user
+                    // error
+                    Log.i(getClass().getSimpleName(),
+                            "addNodes attempt to add same node");
+                    if (newNodes.size() > 1) {
+                        Log.i(getClass().getSimpleName(), "retrying addNodes");
+                        newNodes.remove(newNodes.size() - 1);
+                        addNodes(newNodes, atBeginning);
+                    }
+                    return;
+                }
+                nodes.addAll(0, newNodes);
+            } else {
+                if ((nodes.size() > 0)
+                        && newNodes.get(0) == nodes.get(nodes.size() - 1)) { // user
+                    // error
+                    Log.i(getClass().getSimpleName(),
+                            "addNodes attempt to add same node");
+                    if (newNodes.size() > 1) {
+                        Log.i(getClass().getSimpleName(), "retrying addNodes");
+                        newNodes.remove(0);
+                        addNodes(newNodes, atBeginning);
+                    }
+                    return;
+                }
+                nodes.addAll(newNodes);
+            }
+        } else {
+            Log.i(getClass().getSimpleName(),
+                    "the list of newNodes contains to much nodes");
+        }
+    }
+
+    /**
      * Append a node at the begin or end of the list. If the refNode is the
      * first element, the new node is added at the begin of the list. If the
      * refNode is the last element, the new node is added to the end of the
