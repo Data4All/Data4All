@@ -57,6 +57,7 @@ public class TouchView extends View {
      */
     private final Paint pathPaint = new Paint();
     private final Paint areaPaint = new Paint();
+    private final Path path = new Path();
 
     /**
      * The motion interpreted Polygon.
@@ -130,8 +131,6 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-
-        Path path = new Path();
         path.reset();
 
         if (newPolygon != null && newPolygon.size() != 0) {
@@ -158,8 +157,6 @@ public class TouchView extends View {
                 canvas.drawCircle(p.getX(), p.getY(),
                         MotionInterpreter.POINT_RADIUS, pathPaint);
             }
-            undoUseable();
-            redoUseable();
         }
     }
 
@@ -175,6 +172,8 @@ public class TouchView extends View {
             handleMotion(event, "start");
             polygon = newPolygon;
             redoUndo = new RedoUndo(polygon);
+            undoUseable();
+            redoUseable();
             break;
         case MotionEvent.ACTION_MOVE:
             handleMotion(event, "move");
