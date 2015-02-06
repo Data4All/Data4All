@@ -32,7 +32,7 @@ public class DeviceOrientation implements Parcelable {
     /** rotation around Y axis. */
     private float roll;
 
-    /** constants for comparison */
+    /** constants for comparison. */
     private final static double EPSILON = 0.00001;
 
     private long timestamp;
@@ -53,7 +53,7 @@ public class DeviceOrientation implements Parcelable {
             };
 
     /**
-     * constructor
+     * constructor.
      * 
      * @param azimuth
      *            the azimuth value

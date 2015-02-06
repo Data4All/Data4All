@@ -36,17 +36,17 @@ import java.util.List;
 public final class Tags {
 
     /**
-     * list of all classified and unclassified tags
+     * list of all classified and unclassified tags.
      */
     public static final List<Tag> TAG_LIST = new ArrayList<Tag>();
 
     /**
-     * list of all address tags
+     * list of all address tags.
      */
     public static final List<Tag> ADDRESS_TAG_LIST = new ArrayList<Tag>();
 
     /**
-     * list of all contact tags
+     * list of all contact tags.
      */
     public static final List<Tag> contactTagList = new ArrayList<Tag>();
 
@@ -78,7 +78,7 @@ public final class Tags {
 
     /**
      * returns an arraylist containing all classified and unclassified tags
-     * which are relevant for relation objects
+     * which are relevant for relation objects.
      * 
      * @return tagList
      */
@@ -89,7 +89,7 @@ public final class Tags {
                 final int[] osmObjects = t.getOsmObjects();
                 if (osmObjects.length > 0) {
                     for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == 4) {
+                        if (osmObjects[i] == Tag.AREA_TAG) {
                             result.add(t);
                         }
                     }
@@ -134,7 +134,7 @@ public final class Tags {
                 final int[] osmObjects = t.getOsmObjects();
                 if (osmObjects.length > 0) {
                     for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == 1) {
+                        if (osmObjects[i] == Tag.NODE_TAG) {
                             result.add(t);
                         }
                     }
@@ -146,7 +146,7 @@ public final class Tags {
 
     /**
      * returns an arraylist containing all classified and unclassified tags
-     * which are relevant for relation objects
+     * which are relevant for relation objects.
      * 
      * @return tagList
      */
@@ -157,7 +157,7 @@ public final class Tags {
                 final int[] osmObjects = t.getOsmObjects();
                 if (osmObjects.length > 0) {
                     for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == 3) {
+                        if (osmObjects[i] == Tag.BUILDING_TAG) {
                             result.add(t);
                         }
                     }
@@ -168,7 +168,7 @@ public final class Tags {
     }
 
     /**
-     * returns an arraylist containing all classified and unclassified tags
+     * returns an arraylist containing all classified and unclassified tags.
      * 
      * @return tagList
      */
@@ -178,7 +178,7 @@ public final class Tags {
 
     /**
      * returns an arraylist containing all classified and unclassified tags
-     * which are relevant for way objects
+     * which are relevant for way objects.
      * 
      * @return tagList
      */
@@ -189,7 +189,7 @@ public final class Tags {
                 final int[] osmObjects = t.getOsmObjects();
                 if (osmObjects.length > 0) {
                     for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == 2) {
+                        if (osmObjects[i] == Tag.WAY_TAG) {
                             result.add(t);
                         }
                     }
@@ -268,9 +268,9 @@ public final class Tags {
                         "embassy", "marketplace", "police", "post_office",
                         "toilets", "water_point", "fire_station",
                         "public_building"));
-        TAG_LIST.add(new ClassifiedTag(12, "amenity", null, amenityValues,
-                new int[] { NODE_TAG, BUILDING_TAG }));
-
+        TAG_LIST.add(new ClassifiedTag(12, "amenity", null, amenityValues, 
+                new int[] {NODE_TAG, BUILDING_TAG}));
+        
         // classified tag: building
         final List<String> buildingValues =
                 new ArrayList<String>(Arrays.asList("apartments", "farm",
@@ -278,7 +278,7 @@ public final class Tags {
                         "warehouse", "church", "hospital", "train_station",
                         "university"));
         TAG_LIST.add(new ClassifiedTag(13, "building", null, buildingValues,
-                new int[] { NODE_TAG, BUILDING_TAG }));
+                new int[] {NODE_TAG, BUILDING_TAG}));
 
         // classified tag: landuse
         final List<String> landuseValues =
@@ -286,7 +286,7 @@ public final class Tags {
                         "construction", "farmland", "forest", "grass",
                         "industrial", "millitary", "residential"));
         TAG_LIST.add(new ClassifiedTag(14, "landuse", null, landuseValues,
-                new int[] { BUILDING_TAG, AREA_TAG }));
+                new int[] {BUILDING_TAG, AREA_TAG}));
 
     }
 

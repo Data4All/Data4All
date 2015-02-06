@@ -66,7 +66,7 @@ public class Constants {
             "http://master.apis.dev.openstreetmap.org/oauth/authorize";
 
     /**
-     * Private Constructor, prevents instantization.
+     * Private Constructor, prevents instantiation.
      */
     private Constants() {
         

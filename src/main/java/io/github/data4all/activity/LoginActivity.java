@@ -34,7 +34,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 /**
- * Activity to start authentication process
+ * Activity to start authentication process.
  * 
  * @author sb
  *

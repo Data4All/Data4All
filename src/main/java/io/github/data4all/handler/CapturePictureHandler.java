@@ -71,11 +71,11 @@ public class CapturePictureHandler implements PictureCallback {
         this.context = context;
     }
 
-    /**
+    /*
      * (non-Javadoc)
      * 
      * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
-     *      android.hardware.Camera)
+     * android.hardware.Camera)
      */
     @Override
     public void onPictureTaken(byte[] raw, Camera camera) {
@@ -132,7 +132,8 @@ public class CapturePictureHandler implements PictureCallback {
 
                 // Passes the filepath, location and device orientation to the
                 // ShowPictureActivity
-                final Intent intent = new Intent(context, ShowPictureActivity.class);
+                final Intent intent =
+                        new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
                 intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);

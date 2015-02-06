@@ -68,11 +68,11 @@ public class OAuthHelper {
                 new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
                         Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
         mProvider.setOAuth10a(true);
-        setmCallbackUrl((callbackUrl == null ? OAuth.OUT_OF_BAND : callbackUrl));
+        setmCallbackUrl(callbackUrl == null ? OAuth.OUT_OF_BAND : callbackUrl);
     }
 
     /**
-     * this constructor is for access to the singletons
+     * this constructor is for access to the singletons.
      */
     public OAuthHelper() {
 
@@ -80,7 +80,7 @@ public class OAuthHelper {
 
     /**
      * Returns an OAuthConsumer initialized with the consumer keys for the API
-     * in question
+     * in question.
      * 
      * @param osmBaseUrl
      * @return

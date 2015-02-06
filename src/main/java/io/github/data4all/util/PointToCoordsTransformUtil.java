@@ -285,20 +285,20 @@ public class PointToCoordsTransformUtil {
                 // device was in portrait mode
                 xAxis = tps.getPhotoHeight();
                 yAxis = tps.getPhotoWidth();
-                return new Point((xAxis - point.getY() + 1), (yAxis
-                        - point.getX() + 1));
+                return new Point(xAxis - point.getY() + 1, yAxis - point.getX()
+                        + 1);
             } else if (rotation == 1) {
                 Log.d(TAG, "Device orientation was landscape counter-clockwise");
                 // device was in landscape mode and the home-button to the right
                 xAxis = tps.getPhotoWidth();
                 yAxis = tps.getPhotoHeight();
-                return new Point((xAxis - point.getX() + 1), (point.getY()));
+                return new Point(xAxis - point.getX() + 1, point.getY());
             } else if (rotation == 3) {
                 Log.d(TAG, "Device orientation was landscape clockwise");
                 // device was in landscape mode and the home-button to the left
                 xAxis = tps.getPhotoWidth();
                 yAxis = tps.getPhotoHeight();
-                return new Point((point.getX()), (yAxis - point.getY() + 1));
+                return new Point(point.getX(), yAxis - point.getY() + 1);
             } else {
                 Log.wtf(TAG, "No device orientation identifiable!!", null);
                 xAxis = tps.getPhotoHeight();

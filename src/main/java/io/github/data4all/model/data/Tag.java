@@ -70,12 +70,12 @@ public class Tag {
     public static final int AREA_TAG = 4;
 
     /**
-     * define to which osm objects the tag refers
+     * define to which osm objects the tag refers.
      */
     private int[] osmObjects;
 
     /**
-     * Constructor to create nameRessource and hintRessource from the key
+     * Constructor to create nameRessource and hintRessource from the key.
      * 
      * @param key
      * @param type
@@ -108,7 +108,7 @@ public class Tag {
     }
 
     /**
-     * Default constructor to create a tag
+     * Default constructor to create a tag.
      * 
      * @param key
      * @param nameRessource

@@ -36,7 +36,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,7 +63,8 @@ public class ResultViewActivity extends BasicActivity implements
 
     // Default Zoom Level
     private static final int DEFAULT_ZOOM_LEVEL = 18;
-    private static final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+    private static final ITileSource DEFAULT_TILESOURCE =
+            TileSourceFactory.MAPNIK;
 
     // Listview for the Dialog
     private ListView listView;
@@ -111,7 +111,7 @@ public class ResultViewActivity extends BasicActivity implements
         tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"));
         output();
         listView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView parent, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                     final int position, long id) {
                 Log.i(TAG,
                         Boolean.toString(Tagging.isClassifiedTag(
@@ -176,7 +176,8 @@ public class ResultViewActivity extends BasicActivity implements
                 }
             }
         });
-        final Button resultButton = (Button) this.findViewById(R.id.buttonResult);
+        final Button resultButton =
+                (Button) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
         final Button resultButtonToCamera =
                 (Button) this.findViewById(R.id.buttonResultToCamera);

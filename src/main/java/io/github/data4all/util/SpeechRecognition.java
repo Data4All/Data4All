@@ -63,7 +63,7 @@ public class SpeechRecognition {
     }
 
     /**
-     * splitString splits all the Strings and adds them to the ArrayList
+     * splitString splits all the Strings and adds them to the ArrayList.
      * 
      * @param matchesText
      *            is a Array List from the results of the SpeechRecognition
@@ -82,7 +82,7 @@ public class SpeechRecognition {
 
     /**
      * It Compares the list of the Google Speechrecognition and the array of key
-     * Values
+     * Values.
      * 
      * @param arrayList
      * @param matchesText

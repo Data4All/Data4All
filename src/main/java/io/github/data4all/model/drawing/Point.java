@@ -24,12 +24,12 @@ package io.github.data4all.model.drawing;
 public class Point {
 
     /**
-     * The x-coordinate
+     * The x-coordinate.
      */
     private final float x;
 
     /**
-     * The x-coordinate
+     * The x-coordinate.
      */
     private final float y;
 
@@ -100,8 +100,8 @@ public class Point {
     }
 
     /**
-     * Calculates the angle in Point b for the two lines (a,b) and (b,c)<br/>
-     * If any point is {@code null} a IllegalArgumentException is thrown
+     * Calculates the angle in Point b for the two lines (a,b) and (b,c).<br/>
+     * If any point is {@code null} a IllegalArgumentException is thrown.
      * 
      * @param a
      *            The first Point
@@ -110,9 +110,9 @@ public class Point {
      * @param c
      *            The third Point
      * 
+     * @return The angle in Point b in radians
      * @throws IllegalArgumentException
      *             If any parameter is {@code null}
-     * @return The angle in Point b in radians
      */
     public static double getBeta(Point a, Point b, Point c) {
         // Calculate the two vectors

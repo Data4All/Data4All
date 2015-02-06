@@ -175,8 +175,8 @@ public class PolyElement extends AbstractDataElement {
         if (newNodes.size() < MAX_POLYELEMENT_NODES) {
             if (atBeginning) {
                 if ((nodes.size() > 0)
-                        && nodes.get(0) == newNodes.get(newNodes.size() - 1)) { // user
-                    // error
+                        && nodes.get(0).equals(
+                                newNodes.get(newNodes.size() - 1))) {
                     Log.i(getClass().getSimpleName(),
                             "addNodes attempt to add same node");
                     if (newNodes.size() > 1) {

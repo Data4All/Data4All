@@ -38,14 +38,14 @@ import android.os.IBinder;
  */
 public class OrientationListener extends Service implements SensorEventListener {
 
-    /** sensor accelerometer */
+    /** sensor accelerometer. */
     Sensor accelerometer;
-    /** sensor magnetic_field */
+    /** sensor magnetic_field. */
     Sensor magnetometer;
-    /** sensorManager */
+    /** sensorManager. */
     private SensorManager sManager;
 
-    /** object of SensorSmoother for smoothing the sensor data*/
+    /** object of SensorSmoother for smoothing the sensor data. */
     private SensorSmoother smoothing = new BasicSensorSmoother();
 
     private static final String TAG = "OrientationListener";

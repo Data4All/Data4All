@@ -30,7 +30,7 @@ public class TransformationParamBean implements Parcelable {
 
     /**
      * CREATOR that generates instances of {@link TransformationParamBean} from
-     * a Parcel
+     * a Parcel.
      */
     public static final Parcelable.Creator<TransformationParamBean> CREATOR =
             new Parcelable.Creator<TransformationParamBean>() {

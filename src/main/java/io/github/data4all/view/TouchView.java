@@ -264,7 +264,7 @@ public class TouchView extends View {
      * Handles the given motion:<br/>
      * Add the point to the current motion<br/>
      * Logs the motion<br/>
-     * Causes the view to redraw itself afterwards
+     * Causes the view to redraw itself afterwards.
      * 
      * @param event
      *            The touch event
@@ -385,7 +385,7 @@ public class TouchView extends View {
     }
 
     /**
-     * Adds the last removed point to the current polygon
+     * Adds the last removed point to the current polygon.
      * 
      * @author vkochno
      */
@@ -396,7 +396,7 @@ public class TouchView extends View {
     }
 
     /**
-     * Removes the last point in the current polygon
+     * Removes the last point in the current polygon.
      * 
      * @author vkochno
      */

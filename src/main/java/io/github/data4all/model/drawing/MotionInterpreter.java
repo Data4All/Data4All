@@ -43,7 +43,7 @@ public interface MotionInterpreter {
 
     /**
      * Interprets the given motions and creates an AbstractDataElement which
-     * represents the content of the interpreted motions
+     * represents the content of the interpreted motions.
      * 
      * @param polygon
      *            the interpreted polygon
@@ -67,7 +67,7 @@ public interface MotionInterpreter {
 
     /**
      * Used by the drawing component to determine if the first and the last
-     * point of the polygon should be connected by a line
+     * point of the polygon should be connected by a line.
      * 
      * @return if the polygon should be drawn as an area
      */

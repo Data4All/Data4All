@@ -20,4 +20,3 @@
  * http://wiki.openstreetmap.org/wiki/OSM_XML
  */
 package io.github.data4all.model.data;
-

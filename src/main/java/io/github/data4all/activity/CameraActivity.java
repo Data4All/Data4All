@@ -29,7 +29,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 /**
- * An Activity for the camera preview and taking a photo
+ * An Activity for the camera preview and taking a photo.
  * 
  * @author: sbollen
  */

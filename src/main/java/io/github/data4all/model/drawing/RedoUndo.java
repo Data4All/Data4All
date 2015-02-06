@@ -28,7 +28,7 @@ import java.util.List;
 public class RedoUndo {
 
     /**
-     * List of all added Points
+     * List of all added Points.
      */
     private List<Point> motions;
     private int maxCount, currentCount;
@@ -120,7 +120,7 @@ public class RedoUndo {
     }
 
     /**
-     * A listener for events of "undo/redo-is-(un)available"
+     * A listener for events of "undo/redo-is-(un)available".
      * 
      * @author tbrose
      */

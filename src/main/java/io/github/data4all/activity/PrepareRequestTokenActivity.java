@@ -100,7 +100,7 @@ public class PrepareRequestTokenActivity extends BasicActivity {
     }
 
     /**
-     * Do the oAuth dance to get request token
+     * Do the oAuth dance to get request token.
      *
      */
     private class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
@@ -203,7 +203,7 @@ public class PrepareRequestTokenActivity extends BasicActivity {
     }
 
     /**
-     * Do the oAuth dance to get access token
+     * Do the oAuth dance to get access token.
      *
      */
     private class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
@@ -243,7 +243,8 @@ public class PrepareRequestTokenActivity extends BasicActivity {
                 edit.commit();
 
                 final String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
-                final String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
+                final String secret =
+                        prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
 
                 consumer.setTokenWithSecret(token, secret);
 
@@ -258,7 +259,7 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
         /**
          * When we're done and we've retrieved either a valid token or an error
-         * from the server, we'll return to our original activity
+         * from the server, we'll return to our original activity.
          */
         @Override
         protected void onPostExecute(Void result) {

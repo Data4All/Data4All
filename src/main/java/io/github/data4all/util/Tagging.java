@@ -20,7 +20,6 @@ import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +33,14 @@ import java.util.Map;
  *
  */
 public class Tagging {
-    
+
     /**
      * Private Constructor, prevents instantiation.
      */
     private Tagging() {
-        
+
     }
-    
+
     /**
      * 
      * 
@@ -71,7 +70,8 @@ public class Tagging {
     }
 
     public static Map<String, ClassifiedTag> getMapKeys(int type) {
-        final Map<String, ClassifiedTag> map = new HashMap<String, ClassifiedTag>();
+        final Map<String, ClassifiedTag> map =
+                new HashMap<String, ClassifiedTag>();
         for (int i = 0; i < getKeys(type).size(); i++) {
             map.put(getKeys(type).get(i).getKey(),
                     (ClassifiedTag) getKeys(type).get(i));

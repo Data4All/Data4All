@@ -96,7 +96,8 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
         ;
         alertDialog.setCustomTitle(view);
-        final ImageButton speechStart = (ImageButton) view.findViewById(R.id.speech);
+        final ImageButton speechStart =
+                (ImageButton) view.findViewById(R.id.speech);
         speechStart.setOnClickListener(this);
 
         if (getIntent().hasExtra("TYPE_DEF")) {
