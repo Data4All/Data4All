@@ -62,6 +62,13 @@ public class PointToCoordsTransformUtilTest {
         util = new PointToCoordsTransformUtil(tps, deviceOrientation);
     }
 
+    // Tests for method transform(TransformationParamBean tps,
+    // DeviceOrientation deviceOrientation, List<Point> points,
+    // int rotation)
+
+    /**
+     * Different transform Tests
+     */
     @Test
     public void transformTest() {
         location.setLatitude(0.0);
@@ -108,31 +115,161 @@ public class PointToCoordsTransformUtilTest {
         assertThat(test.get(0).getLat(), greaterThan(0.0));
     }
 
-    /*
-     * @Test public void calculateCoordFromPointTest(){
-     * location.setLatitude((float) (Math.PI/1.2));
-     * location.setLongitude((float) (-Math.PI/1.3)); TransformationParamBean
-     * tps = new TransformationParamBean(2.0, Math.toRadians(90) ,
-     * Math.toRadians(90) , 1000, 1000, location); float a = (float) - Math.PI;
-     * float b = (float) -(Math.PI/2); float c = (float) -(Math.PI/2); while(a
-     * <= (float) Math.PI){ b = (float) -(Math.PI/2); while(b <= (float)
-     * (Math.PI/2)){ c = (float) -(Math.PI/2); while(c <= (float) (Math.PI/2)){
-     * DeviceOrientation deviceOrientation = new DeviceOrientation(a,b,c, 10L);
-     * int x=1; while(x<=1000){ int y=1; while(y<=1000){ Point point = new
-     * Point(x,y); double[] coord = util.calculateCoordFromPoint(tps,
-     * deviceOrientation, point); if(coord[2] == 0){ Node node =
-     * util.calculateGPSPoint(location, coord); double[] coord2 =
-     * util.calculateCoordFromGPS(location, node); Point test =
-     * util.calculatePointFromCoords(tps, deviceOrientation, coord2);
-     * assertThat((double) point.getX(), closeTo(test.getX() , 1));
-     * assertThat((double) point.getY(), closeTo(test.getY() , 1)); } else{ } y
-     * += 113; } x += 113; } c += (float) (Math.PI/11); } b += (float)
-     * (Math.PI/11); } a += (float) (Math.PI/11); } }
-     */
+    // Tests for method calculateAngleFromPixel(double pixel, double axis,
+    // double maxAngle)
 
-    
+    /**
+     * a few different Pixel
+     */
+    @Test
+    public void calculateAngleFromPixelTest() {
+        double angle = util.calculateAngleFromPixel(500, 1000, 40);
+        assertThat(angle, is(0.0));
+
+        angle = util.calculateAngleFromPixel(1, 1000, 40);
+        assertThat(angle, lessThan(0.0));
+
+        angle = util.calculateAngleFromPixel(1000, 1000, 40);
+        assertThat(angle, greaterThan(0.0));
+    }
+
+    // Tests for method calculateCoordFromPoint(TransformationParamBean tps,
+    // DeviceOrientation deviceOrientation, Point point)
+
+    /**
+     * a few different Pixel
+     */
+    @Test
+    public void calculateCoordFromPointTest_difPixel() {
+        TransformationParamBean tps1 = new TransformationParamBean(2.0,
+                Math.toRadians(90), Math.toRadians(90), 1000, 1000, location);
+        DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.0f,
+                0.0f, 10L);
+        util.setxAxis(1000);
+        util.setyAxis(1000);
+        double[] coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(500, 500));
+        assertThat(coord[0], is(0.0));
+        assertThat(coord[1], is(0.0));
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(1000, 500));
+        assertThat(coord[0], is(0.0));
+        assertThat(coord[1], greaterThan(0.0));
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(500, 1000));
+        assertThat(coord[0], lessThan(0.0));
+        assertThat(coord[1], is(0.0));
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(1, 500));
+        assertThat(coord[0], is(0.0));
+        assertThat(coord[1], lessThan(0.0));
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(500, 1));
+        assertThat(coord[0], greaterThan(0.0));
+        assertThat(coord[1], is(0.0));
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(1000, 1000));
+        assertThat(coord[0], lessThan(0.0));
+        assertThat(coord[1], greaterThan(0.0));
+    }
+
+    /**
+     * a few different Orientations
+     */
+    @Test
+    public void calculateCoordFromPointTest_difOrientation() {
+        TransformationParamBean tps1 = new TransformationParamBean(2.0,
+                Math.toRadians(90), Math.toRadians(90), 1000, 1000, location);
+        util.setxAxis(1000);
+        util.setyAxis(1000);
+        DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.0f,
+                0.0f, 10L);
+        double[] coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(500, 500));
+        assertThat(coord[0], is(0.0));
+        assertThat(coord[1], is(0.0));
+        deviceOrientation = new DeviceOrientation((float) Math.toRadians(123),
+                0.0f, 0.0f, 10L);
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(500, 500));
+        assertThat(coord[0], closeTo(0, 0.000001));
+        assertThat(coord[1], closeTo(0, 0.000001));
+
+        deviceOrientation = new DeviceOrientation((float) Math.toRadians(90),
+                (float) Math.toRadians(45), 0.0f, 10L);
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(500, 500));
+        assertThat(coord[0], closeTo(-2.0, 0.00001));
+        assertThat(coord[1], closeTo(0.0, 0.00001));
+
+        deviceOrientation = new DeviceOrientation((float) Math.toRadians(90),
+                0.0f, (float) Math.toRadians(45), 10L);
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(500, 500));
+        assertThat(coord[0], closeTo(0.0, 0.00001));
+        assertThat(coord[1], closeTo(-2.0, 0.00001));
+    }
+
+    // Tests for method calculateGPSPoint(Location location, double[] coord)
+
+    /**
+     * Coords are 0
+     */
+    @Test
+    public void calculateGPSPointTest_CoordsAre0() {
+        location.setLatitude(0);
+        location.setLongitude(0);
+        double[] coord = { 0, 0 };
+        Node node = util.calculateGPSPoint(location, coord);
+        assertThat(node.getLat(), is(location.getLatitude()));
+        assertThat(node.getLon(), is(location.getLongitude()));
+    }
+
+    /**
+     * Coords are greater than 0
+     */
+    @Test
+    public void calculateGPSPointTest_CoordsAreGreater0() {
+        location.setLatitude(0);
+        location.setLongitude(0);
+        double[] coord = { 10, 10 };
+        Node node = util.calculateGPSPoint(location, coord);
+        assertThat(node.getLat(), greaterThan(location.getLatitude()));
+        assertThat(node.getLon(), greaterThan(location.getLongitude()));
+    }
+
+    /**
+     * Coords below 0
+     */
+    @Test
+    public void calculateGPSPointTest_CoordsAreBelow0() {
+        location.setLatitude(0);
+        location.setLongitude(0);
+        double[] coord = { -10, -10 };
+        Node node = util.calculateGPSPoint(location, coord);
+        assertThat(node.getLat(), lessThan(location.getLatitude()));
+        assertThat(node.getLon(), lessThan(location.getLongitude()));
+    }
+
+    /**
+     * Longitude jump over 180° and -180°
+     */
+    @Test
+    public void calculateGPSPointTest_LongitudeJump() {
+        location.setLatitude(0);
+        location.setLongitude(179.9999999);
+        double[] coord = { 100000, 100000 };
+        Node node = util.calculateGPSPoint(location, coord);
+        assertThat(node.getLon(), lessThan(-100.0));
+        location.setLatitude(0);
+        location.setLongitude(-179.9999999);
+        double[] coord2 = { -100000, -100000 };
+        Node node2 = util.calculateGPSPoint(location, coord2);
+        assertThat(node2.getLon(), greaterThan(100.0));
+    }
+
     // Tests for the method changePixelCoordSystem(point, rotation)
-    
+
     /**
      * Rotation is 0 and point in the middle of the coordinate system is given.
      */
