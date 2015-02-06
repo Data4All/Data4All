@@ -33,6 +33,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -52,11 +53,25 @@ import android.view.View;
  */
 public class TouchView extends View {
 
-    private static final int CATCH_DISTANCE = 0;
+    /**
+     * For debug purpose the view can show the catchpoints on the screen.
+     */
+    private static final boolean SHOW_CORNERS = true;
+
+    /**
+     * The maximum distance to a catchpoint where the {@link DrawingMotion} is
+     * catched.
+     */
+    private static final int CATCH_DISTANCE = 30;
+
     /**
      * The paint to draw the path with.
      */
     private final Paint pathPaint = new Paint();
+
+    /**
+     * The paint to draw the area with.
+     */
     private final Paint areaPaint = new Paint();
 
     /**
@@ -141,8 +156,8 @@ public class TouchView extends View {
             limit -= interpreter.isArea() ? 0 : 1;
             for (int i = 0; i < limit; i++) {
                 // The next point in the polygon
-                Point b = newPolygon.get((i + 1) % newPolygon.size());
-                Point a = newPolygon.get(i);
+                final Point b = newPolygon.get((i + 1) % newPolygon.size());
+                final Point a = newPolygon.get(i);
                 path.lineTo(a.getX(), a.getY());
                 path.lineTo(b.getX(), b.getY());
                 canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
@@ -157,8 +172,21 @@ public class TouchView extends View {
                 canvas.drawCircle(p.getX(), p.getY(),
                         MotionInterpreter.POINT_RADIUS, pathPaint);
             }
+
             undoUseable();
             redoUseable();
+        }
+
+        // Show the corners to catch to
+        if (SHOW_CORNERS && catchPoints != null) {
+            int color = pathPaint.getColor();
+            pathPaint.setColor(0x7fffffff & Color.RED);
+            Log.d(VIEW_LOG_TAG, "show catchPoints");
+            for (Point p : catchPoints) {
+                canvas.drawCircle(p.getX(), p.getY(),
+                        MotionInterpreter.POINT_RADIUS, pathPaint);
+            }
+            pathPaint.setColor(color);
         }
     }
 
@@ -299,8 +327,15 @@ public class TouchView extends View {
         }
     }
 
+    /**
+     * Set the corner points to catch the {@link DrawingMotion} to.
+     * 
+     * @param catchPoints
+     *            A list of Points
+     */
     public void setCatchPoints(List<Point> catchPoints) {
         this.catchPoints = catchPoints;
+        this.postInvalidate();
     }
 
     public void setInterpretationType(InterpretationType type) {
