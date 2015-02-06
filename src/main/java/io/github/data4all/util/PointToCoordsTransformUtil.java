@@ -461,34 +461,35 @@ public class PointToCoordsTransformUtil {
      * @return the new calculated point
      */
     public Point changePixelCoordSystem(Point point, int rotation) {
-        // change the point value in dependency of the rotated coordinate
-        // system for drawing
-        if (rotation == 0) {
-            Log.d(TAG, "Device orientation was portrait");
-            // device was in portrait mode
-            xAxis = tps.getPhotoHeight();
-            yAxis = tps.getPhotoWidth();
-            return new Point((tps.getPhotoHeight() - point.getY() + 1),
-                    (tps.getPhotoWidth() - point.getX() + 1));
-        } else if (rotation == 1) {
-            Log.d(TAG, "Device orientation was landscape counter-clockwise");
-            // device was in landscape mode and the home-button to the right
-            xAxis = tps.getPhotoWidth();
-            yAxis = tps.getPhotoHeight();
-            return new Point((tps.getPhotoWidth() - point.getX() + 1),
-                    (point.getY()));
-        } else if (rotation == 3) {
-            Log.d(TAG, "Device orientation was landscape clockwise");
-            // device was in landscape mode and the home-button to the left
-            xAxis = tps.getPhotoWidth();
-            yAxis = tps.getPhotoHeight();
-            return new Point((point.getX()), (tps.getPhotoHeight()
-                    - point.getY() + 1));
+        if (point != null) {
+            if (rotation == 0) {
+                Log.d(TAG, "Device orientation was portrait");
+                // device was in portrait mode
+                xAxis = tps.getPhotoHeight();
+                yAxis = tps.getPhotoWidth();
+                return new Point((xAxis - point.getY() + 1),
+                        (yAxis - point.getX() + 1));
+            } else if (rotation == 1) {
+                Log.d(TAG, "Device orientation was landscape counter-clockwise");
+                // device was in landscape mode and the home-button to the right
+                xAxis = tps.getPhotoWidth();
+                yAxis = tps.getPhotoHeight();
+                return new Point((xAxis - point.getX() + 1), (point.getY()));
+            } else if (rotation == 3) {
+                Log.d(TAG, "Device orientation was landscape clockwise");
+                // device was in landscape mode and the home-button to the left
+                xAxis = tps.getPhotoWidth();
+                yAxis = tps.getPhotoHeight();
+                return new Point((point.getX()), (yAxis - point.getY() + 1));
+            } else {
+                Log.wtf(TAG, "No device orientation identifiable!!", null);
+                xAxis = tps.getPhotoHeight();
+                yAxis = tps.getPhotoWidth();
+                return point;
+            }
         } else {
-            Log.wtf(TAG, "No device orientation identifiable!!", null);
-            xAxis = tps.getPhotoHeight();
-            yAxis = tps.getPhotoWidth();
-            return point;
+            Log.d(TAG, "No point to change");
+            return null;
         }
     }
 }

@@ -47,6 +47,8 @@ public interface MotionInterpreter {
      * 
      * @param polygon
      *            the interpreted polygon
+     * @param rotation
+     *            the device rotation at the state of drawing
      * @return the created AbstractDataModel
      */
     OsmElement create(List<Point> polygon, int rotation);
