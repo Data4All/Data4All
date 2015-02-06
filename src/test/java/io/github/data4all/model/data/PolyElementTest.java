@@ -108,6 +108,26 @@ public class PolyElementTest {
     }
 
     /**
+     * Tests if a list of nodes is added at the begin of a existing list.
+     */
+    @Test
+    public void test_addNodes() {
+        this.PolyElement.addNodes(nodes, true);
+        assertEquals(3, PolyElement.getNodes().size());
+        assertEquals(testNode1, PolyElement.getFirstNode());
+        Node newNode1 = new Node(1, 10.1234567, 20.1234567);
+        Node newNode2 = new Node(2, 10.1234567, 20.1234567);
+        Node newNode3 = new Node(3, 10.1234567, 20.1234567);
+        List<Node> nodes1 = new ArrayList<Node>();
+        nodes1.add(newNode1);
+        nodes1.add(newNode2);
+        nodes1.add(newNode3);
+        PolyElement.addNodes(nodes1, true);
+        assertEquals(newNode1, PolyElement.getFirstNode());
+        assertEquals(6, PolyElement.getNodes().size());
+    }
+
+    /**
      * Tests if the given node is part of the PolyElement.
      */
     @Test
