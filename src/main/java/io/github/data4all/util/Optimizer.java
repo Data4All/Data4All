@@ -28,6 +28,13 @@ import android.location.Location;
  */
 
 public class Optimizer {
+    
+    /**
+     * Private Constructor, prevents instantization.
+     */
+    private Optimizer() {
+        
+    }
 
     // a new Ringbuffer for saving the location objects
     static RingBuffer<Location> locRB = new RingBuffer<Location>(20);

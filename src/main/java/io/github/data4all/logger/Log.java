@@ -34,6 +34,13 @@ public class Log {
     private static final boolean INFO = true;
     private static final boolean DEBUG = true;
     private static final boolean WTF = true;
+    
+    /**
+     * Private Constructor, prevents instantization.
+     */
+    private Log() {
+        
+    }
 
     /**
      * This Log Level reports info messages. any message that is helpful in

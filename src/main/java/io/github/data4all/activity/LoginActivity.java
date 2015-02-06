@@ -129,11 +129,9 @@ public class LoginActivity extends BasicActivity {
     }
 
     protected User returnUser() {
-        final User user =
-                new User(prefs.getString("USERNAME", null), prefs.getString(
-                        OAuth.OAUTH_TOKEN, null), prefs.getString(
-                        OAuth.OAUTH_TOKEN_SECRET, null));
-        return user;
+        return new User(prefs.getString("USERNAME", null), prefs.getString(
+                OAuth.OAUTH_TOKEN, null), prefs.getString(
+                OAuth.OAUTH_TOKEN_SECRET, null));
 
     }
 

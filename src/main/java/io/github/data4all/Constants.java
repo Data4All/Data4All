@@ -65,4 +65,11 @@ public class Constants {
     public static final String AUTHORIZE_URL =
             "http://master.apis.dev.openstreetmap.org/oauth/authorize";
 
+    /**
+     * Private Constructor, prevents instantization.
+     */
+    private Constants() {
+        
+    }
+    
 }
