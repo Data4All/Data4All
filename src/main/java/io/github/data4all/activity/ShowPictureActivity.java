@@ -40,15 +40,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
- * Activity to set a new Layer-Backgroundimage
- * 
+ * Activity to set a ImageView and use the TouchView to draw<br\>
  * @author vkochno
- *
  */
 public class ShowPictureActivity extends BasicActivity {
 
     private TouchView touchView;
     private ImageView imageView;
+    private Bitmap bitmap;
     private Intent intent;
     private static final String TYPE = "TYPE_DEF";
     private static final int POINT = 1;
@@ -59,12 +58,15 @@ public class ShowPictureActivity extends BasicActivity {
     private ImageButton undo;
     private ImageButton redo;
 
-    Bitmap bitmap;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
     private TransformationParamBean transformBean;
     private DeviceOrientation currentOrientation;
+    
+    public ShowPictureActivity() {
+		super();
+	}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,6 +126,11 @@ public class ShowPictureActivity extends BasicActivity {
         onClickBuilding(null);
     }
 
+    /**
+     * OnClick method to finish the current drawing
+     * 
+     * @param view
+     */
     public void onClickOkay(View view) {
 
         // create an abstract data element from the given data and pass it to
@@ -134,6 +141,10 @@ public class ShowPictureActivity extends BasicActivity {
         startActivity(intent);
     }
 
+    /**
+     * Define method to draw a point<br\>
+     * @param view
+     */
     public void onClickPoint(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.POINT);
@@ -141,6 +152,10 @@ public class ShowPictureActivity extends BasicActivity {
         intent.putExtra(TYPE, POINT);
     }
 
+    /**
+     * Define method to draw a way<br\>
+     * @param view
+     */
     public void onClickPath(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.WAY);
@@ -148,6 +163,10 @@ public class ShowPictureActivity extends BasicActivity {
         intent.putExtra(TYPE, WAY);
     }
 
+    /**
+     * Define method to draw a area<br\>
+     * @param view
+     */
     public void onClickArea(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.AREA);
@@ -156,6 +175,10 @@ public class ShowPictureActivity extends BasicActivity {
 
     }
 
+    /**
+     * Define method to draw a building<br\>
+     * @param view
+     */
     public void onClickBuilding(View view) {
         touchView.clearMotions();
         touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
@@ -163,28 +186,44 @@ public class ShowPictureActivity extends BasicActivity {
         intent.putExtra(TYPE, BUILDING);
     }
 
+    /**
+     * Method to use the redo function
+     * @param view
+     */
     public void onClickRedo(View view) {
         touchView.redo();
         touchView.invalidate();
     }
 
+    /**
+     * Method to use the undo function
+     * @param view
+     */
     public void onClickUndo(View view) {
         touchView.undo();
         touchView.invalidate();
     }
 
+    /**
+     * 
+     * @param enabled
+     */
     public void SetRedoEnable(boolean enabled) {
         this.redo.setEnabled(enabled);
+        this.redo.setVisibility(View.GONE);
     }
 
     public void SetUndoEnable(boolean enabled) {
         this.undo.setEnabled(enabled);
+        this.undo.setVisibility(View.GONE);
     }
 
     /**
-     * Get a Uri of a Image and set this to local layout as background
+     * Get a Uri of a Image and set this to local ImageView
      * 
      * @param selectedImage
+     * 
+     * @author vkochno
      */
     private void setBackground(Uri selectedImage) {
 
@@ -195,10 +234,8 @@ public class ShowPictureActivity extends BasicActivity {
             imageView.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             Log.e(this.getClass().toString(), "ERROR, no file found");
-            e.printStackTrace();
         } catch (IOException e) {
             Log.e(this.getClass().toString(), "ERROR, file is no image");
-            e.printStackTrace();
         }
     }
 
