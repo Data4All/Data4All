@@ -85,25 +85,6 @@ public class Tagging {
      * 
      * @param key
      * 
-     *            the Key of the Hashmap
-     * 
-     * @return the Values of the Key
-     */
-    public static List<String> getValues(String key) {
-        final Map<String, String> map = new HashMap<String, String>();
-        // map = Tags.getClassifiedTags();
-        String[] split;
-        split = map.get(key).split(",");
-        final List<String> list = new ArrayList<String>(Arrays.asList(split));
-        return list;
-    }
-
-    /**
-     * 
-     * 
-     * 
-     * @param key
-     * 
      * @param value
      * 
      * @return a HashMap with the Keys and Values
