@@ -39,7 +39,7 @@ public class BasicSensorSmoother implements SensorSmoother {
      */
     @Override
     public float[] filter(float[] input, float[] output) {
-        float[] filteredValues = new float[3];
+        final float[] filteredValues = new float[3];
         if (output == null)
             return input;
         if (input != null) {

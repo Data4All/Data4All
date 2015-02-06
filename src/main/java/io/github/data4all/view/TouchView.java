@@ -214,7 +214,7 @@ public class TouchView extends View {
             limit -= interpreter.isArea() ? 0 : 1;
             for (int i = 0; i < limit; i++) {
                 // The next point in the polygon
-                Point b = newPolygon.get((i + 1) % newPolygon.size());
+                final Point b = newPolygon.get((i + 1) % newPolygon.size());
                 final Point a = newPolygon.get(i);
                 path.lineTo(a.getX(), a.getY());
                 path.lineTo(b.getX(), b.getY());
@@ -322,7 +322,7 @@ public class TouchView extends View {
             // runs through the list of points in the polygon and checks which
             // point is the closest
             for (Point p : polygon) {
-                double distance = Math.hypot(x - p.getX(), y - p.getY());
+                final double distance = Math.hypot(x - p.getX(), y - p.getY());
                 Log.d(this.getClass().getSimpleName(), "distance:" + distance);
                 if (distance <= shortest) {
                     shortest = distance;
@@ -347,7 +347,7 @@ public class TouchView extends View {
      * 
      */
     public PointMover movePoint(Point point) {
-        int i = polygon.indexOf(point);
+        final int i = polygon.indexOf(point);
         if (i == -1) {
             Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
             return null;

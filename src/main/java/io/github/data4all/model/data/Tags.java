@@ -246,7 +246,7 @@ public final class Tags {
         TAG_LIST.addAll(contactTagList);
 
         // classified tag: highway
-        List<String> highwayValues =
+        final List<String> highwayValues =
                 new ArrayList<String>(Arrays.asList("motorway", "residential",
                         "service", "track", "footway", "road", "path"));
         TAG_LIST.add(new ClassifiedTag(10, "highway", null, highwayValues,

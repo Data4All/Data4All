@@ -140,15 +140,15 @@ public class PointToCoordsTransformUtil {
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
-        double pixelpitch =
+        final double pixelpitch =
                 this.calculateAngleFromPixel(point.getX(), xAxis,
                         tps.getCameraMaxPitchAngle());
         // gets an angle for the point on the roll axis
-        double pixelroll =
+        final double pixelroll =
                 -calculateAngleFromPixel(point.getY(), yAxis,
                         tps.getCameraMaxRotationAngle());
-        double pitch = -deviceOrientation.getPitch();
-        double roll = -deviceOrientation.getRoll();
+        final double pitch = -deviceOrientation.getPitch();
+        final double roll = -deviceOrientation.getRoll();
         final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
         vector[2] = -1;
@@ -160,7 +160,7 @@ public class PointToCoordsTransformUtil {
         vector2[1] = vector[1] * Math.cos(pitch) - vector[2] * Math.sin(pitch);
         vector2[2] = vector[1] * Math.sin(pitch) + vector[2] * Math.cos(pitch);
         // rotate around line through origin with pitch angle
-        double[] finalVector = new double[3];
+        final double[] finalVector = new double[3];
         finalVector[0] =
                 vector2[0] * Math.cos(roll) - vector2[1] * Math.sin(pitch)
                         * Math.sin(roll) + vector2[2] * Math.cos(pitch)
@@ -193,8 +193,8 @@ public class PointToCoordsTransformUtil {
             return null;
         }
         // collides vector with the xy-plane
-        double tempXX = finalVector[0] * (height / -finalVector[2]);
-        double tempYY = finalVector[1] * (height / -finalVector[2]);
+        final double tempXX = finalVector[0] * (height / -finalVector[2]);
+        final double tempYY = finalVector[1] * (height / -finalVector[2]);
         final double[] coord = new double[3];
         // Rotate Vector with azimuth (z is fix))
         Log.d(TAG, "AZIMUTH: " + azimuth);
@@ -222,7 +222,7 @@ public class PointToCoordsTransformUtil {
         if ((pixel - (axis / 2)) == 0) {
             return 0;
         }
-        double percent = (2 * pixel - axis) / axis;
+        final double percent = (2 * pixel - axis) / axis;
         final double z = Math.sin(maxAngle / 2);
         final double angle = Math.asin(z * percent);
         return angle;
@@ -240,8 +240,8 @@ public class PointToCoordsTransformUtil {
      */
     public Node calculateGPSPoint(Location location, double[] coord) {
         final double radius = 6371004.0;
-        double lat = Math.toRadians(location.getLatitude());
-        double lon = Math.toRadians(location.getLongitude());
+        final double lat = Math.toRadians(location.getLatitude());
+        final double lon = Math.toRadians(location.getLongitude());
         // calculate the length of the current latitude line with the earth
         // radius
         double lonLength = radius * Math.cos(lat);
@@ -252,7 +252,7 @@ public class PointToCoordsTransformUtil {
         lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
         // calculate the length of the current longitude line with the earth
         // radius
-        double latLength = radius * 2 * Math.PI;
+        final double latLength = radius * 2 * Math.PI;
         // add to the current Longitude the distance of the coordinate
         double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
         /*
@@ -262,7 +262,7 @@ public class PointToCoordsTransformUtil {
         lat2 = Math.toDegrees(lat2);
         lon2 = Math.toDegrees(lon2);
         // create a new Node with the latitude and longitude values
-        Node node = new Node(osmID, lat2, lon2);
+        final Node node = new Node(osmID, lat2, lon2);
         osmID--;
         return node;
     }

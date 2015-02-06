@@ -88,7 +88,7 @@ public class RedoUndo {
                 + maxCount);
         if (currentCount != 0 && currentCount <= maxCount) {
             currentCount--;
-            List<Point> relist = new ArrayList<Point>();
+            final List<Point> relist = new ArrayList<Point>();
             for (int i = 0; i < currentCount; i++) {
                 relist.add(motions.get(i));
             }
@@ -102,7 +102,7 @@ public class RedoUndo {
                 + maxCount);
         if (currentCount < maxCount) {
             currentCount++;
-            List<Point> relist = new ArrayList<Point>();
+            final List<Point> relist = new ArrayList<Point>();
             for (int i = 0; i < currentCount; i++) {
                 relist.add(motions.get(i));
             }

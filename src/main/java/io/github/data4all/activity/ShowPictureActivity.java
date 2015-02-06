@@ -152,7 +152,7 @@ public class ShowPictureActivity extends BasicActivity {
         // 0 or Rotation0 if portrait
         // 90 or Rotation1 if home-button to the right
         // 270 or Rotation3 if home-button to the left
-        int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+        final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay().getRotation();
 
         // create an abstract data element from the given data and pass it to

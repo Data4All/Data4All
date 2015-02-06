@@ -242,8 +242,8 @@ public class PrepareRequestTokenActivity extends BasicActivity {
                         consumer.getTokenSecret());
                 edit.commit();
 
-                String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
-                String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
+                final String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
+                final String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
 
                 consumer.setTokenWithSecret(token, secret);
 

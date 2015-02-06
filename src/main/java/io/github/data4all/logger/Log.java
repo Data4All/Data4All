@@ -160,7 +160,7 @@ public class Log {
     }
 
     private static String createTag(String tag) {
-        StringBuilder result = new StringBuilder(DEFAULT_TAG);
+        final StringBuilder result = new StringBuilder(DEFAULT_TAG);
         result.append("-");
         result.append(tag);
         return result.toString();

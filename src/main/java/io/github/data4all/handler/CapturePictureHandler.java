@@ -111,7 +111,7 @@ public class CapturePictureHandler implements PictureCallback {
 
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
-                FileOutputStream fos =
+                final FileOutputStream fos =
                         new FileOutputStream(photoFile.getPath());
                 fos.write(photoData[0]);
                 fos.flush();
@@ -132,7 +132,7 @@ public class CapturePictureHandler implements PictureCallback {
 
                 // Passes the filepath, location and device orientation to the
                 // ShowPictureActivity
-                Intent intent = new Intent(context, ShowPictureActivity.class);
+                final Intent intent = new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
                 intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);

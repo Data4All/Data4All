@@ -158,7 +158,7 @@ public class ResultViewActivity extends BasicActivity implements
                     dialog.setTitle(keyList.get(position));
                     final Button okay = new Button(ResultViewActivity.this);
                     final EditText text = new EditText(ResultViewActivity.this);
-                    LinearLayout layout =
+                    final LinearLayout layout =
                             (LinearLayout) dialog
                                     .findViewById(R.id.dialogDynamic);
                     layout.addView(text);
@@ -176,9 +176,9 @@ public class ResultViewActivity extends BasicActivity implements
                 }
             }
         });
-        Button resultButton = (Button) this.findViewById(R.id.buttonResult);
+        final Button resultButton = (Button) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
-        Button resultButtonToCamera =
+        final Button resultButtonToCamera =
                 (Button) this.findViewById(R.id.buttonResultToCamera);
         resultButtonToCamera.setOnClickListener(this);
     }
@@ -195,7 +195,7 @@ public class ResultViewActivity extends BasicActivity implements
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        final int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
         }
@@ -206,7 +206,7 @@ public class ResultViewActivity extends BasicActivity implements
         endList = new ArrayList<String>();
         keyList = new ArrayList<String>();
         for (Entry entry : element.getTags().entrySet()) {
-            String key = (String) entry.getKey();
+            final String key = (String) entry.getKey();
             keyList.add(key);
             endList.add(key + "=" + element.getTags().get(key));
         }

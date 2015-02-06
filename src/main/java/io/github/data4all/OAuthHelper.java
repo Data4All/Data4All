@@ -42,8 +42,8 @@ public class OAuthHelper {
 
     public OAuthHelper(String osmBaseUrl) throws OsmException {
 
-        String key = Constants.CONSUMER_KEY;
-        String secret = Constants.CONSUMER_SECRET;
+        final String key = Constants.CONSUMER_KEY;
+        final String secret = Constants.CONSUMER_SECRET;
 
         setmConsumer(new CommonsHttpOAuthConsumer(key, secret));
         Log.d("OAuthHelper", "Using " + Constants.REQUEST_URL + " "
@@ -86,8 +86,8 @@ public class OAuthHelper {
      * @return
      */
     public OAuthConsumer getConsumer() {
-        String key = Constants.CONSUMER_KEY;
-        String secret = Constants.CONSUMER_SECRET;
+        final String key = Constants.CONSUMER_KEY;
+        final String secret = Constants.CONSUMER_SECRET;
         return new CommonsHttpOAuthConsumer(key, secret);
     }
 

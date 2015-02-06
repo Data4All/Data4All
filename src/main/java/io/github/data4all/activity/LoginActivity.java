@@ -57,7 +57,7 @@ public class LoginActivity extends BasicActivity {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-        Button loginButton = (Button) findViewById(R.id.loginButton);
+        final Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -85,7 +85,7 @@ public class LoginActivity extends BasicActivity {
         });
 
         // Delete tokens
-        Button deleteButton = (Button) findViewById(R.id.deleteButton);
+        final Button deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -93,7 +93,7 @@ public class LoginActivity extends BasicActivity {
             }
         });
 
-        Button getUsernameButton =
+        final Button getUsernameButton =
                 (Button) findViewById(R.id.getUsernameButton);
         getUsernameButton.setOnClickListener(new View.OnClickListener() {
 
@@ -129,7 +129,7 @@ public class LoginActivity extends BasicActivity {
     }
 
     protected User returnUser() {
-        User user =
+        final User user =
                 new User(prefs.getString("USERNAME", null), prefs.getString(
                         OAuth.OAUTH_TOKEN, null), prefs.getString(
                         OAuth.OAUTH_TOKEN_SECRET, null));
@@ -140,7 +140,7 @@ public class LoginActivity extends BasicActivity {
     private void deleteTokenFromSharedPreferences() {
         if (prefs.contains(OAuth.OAUTH_TOKEN)
                 && prefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
-            Editor ed = prefs.edit();
+            final Editor ed = prefs.edit();
             ed.remove(OAuth.OAUTH_TOKEN);
             ed.remove(OAuth.OAUTH_TOKEN_SECRET);
             ed.remove("USERNAME");
@@ -155,7 +155,7 @@ public class LoginActivity extends BasicActivity {
     }
 
     private void setTemporaryFlag(boolean b) {
-        Editor ed = prefs.edit();
+        final Editor ed = prefs.edit();
         ed.putBoolean("IS_TEMPORARY", b);
         ed.commit();
         Log.i(TAG, "SharedPreferences:" + prefs.getAll());

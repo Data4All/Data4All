@@ -267,7 +267,7 @@ public class MapActivity extends BasicActivity {
      *            the path which should be added to the map
      **/
     protected void addPathToMap(PolyElement polyElement) {
-        Polyline path = new MapLine(this);
+        final Polyline path = new MapLine(this);
 
         Log.i(TAG, "Set Path Points to " + polyElement.toString());
         path.setPoints(polyElement.getGeoPoints());

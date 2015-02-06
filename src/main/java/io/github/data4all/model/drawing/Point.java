@@ -117,8 +117,8 @@ public class Point {
     public static double getBeta(Point a, Point b, Point c) {
         // Calculate the two vectors
         if (a != null && b != null && c != null) {
-            Point x = new Point(a.getX() - b.getX(), a.getY() - b.getY());
-            Point y = new Point(c.getX() - b.getX(), c.getY() - b.getY());
+            final Point x = new Point(a.getX() - b.getX(), a.getY() - b.getY());
+            final Point y = new Point(c.getX() - b.getX(), c.getY() - b.getY());
 
             return Math.acos((x.getX() * y.getX() + x.getY() * y.getY())
                     / (Math.hypot(x.getX(), x.getY()) * Math.hypot(y.getX(),

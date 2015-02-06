@@ -78,7 +78,7 @@ public class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
                     provider.retrieveRequestToken(consumer,
                             Constants.OAUTH_CALLBACK_URL);
             Log.i(TAG, "Popping a browser with the authorize URL : " + url);
-            Intent intent =
+            final Intent intent =
                     new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
                                     | Intent.FLAG_ACTIVITY_NO_HISTORY

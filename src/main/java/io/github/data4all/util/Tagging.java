@@ -71,7 +71,7 @@ public class Tagging {
     }
 
     public static Map<String, ClassifiedTag> getMapKeys(int type) {
-        Map<String, ClassifiedTag> map = new HashMap<String, ClassifiedTag>();
+        final Map<String, ClassifiedTag> map = new HashMap<String, ClassifiedTag>();
         for (int i = 0; i < getKeys(type).size(); i++) {
             map.put(getKeys(type).get(i).getKey(),
                     (ClassifiedTag) getKeys(type).get(i));
@@ -109,7 +109,7 @@ public class Tagging {
      * @return a HashMap with the Keys and Values
      */
     public static Map<String, String> hashMapTag(String key, String value) {
-        Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<String, String>();
         map.put(key, value);
         return map;
     }

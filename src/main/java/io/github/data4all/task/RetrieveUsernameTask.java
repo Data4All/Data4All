@@ -81,22 +81,22 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void getUserXml(String url, OAuthConsumer consumer) {
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        final DefaultHttpClient httpclient = new DefaultHttpClient();
 
         try {
             // make a GET request
-            HttpGet request = new HttpGet(url);
+            final HttpGet request = new HttpGet(url);
             Log.i(tag, "Requesting URL : " + url);
 
             // sign the request with oAuth
             consumer.sign(request);
 
             // execute request and get the response
-            HttpResponse response = httpclient.execute(request);
+            final HttpResponse response = httpclient.execute(request);
             Log.i(tag, "Statusline : " + response.getStatusLine());
 
             // write content of response in InputStream
-            InputStream data = response.getEntity().getContent();
+            final InputStream data = response.getEntity().getContent();
 
             parseXmlUserInfo(data);
         } catch (OAuthMessageSignerException e) {
@@ -132,7 +132,7 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
             int eventType;
 
             while ((eventType = parser.next()) != XmlPullParser.END_DOCUMENT) {
-                String tagName = parser.getName();
+                final String tagName = parser.getName();
                 if (eventType == XmlPullParser.START_TAG
                         && "user".equals(tagName)) {
                     prefs.edit()

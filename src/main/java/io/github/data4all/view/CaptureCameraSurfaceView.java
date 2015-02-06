@@ -104,8 +104,7 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
     }
 
     private void init(Context context) {
-
-        SurfaceView mSurfaceView = new SurfaceView(context);
+        final SurfaceView mSurfaceView = new SurfaceView(context);
 
         addView(mSurfaceView);
         mHolder = mSurfaceView.getHolder();
@@ -139,13 +138,13 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
      * Set the Camera Display Orientation when the Surface is changed
      */
     public static void setCameraDisplayOrientation() {
-        Camera.CameraInfo info = new Camera.CameraInfo();
+        final Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
         final WindowManager winManager =
                 (WindowManager) context
                         .getSystemService(Context.WINDOW_SERVICE);
-        int rotation = winManager.getDefaultDisplay().getRotation();
+        final int rotation = winManager.getDefaultDisplay().getRotation();
 
         int degrees = 0;
 

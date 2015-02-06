@@ -84,7 +84,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             mapController.setCenter(node.toGeoPoint());
             mapController.animateTo(node.toGeoPoint());
         } else {
-            PolyElement polyElement = (PolyElement) element;
+            final PolyElement polyElement = (PolyElement) element;
             mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
             mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
         }
