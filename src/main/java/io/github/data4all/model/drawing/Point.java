@@ -16,8 +16,8 @@
 package io.github.data4all.model.drawing;
 
 /**
- * A Point is a Object that can hold an x and y coordinate There is no further
- * logic in this class
+ * A Point is a Object that can hold an x and y coordinate. There is no further
+ * logic in this class.
  * 
  * @author tbrose
  */
