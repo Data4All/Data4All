@@ -88,7 +88,7 @@ public class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
             Log.e(TAG, "Error during OAUth retrieve request token", e);
         }
 
-        SharedPreferences prefs =
+        final SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
         Log.d(TAG, "SharedPreferences: " + prefs.getAll().toString());
         return null;

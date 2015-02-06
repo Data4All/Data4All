@@ -72,6 +72,7 @@ public class TransformationParamBean implements Parcelable {
         }
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }

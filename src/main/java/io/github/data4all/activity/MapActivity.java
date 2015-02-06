@@ -242,7 +242,7 @@ public class MapActivity extends BasicActivity {
      *            the area which should be added to the map
      **/
     protected void addAreaToMap(PolyElement polyElement) {
-        Polygon area = new MapPolygon(this);
+        final Polygon area = new MapPolygon(this);
 
         Log.i(TAG, "Set Area Points to " + polyElement.toString());
         area.setPoints(polyElement.getGeoPoints());

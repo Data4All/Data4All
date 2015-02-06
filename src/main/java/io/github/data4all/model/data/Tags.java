@@ -253,14 +253,14 @@ public final class Tags {
                 WAY_TAG));
 
         // classified tag: barrier
-        List<String> barrierValues =
+        final List<String> barrierValues =
                 new ArrayList<String>(Arrays.asList("citywall", "fence",
                         "wall", "bollard", "gate"));
         TAG_LIST.add(new ClassifiedTag(11, "barrier", null, barrierValues,
                 NODE_TAG, WAY_TAG, AREA_TAG));
 
         // classified tag: amenity
-        List<String> amenityValues =
+        final List<String> amenityValues =
                 new ArrayList<String>(Arrays.asList("bar", "cafe",
                         "restaurant", "fast_food", "pub", "collage", "library",
                         "school", "university", "parking", "taxi", "fuel",
@@ -272,7 +272,7 @@ public final class Tags {
                 new int[] { NODE_TAG, BUILDING_TAG }));
 
         // classified tag: building
-        List<String> buildingValues =
+        final List<String> buildingValues =
                 new ArrayList<String>(Arrays.asList("apartments", "farm",
                         "hotel", "house", "commercial", "industrial", "retail",
                         "warehouse", "church", "hospital", "train_station",
@@ -281,7 +281,7 @@ public final class Tags {
                 new int[] { NODE_TAG, BUILDING_TAG }));
 
         // classified tag: landuse
-        List<String> landuseValues =
+        final List<String> landuseValues =
                 new ArrayList<String>(Arrays.asList("commercial",
                         "construction", "farmland", "forest", "grass",
                         "industrial", "millitary", "residential"));

@@ -1,19 +1,19 @@
-/* 
+/*
  * Copyright (c) 2014, 2015 Data4All
  * 
- * <p>Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  * 
- *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  * 
  * <p>Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
- package io.github.data4all.util;
+package io.github.data4all.util;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
@@ -37,29 +37,19 @@ import android.location.Location;
  *
  */
 public class PointToCoordsTransformUtil {
-
-    /** Logger tag for this class */
+    /** Logger tag for this class. */
     final static String TAG = "PointToWorldCoords";
-
-    /** osmID for the node */
+    /** osmID for the node. */
     private int osmID = -1;
-
-    // TODO to remove with the new data models
-    private static int osmVersion = 1;
-
-    /** height of the device from the ground */
-    private double height = 0;
-
+    /** height of the device from the ground. */
+    private double height;
     /** */
-    private int xAxis = 0;
-
+    private int xAxis;
     /** */
-    private int yAxis = 0;
-
-    /** object of the TransFormationParamBean */
+    private int yAxis;
+    /** object of the TransFormationParamBean. */
     private TransformationParamBean tps;
-
-    /** object of the deviceOrientation */
+    /** object of the deviceOrientation. */
     private DeviceOrientation deviceOrientation;
 
     public PointToCoordsTransformUtil() {
@@ -68,10 +58,10 @@ public class PointToCoordsTransformUtil {
     /**
      * Constructor, which set some necessary data.
      * 
-     * @param object
-     *            of TranformParamBean
-     * @param object
-     *            of DeviceOrientation
+     * @param tps
+     *            object of TranformParamBean
+     * @param deviceOrientation
+     *            object of DeviceOrientation
      */
     public PointToCoordsTransformUtil(TransformationParamBean tps,
             DeviceOrientation deviceOrientation) {
@@ -82,21 +72,21 @@ public class PointToCoordsTransformUtil {
     /**
      * Calls transform with saved informations.
      * 
-     * @param List
-     *            of Point
-     * @return List of Node
+     * @param points
+     *            List of Point
+     * @return rotation List of Node
      */
     public List<Node> transform(List<Point> points, int rotation) {
-        return transform(tps, deviceOrientation, points, rotation);
+        return this.transform(tps, deviceOrientation, points, rotation);
     }
 
     /**
      * transforms a list of points in a list of Nodes.
      * 
-     * @param object
-     *            of TransformParamBean
-     * @param object
-     *            of DeviceOrientation
+     * @param tps
+     *            object of TransformParamBean
+     * @param deviceOrientation
+     *            object of DeviceOrientation
      * @param points
      *            list of points which have to be calculated
      * @param rotation
@@ -107,29 +97,23 @@ public class PointToCoordsTransformUtil {
             DeviceOrientation deviceOrientation, List<Point> points,
             int rotation) {
         this.tps = tps;
-
-        List<Node> nodes = new ArrayList<Node>();
-        this.height = tps.getHeight(); // get the set height
-
+        final List<Node> nodes = new ArrayList<Node>();
+        // get the set height
+        this.height = tps.getHeight();
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
                 + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
-
         for (Point point : points) {
-
             // change point coordinates to match the set coordinate system.
-            point = changePixelCoordSystem(point, rotation);
-
+            point = this.changePixelCoordSystem(point, rotation);
             Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
-
             // calculates local coordinates in meter first
-            double[] coord = calculateCoordFromPoint(tps, deviceOrientation,
-                    point);
+            double[] coord =
+                    this.calculateCoordFromPoint(tps, deviceOrientation, point);
             Log.d(TAG, "Calculated local Coords:" + coord[0] + "  " + coord[1]);
             // transforms local coordinates in global GPS-coordinates set to.
             // Node.
             if (coord != null) {
-                Node node = calculateGPSPoint(tps.getLocation(), coord);
-
+                final Node node = calculateGPSPoint(tps.getLocation(), coord);
                 Log.d(TAG,
                         "Calculated Lat: " + node.getLat() + " Lon: "
                                 + node.getLon());
@@ -156,61 +140,68 @@ public class PointToCoordsTransformUtil {
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
-        double pixelpitch = calculateAngleFromPixel(point.getX(), xAxis,
-                tps.getCameraMaxPitchAngle());
+        double pixelpitch =
+                this.calculateAngleFromPixel(point.getX(), xAxis,
+                        tps.getCameraMaxPitchAngle());
         // gets an angle for the point on the roll axis
-        double pixelroll = -calculateAngleFromPixel(point.getY(), yAxis,
-                tps.getCameraMaxRotationAngle());
+        double pixelroll =
+                -calculateAngleFromPixel(point.getY(), yAxis,
+                        tps.getCameraMaxRotationAngle());
         double pitch = -deviceOrientation.getPitch();
         double roll = -deviceOrientation.getRoll();
-
-        double[] vector = new double[3];
+        final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
         vector[2] = -1;
         vector[1] = Math.tan(pixelpitch);
         vector[0] = Math.tan(pixelroll);
         // rotate around x-axis with pitch
-        double[] vector2 = new double[3];
+        final double[] vector2 = new double[3];
         vector2[0] = vector[0];
         vector2[1] = vector[1] * Math.cos(pitch) - vector[2] * Math.sin(pitch);
         vector2[2] = vector[1] * Math.sin(pitch) + vector[2] * Math.cos(pitch);
         // rotate around line through origin with pitch angle
         double[] finalVector = new double[3];
-        finalVector[0] = vector2[0] * Math.cos(roll) - vector2[1]
-                * Math.sin(pitch) * Math.sin(roll) + vector2[2]
-                * Math.cos(pitch) * Math.sin(roll);
-        finalVector[1] = vector2[0]
-                * Math.sin(roll)
-                * Math.sin(pitch)
-                + vector2[1]
-                * (Math.cos(pitch) * Math.cos(pitch) * (1 - Math.cos(roll)) + Math
-                        .cos(roll)) + vector2[2] * Math.cos(pitch)
-                * Math.sin(pitch) * (1 - Math.cos(roll));
-        finalVector[2] = -vector2[0]
-                * Math.cos(pitch)
-                * Math.sin(roll)
-                + vector2[1]
-                * Math.sin(pitch)
-                * Math.cos(pitch)
-                * (1 - Math.cos(roll))
-                + vector2[2]
-                * (Math.sin(pitch) * Math.sin(pitch) * (1 - Math.cos(roll)) + Math
-                        .cos(roll));
-
+        finalVector[0] =
+                vector2[0] * Math.cos(roll) - vector2[1] * Math.sin(pitch)
+                        * Math.sin(roll) + vector2[2] * Math.cos(pitch)
+                        * Math.sin(roll);
+        finalVector[1] =
+                vector2[0]
+                        * Math.sin(roll)
+                        * Math.sin(pitch)
+                        + vector2[1]
+                        * (Math.cos(pitch) * Math.cos(pitch)
+                                * (1 - Math.cos(roll)) + Math.cos(roll))
+                        + vector2[2] * Math.cos(pitch) * Math.sin(pitch)
+                        * (1 - Math.cos(roll));
+        finalVector[2] =
+                -vector2[0]
+                        * Math.cos(pitch)
+                        * Math.sin(roll)
+                        + vector2[1]
+                        * Math.sin(pitch)
+                        * Math.cos(pitch)
+                        * (1 - Math.cos(roll))
+                        + vector2[2]
+                        * (Math.sin(pitch) * Math.sin(pitch)
+                                * (1 - Math.cos(roll)) + Math.cos(roll));
         // returns null, if the vector points to the sky
         if (finalVector[2] >= 0) {
-            Log.wtf(TAG, "Vector is directed to the sky, cannot calculate coords", null);
+            Log.wtf(TAG,
+                    "Vector is directed to the sky, cannot calculate coords",
+                    null);
             return null;
         }
-
         // collides vector with the xy-plane
         double tempXX = finalVector[0] * (height / -finalVector[2]);
         double tempYY = finalVector[1] * (height / -finalVector[2]);
         final double[] coord = new double[3];
         // Rotate Vector with azimuth (z is fix))
         Log.d(TAG, "AZIMUTH: " + azimuth);
-        coord[0] = ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
-        coord[1] = ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
+        coord[0] =
+                ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
+        coord[1] =
+                ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
         coord[2] = 0;
         return coord;
     }
@@ -228,15 +219,13 @@ public class PointToCoordsTransformUtil {
      */
     public double calculateAngleFromPixel(double pixel, double axis,
             double maxAngle) {
-
         if ((pixel - (axis / 2)) == 0) {
             return 0;
         }
         double percent = (2 * pixel - axis) / axis;
-        double z = Math.sin(maxAngle / 2);
+        final double z = Math.sin(maxAngle / 2);
         double angle = Math.asin(z * percent);
         return angle;
-
     }
 
     /**
@@ -250,10 +239,9 @@ public class PointToCoordsTransformUtil {
      * @return A Node with latitude and longitude
      */
     public Node calculateGPSPoint(Location location, double[] coord) {
-        double radius = 6371004.0;
+        final double radius = 6371004.0;
         double lat = Math.toRadians(location.getLatitude());
         double lon = Math.toRadians(location.getLongitude());
-
         // calculate the length of the current latitude line with the earth
         // radius
         double lonLength = radius * Math.cos(lat);
@@ -262,7 +250,6 @@ public class PointToCoordsTransformUtil {
         double lon2 = lon + Math.toRadians((coord[0] * 360) / lonLength);
         // fix the skip from -PI to +PI for the longitude
         lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
-
         // calculate the length of the current longitude line with the earth
         // radius
         double latLength = radius * 2 * Math.PI;
@@ -274,7 +261,6 @@ public class PointToCoordsTransformUtil {
          */
         lat2 = Math.toDegrees(lat2);
         lon2 = Math.toDegrees(lon2);
-
         // create a new Node with the latitude and longitude values
         Node node = new Node(osmID, lat2, lon2);
         osmID--;
@@ -326,8 +312,7 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
-     * @return
-     *      Size of xAxis
+     * @return Size of xAxis
      */
     public int getxAxis() {
         return xAxis;
@@ -335,15 +320,14 @@ public class PointToCoordsTransformUtil {
 
     /**
      * @param xAxis
-     *      Size of xAxis
+     *            Size of xAxis
      */
     public void setxAxis(int xAxis) {
         this.xAxis = xAxis;
     }
 
     /**
-     * @return
-     *      Size of yAxis
+     * @return Size of yAxis
      */
     public int getyAxis() {
         return yAxis;
@@ -351,10 +335,9 @@ public class PointToCoordsTransformUtil {
 
     /**
      * @param yAxis
-     *      Size of yAxis
+     *            Size of yAxis
      */
     public void setyAxis(int yAxis) {
         this.yAxis = yAxis;
     }
-
 }

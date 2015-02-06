@@ -77,6 +77,7 @@ public class CapturePictureHandler implements PictureCallback {
      * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
      *      android.hardware.Camera)
      */
+    @Override
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
 

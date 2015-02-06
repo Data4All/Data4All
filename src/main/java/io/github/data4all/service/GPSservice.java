@@ -44,11 +44,11 @@ public class GPSservice extends Service implements LocationListener {
     /*
      * the minimum of time after we get a new locationupdate in ms.
      */
-    private final long minTime = 1000;
+    private static final long minTime = 1000;
     /*
      * the minimum of Distance after we get a new locationupdate.
      */
-    private final float minDistance = 0;
+    private static final float minDistance = 0;
 
     @Override
     public void onCreate() {

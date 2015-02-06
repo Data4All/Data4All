@@ -64,7 +64,7 @@ public class LoginActivity extends BasicActivity {
 
                 // By checking oauth tokens will be saved permanently
                 // Otherwise they will be destroyed on by calling onDestroy()
-                CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
+                final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
 
                 // Already got token?
                 if (!prefs.contains(OAuth.OAUTH_TOKEN)
@@ -99,7 +99,7 @@ public class LoginActivity extends BasicActivity {
 
             public void onClick(View v) {
                 if (!prefs.contains("USERNAME")) {
-                    OAuthConsumer consumer =
+                    final OAuthConsumer consumer =
                             new CommonsHttpOAuthConsumer(
                                     Constants.CONSUMER_KEY,
                                     Constants.CONSUMER_SECRET);

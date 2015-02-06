@@ -53,19 +53,19 @@ public final class MapUtil {
     /**
      * Returns the BoundingBox of the given OsmElement.
      * 
-     * @param elem
+     * @param element
      *            the OsmElement whose BoundingBox should be calculated
      * @return the BoundingBox for the given OsmElement
      */
     public static BoundingBoxE6 getBoundingBoxForOsmElement(
             AbstractDataElement element) {
         if (element instanceof Node) {
-            Node node = (Node) element;
-            List<GeoPoint> array = new ArrayList<GeoPoint>();
+            final Node node = (Node) element;
+            final List<GeoPoint> array = new ArrayList<GeoPoint>();
             array.add(node.toGeoPoint());
             return BoundingBoxE6.fromGeoPoints((ArrayList<GeoPoint>) array);
         } else if (element instanceof PolyElement) {
-            PolyElement polyElement = (PolyElement) element;
+            final PolyElement polyElement = (PolyElement) element;
             return BoundingBoxE6
                     .fromGeoPoints((ArrayList<GeoPoint>) polyElement
                             .getUnsortedGeoPoints());

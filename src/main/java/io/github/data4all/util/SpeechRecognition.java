@@ -12,7 +12,14 @@ import java.util.Map;
  * @author Maurice Boyke
  *
  */
-public abstract class SpeechRecognition {
+public class SpeechRecognition {
+    
+    /**
+     * Private Constructor, prevents instantiation.
+     */
+    private SpeechRecognition() {
+        
+    }
 
     /**
      * 
@@ -21,11 +28,11 @@ public abstract class SpeechRecognition {
      * @return The HashMap of the matching Tags
      */
     public static Map<String, String> speechToTag(List<String> matchesText) {
-        Map<String, String> map = new HashMap<String, String>();
-        ArrayList<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
+        final Map<String, String> map = new HashMap<String, String>();
+        List<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
         tagData = (ArrayList<ClassifiedTag>) Tags.getAllClassifiedTags();
         for (ClassifiedTag entry : tagData) {
-            String key = (String) entry.getKey();
+            final String key = (String) entry.getKey();
             // split is the Array from the Key Values
             if (compareStringTag(
                     (ArrayList<String>) entry.getClassifiedValues(),
@@ -66,7 +73,7 @@ public abstract class SpeechRecognition {
      * @param matchesText
      * @return the String that matches with the tagValue
      */
-    private static String compareStringTag(ArrayList<String> arrayList,
+    private static String compareStringTag(List<String> arrayList,
             List<String> matchesText) {
         for (int i = 0; i < matchesText.size(); i++) {
             for (int j = 0; j < arrayList.size(); j++) {

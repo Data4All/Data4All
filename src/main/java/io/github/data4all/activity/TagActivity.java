@@ -88,11 +88,11 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tag);
-        AlertDialog.Builder alertDialog =
+        final AlertDialog.Builder alertDialog =
                 new AlertDialog.Builder(TagActivity.this,
                         android.R.style.Theme_Holo_Dialog_MinWidth);
         LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.drawable.header_listview, null);
+        final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
         ;
         alertDialog.setCustomTitle(view);
@@ -117,7 +117,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                 .toArray(
                                         new String[tagMap.get(key)
                                                 .getClassifiedValues().size()]);
-                AlertDialog.Builder alertDialogBuilder =
+                final AlertDialog.Builder alertDialogBuilder =
                         new AlertDialog.Builder(TagActivity.this);
                 alertDialogBuilder.setTitle("Select Tag");
                 alertDialogBuilder.setItems(array,
@@ -151,6 +151,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 
     }
 
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.speech:
@@ -204,7 +205,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                 final String key = (String) entry.getKey();
                 matchesText.add(key + "=" + map.get(key));
             }
-            ArrayAdapter<String> adapter =
+            final ArrayAdapter<String> adapter =
                     new ArrayAdapter<String>(this,
                             android.R.layout.simple_list_item_1, matchesText);
             textList.setAdapter(adapter);

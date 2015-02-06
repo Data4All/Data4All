@@ -40,6 +40,7 @@ public class BasicActivity extends Activity {
      * 
      * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
      */
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actionbar, menu);

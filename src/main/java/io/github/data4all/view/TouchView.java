@@ -1,17 +1,17 @@
-/* 
+/*
  * Copyright (c) 2014, 2015 Data4All
  * 
- * <p>Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  * 
- *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  * 
  * <p>Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package io.github.data4all.view;
 
@@ -51,39 +51,32 @@ import android.view.View;
  * @see MotionInterpreter
  */
 public class TouchView extends View {
-
     /**
      * The paint to draw the path with.
      */
     private final Paint pathPaint = new Paint();
     private final Paint areaPaint = new Paint();
     private final Path path = new Path();
-
     /**
      * The motion interpreted Polygon.
      */
     private List<Point> polygon = new ArrayList<Point>();
-
     /**
      * The Polygon with the current pending motion.
      */
     private List<Point> newPolygon = new ArrayList<Point>();
-
     /**
      * The current motion the user is typing via the screen.
      */
     private DrawingMotion currentMotion;
-
     /**
      * An object for the calculation of the point transformation.
      */
     private PointToCoordsTransformUtil pointTrans;
-
     /**
      * The currently used interpreter.
      */
     private MotionInterpreter interpreter;
-
     /**
      * The current used RedoUndo object.
      */
@@ -132,7 +125,6 @@ public class TouchView extends View {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
         path.reset();
-
         if (newPolygon != null && newPolygon.size() != 0) {
             path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
             // first draw all lines
@@ -142,7 +134,7 @@ public class TouchView extends View {
             for (int i = 0; i < limit; i++) {
                 // The next point in the polygon
                 Point b = newPolygon.get((i + 1) % newPolygon.size());
-                Point a = newPolygon.get(i);
+                final Point a = newPolygon.get(i);
                 path.lineTo(a.getX(), a.getY());
                 path.lineTo(b.getX(), b.getY());
                 canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
@@ -162,7 +154,7 @@ public class TouchView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
+        final int action = event.getAction();
         switch (action) {
         case MotionEvent.ACTION_DOWN:
             currentMotion = new DrawingMotion();
@@ -240,13 +232,11 @@ public class TouchView extends View {
     public Point lookUp(float x, float y, float maxDistance) {
         double shortest = maxDistance;
         Point closePoint = null;
-
         if (!polygon.isEmpty()) {
             // runs through the list of points in the polygon and checks which
             // point is the closest
             for (Point p : polygon) {
                 double distance = Math.hypot(x - p.getX(), y - p.getY());
-
                 Log.d(this.getClass().getSimpleName(), "distance:" + distance);
                 if (distance <= shortest) {
                     shortest = distance;
@@ -263,12 +253,12 @@ public class TouchView extends View {
      * 
      * Use moveTo() afterwards to actually move the point.
      * 
+     * @author konerman
      * @param point
      *            the point you want to move
      * 
      * @return A {@link PointMover} for moving this point
      * 
-     * @author konerman
      */
     public PointMover movePoint(Point point) {
         int i = polygon.indexOf(point);
