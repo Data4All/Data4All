@@ -50,14 +50,18 @@ public class GPSservice extends Service implements LocationListener {
      */
     private static final float minDistance = 0;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate() {
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
         powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock =
-                powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                        "MyWakelockTag");
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
         wakeLock.acquire();
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -75,6 +79,11 @@ public class GPSservice extends Service implements LocationListener {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
@@ -82,6 +91,11 @@ public class GPSservice extends Service implements LocationListener {
         return START_STICKY;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Service#onDestroy()
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -89,21 +103,45 @@ public class GPSservice extends Service implements LocationListener {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * android.location.LocationListener#onLocationChanged(android.location.
+     * Location)
+     */
     @Override
     public void onLocationChanged(Location loc) {
         Optimizer.putLoc(loc);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.location.LocationListener#onStatusChanged(java.lang.String,
+     * int, android.os.Bundle)
+     */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // Not interested in provider status
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * android.location.LocationListener#onProviderEnabled(java.lang.String)
+     */
     @Override
     public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * android.location.LocationListener#onProviderDisabled(java.lang.String)
+     */
     @Override
     public void onProviderDisabled(String provider) {
         Toast.makeText(getBaseContext(),
@@ -111,9 +149,13 @@ public class GPSservice extends Service implements LocationListener {
                 .show();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Service#onBind(android.content.Intent)
+     */
     @Override
     public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
         return null;
     }
 }
