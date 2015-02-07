@@ -50,7 +50,7 @@ public class LoginActivity extends BasicActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (isLoggegIn()) {
+        if (isLoggedIn()) {
             nextActivity();
         } else {
             setContentView(R.layout.activity_login);
@@ -63,7 +63,7 @@ public class LoginActivity extends BasicActivity {
     /**
      * @return If the user is currently logged in.
      */
-    private boolean isLoggegIn() {
+    private boolean isLoggedIn() {
         // TODO: ask the database
         return false;
     }
