@@ -8,8 +8,6 @@
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
         android:contentDescription="OSM Logo"
         android:src="@drawable/osm_logo" />
 
