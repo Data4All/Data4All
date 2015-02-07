@@ -20,11 +20,13 @@ import io.github.data4all.logger.Log;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
  * An asynchronous task that communicates with OpenStreetMap to retrieve a
@@ -38,12 +40,13 @@ import android.preference.PreferenceManager;
  *         /oauth-flow-in-android-app/
  * 
  */
-public class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
+public class OAuthRequestTokenTask extends AsyncTask<WebView, Void, WebView> {
 
     final String TAG = getClass().getName();
     private Context context;
     private OAuthProvider provider;
     private OAuthConsumer consumer;
+    private String url;
 
     /**
      * 
@@ -65,33 +68,65 @@ public class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
 
     /**
      * 
-     * Retrieve the OAuth Request Token and present a browser to the user to
+     * Retrieve the OAuth Request Token and present a webview to the user to
      * authorize the token.
      * 
      */
     @Override
-    protected Void doInBackground(Void... params) {
-
-        try {
-            Log.i(TAG, "Retrieving request token from OSM servers");
-            final String url =
-                    provider.retrieveRequestToken(consumer,
-                            Constants.OAUTH_CALLBACK_URL);
-            Log.i(TAG, "Popping a browser with the authorize URL : " + url);
-            final Intent intent =
-                    new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-                                    | Intent.FLAG_ACTIVITY_NO_HISTORY
-                                    | Intent.FLAG_FROM_BACKGROUND);
-            context.startActivity(intent);
-        } catch (Exception e) {
-            Log.e(TAG, "Error during OAUth retrieve request token", e);
+    protected WebView doInBackground(final WebView... params) {
+        if (params.length > 0) {
+            final WebView webView = params[0];
+            try {
+                Log.i(TAG, "Retrieving request token from OSM servers");
+                url =
+                        provider.retrieveRequestToken(consumer,
+                                Constants.OAUTH_CALLBACK_URL);
+            } catch (Exception e) {
+                Log.e(TAG, "Error during OAUth retrieve request token", e);
+            }
+            Log.d(TAG, "SharedPreferences: "
+                    + PreferenceManager.getDefaultSharedPreferences(context)
+                            .getAll().toString());
+            return webView;
+        } else {
+            throw new IllegalArgumentException("params.length < 1");
         }
+    }
 
-        final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        Log.d(TAG, "SharedPreferences: " + prefs.getAll().toString());
-        return null;
+    @Override
+    protected void onPostExecute(final WebView webView) {
+
+        Log.i(TAG, "Retrieving request token from OSM servers");
+
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap bitmap) {
+                Log.i(TAG, "onPageStarted : " + url);
+            }
+
+            @Override
+            public void onPageFinished(final WebView view, final String url) {
+                Log.i(TAG, "onPageFinished : " + url);
+
+                if (url.startsWith(Constants.OAUTH_CALLBACK_URL)) {
+                    if (url.indexOf("oauth_token=") != -1) {
+                        webView.setVisibility(View.INVISIBLE);
+
+                        new RetrieveAccessTokenTask(consumer, provider,
+                                PreferenceManager
+                                        .getDefaultSharedPreferences(context))
+                                .execute(Uri.parse(url));
+                    } else {
+                        webView.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+        });
+
+        webView.loadUrl(url);
+
     }
 
 }

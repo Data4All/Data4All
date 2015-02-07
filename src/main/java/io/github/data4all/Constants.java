@@ -40,10 +40,7 @@ public class Constants {
 
     public static final String ENCODING = "UTF-8";
 
-    public static final String OAUTH_CALLBACK_SCHEME = "x-oauthflow";
-    public static final String OAUTH_CALLBACK_HOST = "callback";
-    public static final String OAUTH_CALLBACK_URL = OAUTH_CALLBACK_SCHEME
-            + "://" + OAUTH_CALLBACK_HOST;
+    public static final String OAUTH_CALLBACK_URL = "x-oauthflow://callback";
 
     public static final String API_URL =
             "http://master.apis.dev.openstreetmap.org/";

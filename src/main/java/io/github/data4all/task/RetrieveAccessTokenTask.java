@@ -15,17 +15,15 @@
  */
 package io.github.data4all.task;
 
-import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.webkit.CookieManager;
 
 /**
  * 
@@ -39,22 +37,20 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
 
     final String TAG = getClass().getName();
 
-    private Context context;
     private OAuthProvider provider;
     private OAuthConsumer consumer;
     private SharedPreferences prefs;
 
-    public RetrieveAccessTokenTask(Context context, OAuthConsumer consumer,
+    public RetrieveAccessTokenTask(OAuthConsumer consumer,
             OAuthProvider provider, SharedPreferences prefs) {
-        this.context = context;
         this.consumer = consumer;
         this.provider = provider;
         this.prefs = prefs;
     }
 
     /**
-     * Retrieve the oauth_verifier, and store the oauth and oauth_token_secret
-     * for future API calls.
+     * Retrieve the oauth_verifier, and store the oauth and
+     * oauth_token_secret for future API calls in SharedPreferences.
      */
     @Override
     protected Void doInBackground(Uri... params) {
@@ -66,16 +62,17 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
         try {
             provider.retrieveAccessToken(consumer, oauth_verifier);
 
+            // Store tokens in SharedPreferences
             final Editor edit = prefs.edit();
             edit.putString(OAuth.OAUTH_TOKEN, consumer.getToken());
-            edit.putString(OAuth.OAUTH_TOKEN_SECRET, consumer.getTokenSecret());
+            edit.putString(OAuth.OAUTH_TOKEN_SECRET,
+                    consumer.getTokenSecret());
             edit.commit();
 
             final String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
             final String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
 
             consumer.setTokenWithSecret(token, secret);
-            context.startActivity(new Intent(context, MapViewActivity.class));
 
             Log.i(TAG, "OAuth - Access Token Retrieved");
 
@@ -84,5 +81,19 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
         }
 
         return null;
+    }
+
+    /**
+     * When we're done and we've retrieved either a valid token or an error
+     * from the server, we'll return to our original activity
+     */
+    @Override
+    protected void onPostExecute(Void result) {
+        Log.i(TAG, "Starting Loginscreen again");
+        //startActivity(new Intent(LoginActivity.this,
+         //       MapViewActivity.class));
+        // Remove sessioncookie before moving on
+        CookieManager.getInstance().removeSessionCookie();
+        //finish();
     }
 }

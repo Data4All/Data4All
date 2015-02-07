@@ -1,50 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.github.data4all.activity.LoginActivity" >
 
-    <CheckBox
-        android:id="@+id/checkBox1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/stayLoggedIn" />
-
-    <Button
-        android:id="@+id/loginButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/checkBox1"
-        android:layout_centerHorizontal="true"
-        android:text="@string/loginButton" />
-
-    <Button
-        android:id="@+id/deleteButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="false"
-        android:layout_marginBottom="26dp"
-        android:text="@string/deleteButton" />
-    
-
-    <Button
-        android:id="@+id/getUsernameButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/deleteButton"
-        android:layout_alignLeft="@+id/deleteButton"
-        android:layout_marginBottom="30dp"
-        android:text="Username" />
-
-</RelativeLayout>
+<WebView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/webView"
+    android:visibility="visible"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+     />
