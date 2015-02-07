@@ -103,11 +103,11 @@ public class LoginActivity extends BasicActivity {
             osmPass.requestFocus();
             osmPass.setError("Password is empty");
         } else if (!NetworkState.isNetworkAvailable(this)) {
-            progress.setVisibility(View.VISIBLE);
             new AlertDialog.Builder(this).setTitle("Network unavailable")
                     .setMessage("Please connect your device to the internet")
                     .show();
         } else {
+            progress.setVisibility(View.VISIBLE);
             new Thread(new Authentisator(password, username)).start();
         }
     }
