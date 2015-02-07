@@ -15,27 +15,18 @@
  */
 package io.github.data4all.activity;
 
-import io.github.data4all.Constants;
 import io.github.data4all.R;
-import io.github.data4all.task.OAuthRequestTokenTask;
-
-import java.net.URLEncoder;
-
-import oauth.signpost.OAuth;
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.OAuthProvider;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
-import android.app.Activity;
+import io.github.data4all.model.data.User;
+import io.github.data4all.util.NetworkState;
+import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
+import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
+import io.github.data4all.util.oauth.parameters.DevelopOAuthParameters;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.webkit.CookieManager;
-import android.webkit.WebView;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.EditText;
 
 /**
  * Activity to start authentication process
@@ -43,35 +34,110 @@ import android.webkit.WebView;
  * @author sbollen, tbrose
  *
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends BasicActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
+    
+    private EditText osmName;
+    private EditText osmPass;
 
-    private OAuthConsumer consumer;
-    private OAuthProvider provider;
-    private WebView webView;
-
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        setContentView(R.layout.activity_login);
-        webView = (WebView) findViewById(R.id.webView);
-        webView.getSettings().setJavaScriptEnabled(true);
+        if (isLoggegIn()) {
+            startActivity(nextActivity());
+            this.finish();
+        } else {
+            setContentView(R.layout.activity_login);
+            osmName = (EditText) findViewById(R.id.osm_name);
+            osmPass = (EditText) findViewById(R.id.osm_pass);
+        }
+    }
 
-        try {
-            this.consumer =
-                    new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY,
-                            Constants.CONSUMER_SECRET);
-            this.provider =
-                    new CommonsHttpOAuthProvider(Constants.REQUEST_URL
-                            + "?scope="
-                            + URLEncoder.encode(Constants.SCOPE,
-                                    Constants.ENCODING), Constants.ACCESS_URL,
-                            Constants.AUTHORIZE_URL);
-            new OAuthRequestTokenTask(this, consumer, provider).execute(webView);
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating consumer / provider", e);
+    /**
+     * @return If the user is currently logged in.
+     */
+    private boolean isLoggegIn() {
+        return false;
+    }
+
+    /**
+     * The intent for the next activity to open if the user is logged in.
+     * 
+     * @return The intent for the next activity
+     */
+    private Intent nextActivity() {
+        return new Intent(this, MapActivity.class);
+    }
+
+    public void onClickStart(View v) {
+        final String username = osmName.getText().toString().trim();
+        final String password = osmPass.getText().toString().trim();
+
+        if (TextUtils.isEmpty(username)) {
+            osmName.requestFocus();
+            osmName.setError("Username is empty");
+        } else if (TextUtils.isEmpty(password)) {
+            osmPass.requestFocus();
+            osmPass.setError("Password is empty");
+        } else if (!NetworkState.isNetworkAvailable(this)) {
+            new AlertDialog.Builder(this).setTitle("Network unavailable")
+                    .setMessage("Please connect your device to the internet")
+                    .show();
+        } else {
+            new Thread(new Authentisator(password, username)).start();
+        }
+    }
+
+    /**
+     * @author tbrose
+     *
+     */
+    private final class Authentisator implements Runnable {
+        /**
+         * 
+         */
+        private final String password;
+        /**
+         * 
+         */
+        private final String username;
+
+        /**
+         * @param password
+         * @param username
+         */
+        private Authentisator(String password, String username) {
+            this.password = password;
+            this.username = username;
+        }
+
+        @Override
+        public void run() {
+            try {
+                User user =
+                        new OsmOAuthAuthorizationClient(
+                                DevelopOAuthParameters.THIS).authorise(
+                                username, password);
+                showDialog("Success", "Token: " + user.getOAuthToken()
+                        + "\nSecret: " + user.getOauthTokenSecret());
+            } catch (OsmOAuthAuthorizationException e) {
+                showDialog("Error", e.getLocalizedMessage());
+            }
+        }
+
+        public void showDialog(final String title, final String content) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new AlertDialog.Builder(LoginActivity.this).setTitle(title)
+                            .setMessage(content).show();
+                }
+            });
         }
     }
 }
