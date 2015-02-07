@@ -147,7 +147,12 @@ public class LoginActivity extends BasicActivity {
             } catch (OsmOAuthAuthorizationException e) {
                 showDialog("Error", e.getLocalizedMessage());
             } finally {
-                progress.setVisibility(View.GONE);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.setVisibility(View.GONE);
+                    }
+                });
             }
         }
 
