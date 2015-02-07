@@ -31,30 +31,32 @@ import android.widget.EditText;
 /**
  * Activity to start authentication process
  * 
- * @author sbollen, tbrose
+ * @author tbrose
  *
  */
 public class LoginActivity extends BasicActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
-    
+
     private EditText osmName;
     private EditText osmPass;
+    private View progress;
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (isLoggegIn()) {
-            startActivity(nextActivity());
-            this.finish();
+            nextActivity();
         } else {
             setContentView(R.layout.activity_login);
             osmName = (EditText) findViewById(R.id.osm_name);
             osmPass = (EditText) findViewById(R.id.osm_pass);
+            progress = findViewById(R.id.progress);
         }
     }
 
@@ -62,18 +64,34 @@ public class LoginActivity extends BasicActivity {
      * @return If the user is currently logged in.
      */
     private boolean isLoggegIn() {
+        // TODO: ask the database
         return false;
     }
 
     /**
-     * The intent for the next activity to open if the user is logged in.
+     * Saves the user in the database.
      * 
-     * @return The intent for the next activity
+     * @param user
+     *            The user to save
      */
-    private Intent nextActivity() {
-        return new Intent(this, MapActivity.class);
+    public void saveUser(User user) {
+        // TODO: save in database
     }
 
+    /**
+     * Starts the next activity. Used when the user is logged in.
+     */
+    private void nextActivity() {
+        this.startActivity(new Intent(this, MapActivity.class));
+        this.finish();
+    }
+
+    /**
+     * Starts the login process
+     * 
+     * @param v
+     *            The view which was clicked
+     */
     public void onClickStart(View v) {
         final String username = osmName.getText().toString().trim();
         final String password = osmPass.getText().toString().trim();
@@ -85,6 +103,7 @@ public class LoginActivity extends BasicActivity {
             osmPass.requestFocus();
             osmPass.setError("Password is empty");
         } else if (!NetworkState.isNetworkAvailable(this)) {
+            progress.setVisibility(View.VISIBLE);
             new AlertDialog.Builder(this).setTitle("Network unavailable")
                     .setMessage("Please connect your device to the internet")
                     .show();
@@ -123,10 +142,12 @@ public class LoginActivity extends BasicActivity {
                         new OsmOAuthAuthorizationClient(
                                 DevelopOAuthParameters.THIS).authorise(
                                 username, password);
-                showDialog("Success", "Token: " + user.getOAuthToken()
-                        + "\nSecret: " + user.getOauthTokenSecret());
+                saveUser(user);
+                nextActivity();
             } catch (OsmOAuthAuthorizationException e) {
                 showDialog("Error", e.getLocalizedMessage());
+            } finally {
+                progress.setVisibility(View.GONE);
             }
         }
 
