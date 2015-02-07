@@ -65,14 +65,6 @@ public class User implements Parcelable {
         this.username = username;
     }
 
-    public String getLoginToken() {
-        return oauthToken;
-    }
-
-    public void setLoginToken(String loginToken) {
-        this.oauthToken = loginToken;
-    }
-
     public String getOAuthToken() {
         return oauthToken;
     }
