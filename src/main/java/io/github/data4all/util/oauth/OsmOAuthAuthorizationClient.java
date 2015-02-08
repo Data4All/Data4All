@@ -1,12 +1,24 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.util.oauth;
-
-// License: GPL. For details, see LICENSE file.
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
 import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
-import io.github.data4all.util.oauth.parameters.DevelopOAuthParameters;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
 import java.io.BufferedReader;
@@ -36,8 +48,6 @@ import oauth.signpost.exception.OAuthException;
 
 /**
  * An OAuth 1.0 authorization client.
- * 
- * @since 2746
  */
 public class OsmOAuthAuthorizationClient {
     private static final String LOG_TAG = OsmOAuthAuthorizationClient.class.getSimpleName();
@@ -394,10 +404,7 @@ public class OsmOAuthAuthorizationClient {
             //
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
-                throw new OsmOAuthAuthorizationException(
-                        String.format(
-                                "Failed to authenticate user ''%s'' with password ''***'' as OAuth user",
-                                userName));
+                throw new OsmOAuthAuthorizationException();
         } catch (OsmOAuthAuthorizationException e) {
             throw new OsmLoginFailedException(e.getCause());
         } catch (IOException e) {
@@ -483,9 +490,7 @@ public class OsmOAuthAuthorizationClient {
 
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_OK)
-                throw new OsmOAuthAuthorizationException(String.format(
-                        "Failed to authorize OAuth request  ''%s'', code: %s",
-                        user.getOAuthToken(), retCode));
+                throw new OsmLoginFailedException();
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
