@@ -19,6 +19,7 @@ import io.github.data4all.R;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.NetworkState;
 import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
+import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
 import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
 import io.github.data4all.util.oauth.parameters.DevelopOAuthParameters;
 import android.app.AlertDialog;
@@ -29,7 +30,7 @@ import android.view.View;
 import android.widget.EditText;
 
 /**
- * Activity to start authentication process
+ * Activity to start authentication process.
  * 
  * @author tbrose
  *
@@ -64,7 +65,7 @@ public class LoginActivity extends BasicActivity {
      * @return If the user is currently logged in.
      */
     private boolean isLoggedIn() {
-        // TODO: ask the database
+        // TODO: Ask the database if there is a user
         return false;
     }
 
@@ -74,20 +75,36 @@ public class LoginActivity extends BasicActivity {
      * @param user
      *            The user to save
      */
-    public void saveUser(User user) {
-        // TODO: save in database
+    private void saveUser(User user) {
+        // TODO: Save user in database
     }
 
     /**
      * Starts the next activity. Used when the user is logged in.
      */
     private void nextActivity() {
+        // TODO: Open right activity
         this.startActivity(new Intent(this, MapActivity.class));
         this.finish();
     }
 
     /**
-     * Starts the login process
+     * Show or hide the progress bar.
+     * 
+     * @param show
+     *            Whether or not the progress bar should be shown
+     */
+    private void showProgress(boolean show) {
+        if (show) {
+            progress.setVisibility(View.VISIBLE);
+        } else {
+            progress.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Starts the login process if there is a network connection and the
+     * username and password fields are not empty.
      * 
      * @param v
      *            The view which was clicked
@@ -107,34 +124,44 @@ public class LoginActivity extends BasicActivity {
                     .setMessage("Please connect your device to the internet")
                     .show();
         } else {
-            progress.setVisibility(View.VISIBLE);
-            new Thread(new Authentisator(password, username)).start();
+            showProgress(true);
+            new Thread(new Authentisator(username, password)).start();
         }
     }
 
     /**
+     * Starts an authorization-attempt via {@link OsmOAuthAuthorizationClient}.
+     * 
      * @author tbrose
      *
      */
     private final class Authentisator implements Runnable {
         /**
-         * 
-         */
-        private final String password;
-        /**
-         * 
+         * The username to login with.
          */
         private final String username;
 
         /**
-         * @param password
-         * @param username
+         * The password to login with.
          */
-        private Authentisator(String password, String username) {
-            this.password = password;
+        private final String password;
+
+        /**
+         * Constructs a new Authentisator with the given credentials.
+         * 
+         * @param username
+         *            The username to login with.
+         * @param password
+         *            The password to login with.
+         */
+        private Authentisator(String username, String password) {
             this.username = username;
+            this.password = password;
         }
 
+        /**
+         * Make an attempt to get a token for the given credentials.
+         */
         @Override
         public void run() {
             try {
@@ -145,17 +172,30 @@ public class LoginActivity extends BasicActivity {
                 saveUser(user);
                 nextActivity();
             } catch (OsmOAuthAuthorizationException e) {
-                showDialog("Error", e.getLocalizedMessage());
+                if (e instanceof OsmLoginFailedException) {
+                    showDialog("Access denied",
+                            "Username or Password may be incorrect");
+                } else {
+                    showDialog("Error", e.getLocalizedMessage());
+                }
             } finally {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progress.setVisibility(View.GONE);
+                        showProgress(false);
                     }
                 });
             }
         }
 
+        /**
+         * Shows a {@link AlertDialog} via the UiThread.
+         * 
+         * @param title
+         *            The title of the dialog
+         * @param content
+         *            The message of the dialog
+         */
         public void showDialog(final String title, final String content) {
             runOnUiThread(new Runnable() {
                 @Override
