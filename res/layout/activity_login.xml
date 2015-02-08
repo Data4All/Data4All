@@ -44,6 +44,7 @@
         android:singleLine="true" />
 
     <Button
+        android:id="@+id/osm_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/osm_pass"

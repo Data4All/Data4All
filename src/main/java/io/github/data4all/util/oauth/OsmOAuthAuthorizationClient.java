@@ -22,6 +22,7 @@ import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,29 +43,25 @@ import java.util.regex.Pattern;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-import oauth.signpost.basic.DefaultOAuthConsumer;
-import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthException;
 
 /**
  * An OAuth 1.0 authorization client.
+ * 
+ * @author tbrose (inspired by JOSM)
  */
 public class OsmOAuthAuthorizationClient {
-    private static final String LOG_TAG = OsmOAuthAuthorizationClient.class.getSimpleName();
+    private static final String OSM_SESSION = "_osm_session=";
+    private static final String COOKIE = "Cookie";
+    private static final String LOG_TAG = "OsmOAuthAuthorizationClient";
 
     private final OAuthConsumer consumer;
     private final OAuthProvider provider;
     private HttpURLConnection connection;
     private final OAuthParameters parameters;
 
-    private static class SessionId {
-        String id;
-        String token;
-        String userName;
-    }
-
     /**
-     * Creates a new authorisation client with the parameters
+     * Creates a new authorization client with the parameters
      * <code>parameters</code>.
      *
      * @param parameters
@@ -72,37 +69,31 @@ public class OsmOAuthAuthorizationClient {
      */
     public OsmOAuthAuthorizationClient(OAuthParameters parameters) {
         this.parameters = parameters;
-        consumer = new DefaultOAuthConsumer(parameters.getConsumerKey(),
-                        parameters.getConsumerSecret());
-        provider = new DefaultOAuthProvider(parameters.getRequestTokenUrl(),
-                        parameters.getAccessTokenUrl(),
-                        parameters.getAuthoriseUrl());
+        consumer = parameters.createConsumer();
+        provider = parameters.createProvider();
     }
 
     /**
-     * Automatically authorises a request token for a set of privileges.
+     * Automatically authorizes a osmUser.
      *
-     * @param requestToken
-     *            the request token. Must not be null.
      * @param osmUserName
      *            the OSM user name. Must not be null.
      * @param osmPassword
      *            the OSM password. Must not be null.
-     * @param privileges
-     *            the set of privileges. Must not be null.
+     * @return A valid user with name and tokens.
      * @throws OsmOAuthAuthorizationException
-     *             if the authorisation fails
+     *             if the authorization fails
      */
-    public User authorise(String osmUserName,
-            String osmPassword) throws OsmOAuthAuthorizationException {
-        SessionId sessionId = fetchOsmWebsiteSessionId();
-        sessionId.userName = osmUserName;
-        authenticateOsmSession(sessionId, osmUserName, osmPassword);
-        sendAuthorisationRequest(sessionId, getRequestToken());
-        logoutOsmSession(sessionId);
+    public User authorise(String osmUserName, String osmPassword)
+            throws OsmOAuthAuthorizationException {
+        final SessionId sessionId = this.fetchOsmWebsiteSessionId(osmUserName);
+        this.authenticateOsmSession(sessionId, osmUserName, osmPassword);
+        this.sendAuthorisationRequest(sessionId, this.getRequestToken());
+        this.logoutOsmSession();
         try {
             provider.retrieveAccessToken(consumer, null);
-            return new User(sessionId.userName, consumer.getToken(), consumer.getTokenSecret());
+            return new User(sessionId.getUserName(), consumer.getToken(),
+                    consumer.getTokenSecret());
         } catch (OAuthException e) {
             throw new OsmOAuthAuthorizationException(e);
         }
@@ -137,7 +128,7 @@ public class OsmOAuthAuthorizationClient {
      * @return the authorise URL for this request
      */
     private String getAuthoriseUrl(User user) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         // OSM is an OAuth 1.0 provider. We just add
         // the oauth request token to
@@ -154,78 +145,83 @@ public class OsmOAuthAuthorizationClient {
         BufferedReader r = null;
         try {
             is = connection.getInputStream();
-            r = new BufferedReader(new InputStreamReader(is,"UTF_8"));
+            r = new BufferedReader(new InputStreamReader(is, "UTF_8"));
             String c;
-            Pattern p =
-                    Pattern.compile(".*authenticity_token.*value=\"([^\"]+)\".*");
+            final Pattern p =
+                    Pattern.compile(".*authenticity_token.*"
+                            + "value=\"([^\"]+)\".*");
             while ((c = r.readLine()) != null) {
-                Matcher m = p.matcher(c);
+                final Matcher m = p.matcher(c);
                 if (m.find()) {
                     return m.group(1);
                 }
             }
         } catch (IOException e) {
+            Log.e(LOG_TAG, "extractToken failed", e);
             return null;
         } finally {
-            if (r != null) {
-                try {
-                    r.close();
-                } catch (Exception ignore) {
-                }
-            }
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception ignore) {
+            close(r);
+            close(is);
+        }
+        return null;
+    }
+
+    private static SessionId extractOsmSession(HttpURLConnection connection,
+            String username) {
+        final List<String> setCookies =
+                connection.getHeaderFields().get("Set-Cookie");
+        if (setCookies == null) {
+            // no cookies set
+            return null;
+        }
+        for (String setCookie : setCookies) {
+            final String[] kvPairs = setCookie.split(";");
+            for (String kvPair : kvPairs) {
+                final String[] kv = kvPair.trim().split("=");
+                if (kv != null && kv.length == 1 + 1
+                        && "_osm_session".equals(kv[0])) {
+                    // osm session cookie found
+                    return buildSessionId(connection, kv[1], username);
                 }
             }
         }
         return null;
     }
 
-    private static SessionId extractOsmSession(HttpURLConnection connection) {
-        List<String> setCookies =
-                connection.getHeaderFields().get("Set-Cookie");
-        if (setCookies == null)
-            // no cookies set
+    /**
+     * Builds a {@link SessionId} for this connection with the given id and
+     * username.
+     * 
+     * @param connection
+     *            The connection to read the token from
+     * @param id
+     *            The id to use
+     * @param username
+     *            The username to use
+     * @return The SessionId or {@code null} if the token cannot be extracted.
+     */
+    private static SessionId buildSessionId(HttpURLConnection connection,
+            String id, String username) {
+        final String token = extractToken(connection);
+        if (token == null) {
             return null;
-
-        for (String setCookie : setCookies) {
-            String[] kvPairs = setCookie.split(";");
-            if (kvPairs == null || kvPairs.length == 0) {
-                continue;
-            }
-            for (String kvPair : kvPairs) {
-                kvPair = kvPair.trim();
-                String[] kv = kvPair.split("=");
-                if (kv == null || kv.length != 2) {
-                    continue;
-                }
-                if ("_osm_session".equals(kv[0])) {
-                    // osm session cookie found
-                    String token = extractToken(connection);
-                    if (token == null)
-                        return null;
-                    SessionId si = new SessionId();
-                    si.id = kv[1];
-                    si.token = token;
-                    return si;
-                }
-            }
+        } else {
+            return SessionId.create(id, token, username);
         }
-        return null;
     }
 
     private static String buildPostRequest(Map<String, String> parameters)
             throws OsmOAuthAuthorizationException {
         try {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
 
-            for (Iterator<Entry<String, String>> it =
+            for (final Iterator<Entry<String, String>> it =
                     parameters.entrySet().iterator(); it.hasNext();) {
-                Entry<String, String> entry = it.next();
+                final Entry<String, String> entry = it.next();
                 String value = entry.getValue();
-                value = (value == null) ? "" : value;
+                if (value == null) {
+                    value = "";
+                }
                 sb.append(entry.getKey()).append("=")
                         .append(URLEncoder.encode(value, "UTF-8"));
                 if (it.hasNext()) {
@@ -239,27 +235,7 @@ public class OsmOAuthAuthorizationClient {
     }
 
     /**
-     * Derives the OSM login URL from the OAuth Authorization Website URL
-     *
-     * @return the OSM login URL
-     * @throws OsmOAuthAuthorizationException
-     *             if something went wrong, in particular if the URLs are
-     *             malformed
-     */
-    private String buildOsmLoginUrl() throws OsmOAuthAuthorizationException {
-        try {
-            URL autUrl = new URL(parameters.getAuthoriseUrl());
-            URL url =
-                    new URL(autUrl.getProtocol(), autUrl.getHost(),
-                            autUrl.getPort(), "/login");
-            return url.toString();
-        } catch (MalformedURLException e) {
-            throw new OsmOAuthAuthorizationException(e);
-        }
-    }
-
-    /**
-     * Derives the OSM logout URL from the OAuth Authorization Website URL
+     * Derives the OSM logout URL from the OAuth Authorization Website URL.
      *
      * @return the OSM logout URL
      * @throws OsmOAuthAuthorizationException
@@ -268,8 +244,8 @@ public class OsmOAuthAuthorizationClient {
      */
     private String buildOsmLogoutUrl() throws OsmOAuthAuthorizationException {
         try {
-            URL autUrl = new URL(parameters.getAuthoriseUrl());
-            URL url =
+            final URL autUrl = new URL(parameters.getAuthoriseUrl());
+            final URL url =
                     new URL("http", autUrl.getHost(), autUrl.getPort(),
                             "/logout");
             return url.toString();
@@ -286,12 +262,12 @@ public class OsmOAuthAuthorizationClient {
      * @throws OsmOAuthAuthorizationException
      *             if something went wrong
      */
-    private SessionId fetchOsmWebsiteSessionId()
+    private SessionId fetchOsmWebsiteSessionId(String username)
             throws OsmOAuthAuthorizationException {
         try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(buildOsmLoginUrl()).append("?cookie_test=true");
-            URL url = new URL(sb.toString());
+            final StringBuilder sb = new StringBuilder();
+            sb.append(parameters.getUserLoginUrl()).append("?cookie_test=true");
+            final URL url = new URL(sb.toString());
             synchronized (this) {
                 connection = openHttpConnection(url);
             }
@@ -299,12 +275,12 @@ public class OsmOAuthAuthorizationClient {
             connection.setDoInput(true);
             connection.setDoOutput(false);
             connection.connect();
-            SessionId sessionId = extractOsmSession(connection);
-            if (sessionId == null)
-                throw new OsmOAuthAuthorizationException(
-                        String.format(
-                                "OSM website did not return a session cookie in response to ''%s'',",
-                                url.toString()));
+            final SessionId sessionId = extractOsmSession(connection, username);
+            if (sessionId == null) {
+                throw new OsmOAuthAuthorizationException(String.format(
+                        "OSM website did not return a session cookie"
+                                + " in response to ''%s'',", url.toString()));
+            }
             return sessionId;
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
@@ -325,22 +301,23 @@ public class OsmOAuthAuthorizationClient {
     private void fetchOAuthToken(SessionId sessionId, User requestToken)
             throws OsmOAuthAuthorizationException {
         try {
-            URL url = new URL(getAuthoriseUrl(requestToken));
+            final URL url = new URL(this.getAuthoriseUrl(requestToken));
             synchronized (this) {
                 connection = openHttpConnection(url);
             }
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
             connection.setDoOutput(false);
-            connection.setRequestProperty("Cookie", "_osm_session="
-                    + sessionId.id + "; _osm_username=" + sessionId.userName);
+            connection.setRequestProperty(COOKIE,
+                    OSM_SESSION + sessionId.getId() + "; _osm_username="
+                            + sessionId.getUserName());
             connection.connect();
-            sessionId.token = extractToken(connection);
-            if (sessionId.token == null)
-                throw new OsmOAuthAuthorizationException(
-                        String.format(
-                                "OSM website did not return a session cookie in response to ''%s'',",
-                                url.toString()));
+            sessionId.setToken(extractToken(connection));
+            if (sessionId.getToken() == null) {
+                throw new OsmOAuthAuthorizationException(String.format(
+                        "OSM website did not return a session cookie "
+                                + "in response to ''%s'',", url.toString()));
+            }
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
@@ -353,7 +330,7 @@ public class OsmOAuthAuthorizationClient {
     private void authenticateOsmSession(SessionId sessionId, String userName,
             String password) throws OsmLoginFailedException {
         try {
-            URL url = new URL(buildOsmLoginUrl());
+            final URL url = new URL(parameters.getUserLoginUrl());
             synchronized (this) {
                 connection = openHttpConnection(url);
             }
@@ -362,38 +339,28 @@ public class OsmOAuthAuthorizationClient {
             connection.setDoOutput(true);
             connection.setUseCaches(false);
 
-            Map<String, String> parameters = new HashMap<String, String>();
-            parameters.put("username", userName);
-            parameters.put("password", password);
-            parameters.put("referer", "/");
-            parameters.put("commit", "Login");
-            parameters.put("authenticity_token", sessionId.token);
-
-            String request = buildPostRequest(parameters);
+            final String request =
+                    buildPostRequest(authenticateOsmSessionParams(userName,
+                            password, sessionId.getToken()));
 
             connection.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
             connection.setRequestProperty("Content-Length",
                     Integer.toString(request.length()));
-            connection.setRequestProperty("Cookie", "_osm_session="
-                    + sessionId.id);
+            connection.setRequestProperty(COOKIE,
+                    OSM_SESSION + sessionId.getId());
             // make sure we can catch 302 Moved Temporarily below
             connection.setInstanceFollowRedirects(false);
 
             connection.connect();
-            
+
             DataOutputStream dout = null;
             try {
                 dout = new DataOutputStream(connection.getOutputStream());
                 dout.writeBytes(request);
                 dout.flush();
             } finally {
-                if (dout != null) {
-                    try {
-                        dout.close();
-                    } catch (Exception ignore) {
-                    }
-                }
+                close(dout);
             }
 
             // after a successful login the OSM website sends a redirect to a
@@ -402,24 +369,35 @@ public class OsmOAuthAuthorizationClient {
             // if the login form with
             // an error page is sent to back to the user.
             //
-            int retCode = connection.getResponseCode();
-            if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
+            final int retCode = connection.getResponseCode();
+            if (retCode != HttpURLConnection.HTTP_MOVED_TEMP) {
                 throw new OsmOAuthAuthorizationException();
+            }
         } catch (OsmOAuthAuthorizationException e) {
-            throw new OsmLoginFailedException(e.getCause());
+            throw new OsmLoginFailedException(e);
         } catch (IOException e) {
             throw new OsmLoginFailedException(e);
-        } finally { 
+        } finally {
             synchronized (this) {
                 connection = null;
             }
         }
     }
 
-    private void logoutOsmSession(SessionId sessionId)
-            throws OsmOAuthAuthorizationException {
+    private static Map<String, String> authenticateOsmSessionParams(
+            String userName, String password, String token) {
+        final Map<String, String> postParams = new HashMap<String, String>();
+        postParams.put("username", userName);
+        postParams.put("password", password);
+        postParams.put("referer", "/");
+        postParams.put("commit", "Login");
+        postParams.put("authenticity_token", token);
+        return postParams;
+    }
+
+    private void logoutOsmSession() throws OsmOAuthAuthorizationException {
         try {
-            URL url = new URL(buildOsmLogoutUrl());
+            final URL url = new URL(this.buildOsmLogoutUrl());
             synchronized (this) {
                 connection = openHttpConnection(url);
             }
@@ -436,27 +414,14 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
-    private void sendAuthorisationRequest(SessionId sessionId,
-            User user) throws OsmOAuthAuthorizationException {
-        Map<String, String> parameters = new HashMap<String, String>();
-        fetchOAuthToken(sessionId, user);
-        parameters.put("oauth_token", user.getOAuthToken());
-        parameters.put("oauth_callback", "");
-        parameters.put("authenticity_token", sessionId.token);
-
-        // Write all privileges
-        parameters.put("allow_write_api", "yes");
-        parameters.put("allow_write_gpx", "yes");
-        parameters.put("allow_read_gpx", "yes");
-        parameters.put("allow_write_prefs", "yes");
-        parameters.put("allow_read_prefs", "yes");
-        parameters.put("allow_write_notes", "yes");
-
-        parameters.put("commit", "Save changes");
-
-        String request = buildPostRequest(parameters);
+    private void sendAuthorisationRequest(SessionId sessionId, User user)
+            throws OsmOAuthAuthorizationException {
+        this.fetchOAuthToken(sessionId, user);
+        final String request =
+                buildPostRequest(sendAuthorisationRequestParams(
+                        sessionId.getToken(), user.getOAuthToken()));
         try {
-            URL url = new URL(this.parameters.getAuthoriseUrl());
+            final URL url = new URL(this.parameters.getAuthoriseUrl());
             synchronized (this) {
                 connection = openHttpConnection(url);
             }
@@ -468,29 +433,26 @@ public class OsmOAuthAuthorizationClient {
                     "application/x-www-form-urlencoded");
             connection.setRequestProperty("Content-Length",
                     Integer.toString(request.length()));
-            connection.setRequestProperty("Cookie", "_osm_session="
-                    + sessionId.id + "; _osm_username=" + sessionId.userName);
+            connection.setRequestProperty(COOKIE,
+                    OSM_SESSION + sessionId.getId() + "; _osm_username="
+                            + sessionId.getUserName());
             connection.setInstanceFollowRedirects(false);
 
             connection.connect();
-            
+
             DataOutputStream dout = null;
             try {
                 dout = new DataOutputStream(connection.getOutputStream());
                 dout.writeBytes(request);
                 dout.flush();
             } finally {
-                if (dout != null) {
-                    try {
-                        dout.close();
-                    } catch (Exception ignore) {
-                    }
-                }
+                close(dout);
             }
 
-            int retCode = connection.getResponseCode();
-            if (retCode != HttpURLConnection.HTTP_OK)
+            final int retCode = connection.getResponseCode();
+            if (retCode != HttpURLConnection.HTTP_OK) {
                 throw new OsmLoginFailedException();
+            }
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
@@ -500,8 +462,38 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
+    private static Map<String, String> sendAuthorisationRequestParams(
+            String sessionToken, String userToken) {
+        final Map<String, String> postParams = new HashMap<String, String>();
+        postParams.put("oauth_token", userToken);
+        postParams.put("oauth_callback", "");
+        postParams.put("authenticity_token", sessionToken);
+
+        // Write all privileges
+        postParams.put("allow_write_api", "yes");
+        postParams.put("allow_write_gpx", "yes");
+        postParams.put("allow_read_gpx", "yes");
+        postParams.put("allow_write_prefs", "yes");
+        postParams.put("allow_read_prefs", "yes");
+        postParams.put("allow_write_notes", "yes");
+
+        postParams.put("commit", "Save changes");
+        return postParams;
+    }
+
+    private static void close(Closeable c) {
+        if (c != null) {
+            try {
+                c.close();
+            } catch (IOException ignore) {
+                Log.e(LOG_TAG, "Exception is thown while closing stream",
+                        ignore);
+            }
+        }
+    }
+
     /**
-     * Opens a HTTP connection to the given URL
+     * Opens a HTTP connection to the given URL.
      * 
      * @param httpURL
      *            The HTTP url to open (must use http:// or https://)
@@ -517,7 +509,7 @@ public class OsmOAuthAuthorizationClient {
             throw new IllegalArgumentException("Invalid HTTP url");
         }
         Log.d(LOG_TAG, "Open connection to: " + httpURL.toString());
-        HttpURLConnection connection =
+        final HttpURLConnection connection =
                 (HttpURLConnection) httpURL.openConnection();
         connection.setUseCaches(false);
         return connection;

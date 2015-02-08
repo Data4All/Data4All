@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.NetworkState;
 import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
@@ -42,6 +43,12 @@ public class LoginActivity extends BasicActivity {
     private EditText osmName;
     private EditText osmPass;
     private View progress;
+    
+    /**
+     * Sole Constructor.
+     */
+    public LoginActivity() {
+    }
 
     /*
      * (non-Javadoc)
@@ -51,13 +58,13 @@ public class LoginActivity extends BasicActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (isLoggedIn()) {
-            nextActivity();
+        if (this.isLoggedIn()) {
+            this.nextActivity();
         } else {
-            setContentView(R.layout.activity_login);
-            osmName = (EditText) findViewById(R.id.osm_name);
-            osmPass = (EditText) findViewById(R.id.osm_pass);
-            progress = findViewById(R.id.progress);
+            this.setContentView(R.layout.activity_login);
+            this.osmName = (EditText) findViewById(R.id.osm_name);
+            this.osmPass = (EditText) findViewById(R.id.osm_pass);
+            this.progress = findViewById(R.id.progress);
         }
     }
 
@@ -110,22 +117,26 @@ public class LoginActivity extends BasicActivity {
      *            The view which was clicked
      */
     public void onClickStart(View v) {
-        final String username = osmName.getText().toString().trim();
-        final String password = osmPass.getText().toString().trim();
+        if (v.getId() == R.id.osm_login) {
+            final String username = osmName.getText().toString().trim();
+            final String password = osmPass.getText().toString().trim();
 
-        if (TextUtils.isEmpty(username)) {
-            osmName.requestFocus();
-            osmName.setError("Username is empty");
-        } else if (TextUtils.isEmpty(password)) {
-            osmPass.requestFocus();
-            osmPass.setError("Password is empty");
-        } else if (!NetworkState.isNetworkAvailable(this)) {
-            new AlertDialog.Builder(this).setTitle("Network unavailable")
-                    .setMessage("Please connect your device to the internet")
-                    .show();
-        } else {
-            showProgress(true);
-            new Thread(new Authentisator(username, password)).start();
+            if (TextUtils.isEmpty(username)) {
+                osmName.requestFocus();
+                osmName.setError("Username is empty");
+            } else if (TextUtils.isEmpty(password)) {
+                osmPass.requestFocus();
+                osmPass.setError("Password is empty");
+            } else if (!NetworkState.isNetworkAvailable(this)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Network unavailable")
+                        .setMessage(
+                                "Please connect your device to the internet")
+                        .show();
+            } else {
+                this.showProgress(true);
+                new Thread(new Authentisator(username, password)).start();
+            }
         }
     }
 
@@ -165,24 +176,24 @@ public class LoginActivity extends BasicActivity {
         @Override
         public void run() {
             try {
-                User user =
+                final User user =
                         new OsmOAuthAuthorizationClient(
-                                DevelopOAuthParameters.THIS).authorise(
+                                DevelopOAuthParameters.INSTANCE).authorise(
                                 username, password);
-                saveUser(user);
-                nextActivity();
+                LoginActivity.this.saveUser(user);
+                LoginActivity.this.nextActivity();
+            } catch (OsmLoginFailedException e) {
+                Log.e(TAG, "Login to osm failed:", e);
+                this.showDialog("Access denied",
+                        "Username or Password may be incorrect");
             } catch (OsmOAuthAuthorizationException e) {
-                if (e instanceof OsmLoginFailedException) {
-                    showDialog("Access denied",
-                            "Username or Password may be incorrect");
-                } else {
-                    showDialog("Error", e.getLocalizedMessage());
-                }
+                Log.e(TAG, "Osm OAuth failed:", e);
+                this.showDialog("Error", e.getLocalizedMessage());
             } finally {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        showProgress(false);
+                        LoginActivity.this.showProgress(false);
                     }
                 });
             }
