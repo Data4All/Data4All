@@ -95,7 +95,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE + " TEXT"
                 + ")";
         String CREATE_POLYELEMENT_TABLE = "CREATE TABLE " + TABLE_POLYELEMENT
-                + " (" + KEY_OSMID + " TEXT PRIMARY KEY," + KEY_TYPE + " TEXT"
+                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
                 + KEY_NODEIDS + " TEXT" + ")";
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
@@ -410,7 +410,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
 
         JSONObject json = new JSONObject();
-        json.put("nodeIDarray", nodeIDs);
+        json.put("nodeIDarray", new JSONArray(nodeIDs));
         String arrayList = json.toString();
 
         values.put(KEY_NODEIDS, arrayList);
@@ -534,7 +534,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
 
         JSONObject json = new JSONObject();
-        json.put("nodeIDarray", nodeIDs);
+        json.put("nodeIDarray", new JSONArray(nodeIDs));
         String arrayList = json.toString();
 
         values.put(KEY_NODEIDS, arrayList);
@@ -619,7 +619,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         createTagMap(tagMap);
 
         JSONObject json = new JSONObject();
-        json.put("tagIDarray", tagIDs);
+        json.put("tagIDarray", new JSONArray(tagIDs));
         String arrayList = json.toString();
 
         values.put(KEY_TAGIDS, arrayList);
