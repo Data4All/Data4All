@@ -3,7 +3,9 @@ package io.github.data4all.model;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.junit.After;
@@ -18,6 +20,8 @@ import org.robolectric.annotation.Config;
 import io.github.data4all.model.DataBaseHandler;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.User;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 
@@ -151,6 +155,34 @@ public class DataBaseHandlerTest {
 
         assertEquals(0, dbHandler.getPolyElementCount());
         assertEquals(0, dbHandler.getNodeCount());
+
+    }
+
+    @Test
+    public void testDataElementCRUD() throws JSONException {
+        PolyElement polyElement1 = new PolyElement(1, PolyElementType.BUILDING);
+        Node node1 = new Node(2, 30.123456, 40.1234567);
+
+        Map<Tag, String> tagMap = new Hashtable<Tag, String>();
+        Tag tag1 = Tags.getTagWithId(1);
+        tagMap.put(tag1, "Hollywood Blvd.");
+        Tag tag2 = Tags.getTagWithId(2);
+        tagMap.put(tag2, "113");
+
+        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
+        tagIDs.add(tag1.getId());
+        tagIDs.add(tag2.getId());
+
+        polyElement1.addTags(tagMap);
+
+        dbHandler.createDataElement(polyElement1);
+        dbHandler.createDataElement(node1);
+
+        assertEquals(2, dbHandler.getDataElementCount());
+        assertEquals(1, dbHandler.getPolyElementCount());
+        assertEquals(1, dbHandler.getNodeCount());
+
+        // dbHandler.getDataElement(1);
 
     }
 

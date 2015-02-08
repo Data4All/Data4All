@@ -95,8 +95,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE + " TEXT"
                 + ")";
         String CREATE_POLYELEMENT_TABLE = "CREATE TABLE " + TABLE_POLYELEMENT
-                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
-                + KEY_NODEIDS + " TEXT" + ")";
+                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_TYPE
+                + " TEXT," + KEY_NODEIDS + " TEXT" + ")";
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                 + KEY_TOKENSECRET + " TEXT" + ")";
@@ -393,8 +393,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @throws JSONException
      *             if JSON object can't be initialized
      */
-    public void createPolyElement(PolyElement polyElement) throws JSONException { // TODO:
-                                                                                  // check
+    public void createPolyElement(PolyElement polyElement) throws JSONException {
         List<Long> nodeIDs = new ArrayList<Long>();
 
         SQLiteDatabase db = getWritableDatabase();
@@ -430,8 +429,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @throws JSONException
      *             if JSON object can't be initialized
      */
-    public PolyElement getPolyElement(long id) throws JSONException { // TODO:
-                                                                      // check
+    public PolyElement getPolyElement(long id) throws JSONException {
 
         SQLiteDatabase db = getReadableDatabase();
 
@@ -470,7 +468,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param polyElement
      *            the {@link PolyElement} object whose data should be deleted
      */
-    public void deletePolyElement(PolyElement polyElement) { // TODO: check
+    public void deletePolyElement(PolyElement polyElement) {
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -512,8 +510,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @throws JSONException
      *             if JSON object can't be initialized
      */
-    public int updatePolyElement(PolyElement polyElement) throws JSONException { // TODO:
-                                                                                 // check
+    public int updatePolyElement(PolyElement polyElement) throws JSONException {
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -625,6 +622,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         values.put(KEY_TAGIDS, arrayList);
 
         db.insert(TABLE_DATAELEMENT, null, values);
+
+        if (dataElement instanceof PolyElement) {
+            createPolyElement((PolyElement) dataElement);
+        } else {
+            createNode((Node) dataElement);
+        }
 
         // db.close();
     }
