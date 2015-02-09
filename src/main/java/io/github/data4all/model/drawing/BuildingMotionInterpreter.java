@@ -107,13 +107,15 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
     }
 
     /**
-     * @author sbollen (edited by tbrose)
+     * @author sbollen
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List,
+     *      int)
      */
     @Override
     public AbstractDataElement create(List<Point> polygon, int rotation) {
         final PolyElement element =
-                new PolyElement(-1, PolyElementType.BUILDING);
-
+ new PolyElement(-1,
+                PolyElementType.BUILDING);
 
         final List<Node> nodeList = pointTrans.transform(polygon, rotation);
         nodeList.add(nodeList.get(0));

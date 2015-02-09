@@ -123,7 +123,9 @@ public class AreaMotionInterpreter implements MotionInterpreter {
     }
 
     /**
-     * @author sbollen (edited by tbrose)
+     * @author sbollen
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List,
+     *      int)
      */
     @Override
     public AbstractDataElement create(List<Point> polygon, int rotation) {
