@@ -32,12 +32,12 @@ public class CameraActivity extends Activity {
 		private static final String TAG = "CameraActivity";
 		
 		private Camera mCamera;
-	private CameraPreview mPreview;
+	private CameraPreview preview;
 	private int deviceHeight;
 	private ImageButton btnCapture;
 
 	
-
+	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "onCreate is called");
@@ -56,10 +56,14 @@ public class CameraActivity extends Activity {
 			finish();
 		}
 
+		
+		preview = new CameraPreview(this);
+		((FrameLayout) findViewById(R.id.preview)).addView(preview);
+		 
 		btnCapture = (ImageButton) findViewById(R.id.btnCapture);
 		btnCapture.setOnClickListener(btnCaptureOnClickListener);
-				
-		createCamera();
+
+		Log.d(TAG,"ready with onCreate");
 	}
 
 	
@@ -80,7 +84,8 @@ public class CameraActivity extends Activity {
 
 		if (mCamera == null) {
 			Log.d(TAG, "camera is null, so we have to create a new one");
-			createCamera();
+			mCamera = getCameraInstance();
+			preview.setCamera(mCamera);
 		}
 
 	}
@@ -92,44 +97,16 @@ public class CameraActivity extends Activity {
 
 		// release the camera immediately on pause event
 		Log.d(TAG, "release camera");
-		releaseCamera();
+
+        if (mCamera != null) {
+            preview.setCamera(null);
+            mCamera.release();
+            mCamera = null;
+        }
 
 	}
 
-	private void createCamera() {
-		Log.i(TAG, "createCamera is called");
-		
-		// Create an instance of Camera
-		Log.d(TAG, "try to get instance of camera or create new one");
-		mCamera = getCameraInstance();
-
-		// Create our Preview view and set it as the content of our activity.
-		mPreview =new CameraPreview(this,
-				(SurfaceView) findViewById(R.id.surfaceView),mCamera);
-
-		
-		mPreview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
-
-		
-		
-		// Calculating the width of the preview so it is proportional.
-		float widthFloat = (float) (deviceHeight) * 4 / 3;
-		int width = Math.round(widthFloat);
-
-		// Resizing the LinearLayout so we can make a proportional preview. This
-		// approach is not 100% perfect because on devices with a really small
-		// screen the the image will still be distorted - there is place for
-		// improvment.
-		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-				width, deviceHeight);
-		mPreview.setLayoutParams(layoutParams);	
-		
-		((FrameLayout) findViewById(R.id.layout)).addView(mPreview);
-		
-		Log.d(TAG, "finish create Camera");
-
-	}
+	
 
 	/**
 	 * This method looks whether the device has a camera and then returns a
@@ -137,6 +114,7 @@ public class CameraActivity extends Activity {
 	 * 
 	 * @return boolean true if device has a camera, false otherwise
 	 */
+	
 	private boolean isDeviceSupportCamera() {
 		Log.d(TAG,"look if device has camera");
 		if (getApplicationContext().getPackageManager().hasSystemFeature(

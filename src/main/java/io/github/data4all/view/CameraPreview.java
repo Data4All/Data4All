@@ -34,55 +34,25 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 	private static Camera mCamera;
 	private static Context context;
 	private Size mPreviewSize;
-	private Size mPhotoSize;
 	private boolean previewIsRunning;
 
-	public CameraPreview(Context context, SurfaceView surfaceView, Camera camera) {
+	public CameraPreview(Context context) {
 		super(context);
 
-		CameraPreview.mSurfaceView = surfaceView;
-		CameraPreview.context = context;
-		CameraPreview.mCamera = camera;
-		this.mHolder = mSurfaceView.getHolder();
-		this.mHolder.addCallback(this);
-		this.mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		this.mHolder.setKeepScreenOn(true);
+		mSurfaceView = new SurfaceView(context);
+		addView(mSurfaceView);
+
+		mHolder = mSurfaceView.getHolder();
+		mHolder.addCallback(this);
+
 	}
 
 	public void setCamera(Camera camera) {
-		Log.d(TAG, "setCamera is called");
-
+		mCamera = camera;
 		if (mCamera != null) {
-
-			
-
-			try {
-				mSupportedPreviewSizes = mCamera.getParameters()
-						.getSupportedPreviewSizes();
-
-				requestLayout();
-
-				// get Camera parameters
-				Camera.Parameters params = mCamera.getParameters();
-
-				List<String> focusModes = params.getSupportedFocusModes();
-				if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-					// set the focus mode
-					params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-					// set Camera parameters
-
-				}
-
-				mCamera.setParameters(params);
-
-				mCamera.setPreviewDisplay(mHolder);
-
-			} catch (IOException e) {
-				Log.e(TAG, "Error on setCamera", e);
-			}
-			// Important: Call startPreview() to start updating the preview
-			// surface. Preview must be started before you can take a picture.
-			mCamera.startPreview();
+			mSupportedPreviewSizes = mCamera.getParameters()
+					.getSupportedPreviewSizes();
+			requestLayout();
 		}
 	}
 
@@ -166,87 +136,28 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
-
 		try {
 			if (mCamera != null) {
-
 				mCamera.setPreviewDisplay(holder);
-
-				// retrieve the parameters of cameras
-				Camera.Parameters params = mCamera.getParameters();
-
-				List<Size> sizes = params.getSupportedPictureSizes();
-
-				// See which sizes the camera supports and choose one of those
-				if (!sizes.isEmpty()) {
-					mPhotoSize = sizes.get(0);
-					Log.i(TAG, "Photo size: (" + this.mPhotoSize.width + ", "
-							+ this.mPhotoSize.height + ")");
-					params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
-				} else {
-					Log.d(TAG, "cant find perfect Photo Size");
-				}
-
-				// set the picture type for taking photo
-				params.setPictureFormat(ImageFormat.JPEG);
-
-				mCamera.setParameters(params);
 			}
-		} catch (IOException ex) {
-			Log.e(getClass().getSimpleName(),
-					"IOException caused by surfaceCreated", ex);
-		}
-	}
-
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
-		Log.d(TAG, "surfaceChange is called");
-
-		// If your preview can change or rotate, take care of those events here.
-		// Make sure to stop the preview before resizing or reformatting it.
-
-		Log.d(TAG, "stop preview");
-		myStopPreview();
-
-		// start preview with new settings
-		try {
-			if (mCamera != null) {
-				Log.d(TAG, "camera is set up, so go on");
-				Log.d(TAG, "start to set display Orientation");
-				setCameraDisplayOrientation();
-				Log.d(TAG, "request Layout");
-				requestLayout();
-				Camera.Parameters params = mCamera.getParameters();
-				List<Size> sizes = params.getSupportedPictureSizes();
-
-				// See which sizes the camera supports and choose one of those
-				if (!sizes.isEmpty()) {
-					mPhotoSize = sizes.get(0);
-					Log.i(TAG, "Photo size: (" + this.mPhotoSize.width + ", "
-							+ this.mPhotoSize.height + ")");
-					params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
-				} else {
-					Log.d(TAG, "cant find perfect Photo Size");
-				}
-				// set the picture type for taking photo
-				params.setPictureFormat(ImageFormat.JPEG);
-				mCamera.setParameters(params);
-				Log.d(TAG, "SETUP DONE, start preview");
-				mCamera.startPreview();
-			}
-
-			Log.d(TAG, "something seems to fail, camera is null");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.d(TAG,"Error starting camera preview: " + e.getMessage());
-
+		} catch (IOException exception) {
+			Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
 		}
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Log.d(TAG, "surface gets destroyed");
-		myStopPreview();
+		if (mCamera != null) {
+			mCamera.stopPreview();
+		}
+	}
+
+	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+		Camera.Parameters parameters = mCamera.getParameters();
+		parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
+		requestLayout();
+
+		mCamera.setParameters(parameters);
+		mCamera.startPreview();
 	}
 
 	// safe call to start the preview
