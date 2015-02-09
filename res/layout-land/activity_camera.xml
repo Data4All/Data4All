@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:weightSum="100" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <io.github.data4all.view.CaptureCameraSurfaceView
+    <io.github.data4all.view.CameraPreview
         android:id="@+id/cameraPreview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-    </io.github.data4all.view.CaptureCameraSurfaceView>
+    </io.github.data4all.view.CameraPreview>
 
     <ImageButton
-        android:id="@+id/btnTrigger"
-        style="@style/imageButtonCamActionLand"
+        android:id="@+id/btnCapture"
+        style="@style/imageButtonCamAction"
+        android:layout_gravity="center_horizontal|bottom"
         android:background="@null"
+        android:contentDescription="@string/noDescription"
         android:src="@drawable/ic_camaction" />
 
 </RelativeLayout>
