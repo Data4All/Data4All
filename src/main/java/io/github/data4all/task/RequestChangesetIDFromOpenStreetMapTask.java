@@ -2,6 +2,7 @@ package io.github.data4all.task;
 
 import io.github.data4all.Constants;
 import io.github.data4all.R;
+import io.github.data4all.network.OscUploadHelper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -47,6 +48,7 @@ public class RequestChangesetIDFromOpenStreetMapTask extends
 
     private OAuthConsumer consumer;
     private File changeSetXML;
+    private OscUploadHelper helper;
 
     /**
      * HTTP result code or -1 in case of internal error
@@ -54,8 +56,9 @@ public class RequestChangesetIDFromOpenStreetMapTask extends
     private int statusCode = -1;
 
     public RequestChangesetIDFromOpenStreetMapTask(Context context,
-            OAuthConsumer consumer, String comment) {
-
+            OAuthConsumer consumer, String comment, OscUploadHelper helper) {
+        
+        this.helper = helper;
         this.context = context;
         this.consumer = consumer;
         changeSetXML =
@@ -154,12 +157,14 @@ public class RequestChangesetIDFromOpenStreetMapTask extends
             HttpResponse response = httpClient.execute(request);
             statusCode = response.getStatusLine().getStatusCode();
             HttpEntity responseEntity = response.getEntity();
-
-            InputStream is = responseEntity.getContent();
-            BufferedReader in = new BufferedReader(new InputStreamReader(is));
-            String line = in.readLine();
-            Integer changesetId = Integer.parseInt(line);
-
+            Integer changesetId = 0;
+            if(statusCode >= 200 && statusCode < 299){
+                InputStream is = responseEntity.getContent();
+                BufferedReader in = new BufferedReader(new InputStreamReader(is));
+                String line = in.readLine();
+                changesetId = Integer.parseInt(line);
+                helper.parseAndUpload(changesetId);
+            }
             Log.d(TAG, "OSM ChangeSetID response Entity: " + responseEntity);
             Log.d(TAG, "OSM ChangeSetID response: " + changesetId);
             Log.d(TAG, "OSM ChangeSetID statusCode: " + statusCode);

@@ -16,8 +16,8 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.SortedMap;
 
 /**
  * @author Richard
@@ -63,8 +63,11 @@ public class OsmChangeParser {
                         ways.add(poly);
                         break;
                     case AREA:
+                        relations.add(poly);
+                        break;
                     case BUILDING:
                         relations.add(poly);
+                        break;
                     }
                 }
 
@@ -115,7 +118,7 @@ public class OsmChangeParser {
                 + "\" lon=\"" + node.getLon() + "\" changeset=\"" + changesetID
                 + "\" version=\"1\"");
 
-        SortedMap<Tag, String> tags = (SortedMap<Tag, String>) node.getTags();
+        LinkedHashMap<Tag, String> tags = (LinkedHashMap<Tag, String>) node.getTags();
         if (tags.isEmpty()) {
             writer.print("/>");
             writer.println();
@@ -137,7 +140,7 @@ public class OsmChangeParser {
         writer.println("<way id=\"" + way.getOsmId() + "\" timestamp=\""
                 + dateformat.format(new Date()) + "\" changeset=\""
                 + changesetID + "\" version=\"1\">");
-        SortedMap<Tag, String> tags = (SortedMap<Tag, String>) way.getTags();
+        LinkedHashMap<Tag, String> tags = (LinkedHashMap<Tag, String>) way.getTags();
         for (Node nd : way.getNodes()) {
             writer.println("<nd ref=\"" + nd.getOsmId() + "\"/>");
         }
@@ -156,7 +159,7 @@ public class OsmChangeParser {
         writer.println("<relation id=\"" + relation.getOsmId()
                 + "\" timestamp=\"" + dateformat.format(new Date())
                 + "\" changeset=\"" + changesetID + "\" version=\"1\">");
-        SortedMap<Tag, String> tags = (SortedMap<Tag, String>) relation
+        LinkedHashMap<Tag, String> tags = (LinkedHashMap<Tag, String>) relation
                 .getTags();
         for (Node member : relation.getNodes()) {
             writer.println("<member type=\"Node\" ref=\"" + member.getOsmId()

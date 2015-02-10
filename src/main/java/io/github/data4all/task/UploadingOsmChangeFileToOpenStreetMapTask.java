@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import oauth.signpost.OAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
@@ -25,6 +26,7 @@ import org.apache.http.params.BasicHttpParams;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -66,14 +68,17 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends AsyncTask<Void, V
         try {
             // Prepare request
         	request = new HttpPost (Constants.SCOPE + "/api/0.6/changeset/" + id + "/upload");
-  
             // Sign the request with oAuth
-            consumer.sign(request);
+            this.consumer.sign(request);
+            
             BasicHttpParams params = new BasicHttpParams();
             params.setParameter("id", id);
-            params.setParameter("POST data ", oscFile);
             request.setParams(params);
-
+            
+            HttpEntity entity = new FileEntity(oscFile, "text/plain");
+            request.setEntity(entity);
+        
+            
         } catch (OAuthMessageSignerException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

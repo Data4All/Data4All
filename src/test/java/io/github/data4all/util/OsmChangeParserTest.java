@@ -9,6 +9,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.network.OscUploadHelper;
 import io.github.data4all.task.RequestChangesetIDFromOpenStreetMapTask;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
@@ -39,10 +40,10 @@ public class OsmChangeParserTest {
 	public void parseTest(){
 		Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
 		ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
-		Node node1 = new Node(1,23,23);
-		Node node2 = new Node(2,24,24);
-		Node node3 = new Node(3,25,25);
-		PolyElement way1 = new PolyElement(4,PolyElementType.WAY);
+		Node node1 = new Node(-1,23,23);
+		Node node2 = new Node(-2,24,24);
+		Node node3 = new Node(-3,25,25);
+		PolyElement way1 = new PolyElement(-4,PolyElementType.WAY);
 		way1.addNode(node1);
 		way1.addNode(node2);
 		Log.i("test", "before oauth");
@@ -50,14 +51,9 @@ public class OsmChangeParserTest {
 		elems.add(node3);
 		elems.add(way1);
 		Context act = Robolectric.buildActivity(MapViewActivity.class).get().getApplicationContext();
-		//OsmChangeParser.parseElements(Robolectric.buildActivity(MapViewActivity.class).get().getApplicationContext(),elems,13);
-		OAuthConsumer consumer = new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
-        
-		consumer.setTokenWithSecret(PreferenceManager
-                .getDefaultSharedPreferences(act).getString("oauth_token", null), PreferenceManager
-                .getDefaultSharedPreferences(act).getString("oauth_token_secret", null));
+		OsmChangeParser.parseElements(act,elems,13);
 		Log.i("test", "start the Request");
-		new RequestChangesetIDFromOpenStreetMapTask(act.getApplicationContext(), consumer, "blah").execute();
+		new OscUploadHelper(act,elems,"upload test");
 		
 	}
 	
