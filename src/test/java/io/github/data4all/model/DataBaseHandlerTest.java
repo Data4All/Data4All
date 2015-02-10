@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.junit.After;
@@ -169,10 +171,6 @@ public class DataBaseHandlerTest {
         Tag tag2 = Tags.getTagWithId(2);
         tagMap.put(tag2, "113");
 
-        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
-        tagIDs.add(tag1.getId());
-        tagIDs.add(tag2.getId());
-
         polyElement1.addTags(tagMap);
 
         dbHandler.createDataElement(polyElement1);
@@ -210,6 +208,43 @@ public class DataBaseHandlerTest {
         assertEquals(0, dbHandler.getPolyElementCount());
         assertEquals(0, dbHandler.getNodeCount());
 
+    }
+
+    @Test
+    public void testTagMapCRUD() {
+
+        Map<Tag, String> tagMap = new Hashtable<Tag, String>();
+        Tag tag1 = Tags.getTagWithId(1);
+        tagMap.put(tag1, "Hollywood Blvd.");
+        Tag tag2 = Tags.getTagWithId(2);
+        tagMap.put(tag2, "113");
+
+        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
+        tagIDs.add(tag1.getId());
+        tagIDs.add(tag2.getId());
+
+        dbHandler.createTagMap(tagMap);
+
+        assertEquals(2, dbHandler.getTagMapCount());
+
+        Tag tag3 = Tags.getTagWithId(4);
+        tagMap.put(tag3, "Los Angeles");
+        tagIDs.add(tag3.getId());
+
+        dbHandler.updateTagMap(tagMap);
+
+        assertEquals(3, dbHandler.getTagMapCount());
+
+        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag1));
+        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("Hollywood Blvd."));
+        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag2));
+        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("113"));
+        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag3));
+        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("Los Angeles"));
+
+        dbHandler.deleteTagMap(tagIDs);
+
+        assertEquals(0, dbHandler.getTagMapCount());
     }
 
     @After

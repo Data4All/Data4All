@@ -922,8 +922,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             values.put(KEY_TAGID, tag.getKey().getId());
             values.put(KEY_VALUE, tag.getValue());
 
-            count += db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
-                    new String[] { String.valueOf(tag.getKey().getId()) });
+            if (checkIfRecordExists(TABLE_TAGMAP, KEY_TAGID, tag.getKey()
+                    .getId())) {
+                count += db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
+                        new String[] { String.valueOf(tag.getKey().getId()) });
+            } else {
+                db.insert(TABLE_TAGMAP, null, values);
+            }
+
         }
         // db.close();
         return count;
