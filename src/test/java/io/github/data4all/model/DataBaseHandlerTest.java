@@ -182,7 +182,33 @@ public class DataBaseHandlerTest {
         assertEquals(1, dbHandler.getPolyElementCount());
         assertEquals(1, dbHandler.getNodeCount());
 
-        // dbHandler.getDataElement(1);
+        assertEquals(2, dbHandler.getDataElement(1).getTags().size());
+        assertEquals(0, dbHandler.getDataElement(2).getTags().size());
+
+        PolyElement returnedPE = (PolyElement) dbHandler.getDataElement(1);
+        assertEquals(PolyElementType.BUILDING, returnedPE.getType());
+
+        Node returnedN = (Node) dbHandler.getDataElement(2);
+        assertEquals(30.123456, returnedN.getLat(), 0.0);
+
+        polyElement1.setType(PolyElementType.AREA);
+        node1.setLon(42.1234567);
+
+        dbHandler.updateDataElement(polyElement1);
+        dbHandler.updateDataElement(node1);
+
+        returnedPE = (PolyElement) dbHandler.getDataElement(1);
+        returnedN = (Node) dbHandler.getDataElement(2);
+
+        assertEquals(PolyElementType.AREA, returnedPE.getType());
+        assertEquals(42.1234567, returnedN.getLon(), 0.0);
+
+        dbHandler.deleteDataElement(polyElement1);
+        dbHandler.deleteDataElement(node1);
+
+        assertEquals(0, dbHandler.getDataElementCount());
+        assertEquals(0, dbHandler.getPolyElementCount());
+        assertEquals(0, dbHandler.getNodeCount());
 
     }
 

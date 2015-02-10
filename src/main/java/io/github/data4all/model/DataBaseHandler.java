@@ -860,6 +860,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                             KEY_TAGID + "=?",
                             new String[] { String.valueOf(id) }, null, null,
                             null, null);
+
+            if (cursor != null)
+                cursor.moveToFirst();
+
             tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
             cursor.close();
         }
