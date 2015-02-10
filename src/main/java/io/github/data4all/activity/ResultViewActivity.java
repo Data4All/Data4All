@@ -21,6 +21,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.Tagging;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -176,11 +178,11 @@ public class ResultViewActivity extends BasicActivity implements
                 }
             }
         });
-        final Button resultButton =
-                (Button) this.findViewById(R.id.buttonResult);
+        final ImageButton resultButton =
+                (ImageButton) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
-        final Button resultButtonToCamera =
-                (Button) this.findViewById(R.id.buttonResultToCamera);
+        final ImageButton resultButtonToCamera =
+                (ImageButton) this.findViewById(R.id.buttonResultToCamera);
         resultButtonToCamera.setOnClickListener(this);
     }
 
@@ -207,9 +209,9 @@ public class ResultViewActivity extends BasicActivity implements
         endList = new ArrayList<String>();
         keyList = new ArrayList<String>();
         for (Entry entry : element.getTags().entrySet()) {
-            final String key = (String) entry.getKey();
-            keyList.add(key);
-            endList.add(key + "=" + element.getTags().get(key));
+            final Tag tagKey =  (Tag) entry.getKey();
+            keyList.add(tagKey.getKey());
+            endList.add(tagKey.getKey() + "=" + element.getTags().get(tagKey.getKey()));
         }
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(this,

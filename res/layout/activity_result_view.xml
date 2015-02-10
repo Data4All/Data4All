@@ -23,23 +23,14 @@
         style="@style/imageButtonReturnToCamera"
         android:contentDescription="@string/returnToCamera" />
 
-    <Spinner
-        android:id="@+id/spinnerClassifiedTagKey"
-        android:layout_width="0dp"
+    <ListView
+        android:id="@+id/listViewResult"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-     	android:layout_below="@+id/mapviewResult"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/spinnerClassifiedTagValue" 
-        android:layout_marginTop="10dp"
-        />
+        android:layout_below="@+id/mapviewResult" >
 
-    <Spinner
-        android:id="@+id/spinnerClassifiedTagValue"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mapviewResult"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
-         />
+    </ListView>
 
 </RelativeLayout>
