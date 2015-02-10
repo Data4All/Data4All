@@ -58,7 +58,6 @@ import android.widget.Spinner;
 
 public class ResultViewActivity extends BasicActivity implements OnClickListener {
 	
-
 	   private static final String TAG = "ResultViewActivity";
 	   
 	   final Context context = this;
@@ -102,6 +101,10 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 	    private AlertDialog alert;
 
 		private Map<String, ClassifiedTag> tagMap;
+		
+		private String key;
+		
+		private String value;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,9 +119,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		
 		
 		mapController = (MapController) this.mapView.getController();
-		
-	
-		
+				
 		mapView.setMinZoomLevel(10);
 		
 		mapView.setMaxZoomLevel(20);
@@ -160,7 +161,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 					int position, long id) {
 				Log.i(TAG, "onITEM");
 				Log.i(TAG, (String) parent.getItemAtPosition(position));
-				final String key = (String) parent.getItemAtPosition(position);
+				key = (String) parent.getItemAtPosition(position);
 				valueArray = tagMap.get(key).getClassifiedValues().toArray(new String [tagMap.get(key).getClassifiedValues().size()]);
 				Spinner spinnerClassifiedTagValues = (Spinner) findViewById(R.id.spinnerClassifiedTagValue);
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
@@ -173,6 +174,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						Log.i(TAG, "Key Value Pair: " +key + (String) parent.getItemAtPosition(position));
+						value = (String) parent.getItemAtPosition(position);
 						element.addOrUpdateTag(key,(String) parent.getItemAtPosition(position));
 						
 					}
@@ -197,28 +199,6 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 		
 		
 		
-		
-	/**	listView = (ListView) this.findViewById(R.id.listViewResult);
-		// The Sorted Keys of the ShowPictureActivity
-		array = Tagging.getArrayKeys( getIntent().getExtras().getInt("TYPE_DEF"));
-		tagMap = Tagging.getMapKeys( getIntent().getExtras().getInt("TYPE_DEF"));
-		output();
-		listView.setOnItemClickListener(new OnItemClickListener() {
-		
-			public void onItemClick(AdapterView parent, View view, final int position, long id) {
-				Log.i(TAG, keyList.get(position));
-				Log.i(TAG, Integer.toString(endList.size()));
-				Log.i(TAG, Integer.toString(position));
-				if(Tagging.isClassifiedTag(keyList.get(position), array)){
-					changeClassifiedTags(position);
-				}
-				else {
-					changeUnclassifiedTags(position);
-			}
-			
-		}
-	});
-	*/
 	// Set the setonclicklistener of the resultButton	
 	ImageButton resultButton = (ImageButton) this.findViewById(R.id.buttonResult);	
 	resultButton.setOnClickListener(this);	
@@ -230,17 +210,6 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 	}
 
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 	/**
 	 * The Method to show the Tags in the Listview 
 	 * 
@@ -347,7 +316,7 @@ public class ResultViewActivity extends BasicActivity implements OnClickListener
 	}
 	
 	/**
-	 * adds the OSM Elemnt to the Map
+	 * adds the OSM Element to the Map
 	 * 
 	 * @param element of the OSM Object 
 	 */
