@@ -71,4 +71,9 @@
     <string name="capturing_image">Taking New Picture</string>
     <string name="done">Done</string>
     
+    <string name="return_to_position">a</string>
+     <string name="switch_to_osm">a</string>
+      <string name="switch_to_satellite">a</string>
+       <string name="to_camera">a</string>
+    
 </resources>

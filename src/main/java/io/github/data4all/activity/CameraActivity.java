@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -35,86 +36,88 @@ public class CameraActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate is called");
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+	Log.i(TAG, "onCreate is called");
+	super.onCreate(savedInstanceState);
+	requestWindowFeature(Window.FEATURE_NO_TITLE);
+	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_camera);
+	setContentView(R.layout.activity_camera);
 
-        // Checking camera availability
-        Log.d(TAG, "check if device support Camera");
-        if (!isDeviceSupportCamera()) {
-            finish();
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.noCamSupported), Toast.LENGTH_LONG)
-                    .show();
-            Log.d(TAG, "device supports no camera");
+	// Checking camera availability
+	Log.d(TAG, "check if device support Camera");
+	if (!isDeviceSupportCamera()) {
+	    finish();
+	    Toast.makeText(getApplicationContext(),
+		    getString(R.string.noCamSupported), Toast.LENGTH_LONG)
+		    .show();
+	    Log.d(TAG, "device supports no camera");
 
-        }
-        Log.d(TAG, "get here");
-        btnCapture = (ImageButton) findViewById(R.id.btnCapture);
-        btnCapture.setOnClickListener(btnCaptureOnClickListener);
-
+	}
+	btnCapture = (ImageButton) findViewById(R.id.btnCapture);
+	btnCapture.setOnClickListener(btnCaptureOnClickListener);
     }
 
     private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mCamera.takePicture(shutterCallback, null,
-                    new CapturePictureHandler(getApplicationContext()));
-        }
+	@Override
+	public void onClick(View v) {
+	    mCamera.takePicture(shutterCallback, null,
+		    new CapturePictureHandler(getApplicationContext()));
+	}
     };
 
     @Override
     protected void onResume() {
-        Log.i(TAG, "onResume is called");
-        super.onResume();
+	Log.i(TAG, "onResume is called");
+	super.onResume();
 
-        if (mCamera == null) {
-            Log.d(TAG, "camera is null, so we have to create a new one");
-            createCamera();
-        }
+	if (mCamera == null) {
+	    Log.d(TAG, "camera is null, so we have to create a new one");
+	    createCamera();
+	}
 
     }
 
     @Override
     protected void onPause() {
-        Log.i(TAG, "onPause is called");
-        super.onPause();
+	Log.i(TAG, "onPause is called");
+	super.onPause();
 
-        if (mCamera != null) {
-            Log.d(TAG, "camera is not null, set everything to null");
-            cameraPreview.setCamera(null);
-            releaseCamera();
-        }
+	if (mCamera != null) {
+	    Log.d(TAG, "camera is not null, set everything to null");
+	    cameraPreview.setCamera(null);
+	    releaseCamera();
+	}
 
-        btnCapture.setOnClickListener(null);
-        btnCapture.setClickable(false);
+	btnCapture.setOnClickListener(null);
+	btnCapture.setClickable(false);
 
     }
 
     private void createCamera() {
-        Log.i(TAG, "createCamera is called");
+	Log.i(TAG, "createCamera is called");
 
-        if (isDeviceSupportCamera()) {
-            Log.d(TAG, "seems as the device has a camera");
-            
-            mCamera = getCameraInstance();
+	if (isDeviceSupportCamera()) {
+	    Log.d(TAG, "seems as the device has a camera");
 
-            Log.d(TAG, "now set camera");
-            // Calculate the camera previews
-            if (mCamera == null) {
-                Log.d(TAG, "shit,camera is null");
-                finish();
-            }
-            Log.d(TAG, "DEBUG " + mCamera.hashCode());
-            cameraPreview.setCamera(mCamera);
+	    mCamera = getCameraInstance();
 
-            Log.d(TAG, "finish create Camera");
-        } else {
-            
-            Log.e(TAG, "Cant believe");
-        }
+	    cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
+	    
+	    Log.d(TAG, "now set camera");
+	    if (mCamera == null) {
+		Log.d(TAG, "shit,camera is null");
+		finish();
+		return;
+	    }
+	    Log.d(TAG, "DEBUG " + mCamera.hashCode());
+	    cameraPreview.setCamera(mCamera);
+
+	    Log.d(TAG, "finish create Camera");
+	} else {
+
+	    Log.e(TAG, "Cant believe");
+	}
     }
 
     /**
@@ -124,60 +127,58 @@ public class CameraActivity extends Activity {
      * @return boolean true if device has a camera, false otherwise
      */
     private boolean isDeviceSupportCamera() {
-        Log.d(TAG, "look if device has camera");
-        return getApplicationContext().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA);
+	Log.d(TAG, "look if device has camera");
+	return getApplicationContext().getPackageManager().hasSystemFeature(
+		PackageManager.FEATURE_CAMERA);
     }
 
     private void releaseCamera() {
-        Log.d(TAG, "release Camera is called");
-        if (mCamera != null) {
-            mCamera.release(); // release the camera for other applications
-            mCamera = null;
-        }
+	Log.d(TAG, "release Camera is called");
+	if (mCamera != null) {
+	    mCamera.release(); // release the camera for other applications
+	    mCamera = null;
+	}
     }
 
-    
     @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        
-        releaseCameraAndPreview();
+    protected void onDestroy() {
+	super.onDestroy();
+
+	releaseCameraAndPreview();
     }
-    
-    
+
     /**
      * A safe way to get an instance of the Camera object.
      */
     public Camera getCameraInstance() {
-        Log.d(TAG, "get camera instance is called");
-        Camera camera = null;
-        try {
-            releaseCameraAndPreview();
-            camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+	Log.d(TAG, "get camera instance is called");
+	Camera camera = null;
+	try {
+	    releaseCameraAndPreview();
+	    camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
 
-        } catch (Exception e) {
-            Log.e(TAG, "failed to open Camera");
-            e.printStackTrace();
-        }
+	} catch (Exception e) {
+	    Log.e(TAG, "failed to open Camera");
+	    e.printStackTrace();
+	}
 
-        return camera;
+	return camera;
     }
 
+
+    
     private void releaseCameraAndPreview() {
-        cameraPreview.setCamera(null);
-        if (mCamera != null) {
-            mCamera.release();
-            mCamera = null;
-        }
+	//cameraPreview.setCamera(null);
+	if (mCamera != null) {
+	    mCamera.release();
+	    mCamera = null;
+	}
     }
 
-    
-        ShutterCallback shutterCallback = new ShutterCallback() {
-            public void onShutter() {
-                // Log.d(TAG, "onShutter'd");
-            }
-        };
+    ShutterCallback shutterCallback = new ShutterCallback() {
+	public void onShutter() {
+	    // Log.d(TAG, "onShutter'd");
+	}
+    };
 
-    
 }

@@ -8,6 +8,7 @@
     <ImageView
         android:id="@+id/imageView1"
         style="@style/imageViewTakedPicture"
+        android:rotation="90"
         android:contentDescription="@string/returnToActualPosition" />
 
     <io.github.data4all.view.TouchView

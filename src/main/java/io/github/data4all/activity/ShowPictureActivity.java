@@ -7,31 +7,39 @@ import io.github.data4all.model.data.OsmElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.PointToCoordsTransformUtil;
+import io.github.data4all.view.CameraPreview;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 /**
  * Activity to set a new Layer-Backgroundimage
  * 
  * @author vkochno
- *
+ * 
  */
 public class ShowPictureActivity extends BasicActivity {
 
+    private static final String TAG = ShowPictureActivity.class.getSimpleName();
     private TouchView touchView;
     private ImageView imageView;
     private Intent intent;
@@ -65,18 +73,18 @@ public class ShowPictureActivity extends BasicActivity {
 	redo = (Button) findViewById(R.id.redobtn);
 
 	touchView.setUndoRedoListener(new UndoRedoListener() {
-        
-        @Override
-        public void canUndo(boolean state) {
-            undo.setEnabled(state);
-        }
-        
-        @Override
-        public void canRedo(boolean state) {
-            redo.setEnabled(state);
-        }
-    });
-	
+
+	    @Override
+	    public void canUndo(boolean state) {
+		undo.setEnabled(state);
+	    }
+
+	    @Override
+	    public void canRedo(boolean state) {
+		redo.setEnabled(state);
+	    }
+	});
+
 	if (getIntent().hasExtra("file_path")) {
 	    setBackground(Uri.fromFile((File) getIntent().getExtras().get(
 		    "file_path")));
@@ -104,8 +112,46 @@ public class ShowPictureActivity extends BasicActivity {
 	// height
 	touchView.setTransformUtil(new PointToCoordsTransformUtil(
 		transformBean, currentOrientation));
-	
+
 	onClickBuilding(null);
+	
+	Matrix matrix = new Matrix();
+	imageView.setScaleType(ScaleType.MATRIX);   //required
+	matrix.postRotate( getRotation(), imageView.getDrawable().getBounds().width()/2, imageView.getDrawable().getBounds().height()/2);
+	imageView.setImageMatrix(matrix);	
+	imageView.setScaleType(ScaleType.CENTER_INSIDE);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+	super.onConfigurationChanged(newConfig);
+	Matrix matrix = new Matrix();
+	imageView.setScaleType(ScaleType.MATRIX);   //required
+	matrix.postRotate( getRotation(), imageView.getDrawable().getBounds().width()/2, imageView.getDrawable().getBounds().height()/2);
+	imageView.setImageMatrix(matrix);
+	imageView.setScaleType(ScaleType.CENTER_INSIDE);
+    }
+
+    private int getRotation() {
+	Display display = ((WindowManager) this
+		.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+	int result = 0;
+	Log.i(TAG, "#### "+display.getRotation());
+	switch (display.getRotation()) {
+	case Surface.ROTATION_0:
+	    result = 0;
+	    break;
+	case Surface.ROTATION_90:
+	    result = 180;
+	    break;
+	case Surface.ROTATION_180:
+	    result = 270;
+	    break;
+	case Surface.ROTATION_270:
+	    result = 270;
+	    break;
+	}
+	return result;
     }
 
     public void onClickOkay(View view) {

@@ -69,7 +69,7 @@ public class CapturePictureHandler implements PictureCallback {
 				.getHorizontalViewAngle());
 		final double verticalViewAngle = Math.toRadians(params
 				.getVerticalViewAngle());
-		final Size pictureSize = params.getSupportedPictureSizes().get(0);
+		final Size pictureSize = params.getPictureSize();
 		final Location currentLocation = Optimizer.currentBestLoc();
 		transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
 				verticalViewAngle, pictureSize.width, pictureSize.height,

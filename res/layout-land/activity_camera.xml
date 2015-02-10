@@ -11,10 +11,7 @@
 
     <ImageButton
         android:id="@+id/btnCapture"
-        style="@style/imageButtonCamAction"
-        android:layout_gravity="center_horizontal|bottom"
-        android:background="@null"
-        android:contentDescription="@string/noDescription"
-        android:src="@drawable/ic_camaction" />
+        style="@style/imageButtonCamActionLand"
+        android:contentDescription="@string/noDescription" />
 
 </RelativeLayout>
