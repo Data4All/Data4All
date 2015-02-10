@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.task;
 
 import io.github.data4all.activity.MapViewActivity;
@@ -45,8 +60,8 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
     protected Void doInBackground(Uri... params) {
         final Uri uri = params[0];
 
-        final String oauth_verifier = uri
-                .getQueryParameter(OAuth.OAUTH_VERIFIER);
+        final String oauth_verifier =
+                uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
 
         try {
             provider.retrieveAccessToken(consumer, oauth_verifier);
@@ -56,8 +71,8 @@ public class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
             edit.putString(OAuth.OAUTH_TOKEN_SECRET, consumer.getTokenSecret());
             edit.commit();
 
-            String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
-            String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
+            final String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
+            final String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
 
             consumer.setTokenWithSecret(token, secret);
             context.startActivity(new Intent(context, MapViewActivity.class));
