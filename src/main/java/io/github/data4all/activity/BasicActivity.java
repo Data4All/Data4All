@@ -18,7 +18,7 @@ import android.view.MenuItem;
  * @author AndreKoch
  * 
  */
-public class BasicActivity extends Activity {
+public abstract class BasicActivity extends Activity {
 
 	/*
 	 * (non-Javadoc)
@@ -34,27 +34,36 @@ public class BasicActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
+	        boolean status;
 		switch (item.getItemId()) {
 		case R.id.upload_data:
 			startActivity(new Intent(this, LoginActivity.class));
-			return true;
+			status = true;
+			break;
 		case R.id.action_settings:
 			// TODO startActivity(new Intent(this, SettingsActivity.class));
-			return true;
+		        status = true;
+		        break;
 		case R.id.action_camera:
 			startActivity(new Intent(this, CameraActivity.class));
-			return true;
+			status = true;
+			break;
 		case R.id.action_map:
 			startActivity(new Intent(this, MapViewActivity.class));
-			return true;
+			status = true;
+			break;
 		case R.id.action_help:
 			// TODO set help activity here
-			return true;
+		        status = true;
+		        break;
 		case R.id.action_login:
 			startActivity(new Intent(this, LoginActivity.class));
-			return true;
+			status = true;
+			break;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+		
+		return status;
 	}
 }
