@@ -76,4 +76,8 @@
       <string name="switch_to_satellite">a</string>
        <string name="to_camera">a</string>
     
+    <string name="redo">Redo Function</string>
+    
+    <string name="undo">Undo Function</string>
+
 </resources>

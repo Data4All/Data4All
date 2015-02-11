@@ -1,14 +1,19 @@
-package io.github.data4all.util;
-
-/**
- * This Class uses the Orientation of the Phone, the Pixel 
- * and the Camera-Parameters to calculate the Distance between 
- * the Phone and the Object in a 2D System.
+/*
+ * Copyright (c) 2014, 2015 Data4All
  * 
- * @author burghardt
- * @version 0.1
- *
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
+package io.github.data4all.util;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
@@ -21,22 +26,42 @@ import java.util.List;
 
 import android.location.Location;
 
+/**
+ * This class uses the orientation of the phone, the pixel of the drawn points
+ * and the camera parameters to calculate the distance between the phone and the
+ * object in a 2D system. After that the location of the point in world
+ * coordinates is calculated.
+ * 
+ * @author burghardt
+ * @version 0.1
+ *
+ */
 public class PointToCoordsTransformUtil {
-    static String TAG = "PointToWorldCoords";
+    /** Logger tag for this class. */
+    final static String TAG = "PointToWorldCoords";
+    /** osmID for the node. */
     private int osmID = -1;
-    private static int osmVersion = 1;
-    private double height = 0;
-    TransformationParamBean tps;
-    DeviceOrientation deviceOrientation;
+    /** height of the device from the ground. */
+    private double height;
+    /** */
+    private int xAxis;
+    /** */
+    private int yAxis;
+    /** object of the TransFormationParamBean. */
+    private TransformationParamBean tps;
+    /** object of the deviceOrientation. */
+    private DeviceOrientation deviceOrientation;
 
     public PointToCoordsTransformUtil() {
     }
 
     /**
-     * Constructor, which some Data
+     * Constructor, which set some necessary data.
      * 
      * @param tps
+     *            object of TranformParamBean
      * @param deviceOrientation
+     *            object of DeviceOrientation
      */
     public PointToCoordsTransformUtil(TransformationParamBean tps,
             DeviceOrientation deviceOrientation) {
@@ -45,291 +70,190 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
-     * Opens transform with saved informations
+     * Calls transform with saved informations.
      * 
      * @param points
-     * @return List of Nodes
+     *            List of Point
+     * @return rotation List of Node
      */
-    public List<Node> transform(List<Point> points) {
-        return transform(tps, deviceOrientation, points);
+    public List<Node> transform(List<Point> points, int rotation) {
+        return this.transform(tps, deviceOrientation, points, rotation);
     }
 
     /**
-     * transforms a List of Points in a List of GPS-coordinates
+     * transforms a list of points in a list of Nodes.
      * 
      * @param tps
+     *            object of TransformParamBean
      * @param deviceOrientation
-     * @return List of Nodes
+     *            object of DeviceOrientation
+     * @param points
+     *            list of points which have to be calculated
+     * @param rotation
+     *            rotation of the device
+     * @return list of Node
      */
     public List<Node> transform(TransformationParamBean tps,
-            DeviceOrientation deviceOrientation, List<Point> points) {
-
-        if (tps == null || deviceOrientation == null || points == null
-                || tps.getLocation() == null
-                || tps.getCameraMaxPitchAngle() == 0
-                || tps.getCameraMaxRotationAngle() == 0 || tps.getHeight() == 0
-                || tps.getLocation().getLatitude() == 0
-                || tps.getLocation().getLongitude() == 0
-                || deviceOrientation.getAzimuth() == 0
-                || deviceOrientation.getPitch() == 0
-                || deviceOrientation.getRoll() == 0) {
-            Log.d(TAG, "**********WRONG VALUES**********");
-        }
-
-        List<Node> nodes = new ArrayList<Node>();
+            DeviceOrientation deviceOrientation, List<Point> points,
+            int rotation) {
+        this.tps = tps;
+        final List<Node> nodes = new ArrayList<Node>();
+        // get the set height
         this.height = tps.getHeight();
-
-        for (Point iter : points) {
-            Point point = new Point((tps.getPhotoHeight() - iter.getY() + 1),
-                    (tps.getPhotoWidth() - iter.getX() + 1));
-            Log.d(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
-            Log.d(TAG,
-                    "TPS-DATA pic height;width height" + tps.getPhotoHeight()
-                            + " " + tps.getPhotoWidth() + " " + tps.getHeight());
-            // first calculates local coordinates in meter
-            double[] coord = calculateCoordFromPoint(tps, deviceOrientation,
-                    point);
+        Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
+                + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
+        for (Point point : points) {
+            // change point coordinates to match the set coordinate system.
+            point = this.changePixelCoordSystem(point, rotation);
+            Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
+            // calculates local coordinates in meter first
+            final double[] coord =
+                    this.calculateCoordFromPoint(tps, deviceOrientation, point);
             Log.d(TAG, "Calculated local Coords:" + coord[0] + "  " + coord[1]);
-            // transforms local coordinates in global GPS-coordinates
-            Log.d(TAG, "Local Lat Lon" + tps.getLocation().getLatitude() + "  "
-                    + tps.getLocation().getLongitude());
-            Node node = calculateGPSPoint(tps.getLocation(), coord);
-
-            Log.d(TAG,
-                    "Calculated Lat / Lon:" + node.getLat() + "  "
-                            + node.getLon());
-            nodes.add(node);
+            // transforms local coordinates in global GPS-coordinates set to.
+            // Node.
+            if (coord != null) {
+                final Node node = calculateGPSPoint(tps.getLocation(), coord);
+                Log.d(TAG,
+                        "Calculated Lat: " + node.getLat() + " Lon: "
+                                + node.getLon());
+                nodes.add(node);
+            }
         }
         return nodes;
     }
 
     /**
-     * opens calculate4thPoint with saved information
-     * 
-     * @param points
-     * @return
-     */
-    public Point calculate4thPoint(List<Point> points) {
-        return calculate4thPoint(tps, deviceOrientation, points);
-    }
-
-    /**
-     * calculates a 4th Point (for houses etc.) with 3 given Points
-     * 
-     * @param points
-     * @return the 4th Point
-     */
-    public Point calculate4thPoint(TransformationParamBean tps,
-            DeviceOrientation deviceOrientation, List<Point> points) {
-        if (points.size() != 3) {
-            return null;
-        }
-        List<double[]> coords = new ArrayList<double[]>();
-        this.height = tps.getHeight();
-        for (Point point : points) {
-            coords.add(calculateCoordFromPoint(tps, deviceOrientation, point));
-        }
-        double[] coord = add4Point(coords);
-        return calculatePointFromCoords(tps, deviceOrientation, coord);
-    }
-
-    /**
-     * calculates local coordinates for a Point with the orientation of the
-     * phone, the pixel and information of the camera
+     * calculates local coordinates for a point with the orientation of the
+     * device, the pixel and information of the camera.
      * 
      * @param tps
-     * @param deviceOrientation
+     *            object of TransformParamBean
+     * @param deviceOrientationobject
+     *            of DeviceOrientation
      * @param point
-     * @return coordinates in a local system
+     *            object of Point
+     * @return double[] with coordinates in a local system
      */
     public double[] calculateCoordFromPoint(TransformationParamBean tps,
             DeviceOrientation deviceOrientation, Point point) {
         this.height = tps.getHeight();
-        double azimuth = -deviceOrientation.getAzimuth();
-        double pitch = calculateAngleFromPixel(point.getX(),
-                tps.getPhotoHeight(), tps.getCameraMaxPitchAngle(),
-                deviceOrientation.getPitch());
-        double roll = calculateAngleFromPixel(point.getY(),
-                tps.getPhotoWidth(), tps.getCameraMaxRotationAngle(),
-                deviceOrientation.getRoll());
-
-        if (pitch <= (float) (-Math.PI / 2) || pitch >= (float) (Math.PI / 2)
-                || roll <= (float) (-Math.PI / 2)
-                || roll >= (float) (Math.PI / 2)) {
-            Log.d(TAG,
-                    "######################     FAIL     ########################");
-            double[] fail = { 0.0, 0.0, -1 };
-            return fail;
+        final double azimuth = -deviceOrientation.getAzimuth();
+        // gets an angle for the point on the pitch axis
+        final double pixelpitch =
+                this.calculateAngleFromPixel(point.getX(), xAxis,
+                        tps.getCameraMaxPitchAngle());
+        // gets an angle for the point on the roll axis
+        final double pixelroll =
+                -calculateAngleFromPixel(point.getY(), yAxis,
+                        tps.getCameraMaxRotationAngle());
+        final double pitch = -deviceOrientation.getPitch();
+        final double roll = -deviceOrientation.getRoll();
+        final double[] vector = new double[3];
+        // without any rotation (faced to the ground and the north)
+        vector[2] = -1;
+        vector[1] = Math.tan(pixelpitch);
+        vector[0] = Math.tan(pixelroll);
+        // rotate around x-axis with pitch
+        final double[] vector2 = new double[3];
+        vector2[0] = vector[0];
+        vector2[1] = vector[1] * Math.cos(pitch) - vector[2] * Math.sin(pitch);
+        vector2[2] = vector[1] * Math.sin(pitch) + vector[2] * Math.cos(pitch);
+        // rotate around line through origin with pitch angle
+        final double[] finalVector = new double[3];
+        finalVector[0] =
+                vector2[0] * Math.cos(roll) - vector2[1] * Math.sin(pitch)
+                        * Math.sin(roll) + vector2[2] * Math.cos(pitch)
+                        * Math.sin(roll);
+        finalVector[1] =
+                vector2[0]
+                        * Math.sin(roll)
+                        * Math.sin(pitch)
+                        + vector2[1]
+                        * (Math.cos(pitch) * Math.cos(pitch)
+                                * (1 - Math.cos(roll)) + Math.cos(roll))
+                        + vector2[2] * Math.cos(pitch) * Math.sin(pitch)
+                        * (1 - Math.cos(roll));
+        finalVector[2] =
+                -vector2[0]
+                        * Math.cos(pitch)
+                        * Math.sin(roll)
+                        + vector2[1]
+                        * Math.sin(pitch)
+                        * Math.cos(pitch)
+                        * (1 - Math.cos(roll))
+                        + vector2[2]
+                        * (Math.sin(pitch) * Math.sin(pitch)
+                                * (1 - Math.cos(roll)) + Math.cos(roll));
+        // returns null, if the vector points to the sky
+        if (finalVector[2] >= 0) {
+            Log.wtf(TAG,
+                    "Vector is directed to the sky, cannot calculate coords",
+                    null);
+            return null;
         }
-
-        // calculate local coords without azimuth
-        double tempZ = Math.cos(pitch);
-        double y = Math.sin(-pitch);
-        // double tempX = 0;
-        double x = Math.sin(roll);
-        double z = tempZ * Math.cos(roll);
-
-        double tempXX = x * (height / z);
-        double tempYY = y * (height / z);
-        double[] coord = new double[3];
-        // Rotate Vector with Azimuth (Z is fix))
-        coord[0] = ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
-        coord[1] = ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
+        // collides vector with the xy-plane
+        final double tempXX = finalVector[0] * (height / -finalVector[2]);
+        final double tempYY = finalVector[1] * (height / -finalVector[2]);
+        final double[] coord = new double[3];
+        // Rotate Vector with azimuth (z is fix))
+        Log.d(TAG, "AZIMUTH: " + azimuth);
+        coord[0] =
+                ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
+        coord[1] =
+                ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
         coord[2] = 0;
         return coord;
     }
 
-    /*
-     * Calculates a Vector with the given Orientation. The Coordinate-System: y
-     * = North , x = West , z = Earth-Center
-     * 
-     * @param orientation
-     * 
-     * @return
-     * 
-     * public double[] calculateCoordfromOrientation(double[] orientation){ /
-     * //calculate fix Z with Pitch double z = Math.cos(orientation[1]);
-     * 
-     * //calculate temp.Y with Pitch double y = Math.sin(-orientation[1]);
-     * double x; // if the pitch is Zero, it wouldn't be possible to calculate
-     * the X-Variable if (orientation[1] != 0.0){ //calculate a temporary X with
-     * fix Z and Roll x = (Math.tan(orientation[2]) * z); } else{ //calculate
-     * new Z and X, Y is 0 x = Math.sin(orientation[2]); z =
-     * Math.cos(orientation[2]); }
-     * 
-     * // Rotate Vector with Azimuth (Z is fix)) double[] vector = new
-     * double[3]; vector[0] = ((x * Math.cos(orientation[0])) - (y *
-     * Math.sin(orientation[0]))); vector[1] = ((x * Math.sin(orientation[0])) +
-     * (y * Math.cos(orientation[0]))); vector[2] = z;
-     * 
-     * return vector; //calculate local coords without azimuth double z =
-     * Math.cos(orientation[1]); double y = Math.sin(-orientation[1]); double
-     * tempY = y * (height / z); double x = Math.sin(orientation[2]); z =
-     * Math.cos(orientation[2]); double tempX = x * (height / z); double[] coord
-     * = new double[3]; // Rotate Vector with Azimuth (Z is fix)) coord[0] =
-     * ((tempX * Math.cos(orientation[0])) - (tempY *
-     * Math.sin(orientation[0]))); coord[1] = ((tempX *
-     * Math.sin(orientation[0])) + (tempY * Math.cos(orientation[0]))); coord[2]
-     * = 0; return coord;
-     * 
-     * }
-     */
-    /*
-     * @param orientation
-     * 
-     * @return coords in m in a System with (0,0) = Phoneposition; x = West/East
-     * Axis and y = Norh/South Axis
-     * 
-     * public double[] calculate2dPoint(double[] vector){ double[] coord = new
-     * double[3]; double z = height / vector[2]; coord[0] = vector[0] * z;
-     * coord[1] = vector[1] * z; coord[2] = 0; Log.d(TAG,"Calculated X = " +
-     * coord[0] + " and Y = " + coord[1]); return coord; }
-     */
-
     /**
-     * Calculates the fourth point in dependence of the first three points of
-     * the given list
-     * 
-     * @param areaPoints
-     *            A list with exact three points
-     */
-    private static double[] add4Point(List<double[]> coords) {
-        double[] a = coords.get(0);
-        double[] b = coords.get(1);
-        double[] c = coords.get(2);
-        double[] coord = new double[2];
-        coord[0] = a[0] + (c[0] - b[0]);
-        coord[1] = a[1] + (c[1] - b[1]);
-        return coord;
-    }
-
-    /**
-     * Calculates the Angle altered by the given Pixel
+     * Calculates the angle altered by the given pixel.
      * 
      * @param pixel
-     * @param width
+     *            one coordinate of the pixel
+     * @param axis
+     *            the axis on which the angle is altered
      * @param maxAngle
-     * @param oldAngle
+     *            maximum camera angle
      * @return altered Angle
      */
-    public double calculateAngleFromPixel(double pixel, double width,
-            double maxAngle, double oldAngle) {
-        Log.d(TAG, " pixel and width" + pixel + "  " + width);
-        // Log.d(TAG, "Calculate Angle, OldAngle: " + oldAngle + " maxANgle: " +
-        // maxAngle);
-        if ((pixel - (width / 2)) == 0) {
-            return oldAngle;
+    public double calculateAngleFromPixel(double pixel, double axis,
+            double maxAngle) {
+        if ((pixel - (axis / 2)) == 0) {
+            return 0;
         }
-        double percent = pixel / width;
-        double angle = maxAngle * percent;
-        angle = angle - (maxAngle / 2);
-        return oldAngle - angle;
+        final double percent = (2 * pixel - axis) / axis;
+        final double z = Math.sin(maxAngle / 2);
+        final double angle = Math.asin(z * percent);
+        return angle;
     }
 
     /**
-     * calculates
-     * 
-     * @param tps
-     * @param deviceOrientation
-     * @param coord
-     * @return calculated Point
-     */
-    public Point calculatePointFromCoords(TransformationParamBean tps,
-            DeviceOrientation deviceOrientation, double[] coord) {
-        if (coord[2] == -1) {
-            return null;
-        }
-        // rotates the vector with azimuth
-        double x = ((coord[0] * Math.cos(deviceOrientation.getAzimuth())) - (coord[1] * Math
-                .sin(deviceOrientation.getAzimuth())));
-        double y = ((coord[0] * Math.sin(deviceOrientation.getAzimuth())) + (coord[1] * Math
-                .cos(deviceOrientation.getAzimuth())));
-        // calculates the rotation and pitch of the Pixel given the approximate
-        // height and orientation of the phone
-        double rotation = Math.atan(x / tps.getHeight())
-                - deviceOrientation.getRoll();
-        double pitch = Math.atan(y / tps.getHeight())
-                + deviceOrientation.getPitch();
-
-        // calculates the multiplier of the Pixel
-        double x2 = (pitch + (tps.getCameraMaxPitchAngle() / 2))
-                / tps.getCameraMaxPitchAngle();
-        double y2 = -((rotation - (tps.getCameraMaxRotationAngle() / 2)) / tps
-                .getCameraMaxRotationAngle());
-
-        // multiply with the Width and Height of the Photo
-        float xx = (float) ((int) (x2 * tps.getPhotoWidth()));
-        float yy = (float) ((int) (y2 * tps.getPhotoHeight()));
-        Point point = new Point(xx, yy);
-        return point;
-    }
-
-    /**
-     * calculates GPS-Point from Coordinates in a local System and the given
-     * Location
+     * calculates Node (with latitude and longitude) from coordinates in a local
+     * system and the current Location.
      * 
      * @param location
-     * @param point
-     * @return A Node with a GPS Point
+     *            current location of the device
+     * @param coord
+     *            coordinate of the point in the local system
+     * @return A Node with latitude and longitude
      */
     public Node calculateGPSPoint(Location location, double[] coord) {
-        double radius = 6371004.0;
-        double lat = Math.toRadians(location.getLatitude());
-        double lon = Math.toRadians(location.getLongitude());
-
-        // calculate the Length of the current Latitude with the earth Radius
+        final double radius = 6371004.0;
+        final double lat = Math.toRadians(location.getLatitude());
+        final double lon = Math.toRadians(location.getLongitude());
+        // calculate the length of the current latitude line with the earth
+        // radius
         double lonLength = radius * Math.cos(lat);
         lonLength = lonLength * 2 * Math.PI;
-        // add to the current Latitude the distance of the coord
+        // add to the current latitude the distance of the coordinate
         double lon2 = lon + Math.toRadians((coord[0] * 360) / lonLength);
-        /*
-         * if (lat2 < (-Math.PI/2)){ lat2 += Math.PI; } if (lat2 > (Math.PI/2)){
-         * lat2 -= Math.PI; }
-         */
-
-        // calculate the Length of the current Longitude with the earth Radius
-        double latLength = radius * 2 * Math.PI;
-        // add to the current Longitude the distance of the coord
+        // fix the skip from -PI to +PI for the longitude
+        lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+        // calculate the length of the current longitude line with the earth
+        // radius
+        final double latLength = radius * 2 * Math.PI;
+        // add to the current Longitude the distance of the coordinate
         double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
         /*
          * if (lon2 > (Math.PI/4)){ lon2 = (Math.PI/2) - lon2; } if (lon2 <
@@ -337,36 +261,83 @@ public class PointToCoordsTransformUtil {
          */
         lat2 = Math.toDegrees(lat2);
         lon2 = Math.toDegrees(lon2);
-
-        Node node = new Node(osmID, osmVersion, lat2, lon2);
+        // create a new Node with the latitude and longitude values
+        final Node node = new Node(osmID, lat2, lon2);
         osmID--;
         return node;
     }
 
     /**
-     * Calculates the given GPS-Point in a local System
+     * Changes the point coordinates on the device coordinate system depending
+     * on the device rotation.
      * 
-     * @param location
-     * @param node
-     * @return coord[]
+     * @author sbollen
+     * @param point
+     *            the drawn point
+     * @param rotation
+     *            the rotation of the device at the state of drawing
+     * @return the new calculated point
      */
-    public double[] calculateCoordFromGPS(Location location, Node node) {
-        double radius = 6371004.0;
-        double lat = Math.toRadians(node.getLat() - location.getLatitude());
-        double lon = Math.toRadians(node.getLon() - location.getLongitude());
-        double localLat = Math.toRadians(location.getLatitude());
-
-        // calculate the Length of the current Latitude with the earth Radius
-        double latLength = radius * Math.cos(localLat);
-
-        double[] coord = new double[3];
-        coord[0] = latLength * lat;
-
-        double lonLength = radius;
-        coord[1] = lonLength * lon;
-        coord[2] = 0;
-
-        return coord;
+    public Point changePixelCoordSystem(Point point, int rotation) {
+        if (point != null) {
+            if (rotation == 0) {
+                Log.d(TAG, "Device orientation was portrait");
+                // device was in portrait mode
+                xAxis = tps.getPhotoHeight();
+                yAxis = tps.getPhotoWidth();
+                return new Point(xAxis - point.getY() + 1, yAxis - point.getX()
+                        + 1);
+            } else if (rotation == 1) {
+                Log.d(TAG, "Device orientation was landscape counter-clockwise");
+                // device was in landscape mode and the home-button to the right
+                xAxis = tps.getPhotoWidth();
+                yAxis = tps.getPhotoHeight();
+                return new Point(xAxis - point.getX() + 1, point.getY());
+            } else if (rotation == 3) {
+                Log.d(TAG, "Device orientation was landscape clockwise");
+                // device was in landscape mode and the home-button to the left
+                xAxis = tps.getPhotoWidth();
+                yAxis = tps.getPhotoHeight();
+                return new Point(point.getX(), yAxis - point.getY() + 1);
+            } else {
+                Log.wtf(TAG, "No device orientation identifiable!!", null);
+                xAxis = tps.getPhotoHeight();
+                yAxis = tps.getPhotoWidth();
+                return point;
+            }
+        } else {
+            Log.d(TAG, "No point to change");
+            return null;
+        }
     }
 
+    /**
+     * @return Size of xAxis
+     */
+    public int getxAxis() {
+        return xAxis;
+    }
+
+    /**
+     * @param xAxis
+     *            Size of xAxis
+     */
+    public void setxAxis(int xAxis) {
+        this.xAxis = xAxis;
+    }
+
+    /**
+     * @return Size of yAxis
+     */
+    public int getyAxis() {
+        return yAxis;
+    }
+
+    /**
+     * @param yAxis
+     *            Size of yAxis
+     */
+    public void setyAxis(int yAxis) {
+        this.yAxis = yAxis;
+    }
 }

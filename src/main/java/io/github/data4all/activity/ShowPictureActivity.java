@@ -18,6 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.PointToCoordsTransformUtil;
@@ -120,12 +121,13 @@ public class ShowPictureActivity extends BasicActivity {
         }
 
         if (getIntent().hasExtra("transform_bean")) {
-            transformBean = getIntent().getExtras().getParcelable(
-                    "transform_bean");
+            transformBean =
+                    getIntent().getExtras().getParcelable("transform_bean");
         }
         if (getIntent().hasExtra("current_orientation")) {
-            currentOrientation = getIntent().getExtras().getParcelable(
-                    "current_orientation");
+            currentOrientation =
+                    getIntent().getExtras()
+                            .getParcelable("current_orientation");
         }
         // Set the display size as photo size to get a coordinate system for the
         // drawn points
@@ -152,8 +154,9 @@ public class ShowPictureActivity extends BasicActivity {
         // 0 or Rotation0 if portrait
         // 90 or Rotation1 if home-button to the right
         // 270 or Rotation3 if home-button to the left
-        final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay().getRotation();
+        final int rotation =
+                ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                        .getDefaultDisplay().getRotation();
 
         // create an abstract data element from the given data and pass it to
         // the next
@@ -243,8 +246,9 @@ public class ShowPictureActivity extends BasicActivity {
     private void setBackground(Uri selectedImage) {
         // try to convert a image to a bitmap
         try {
-            bitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(), selectedImage);
+            bitmap =
+                    MediaStore.Images.Media.getBitmap(
+                            this.getContentResolver(), selectedImage);
             final Display d = getWindowManager().getDefaultDisplay();
             if (d.getRotation() == Surface.ROTATION_0) {
                 // get the display size
@@ -254,8 +258,8 @@ public class ShowPictureActivity extends BasicActivity {
                 final int height = size.y;
 
                 // scaled bitmap
-                final Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
-                        height, width, true);
+                final Bitmap scaledBitmap =
+                        Bitmap.createScaledBitmap(bitmap, height, width, true);
 
                 // create a matrix object
                 final Matrix matrix = new Matrix();
@@ -264,9 +268,10 @@ public class ShowPictureActivity extends BasicActivity {
 
                 // create a new bitmap from the original using the matrix to
                 // transform the result
-                bitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                        scaledBitmap.getWidth(), scaledBitmap.getHeight(),
-                        matrix, true);
+                bitmap =
+                        Bitmap.createBitmap(scaledBitmap, 0, 0,
+                                scaledBitmap.getWidth(),
+                                scaledBitmap.getHeight(), matrix, true);
             }
 
             // set the imageview bitmap-resource

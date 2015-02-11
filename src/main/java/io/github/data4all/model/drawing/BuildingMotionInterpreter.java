@@ -1,8 +1,24 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.model.drawing;
 
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.OsmElement;
-import io.github.data4all.model.data.Way;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
@@ -27,7 +43,8 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      * Creates an BuildingMotionInterpreter with the specified transformation
      * utility.
      * 
-     * @param pointTrans the transformation utility
+     * @param pointTrans
+     *            the transformation utility
      */
     public BuildingMotionInterpreter(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
@@ -91,15 +108,19 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
 
     /**
      * @author sbollen
+     * @see io.github.data4all.model.drawing.MotionInterpreter#create(java.util.List,
+     *      int)
      */
     @Override
-    public OsmElement create(List<Point> polygon) {
-        final Way newWay = new Way(-1, 1);
+    public AbstractDataElement create(List<Point> polygon, int rotation) {
+        final PolyElement element =
+ new PolyElement(-1,
+                PolyElementType.BUILDING);
 
-        final List<Node> nodeList = pointTrans.transform(polygon);
+        final List<Node> nodeList = pointTrans.transform(polygon, rotation);
         nodeList.add(nodeList.get(0));
-        newWay.addNodes(nodeList, false);
-        return newWay;
+        element.addNodes(nodeList, false);
+        return element;
     }
 
     /*

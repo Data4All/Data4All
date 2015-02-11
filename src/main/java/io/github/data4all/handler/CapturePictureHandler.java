@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.handler;
 
 import io.github.data4all.activity.ShowPictureActivity;
@@ -60,6 +75,7 @@ public class CapturePictureHandler implements PictureCallback {
 	 * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
 	 *      android.hardware.Camera)
 	 */
+    @Override
 	public void onPictureTaken(byte[] raw, Camera camera) {
 		Log.d(getClass().getSimpleName(), "Save the Picture");
 
@@ -74,6 +90,7 @@ public class CapturePictureHandler implements PictureCallback {
 		transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
 				verticalViewAngle, pictureSize.width, pictureSize.height,
 				currentLocation);
+                        pictureSize.height, currentLocation);
 		currentOrientation = Optimizer.currentBestPos();
 
 		// Start a thread to save the Raw Image in JPEG into SDCard
@@ -93,6 +110,7 @@ public class CapturePictureHandler implements PictureCallback {
 				Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
 				// Open file channel
 				FileOutputStream fos = new FileOutputStream(photoFile.getPath());
+                        new FileOutputStream(photoFile.getPath());
 				fos.write(photoData[0]);
 				fos.flush();
 				fos.close();
@@ -128,6 +146,19 @@ public class CapturePictureHandler implements PictureCallback {
 			}
 		}
 	}
+                intent.putExtra(FILEPATH, photoFile);
+                intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+                intent.putExtra(TRANSFORM_BEAN, transformBean);
+
+                // start the new ShowPictureActivity
+                context.startActivity(intent);
+
+            } else {
+                Toast.makeText(context, "Failed on taking picture",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 	/*
 	 * Create a directory Data4all if necessary and create a file for the
@@ -138,8 +169,8 @@ public class CapturePictureHandler implements PictureCallback {
 		// Image Type is JPEG
 
 		// Create a new folder on the internal storage named Data4all
-		final File folder = new File(Environment.getExternalStorageDirectory()
-				+ DIRECTORY);
+        final File folder =
+                new File(Environment.getExternalStorageDirectory() + DIRECTORY);
 		if (!folder.exists() && folder.mkdirs()) {
 			Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
 					.show();
