@@ -3,7 +3,7 @@
     android:id="@+id/main_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
 
     <ImageView
         android:id="@+id/imageView1"

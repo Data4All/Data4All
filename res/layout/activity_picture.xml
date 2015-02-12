@@ -8,8 +8,6 @@
     <ImageView
         android:id="@+id/imageView1"
         style="@style/imageViewTakedPicture"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
         android:contentDescription="@string/returnToActualPosition" />
 
     <io.github.data4all.view.TouchView

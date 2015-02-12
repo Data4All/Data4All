@@ -254,11 +254,13 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
      * Set the Camera Display Orientation when the view changed
      */
     private void setCameraDisplayOrientation() {
-	Camera.CameraInfo info = new Camera.CameraInfo();
+     	
+    Camera.CameraInfo info = new Camera.CameraInfo();
 	Camera.getCameraInfo(0, info);
 
 	WindowManager winManager = (WindowManager) context
 		.getSystemService(Context.WINDOW_SERVICE);
+	
 	int rotation = winManager.getDefaultDisplay().getRotation();
 
 	int degrees = 0;
@@ -285,13 +287,13 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 	} else { // back-facing
 	    result = (info.orientation - degrees + 360) % 360;
 	}
-
+	Log.i(TAG, "DEBUG: "+info.orientation);
 	Log.i(TAG, "DEBUG: "+degrees);
 	Log.i(TAG, "DEBUG: "+result);
 	
 	mCamera.setDisplayOrientation(result);
 	
-	params.setRotation(degrees);
+	params.setRotation(result);
 	
 	mCamera.setParameters(params);
 

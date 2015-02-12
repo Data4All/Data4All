@@ -116,16 +116,12 @@
     <style name="imageViewTakedPicture">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
-        <item name="android:layout_centerInParent">true</item>
 
     </style>
     
     <style name="imageViewTakedPictureLand">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">fill_parent</item>
-        <item name="android:adjustViewBounds">true</item>
-        <item name="android:layout_centerInParent">true</item>
-        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 
     
