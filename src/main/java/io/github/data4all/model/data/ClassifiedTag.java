@@ -110,9 +110,9 @@ public class ClassifiedTag extends Tag {
 
         }
         if ("Last Choice".equalsIgnoreCase(getKey())) {
-            lastChoice.setParentKey(getParentKey());
+            lastChoice.setOriginKey(getOriginKey());
         } else {
-            lastChoice.setParentKey(getKey());
+            lastChoice.setOriginKey(getKey());
         }
 
     }
