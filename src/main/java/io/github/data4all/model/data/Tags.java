@@ -256,5 +256,19 @@ public class Tags {
     public static ArrayList<Tag> getAllContactTags() {
         return contactTagList;
     }
+    
+    /**
+     *  @author Steeve
+     *  @return ClassifiedTag
+     *                    get LastChoice
+     */
+    public static ClassifiedTag getLastChoice(){
+        for(Tag t : tagList){
+            if(t instanceof ClassifiedTag && t.getKey().equalsIgnoreCase("last choice")){
+                return (ClassifiedTag)t;
+            }
+        }
+        return null;
+    }
 
 }
