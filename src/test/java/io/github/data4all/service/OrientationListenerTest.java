@@ -18,7 +18,6 @@ package io.github.data4all.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.hamcrest.core.IsNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +27,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.MediaScannerConnection;
 
 /**
  * test cases for the OrientationListener class
