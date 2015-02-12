@@ -16,7 +16,6 @@
 package io.github.data4all.util;
 
 import static org.junit.Assert.assertThat;
-//import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 import java.util.ArrayList;
