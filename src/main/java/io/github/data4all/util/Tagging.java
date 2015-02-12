@@ -104,8 +104,12 @@ public abstract class Tagging {
         ArrayList<Tag> tag;
         tag = Tags.getAllAddressTags();
         for (int i = 0; i < tag.size(); i++) {
-            if (!addressTags.get(i).equals("")) {
-                map.put(tag.get(i).getKey(), addressTags.get(i));
+            final String value = addressTags.get(i);
+            //make sure that the new Tag contains all informations for last tag
+            if (!value.equals("")) {
+                final Tag tagActual = tag.get(i);
+                map.put(tagActual.getKey(), value);
+                tagActual.setLastValue(value);
             }
         }
         return map;
@@ -117,8 +121,12 @@ public abstract class Tagging {
         ArrayList<Tag> tag;
         tag = Tags.getAllContactTags();
         for (int i = 0; i < tag.size(); i++) {
-            if (!contactTags.get(i).equals("")) {
-                map.put(tag.get(i).getKey(), contactTags.get(i));
+            final String value = contactTags.get(i);
+            //make sure that the new Tag contains all informations for last tag
+            if (!value.equals("")) {
+                final Tag tagActual = tag.get(i);
+                map.put(tagActual.getKey(), value);
+                tagActual.setLastValue(value);
             }
         }
         return map;
