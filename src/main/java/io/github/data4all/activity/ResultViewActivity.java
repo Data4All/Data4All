@@ -54,7 +54,7 @@ import android.widget.ListView;
 
 /**
  * 
- * @author Maurice Boyke,Steeve
+ * @author Maurice Boyke
  *
  */
 
@@ -194,19 +194,13 @@ public class ResultViewActivity extends BasicActivity implements
             }
 
             /**
-             * this method create a item view dialog which help the user to
-             * choose a Tag. when user map for the first time, then he receive a
-             * dialog with a list of all classifiedTag. when the user want after
-             * directly mapping a object which belong to the same Category then
-             * he receive a list with 2 suggestions: the first is the last Tag
-             * which was selected and he can choose this last Tag. But when he
-             * don't want so he can choose ALL which get a dialog with all
-             * ClassifiedTag and then he can choose a new Tag.
-             * 
+             * this method create a dialog with all classifiedTag. 
+             * add a tag to a osmElement
+             * or add a suggestion to a osmElement, when this new osmElement belong to the same category as the last  
              * @param position, showArray, classifiedTag
              * @return alertDialogBuilder
              * 
-             * @author: Steeve
+             * @author Steeve
              */
             private AlertDialog.Builder createItemViewDialog(
                     final int position, final CharSequence[] showArray,
@@ -222,26 +216,25 @@ public class ResultViewActivity extends BasicActivity implements
                     @Override
                     public void onClick(DialogInterface dialog,
                                     int which) {
-                                if ("ALL".equals(showArray[which])) {
-                                  final  CharSequence showArrayALL[] = classifiedTag
+                                
+                     final  CharSequence showArrayALL[] = classifiedTag
                                             .getAllClassifiedValues()
                                             .toArray(
                                                new String[classifiedTag
                                                .getAllClassifiedValues()
                                                .size()]);
 
-                               final AlertDialog.Builder alertDialog = createItemViewDialog(
-                                            position, showArrayALL,
-                                            classifiedTag);
+                      final AlertDialog.Builder alertDialog = createItemViewDialog(
+                                    position, showArrayALL,
+                                    classifiedTag);
                                     alert = alertDialog.create();
 
                                     alert.show();
-                                    return;
-                                }
-                                element.addOrUpdateTag(keyList.get(position),
+                                
+                          element.addOrUpdateTag(keyList.get(position),
                                         (String) showArray[which]);
 
-                                element.addOrUpdateSuggestionTag(keyList.get(position),
+                       element.addOrUpdateSuggestionTag(keyList.get(position),
                                         (String) showArray[which],
                                         classifiedTag);
                                 output();

@@ -121,9 +121,8 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 
             /**
              * 
-             * this method create a dialog which help the user to choose a Tag.
-             * and it add each a new Suggestion after user has tagged something.
-             * 
+             * this method create a dialog with all classifiedTag. this will help the user to choose a tag.
+             * and each tag will be after a suggestion 
              * @param classifiedTag
              * @return alertDialogBuilder
              * 
