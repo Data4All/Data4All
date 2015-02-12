@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to undo and redo points in the TouchView
+ * Class to undo and redo points in the TouchView.
  * 
  * 
  * @author vkochno
@@ -35,17 +35,17 @@ public class RedoUndo {
 	private List<Point> motions;
 
 	/**
-	 * counters for set die new list
+	 * length of the list.
 	 */
-	private int maxCount, currentCount;
+	private int maxCount;
+	
+	/**
+	 * current position.
+	 */
+	private int currentCount;
 
 	/**
-	 * Boolean for setup the view for the buttons
-	 */
-	private boolean isUndo = false;
-
-	/**
-	 * Standard constructor with clean start
+	 * Standard constructor with clean start.
 	 */
 	public RedoUndo() {
 		motions = new ArrayList<Point>();
@@ -54,7 +54,7 @@ public class RedoUndo {
 	}
 
 	/**
-	 * Constructor for using a already created list
+	 * Constructor for using a already created list.
 	 * 
 	 * @param points
 	 *            List containing the points of the already drawn polygon
@@ -72,13 +72,13 @@ public class RedoUndo {
 			}
 		} else {
 			if (points != null) {
-				setList(points);
+				this.setList(points);
 			}
 		}
 	}
 
 	/**
-	 * Add a point into the RedoUndo List of points
+	 * Add a point into the RedoUndo List of points.
 	 * 
 	 * @param point
 	 *            Point to add
@@ -104,12 +104,12 @@ public class RedoUndo {
 			motions.clear();
 			Log.d(this.getClass().getSimpleName(),
 					"motions size" + motions.size());
-			add(p);
+			this.add(p);
 		}
 	}
 
 	/**
-	 * Go a step back and return a new list
+	 * Go a step back and return a new list.
 	 * 
 	 * @return 
 	 * 		new list with one step less
@@ -129,7 +129,7 @@ public class RedoUndo {
 	}
 
 	/**
-	 * Go a step forward,if there is a point, and return a new list
+	 * Go a step forward,if there is a point, and return a new list.
 	 * 
 	 * @return 
 	 * 		new list with one step more
@@ -149,7 +149,7 @@ public class RedoUndo {
 	}
 
 	/**
-	 * Getter for the current step
+	 * Getter for the current step.
 	 * 
 	 * @return 
 	 * 		current position in the list
@@ -159,7 +159,7 @@ public class RedoUndo {
 	}
 
 	/**
-	 * Getter for the max length
+	 * Getter for the max length.
 	 * 
 	 * @return 
 	 * 		max length of the list
