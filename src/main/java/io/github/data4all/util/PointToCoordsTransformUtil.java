@@ -226,8 +226,7 @@ public class PointToCoordsTransformUtil {
         }
         final double percent = (2 * pixel - axis) / axis;
         final double z = Math.sin(maxAngle / 2);
-        final double angle = Math.asin(z * percent);
-        return angle;
+        return Math.asin(z * percent);
     }
 
     /**
@@ -288,8 +287,8 @@ public class PointToCoordsTransformUtil {
                 // device was in portrait mode
                 xAxis = tps.getPhotoHeight();
                 yAxis = tps.getPhotoWidth();
-                returnpoint = new Point(xAxis - point.getY() + 1, yAxis - point.getX()
-                        + 1);
+                returnpoint = new Point(xAxis - point.getY() + 1, yAxis
+                        - point.getX() + 1);
             } else if (rotation == 1) {
                 Log.d(TAG, "Device orientation was landscape counter-clockwise");
                 // device was in landscape mode and the home-button to the right
