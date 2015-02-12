@@ -53,7 +53,7 @@ import android.widget.TextView;
 
 /**
  * 
- * @author Maurice Boyke,Steeve
+ * @author Maurice Boyke
  *
  */
 public class TagActivity extends BasicActivity implements OnClickListener {
@@ -113,18 +113,16 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                         .getClassifiedValues();
                 array = classifiedValues.toArray(new String[classifiedValues
                         .size()]);
-            final AlertDialog.Builder alertDialogBuilder = 
-                      createItemViewDialog(classifiedTag);
+                final AlertDialog.Builder alertDialogBuilder = createItemViewDialog(classifiedTag);
 
                 alert1 = alertDialogBuilder.create();
                 alert1.show();
             }
 
             /**
-             * this method create a Item view Dialog. when ALL is a value, then
-             * create dialog with all classifiedTag. when key was a building or
-             * a amenity,so create a new Dialog which contains more informations
-             * about the building add a new suggestion
+             * 
+             * this method create a dialog which help the user to choose a Tag.
+             * and it add each a new Suggestion after user has tagged something.
              * 
              * @param classifiedTag
              * @return alertDialogBuilder
@@ -143,25 +141,28 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                             public void onClick(DialogInterface dialog,
                                     int which) {
                                 String value = (String) array[which];
-                                if ("ALL".equals(value)) {
-                                    array = classifiedTag
-                                    .getAllClassifiedValues()
-                                    .toArray(
-                                     new String[classifiedTag
-                                    .getAllClassifiedValues()
-                                    .size()]);
-                                    
-                                   final AlertDialog.Builder alertDialogBuilder = createItemViewDialog(classifiedTag);
 
-                                    alert1 = alertDialogBuilder.create();
-                                    alert1.show();
-                                    return;
-                                }
+                                array = classifiedTag
+                                        .getAllClassifiedValues()
+                                        .toArray(
+                                                new String[classifiedTag
+                                                        .getAllClassifiedValues()
+                                                        .size()]);
+
+                                final AlertDialog.Builder alertDialogBuilder = createItemViewDialog(classifiedTag);
+
+                                alert1 = alertDialogBuilder.create();
+                                alert1.show();
+
                                 map = new LinkedHashMap<String, String>();
                                 map.put(key, value);
                                 if (key.equals("building")
-                                        || key.equals("amenity")) {
-                                   createDialog(Tags.getAllAddressTags(),
+                                        || key.equals("amenity")
+                                        || "building".equals(classifiedTag
+                                                .getOriginKey())
+                                        || "amenity".equals(classifiedTag
+                                                .getOriginKey())) {
+                                    createDialog(Tags.getAllAddressTags(),
                                             "Add Address",
                                             key.equals("building"), true);
                                 } else {
@@ -258,7 +259,12 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         edit = new ArrayList<EditText>();
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
-            text.setHint(arrayList.get(i).getHintRessource());
+            final Tag tag = arrayList.get(i);
+            if (tag.getLastValue() != null) {
+                text.setText(tag.getLastValue());
+            } else {
+                text.setHint(tag.getHintRessource());
+            }
             text.setHintTextColor(Color.DKGRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
