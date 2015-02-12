@@ -43,8 +43,8 @@ import android.widget.ImageView;
  */
 public abstract class MapActivity extends BasicActivity {
 
-    GPSservice mService;
-    boolean mBound = false;
+    GPSservice gpsService;
+    boolean isBound = false;
 
     // Node Type Definition Number
     protected static final int NODE_TYPE_DEF = 1;

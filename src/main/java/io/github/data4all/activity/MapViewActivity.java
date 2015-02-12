@@ -43,11 +43,15 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // Start the GPS service
-        Log.i(TAG, "Start GPSService");
+        // Log.i(TAG, "Start GPSService");
+        // startService(new Intent(this, GPSservice.class));
+        // // Bind to gpsservice
+        // Intent intent = new Intent(this, GPSservice.class);
+        // bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         startService(new Intent(this, GPSservice.class));
-        // Bind to gpsservice
-        Intent intent = new Intent(this, GPSservice.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        isBound = getApplicationContext().bindService(
+                new Intent(getApplicationContext(), GPSservice.class),
+                gpsConnection, Context.BIND_AUTO_CREATE);
 
         super.onCreate(savedInstanceState);
 
@@ -206,6 +210,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Pause the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
+        if (isBound) {
+            isBound = false;
+            getApplicationContext().unbindService(gpsConnection);
+        }
     }
 
     /**
@@ -214,7 +222,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
      * 
      * @author: konerman
      */
-    public ServiceConnection mConnection = new ServiceConnection() {
+    public ServiceConnection gpsConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -223,8 +231,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             // We've bound to GPSservice, cast the IBinder and get
             // GPSservice instance
             LocalBinder binder = (LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
+            gpsService = binder.getService();
+            isBound = true;
             // Set actual Center
             if (getMyLocation() != null) {
                 Log.i(TAG, "Set actual Center to " + getMyLocation());
@@ -236,7 +244,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
+            isBound = false;
         }
 
     };
