@@ -21,124 +21,173 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Class to undo and redo points in the TouchView
+ * 
  * 
  * @author vkochno
  *
  */
 public class RedoUndo {
 
-    /**
-     * List of all added Points.
-     */
-    private List<Point> motions;
-    private int maxCount, currentCount;
-    private boolean isUndo = false;
+	/**
+	 * List of all added Points.
+	 */
+	private List<Point> motions;
 
-    public RedoUndo() {
-        motions = new ArrayList<Point>();
-        maxCount = 0;
-        currentCount = 0;
-    }
+	/**
+	 * counters for set die new list
+	 */
+	private int maxCount, currentCount;
 
-    public RedoUndo(List<Point> points) {
-        if (motions == null) {
-            if (points != null) {
-                motions = points;
-                maxCount = points.size();
-                currentCount = points.size();
-            } else {
-                motions = new ArrayList<Point>();
-                maxCount = 0;
-                currentCount = 0;
-            }
-        } else {
-            if (points != null) {
-                addList(points);
-            }
-        }
-    }
+	/**
+	 * Boolean for setup the view for the buttons
+	 */
+	private boolean isUndo = false;
 
-    public void addMotion(Point point) {
-        Log.d(this.getClass().getSimpleName(), "ADD: " + currentCount + ":"
-                + maxCount);
-        if (maxCount == currentCount) {
-            maxCount++;
-            currentCount++;
-        } else {
-            for (int i = currentCount; i <= maxCount; i++) {
-                motions.remove(i);
-            }
-            currentCount++;
-            maxCount = currentCount;
-        }
-        motions.add(point);
-    }
+	/**
+	 * Standard constructor with clean start
+	 */
+	public RedoUndo() {
+		motions = new ArrayList<Point>();
+		maxCount = 0;
+		currentCount = 0;
+	}
 
-    public void addList(List<Point> newPoly) {
-        for (Point p : newPoly) {
-            motions.clear();
-            Log.d(this.getClass().getSimpleName(),
-                    "motions size" + motions.size());
-            addMotion(p);
-        }
-    }
+	/**
+	 * Constructor for using a already created list
+	 * 
+	 * @param points
+	 *            List containing the points of the already drawn polygon
+	 */
+	public RedoUndo(List<Point> points) {
+		if (motions == null) {
+			if (points != null) {
+				motions = points;
+				maxCount = points.size();
+				currentCount = points.size();
+			} else {
+				motions = new ArrayList<Point>();
+				maxCount = 0;
+				currentCount = 0;
+			}
+		} else {
+			if (points != null) {
+				setList(points);
+			}
+		}
+	}
 
-    public List<Point> undo() {
-        Log.d(this.getClass().getSimpleName(), "UNDO: " + currentCount + ":"
-                + maxCount);
-        if (currentCount != 0 && currentCount <= maxCount) {
-            currentCount--;
-            final List<Point> relist = new ArrayList<Point>();
-            for (int i = 0; i < currentCount; i++) {
-                relist.add(motions.get(i));
-            }
-            return relist;
-        }
-        return motions;
-    }
+	/**
+	 * Add a point into the RedoUndo List of points
+	 * 
+	 * @param point
+	 *            Point to add
+	 */
+	public void add(Point point) {
+		Log.d(this.getClass().getSimpleName(), "ADD: " + currentCount + ":"
+				+ maxCount);
+		if (maxCount == currentCount) {
+			maxCount++;
+			currentCount++;
+		} else {
+			for (int i = currentCount; i <= maxCount; i++) {
+				motions.remove(i);
+			}
+			currentCount++;
+			maxCount = currentCount;
+		}
+		motions.add(point);
+	}
 
-    public List<Point> redo() {
-        Log.d(this.getClass().getSimpleName(), "REDO: " + currentCount + ":"
-                + maxCount);
-        if (currentCount < maxCount) {
-            currentCount++;
-            final List<Point> relist = new ArrayList<Point>();
-            for (int i = 0; i < currentCount; i++) {
-                relist.add(motions.get(i));
-            }
-            return relist;
-        }
-        return motions;
-    }
+	private void setList(List<Point> newPoly) {
+		for (Point p : newPoly) {
+			motions.clear();
+			Log.d(this.getClass().getSimpleName(),
+					"motions size" + motions.size());
+			add(p);
+		}
+	}
 
-    public int getCurrent() {
-        return currentCount;
-    }
+	/**
+	 * Go a step back and return a new list
+	 * 
+	 * @return 
+	 * 		new list with one step less
+	 */
+	public List<Point> undo() {
+		Log.d(this.getClass().getSimpleName(), "UNDO: " + currentCount + ":"
+				+ maxCount);
+		if (currentCount != 0 && currentCount <= maxCount) {
+			currentCount--;
+			final List<Point> relist = new ArrayList<Point>();
+			for (int i = 0; i < currentCount; i++) {
+				relist.add(motions.get(i));
+			}
+			return relist;
+		}
+		return motions;
+	}
 
-    public int getMax() {
-        return maxCount;
-    }
+	/**
+	 * Go a step forward,if there is a point, and return a new list
+	 * 
+	 * @return 
+	 * 		new list with one step more
+	 */
+	public List<Point> redo() {
+		Log.d(this.getClass().getSimpleName(), "REDO: " + currentCount + ":"
+				+ maxCount);
+		if (currentCount < maxCount) {
+			currentCount++;
+			final List<Point> relist = new ArrayList<Point>();
+			for (int i = 0; i < currentCount; i++) {
+				relist.add(motions.get(i));
+			}
+			return relist;
+		}
+		return motions;
+	}
 
-    /**
-     * A listener for events of "undo/redo-is-(un)available".
-     * 
-     * @author tbrose
-     */
-    public interface UndoRedoListener {
-        /**
-         * Informs about the current undo state.
-         * 
-         * @param state
-         *            The current undo state
-         */
-        void canUndo(boolean state);
+	/**
+	 * Getter for the current step
+	 * 
+	 * @return 
+	 * 		current position in the list
+	 */
+	public int getCurrent() {
+		return currentCount;
+	}
 
-        /**
-         * Informs about the current redo state.
-         * 
-         * @param state
-         *            The current redo state
-         */
-        void canRedo(boolean state);
-    }
+	/**
+	 * Getter for the max length
+	 * 
+	 * @return 
+	 * 		max length of the list
+	 */
+	public int getMax() {
+		return maxCount;
+	}
+
+	/**
+	 * A listener for events of "undo/redo-is-(un)available".
+	 * 
+	 * @author tbrose
+	 */
+	public interface UndoRedoListener {
+		/**
+		 * Informs about the current undo state.
+		 * 
+		 * @param state
+		 *            The current undo state
+		 */
+		void canUndo(boolean state);
+
+		/**
+		 * Informs about the current redo state.
+		 * 
+		 * @param state
+		 *            The current redo state
+		 */
+		void canRedo(boolean state);
+	}
 }
