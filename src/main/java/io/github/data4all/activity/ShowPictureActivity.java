@@ -246,10 +246,10 @@ public class ShowPictureActivity extends BasicActivity {
     private void setBackground(Uri selectedImage) {
         // try to convert a image to a bitmap
         try {
-            bitmap =
-                    MediaStore.Images.Media.getBitmap(
+            bitmap = MediaStore.Images.Media.getBitmap(
                             this.getContentResolver(), selectedImage);
             final Display d = getWindowManager().getDefaultDisplay();
+            
             if (d.getRotation() == Surface.ROTATION_0) {
                 // get the display size
                 final Point size = new Point();

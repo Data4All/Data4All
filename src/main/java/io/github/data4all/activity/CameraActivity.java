@@ -80,7 +80,7 @@ public class CameraActivity extends Activity {
 
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
         btnCapture.setOnClickListener(btnCaptureOnClickListener);
-        
+       
         //mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         //crossHair = AnimationUtils.loadAnimation(this,R.anim.crossHair);
         //mAutoFocusCrossHair.clearAnimation();
@@ -107,10 +107,10 @@ public class CameraActivity extends Activity {
                     }
                 }
             });
-            
+          
             btnCapture.setOnClickListener(null);
             btnCapture.setClickable(false);
-
+            
         }
     };
 
@@ -137,6 +137,7 @@ public class CameraActivity extends Activity {
     protected void onResume() {
         Log.i(TAG, "onResume is called");
 
+
         super.onResume();
 
         if (mCamera == null) {
@@ -144,8 +145,11 @@ public class CameraActivity extends Activity {
             this.createCamera();
         }
         
+        
         btnCapture.setOnClickListener(btnCaptureOnClickListener);
         btnCapture.setClickable(true);
+        
+        
 
     }
 
