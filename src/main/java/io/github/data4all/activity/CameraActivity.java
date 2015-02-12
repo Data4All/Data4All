@@ -49,7 +49,6 @@ public class CameraActivity extends Activity {
     private Camera mCamera;
     private CameraPreview cameraPreview;
     private ImageButton btnCapture;
-    private AutoFocusCrossHair mAutofocusCrosshair;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,9 +81,7 @@ public class CameraActivity extends Activity {
     private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            
-          
-            
+
             mCamera.autoFocus(new AutoFocusCallback() {
                 @Override
                 public void onAutoFocus(boolean success, Camera camera) {

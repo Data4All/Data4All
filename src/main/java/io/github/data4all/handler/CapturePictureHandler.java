@@ -90,7 +90,6 @@ public class CapturePictureHandler implements PictureCallback {
 		transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
 				verticalViewAngle, pictureSize.width, pictureSize.height,
 				currentLocation);
-                        pictureSize.height, currentLocation);
 		currentOrientation = Optimizer.currentBestPos();
 
 		// Start a thread to save the Raw Image in JPEG into SDCard
@@ -146,20 +145,9 @@ public class CapturePictureHandler implements PictureCallback {
 			}
 		}
 	}
-                intent.putExtra(FILEPATH, photoFile);
-                intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
-                intent.putExtra(TRANSFORM_BEAN, transformBean);
+                
 
-                // start the new ShowPictureActivity
-                context.startActivity(intent);
-
-            } else {
-                Toast.makeText(context, "Failed on taking picture",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
+           
 	/*
 	 * Create a directory Data4all if necessary and create a file for the
 	 * picture
