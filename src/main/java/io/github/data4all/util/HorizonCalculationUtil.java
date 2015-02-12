@@ -29,7 +29,7 @@ public class HorizonCalculationUtil {
         float skylook = 0;
 
         double pitch = -deviceOrientation.getPitch();
-        double roll = -deviceOrientation.getRoll();
+        double roll = deviceOrientation.getRoll();
 
         double[] vector = new double[3];
         // Without any rotation
@@ -63,59 +63,65 @@ public class HorizonCalculationUtil {
                 + vector2[2]
                 * (Math.sin(pitch) * Math.sin(pitch) * (1 - Math.cos(roll)) + Math
                         .cos(roll));
+
         double vectorLength = Math.sqrt((vector3[0] * vector3[0])
                 + (vector3[1] * vector3[1]) + (vector3[2] * vector3[2]));
         double angle = Math.acos(-vector3[2]);
+        double angleDegree = Math.toDegrees(angle);
         double alpha = maxhorizon - angle;
+        double alphaDegree = Math.toDegrees(alpha);
         if (alpha < 0) {
             skylook = 1;
         }
-        double[] rotateVector = { -vector3[1], vector3[0], 0 };
+        double rotateVectorLengthMultiplicator = Math
+                .sqrt((vector3[0] * vector3[0]) + (vector3[1] * vector3[1]));
+        double[] rotateVector = {
+                (-vector3[1] / rotateVectorLengthMultiplicator),
+                (vector3[0] / rotateVectorLengthMultiplicator) };
         double[] vector4 = new double[3];
 
         vector4[0] = (rotateVector[1] * Math.sin(alpha));
         vector4[1] = -(rotateVector[0] * Math.sin(alpha));
         vector4[2] = Math.cos(alpha);
+        double vectorLength2 = Math.sqrt((vector4[0] * vector4[0])
+                + (vector4[1] * vector4[1]) + (vector4[2] * vector4[2]));
 
         double horizonPitch = Math.atan(vector4[1] / (-vector[2]));
         double horizonRoll = Math.atan(vector4[0] / (-vector[2]));
-        float[] point = {calculatePixelFromAngle(horizonPitch, maxWidth,
-                maxPitch), calculatePixelFromAngle(horizonRoll, maxHeight,
-                maxRoll), skylook};
+        float[] point = {
+                calculatePixelFromAngle(horizonPitch, maxWidth, maxPitch),
+                calculatePixelFromAngle(horizonRoll, maxHeight, maxRoll),
+                skylook };
         /*
-        vector4[0] = vector3[0]
-                * (rotateVector[0] * rotateVector[0] * (1 - Math.cos(alpha)) + Math
-                        .cos(alpha)) + vector3[1]
-                * (rotateVector[0] * rotateVector[1] * (1 - Math.cos(alpha)))
-                + vector3[2] * (rotateVector[1] * Math.sin(alpha));
-        vector4[1] = vector3[0]
-                * (rotateVector[1] * rotateVector[0] * (1 - Math.cos(alpha)))
-                + vector3[1]
-                * (rotateVector[0] * rotateVector[0] * (1 - Math.cos(alpha)) + Math
-                        .cos(alpha)) - vector3[2]
-                * (rotateVector[0] * Math.sin(alpha));
-        vector4[2] = vector3[0] * (-rotateVector[1] * Math.sin(alpha))
-                + vector3[1] * (rotateVector[0] * Math.sin(alpha)) + vector3[2]
-                * Math.cos(alpha);*/
-        
+         * vector4[0] = vector3[0] (rotateVector[0] * rotateVector[0] * (1 -
+         * Math.cos(alpha)) + Math .cos(alpha)) + vector3[1] (rotateVector[0] *
+         * rotateVector[1] * (1 - Math.cos(alpha))) + vector3[2] *
+         * (rotateVector[1] * Math.sin(alpha)); vector4[1] = vector3[0]
+         * (rotateVector[1] * rotateVector[0] * (1 - Math.cos(alpha))) +
+         * vector3[1] (rotateVector[0] * rotateVector[0] * (1 - Math.cos(alpha))
+         * + Math .cos(alpha)) - vector3[2] (rotateVector[0] * Math.sin(alpha));
+         * vector4[2] = vector3[0] * (-rotateVector[1] * Math.sin(alpha)) +
+         * vector3[1] * (rotateVector[0] * Math.sin(alpha)) + vector3[2]
+         * Math.cos(alpha);
+         */
+
         return point;
     }
 
     public float calculatePixelFromAngle(double angle, double width,
             double maxAngle) {
 
-        double mid = width/2 ;
+        double mid = width / 2;
         double angle2 = maxAngle / 2;
-        
+
         double a = Math.tan(angle2);
         double b = Math.tan(angle);
-        
-        float pixel = (float) ((b/a) * mid + mid);
+
+        float pixel = (float) ((b / a) * mid + mid);
         return pixel;
 
     }
-    
-    
+
     public double calculateAngleFromPixel(double pixel, double width,
             double maxAngle) {
 
