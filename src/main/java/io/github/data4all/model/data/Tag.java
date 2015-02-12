@@ -23,7 +23,7 @@ import io.github.data4all.R;
  * This class represents a predefined osm tag. The name and hint for a specific
  * tag is defined in the tag_name.xml and tag_hint.xml.
  * 
- * @author fkirchge, tbrose
+ * @author fkirchge, tbrose,Steeve
  *
  */
 public class Tag {
@@ -48,6 +48,11 @@ public class Tag {
      * numpad as input method
      */
     private InputType type;
+    
+    /**
+     * store the last Tag value e.g the last value for addr:street.  
+     */
+    private String lastValue;
 
     /**
      * constant values to define which osmObject the tag refers to
@@ -61,6 +66,11 @@ public class Tag {
      * define to which osm objects the tag refers
      */
     private int[] osmObjects;
+    
+    /** 
+     * store the provenance for a Key
+     */
+    private String originKey;
 
     /**
      * defines different input types
@@ -168,6 +178,24 @@ public class Tag {
 
     public static int getWayTag() {
         return WAY_TAG;
+    }
+
+    
+    public String getOriginKey() {
+        return originKey;
+    }
+    
+   
+    public void setOriginKey(String originKey) {
+        this.originKey = originKey;
+    }
+
+    public String getLastValue() {
+        return lastValue;
+    }
+
+    public void setLastValue(String lastValue) {
+        this.lastValue = lastValue;
     }
 
 }
