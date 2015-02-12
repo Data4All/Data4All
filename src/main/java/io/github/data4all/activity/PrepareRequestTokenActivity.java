@@ -1,22 +1,23 @@
-/*******************************************************************************
+/*
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.Constants;
 import io.github.data4all.logger.Log;
+
 import java.net.URLEncoder;
 
 import oauth.signpost.OAuth;
@@ -37,7 +38,6 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 
 /**
  * Prepares a OAuthConsumer and OAuthProvider
@@ -60,8 +60,8 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
     private OAuthConsumer consumer;
     private OAuthProvider provider;
-    private WebView       webView;
-    private boolean       handled;
+    private WebView webView;
+    private boolean handled;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,12 +70,15 @@ public class PrepareRequestTokenActivity extends BasicActivity {
         try {
 
             System.setProperty("debug", "true");
-            this.consumer = new CommonsHttpOAuthConsumer(
-                    Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
-            this.provider = new CommonsHttpOAuthProvider(Constants.REQUEST_URL
-                    + "?scope="
-                    + URLEncoder.encode(Constants.SCOPE, Constants.ENCODING),
-                    Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
+            this.consumer =
+                    new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY,
+                            Constants.CONSUMER_SECRET);
+            this.provider =
+                    new CommonsHttpOAuthProvider(Constants.REQUEST_URL
+                            + "?scope="
+                            + URLEncoder.encode(Constants.SCOPE,
+                                    Constants.ENCODING), Constants.ACCESS_URL,
+                            Constants.AUTHORIZE_URL);
         } catch (Exception e) {
             Log.e(TAG, "Error creating consumer / provider", e);
         }
@@ -84,7 +87,7 @@ public class PrepareRequestTokenActivity extends BasicActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        webView = new WebView(this);        
+        webView = new WebView(this);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setVisibility(View.VISIBLE);
         setContentView(webView);
@@ -96,18 +99,17 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
     }
 
-    
     /**
-     * Do the oAuth dance to get request token
+     * Do the oAuth dance to get request token.
      *
      */
     private class OAuthRequestTokenTask extends AsyncTask<Void, Void, Void> {
 
-        final String          TAG = getClass().getName();
-        private Context       context;
+        final String TAG = getClass().getName();
+        private Context context;
         private OAuthProvider provider;
         private OAuthConsumer consumer;
-        private String        url;
+        private String url;
 
         /**
          * 
@@ -139,8 +141,9 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
             try {
                 Log.i(TAG, "Retrieving request token from OSM servers");
-                url = provider.retrieveRequestToken(consumer,
-                        Constants.OAUTH_CALLBACK_URL);
+                url =
+                        provider.retrieveRequestToken(consumer,
+                                Constants.OAUTH_CALLBACK_URL);
 
                 handled = false;
             } catch (Exception e) {
@@ -153,7 +156,6 @@ public class PrepareRequestTokenActivity extends BasicActivity {
             return null;
         }
 
-        
         @Override
         protected void onPostExecute(Void result) {
 
@@ -201,15 +203,15 @@ public class PrepareRequestTokenActivity extends BasicActivity {
     }
 
     /**
-     * Do the oAuth dance to get access token
+     * Do the oAuth dance to get access token.
      *
      */
     private class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
 
-        final String              TAG = getClass().getName();
+        final String TAG = getClass().getName();
 
-        private OAuthProvider     provider;
-        private OAuthConsumer     consumer;
+        private OAuthProvider provider;
+        private OAuthConsumer consumer;
         private SharedPreferences prefs;
 
         public RetrieveAccessTokenTask(OAuthConsumer consumer,
@@ -227,21 +229,22 @@ public class PrepareRequestTokenActivity extends BasicActivity {
         protected Void doInBackground(Uri... params) {
             final Uri uri = params[0];
 
-            final String oauth_verifier = uri
-                    .getQueryParameter(OAuth.OAUTH_VERIFIER);
+            final String oauth_verifier =
+                    uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
 
             try {
                 provider.retrieveAccessToken(consumer, oauth_verifier);
 
-                //Store tokens in SharedPreferences
+                // Store tokens in SharedPreferences
                 final Editor edit = prefs.edit();
                 edit.putString(OAuth.OAUTH_TOKEN, consumer.getToken());
                 edit.putString(OAuth.OAUTH_TOKEN_SECRET,
                         consumer.getTokenSecret());
                 edit.commit();
 
-                String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
-                String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
+                final String token = prefs.getString(OAuth.OAUTH_TOKEN, "");
+                final String secret =
+                        prefs.getString(OAuth.OAUTH_TOKEN_SECRET, "");
 
                 consumer.setTokenWithSecret(token, secret);
 
@@ -256,14 +259,14 @@ public class PrepareRequestTokenActivity extends BasicActivity {
 
         /**
          * When we're done and we've retrieved either a valid token or an error
-         * from the server, we'll return to our original activity
+         * from the server, we'll return to our original activity.
          */
         @Override
         protected void onPostExecute(Void result) {
             Log.i(TAG, "Starting Loginscreen again");
             startActivity(new Intent(PrepareRequestTokenActivity.this,
                     MapViewActivity.class));
-            //Remove sessioncookie before moving on
+            // Remove sessioncookie before moving on
             CookieManager.getInstance().removeSessionCookie();
             finish();
         }

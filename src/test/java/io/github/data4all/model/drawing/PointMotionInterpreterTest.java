@@ -1,18 +1,18 @@
-/*******************************************************************************
+/* 
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package io.github.data4all.model.drawing;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -57,11 +57,12 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
 
     @Test
     public void interprete_onePoint_replacePointsInList() {
-        List<Point> interprete = Arrays.asList(new Point(100, 100), new Point(
-                200, 200), new Point(300, 300));
+        List<Point> interprete =
+                Arrays.asList(new Point(100, 100), new Point(200, 200),
+                        new Point(300, 300));
         DrawingMotion drawingMotion = getDrawingMotion(0, 0);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
     }
@@ -70,8 +71,8 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
     public void interprete_onePoint_thisPointInList() {
         List<Point> interprete = new ArrayList<Point>();
         DrawingMotion drawingMotion = getDrawingMotion(0, 0);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(0, 0)));
     }
@@ -79,10 +80,10 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
     @Test
     public void interprete_twoNearPoints_averageInList() {
         List<Point> interprete = new ArrayList<Point>();
-        DrawingMotion drawingMotion = getDrawingMotion(0, 0,
-                DrawingMotion.POINT_TOLERANCE, 0);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        DrawingMotion drawingMotion =
+                getDrawingMotion(0, 0, DrawingMotion.POINT_TOLERANCE, 0);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(
                 DrawingMotion.POINT_TOLERANCE / 2, 0)));
@@ -91,10 +92,11 @@ public class PointMotionInterpreterTest extends MotionInterpreterTest {
     @Test
     public void interprete_twoPoints_lastPointIsInList() {
         List<Point> interprete = new ArrayList<Point>();
-        DrawingMotion drawingMotion = getDrawingMotion(0, 0,
-                DrawingMotion.POINT_TOLERANCE, DrawingMotion.POINT_TOLERANCE);
-        List<Point> interpreted = interpreter.interprete(interprete,
-                drawingMotion);
+        DrawingMotion drawingMotion =
+                getDrawingMotion(0, 0, DrawingMotion.POINT_TOLERANCE,
+                        DrawingMotion.POINT_TOLERANCE);
+        List<Point> interpreted =
+                interpreter.interprete(interprete, drawingMotion);
         assertThat(interpreted.size(), is(1));
         assertThat(interpreted.get(0), equalTo(new Point(
                 DrawingMotion.POINT_TOLERANCE, DrawingMotion.POINT_TOLERANCE)));

@@ -1,18 +1,18 @@
-/*******************************************************************************
+/*
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.Constants;
@@ -34,16 +34,16 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 /**
- * Activity to start authentication process
+ * Activity to start authentication process.
  * 
  * @author sb
  *
  */
 public class LoginActivity extends BasicActivity {
 
-    final String              TAG = getClass().getSimpleName();
+    final String TAG = getClass().getSimpleName();
     private SharedPreferences prefs;
-    protected String          xml;
+    protected String xml;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +57,14 @@ public class LoginActivity extends BasicActivity {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-        Button loginButton = (Button) findViewById(R.id.loginButton);
+        final Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
                 // By checking oauth tokens will be saved permanently
                 // Otherwise they will be destroyed on by calling onDestroy()
-                CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
+                final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
 
                 // Already got token?
                 if (!prefs.contains(OAuth.OAUTH_TOKEN)
@@ -85,21 +85,24 @@ public class LoginActivity extends BasicActivity {
         });
 
         // Delete tokens
-        Button deleteButton = (Button) findViewById(R.id.deleteButton);
+        final Button deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v) {                
+            public void onClick(View v) {
                 deleteTokenFromSharedPreferences();
             }
         });
 
-        Button getUsernameButton = (Button) findViewById(R.id.getUsernameButton);
+        final Button getUsernameButton =
+                (Button) findViewById(R.id.getUsernameButton);
         getUsernameButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 if (!prefs.contains("USERNAME")) {
-                    OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
-                            Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
+                    final OAuthConsumer consumer =
+                            new CommonsHttpOAuthConsumer(
+                                    Constants.CONSUMER_KEY,
+                                    Constants.CONSUMER_SECRET);
                     consumer.setTokenWithSecret(
                             prefs.getString(OAuth.OAUTH_TOKEN, null),
                             prefs.getString(OAuth.OAUTH_TOKEN_SECRET, null));
@@ -115,7 +118,6 @@ public class LoginActivity extends BasicActivity {
         });
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -127,17 +129,16 @@ public class LoginActivity extends BasicActivity {
     }
 
     protected User returnUser() {
-        User user = new User(prefs.getString("USERNAME", null),
-                prefs.getString(OAuth.OAUTH_TOKEN, null), prefs.getString(
-                        OAuth.OAUTH_TOKEN_SECRET, null));
-        return user;
+        return new User(prefs.getString("USERNAME", null), prefs.getString(
+                OAuth.OAUTH_TOKEN, null), prefs.getString(
+                OAuth.OAUTH_TOKEN_SECRET, null));
 
     }
 
     private void deleteTokenFromSharedPreferences() {
         if (prefs.contains(OAuth.OAUTH_TOKEN)
                 && prefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
-            Editor ed = prefs.edit();
+            final Editor ed = prefs.edit();
             ed.remove(OAuth.OAUTH_TOKEN);
             ed.remove(OAuth.OAUTH_TOKEN_SECRET);
             ed.remove("USERNAME");
@@ -152,10 +153,9 @@ public class LoginActivity extends BasicActivity {
     }
 
     private void setTemporaryFlag(boolean b) {
-        Editor ed = prefs.edit();
+        final Editor ed = prefs.edit();
         ed.putBoolean("IS_TEMPORARY", b);
         ed.commit();
         Log.i(TAG, "SharedPreferences:" + prefs.getAll());
     }
 }
-
