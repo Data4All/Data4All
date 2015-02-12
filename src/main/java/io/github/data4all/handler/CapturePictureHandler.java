@@ -31,6 +31,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
@@ -93,13 +94,18 @@ public class CapturePictureHandler implements PictureCallback {
 		currentOrientation = Optimizer.currentBestPos();
 
 		// Start a thread to save the Raw Image in JPEG into SDCard
-		new SavePhotoTask().execute(raw);
+		new SavePhotoTask(params).execute(raw);
 	}
 
 	/*
 	 * @Description: An inner Class for saving a picture in storage in a thread
 	 */
 	class SavePhotoTask extends AsyncTask<byte[], String, String> {
+	    	Camera.Parameters params;
+	    	public SavePhotoTask(Camera.Parameters params) {
+	    	    this.params = params;
+	    	}
+	    	
 		@Override
 		protected String doInBackground(byte[]... photoData) {
 			try {

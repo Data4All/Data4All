@@ -30,6 +30,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -49,7 +52,9 @@ public class CameraActivity extends Activity {
     private Camera mCamera;
     private CameraPreview cameraPreview;
     private ImageButton btnCapture;
-
+    private AutoFocusCrossHair mAutoFocusCrossHair;
+    private Animation crossHair;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate is called");
@@ -75,7 +80,12 @@ public class CameraActivity extends Activity {
 
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
         btnCapture.setOnClickListener(btnCaptureOnClickListener);
-
+        
+        //mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        //crossHair = AnimationUtils.loadAnimation(this,R.anim.crossHair);
+        //mAutoFocusCrossHair.clearAnimation();
+        //mAutoFocusCrossHair.setAnimation(crossHair);
+        
     }
 
     private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
@@ -85,8 +95,14 @@ public class CameraActivity extends Activity {
             mCamera.autoFocus(new AutoFocusCallback() {
                 @Override
                 public void onAutoFocus(boolean success, Camera camera) {
+                  
+                   // mAutoFocusCrossHair.showStart();                  
+                   // mAutoFocusCrossHair.startAnimation(crossHair);
+
+                    
                     if(success){
-                        mCamera.takePicture(shutterCallback, null,
+
+                	mCamera.takePicture(shutterCallback, null,
                                 new CapturePictureHandler(getApplicationContext()));
                     }
                 }
@@ -98,8 +114,24 @@ public class CameraActivity extends Activity {
         }
     };
 
+    private AnimationListener animation = new AnimationListener(){
+	
+	 @Override 
+	 public void onAnimationEnd(Animation arg0) {
+	     mAutoFocusCrossHair.clear();                    
+	 }
+	 @Override 
+	 public void onAnimationRepeat(Animation arg0) {
+	     
+	 }
+	 @Override 
+	 public void onAnimationStart(Animation arg0) {
+	     
+	 }
+	
+    };
     
- 
+    
         
     @Override
     protected void onResume() {

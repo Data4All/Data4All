@@ -9,6 +9,7 @@
         android:layout_height="match_parent" >
     </io.github.data4all.view.CameraPreview>
 
+   
     <ImageButton
         android:id="@+id/btnCapture"
         style="@style/imageButtonCamAction"
