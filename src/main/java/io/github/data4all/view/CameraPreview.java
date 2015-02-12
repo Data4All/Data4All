@@ -286,8 +286,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 	    result = (info.orientation - degrees + 360) % 360;
 	}
 
+	Log.i(TAG, "DEBUG: "+degrees);
+	Log.i(TAG, "DEBUG: "+result);
 	mCamera.setDisplayOrientation(result);
-	params.setRotation(result + 180);
+	params.setRotation(degrees);
 	mCamera.setParameters(params);
 
     }
