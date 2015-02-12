@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.util;
 
 import io.github.data4all.model.data.ClassifiedTag;
@@ -12,7 +27,14 @@ import java.util.Map;
  * @author Maurice Boyke
  *
  */
-public abstract class SpeechRecognition {
+public class SpeechRecognition {
+    
+    /**
+     * Private Constructor, prevents instantiation.
+     */
+    private SpeechRecognition() {
+        
+    }
 
     /**
      * 
@@ -21,11 +43,11 @@ public abstract class SpeechRecognition {
      * @return The HashMap of the matching Tags
      */
     public static Map<String, String> speechToTag(List<String> matchesText) {
-        Map<String, String> map = new HashMap<String, String>();
-        ArrayList<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
+        final Map<String, String> map = new HashMap<String, String>();
+        List<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
         tagData = (ArrayList<ClassifiedTag>) Tags.getAllClassifiedTags();
         for (ClassifiedTag entry : tagData) {
-            String key = (String) entry.getKey();
+            final String key = (String) entry.getKey();
             // split is the Array from the Key Values
             if (compareStringTag(
                     (ArrayList<String>) entry.getClassifiedValues(),
@@ -41,7 +63,7 @@ public abstract class SpeechRecognition {
     }
 
     /**
-     * splitString splits all the Strings and adds them to the ArrayList
+     * splitString splits all the Strings and adds them to the ArrayList.
      * 
      * @param matchesText
      *            is a Array List from the results of the SpeechRecognition
@@ -60,13 +82,13 @@ public abstract class SpeechRecognition {
 
     /**
      * It Compares the list of the Google Speechrecognition and the array of key
-     * Values
+     * Values.
      * 
      * @param arrayList
      * @param matchesText
      * @return the String that matches with the tagValue
      */
-    private static String compareStringTag(ArrayList<String> arrayList,
+    private static String compareStringTag(List<String> arrayList,
             List<String> matchesText) {
         for (int i = 0; i < matchesText.size(); i++) {
             for (int j = 0; j < arrayList.size(); j++) {

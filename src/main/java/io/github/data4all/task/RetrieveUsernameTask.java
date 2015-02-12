@@ -1,17 +1,17 @@
-/* 
+/*
  * Copyright (c) 2014, 2015 Data4All
  * 
- * <p>Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  * 
- *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  * 
  * <p>Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package io.github.data4all.task;
 
@@ -81,22 +81,22 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void getUserXml(String url, OAuthConsumer consumer) {
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        final DefaultHttpClient httpclient = new DefaultHttpClient();
 
         try {
             // make a GET request
-            HttpGet request = new HttpGet(url);
+            final HttpGet request = new HttpGet(url);
             Log.i(tag, "Requesting URL : " + url);
 
             // sign the request with oAuth
             consumer.sign(request);
 
             // execute request and get the response
-            HttpResponse response = httpclient.execute(request);
+            final HttpResponse response = httpclient.execute(request);
             Log.i(tag, "Statusline : " + response.getStatusLine());
 
             // write content of response in InputStream
-            InputStream data = response.getEntity().getContent();
+            final InputStream data = response.getEntity().getContent();
 
             parseXmlUserInfo(data);
         } catch (OAuthMessageSignerException e) {
@@ -132,7 +132,7 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
             int eventType;
 
             while ((eventType = parser.next()) != XmlPullParser.END_DOCUMENT) {
-                String tagName = parser.getName();
+                final String tagName = parser.getName();
                 if (eventType == XmlPullParser.START_TAG
                         && "user".equals(tagName)) {
                     prefs.edit()

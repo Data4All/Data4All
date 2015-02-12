@@ -1,17 +1,17 @@
-/* 
+/*
  * Copyright (c) 2014, 2015 Data4All
  * 
- * <p>Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  * 
- *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  * 
  * <p>Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package io.github.data4all;
 
@@ -42,8 +42,8 @@ public class OAuthHelper {
 
     public OAuthHelper(String osmBaseUrl) throws OsmException {
 
-        String key = Constants.CONSUMER_KEY;
-        String secret = Constants.CONSUMER_SECRET;
+        final String key = Constants.CONSUMER_KEY;
+        final String secret = Constants.CONSUMER_SECRET;
 
         setmConsumer(new CommonsHttpOAuthConsumer(key, secret));
         Log.d("OAuthHelper", "Using " + Constants.REQUEST_URL + " "
@@ -68,11 +68,11 @@ public class OAuthHelper {
                 new CommonsHttpOAuthProvider(Constants.REQUEST_URL,
                         Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
         mProvider.setOAuth10a(true);
-        setmCallbackUrl((callbackUrl == null ? OAuth.OUT_OF_BAND : callbackUrl));
+        setmCallbackUrl(callbackUrl == null ? OAuth.OUT_OF_BAND : callbackUrl);
     }
 
     /**
-     * this constructor is for access to the singletons
+     * this constructor is for access to the singletons.
      */
     public OAuthHelper() {
 
@@ -80,14 +80,14 @@ public class OAuthHelper {
 
     /**
      * Returns an OAuthConsumer initialized with the consumer keys for the API
-     * in question
+     * in question.
      * 
      * @param osmBaseUrl
      * @return
      */
     public OAuthConsumer getConsumer() {
-        String key = Constants.CONSUMER_KEY;
-        String secret = Constants.CONSUMER_SECRET;
+        final String key = Constants.CONSUMER_KEY;
+        final String secret = Constants.CONSUMER_SECRET;
         return new CommonsHttpOAuthConsumer(key, secret);
     }
 

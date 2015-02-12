@@ -1,17 +1,17 @@
-/* 
+/*
  * Copyright (c) 2014, 2015 Data4All
  * 
- * <p>Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  * 
- *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  * 
  * <p>Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package io.github.data4all.activity;
 
@@ -88,15 +88,16 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tag);
-        AlertDialog.Builder alertDialog =
+        final AlertDialog.Builder alertDialog =
                 new AlertDialog.Builder(TagActivity.this,
                         android.R.style.Theme_Holo_Dialog_MinWidth);
-        LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.drawable.header_listview, null);
+        final LayoutInflater inflater = getLayoutInflater();
+        final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
         ;
         alertDialog.setCustomTitle(view);
-        ImageButton speechStart = (ImageButton) view.findViewById(R.id.speech);
+        final ImageButton speechStart =
+                (ImageButton) view.findViewById(R.id.speech);
         speechStart.setOnClickListener(this);
 
         if (getIntent().hasExtra("TYPE_DEF")) {
@@ -117,7 +118,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                 .toArray(
                                         new String[tagMap.get(key)
                                                 .getClassifiedValues().size()]);
-                AlertDialog.Builder alertDialogBuilder =
+                final AlertDialog.Builder alertDialogBuilder =
                         new AlertDialog.Builder(TagActivity.this);
                 alertDialogBuilder.setTitle("Select Tag");
                 alertDialogBuilder.setItems(array,
@@ -126,7 +127,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                             @Override
                             public void onClick(DialogInterface dialog,
                                     int which) {
-                                String value = (String) array[which];
+                                final String value = (String) array[which];
                                 map = new LinkedHashMap<Tag, String>();
                                 map.put(tagMap.get(key), value);
                                 if (key.equals("building")
@@ -151,10 +152,11 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 
     }
 
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.speech:
-            Intent intent =
+            final Intent intent =
                     new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -162,7 +164,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             alert.dismiss();
             break;
         case R.id.buttonNext:
-            List<String> tags = new ArrayList<String>();
+            final List<String> tags = new ArrayList<String>();
 
             for (int i = 0; i < edit.size(); i++) {
                 tags.add(edit.get(i).getText().toString());
@@ -173,7 +175,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 
             break;
         case R.id.buttonFinish:
-            List<String> tags1 = new ArrayList<String>();
+            final List<String> tags1 = new ArrayList<String>();
 
             for (int i = 0; i < edit.size(); i++) {
                 tags1.add(edit.get(i).getText().toString());
@@ -193,18 +195,18 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             new Dialog(TagActivity.this);
-            ListView textList = (ListView) findViewById(R.id.listView1);
-            List<String> matchesText =
+            final ListView textList = (ListView) findViewById(R.id.listView1);
+            final List<String> matchesText =
                     data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             SpeechRecognition.splitStrings(matchesText);
-            Map<String, String> map =
+            final Map<String, String> map =
                     SpeechRecognition.speechToTag(matchesText);
             matchesText.clear();
             for (Entry entry : map.entrySet()) {
                 final String key = (String) entry.getKey();
                 matchesText.add(key + "=" + map.get(key));
             }
-            ArrayAdapter<String> adapter =
+            final ArrayAdapter<String> adapter =
                     new ArrayAdapter<String>(this,
                             android.R.layout.simple_list_item_1, matchesText);
             textList.setAdapter(adapter);
@@ -219,7 +221,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         dialog1.setTitle(title);
         // dialog1.getWindow().setBackgroundDrawable(new
         // ColorDrawable(Color.parseColor("#E6808080")));
-        LinearLayout layout =
+        final LinearLayout layout =
                 (LinearLayout) dialog1.findViewById(R.id.dialogDynamic);
         final Button next = new Button(this);
         final Button finish = new Button(this);
@@ -255,7 +257,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         dialog1.setTitle(title);
         // dialog1.getWindow().setBackgroundDrawable(new
         // ColorDrawable(Color.parseColor("#E6808080")));
-        LinearLayout layout =
+        final LinearLayout layout =
                 (LinearLayout) dialog1.findViewById(R.id.dialogDynamic);
         final Button next = new Button(this);
         final Button finish = new Button(this);
@@ -286,9 +288,9 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 
     @Override
     public void finish() {
-        AbstractDataElement element = getIntent().getParcelableExtra(OSM);
+        final AbstractDataElement element = getIntent().getParcelableExtra(OSM);
         element.addTags(map);
-        Intent intent = new Intent(this, ResultViewActivity.class);
+        final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
         super.finish();
