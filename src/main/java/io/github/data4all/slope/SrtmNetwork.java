@@ -1,7 +1,9 @@
 /**
  * 
  */
-package slope;
+package io.github.data4all.slope;
+
+import io.github.data4all.logger.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,12 +38,15 @@ public class SrtmNetwork {
      */
     public static InputStream getInputStream(String urlStr)
             throws IllegalStateException, IOException {
+        
         URL url = new URL(urlStr.replaceAll(" ", "%20"));
         HttpURLConnection urlConnection = (HttpURLConnection) url
                 .openConnection();
+        Log.i("SrtmNetwork", "connection open");
         urlConnection.setRequestMethod("GET");
         urlConnection.setDoOutput(true);
         urlConnection.connect();
+        Log.i("SrtmNetwork", "connected");
         return urlConnection.getInputStream();
     }
 

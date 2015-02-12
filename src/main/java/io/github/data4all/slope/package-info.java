@@ -5,4 +5,4 @@
  * @author sbollen
  *
  */
-package slope;
+package io.github.data4all.slope;

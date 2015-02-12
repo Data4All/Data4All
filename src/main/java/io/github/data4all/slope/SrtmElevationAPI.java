@@ -1,7 +1,7 @@
 /**
  * 
  */
-package slope;
+package io.github.data4all.slope;
 
 import io.github.data4all.model.data.Node;
 
