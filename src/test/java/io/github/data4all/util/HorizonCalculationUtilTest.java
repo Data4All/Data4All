@@ -29,7 +29,7 @@ public class HorizonCalculationUtilTest {
         location = new Location("Provider");
         // height is 1.7, photoWidth is 500 and photoHeight is 1000
         tps = new TransformationParamBean(1.7, Math.toRadians(90),
-                Math.toRadians(90), 500, 1000, location);
+                Math.toRadians(90), 1000, 1000, location);
         util2 = new PointToCoordsTransformUtil(tps, deviceOrientation);
         util = new HorizonCalculationUtil();
     }
@@ -40,12 +40,13 @@ public class HorizonCalculationUtilTest {
 
         DeviceOrientation deviceOrientation ;
         float[][] test = new float[200][100];
-       
+       /*
         int i = -120;
         int b = -120;
         int k = 0;
         int zähler = 0;
         int zähler2 = 0;
+        int h =0;
         while (i < 120){
             while(b < 120){
                 float[] horizon;
@@ -53,16 +54,23 @@ public class HorizonCalculationUtilTest {
                         (float) Math.toRadians(i), (float) Math.toRadians(b), 10L);
                 horizon = util.calcHorizontalPoints((float) Math.toRadians(40), (float) Math.toRadians(40), 
                         500, 1000,(float) Math.toRadians(30), deviceOrientation);
+                if(b < 30 || b > 30){
+                    if (horizon[2] == 1){
+                        h++;
+                    }
+                }
+                
                 if ( horizon[2] == 1){
                    //Point point = new Point(horizon[0], horizon[1]);
-                    Point point = new Point(250,500);
-                    if(util2.calculateCoordFromPoint(tps, deviceOrientation, point) == null){
+                    Point point = new Point(500,500);
+                    if(util2.calculateCoordFromPoint(tps, deviceOrientation, point)[0] == 0.0){
                         zähler++;
                     }
                     else{
                         zähler2++;
                     }
                 }
+                
                 
                 b++;
                 k++;
@@ -71,25 +79,28 @@ public class HorizonCalculationUtilTest {
             i++;
         }
         i = i+1;
-        k = k;
-        /*
+        k = k;*/
+        
 
           //util.calculatePixelFromAngle((float) Math.toRadians(15), 1000, (float) Math.toRadians(40));
 
           deviceOrientation = new DeviceOrientation(0.0f, 
-                  (float) Math.toRadians(120), (float) Math.toRadians(0), 10L);
+                  (float) Math.toRadians(0), (float) Math.toRadians(70), 10L);
           test[1] = util.calcHorizontalPoints((float) Math.toRadians(40), (float) Math.toRadians(40), 
                   1000, 1000,(float) Math.toRadians(85), deviceOrientation);
           deviceOrientation = new DeviceOrientation(0.0f, 
-                  (float) Math.toRadians(0), (float) Math.toRadians(70), 10L);
+                  (float) Math.toRadians(0), (float) Math.toRadians(-70), 10L);
           test[2] = util.calcHorizontalPoints((float) Math.toRadians(40), (float) Math.toRadians(40), 
                   1000, 1000,(float) Math.toRadians(85), deviceOrientation);
           deviceOrientation = new DeviceOrientation(0.0f, 
-                  (float) Math.toRadians(50), (float) Math.toRadians(50), 10L);
+                  (float) Math.toRadians(84), (float) Math.toRadians(84), 10L);
           test[3] = util.calcHorizontalPoints((float) Math.toRadians(40), (float) Math.toRadians(40), 
                   1000, 1000,(float) Math.toRadians(85), deviceOrientation);
-
+          deviceOrientation = new DeviceOrientation(0.0f, 
+                  (float) Math.toRadians(85), (float) Math.toRadians(0), 10L);
+          test[4] = util.calcHorizontalPoints((float) Math.toRadians(40), (float) Math.toRadians(40), 
+                  1000, 1000,(float) Math.toRadians(85), deviceOrientation);
           int i =1;
-          i++;*/
+          i++;
     }
 }
