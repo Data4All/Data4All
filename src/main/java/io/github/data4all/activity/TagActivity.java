@@ -163,7 +163,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                                 .getOriginKey())) {
                                     createDialog(Tags.getAllAddressTags(),
                                             "Add Address",
-                                            key.equals("building"), true);
+                                            false, true);
                                 } else {
                                     finish();
                                 }
