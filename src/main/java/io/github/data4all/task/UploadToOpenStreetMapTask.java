@@ -51,7 +51,7 @@ import android.widget.Toast;
 
 public class UploadToOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
 
-    private final String TAG = getClass().getSimpleName();
+    private static final String TAG = UploadToOpenStreetMapTask.class.getSimpleName();
     private Context context;
 
     private HttpPost request;

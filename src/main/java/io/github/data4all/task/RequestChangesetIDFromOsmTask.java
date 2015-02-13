@@ -55,7 +55,7 @@ import android.widget.Toast;
 
 public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
 
-    private final String TAG = getClass().getSimpleName();
+    private static final String TAG = RequestChangesetIDFromOsmTask.class.getSimpleName();
     private Context context;
 
     private HttpPut request;

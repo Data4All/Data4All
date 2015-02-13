@@ -38,11 +38,7 @@ import android.util.Log;
 
 /**
  * Test for getting changeSetID, parsing Osc and uploading Osc
- */
-
-/**
  * @author Richard
- *
  */
 
 // Use Robolectric
@@ -51,48 +47,15 @@ import android.util.Log;
 @Config(emulateSdk = 18)
 public class OsmChangeParserTest {
 
-	
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
-	 * This test doesn't work in JUnit, because of missing Authorization, copy
-	 * test on Button to test it (please only on the development API)
-	 */
-	@Test
-	public void uploadTest() {
-		Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
-		ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
-		Node node1 = new Node(-1, 23, 23);
-		Node node2 = new Node(-2, 24, 24);
-		Node node3 = new Node(-3, 25, 25);
-		PolyElement way1 = new PolyElement(-4, PolyElementType.WAY);
-		way1.addNode(node1);
-		way1.addNode(node2);
-		elems.add(node1);
-		elems.add(node3);
-		elems.add(way1);
-		Context act = Robolectric.buildActivity(MapViewActivity.class).get()
-				.getApplicationContext();
-		Log.d("test", "start the Request");
-		new OscUploadHelper(act, elems, "upload test");
-
-	}
-	
-    /**
-     * This test checks if the File created by the Parser exists and is not empty
+     * This test doesn't work in JUnit, because of missing Authorization, copy
+     * test on Button to test it (please only on the development API)
      */
     @Test
-    public void parseTest() {
-        ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
+    public void uploadTest() {
+        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        ArrayList<AbstractDataElement> elems =
+                new ArrayList<AbstractDataElement>();
         Node node1 = new Node(-1, 23, 23);
         Node node2 = new Node(-2, 24, 24);
         Node node3 = new Node(-3, 25, 25);
@@ -102,12 +65,40 @@ public class OsmChangeParserTest {
         elems.add(node1);
         elems.add(node3);
         elems.add(way1);
-        Context act = Robolectric.buildActivity(MapViewActivity.class).get()
-                .getApplicationContext();
+        Context act =
+                Robolectric.buildActivity(MapViewActivity.class).get()
+                        .getApplicationContext();
+        Log.d("test", "start the Request");
+        new OscUploadHelper(act, elems, "upload test");
 
-        File file = new File(act.getFilesDir().getAbsolutePath() + "/OsmChangeUpload.osc");
+    }
+
+    /**
+     * This test checks if the File created by the Parser exists and is not
+     * empty
+     */
+    @Test
+    public void parseTest() {
+        ArrayList<AbstractDataElement> elems =
+                new ArrayList<AbstractDataElement>();
+        Node node1 = new Node(-1, 23, 23);
+        Node node2 = new Node(-2, 24, 24);
+        Node node3 = new Node(-3, 25, 25);
+        PolyElement way1 = new PolyElement(-4, PolyElementType.WAY);
+        way1.addNode(node1);
+        way1.addNode(node2);
+        elems.add(node1);
+        elems.add(node3);
+        elems.add(way1);
+        Context act =
+                Robolectric.buildActivity(MapViewActivity.class).get()
+                        .getApplicationContext();
+
+        File file =
+                new File(act.getFilesDir().getAbsolutePath()
+                        + "/OsmChangeUpload.osc");
         OsmChangeParser.parseElements(act, elems, 13);
-        
+
         assertTrue(file.length() > 0);
         assertTrue(file.exists());
     }
