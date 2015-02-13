@@ -40,7 +40,7 @@ import android.widget.Toast;
  */
 public class GPSservice extends Service implements LocationListener {
     
-    DataBaseHandler dbHandler = new DataBaseHandler(this.getApplicationContext());
+    DataBaseHandler dbHandler;
 
     private static final String TAG = "GPSservice";
 
@@ -65,6 +65,7 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate()");
+        dbHandler = new DataBaseHandler(this.getApplicationContext());
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
