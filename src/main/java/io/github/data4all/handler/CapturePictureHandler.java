@@ -110,6 +110,8 @@ public class CapturePictureHandler implements PictureCallback {
      * Reads the height of the device in condition of the bodyheight from the
      * preferences.
      * 
+     * If the preference is empty or not set the default value is stored.
+     * 
      * @return The height of the device or {@code 0} if the preference is not
      *         set or empty
      */
