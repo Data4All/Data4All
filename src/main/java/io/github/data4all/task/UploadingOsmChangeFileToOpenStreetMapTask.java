@@ -16,7 +16,6 @@
 package io.github.data4all.task;
 
 import io.github.data4all.Constants;
-import io.github.data4all.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -162,9 +161,9 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends
 
 			Log.d(TAG, "OSM ChangeSetID response Entity: " + responseEntity);
 			Log.d(TAG, "OSM ChangeSetID statusCode: " + statusCode);
-		} catch (ClientProtocolException e) {
-			Log.e(TAG, "doInBackground failed", e);
-		} catch (IOException e) {
+        } catch (ClientProtocolException e) {
+            Log.e(TAG, "doInBackground failed", e);
+        } catch (IOException e) {
             Log.e(TAG, "doInBackground failed", e);
         }
 

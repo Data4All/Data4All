@@ -33,13 +33,5 @@
         style="@style/startUpScreen"
         android:contentDescription="@string/startUpScreen" />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/to_camera"
-        android:layout_alignBottom="@+id/to_camera"
-        android:layout_alignParentLeft="true"
-        android:text="@string/button1" />
 
 </RelativeLayout>
