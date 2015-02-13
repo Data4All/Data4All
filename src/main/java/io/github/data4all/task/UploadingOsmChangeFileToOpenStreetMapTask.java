@@ -15,7 +15,6 @@
  */
 package io.github.data4all.task;
 
-import io.github.data4all.Constants;
 import io.github.data4all.logger.Log;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
