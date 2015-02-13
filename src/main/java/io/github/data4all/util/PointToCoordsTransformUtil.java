@@ -100,6 +100,10 @@ public class PointToCoordsTransformUtil {
             int rotation) {
         this.tps = tps;
         final List<Node> nodes = new ArrayList<Node>();
+        Log.d("debug", "Orientation: " + Math.toDegrees(deviceOrientation.getAzimuth())
+                + " ; " + Math.toDegrees(deviceOrientation.getPitch())
+                + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
+        
         // get the set height
         this.height = tps.getHeight();
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
@@ -139,6 +143,7 @@ public class PointToCoordsTransformUtil {
      */
     public double[] calculateCoordFromPoint(TransformationParamBean tps,
             DeviceOrientation deviceOrientation, Point point) {
+        
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
@@ -150,7 +155,11 @@ public class PointToCoordsTransformUtil {
                 -calculateAngleFromPixel(point.getY(), yAxis,
                         tps.getCameraMaxRotationAngle());
         final double pitch = -deviceOrientation.getPitch();
-        final double roll = -deviceOrientation.getRoll();
+        final double roll = deviceOrientation.getRoll();
+        
+
+        Log.i("debug", "Punkt: " + point.getX() + " , " + point.getY());
+        
         final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
         vector[2] = -1;
@@ -198,6 +207,7 @@ public class PointToCoordsTransformUtil {
         final double tempXX = finalVector[0] * (height / -finalVector[2]);
         final double tempYY = finalVector[1] * (height / -finalVector[2]);
         final double[] coord = new double[3];
+        Log.i("debug", "Coord: " + tempXX + " , " + tempYY);
         // Rotate Vector with azimuth (z is fix))
         Log.d(TAG, "AZIMUTH: " + azimuth);
         coord[0] =
