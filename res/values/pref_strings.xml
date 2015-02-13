@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_bodyheight_key">PREF_BODY_HEIGHT</string>
+    <string name="pref_bodyheight_title">Bodyheight</string>
+    <string name="pref_bodyheight_summary">Set your bodyheigh</string>
+    <string name="pref_bodyheight_dialog_title">Set your bodyheight</string>
+    <string name="pref_bodyheight_dialog_message">Please enter the height in cm</string>
+
+</resources>
