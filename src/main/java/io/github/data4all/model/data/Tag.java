@@ -29,13 +29,6 @@ import java.util.Arrays;
 public class Tag {
 
     /**
-     * defines different input types.
-     */
-    public static enum InputType {
-        KEYBOARD, NUMPAD;
-    }
-
-    /**
      * id to identify the tag.
      */
     private int id;
@@ -59,7 +52,7 @@ public class Tag {
      * type defines if the tagging activity should display a keyboard or a
      * numpad as input method.
      */
-    private InputType type;
+    private int type;
 
     /**
      * constant values to define which osmObject the tag refers to.
@@ -81,14 +74,14 @@ public class Tag {
      * @param type
      * @param osmObjects
      */
-    public Tag(int id, String key, InputType type, int... osmObjects) {
+    public Tag(int id, String key, int type, int... osmObjects) {
         this.id = id;
         this.key = key;
         try {
             this.nameRessource =
                     (Integer) R.string.class.getDeclaredField(
                             "name_" + key.replaceAll(":", "_")).get(null);
-            if (type != null) {
+            if (type != -1) {
                 this.hintRessource =
                         (Integer) R.string.class.getDeclaredField(
                                 "hint_" + key.replaceAll(":", "_")).get(null);
@@ -106,6 +99,15 @@ public class Tag {
         this.type = type;
         this.setOsmObjects(osmObjects);
     }
+    
+    /**
+     * 
+     * @param id
+     * @param key
+     */
+    public Tag(int id, String key) {
+        
+    }
 
     /**
      * Default constructor to create a tag.
@@ -116,7 +118,7 @@ public class Tag {
      * @param type
      */
     public Tag(int id, String key, int nameRessource, int hintRessource,
-            InputType type, int... osmObjects) {
+            int type, int... osmObjects) {
         this.id = id;
         this.key = key;
         this.nameRessource = nameRessource;
@@ -145,7 +147,7 @@ public class Tag {
         return osmObjects;
     }
 
-    public InputType getType() {
+    public int getType() {
         return type;
     }
 
@@ -169,7 +171,7 @@ public class Tag {
         this.osmObjects = osmObjects;
     }
 
-    public void setType(InputType type) {
+    public void setType(int type) {
         this.type = type;
     }
 

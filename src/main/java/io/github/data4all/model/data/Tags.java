@@ -19,10 +19,11 @@ import static io.github.data4all.model.data.Tag.AREA_TAG;
 import static io.github.data4all.model.data.Tag.BUILDING_TAG;
 import static io.github.data4all.model.data.Tag.NODE_TAG;
 import static io.github.data4all.model.data.Tag.WAY_TAG;
-import io.github.data4all.model.data.Tag.InputType;
+import android.text.InputType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -204,15 +205,15 @@ public final class Tags {
      */
     static {
         // address tags
-        ADDRESS_TAG_LIST.add(new Tag(1, "addr:street", InputType.KEYBOARD,
+        ADDRESS_TAG_LIST.add(new Tag(1, "addr:street", InputType.TYPE_CLASS_TEXT,
                 NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(2, "addr:housenumber", InputType.NUMPAD,
+        ADDRESS_TAG_LIST.add(new Tag(2, "addr:housenumber", InputType.TYPE_CLASS_NUMBER,
                 NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(3, "addr:postcode", InputType.NUMPAD,
+        ADDRESS_TAG_LIST.add(new Tag(3, "addr:postcode", InputType.TYPE_CLASS_NUMBER,
                 NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(4, "addr:city", InputType.KEYBOARD,
+        ADDRESS_TAG_LIST.add(new Tag(4, "addr:city", InputType.TYPE_CLASS_TEXT,
                 NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(5, "addr:country", InputType.KEYBOARD,
+        ADDRESS_TAG_LIST.add(new Tag(5, "addr:country", InputType.TYPE_CLASS_TEXT,
                 NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
     }
 
@@ -221,13 +222,13 @@ public final class Tags {
      */
     static {
         // contact tags
-        contactTagList.add(new Tag(6, "contact:phone", InputType.NUMPAD,
+        contactTagList.add(new Tag(6, "contact:phone", InputType.TYPE_CLASS_PHONE,
                 NODE_TAG, BUILDING_TAG));
-        contactTagList.add(new Tag(7, "contact:fax", InputType.NUMPAD,
+        contactTagList.add(new Tag(7, "contact:fax", InputType.TYPE_CLASS_PHONE,
                 NODE_TAG, BUILDING_TAG));
-        contactTagList.add(new Tag(8, "contact:website", InputType.KEYBOARD,
+        contactTagList.add(new Tag(8, "contact:website", InputType.TYPE_CLASS_TEXT,
                 NODE_TAG, BUILDING_TAG));
-        contactTagList.add(new Tag(9, "contact:email", InputType.KEYBOARD,
+        contactTagList.add(new Tag(9, "contact:email", InputType.TYPE_CLASS_TEXT,
                 NODE_TAG, BUILDING_TAG));
     }
 
@@ -246,47 +247,81 @@ public final class Tags {
         TAG_LIST.addAll(contactTagList);
 
         // classified tag: highway
-        final List<String> highwayValues =
-                new ArrayList<String>(Arrays.asList("motorway", "residential",
-                        "service", "track", "footway", "road", "path"));
-        TAG_LIST.add(new ClassifiedTag(10, "highway", null, highwayValues,
+        final List<ClassifiedValue> highwayValues = new LinkedList<ClassifiedValue>(); 
+        highwayValues.add(new ClassifiedValue(101, "residential"));
+        highwayValues.add(new ClassifiedValue(102, "service"));
+        highwayValues.add(new ClassifiedValue(103, "track"));
+        highwayValues.add(new ClassifiedValue(104, "footway"));
+        highwayValues.add(new ClassifiedValue(105, "path"));
+        highwayValues.add(new ClassifiedValue(106, "motorway"));
+        highwayValues.add(new ClassifiedValue(106, "road"));     
+        TAG_LIST.add(new ClassifiedTag(10, "highway", -1, highwayValues,
                 WAY_TAG));
 
         // classified tag: barrier
-        final List<String> barrierValues =
-                new ArrayList<String>(Arrays.asList("citywall", "fence",
-                        "wall", "bollard", "gate"));
-        TAG_LIST.add(new ClassifiedTag(11, "barrier", null, barrierValues,
+        final List<ClassifiedValue> barrierValues = new LinkedList<ClassifiedValue>(); 
+        barrierValues.add(new ClassifiedValue(107, "fence"));
+        barrierValues.add(new ClassifiedValue(108, "wall"));
+        barrierValues.add(new ClassifiedValue(109, "gate"));
+        barrierValues.add(new ClassifiedValue(110, "bollard"));
+        barrierValues.add(new ClassifiedValue(111, "citywall"));
+        TAG_LIST.add(new ClassifiedTag(11, "barrier", -1, barrierValues,
                 NODE_TAG, WAY_TAG, AREA_TAG));
-
+        
         // classified tag: amenity
-        final List<String> amenityValues =
-                new ArrayList<String>(Arrays.asList("bar", "cafe",
-                        "restaurant", "fast_food", "pub", "college", "library",
-                        "school", "university", "parking", "taxi", "fuel",
-                        "bank", "hospital", "pharmacy", "cinema", "bench",
-                        "embassy", "marketplace", "police", "post_office",
-                        "toilets", "water_point", "fire_station",
-                        "public_building"));
-        TAG_LIST.add(new ClassifiedTag(12, "amenity", null, amenityValues, 
+        final List<ClassifiedValue> amenityValues = new LinkedList<ClassifiedValue>(); 
+        amenityValues.add(new ClassifiedValue(112, "parking"));
+        amenityValues.add(new ClassifiedValue(113, "school"));
+        amenityValues.add(new ClassifiedValue(114, "restaurant"));     
+        amenityValues.add(new ClassifiedValue(115, "bench"));     
+        amenityValues.add(new ClassifiedValue(116, "fuel"));     
+        amenityValues.add(new ClassifiedValue(117, "bank"));     
+        amenityValues.add(new ClassifiedValue(118, "fast_food"));     
+        amenityValues.add(new ClassifiedValue(119, "cafe"));     
+        amenityValues.add(new ClassifiedValue(120, "pharmacy"));     
+        amenityValues.add(new ClassifiedValue(121, "hospital"));     
+        amenityValues.add(new ClassifiedValue(122, "post_office"));     
+        amenityValues.add(new ClassifiedValue(123, "pub"));
+        amenityValues.add(new ClassifiedValue(124, "public_building"));     
+        amenityValues.add(new ClassifiedValue(125, "toilets"));     
+        amenityValues.add(new ClassifiedValue(126, "bar"));     
+        amenityValues.add(new ClassifiedValue(127, "fire_station"));     
+        amenityValues.add(new ClassifiedValue(128, "police"));     
+        amenityValues.add(new ClassifiedValue(129, "library"));     
+        amenityValues.add(new ClassifiedValue(130, "university"));     
+        amenityValues.add(new ClassifiedValue(131, "college"));     
+        amenityValues.add(new ClassifiedValue(132, "marketplace"));     
+        amenityValues.add(new ClassifiedValue(133, "taxi"));
+        amenityValues.add(new ClassifiedValue(134, "cinema"));   
+        amenityValues.add(new ClassifiedValue(135, "embassy"));   
+        amenityValues.add(new ClassifiedValue(136, "water_point"));   
+        TAG_LIST.add(new ClassifiedTag(12, "amenity", -1, amenityValues, 
                 new int[] {NODE_TAG, BUILDING_TAG}));
         
         // classified tag: building
-        final List<String> buildingValues =
-                new ArrayList<String>(Arrays.asList("apartments", "farm",
-                        "hotel", "house", "commercial", "industrial", "retail",
-                        "warehouse", "church", "hospital", "train_station",
-                        "university"));
-        TAG_LIST.add(new ClassifiedTag(13, "building", null, buildingValues,
-                new int[] {NODE_TAG, BUILDING_TAG}));
+        final List<ClassifiedValue> buildingValues = new LinkedList<ClassifiedValue>(); 
+        buildingValues.add(new ClassifiedValue(137, "house"));
+        buildingValues.add(new ClassifiedValue(138, "residential"));
+        buildingValues.add(new ClassifiedValue(139, "garage"));
+        buildingValues.add(new ClassifiedValue(140, "apartments"));
+        buildingValues.add(new ClassifiedValue(141, "industrial"));
+        buildingValues.add(new ClassifiedValue(142, "commercial"));
+        buildingValues.add(new ClassifiedValue(143, "retail"));
+        TAG_LIST.add(new ClassifiedTag(13, "building", -1, buildingValues,
+                new int[] {BUILDING_TAG}));
 
         // classified tag: landuse
-        final List<String> landuseValues =
-                new ArrayList<String>(Arrays.asList("commercial",
-                        "construction", "farmland", "forest", "grass",
-                        "industrial", "millitary", "residential"));
-        TAG_LIST.add(new ClassifiedTag(14, "landuse", null, landuseValues,
-                new int[] {BUILDING_TAG, AREA_TAG}));
+        final List<ClassifiedValue> landuseValues = new LinkedList<ClassifiedValue>(); 
+        landuseValues.add(new ClassifiedValue(144, "forest"));
+        landuseValues.add(new ClassifiedValue(145, "residential"));
+        landuseValues.add(new ClassifiedValue(146, "grass")); 
+        landuseValues.add(new ClassifiedValue(147, "farmland"));
+        landuseValues.add(new ClassifiedValue(148, "industrial"));
+        landuseValues.add(new ClassifiedValue(149, "commercial"));
+        landuseValues.add(new ClassifiedValue(150, "construction"));
+        landuseValues.add(new ClassifiedValue(151, "millitary"));        
+        TAG_LIST.add(new ClassifiedTag(14, "landuse", -1, landuseValues,
+                new int[] {AREA_TAG}));
 
     }
 
