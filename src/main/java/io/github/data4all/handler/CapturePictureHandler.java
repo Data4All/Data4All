@@ -26,9 +26,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.robolectric.impl.ResponseSource;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
@@ -113,11 +116,14 @@ public class CapturePictureHandler implements PictureCallback {
     private double getDeviceHeight() {
         final SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
-        final String key =
-                context.getResources().getString(R.string.pref_bodyheight_key);
+        final Resources res = context.getResources();
+        final String key = res.getString(R.string.pref_bodyheight_key);
         final String height = prefs.getString(key, null);
         if (TextUtils.isEmpty(height)) {
-            return 0;
+            final int defaultValue = res.getInteger(0);
+            // Save the default value
+            prefs.edit().putString(key, "" + defaultValue).commit();
+            return ((double) defaultValue - 20) / 100;
         } else {
             final double bodyHeight = Integer.parseInt(height);
             return (bodyHeight - 20) / 100;
