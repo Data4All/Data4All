@@ -30,16 +30,13 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Display;
-import android.view.Surface;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
