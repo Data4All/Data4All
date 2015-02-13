@@ -86,6 +86,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -114,6 +118,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onResume()
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -127,6 +135,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         startService(new Intent(this, GPSservice.class));
     }
 
+    /*
+     * (non-Javadoc)
+     * @see io.github.data4all.activity.MapActivity#onPause()
+     */
     @Override
     public void onPause() {
         super.onPause();

@@ -48,6 +48,10 @@ public class MapLine extends Polyline implements
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.osmdroid.views.overlay.Overlay#onLongPress(android.view.MotionEvent, org.osmdroid.views.MapView)
+     */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
         final AlertDialog.Builder builder =
@@ -61,6 +65,10 @@ public class MapLine extends Polyline implements
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
+     */
     @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {

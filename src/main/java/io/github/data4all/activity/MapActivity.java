@@ -39,7 +39,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
@@ -152,7 +151,7 @@ public class MapActivity extends BasicActivity {
         // Add Satellite Map TileSource
         MapBoxTileSource.retrieveMapBoxMapId(this);
         satMap = new MapBoxTileSource(SAT_MAP_NAME,
-                ResourceProxy.string.mapquest_osm , 1, 19, 256, ".png");
+                ResourceProxy.string.mapquest_aerial , 1, 19, 256, ".png");
         TileSourceFactory.addTileSource(satMap);
 
         // Activate Multi Touch Control
@@ -207,7 +206,7 @@ public class MapActivity extends BasicActivity {
      **/
     protected void downloadMapTiles(){
         cacheManager.downloadAreaAsync(this, mapView.getBoundingBox(),
-                actualZoomLevel, actualZoomLevel+4);
+                actualZoomLevel, actualZoomLevel);
 
     }
     
@@ -322,6 +321,10 @@ public class MapActivity extends BasicActivity {
         mapView.postInvalidate();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
+     */
     @Override
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
@@ -339,6 +342,10 @@ public class MapActivity extends BasicActivity {
         state.putSerializable(M_T_P, mTS);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onPause()
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -436,7 +443,7 @@ public class MapActivity extends BasicActivity {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            downloadMapTiles();
+            //downloadMapTiles();
         }
 
     }
@@ -475,6 +482,16 @@ public class MapActivity extends BasicActivity {
         } else {
             mapTileSource = OSM_TILESRC;
         }
+    }
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onDestroy()
+     */
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mapView.getTileProvider().clearTileCache();
+        System.gc();
     }
 
 }

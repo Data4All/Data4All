@@ -49,6 +49,10 @@ public class MapMarker extends Marker implements
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.osmdroid.bonuspack.overlays.Marker#onLongPress(android.view.MotionEvent, org.osmdroid.views.MapView)
+     */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
         final AlertDialog.Builder builder =
@@ -62,6 +66,10 @@ public class MapMarker extends Marker implements
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
+     */
     @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {

@@ -45,6 +45,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +72,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         satelliteMap.setOnClickListener(this);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onStart()
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -82,6 +90,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

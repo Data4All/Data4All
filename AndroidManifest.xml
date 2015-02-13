@@ -27,7 +27,7 @@
         android:theme="@style/D4ATheme" >
         <meta-data
             android:name="MAPBOX_MAPID"
-            android:value="data4all.l53h9a71" />  
+            android:value="data4all.c248803d" />  
 
         <activity android:name=".activity.MapViewActivity" >
             <intent-filter>
