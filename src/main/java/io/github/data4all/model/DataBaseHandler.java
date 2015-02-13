@@ -1,5 +1,17 @@
-/**
+/*
+ * Copyright (c) 2014, 2015 Data4All
  * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package io.github.data4all.model;
 
@@ -84,21 +96,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     // Table creation
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_DATAELEMENTS_TABLE = "CREATE TABLE " + TABLE_DATAELEMENT
-                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_TAGIDS
-                + " TEXT" + ")";
-        String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
-                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
-                + KEY_LON + " REAL" + ")";
-        String CREATE_TAGMAP_TABLE = "CREATE TABLE " + TABLE_TAGMAP + " ("
-                + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE + " TEXT"
-                + ")";
-        String CREATE_POLYELEMENT_TABLE = "CREATE TABLE " + TABLE_POLYELEMENT
-                + " (" + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_TYPE
-                + " TEXT," + KEY_NODEIDS + " TEXT" + ")";
-        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
-                + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
-                + KEY_TOKENSECRET + " TEXT" + ")";
+        final String CREATE_DATAELEMENTS_TABLE =
+                "CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_TAGIDS + " TEXT" + ")";
+        final String CREATE_NODES_TABLE =
+                "CREATE TABLE " + TABLE_NODE + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
+                        + KEY_LON + " REAL" + ")";
+        final String CREATE_TAGMAP_TABLE =
+                "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_TAGID
+                        + " INTEGER PRIMARY KEY," + KEY_VALUE + " TEXT" + ")";
+        final String CREATE_POLYELEMENT_TABLE =
+                "CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
+                        + KEY_NODEIDS + " TEXT" + ")";
+        final String CREATE_USERS_TABLE =
+                "CREATE TABLE " + TABLE_USER + " (" + KEY_USERNAME
+                        + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
+                        + KEY_TOKENSECRET + " TEXT" + ")";
 
         db.execSQL(CREATE_DATAELEMENTS_TABLE);
         db.execSQL(CREATE_NODES_TABLE);
@@ -119,7 +134,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
 
         // Recreate tables
-        onCreate(db);
+        this.onCreate(db);
     }
 
     // USER CRUD
@@ -132,10 +147,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link User} object from which the data will be taken
      */
     public void createUser(User user) {
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-
+        final ContentValues values = new ContentValues();
         values.put(KEY_USERNAME, user.getUsername());
         values.put(KEY_TOKEN, user.getOAuthToken());
         values.put(KEY_TOKENSECRET, user.getOauthTokenSecret());
@@ -152,17 +166,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return a {@link User} object for the desired user
      */
     public User getUser(String username) {
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_USER, new String[] { KEY_USERNAME,
-                KEY_TOKEN, KEY_TOKENSECRET }, KEY_USERNAME + "=?",
-                new String[] { username }, null, null, null, null);
+        final Cursor cursor =
+                db.query(TABLE_USER, new String[] {KEY_USERNAME, KEY_TOKEN,
+                        KEY_TOKENSECRET}, KEY_USERNAME + "=?",
+                        new String[] {username}, null, null, null, null);
 
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
-
-        User user = new User(cursor.getString(0), cursor.getString(1),
-                cursor.getString(2));
+        }
+        final User user =
+                new User(cursor.getString(0), cursor.getString(1),
+                        cursor.getString(2));
 
         cursor.close();
 
@@ -176,10 +192,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link User} object whose data should be deleted
      */
     public void deleteUser(User user) {
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_USER, KEY_USERNAME + "=?",
-                new String[] { user.getUsername() });
+                new String[] {user.getUsername()});
     }
 
     /**
@@ -188,10 +204,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of users
      */
     public int getUserCount() {
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
-        int count = cursor.getCount();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
+        final int count = cursor.getCount();
         cursor.close();
 
         return count;
@@ -205,18 +221,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of rows that have been updated
      */
     public int updateUser(User user) {
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         values.put(KEY_USERNAME, user.getUsername());
         values.put(KEY_TOKEN, user.getOAuthToken());
         values.put(KEY_TOKENSECRET, user.getOauthTokenSecret());
 
-        int count = db.update(TABLE_USER, values, KEY_USERNAME + "=?",
-                new String[] { user.getUsername() });
-
-        return count;
+        return db.update(TABLE_USER, values, KEY_USERNAME + "=?",
+                new String[] {user.getUsername()});
     }
 
     /**
@@ -226,15 +240,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return a list of users
      */
     public List<User> getAllUser() {
-        List<User> users = new ArrayList<User>();
+        final List<User> users = new ArrayList<User>();
 
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
 
         if (cursor.moveToFirst()) {
             do {
-                User user = new User(cursor.getString(0), cursor.getString(1),
-                        cursor.getString(2));
+                final User user =
+                        new User(cursor.getString(0), cursor.getString(1),
+                                cursor.getString(2));
                 users.add(user);
             } while (cursor.moveToNext());
         }
@@ -253,10 +268,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link Node} object from which the data will be taken
      */
     public void createNode(Node node) {
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-
+        final ContentValues values = new ContentValues();
         values.put(KEY_OSMID, node.getOsmId());
         values.put(KEY_LAT, node.getLat());
         values.put(KEY_LON, node.getLon());
@@ -273,18 +287,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return a {@link Node} object for the desired node
      */
     public Node getNode(long id) {
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_NODE, new String[] { KEY_OSMID, KEY_LAT,
-                KEY_LON }, KEY_OSMID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+        final Cursor cursor =
+                db.query(TABLE_NODE,
+                        new String[] {KEY_OSMID, KEY_LAT, KEY_LON}, KEY_OSMID
+                                + "=?", new String[] {String.valueOf(id)},
+                        null, null, null, null);
 
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
-
-        Node node = new Node(Long.parseLong(cursor.getString(0)),
-                Double.parseDouble(cursor.getString(1)),
-                Double.parseDouble(cursor.getString(2)));
+        }
+        final Node node =
+                new Node(Long.parseLong(cursor.getString(0)),
+                        Double.parseDouble(cursor.getString(1)),
+                        Double.parseDouble(cursor.getString(2)));
 
         cursor.close();
 
@@ -298,10 +315,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link Node} object whose data should be deleted
      */
     public void deleteNode(Node node) {
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_NODE, KEY_OSMID + "=?",
-                new String[] { String.valueOf(node.getOsmId()) });
+                new String[] {String.valueOf(node.getOsmId())});
     }
 
     /**
@@ -310,10 +327,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of nodes
      */
     public int getNodeCount() {
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
-        int count = cursor.getCount();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
+        final int count = cursor.getCount();
         cursor.close();
 
         return count;
@@ -327,17 +344,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of rows that have been updated
      */
     public int updateNode(Node node) {
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         values.put(KEY_OSMID, node.getOsmId());
         values.put(KEY_LAT, node.getLat());
         values.put(KEY_LON, node.getLon());
-        int count = db.update(TABLE_NODE, values, KEY_OSMID + "=?",
-                new String[] { String.valueOf(node.getOsmId()) });
-
-        return count;
+        return db.update(TABLE_NODE, values, KEY_OSMID + "=?",
+                new String[] {String.valueOf(node.getOsmId())});
     }
 
     /**
@@ -347,16 +362,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return a list of nodes
      */
     public List<Node> getAllNode() {
-        List<Node> nodes = new ArrayList<Node>();
+        final List<Node> nodes = new ArrayList<Node>();
 
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
 
         if (cursor.moveToFirst()) {
             do {
-                Node node = new Node(Long.parseLong(cursor.getString(0)),
-                        Double.parseDouble(cursor.getString(1)),
-                        Double.parseDouble(cursor.getString(2)));
+                final Node node =
+                        new Node(Long.parseLong(cursor.getString(0)),
+                                Double.parseDouble(cursor.getString(1)),
+                                Double.parseDouble(cursor.getString(2)));
                 nodes.add(node);
             } while (cursor.moveToNext());
         }
@@ -379,23 +395,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *             if JSON object can't be initialized
      */
     public void createPolyElement(PolyElement polyElement) throws JSONException {
-        List<Long> nodeIDs = new ArrayList<Long>();
+        final List<Long> nodeIDs = new ArrayList<Long>();
 
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         values.put(KEY_OSMID, polyElement.getOsmId());
         values.put(KEY_TYPE, polyElement.getType().toString());
 
         for (Node node : polyElement.getNodes()) {
             nodeIDs.add(node.getOsmId());
-            createNode(node);
+            this.createNode(node);
         }
 
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("nodeIDarray", new JSONArray(nodeIDs));
-        String arrayList = json.toString();
+        final String arrayList = json.toString();
 
         values.put(KEY_NODEIDS, arrayList);
 
@@ -414,26 +430,29 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public PolyElement getPolyElement(long id) throws JSONException {
 
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_POLYELEMENT, new String[] { KEY_OSMID,
-                KEY_TYPE, KEY_NODEIDS }, KEY_OSMID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+        final Cursor cursor =
+                db.query(TABLE_POLYELEMENT, new String[] {KEY_OSMID, KEY_TYPE,
+                        KEY_NODEIDS}, KEY_OSMID + "=?",
+                        new String[] {String.valueOf(id)}, null, null, null,
+                        null);
 
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
+        }
+        final PolyElement polyElement =
+                new PolyElement(Long.parseLong(cursor.getString(0)),
+                        PolyElementType.valueOf(cursor.getString(1)));
 
-        PolyElement polyElement = new PolyElement(Long.parseLong(cursor
-                .getString(0)), PolyElementType.valueOf(cursor.getString(1)));
+        final JSONObject json = new JSONObject(cursor.getString(2));
+        final JSONArray jArray = json.optJSONArray("nodeIDarray");
 
-        JSONObject json = new JSONObject(cursor.getString(2));
-        JSONArray jArray = json.optJSONArray("nodeIDarray");
-
-        ArrayList<Node> nodes = new ArrayList<Node>();
+        final List<Node> nodes = new ArrayList<Node>();
 
         for (int i = 0; i < jArray.length(); i++) {
-            long nodeID = jArray.optLong(i);
-            Node node = getNode(nodeID);
+            final long nodeID = jArray.optLong(i);
+            final Node node = this.getNode(nodeID);
             nodes.add(node);
         }
 
@@ -452,13 +471,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public void deletePolyElement(PolyElement polyElement) {
 
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
-                new String[] { String.valueOf(polyElement.getOsmId()) });
+                new String[] {String.valueOf(polyElement.getOsmId())});
 
         for (Node node : polyElement.getNodes()) {
-            deleteNode(node);
+            this.deleteNode(node);
         }
     }
 
@@ -469,10 +488,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of poly elements
      */
     public int getPolyElementCount() {
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT, null);
-        int count = cursor.getCount();
+        final Cursor cursor =
+                db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT, null);
+        final int count = cursor.getCount();
         cursor.close();
 
         return count;
@@ -491,34 +511,32 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public int updatePolyElement(PolyElement polyElement) throws JSONException {
 
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         values.put(KEY_OSMID, polyElement.getOsmId());
         values.put(KEY_TYPE, polyElement.getType().toString());
 
-        List<Long> nodeIDs = new ArrayList<Long>();
+        final List<Long> nodeIDs = new ArrayList<Long>();
 
         for (Node node : polyElement.getNodes()) {
             nodeIDs.add(node.getOsmId());
-            if (checkIfRecordExists(TABLE_NODE, KEY_OSMID, node.getOsmId())) {
-                updateNode(node);
+            if (this.checkIfRecordExists(TABLE_NODE, KEY_OSMID, node.getOsmId())) {
+                this.updateNode(node);
             } else {
-                createNode(node);
+                this.createNode(node);
             }
         }
 
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("nodeIDarray", new JSONArray(nodeIDs));
-        String arrayList = json.toString();
+        final String arrayList = json.toString();
 
         values.put(KEY_NODEIDS, arrayList);
 
-        int count = db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
-                new String[] { String.valueOf(polyElement.getOsmId()) });
-
-        return count;
+        return db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
+                new String[] {String.valueOf(polyElement.getOsmId())});
     }
 
     /**
@@ -531,25 +549,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public List<PolyElement> getAllPolyElements() throws JSONException {
 
-        List<PolyElement> polyElements = new ArrayList<PolyElement>();
+        final List<PolyElement> polyElements = new ArrayList<PolyElement>();
 
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT, null);
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor =
+                db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT, null);
 
         if (cursor.moveToFirst()) {
             do {
-                PolyElement polyElement = new PolyElement(Long.parseLong(cursor
-                        .getString(0)), PolyElementType.valueOf(cursor
-                        .getString(1)));
+                final PolyElement polyElement =
+                        new PolyElement(Long.parseLong(cursor.getString(0)),
+                                PolyElementType.valueOf(cursor.getString(1)));
 
-                JSONObject json = new JSONObject(cursor.getString(2));
-                JSONArray jArray = json.optJSONArray("nodeIDarray");
+                final JSONObject json = new JSONObject(cursor.getString(2));
+                final JSONArray jArray = json.optJSONArray("nodeIDarray");
 
-                ArrayList<Node> nodes = new ArrayList<Node>();
+                final List<Node> nodes = new ArrayList<Node>();
 
                 for (int i = 0; i < jArray.length(); i++) {
-                    long nodeID = jArray.optLong(i);
-                    Node node = getNode(nodeID);
+                    final long nodeID = jArray.optLong(i);
+                    final Node node = this.getNode(nodeID);
                     nodes.add(node);
                 }
                 polyElement.addNodes(nodes, false);
@@ -578,11 +597,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void createDataElement(AbstractDataElement dataElement)
             throws JSONException {
 
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        Map<Tag, String> tagMap = dataElement.getTags();
-        List<Integer> tagIDs = new ArrayList<Integer>();
-        ContentValues values = new ContentValues();
+        final Map<Tag, String> tagMap = dataElement.getTags();
+        final List<Integer> tagIDs = new ArrayList<Integer>();
+        final ContentValues values = new ContentValues();
 
         values.put(KEY_OSMID, dataElement.getOsmId());
 
@@ -590,20 +609,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             tagIDs.add(tag.getKey().getId());
         }
 
-        createTagMap(tagMap);
+        this.createTagMap(tagMap);
 
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("tagIDarray", new JSONArray(tagIDs));
-        String arrayList = json.toString();
+        final String arrayList = json.toString();
 
         values.put(KEY_TAGIDS, arrayList);
 
         db.insert(TABLE_DATAELEMENT, null, values);
 
         if (dataElement instanceof PolyElement) {
-            createPolyElement((PolyElement) dataElement);
+            this.createPolyElement((PolyElement) dataElement);
         } else {
-            createNode((Node) dataElement);
+            this.createNode((Node) dataElement);
         }
     }
 
@@ -620,34 +639,36 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public AbstractDataElement getDataElement(long id) throws JSONException {
 
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
         AbstractDataElement dataElement;
 
-        Cursor cursor = db.query(TABLE_DATAELEMENT, new String[] { KEY_OSMID,
-                KEY_TAGIDS }, KEY_OSMID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+        final Cursor cursor =
+                db.query(TABLE_DATAELEMENT,
+                        new String[] {KEY_OSMID, KEY_TAGIDS}, KEY_OSMID + "=?",
+                        new String[] {String.valueOf(id)}, null, null, null,
+                        null);
 
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
-
-        if (checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID, id)) {
-            dataElement = getPolyElement(id);
+        }
+        if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID, id)) {
+            dataElement = this.getPolyElement(id);
         } else {
-            dataElement = getNode(id);
+            dataElement = this.getNode(id);
         }
 
-        JSONObject json = new JSONObject(cursor.getString(1));
-        JSONArray jArray = json.optJSONArray("tagIDarray");
+        final JSONObject json = new JSONObject(cursor.getString(1));
+        final JSONArray jArray = json.optJSONArray("tagIDarray");
 
-        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
+        final List<Integer> tagIDs = new ArrayList<Integer>();
 
         for (int i = 0; i < jArray.length(); i++) {
-            int tagID = jArray.optInt(i);
+            final int tagID = jArray.optInt(i);
             tagIDs.add(tagID);
         }
 
-        Map<Tag, String> tagMap = getTagMap(tagIDs);
+        final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
         dataElement.addTags(tagMap);
 
         cursor.close();
@@ -664,22 +685,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public void deleteDataElement(AbstractDataElement dataElement) {
 
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
-                new String[] { String.valueOf(dataElement.getOsmId()) });
+                new String[] {String.valueOf(dataElement.getOsmId())});
 
-        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
+        final List<Integer> tagIDs = new ArrayList<Integer>();
 
         for (Map.Entry<Tag, String> tag : dataElement.getTags().entrySet()) {
             tagIDs.add(tag.getKey().getId());
         }
-        deleteTagMap(tagIDs);
+        this.deleteTagMap(tagIDs);
 
         if (dataElement instanceof PolyElement) {
-            deletePolyElement((PolyElement) dataElement);
+            this.deletePolyElement((PolyElement) dataElement);
         } else {
-            deleteNode((Node) dataElement);
+            this.deleteNode((Node) dataElement);
         }
     }
 
@@ -691,10 +712,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public int getDataElementCount() {
 
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_DATAELEMENT, null);
-        int count = cursor.getCount();
+        final Cursor cursor =
+                db.rawQuery("SELECT * FROM " + TABLE_DATAELEMENT, null);
+        final int count = cursor.getCount();
         cursor.close();
 
         return count;
@@ -714,23 +736,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public int updateDataElement(AbstractDataElement dataElement)
             throws JSONException {
 
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         values.put(KEY_OSMID, dataElement.getOsmId());
 
         int count = 0;
 
-        count += db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
-                new String[] { String.valueOf(dataElement.getOsmId()) });
+        count +=
+                db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
+                        new String[] {String.valueOf(dataElement.getOsmId())});
 
-        count += updateTagMap(dataElement.getTags());
+        count += this.updateTagMap(dataElement.getTags());
 
         if (dataElement instanceof PolyElement) {
-            count += updatePolyElement((PolyElement) dataElement);
+            count += this.updatePolyElement((PolyElement) dataElement);
         } else {
-            count += updateNode((Node) dataElement);
+            count += this.updateNode((Node) dataElement);
         }
 
         return count;
@@ -746,34 +769,36 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public List<AbstractDataElement> getAllDataElements() throws JSONException {
 
-        List<AbstractDataElement> dataElements = new ArrayList<AbstractDataElement>();
+        final List<AbstractDataElement> dataElements =
+                new ArrayList<AbstractDataElement>();
 
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_DATAELEMENT, null);
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor =
+                db.rawQuery("SELECT * FROM " + TABLE_DATAELEMENT, null);
 
         AbstractDataElement dataElement;
 
         if (cursor.moveToFirst()) {
             do {
 
-                if (checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID,
+                if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID,
                         cursor.getInt(0))) {
-                    dataElement = getPolyElement(cursor.getInt(0));
+                    dataElement = this.getPolyElement(cursor.getInt(0));
                 } else {
-                    dataElement = getNode(cursor.getInt(0));
+                    dataElement = this.getNode(cursor.getInt(0));
                 }
 
-                JSONObject json = new JSONObject(cursor.getString(1));
-                JSONArray jArray = json.optJSONArray("tagIDarray");
+                final JSONObject json = new JSONObject(cursor.getString(1));
+                final JSONArray jArray = json.optJSONArray("tagIDarray");
 
-                ArrayList<Integer> tagIDs = new ArrayList<Integer>();
+                final List<Integer> tagIDs = new ArrayList<Integer>();
 
                 for (int i = 0; i < jArray.length(); i++) {
-                    int tagID = jArray.optInt(i);
+                    final int tagID = jArray.optInt(i);
                     tagIDs.add(tagID);
                 }
 
-                Map<Tag, String> tagMap = getTagMap(tagIDs);
+                final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
                 dataElement.addTags(tagMap);
 
                 dataElements.add(dataElement);
@@ -795,9 +820,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public void createTagMap(Map<Tag, String> tagMap) {
 
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
             values.put(KEY_TAGID, tag.getKey().getId());
@@ -814,22 +839,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the IDs of the desired tags
      * @return a {@link Map} object for the desired tags
      */
-    public Map<Tag, String> getTagMap(ArrayList<Integer> tagIDs) {
+    public Map<Tag, String> getTagMap(List<Integer> tagIDs) {
 
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Map<Tag, String> tagMap = new Hashtable<Tag, String>();
+        final Map<Tag, String> tagMap = new Hashtable<Tag, String>();
 
         for (int id : tagIDs) {
-            Cursor cursor = db
-                    .query(TABLE_TAGMAP, new String[] { KEY_TAGID, KEY_VALUE },
+            final Cursor cursor =
+                    db.query(TABLE_TAGMAP, new String[] {KEY_TAGID, KEY_VALUE},
                             KEY_TAGID + "=?",
-                            new String[] { String.valueOf(id) }, null, null,
+                            new String[] {String.valueOf(id)}, null, null,
                             null, null);
 
-            if (cursor != null)
+            if (cursor != null) {
                 cursor.moveToFirst();
-
+            }
             tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
             cursor.close();
         }
@@ -842,12 +867,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param tagIDs
      *            the tags whose data should be deleted
      */
-    public void deleteTagMap(ArrayList<Integer> tagIDs) {
-        SQLiteDatabase db = getWritableDatabase();
+    public void deleteTagMap(List<Integer> tagIDs) {
+        final SQLiteDatabase db = getWritableDatabase();
 
         for (int id : tagIDs) {
             db.delete(TABLE_TAGMAP, KEY_TAGID + "=?",
-                    new String[] { String.valueOf(id) });
+                    new String[] {String.valueOf(id)});
         }
     }
 
@@ -857,10 +882,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of tags
      */
     public int getTagMapCount() {
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TAGMAP, null);
-        int count = cursor.getCount();
+        final Cursor cursor =
+                db.rawQuery("SELECT * FROM " + TABLE_TAGMAP, null);
+        final int count = cursor.getCount();
         cursor.close();
 
         return count;
@@ -875,9 +901,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of rows that have been updated
      */
     public int updateTagMap(Map<Tag, String> tagMap) {
-        SQLiteDatabase db = getWritableDatabase();
+        final SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         int count = 0;
 
@@ -885,10 +911,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             values.put(KEY_TAGID, tag.getKey().getId());
             values.put(KEY_VALUE, tag.getValue());
 
-            if (checkIfRecordExists(TABLE_TAGMAP, KEY_TAGID, tag.getKey()
+            if (this.checkIfRecordExists(TABLE_TAGMAP, KEY_TAGID, tag.getKey()
                     .getId())) {
-                count += db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
-                        new String[] { String.valueOf(tag.getKey().getId()) });
+                count +=
+                        db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
+                                new String[] {String.valueOf(tag.getKey()
+                                        .getId())});
             } else {
                 db.insert(TABLE_TAGMAP, null, values);
             }
@@ -913,10 +941,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public boolean checkIfRecordExists(String tableName, String field,
             long value) {
 
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM " + tableName + " WHERE " + field + " = "
-                + value;
-        Cursor cursor = db.rawQuery(query, null);
+        final SQLiteDatabase db = getReadableDatabase();
+        final String query =
+                "SELECT * FROM " + tableName + " WHERE " + field + " = "
+                        + value;
+        final Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.getCount() <= 0) {
             return false;
