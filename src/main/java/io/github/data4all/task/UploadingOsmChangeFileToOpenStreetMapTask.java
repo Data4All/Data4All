@@ -17,6 +17,7 @@ package io.github.data4all.task;
 
 import io.github.data4all.Constants;
 import io.github.data4all.logger.Log;
+import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,8 +96,8 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends
         try {
             // Prepare request
             request =
-                    new HttpPost(Constants.SCOPE + "api/0.6/changeset/" + id
-                            + "/upload");
+                    new HttpPost(OAuthParameters.CURRENT.getScopeUrl()
+                            + "api/0.6/changeset/" + id + "/upload");
             // Sign the request with oAuth
             this.consumer.sign(request);
 
