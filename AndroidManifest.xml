@@ -40,8 +40,7 @@
         <activity android:name=".activity.CameraActivity" />
         <activity android:name=".activity.ResultViewActivity" />
         <activity android:name=".activity.MapActivity" />
-        <activity android:name=".ResultViewActivity"
-        ></activity>
+        <activity android:name=".activity.SettingsActivity" />
         <activity
             android:name=".activity.TagActivity"
             android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
