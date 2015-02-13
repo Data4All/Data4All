@@ -1,9 +1,6 @@
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.DataBaseHandler;
-import io.github.data4all.model.data.Track;
-import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Context;

@@ -4,7 +4,6 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
-import io.github.data4all.task.TrackParserTask;
 
 import org.osmdroid.util.GeoPoint;
 
