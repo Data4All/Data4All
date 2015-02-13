@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.handler;
 
 import io.github.data4all.activity.ShowPictureActivity;
@@ -62,21 +77,24 @@ public class CapturePictureHandler implements PictureCallback {
      * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
      * android.hardware.Camera)
      */
+    @Override
     public void onPictureTaken(byte[] raw, Camera camera) {
         Log.d(getClass().getSimpleName(), "Save the Picture");
 
-        //get the current data which is necessary for creating an osm element
-        Camera.Parameters params = camera.getParameters();
-        double horizontalViewAngle = Math.toRadians(params
-                .getHorizontalViewAngle());
-        double verticalViewAngle = Math
-                .toRadians(params.getVerticalViewAngle());
-        Size pictureSize = params.getSupportedPictureSizes().get(0);
-        Location currentLocation = Optimizer.currentBestLoc();
-        transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
-         verticalViewAngle, pictureSize.width, pictureSize.height, currentLocation);
+        // get the current data which is necessary for creating an osm element
+        final Camera.Parameters params = camera.getParameters();
+        final double horizontalViewAngle =
+                Math.toRadians(params.getHorizontalViewAngle());
+        final double verticalViewAngle =
+                Math.toRadians(params.getVerticalViewAngle());
+        final Size pictureSize = params.getSupportedPictureSizes().get(0);
+        final Location currentLocation = Optimizer.currentBestLoc();
+        transformBean =
+                new TransformationParamBean(1.7, horizontalViewAngle,
+                        verticalViewAngle, pictureSize.width,
+                        pictureSize.height, currentLocation);
         currentOrientation = Optimizer.currentBestPos();
-        
+
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
     }
@@ -93,7 +111,8 @@ public class CapturePictureHandler implements PictureCallback {
 
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
-                FileOutputStream fos = new FileOutputStream(photoFile.getPath());
+                final FileOutputStream fos =
+                        new FileOutputStream(photoFile.getPath());
                 fos.write(photoData[0]);
                 fos.flush();
                 fos.close();
@@ -113,7 +132,8 @@ public class CapturePictureHandler implements PictureCallback {
 
                 // Passes the filepath, location and device orientation to the
                 // ShowPictureActivity
-                Intent intent = new Intent(context, ShowPictureActivity.class);
+                final Intent intent =
+                        new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
                 intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
@@ -137,8 +157,8 @@ public class CapturePictureHandler implements PictureCallback {
         // Image Type is JPEG
 
         // Create a new folder on the internal storage named Data4all
-        File folder = new File(Environment.getExternalStorageDirectory()
-                + DIRECTORY);
+        final File folder =
+                new File(Environment.getExternalStorageDirectory() + DIRECTORY);
         if (!folder.exists() && folder.mkdirs()) {
             Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
                     .show();

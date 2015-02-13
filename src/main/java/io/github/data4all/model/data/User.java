@@ -1,4 +1,22 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.model.data;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Simple model for the osm user.
@@ -6,45 +24,37 @@ package io.github.data4all.model.data;
  * @author fkirchge
  *
  */
-public class User {
+public class User implements Parcelable {
 
     /**
-     * User details for the login procedure
+     * User details for the login procedure.
      */
     private String username;
     private String oauthToken;
-    private boolean isLoggedIn;
     private String oauthTokenSecret;
 
     /**
-     * Default constructor
+     * Default constructor.
      * 
-     * @param username
-     * @param loginToken
+     * @param oauthToken
+     * @param oauthTokenSecret
      */
     public User(String oauthToken, String oauthTokenSecret) {
         this.oauthToken = oauthToken;
-        this.setOauthTokenSecret(oauthTokenSecret);
-    }
-
- 
-    public User(String username, String oauthToken, String oauthTokenSecret) {
-        this.username = username;
-        this.oauthToken = oauthToken;
-        this.setOauthTokenSecret(oauthTokenSecret);
+        this.oauthTokenSecret = oauthTokenSecret;
     }
 
     /**
-     * Default constructor
+     * Default constructor.
      * 
      * @param username
-     * @param loginToken
-     * @param status
+     * @param oauthToken
+     * @param oauthTokenSecret
      */
-    public User(String username, String loginToken, boolean status) {
+    public User(String username, String oauthToken, String oauthTokenSecret) {
         this.username = username;
-        this.oauthToken = loginToken;
-        this.isLoggedIn = status;
+        this.oauthToken = oauthToken;
+        this.oauthTokenSecret = oauthTokenSecret;
     }
 
     public String getUsername() {
@@ -63,14 +73,6 @@ public class User {
         this.oauthToken = loginToken;
     }
 
-    public boolean isLoggedIn() {
-        return isLoggedIn;
-    }
-
-    public void setLoggedIn(boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-    }
-     
     public String getOAuthToken() {
         return oauthToken;
     }
@@ -85,6 +87,47 @@ public class User {
 
     public void setOauthTokenSecret(String oauthTokenSecret) {
         this.oauthTokenSecret = oauthTokenSecret;
+    }
+
+    /**
+     * Constructor to create a User from a parcel.
+     * 
+     * @param in
+     */
+    private User(Parcel in) {
+        this.username = in.readString();
+        this.oauthToken = in.readString();
+        this.oauthTokenSecret = in.readString();
+    }
+
+    /**
+     * Methods to write and restore a Parcel.
+     */
+    public static final Parcelable.Creator<User> CREATOR =
+            new Parcelable.Creator<User>() {
+
+                public User createFromParcel(Parcel in) {
+                    return new User(in);
+                }
+
+                public User[] newArray(int size) {
+                    return new User[size];
+                }
+            };
+
+    /**
+     * Writes the nodes to the given parcel.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeString(oauthToken);
+        dest.writeString(oauthTokenSecret);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
 }

@@ -1,10 +1,29 @@
+/* 
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.data4all.view;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import io.github.data4all.model.drawing.Point;
+import io.github.data4all.view.TouchView.PointMover;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -28,11 +47,12 @@ public class TouchViewTest {
 
     private TouchView touchview;
     private List<Point> polygon;
-    
+
     private Point point1;
     private Point point2;
     private Point point3;
     private Point point4;
+    private Point point5;
 
     @Before
     public void setUp() throws Exception {
@@ -42,6 +62,7 @@ public class TouchViewTest {
         point2 = new Point(40, 40);
         point3 = new Point(43, 43);
         point4 = new Point(33, 33);
+        point5 = new Point(1, 1);
 
         Field declaredField = touchview.getClass().getDeclaredField("polygon");
         declaredField.setAccessible(true);
@@ -58,7 +79,7 @@ public class TouchViewTest {
     public void deletePoint_deleteNull_nothingChanged() {
         List<Point> list = new ArrayList<Point>(polygon);
         touchview.deletePoint(null);
-        for(int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             assertEquals(list.get(i), polygon.get(i));
         }
     }
@@ -70,7 +91,7 @@ public class TouchViewTest {
         touchview.deletePoint(point5);
 
         assertFalse(polygon.contains(point5));
-        for(int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             assertEquals(list.get(i), polygon.get(i));
         }
     }
@@ -106,5 +127,34 @@ public class TouchViewTest {
     @Test
     public void lookUp_towPointsInRange_nearestPointReturned() {
         assertEquals(point3, touchview.lookUp(42, 42, 2));
+    }
+
+    @Test
+    public void movePoint_PointIsNull_NullReturned() {
+        assertThat(touchview.movePoint(null), is(nullValue()));
+    }
+
+    @Test
+    public void movePoint_PointIsNotInPolygon_NullReturned() {
+        assertThat(touchview.movePoint(new Point(0, 0)), is(nullValue()));
+    }
+
+    @Test
+    public void movePoint_getRightPositionInPolygon() {
+        polygon.add(point5);
+        int idx = polygon.indexOf(point5);
+        touchview.movePoint(point5);
+
+        assertThat(polygon.get(idx), is(polygon.get(4)));
+    }
+
+    @Test
+    public void moveTo_PointMoved_XYchanged() {
+        polygon.add(point5);
+        PointMover pm = touchview.movePoint(point5);
+        int idx = polygon.indexOf(point5);
+        pm.moveTo(5.0F, 6.0F);
+        assertThat(polygon.get(idx).getX(), is(5.0F));
+        assertThat(polygon.get(idx).getY(), is(6.0F));
     }
 }

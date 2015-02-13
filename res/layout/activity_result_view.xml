@@ -6,7 +6,7 @@
         <org.osmdroid.views.MapView
             android:id="@+id/mapviewResult"
             android:layout_width="150dp"
-            android:layout_height="1500dp"
+            android:layout_height="150dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" >
         </org.osmdroid.views.MapView>
@@ -15,9 +15,25 @@
             android:id="@+id/listViewResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/mapviewResult"
-        	 >
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/mapviewResult" >
+
         </ListView>
 
+        <Button
+            android:id="@+id/buttonResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+             />
+
+        <Button
+            android:id="@+id/buttonResultToCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Camera" />
     
 </RelativeLayout>

@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.util;
 
 import io.github.data4all.model.DeviceOrientation;
@@ -14,32 +29,62 @@ import android.location.Location;
 
 public class Optimizer {
 
-    // a new Ringbuffer for saving the location objects
-    static RingBuffer<Location> locRB = new RingBuffer<Location>(20);
-    // a new Ringbuffer for saving the DevicePosition objects
-    static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(
-            20);
+    /**
+     * Private Constructor, prevents instantiation.
+     */
+    private Optimizer() {
+
+    }
 
     // The timeDifference at which one location should be significant older
     // or newer than another one, 1000 is one second
-    static final double TIME_DIFFERENCE = 1000;
+    public static final double TIME_DIFFERENCE = 1000;
 
-    /*
-     * Put a Location object to the Location RingBuffer
+    // The accuracy difference at which one location should be significant more
+    // accurate than another one
+    public static final int ACCURACY_DIFFERENCE = 50;
+
+    // Size of the two ringbuffers
+    public static final int RB_SIZE = 20;
+
+    // a new Ringbuffer for saving the location objects
+    private static RingBuffer<Location> locRB = new RingBuffer<Location>(
+            RB_SIZE);
+    // a new Ringbuffer for saving the DevicePosition objects
+    private static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(
+            RB_SIZE);
+
+    /**
+     * Put a Location object to the Location RingBuffer.
+     * 
+     * @param loc
+     *            the new location
      */
     public static void putLoc(Location loc) {
         locRB.put(loc);
     }
 
-    /*
-     * Put a DeviceOrientation object to the DeviceOrientation RingBuffer
+    /**
+     * Put a DeviceOrientation object to the DeviceOrientation RingBuffer.
+     * 
+     * @param pos
+     *            the new device orientation
      */
     public static void putPos(DeviceOrientation pos) {
         posRB.put(pos);
     }
 
-    /*
-     * Give the current best location
+    /**
+     * Give the last location.
+     * 
+     * @return the last location
+     */
+    public static Location currentLocation() {
+        return locRB.getLast();
+    }
+
+    /**
+     * Give the current best location.
      * 
      * @return the current best location
      */
@@ -47,8 +92,8 @@ public class Optimizer {
         return calculateBestLoc();
     }
 
-    /*
-     * Give the current DevicePosition
+    /**
+     * Give the current DevicePosition.
      * 
      * @return the current best DevicePosition
      */
@@ -56,16 +101,16 @@ public class Optimizer {
         return posRB.get(posRB.getIndex());
     }
 
-    /*
-     * Calculate from all saved locations in the ringbuffer the best one
+    /**
+     * Calculate from all saved locations in the ringbuffer the best one.
      * 
      * @return the best location of all saved locations
      */
     public static Location calculateBestLoc() {
-        Location lastLoc = locRB.getLast();
+        final Location lastLoc = locRB.getLast();
         Location bestLoc = lastLoc;
         for (Object location : locRB.getAll()) {
-            Location loc = (Location) location;
+            final Location loc = (Location) location;
             // this location must be better than the actual best and last one
             if (loc != null && isBetterLocation(loc, lastLoc)
                     && isBetterLocation(loc, bestLoc)) {
@@ -75,14 +120,18 @@ public class Optimizer {
         return bestLoc;
     }
 
-    /*
+    /**
      * Determines whether one Location reading is better than the current
-     * Location fix
+     * Location fix.
      * 
-     * @param location The new Location that you want to evaluate
+     * @param location
+     *            The new Location that you want to evaluate
      * 
-     * @param currentBestLocation The current Location fix, to which you want to
-     * compare the new one
+     * @param currentBestLocation
+     *            The current Location fix, to which you want to compare the new
+     *            one
+     * 
+     * @return true if the first location is better than the second
      */
     protected static boolean isBetterLocation(Location location,
             Location currentBestLocation) {
@@ -93,10 +142,11 @@ public class Optimizer {
         }
 
         // Check whether the new location fix is newer or older
-        long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > (TIME_DIFFERENCE);
-        boolean isSignificantlyOlder = timeDelta < -(TIME_DIFFERENCE);
-        boolean isNewer = timeDelta > 0;
+        final long timeDelta = location.getTime()
+                - currentBestLocation.getTime();
+        final boolean isSignificantlyNewer = timeDelta > (TIME_DIFFERENCE);
+        final boolean isSignificantlyOlder = timeDelta < -(TIME_DIFFERENCE);
+        final boolean isNewer = timeDelta > 0;
 
         // If it's been more than two minutes since the current location, use
         // the new location
@@ -110,15 +160,15 @@ public class Optimizer {
         }
 
         // Check whether the new location fix is more or less accurate
-        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation
+        final int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation
                 .getAccuracy());
-        boolean isLessAccurate = accuracyDelta > 0;
-        boolean isMoreAccurate = accuracyDelta < 0;
-        boolean isSignificantlyLessAccurate = accuracyDelta > 50;
+        final boolean isLessAccurate = accuracyDelta > 0;
+        final boolean isMoreAccurate = accuracyDelta < 0;
+        final boolean isSignificantlyLessAccurate = accuracyDelta > ACCURACY_DIFFERENCE;
 
         // Check if the old and new location are from the same provider
-        boolean isFromSameProvider = isSameProvider(location.getProvider(),
-                currentBestLocation.getProvider());
+        final boolean isFromSameProvider = isSameProvider(
+                location.getProvider(), currentBestLocation.getProvider());
 
         // Determine location quality using a combination of timeliness and
         // accuracy
@@ -133,7 +183,15 @@ public class Optimizer {
         return false;
     }
 
-    /* Checks whether two providers are the same */
+    /**
+     * checks whether two providers are the same.
+     * 
+     * @param provider1
+     *            one provider
+     * @param provider2
+     *            the other provider
+     * @return true if the two providers are the same
+     */
     private static boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
             return provider2 == null;

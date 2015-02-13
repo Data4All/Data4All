@@ -41,5 +41,9 @@
     
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Passenden Tag auswählen</string>
-
+    
+        <!-- Delete Dialog -->
+    <string name="deleteDialog">Wollen sie dieses Objekt wirklich löschen?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
 </resources>
