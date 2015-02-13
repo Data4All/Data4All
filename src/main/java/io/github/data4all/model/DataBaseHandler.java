@@ -34,7 +34,6 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
 
-    // All Static variables
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -82,7 +81,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Creating Tables
+    // Table creation
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_DATAELEMENTS_TABLE = "CREATE TABLE " + TABLE_DATAELEMENT
@@ -108,10 +107,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_USERS_TABLE);
     }
 
-    // Upgrading database
+    // Database handling on upgrade
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
+        // Drop tables that already exist
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAGMAP);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WAY);
@@ -142,8 +141,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         values.put(KEY_TOKENSECRET, user.getOauthTokenSecret());
 
         db.insert(TABLE_USER, null, values);
-
-        // db.close();
     }
 
     /**
@@ -168,7 +165,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 cursor.getString(2));
 
         cursor.close();
-        // db.close();
+
         return user;
     }
 
@@ -183,8 +180,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db.delete(TABLE_USER, KEY_USERNAME + "=?",
                 new String[] { user.getUsername() });
-
-        // db.close();
     }
 
     /**
@@ -198,7 +193,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
         int count = cursor.getCount();
         cursor.close();
-        // db.close();
 
         return count;
     }
@@ -221,7 +215,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         int count = db.update(TABLE_USER, values, KEY_USERNAME + "=?",
                 new String[] { user.getUsername() });
-        // db.close();
+
         return count;
     }
 
@@ -245,7 +239,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // db.close();
         return users;
     }
 
@@ -269,8 +262,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         values.put(KEY_LON, node.getLon());
 
         db.insert(TABLE_NODE, null, values);
-
-        // db.close();
     }
 
     /**
@@ -296,7 +287,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 Double.parseDouble(cursor.getString(2)));
 
         cursor.close();
-        // db.close();
 
         return node;
     }
@@ -312,8 +302,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db.delete(TABLE_NODE, KEY_OSMID + "=?",
                 new String[] { String.valueOf(node.getOsmId()) });
-
-        // db.close();
     }
 
     /**
@@ -327,7 +315,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
         int count = cursor.getCount();
         cursor.close();
-        // db.close();
 
         return count;
     }
@@ -349,7 +336,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         values.put(KEY_LON, node.getLon());
         int count = db.update(TABLE_NODE, values, KEY_OSMID + "=?",
                 new String[] { String.valueOf(node.getOsmId()) });
-        // db.close();
 
         return count;
     }
@@ -375,7 +361,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // db.close();
         return nodes;
     }
 
@@ -415,8 +400,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         values.put(KEY_NODEIDS, arrayList);
 
         db.insert(TABLE_POLYELEMENT, null, values);
-
-        // db.close();
     }
 
     /**
@@ -457,7 +440,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         polyElement.addNodes(nodes, false);
 
         cursor.close();
-        // db.close();
 
         return polyElement;
     }
@@ -478,8 +460,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         for (Node node : polyElement.getNodes()) {
             deleteNode(node);
         }
-
-        // db.close();
     }
 
     /**
@@ -494,7 +474,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT, null);
         int count = cursor.getCount();
         cursor.close();
-        // db.close();
 
         return count;
     }
@@ -538,7 +517,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         int count = db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
                 new String[] { String.valueOf(polyElement.getOsmId()) });
-        // db.close();
 
         return count;
     }
@@ -580,7 +558,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // db.close();
         return polyElements;
     }
 
@@ -628,8 +605,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         } else {
             createNode((Node) dataElement);
         }
-
-        // db.close();
     }
 
     /**
@@ -676,7 +651,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         dataElement.addTags(tagMap);
 
         cursor.close();
-        // db.close();
 
         return dataElement;
     }
@@ -707,8 +681,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         } else {
             deleteNode((Node) dataElement);
         }
-
-        // db.close();
     }
 
     /**
@@ -724,7 +696,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_DATAELEMENT, null);
         int count = cursor.getCount();
         cursor.close();
-        // db.close();
 
         return count;
     }
@@ -761,8 +732,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         } else {
             count += updateNode((Node) dataElement);
         }
-
-        // db.close();
 
         return count;
     }
@@ -811,7 +780,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // db.close();
         return dataElements;
     }
 
@@ -836,8 +804,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             values.put(KEY_VALUE, tag.getValue());
             db.insert(TABLE_TAGMAP, null, values);
         }
-
-        // db.close();
     }
 
     /**
@@ -845,7 +811,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * creates the corresponding {@link Map} object.
      * 
      * @param tagIDs
-     *            the ids of the desired tags
+     *            the IDs of the desired tags
      * @return a {@link Map} object for the desired tags
      */
     public Map<Tag, String> getTagMap(ArrayList<Integer> tagIDs) {
@@ -867,7 +833,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
             cursor.close();
         }
-        // db.close();
         return tagMap;
     }
 
@@ -884,7 +849,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.delete(TABLE_TAGMAP, KEY_TAGID + "=?",
                     new String[] { String.valueOf(id) });
         }
-        // db.close();
     }
 
     /**
@@ -898,7 +862,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TAGMAP, null);
         int count = cursor.getCount();
         cursor.close();
-        // db.close();
 
         return count;
     }
@@ -931,7 +894,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             }
 
         }
-        // db.close();
         return count;
     }
 
