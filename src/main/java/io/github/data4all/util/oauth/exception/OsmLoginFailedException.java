@@ -17,8 +17,11 @@ package io.github.data4all.util.oauth.exception;
 
 /**
  * Indicates an failure in login progress.
+ * 
+ * @author tbrose (inspired by JOSM)
  */
 public class OsmLoginFailedException extends OsmOAuthAuthorizationException {
+    private static final long serialVersionUID = 9047143911249178002L;
 
     /**
      * Constructs a new exception with null as its detail message.<br/>
@@ -61,7 +64,7 @@ public class OsmLoginFailedException extends OsmOAuthAuthorizationException {
     /**
      * Constructs a new exception with the specified detail message and cause.
      * 
-     * <p>
+     * <br/>
      * Note that the detail message associated with cause is not automatically
      * incorporated in this exception's detail message.
      * 

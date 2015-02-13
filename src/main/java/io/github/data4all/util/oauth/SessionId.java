@@ -18,7 +18,7 @@ package io.github.data4all.util.oauth;
 /**
  * Holds session data for the authentication progress.
  * 
- * @author tbrose
+ * @author tbrose (inspired by JOSM)
  */
 final class SessionId {
     private String id;

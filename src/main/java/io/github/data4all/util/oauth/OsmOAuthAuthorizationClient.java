@@ -166,6 +166,16 @@ public class OsmOAuthAuthorizationClient {
         return null;
     }
 
+    /**
+     * Extracts the OSM session into a {@link SessionId} object.
+     * 
+     * @param connection
+     *            The connection to read from
+     * @param username
+     *            The username for the Session
+     * @return The session object or {@code null} if the session cannot be
+     *         extracted
+     */
     private static SessionId extractOsmSession(HttpURLConnection connection,
             String username) {
         final List<String> setCookies =
@@ -210,6 +220,15 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
+    /**
+     * Converts the parameter map into uri post parameters.
+     * 
+     * @param parameters
+     *            The Parameters to post
+     * @return The given parameters as a HTTP-POST string
+     * @throws OsmOAuthAuthorizationException
+     *             If UTF-8 is not supported
+     */
     private static String buildPostRequest(Map<String, String> parameters)
             throws OsmOAuthAuthorizationException {
         try {
@@ -327,6 +346,19 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
+    /**
+     * Send an authentication request for the given user, password and session
+     * to the OSM server.
+     * 
+     * @param sessionId
+     *            The session to use
+     * @param userName
+     *            The username to use
+     * @param password
+     *            The password to use
+     * @throws OsmLoginFailedException
+     *             If the given credentials
+     */
     private void authenticateOsmSession(SessionId sessionId, String userName,
             String password) throws OsmLoginFailedException {
         try {
@@ -384,6 +416,17 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
+    /**
+     * Builds the parameter map for the OsmSession authentication.
+     * 
+     * @param userName
+     *            The userName to use
+     * @param password
+     *            The password to use
+     * @param token
+     *            The token to use
+     * @return The constructed parameter map
+     */
     private static Map<String, String> authenticateOsmSessionParams(
             String userName, String password, String token) {
         final Map<String, String> postParams = new HashMap<String, String>();
@@ -414,11 +457,22 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
+    /**
+     * Send an authorization request for the given user and session to the OSM
+     * server.
+     * 
+     * @param sessionId
+     *            The session to use
+     * @param user
+     *            The user to authorize
+     * @throws OsmOAuthAuthorizationException
+     *             If the authorization request fails
+     */
     private void sendAuthorisationRequest(SessionId sessionId, User user)
             throws OsmOAuthAuthorizationException {
         this.fetchOAuthToken(sessionId, user);
         final String request =
-                buildPostRequest(sendAuthorisationRequestParams(
+                buildPostRequest(sendAuthorizationRequestParams(
                         sessionId.getToken(), user.getOAuthToken()));
         try {
             final URL url = new URL(this.parameters.getAuthoriseUrl());
@@ -462,7 +516,16 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
-    private static Map<String, String> sendAuthorisationRequestParams(
+    /**
+     * Builds the parameter map for the authorization request.
+     * 
+     * @param sessionToken
+     *            The sessionToken to use
+     * @param userToken
+     *            The userToken to use
+     * @return The constructed parameter map
+     */
+    private static Map<String, String> sendAuthorizationRequestParams(
             String sessionToken, String userToken) {
         final Map<String, String> postParams = new HashMap<String, String>();
         postParams.put("oauth_token", userToken);
@@ -481,6 +544,13 @@ public class OsmOAuthAuthorizationClient {
         return postParams;
     }
 
+    /**
+     * Closes the given {@link Closeable} and logs Exceptions that might be
+     * thrown.
+     * 
+     * @param c
+     *            The {@link Closeable} to close
+     */
     private static void close(Closeable c) {
         if (c != null) {
             try {

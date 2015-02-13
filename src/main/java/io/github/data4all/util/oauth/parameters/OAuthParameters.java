@@ -24,8 +24,7 @@ import oauth.signpost.basic.DefaultOAuthProvider;
  * An interface for providing the parameters to the osm oauth authentication
  * process.
  * 
- * @author tbrose
- *
+ * @author tbrose (inspired by JOSM)
  */
 public abstract class OAuthParameters {
 
