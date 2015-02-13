@@ -111,8 +111,8 @@ public class PointToCoordsTransformUtilTest {
         ArrayList<Point> points2 = new ArrayList<Point>();
         points2.add(new Point(500, 500));
         test = util.transform(tps, deviceOrientation, points2, 4);
-        assertThat(test.get(0).getLon(), greaterThan(0.0));
-        assertThat(test.get(0).getLat(), greaterThan(0.0));
+        assertThat(test.get(0).getLon(), lessThan(0.0));
+        assertThat(test.get(0).getLat(), lessThan(0.0));
     }
 
     // Tests for method calculateAngleFromPixel(double pixel, double axis,
@@ -161,7 +161,7 @@ public class PointToCoordsTransformUtilTest {
         assertThat(coord[1], is(0.0));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(1, 500));
-        assertThat(coord[0], is(0.0));
+        assertThat(coord[0], closeTo(0.0,0.00001));
         assertThat(coord[1], lessThan(0.0));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(500, 1));
@@ -207,7 +207,7 @@ public class PointToCoordsTransformUtilTest {
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(500, 500));
         assertThat(coord[0], closeTo(0.0, 0.00001));
-        assertThat(coord[1], closeTo(-2.0, 0.00001));
+        assertThat(coord[1], closeTo(2.0, 0.00001));
     }
 
     // Tests for method calculateGPSPoint(Location location, double[] coord)

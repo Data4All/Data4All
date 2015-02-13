@@ -100,7 +100,7 @@ public class PointToCoordsTransformUtil {
             int rotation) {
         this.tps = tps;
         final List<Node> nodes = new ArrayList<Node>();
-        Log.d("debug", "Orientation: " + Math.toDegrees(deviceOrientation.getAzimuth())
+        Log.d(TAG, "Orientation: " + Math.toDegrees(deviceOrientation.getAzimuth())
                 + " ; " + Math.toDegrees(deviceOrientation.getPitch())
                 + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
         
@@ -158,7 +158,7 @@ public class PointToCoordsTransformUtil {
         final double roll = deviceOrientation.getRoll();
         
 
-        Log.i("debug", "Punkt: " + point.getX() + " , " + point.getY());
+        Log.i(TAG, "Punkt: " + point.getX() + " , " + point.getY());
         
         final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
@@ -207,7 +207,7 @@ public class PointToCoordsTransformUtil {
         final double tempXX = finalVector[0] * (height / -finalVector[2]);
         final double tempYY = finalVector[1] * (height / -finalVector[2]);
         final double[] coord = new double[3];
-        Log.i("debug", "Coord: " + tempXX + " , " + tempYY);
+        Log.i(TAG, "Coord: " + tempXX + " , " + tempYY);
         // Rotate Vector with azimuth (z is fix))
         Log.d(TAG, "AZIMUTH: " + azimuth);
         coord[0] =
