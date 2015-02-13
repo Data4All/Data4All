@@ -91,7 +91,7 @@ public class LoginActivity extends BasicActivity {
      */
     private void nextActivity() {
         // TODO: Open right activity
-        this.startActivity(new Intent(this, MapActivity.class));
+        this.startActivity(new Intent(this, MapViewActivity.class));
         this.finish();
     }
 
