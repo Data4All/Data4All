@@ -27,6 +27,8 @@ public class SrtmUtil {
     public static final String NORTH_AMERICA = "North_America";
     public static final String SOUTH_AMERICA = "South_America";
     public static String SRTM3_URL = "http://dds.cr.usgs.gov/srtm/version2_1/SRTM3/";
+    
+    private final static String TAG = "SrtmUtil";
 
     /**
      * Download the SRTM file from the dds.cr.usgs.gov to the specified Folder.
@@ -44,40 +46,16 @@ public class SrtmUtil {
      * @throws IllegalStateException
      * @throws IOException
      */
-    public File downloadSrtm(double lat, double lon, String region,
+    public void downloadSrtm(double lat, double lon, String region,
             File toFolder) throws IOException {
         String srtmFileName = getSrtmFileName(lat, lon) + ".hgt.zip";
         URL url = new URL(SRTM3_URL + region + "/" + srtmFileName);
         Log.i("SrtmUtil", "URL: " + url.toString());
-        final NetworkTask nt = new NetworkTask();
-        nt.execute();
-        
-        File srtmFile = new File(toFolder, srtmFileName);
-        Log.i("SrtmUtil", "Filepath: " + srtmFile.getAbsolutePath());
-        InputStream is = null;
-        FileOutputStream fos = null;
-        try {
-            is = getInputStream(url.toString());
-            Log.i("SrtmUtil", "is: " + is.toString());
-            fos = new FileOutputStream(srtmFile);
-            final byte[] buf = new byte[1024];
 
-            for (int count = is.read(buf); count != -1; count = is.read(buf)) {
-                fos.write(buf, 0, count);
-            }
-            Log.i("SrtmUtil", "saved file: " + srtmFile.getAbsolutePath());
-            
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-            if (fos != null) {
-                fos.close();
-            }
-        }
-        return srtmFile;
+        final NetworkTask nt = new NetworkTask();
+        nt.execute(srtmFileName, url, toFolder);
     }
-    
+
     /**
      * Gets the InputStream of the given URL
      *
@@ -89,7 +67,7 @@ public class SrtmUtil {
      */
     public static InputStream getInputStream(String urlStr)
             throws IllegalStateException, IOException {
-        
+
         URL url = new URL(urlStr.replaceAll(" ", "%20"));
         HttpURLConnection urlConnection = (HttpURLConnection) url
                 .openConnection();
@@ -98,16 +76,58 @@ public class SrtmUtil {
         urlConnection.setDoOutput(true);
         urlConnection.connect();
         Log.i("SrtmNetwork", "connected");
+
         return urlConnection.getInputStream();
     }
 
     /*
-     * @Description: An inner Class for saving a picture in storage in a thread
+     * @Description: An inner Class for downloading the actual srtm data
      */
-    private class NetworkTask extends AsyncTask<URL, String, String> {
+    private class NetworkTask extends AsyncTask<Object, String, String> {
         @Override
-        protected String doInBackground(URL... photoData) {
+        protected String doInBackground(Object... param) {
+
+            String srtmFileName = (String) param[0];
+            URL url = (URL) param[1];
+            File toFolder = (File) param[2];
+
+            File srtmFile = new File(toFolder, srtmFileName);
             
+            Log.i("SrtmUtil", "Filepath: " + srtmFile.getAbsolutePath());
+            InputStream is = null;
+            FileOutputStream fos = null;
+            try {
+                is = getInputStream(url.toString());
+                fos = new FileOutputStream(srtmFile);
+                final byte[] buf = new byte[1024];
+
+                for (int count = is.read(buf); count != -1; count = is
+                        .read(buf)) {
+                    fos.write(buf, 0, count);
+                }
+                Log.i("SrtmUtil", "saved file: " + srtmFile.getAbsolutePath());
+
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "" + e);
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e(TAG, "" + e);
+                e.printStackTrace();
+            } finally {
+
+                try {
+                    if (is != null) {
+                        is.close();
+                    }
+                    if (fos != null) {
+                        fos.close();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "" + e);
+                    e.printStackTrace();
+                }
+            }
+
             return "successful";
         }
 
@@ -115,9 +135,32 @@ public class SrtmUtil {
         protected void onPostExecute(String result) {
             Log.i("SrtmUtil", "success");
         }
+
+        /**
+         * Gets the InputStream of the given URL
+         *
+         * @param url
+         *            String that represents an URL
+         * @return InputStream
+         * @throws IllegalStateException
+         * @throws IOException
+         */
+        public InputStream getInputStream(String urlStr)
+                throws IllegalStateException, IOException {
+
+            URL url = new URL(urlStr.replaceAll(" ", "%20"));
+            HttpURLConnection urlConnection = (HttpURLConnection) url
+                    .openConnection();
+            Log.i("SrtmNetwork", "connection open");
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+            Log.i("SrtmNetwork", "connected");
+
+            return urlConnection.getInputStream();
+        }
     }
-    
-    
+
     /**
      * Return the SRTM file name without the extension
      *

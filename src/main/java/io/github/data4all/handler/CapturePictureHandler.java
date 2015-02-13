@@ -90,8 +90,11 @@ public class CapturePictureHandler implements PictureCallback {
                 Math.toRadians(params.getVerticalViewAngle());
         final Size pictureSize = params.getSupportedPictureSizes().get(0);
         final Location currentLocation = Optimizer.currentBestLoc();
+        
         Log.i(getClass().getSimpleName(), "STARTOFSRTMFILETHING!!!!");
-        ConnectionUtil.getValue(currentLocation);
+        ConnectionUtil conUtil = new ConnectionUtil();
+        conUtil.getValue(currentLocation);
+        
         transformBean =
                 new TransformationParamBean(1.7, horizontalViewAngle,
                         verticalViewAngle, pictureSize.width,

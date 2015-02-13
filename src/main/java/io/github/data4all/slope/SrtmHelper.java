@@ -50,7 +50,8 @@ public class SrtmHelper {
     public double srtmHeight(double lat, double lon) throws IOException {
         double val;
         String srtmFileName = SrtmUtil.getSrtmFileName(lat, lon);
-        File file = new File(srtmFileName + ".hgt");
+        File file = new File(srtmFileName + ".hgt.zip");
+        Log.i("SrtmHelper", file.getAbsolutePath());
         double ilat = getILat(lat);
         double ilon = getILon(lon);
         int rowmin = (int) Math.floor(ilon);
@@ -90,7 +91,6 @@ public class SrtmHelper {
     private double getValues(File file, int rowmin, int colmin)
             throws IOException {
         file = new File(localDir, file.getName());
-        Log.i("SrtmHelper", file.getAbsolutePath());
         if (!file.exists()) {
             File zipped = new File(localDir, file.getName() + ".zip");
 
