@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.network;
 
 /**
@@ -7,12 +22,13 @@ package io.github.data4all.network;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
 import io.github.data4all.Constants;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.task.RequestChangesetIDFromOpenStreetMapTask;
+import io.github.data4all.task.RequestChangesetIDFromOsmTask;
 import io.github.data4all.task.UploadingOsmChangeFileToOpenStreetMapTask;
 import io.github.data4all.util.OsmChangeParser;
 import oauth.signpost.OAuthConsumer;
@@ -26,10 +42,10 @@ public class OscUploadHelper {
 
 	private OAuthConsumer consumer;
 	private Context context;
-	private ArrayList<AbstractDataElement> elems;
+	private List<AbstractDataElement> elems;
 
 	/**
-	 * Constructor of the OscUploadHelper starts with the ChangeSetRequest
+	 * Constructor of the OscUploadHelper starts with the ChangeSetRequest.
 	 * 
 	 * @param context
 	 *            Context of the Application
@@ -40,7 +56,7 @@ public class OscUploadHelper {
 	 */
 
 	public OscUploadHelper(Context context,
-			ArrayList<AbstractDataElement> elems, String comment) {
+			List<AbstractDataElement> elems, String comment) {
 		consumer = new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY,
 				Constants.CONSUMER_SECRET);
 		this.context = context;
@@ -50,7 +66,7 @@ public class OscUploadHelper {
 						.getString("oauth_token", null),
 				PreferenceManager.getDefaultSharedPreferences(context)
 						.getString("oauth_token_secret", null));
-		new RequestChangesetIDFromOpenStreetMapTask(context, consumer, comment,
+		new RequestChangesetIDFromOsmTask(context, consumer, comment,
 				this).execute();
 	}
 
