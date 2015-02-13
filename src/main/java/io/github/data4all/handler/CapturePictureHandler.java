@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.robolectric.impl.ResponseSource;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -125,10 +123,10 @@ public class CapturePictureHandler implements PictureCallback {
             final int defaultValue = res.getInteger(0);
             // Save the default value
             prefs.edit().putString(key, "" + defaultValue).commit();
-            return ((double) defaultValue - 20) / 100;
+            return (defaultValue - 20) / 100.0;
         } else {
             final double bodyHeight = Integer.parseInt(height);
-            return (bodyHeight - 20) / 100;
+            return (bodyHeight - 20) / 100.0;
         }
     }
 
