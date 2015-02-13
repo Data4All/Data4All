@@ -16,6 +16,7 @@
 package io.github.data4all.model.data;
 
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
 
 import java.util.Arrays;
 
@@ -27,6 +28,11 @@ import java.util.Arrays;
  *
  */
 public class Tag {
+
+    /**
+     * The log-tag for this class.
+     */
+    private static final String TAG = Tag.class.getSimpleName();
 
     /**
      * id to identify the tag.
@@ -87,26 +93,14 @@ public class Tag {
                                 "hint_" + key.replaceAll(":", "_")).get(null);
             }
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "IllegalArgumentException", e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "IllegalAccessException", e);
         } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "NoSuchFieldException", e);
         }
         this.type = type;
         this.setOsmObjects(osmObjects);
-    }
-    
-    /**
-     * 
-     * @param id
-     * @param key
-     */
-    public Tag(int id, String key) {
-        
     }
 
     /**

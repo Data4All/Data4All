@@ -15,6 +15,9 @@
  */
 package io.github.data4all.model.data;
 
+import io.github.data4all.R;
+import io.github.data4all.logger.Log;
+
 /**
  * This class represents a classified value. A classified tag can contain one or
  * more classified values.
@@ -23,26 +26,26 @@ package io.github.data4all.model.data;
  *
  */
 public class ClassifiedValue {
+    
+    /**
+     * The log-tag for this class.
+     */
+    private static final String TAG = ClassifiedValue.class.getSimpleName();
 
     /**
      * id to identify the tag.
      */
     private int id;
-    
+
     /**
      * value for the internal representation in osm e.g. residential.
      */
     private String value;
-    
+
     /**
      * nameRessource defines the displayed name/value in the tagging activity.
      */
     private int nameRessource;
-
-    /**
-     * hintRessource defines the displayed hint/value in the tagging activity.
-     */
-    private int hintRessource;
 
     /**
      * Constructor to create nameRessource and hintRessource from the key.
@@ -53,6 +56,17 @@ public class ClassifiedValue {
     public ClassifiedValue(int id, String value) {
         this.id = id;
         this.value = value;
+        try {
+            this.nameRessource =
+                    (Integer) R.string.class.getDeclaredField(
+                            "name_" + value.replaceAll(":", "_")).get(null);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "IllegalArgumentException", e);
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "IllegalAccessException", e);
+        } catch (NoSuchFieldException e) {
+            Log.e(TAG, "NoSuchFieldException", e);
+        }
     }
 
     public int getId() {
