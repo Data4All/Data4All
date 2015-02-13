@@ -16,6 +16,9 @@
 package io.github.data4all.service;
 
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.DataBaseHandler;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.util.Optimizer;
 import android.app.Service;
 import android.content.Context;
@@ -36,8 +39,6 @@ import android.widget.Toast;
  * 
  */
 public class GPSservice extends Service implements LocationListener {
-
-    Optimizer optimizer = new Optimizer();
     
     DataBaseHandler dbHandler = new DataBaseHandler(this.getApplicationContext());
 
@@ -74,7 +75,7 @@ public class GPSservice extends Service implements LocationListener {
         // new track is initialized and gets timestamp.
         // Does not contain any trackpoints yet
         track = new Track();
-        dbHandler.createTrack(track);
+        //dbHandler.createTrack(track);
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -137,7 +138,7 @@ public class GPSservice extends Service implements LocationListener {
             track.addTrackPoint(tp);
             // After ten trackpoints updateDatabase
             if ((track.getTrackPoints().size() % 10) == 0) {
-                dbHandler.updateTrack(track);
+                //dbHandler.updateTrack(track);
             }
         }
     }
@@ -182,13 +183,13 @@ public class GPSservice extends Service implements LocationListener {
         if (track == null) {
             // start new track
             track = new Track();
-            dbHandler.createTrack(track);
+            //dbHandler.createTrack(track);
         } else {
             // overrides old track with null and start a new track everytime gps
             // is enabled
             track = null;
             track = new Track();
-            dbHandler.createTrack(track);
+            //dbHandler.createTrack(track);
         }
     }
 
@@ -205,11 +206,11 @@ public class GPSservice extends Service implements LocationListener {
         if (track.getTrackPoints().isEmpty()) {
             // track does not contain any trackpoints and gps is not available,
             // so clear track
-            dbHandler.deleteTrack(track);
+            //dbHandler.deleteTrack(track);
             track = null;
         } else {
             // Track with trackpoints exist, so save it to database
-            dbHandler.updateTrack(track);
+            //dbHandler.updateTrack(track);
             track = null; // override current track with null
         }
         // TODO localization
