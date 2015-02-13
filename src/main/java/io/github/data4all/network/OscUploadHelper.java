@@ -15,11 +15,11 @@
  */
 package io.github.data4all.network;
 
-import io.github.data4all.Constants;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.task.RequestChangesetIDFromOsmTask;
 import io.github.data4all.task.UploadingOsmChangeFileToOpenStreetMapTask;
 import io.github.data4all.util.OsmChangeParser;
+import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
 import java.util.List;
 
@@ -29,8 +29,9 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 /**
- * the OsCUploadHelper handles the whole Uploading Process from 
- * requesting changeSet, parsing into Osc and uploading to the OSM API 
+ * the OsCUploadHelper handles the whole Uploading Process from requesting
+ * changeSet, parsing into Osc and uploading to the OSM API
+ * 
  * @author Richard
  * 
  */
@@ -53,9 +54,10 @@ public class OscUploadHelper {
 
     public OscUploadHelper(Context context, List<AbstractDataElement> elems,
             String comment) {
+        OAuthParameters params = OAuthParameters.CURRENT;
         consumer =
-                new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY,
-                        Constants.CONSUMER_SECRET);
+                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
+                        params.getConsumerSecret());
         this.context = context;
         this.elems = elems;
         consumer.setTokenWithSecret(

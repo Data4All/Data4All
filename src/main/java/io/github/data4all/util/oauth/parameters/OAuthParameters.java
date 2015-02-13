@@ -27,6 +27,11 @@ import oauth.signpost.basic.DefaultOAuthProvider;
  * @author tbrose (inspired by JOSM)
  */
 public abstract class OAuthParameters {
+    /**
+     * The OAuth parameters which are currently in use.
+     */
+    public static final OAuthParameters CURRENT =
+            DevelopOAuthParameters.INSTANCE;
 
     /**
      * Gets the consumer key.
@@ -41,6 +46,14 @@ public abstract class OAuthParameters {
      * @return The consumer secret
      */
     public abstract String getConsumerSecret();
+
+    /**
+     * Gets the scope URL for all URLs that needs to be build to address this
+     * API endpoint.
+     * 
+     * @return The the scope of the endpoint
+     */
+    public abstract String getScopeUrl();
 
     /**
      * Gets the user login URL.

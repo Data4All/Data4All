@@ -15,7 +15,7 @@
  */
 package io.github.data4all.task;
 
-import io.github.data4all.Constants;
+import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,8 @@ import android.widget.Toast;
 
 public class UploadToOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
 
-    private static final String TAG = UploadToOpenStreetMapTask.class.getSimpleName();
+    private static final String TAG = UploadToOpenStreetMapTask.class
+            .getSimpleName();
     private Context context;
 
     private HttpPost request;
@@ -102,14 +103,16 @@ public class UploadToOpenStreetMapTask extends AsyncTask<Void, Void, Void> {
 
         try {
             // Prepare request
-            request = new HttpPost(Constants.SCOPE + "api/0.6/gpx/create");
+            request =
+                    new HttpPost(OAuthParameters.CURRENT.getScopeUrl()
+                            + "api/0.6/gpx/create");
 
             // Sign the request with oAuth
             consumer.sign(request);
 
             // Prepare entity
-            final MultipartEntity entity = new MultipartEntity(
-                    HttpMultipartMode.BROWSER_COMPATIBLE);
+            final MultipartEntity entity =
+                    new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
             // Add different parts to entity
             final FileBody gpxBody = new FileBody(gpxFile);

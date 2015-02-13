@@ -22,7 +22,7 @@ import io.github.data4all.util.NetworkState;
 import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
 import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
 import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
-import io.github.data4all.util.oauth.parameters.DevelopOAuthParameters;
+import io.github.data4all.util.oauth.parameters.OAuthParameters;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -178,7 +178,7 @@ public class LoginActivity extends BasicActivity {
             try {
                 final User user =
                         new OsmOAuthAuthorizationClient(
-                                DevelopOAuthParameters.INSTANCE).authorise(
+                                OAuthParameters.CURRENT).authorise(
                                 username, password);
                 LoginActivity.this.saveUser(user);
                 LoginActivity.this.nextActivity();

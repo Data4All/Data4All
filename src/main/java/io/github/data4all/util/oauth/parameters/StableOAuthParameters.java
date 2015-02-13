@@ -53,6 +53,17 @@ public final class StableOAuthParameters extends OAuthParameters {
     /*
      * (non-Javadoc)
      * 
+     * @see
+     * io.github.data4all.util.oauth.parameters.OAuthParameters#getScopeUrl()
+     */
+    @Override
+    public String getScopeUrl() {
+        return "http://www.openstreetmap.org";
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.openstreetmap.josm.data.oauth.OAuthParameters#getUserLoginUrl()
      */
     @Override

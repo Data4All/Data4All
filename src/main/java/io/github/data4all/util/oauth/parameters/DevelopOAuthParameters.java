@@ -53,6 +53,17 @@ public final class DevelopOAuthParameters extends OAuthParameters {
      * (non-Javadoc)
      * 
      * @see
+     * io.github.data4all.util.oauth.parameters.OAuthParameters#getScopeUrl()
+     */
+    @Override
+    public String getScopeUrl() {
+        return "http://master.apis.dev.openstreetmap.org/";
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
      * org.openstreetmap.josm.data.oauth.OAuthParameters#getConsumerSecret()
      */
     @Override
