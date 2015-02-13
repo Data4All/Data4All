@@ -53,8 +53,7 @@ import android.widget.Toast;
  *
  */
 
-public class RequestChangesetIDFromOsmTask extends
-        AsyncTask<Void, Void, Void> {
+public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
 
     private final String TAG = getClass().getSimpleName();
     private Context context;
@@ -91,14 +90,12 @@ public class RequestChangesetIDFromOsmTask extends
         this.helper = helper;
         this.context = context;
         this.consumer = consumer;
-        changeSetXML =
-                new File(Environment.getExternalStorageDirectory()
-                        .getAbsolutePath() + "/getChangesetID.xml");
+        changeSetXML = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/getChangesetID.xml");
 
         try {
-            final PrintWriter writer =
-                    new PrintWriter(new BufferedWriter(new FileWriter(
-                            changeSetXML)));
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(
+                    new FileWriter(changeSetXML)));
 
             writer.println("<osm>");
             writer.println("<changeset>");
@@ -150,21 +147,14 @@ public class RequestChangesetIDFromOsmTask extends
         switch (statusCode) {
         case -1:
             // Internal error, the request didn't start at all
-            // Toast.makeText(context,
-            // R.string.uploadToOsmRequestInternalTaskError,
-            // Toast.LENGTH_LONG).show();
             Log.d(TAG, "Internal error, the request did not start at all");
             break;
         case HttpStatus.SC_OK:
             // Success ! Update database and close activity
-            // Toast.makeText(context, R.string.success,
-            // Toast.LENGTH_LONG).show();
             Log.d(TAG, "Success");
             break;
         case HttpStatus.SC_UNAUTHORIZED:
             // Does not have authorization
-            // Toast.makeText(context, R.string.uploadToOsmRequestTaskAuthError,
-            // Toast.LENGTH_LONG).show();
             Log.d(TAG, "Does not have authorization");
             break;
         case HttpStatus.SC_INTERNAL_SERVER_ERROR:
@@ -172,11 +162,8 @@ public class RequestChangesetIDFromOsmTask extends
                     .show();
             Log.d(TAG, "INTERNAL SERVER ERROR");
             break;
-
         default:
             // unknown error
-            // Toast.makeText(context, R.string.unkownError, Toast.LENGTH_LONG)
-            // .show();
             Log.d(TAG, "Unknown error");
         }
     }
@@ -198,10 +185,10 @@ public class RequestChangesetIDFromOsmTask extends
 
             // Looking if the Request was successful and then starting the
             // Upload Task through the helper
-            if (statusCode >= 200 && statusCode < 299) {
+            if (statusCode == HttpStatus.SC_OK) {
                 final InputStream is = responseEntity.getContent();
-                final BufferedReader in =
-                        new BufferedReader(new InputStreamReader(is));
+                final BufferedReader in = new BufferedReader(
+                        new InputStreamReader(is));
                 final String line = in.readLine();
                 changesetId = Integer.parseInt(line);
                 helper.parseAndUpload(changesetId);

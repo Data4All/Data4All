@@ -46,8 +46,15 @@ import java.util.Map;
 @SuppressLint("SimpleDateFormat")
 public final class OsmChangeParser {
 
+    private static final String TAG = "OsmChangeParser";
+    private static final String TIMEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SZ";
+    private static final String TIMESTAMP = "\" timestamp=\"";
+    private static final String CHANGESET = "\" changeset=\"";
+    private static final String TAGKEY = "<tag k=\"";
+    private static final String TAGVALUE = "\" v=\"";
+
     /**
-     * Private Constructor, prevents instantization.
+     * Private Constructor, prevents instantiation.
      */
     private OsmChangeParser() {
 
@@ -66,10 +73,9 @@ public final class OsmChangeParser {
     public static void parseElements(Context context,
             List<AbstractDataElement> elems, long changesetID) {
         try {
-            final PrintWriter writer =
-                    new PrintWriter(new BufferedWriter(new FileWriter(new File(
-                            context.getFilesDir().getAbsolutePath()
-                                    + "/OsmChangeUpload.osc"))));
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(
+                    new FileWriter(new File(context.getFilesDir()
+                            .getAbsolutePath() + "/OsmChangeUpload.osc"))));
             final List<Node> nodes = new ArrayList<Node>();
             final List<PolyElement> ways = new ArrayList<PolyElement>();
             final List<PolyElement> relations = new ArrayList<PolyElement>();
@@ -95,6 +101,8 @@ public final class OsmChangeParser {
                     case BUILDING:
                         relations.add(poly);
                         break;
+                    default:
+                        break;
                     }
                 }
 
@@ -107,9 +115,9 @@ public final class OsmChangeParser {
             writer.println("<create>");
 
             for (Node n : nodes) {
-                Log.i("OsmChangeParser", "Node parsed" + n.toString());
+                Log.i(TAG, "Node parsed" + n.toString());
                 parseNode(writer, n, changesetID);
-                Log.i("OsmChangeParser", "Node parsed");
+                Log.i(TAG, "Node parsed");
             }
             for (PolyElement w : ways) {
                 parseWay(writer, w, changesetID);
@@ -122,14 +130,14 @@ public final class OsmChangeParser {
             writer.println("</osmChange>");
 
             writer.flush();
-            Log.i("OsmChangeParser", "Data is flushed to :"
+            Log.i(TAG, "Data is flushed to :"
                     + context.getFilesDir().getAbsolutePath()
                     + "/OsmChangeUpload.osc");
             writer.close();
-            Log.i("OsmChangeParser", "Writer is closed");
+            Log.i(TAG, "Writer is closed");
 
         } catch (IOException e) {
-            Log.e("OsmChangeParser", "Problem in writing the OsmChangeFile", e);
+            Log.e(TAG, "Problem in writing the OsmChangeFile", e);
         }
     }
 
@@ -145,17 +153,16 @@ public final class OsmChangeParser {
      */
     private static void parseNode(PrintWriter writer, Node node,
             long changesetID) {
-        Log.i("OsmChangeParser", "in die Methode");
-        final SimpleDateFormat dateformat =
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
+        Log.i(TAG, "in die Methode");
+        final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
 
-        writer.print("<node id=\"" + node.getOsmId() + "\" timestamp=\""
+        writer.print("<node id=\"" + node.getOsmId() + TIMESTAMP
                 + dateformat.format(new Date()) + "\" lat=\"" + node.getLat()
-                + "\" lon=\"" + node.getLon() + "\" changeset=\"" + changesetID
+                + "\" lon=\"" + node.getLon() + CHANGESET + changesetID
                 + "\" version=\"1\"");
 
-        final Map<Tag, String> tags =
-                (LinkedHashMap<Tag, String>) node.getTags();
+        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) node
+                .getTags();
         if (tags.isEmpty()) {
             writer.print("/>");
             writer.println();
@@ -164,8 +171,8 @@ public final class OsmChangeParser {
         writer.print(">");
         writer.println();
         for (Tag key : tags.keySet()) {
-            writer.println("<tag k=\"" + key.getKey() + "\" v=\""
-                    + tags.get(key) + "\"/>");
+            writer.println(TAGKEY + key.getKey() + TAGVALUE + tags.get(key)
+                    + "\"/>");
         }
         writer.println("</node>");
     }
@@ -182,20 +189,19 @@ public final class OsmChangeParser {
      */
     private static void parseWay(PrintWriter writer, PolyElement way,
             long changesetID) {
-        final SimpleDateFormat dateformat =
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
-        writer.println("<way id=\"" + way.getOsmId() + "\" timestamp=\""
-                + dateformat.format(new Date()) + "\" changeset=\""
-                + changesetID + "\" version=\"1\">");
-        final Map<Tag, String> tags =
-                (LinkedHashMap<Tag, String>) way.getTags();
+        final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
+        writer.println("<way id=\"" + way.getOsmId() + TIMESTAMP
+                + dateformat.format(new Date()) + CHANGESET + changesetID
+                + "\" version=\"1\">");
+        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) way
+                .getTags();
         for (Node nd : way.getNodes()) {
             writer.println("<nd ref=\"" + nd.getOsmId() + "\"/>");
         }
 
         for (Tag key : tags.keySet()) {
-            writer.println("<tag k=\"" + key.getKey() + "\" v=\""
-                    + tags.get(key) + "\"/>");
+            writer.println(TAGKEY + key.getKey() + TAGVALUE + tags.get(key)
+                    + "\"/>");
         }
         writer.println("</way>");
     }
@@ -212,21 +218,20 @@ public final class OsmChangeParser {
      */
     private static void parseRelation(PrintWriter writer, PolyElement relation,
             long changesetID) {
-        final SimpleDateFormat dateformat =
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
-        writer.println("<relation id=\"" + relation.getOsmId()
-                + "\" timestamp=\"" + dateformat.format(new Date())
-                + "\" changeset=\"" + changesetID + "\" version=\"1\">");
-        final Map<Tag, String> tags =
-                (LinkedHashMap<Tag, String>) relation.getTags();
+        final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
+        writer.println("<relation id=\"" + relation.getOsmId() + TIMESTAMP
+                + dateformat.format(new Date()) + CHANGESET + changesetID
+                + "\" version=\"1\">");
+        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) relation
+                .getTags();
         for (Node member : relation.getNodes()) {
             writer.println("<member type=\"Node\" ref=\"" + member.getOsmId()
                     + "\" role=\"\"/>");
         }
 
         for (Tag key : tags.keySet()) {
-            writer.println("<tag k=\"" + key.getKey() + "\" v=\""
-                    + tags.get(key) + "\"/>");
+            writer.println(TAGKEY + key.getKey() + TAGVALUE + tags.get(key)
+                    + "\"/>");
         }
         writer.println("</relation>");
     }
