@@ -39,9 +39,6 @@ import android.widget.Toast;
  * 
  */
 public class GPSservice extends Service implements LocationListener {
-    
-    DataBaseHandler dbHandler;
-
     private static final String TAG = "GPSservice";
 
     /**
@@ -50,6 +47,8 @@ public class GPSservice extends Service implements LocationListener {
     private LocationManager lmgr;
     private WakeLock wakeLock;
     private PowerManager powerManager;
+    
+    private DataBaseHandler dbHandler;
     /*
      * the minimum of time after we get a new locationupdate in ms.
      */
