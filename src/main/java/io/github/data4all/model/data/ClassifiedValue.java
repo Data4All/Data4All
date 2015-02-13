@@ -36,6 +36,11 @@ public class ClassifiedValue {
      * id to identify the tag.
      */
     private int id;
+    
+    /**
+     * key for the internal representation in osm e.g. addr:street.
+     */
+    private String key;
 
     /**
      * value for the internal representation in osm e.g. residential.
@@ -50,16 +55,17 @@ public class ClassifiedValue {
     /**
      * Constructor to create nameRessource and hintRessource from the key.
      * 
-     * @param id
-     * @param value
+     * @param id The id of the ClassifiedValue 
+     * @param key The key of the ClassifiedValue
+     * @param value The value of the ClassifiedValue
      */
-    public ClassifiedValue(int id, String value) {
+    public ClassifiedValue(int id, String key, String value) {
         this.id = id;
+        this.setKey(key); 
         this.value = value;
         try {
-            this.nameRessource =
-                    (Integer) R.string.class.getDeclaredField(
-                            "name_" + value.replaceAll(":", "_")).get(null);
+            this.setNameRessource((Integer) R.string.class.getDeclaredField(
+                    "name_" + key + "_" +value).get(null));
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "IllegalArgumentException", e);
         } catch (IllegalAccessException e) {
@@ -76,6 +82,14 @@ public class ClassifiedValue {
     public void setId(int id) {
         this.id = id;
     }
+    
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getValue() {
         return value;
@@ -83,6 +97,14 @@ public class ClassifiedValue {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public int getNameRessource() {
+        return nameRessource;
+    }
+
+    public void setNameRessource(int nameRessource) {
+        this.nameRessource = nameRessource;
     }
 
 }
