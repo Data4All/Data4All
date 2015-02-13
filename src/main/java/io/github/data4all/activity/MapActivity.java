@@ -46,6 +46,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -392,6 +393,11 @@ public class MapActivity extends BasicActivity {
             actCentLong = (Double) savedInstanceState.getSerializable(CENT_LON);
             actualCenter = new GeoPoint(actCentLat, actCentLong);
         }
+    }
+
+    public void moveOverlayOnMap(MotionEvent pEvent1, MotionEvent pEvent2,
+            float pVelocityX, float pVelocityY, MapView pMapView) {
+       Log.d(TAG, pMapView.getOverlays().toString());
     }
 
 }

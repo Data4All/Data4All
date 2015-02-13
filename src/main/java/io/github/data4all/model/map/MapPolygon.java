@@ -60,6 +60,15 @@ public class MapPolygon extends Polygon implements
         return true;
 
     }
+    
+    @Override
+    public boolean onFling(final MotionEvent pEvent1, final MotionEvent pEvent2,
+            final float pVelocityX, final float pVelocityY, final MapView pMapView) {
+        
+        mapActivity.moveOverlayOnMap(pEvent1, pEvent2, pVelocityX, pVelocityY, pMapView);
+        
+        return true;
+    }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
