@@ -19,6 +19,14 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * This class delivers all the data needed for the calculation
+ * 
+ * @author burghardt
+ * @version 1.0
+ *
+ */
+
 public class TransformationParamBean implements Parcelable {
 
     private double height;
@@ -43,6 +51,20 @@ public class TransformationParamBean implements Parcelable {
                 }
             };
 
+    /**
+     * @param height
+     *      camera height in m
+     * @param cameraMaxRotationAngle
+     *      the maximum of the camerarotationangle
+     * @param cameraMaxPitchAngle
+     *      the maximum of the camerapitchangle
+     * @param photoWidth
+     *      the width of the devicedisplay
+     * @param photoHeight
+     *      the height of the devicedisplay
+     * @param location
+     *      location of the device
+     */
     public TransformationParamBean(double height,
             double cameraMaxRotationAngle, double cameraMaxPitchAngle,
             int photoWidth, int photoHeight, Location location) {
