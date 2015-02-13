@@ -15,10 +15,6 @@
  */
 package io.github.data4all.util;
 
-/**
- * The OsmChangeParser is a util for Parsing a List of DataElements into a File
- * which can then be uploaded to the OSM API
- */
 import android.annotation.SuppressLint;
 import android.content.Context;
 import io.github.data4all.logger.Log;
@@ -40,8 +36,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * The OsmChangeParser is a util for Parsing a List of DataElements into a File
+ * which can then be uploaded to the OSM API
  * @author Richard
- *
  */
 @SuppressLint("SimpleDateFormat")
 public final class OsmChangeParser {
