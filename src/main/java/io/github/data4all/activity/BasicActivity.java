@@ -55,7 +55,7 @@ public class BasicActivity extends Activity {
             startActivity(new Intent(this, LoginActivity.class));
             return true;
         case R.id.action_settings:
-            // TODO startActivity(new Intent(this, SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         case R.id.action_camera:
             startActivity(new Intent(this, CameraActivity.class));
