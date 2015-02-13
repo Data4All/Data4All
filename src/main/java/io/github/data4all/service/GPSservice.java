@@ -37,7 +37,15 @@ import android.widget.Toast;
  */
 public class GPSservice extends Service implements LocationListener {
 
+    Optimizer optimizer = new Optimizer();
+    
+    DataBaseHandler dbHandler = new DataBaseHandler(this.getApplicationContext());
+
     private static final String TAG = "GPSservice";
+
+    /**
+     * LocationManager
+     */
     private LocationManager lmgr;
     private WakeLock wakeLock;
     private PowerManager powerManager;
@@ -50,19 +58,23 @@ public class GPSservice extends Service implements LocationListener {
      */
     private static final float minDistance = 0;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
+
+    private Track track;
+
     @Override
     public void onCreate() {
+        Log.d(TAG, "onCreate()");
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
-        powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
+
+        // new track is initialized and gets timestamp.
+        // Does not contain any trackpoints yet
+        track = new Track();
+        dbHandler.createTrack(track);
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -77,6 +89,7 @@ public class GPSservice extends Service implements LocationListener {
             lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                     minTime, minDistance, this);
         }
+
     }
 
     /*
@@ -87,7 +100,6 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
-
         return START_STICKY;
     }
 
@@ -99,6 +111,10 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        // Remove registration for location updates
+        lmgr.removeUpdates(this);
+
         wakeLock.release();
 
     }
@@ -113,6 +129,35 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location loc) {
         Optimizer.putLoc(loc);
+
+        Location tp = Optimizer.currentBestLoc();
+
+        // check if new Location is already stored
+        if (sameTrackPoints(track.getLastTrackPoint(), tp)) {
+            track.addTrackPoint(tp);
+            // After ten trackpoints updateDatabase
+            if ((track.getTrackPoints().size() % 10) == 0) {
+                dbHandler.updateTrack(track);
+            }
+        }
+    }
+
+    /**
+     * Easy comparison of two TrackPoints. Only compares longitude and latitude.
+     * 
+     * @param point1
+     *            The first trackpoint
+     * @param point2
+     *            The second trackpoint
+     * @return true if lon and lat of the trackpoints are the same, else false
+     */
+    private boolean sameTrackPoints(TrackPoint point1, Location loc) {
+        TrackPoint point2 = new TrackPoint(loc);
+        if (point1.getLat() == point2.getLat()
+                && point1.getLon() == point2.getLon()) {
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -134,6 +179,17 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onProviderEnabled(String provider) {
+        if (track == null) {
+            // start new track
+            track = new Track();
+            dbHandler.createTrack(track);
+        } else {
+            // overrides old track with null and start a new track everytime gps
+            // is enabled
+            track = null;
+            track = new Track();
+            dbHandler.createTrack(track);
+        }
     }
 
     /*
@@ -144,6 +200,19 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onProviderDisabled(String provider) {
+        // Remove registration for location updates
+        lmgr.removeUpdates(this);
+        if (track.getTrackPoints().isEmpty()) {
+            // track does not contain any trackpoints and gps is not available,
+            // so clear track
+            dbHandler.deleteTrack(track);
+            track = null;
+        } else {
+            // Track with trackpoints exist, so save it to database
+            dbHandler.updateTrack(track);
+            track = null; // override current track with null
+        }
+        // TODO localization
         Toast.makeText(getBaseContext(),
                 "Gps turned off, GPS tracking not possible ", Toast.LENGTH_LONG)
                 .show();
