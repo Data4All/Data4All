@@ -71,6 +71,7 @@ public class ShowPictureActivity extends BasicActivity {
 	private TransformationParamBean transformBean;
 	private DeviceOrientation currentOrientation;
 
+
 	/**
 	 * public standard constructor.
 	 */
@@ -142,14 +143,15 @@ public class ShowPictureActivity extends BasicActivity {
 		// height
 		touchView.setTransformUtil(new PointToCoordsTransformUtil(
 				transformBean, currentOrientation));
-
 		this.onClickBuilding(null);
 	}
+
 
 	/**
 	 * OnClick method to finish the current drawing.
 	 * 
 	 * @param view
+     * current view used this method
 	 */
 	public void onClickOkay(View view) {
 		// 0 or Rotation0 if portrait
@@ -170,6 +172,7 @@ public class ShowPictureActivity extends BasicActivity {
 	 * Define method to draw a point.<br\>
 	 * 
 	 * @param view
+     * current view used this method
 	 */
 	public void onClickPoint(View view) {
 		touchView.clearMotions();
@@ -182,6 +185,7 @@ public class ShowPictureActivity extends BasicActivity {
 	 * Define method to draw a way.<br\>
 	 * 
 	 * @param view
+     * current view used this method
 	 */
 	public void onClickPath(View view) {
 		touchView.clearMotions();
@@ -194,19 +198,20 @@ public class ShowPictureActivity extends BasicActivity {
 	 * Define method to draw a area.<br\>
 	 * 
 	 * @param view
+     * current view used this method
 	 */
 	public void onClickArea(View view) {
 		touchView.clearMotions();
 		touchView.setInterpretationType(TouchView.InterpretationType.AREA);
 		touchView.invalidate();
 		intent.putExtra(TYPE, AREA);
-
 	}
 
 	/**
 	 * Define method to draw a building.<br\>
 	 * 
 	 * @param view
+     * current view used this method
 	 */
 	public void onClickBuilding(View view) {
 		touchView.clearMotions();
@@ -219,6 +224,7 @@ public class ShowPictureActivity extends BasicActivity {
 	 * Method to use the redo function.<br\>
 	 * 
 	 * @param view
+     * current view used this method
 	 */
 	public void onClickRedo(View view) {
 		touchView.redo();
@@ -229,6 +235,7 @@ public class ShowPictureActivity extends BasicActivity {
 	 * Method to use the undo function.<br\>
 	 * 
 	 * @param view
+     * current view used this method
 	 */
 	public void onClickUndo(View view) {
 		touchView.undo();

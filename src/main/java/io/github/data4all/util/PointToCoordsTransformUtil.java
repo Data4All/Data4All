@@ -38,7 +38,7 @@ import android.location.Location;
  */
 public class PointToCoordsTransformUtil {
     /** Logger tag for this class. */
-    final static String TAG = "PointToWorldCoords";
+    private final static String TAG = "PointToWorldCoords";
     /** osmID for the node. */
     private int osmID = -1;
     /** height of the device from the ground. */
@@ -74,6 +74,8 @@ public class PointToCoordsTransformUtil {
      * 
      * @param points
      *            List of Point
+     * @param rotation
+     *            rotation of the device
      * @return rotation List of Node
      */
     public List<Node> transform(List<Point> points, int rotation) {
@@ -189,8 +191,8 @@ public class PointToCoordsTransformUtil {
         if (finalVector[2] >= 0) {
             Log.wtf(TAG,
                     "Vector is directed to the sky, cannot calculate coords",
-                    null);
-            return null;
+                    null);       
+            return new double[3];
         }
         // collides vector with the xy-plane
         final double tempXX = finalVector[0] * (height / -finalVector[2]);
@@ -224,8 +226,7 @@ public class PointToCoordsTransformUtil {
         }
         final double percent = (2 * pixel - axis) / axis;
         final double z = Math.sin(maxAngle / 2);
-        final double angle = Math.asin(z * percent);
-        return angle;
+        return Math.asin(z * percent);
     }
 
     /**
@@ -279,32 +280,34 @@ public class PointToCoordsTransformUtil {
      * @return the new calculated point
      */
     public Point changePixelCoordSystem(Point point, int rotation) {
+        Point returnpoint;
         if (point != null) {
             if (rotation == 0) {
                 Log.d(TAG, "Device orientation was portrait");
                 // device was in portrait mode
                 xAxis = tps.getPhotoHeight();
                 yAxis = tps.getPhotoWidth();
-                return new Point(xAxis - point.getY() + 1, yAxis - point.getX()
-                        + 1);
+                returnpoint = new Point(xAxis - point.getY() + 1, yAxis
+                        - point.getX() + 1);
             } else if (rotation == 1) {
                 Log.d(TAG, "Device orientation was landscape counter-clockwise");
                 // device was in landscape mode and the home-button to the right
                 xAxis = tps.getPhotoWidth();
                 yAxis = tps.getPhotoHeight();
-                return new Point(xAxis - point.getX() + 1, point.getY());
+                returnpoint = new Point(xAxis - point.getX() + 1, point.getY());
             } else if (rotation == 3) {
                 Log.d(TAG, "Device orientation was landscape clockwise");
                 // device was in landscape mode and the home-button to the left
                 xAxis = tps.getPhotoWidth();
                 yAxis = tps.getPhotoHeight();
-                return new Point(point.getX(), yAxis - point.getY() + 1);
+                returnpoint = new Point(point.getX(), yAxis - point.getY() + 1);
             } else {
                 Log.wtf(TAG, "No device orientation identifiable!!", null);
                 xAxis = tps.getPhotoHeight();
                 yAxis = tps.getPhotoWidth();
-                return point;
+                returnpoint = point;
             }
+            return returnpoint;
         } else {
             Log.d(TAG, "No point to change");
             return null;
