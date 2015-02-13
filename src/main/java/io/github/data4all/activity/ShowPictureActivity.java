@@ -289,10 +289,11 @@ public class ShowPictureActivity extends BasicActivity {
                 bitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
                         scaledBitmap.getWidth(), scaledBitmap.getHeight(),
                         matrix, true);
-
+                scaledBitmap.recycle();
             }
 
             // set the imageview bitmap-resource
+            imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             imageView.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             Log.e(this.getClass().toString(), "ERROR, no file found" + e);
