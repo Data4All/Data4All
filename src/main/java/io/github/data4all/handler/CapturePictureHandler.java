@@ -15,6 +15,7 @@
  */
 package io.github.data4all.handler;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
@@ -27,12 +28,15 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 /**
@@ -90,13 +94,34 @@ public class CapturePictureHandler implements PictureCallback {
         final Size pictureSize = params.getSupportedPictureSizes().get(0);
         final Location currentLocation = Optimizer.currentBestLoc();
         transformBean =
-                new TransformationParamBean(1.7, horizontalViewAngle,
-                        verticalViewAngle, pictureSize.width,
-                        pictureSize.height, currentLocation);
+                new TransformationParamBean(getDeviceHeight(),
+                        horizontalViewAngle, verticalViewAngle,
+                        pictureSize.width, pictureSize.height, currentLocation);
         currentOrientation = Optimizer.currentBestPos();
 
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);
+    }
+
+    /**
+     * Reads the height of the device in condition of the bodyheight from the
+     * preferences.
+     * 
+     * @return The height of the device or {@code 0} if the preference is not
+     *         set or empty
+     */
+    private double getDeviceHeight() {
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        final String key =
+                context.getResources().getString(R.string.pref_bodyheight_key);
+        final String height = prefs.getString(key, null);
+        if (TextUtils.isEmpty(height)) {
+            return 0;
+        } else {
+            final double bodyHeight = Integer.parseInt(height);
+            return (bodyHeight - 20) / 100;
+        }
     }
 
     /*
@@ -132,7 +157,8 @@ public class CapturePictureHandler implements PictureCallback {
 
                 // Passes the filepath, location and device orientation to the
                 // ShowPictureActivity
-                final Intent intent = new Intent(context, ShowPictureActivity.class);
+                final Intent intent =
+                        new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
                 intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
