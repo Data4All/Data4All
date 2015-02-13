@@ -17,12 +17,16 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.DataBaseHandler;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.NetworkState;
 import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
 import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
 import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
+
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,7 +47,7 @@ public class LoginActivity extends BasicActivity {
     private EditText osmName;
     private EditText osmPass;
     private View progress;
-    
+
     /**
      * Sole Constructor.
      */
@@ -72,8 +76,10 @@ public class LoginActivity extends BasicActivity {
      * @return If the user is currently logged in.
      */
     private boolean isLoggedIn() {
-        // TODO: Ask the database if there is a user
-        return false;
+        final DataBaseHandler database = new DataBaseHandler(this);
+        final List<User> users = database.getAllUser();
+        database.close();
+        return !users.isEmpty();
     }
 
     /**
@@ -83,7 +89,9 @@ public class LoginActivity extends BasicActivity {
      *            The user to save
      */
     private void saveUser(User user) {
-        // TODO: Save user in database
+        final DataBaseHandler database = new DataBaseHandler(this);
+        database.createUser(user);
+        database.close();
     }
 
     /**
@@ -177,9 +185,8 @@ public class LoginActivity extends BasicActivity {
         public void run() {
             try {
                 final User user =
-                        new OsmOAuthAuthorizationClient(
-                                OAuthParameters.CURRENT).authorise(
-                                username, password);
+                        new OsmOAuthAuthorizationClient(OAuthParameters.CURRENT)
+                                .authorise(username, password);
                 LoginActivity.this.saveUser(user);
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {
