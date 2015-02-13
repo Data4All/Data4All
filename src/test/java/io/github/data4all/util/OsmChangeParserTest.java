@@ -15,17 +15,17 @@
  */
 package io.github.data4all.util;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.util.ArrayList;
-
+import static org.junit.Assert.assertTrue;
 import io.github.data4all.activity.MapViewActivity;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.network.OscUploadHelper;
+
+import java.io.File;
+import java.util.ArrayList;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * Test for getting changeSetID, parsing Osc and uploading Osc

@@ -16,6 +16,7 @@
 package io.github.data4all.task;
 
 import io.github.data4all.Constants;
+import io.github.data4all.logger.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +37,6 @@ import org.apache.http.params.BasicHttpParams;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -46,127 +46,130 @@ import android.widget.Toast;
  *
  */
 public class UploadingOsmChangeFileToOpenStreetMapTask extends
-		AsyncTask<Void, Void, Void> {
+        AsyncTask<Void, Void, Void> {
 
-	private static final  String TAG = UploadingOsmChangeFileToOpenStreetMapTask.class.getSimpleName();
-	private Context context;
+    private static final String TAG =
+            UploadingOsmChangeFileToOpenStreetMapTask.class.getSimpleName();
+    private Context context;
 
-	private HttpPost request;
+    private HttpPost request;
 
-	private OAuthConsumer consumer;
-	private File oscFile;
-	private long id;
+    private OAuthConsumer consumer;
+    private File oscFile;
+    private long id;
 
-	/**
-	 * HTTP result code or -1 in case of internal error.
-	 */
-	private int statusCode = -1;
+    /**
+     * HTTP result code or -1 in case of internal error.
+     */
+    private int statusCode = -1;
 
-	/**
-	 * Constructor of the UploadingOsmChangeFileToOpenStreetMapTask.
-	 * 
-	 * Sets the Parameter values to the local attributes
-	 * 
-	 * @param context
-	 *            The context of the Application
-	 * @param consumer
-	 *            The OAuthconsumer used for authentication
-	 * @param id
-	 *            The ChangeSetID required for uploading
-	 */
-	public UploadingOsmChangeFileToOpenStreetMapTask(Context context,
-			OAuthConsumer consumer, long id) {
+    /**
+     * Constructor of the UploadingOsmChangeFileToOpenStreetMapTask.
+     * 
+     * Sets the Parameter values to the local attributes
+     * 
+     * @param context
+     *            The context of the Application
+     * @param consumer
+     *            The OAuthconsumer used for authentication
+     * @param id
+     *            The ChangeSetID required for uploading
+     */
+    public UploadingOsmChangeFileToOpenStreetMapTask(Context context,
+            OAuthConsumer consumer, long id) {
 
-		this.context = context;
-		this.consumer = consumer;
-		oscFile = new File(context.getFilesDir().getAbsolutePath()
-				+ "/OsmChangeUpload.osc");
-		this.id = id;
-	}
+        this.context = context;
+        this.consumer = consumer;
+        oscFile =
+                new File(context.getFilesDir().getAbsolutePath()
+                        + "/OsmChangeUpload.osc");
+        this.id = id;
+    }
 
-	/**
-	 * Forms the HttpRequest.
-	 */
-	@Override
-	protected void onPreExecute() {
+    /**
+     * Forms the HttpRequest.
+     */
+    @Override
+    protected void onPreExecute() {
 
-		try {
-			// Prepare request
-			request = new HttpPost(Constants.SCOPE + "api/0.6/changeset/" + id
-					+ "/upload");
-			// Sign the request with oAuth
-			this.consumer.sign(request);
+        try {
+            // Prepare request
+            request =
+                    new HttpPost(Constants.SCOPE + "api/0.6/changeset/" + id
+                            + "/upload");
+            // Sign the request with oAuth
+            this.consumer.sign(request);
 
-			// Setting the Parameter
-			final BasicHttpParams params = new BasicHttpParams();
-			params.setParameter("id", id);
-			request.setParams(params);
+            // Setting the Parameter
+            final BasicHttpParams params = new BasicHttpParams();
+            params.setParameter("id", id);
+            request.setParams(params);
 
-			// Setting the Entity
-			final HttpEntity entity = new FileEntity(oscFile, "text/plain");
-			request.setEntity(entity);
+            // Setting the Entity
+            final HttpEntity entity = new FileEntity(oscFile, "text/plain");
+            request.setEntity(entity);
 
-		} catch (OAuthMessageSignerException e) {
-		    Log.e(TAG, "OAuthMessageSignerException", e);
-		} catch (OAuthExpectationFailedException e) {
-		    Log.e(TAG, "OAuthExpectationFailedException", e);
-		} catch (OAuthCommunicationException e) {
-		    Log.e(TAG, "OAuthCommunicationException", e);
-		}
-	}
+        } catch (OAuthMessageSignerException e) {
+            Log.e(TAG, "OAuthMessageSignerException", e);
+        } catch (OAuthExpectationFailedException e) {
+            Log.e(TAG, "OAuthExpectationFailedException", e);
+        } catch (OAuthCommunicationException e) {
+            Log.e(TAG, "OAuthCommunicationException", e);
+        }
+    }
 
-	/**
-	 * Displays what happened.
-	 */
-	@Override
-	protected void onPostExecute(Void result) {
-		switch (statusCode) {
-		case -1:
-			// Internal error, the request didn't start at all
-			Log.d(TAG, "Internal error, the request did not start at all");
-			break;
-		case HttpStatus.SC_OK:
-			// Success ! Update database and close activity
-			Log.d(TAG, "Success");
-			break;
-		case HttpStatus.SC_UNAUTHORIZED:
-			// Does not have authorization
-			Log.d(TAG, "Does not have authorization");
-			break;
-		case HttpStatus.SC_INTERNAL_SERVER_ERROR:
-			Toast.makeText(context, "INTERNAL SERVER ERROR", Toast.LENGTH_LONG)
-					.show();
-			Log.d(TAG, "INTERNAL SERVER ERROR");
-			break;
+    /**
+     * Displays what happened.
+     */
+    @Override
+    protected void onPostExecute(Void result) {
+        switch (statusCode) {
+        case -1:
+            // Internal error, the request didn't start at all
+            Log.d(TAG, "Internal error, the request did not start at all");
+            break;
+        case HttpStatus.SC_OK:
+            // Success ! Update database and close activity
+            Log.d(TAG, "Success");
+            break;
+        case HttpStatus.SC_UNAUTHORIZED:
+            // Does not have authorization
+            Log.d(TAG, "Does not have authorization");
+            break;
+        case HttpStatus.SC_INTERNAL_SERVER_ERROR:
+            Toast.makeText(context, "INTERNAL SERVER ERROR", Toast.LENGTH_LONG)
+                    .show();
+            Log.d(TAG, "INTERNAL SERVER ERROR");
+            break;
 
-		default:
-			// unknown error
-			Log.d(TAG, "Unknown error");
-		}
-	}
+        default:
+            // unknown error
+            Log.d(TAG, "Unknown error");
+        }
+    }
 
-	/**
-	 * Sending the Request and analyzes the response.
-	 */
-	@Override
-	protected Void doInBackground(Void... params) {
-		try {
-			final DefaultHttpClient httpClient = new DefaultHttpClient();
+    /**
+     * Sending the Request and analyzes the response.
+     */
+    @Override
+    protected Void doInBackground(Void... params) {
+        try {
+            final DefaultHttpClient httpClient = new DefaultHttpClient();
 
-			// Sending the Request
-			final HttpResponse response = httpClient.execute(request);
-			statusCode = response.getStatusLine().getStatusCode();
-			final HttpEntity responseEntity = response.getEntity();
+            // Sending the Request
+            final HttpResponse response = httpClient.execute(request);
+            statusCode = response.getStatusLine().getStatusCode();
+            final HttpEntity responseEntity = response.getEntity();
 
-			Log.d(TAG, "OSM ChangeSetID response Entity: " + responseEntity);
-			Log.d(TAG, "OSM ChangeSetID statusCode: " + statusCode);
+            Log.d(TAG, "OSM ChangeSetID response Entity: " + responseEntity);
+            Log.d(TAG, "OSM ChangeSetID statusCode: " + statusCode);
         } catch (ClientProtocolException e) {
             Log.e(TAG, "doInBackground failed", e);
         } catch (IOException e) {
             Log.e(TAG, "doInBackground failed", e);
         }
 
-		return null;
-	}
+        return null;
+    }
 
 }

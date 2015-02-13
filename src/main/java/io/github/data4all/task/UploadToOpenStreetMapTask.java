@@ -38,7 +38,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import io.github.data4all.logger.Log;
 import android.widget.Toast;
 
 /**
