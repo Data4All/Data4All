@@ -131,11 +131,11 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                 map.put(tagMap.get(key), value);
                                 if (key.equals("building")
                                         || key.equals("amenity")) {
-                                    createDialog(Tags.getAllAddressTags(),
+                                    TagActivity.this.createDialog(Tags.getAllAddressTags(),
                                             "Add Address",
                                             key.equals("building"), true);
                                 } else {
-                                    finish();
+                                    TagActivity.this.finish();
                                 }
                             }
                         });
@@ -170,7 +170,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             }
             map = Tagging.addressToTag(tags, map);
             dialog1.dismiss();
-            createDialog(Tags.getAllContactTags(), "Add Contacts", true, false);
+            this.createDialog(Tags.getAllContactTags(), "Add Contacts", true, false);
 
             break;
         case R.id.buttonFinish:

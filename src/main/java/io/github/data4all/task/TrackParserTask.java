@@ -53,7 +53,7 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
             + "version=\"1.0\" encoding=\"UTF-8\" ?>";
 
     /**
-     * GPX opening tag
+     * GPX opening tag.
      */
     private static final String OPENING_TAG = "<gpx "
             + "xmlns=\"http://www.topografix.com/GPX/1/1\" "
@@ -139,11 +139,11 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
             List<TrackPoint> points = track.getTrackPoints();
 
             // Save file in application package
-            FileOutputStream file = context.openFileOutput(filename,
+            final FileOutputStream file = context.openFileOutput(filename,
                     Context.MODE_PRIVATE);
 
             // Use PrintWriter is easier, so you can directly pass strings
-            PrintWriter writer = new PrintWriter(file);
+            final PrintWriter writer = new PrintWriter(file);
 
             writer.println(XML_HEADER);
             writer.println(OPENING_TAG);

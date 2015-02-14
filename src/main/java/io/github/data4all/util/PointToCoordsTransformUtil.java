@@ -119,7 +119,7 @@ public class PointToCoordsTransformUtil {
             // transforms local coordinates in global GPS-coordinates set to.
             // Node.
             if (coord != null) {
-                final Node node = calculateGPSPoint(tps.getLocation(), coord);
+                final Node node = this.calculateGPSPoint(tps.getLocation(), coord);
                 Log.d(TAG,
                         "Calculated Lat: " + node.getLat() + " Lon: "
                                 + node.getLon());
@@ -152,7 +152,7 @@ public class PointToCoordsTransformUtil {
                         tps.getCameraMaxPitchAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll =
-                -calculateAngleFromPixel(point.getY(), yAxis,
+                -this.calculateAngleFromPixel(point.getY(), yAxis,
                         tps.getCameraMaxRotationAngle());
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();

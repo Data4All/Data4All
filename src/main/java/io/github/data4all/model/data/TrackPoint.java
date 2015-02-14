@@ -94,9 +94,9 @@ public class TrackPoint implements Parcelable {
     public boolean equals(TrackPoint tp) {
         int lat = Double.compare(this.getLat(), tp.getLat());
         int lon = Double.compare(this.getLon(), tp.getLon());
-        int alt = Double.compare(this.getAlt(), tp.getAlt());
-        int time = Double.compare(this.getTime(), tp.getTime());
-        if (lat == 0 && lon == 0 && alt == 0 && time == 0) {
+        final int alt = Double.compare(this.getAlt(), tp.getAlt());
+        int t = Double.compare(this.getTime(), tp.getTime());
+        if (lat == 0 && lon == 0 && alt == 0 && t == 0) {
             return true;
         }
         return false;
