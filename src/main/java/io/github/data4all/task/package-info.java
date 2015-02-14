@@ -15,7 +15,9 @@
  */
 
 /**
- * This classes provide methods for smoothing various Sensor Data.
+ * Tasks which are potentially time-consuming operations. This classes allow to
+ * perform background operations and publish results on the UI thread without
+ * having to manipulate threads and/or handlers.
  */
-package io.github.data4all.smoothing;
+package io.github.data4all.task;
 
