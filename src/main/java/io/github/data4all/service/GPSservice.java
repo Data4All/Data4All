@@ -15,8 +15,8 @@
  */
 package io.github.data4all.service;
 
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.DataBaseHandler;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.util.Optimizer;
@@ -42,22 +42,21 @@ public class GPSservice extends Service implements LocationListener {
     private static final String TAG = "GPSservice";
 
     /**
-     * LocationManager
+     * LocationManager.
      */
     private LocationManager lmgr;
     private WakeLock wakeLock;
     private PowerManager powerManager;
-    
+
     private DataBaseHandler dbHandler;
     /*
      * the minimum of time after we get a new locationupdate in ms.
      */
-    private static final long minTime = 1000;
+    private static final long MIN_TIME = 1000;
     /*
      * the minimum of Distance after we get a new locationupdate.
      */
-    private static final float minDistance = 0;
-
+    private static final float MIN_DISTANCE = 0;
 
     private Track track;
 
@@ -67,28 +66,30 @@ public class GPSservice extends Service implements LocationListener {
         dbHandler = new DataBaseHandler(this.getApplicationContext());
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "MyWakelockTag");
+        final PowerManager powerManager =
+                (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock =
+                powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                        "MyWakelockTag");
         wakeLock.acquire();
 
         // new track is initialized and gets timestamp.
         // Does not contain any trackpoints yet
         track = new Track();
-        //dbHandler.createTrack(track);
+        // dbHandler.createTrack(track);
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (lmgr.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             // second value is minimum of time, third value is minimum of meters
-            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime,
-                    minDistance, this);
+            lmgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME,
+                    MIN_DISTANCE, this);
         }
 
         if (lmgr.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
             lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    minTime, minDistance, this);
+                    MIN_TIME, MIN_DISTANCE, this);
         }
 
     }
@@ -131,14 +132,14 @@ public class GPSservice extends Service implements LocationListener {
     public void onLocationChanged(Location loc) {
         Optimizer.putLoc(loc);
 
-        Location tp = Optimizer.currentBestLoc();
+        final Location tp = Optimizer.currentBestLoc();
 
         // check if new Location is already stored
-        if (sameTrackPoints(track.getLastTrackPoint(), tp)) {
+        if (this.sameTrackPoints(track.getLastTrackPoint(), tp)) {
             track.addTrackPoint(tp);
             // After ten trackpoints updateDatabase
             if ((track.getTrackPoints().size() % 10) == 0) {
-                //dbHandler.updateTrack(track);
+                // dbHandler.updateTrack(track);
             }
         }
     }
@@ -153,7 +154,7 @@ public class GPSservice extends Service implements LocationListener {
      * @return true if lon and lat of the trackpoints are the same, else false
      */
     private boolean sameTrackPoints(TrackPoint point1, Location loc) {
-        TrackPoint point2 = new TrackPoint(loc);
+        final TrackPoint point2 = new TrackPoint(loc);
         if (point1.getLat() == point2.getLat()
                 && point1.getLon() == point2.getLon()) {
             return true;
@@ -183,13 +184,13 @@ public class GPSservice extends Service implements LocationListener {
         if (track == null) {
             // start new track
             track = new Track();
-            //dbHandler.createTrack(track);
+            // dbHandler.createTrack(track);
         } else {
             // overrides old track with null and start a new track everytime gps
             // is enabled
             track = null;
             track = new Track();
-            //dbHandler.createTrack(track);
+            // dbHandler.createTrack(track);
         }
     }
 
@@ -206,11 +207,11 @@ public class GPSservice extends Service implements LocationListener {
         if (track.getTrackPoints().isEmpty()) {
             // track does not contain any trackpoints and gps is not available,
             // so clear track
-            //dbHandler.deleteTrack(track);
+            // dbHandler.deleteTrack(track);
             track = null;
         } else {
             // Track with trackpoints exist, so save it to database
-            //dbHandler.updateTrack(track);
+            // dbHandler.updateTrack(track);
             track = null; // override current track with null
         }
         // TODO localization

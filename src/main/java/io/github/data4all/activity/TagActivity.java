@@ -61,7 +61,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     // OSMElement Key
     protected static final String OSM = "OSM_ELEMENT";
     private static final int REQUEST_CODE = 1234;
-    final Context context = this;
+    private final Context context = this;
     private String key;
     private Map<Tag, String> map;
     private List<EditText> edit;
@@ -94,7 +94,6 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         final LayoutInflater inflater = getLayoutInflater();
         final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
-        ;
         alertDialog.setCustomTitle(view);
         final ImageButton speechStart =
                 (ImageButton) view.findViewById(R.id.speech);
@@ -132,11 +131,11 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                 map.put(tagMap.get(key), value);
                                 if (key.equals("building")
                                         || key.equals("amenity")) {
-                                    createDialog(Tags.getAllAddressTags(),
+                                    TagActivity.this.createDialog(Tags.getAllAddressTags(),
                                             "Add Address",
                                             key.equals("building"), true);
                                 } else {
-                                    finish();
+                                    TagActivity.this.finish();
                                 }
                             }
                         });
@@ -171,7 +170,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             }
             map = Tagging.addressToTag(tags, map);
             dialog1.dismiss();
-            createDialog(Tags.getAllContactTags(), "Add Contacts", true, false);
+            this.createDialog(Tags.getAllContactTags(), "Add Contacts", true, false);
 
             break;
         case R.id.buttonFinish:

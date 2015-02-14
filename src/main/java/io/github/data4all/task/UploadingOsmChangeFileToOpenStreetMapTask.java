@@ -15,6 +15,7 @@
  */
 package io.github.data4all.task;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
 import java.io.File;
@@ -36,7 +37,6 @@ import org.apache.http.params.BasicHttpParams;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 /**

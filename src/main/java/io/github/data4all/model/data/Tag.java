@@ -77,9 +77,9 @@ public class Tag {
     /**
      * Constructor to create nameRessource and hintRessource from the key.
      * 
-     * @param key
-     * @param type
-     * @param osmObjects
+     * @param key The key of the tag
+     * @param type The InputType of the tag
+     * @param osmObjects The osm objects the tag refers to
      */
     public Tag(int id, String key, InputType type, int... osmObjects) {
         this.id = id;
@@ -110,10 +110,10 @@ public class Tag {
     /**
      * Default constructor to create a tag.
      * 
-     * @param key
-     * @param nameRessource
-     * @param hintRessource
-     * @param type
+     * @param key The key of the tag
+     * @param nameRessource The reference to the name ressource
+     * @param hintRessource The reference to the hint ressource
+     * @param type The InputType for the tag
      */
     public Tag(int id, String key, int nameRessource, int hintRessource,
             InputType type, int... osmObjects) {

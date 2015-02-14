@@ -27,13 +27,13 @@ import java.util.Map;
  * @author Maurice Boyke
  *
  */
-public class SpeechRecognition {
-    
+public final class SpeechRecognition {
+
     /**
      * Private Constructor, prevents instantiation.
      */
     private SpeechRecognition() {
-        
+
     }
 
     /**
@@ -85,7 +85,9 @@ public class SpeechRecognition {
      * Values.
      * 
      * @param arrayList
+     *            The List of Strings to compare with
      * @param matchesText
+     *            The List of String to compare with
      * @return the String that matches with the tagValue
      */
     private static String compareStringTag(List<String> arrayList,

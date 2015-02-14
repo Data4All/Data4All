@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.data4all.model;
+package io.github.data4all.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;

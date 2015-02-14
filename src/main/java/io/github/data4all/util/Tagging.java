@@ -32,7 +32,7 @@ import java.util.Map;
  * 
  *
  */
-public class Tagging {
+public final class Tagging {
 
     /**
      * Private Constructor, prevents instantiation.

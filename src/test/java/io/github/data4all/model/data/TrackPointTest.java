@@ -1,3 +1,18 @@
+/*
+* Copyright (c) 2014, 2015 Data4All
+*
+* <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+* not use this file except in compliance with the License. You may obtain a
+* copy of the License at
+*
+* <p>http://www.apache.org/licenses/LICENSE-2.0
+*
+* <p>Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations under
+* the License.
+*/
 package io.github.data4all.model.data;
 
 import static org.junit.Assert.*;
@@ -33,74 +48,42 @@ public class TrackPointTest {
 
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#TrackPoint(android.location.Location)}
-     */
     @Test
     public void testTrackPoint() {
         assertNotNull(new TrackPoint(loc));
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#getLat()}.
-     */
     @Test
     public void testGetLat() {
         assertEquals(loc.getLatitude(), tp.getLat(), 0);
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#getLon()}.
-     */
     @Test
     public void testGetLon() {
         assertEquals(loc.getLongitude(), tp.getLon(), 0);
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#getTime()}.
-     */
     @Test
     public void testGetTime() {
         assertEquals(loc.getTime(), tp.getTime(), 0);
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#getAlt()}.
-     */
     @Test
     public void testGetAlt() {
         assertEquals(loc.getAltitude(), tp.getAlt(), 0);
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#hasAltitude()}.
-     */
     @Test
     public void testHasAltitude() {
         assertFalse(tp.hasAltitude());
         assertTrue(!tp.hasAltitude());
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#describeContents()}.
-     */
     @Test
     public void testDescribeContents() {
         assertTrue(tp.describeContents()==0);
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#writeToParcel(android.os.Parcel, int)}.
-     */
     @Test
     public void testWriteToParcel() {
         Parcel newParcel = Parcel.obtain();
@@ -115,10 +98,6 @@ public class TrackPointTest {
         assertEquals(tp.getTime(), deParcelTp.getTime(), 0);
     }
 
-    /**
-     * Test method for
-     * {@link io.github.data4all.model.data.TrackPoint#equals(TrackPoint}.
-     */
     @Test
     public void testEqualsTrackPoint() {
         assertTrue(tp.equals(tp));

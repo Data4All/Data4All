@@ -13,4 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * The widget package contains (mostly visual) UI elements to use on the
+ * Application screen.
+ */
 package io.github.data4all.widged;
+

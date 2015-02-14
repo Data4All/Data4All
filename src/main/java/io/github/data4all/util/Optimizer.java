@@ -27,7 +27,7 @@ import android.location.Location;
  *
  */
 
-public class Optimizer {
+public final class Optimizer {
 
     /**
      * Private Constructor, prevents instantiation.

@@ -13,4 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * Classes in this package represent our data model. Basically data primitives
+ * (nodes, ways, and relations) to process osm data. Detailed information about
+ * the osm xml structure can be found in the osm wiki:
+ * http://wiki.openstreetmap.org/wiki/OSM_XML
+ */
 package io.github.data4all.model;
+

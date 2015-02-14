@@ -50,6 +50,17 @@ import java.util.List;
  * @author tbrose
  */
 public class DrawingMotion {
+    
+    /**
+     * The default tolerance for a Point.
+     */
+    public static final float POINT_TOLERANCE = 5f;
+
+    /**
+     * List of all added Points.
+     */
+    private List<Point> points = new ArrayList<Point>();    
+    
     /**
      * Calculates the euclidean distance between point a and point b.
      * 
@@ -62,16 +73,6 @@ public class DrawingMotion {
     private static float delta(Point a, Point b) {
         return (float) Math.hypot(a.getX() - b.getX(), a.getY() - b.getY());
     }
-
-    /**
-     * The default tolerance for a Point.
-     */
-    public static final float POINT_TOLERANCE = 5f;
-
-    /**
-     * List of all added Points.
-     */
-    private List<Point> points = new ArrayList<Point>();
 
     /**
      * Adds a Point to the DrawingMotion.
@@ -92,22 +93,22 @@ public class DrawingMotion {
      *         point in this motion
      */
     public Point average() {
-        if (getPathSize() == 0) {
+        if (this.getPathSize() == 0) {
             return null;
         } else {
             float x = 0;
             float y = 0;
-            for (Point p : getPoints()) {
+            for (Point p : this.getPoints()) {
                 x += p.getX();
                 y += p.getY();
             }
-            return new Point(x / getPathSize(), y / getPathSize());
+            return new Point(x / this.getPathSize(), y / this.getPathSize());
         }
     }
 
     /**
      * Returns the last point of this DrawingMotion if there is at least one
-     * point in this motion
+     * point in this motion.
      * 
      * @return the last point of the motion or null if there is no point in the
      *         motion
@@ -117,7 +118,7 @@ public class DrawingMotion {
     }
 
     /**
-     * Returns the number of points in this DrawingMotion
+     * Returns the number of points in this DrawingMotion.
      * 
      * @return the number of points
      */
@@ -126,7 +127,7 @@ public class DrawingMotion {
     }
 
     /**
-     * Returns a copy of the point at the given index
+     * Returns a copy of the point at the given index.
      * 
      * @param index
      *            the given index
@@ -144,7 +145,7 @@ public class DrawingMotion {
     }
 
     /**
-     * Returns a copy of the points in this DrawingMotion
+     * Returns a copy of the points in this DrawingMotion.
      * 
      * @return a copy of the points in this DrawingMotion
      */
@@ -154,7 +155,7 @@ public class DrawingMotion {
 
     /**
      * Returns the first point of this DrawingMotion if there is at least one
-     * point in this motion
+     * point in this motion.
      * 
      * @return the first point of the motion or null if there is no point in the
      *         motion
@@ -176,7 +177,7 @@ public class DrawingMotion {
      * @see DrawingMotion#POINT_TOLERANCE
      */
     public boolean isPath() {
-        return !(getPathSize() == 0) && !isPoint();
+        return !(this.getPathSize() == 0) && !isPoint();
     }
 
     /**
@@ -193,11 +194,11 @@ public class DrawingMotion {
      * @see DrawingMotion#POINT_TOLERANCE
      */
     public boolean isPoint() {
-        if (getPathSize() == 0) {
+        if (this.getPathSize() == 0) {
             return false;
         }
         for (Point p : points) {
-            if (delta(getStart(), p) > POINT_TOLERANCE) {
+            if (delta(this.getStart(), p) > POINT_TOLERANCE) {
                 return false;
             }
         }

@@ -77,9 +77,9 @@ public class TransformationParamBean implements Parcelable {
     }
 
     /**
-     * Constructor to create a transformationbean from a parcel.
+     * Constructor to create a TransformationParamBean from a parcel.
      * 
-     * @param in
+     * @param in The parcel to read from
      */
     private TransformationParamBean(Parcel in) {
         height = in.readDouble();
