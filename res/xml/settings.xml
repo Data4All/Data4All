@@ -1,5 +1,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <io.github.data4all.preference.CurrentUserPreference 
+        android:title="@string/pref_currentuser_title" />
+
     <EditTextPreference
         android:defaultValue="@integer/pref_bodyheight_default"
         android:dialogTitle="@string/pref_bodyheight_dialog_title"
