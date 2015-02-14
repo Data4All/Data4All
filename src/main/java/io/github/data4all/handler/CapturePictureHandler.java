@@ -63,7 +63,7 @@ public class CapturePictureHandler implements PictureCallback {
     private static final String FILEPATH = "file_path";
     // Name and object of the DeviceOrientation to give to the next activity
     private static final String DEVICE_ORIENTATION = "current_orientation";
-    private DeviceOrientation currentOrientation = null;
+    private DeviceOrientation currentOrientation;
     // Name and object of the TransformationParamBean to give to the next
     // activity
     private static final String TRANSFORM_BEAN = "transform_bean";
@@ -72,6 +72,12 @@ public class CapturePictureHandler implements PictureCallback {
     public CapturePictureHandler() {
     }
 
+    /**
+     * Default constructor.
+     * 
+     * @param context
+     *            The Application context
+     */
     public CapturePictureHandler(Context context) {
         this.context = context;
     }
@@ -95,7 +101,7 @@ public class CapturePictureHandler implements PictureCallback {
         final Size pictureSize = params.getSupportedPictureSizes().get(0);
         final Location currentLocation = Optimizer.currentBestLoc();
         transformBean =
-                new TransformationParamBean(getDeviceHeight(),
+                new TransformationParamBean(this.getDeviceHeight(),
                         horizontalViewAngle, verticalViewAngle,
                         pictureSize.width, pictureSize.height, currentLocation);
         currentOrientation = Optimizer.currentBestPos();
@@ -130,15 +136,15 @@ public class CapturePictureHandler implements PictureCallback {
         }
     }
 
-    /*
-     * @Description: An inner Class for saving a picture in storage in a thread
+    /**
+     * @Description: An inner Class for saving a picture in storage in a thread.
      */
     class SavePhotoTask extends AsyncTask<byte[], String, String> {
         @Override
         protected String doInBackground(byte[]... photoData) {
             try {
                 // Call the method where the file is created
-                photoFile = createFile();
+                photoFile = CapturePictureHandler.this.createFile();
 
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
@@ -149,8 +155,7 @@ public class CapturePictureHandler implements PictureCallback {
                 fos.close();
 
             } catch (IOException ex) {
-                Log.d(getClass().getSimpleName(), ex.getMessage());
-                return ex.getMessage();
+                Log.e(getClass().getSimpleName(), "IOException", ex);
             }
 
             return "successful";
@@ -179,9 +184,9 @@ public class CapturePictureHandler implements PictureCallback {
         }
     }
 
-    /*
+    /**
      * Create a directory Data4all if necessary and create a file for the
-     * picture
+     * picture.
      */
     private File createFile() {
         // Create a File Reference of Photo File

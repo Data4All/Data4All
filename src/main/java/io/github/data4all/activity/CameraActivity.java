@@ -53,23 +53,7 @@ public class CameraActivity extends Activity {
         setContentView(R.layout.activity_camera);
 
         // Initialize the UI components
-        initUIComponents();
-    }
-
-    /*
-     * Called when the Activity is no longer visible at all.
-     */
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    /*
-     * Called when the Activity is restarted, even before it becomes visible.
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
+        this.initUIComponents();
     }
 
     @Override
@@ -81,7 +65,7 @@ public class CameraActivity extends Activity {
             mCamera = Camera.open();
             Log.d(getClass().getSimpleName(), "CameraInstance:" + mCamera);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(getClass().getSimpleName(), "Exception", e);
         }
 
         // Calculate the camera previews
@@ -112,15 +96,16 @@ public class CameraActivity extends Activity {
         btnTrigger.setOnClickListener(null);
     }
 
-    /*
+    /**
      * Set the trigger clickable if necessary
      */
     public void setCameraShutter(boolean flag) {
-        if (btnTrigger != null)
+        if (btnTrigger != null) {
             btnTrigger.setClickable(flag);
+        }
     }
 
-    /*
+    /**
      * Initialize the UI Components (trigger and cameraPreview)
      */
     private void initUIComponents() {

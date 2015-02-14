@@ -61,7 +61,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     // OSMElement Key
     protected static final String OSM = "OSM_ELEMENT";
     private static final int REQUEST_CODE = 1234;
-    final Context context = this;
+    private final Context context = this;
     private String key;
     private Map<Tag, String> map;
     private List<EditText> edit;
@@ -94,7 +94,6 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         final LayoutInflater inflater = getLayoutInflater();
         final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
-        ;
         alertDialog.setCustomTitle(view);
         final ImageButton speechStart =
                 (ImageButton) view.findViewById(R.id.speech);
