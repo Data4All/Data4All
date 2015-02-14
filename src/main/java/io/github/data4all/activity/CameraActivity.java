@@ -97,7 +97,7 @@ public class CameraActivity extends Activity {
     }
 
     /**
-     * Set the trigger clickable if necessary
+     * Set the trigger clickable if necessary.
      */
     public void setCameraShutter(boolean flag) {
         if (btnTrigger != null) {
@@ -106,7 +106,7 @@ public class CameraActivity extends Activity {
     }
 
     /**
-     * Initialize the UI Components (trigger and cameraPreview)
+     * Initialize the UI Components (trigger and cameraPreview).
      */
     private void initUIComponents() {
         // Retrieve the ImageButton of Camera Trigger
