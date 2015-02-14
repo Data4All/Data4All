@@ -16,8 +16,8 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.DataBaseHandler;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.NetworkState;
 import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
