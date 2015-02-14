@@ -35,6 +35,7 @@ tmp/
 *~.nib
 .settings/
 .loadpath
+.classpath
 /target/
 
 # External tool builders
