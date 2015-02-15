@@ -30,6 +30,8 @@ import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 import android.content.ContentValues;
 import android.content.Context;
@@ -59,6 +61,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_POLYELEMENT = "polyelements";
     private static final String TABLE_USER = "users";
     private static final String TABLE_WAY = "ways";
+    private static final String TABLE_GPSTRACK = "gpstracks";
+    private static final String TABLE_TRACKPOINT = "trackpoints";
 
     // General Column Names
     private static final String KEY_OSMID = "osmid";
@@ -82,6 +86,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_TOKENSECRET = "tokensecret";
+
+    // GPS Track Column Names
+    private static final String KEY_TRACKNAME = "trackname";
+    private static final String KEY_TRACKPOINTS = "trackpointids";
+
+    // GPS Trackpoint Column Names
+    private static final String KEY_ALT = "altitude";
+    private static final String KEY_TIME = "timestamp";
 
     /**
      * Default constructor for the database handler.
@@ -112,12 +124,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                 + KEY_TOKENSECRET + " TEXT" + ")";
+        final String CREATE_GPSTRACK_TABLE = "CREATE TABLE " + TABLE_GPSTRACK
+                + " ("
+                + KEY_TRACKNAME + " TEXT PRIMARY KEY," + KEY_TRACKPOINTS
+                + " TEXT" + ")";
+        final String CREATE_TRACKPOINT_TABLE = "CREATE TABLE "
+                + TABLE_TRACKPOINT + " ("
+                + KEY_LAT + " REAL," + KEY_LON + " REAL," + KEY_ALT + " REAL,"
+                + KEY_TIME + " REAL" + ")";
 
         db.execSQL(CREATE_DATAELEMENTS_TABLE);
         db.execSQL(CREATE_NODES_TABLE);
         db.execSQL(CREATE_TAGMAP_TABLE);
         db.execSQL(CREATE_POLYELEMENT_TABLE);
         db.execSQL(CREATE_USERS_TABLE);
+        db.execSQL(CREATE_GPSTRACK_TABLE);
+        db.execSQL(CREATE_TRACKPOINT_TABLE);
     }
 
     // Database handling on upgrade
@@ -130,6 +152,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATAELEMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GPSTRACK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRACKPOINT);
 
         // Recreate tables
         this.onCreate(db);
@@ -908,6 +932,86 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         }
         return count;
+    }
+
+    // -------------------------------------------------------------------------
+    // GPS-TRACK CRUD
+
+    /**
+     * This method creates and stores a new GPS track in the database. The data
+     * is taken from the {@link Track} object that is passed to the method.
+     * 
+     * @param track
+     *            the {@link Track} object from which the data will be taken
+     * @throws JSONException
+     *             if JSON object can't be initialized
+     */
+    public void createGPSTrack(Track track) throws JSONException {
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final List<Long> timestamps = new ArrayList<Long>();
+        final ContentValues values = new ContentValues();
+
+        values.put(KEY_TRACKNAME, track.getTrackName());
+
+        for (TrackPoint trackpoint : track.getTrackPoints()) {
+            timestamps.add(trackpoint.getTime());
+        }
+
+        // this.createTagMap(tagMap);
+
+        final JSONObject json = new JSONObject();
+        json.put("timestamparray", new JSONArray(timestamps));
+        final String arrayList = json.toString();
+
+        values.put(KEY_TRACKPOINTS, arrayList);
+
+        db.insert(TABLE_GPSTRACK, null, values);
+    }
+
+    /**
+     * This method returns the data for a specific GPS track stored in the
+     * database and creates the corresponding {@link Track} object.
+     * 
+     * @param name
+     *            the name of the desired GPS track
+     * @return a {@link Track} object for the desired GPS track
+     * @throws JSONException
+     *             if the JSON object can't be initialized
+     */
+    public Track getGPSTrack(String name) throws JSONException { // NOSONAR
+
+        final SQLiteDatabase db = getReadableDatabase();
+
+        Track track = new Track();
+
+        final Cursor cursor = db.query(TABLE_GPSTRACK, new String[] {
+                KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_TRACKNAME + "=?",
+                new String[] {name}, null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        
+        track.setTrackName(cursor.getString(0));
+
+        final JSONObject json = new JSONObject(cursor.getString(1));
+        final JSONArray jArray = json.optJSONArray("timestamparray");
+
+        final List<Long> timestamps = new ArrayList<Long>();
+
+        for (int i = 0; i < jArray.length(); i++) {
+            final long timestamp = jArray.optInt(i);
+            timestamps.add(timestamp);
+        }
+
+//        final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
+//        track.addTrackPoint(location);
+
+        cursor.close();
+
+        return track;
     }
 
     // ---auxiliary functions---------------------------------------------------

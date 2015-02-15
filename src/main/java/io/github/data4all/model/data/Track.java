@@ -50,7 +50,7 @@ public class Track implements Parcelable {
     /**
      * trackName is a Timestamp of format "yyyy_MM_dd_HH_mm_ss".
      */
-    private final String trackName;
+    private String trackName;
 
     /**
      * saves a list of TrackPoints.
@@ -96,6 +96,10 @@ public class Track implements Parcelable {
 
     public String getTrackName() {
         return trackName;
+    }
+    
+    public void setTrackName(String timestamp) {
+        this.trackName = timestamp;
     }
 
     private String getTimeStamp() {
