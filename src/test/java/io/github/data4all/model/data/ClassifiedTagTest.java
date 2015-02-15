@@ -30,8 +30,8 @@ public class ClassifiedTagTest {
     public void setUp() {
         classifiedValues = new ArrayList<String>(Arrays.asList("motorway",
                 "residential", "service", "track", "footway", "road"));
-        classifiedTag = new ClassifiedTag("highway", null, classifiedValues,
-                Tag.getWayTag());
+//        classifiedTag = new ClassifiedTag("highway", null, classifiedValues,
+//                Tag.WAY_TAG);
     }
 
     /**

@@ -1,18 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2014 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.task;
 
 import java.io.IOException;
@@ -37,14 +37,14 @@ import android.util.Log;
 
 /**
  * AsyncTask to retrieve the username over http-connection Stores username in
- * SharedPreferences
+ * SharedPreferences.
  * 
  * @author sb
  *
  */
 public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
 
-    private String TAG = getClass().getSimpleName();
+    private String tag = getClass().getSimpleName();
 
     private XmlPullParserFactory xmlParserFactory;
 
@@ -52,6 +52,16 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
     private OAuthConsumer consumer;
     private SharedPreferences prefs;
 
+    /**
+     * Constructor for this task.
+     * 
+     * @param url
+     *            The url to retrieve the data
+     * @param consumer
+     *            The {@link OAuthConsumer}
+     * @param prefs
+     *            The SharedPreferences
+     */
     public RetrieveUsernameTask(String url, OAuthConsumer consumer,
             SharedPreferences prefs) {
         this.url = url;
@@ -71,45 +81,45 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void getUserXml(String url, OAuthConsumer consumer) {
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        final DefaultHttpClient httpclient = new DefaultHttpClient();
 
         try {
             // make a GET request
-            HttpGet request = new HttpGet(url);
-            Log.i(TAG, "Requesting URL : " + url);
+            final HttpGet request = new HttpGet(url);
+            Log.i(tag, "Requesting URL : " + url);
 
             // sign the request with oAuth
             consumer.sign(request);
 
             // execute request and get the response
-            HttpResponse response = httpclient.execute(request);
-            Log.i(TAG, "Statusline : " + response.getStatusLine());
+            final HttpResponse response = httpclient.execute(request);
+            Log.i(tag, "Statusline : " + response.getStatusLine());
 
             // write content of response in InputStream
-            InputStream data = response.getEntity().getContent();
+            final InputStream data = response.getEntity().getContent();
 
             parseXmlUserInfo(data);
         } catch (OAuthMessageSignerException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(tag, e.getMessage());
         } catch (OAuthExpectationFailedException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(tag, e.getMessage());
         } catch (OAuthCommunicationException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(tag, e.getMessage());
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(tag, e.getMessage());
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(tag, e.getMessage());
         }
 
     }
 
     /**
-     * Parse a given InputStream to retrieve the username
+     * Parse a given InputStream to retrieve the username.
      * 
      * @param inputStream
      *            an xml as InputStream
@@ -122,7 +132,7 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
             int eventType;
 
             while ((eventType = parser.next()) != XmlPullParser.END_DOCUMENT) {
-                String tagName = parser.getName();
+                final String tagName = parser.getName();
                 if (eventType == XmlPullParser.START_TAG
                         && "user".equals(tagName)) {
                     prefs.edit()
@@ -130,17 +140,17 @@ public class RetrieveUsernameTask extends AsyncTask<Void, Void, Void> {
                                     "USERNAME",
                                     parser.getAttributeValue(null,
                                             "display_name")).apply();
-                    Log.d(TAG,
+                    Log.d(tag,
                             "getUserDetails display name "
                                     + prefs.getString("USERNAME", "NULL"));
                 }
             }
         } catch (XmlPullParserException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.d(tag, e.getMessage());
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.d(tag, e.getMessage());
         }
     }
 

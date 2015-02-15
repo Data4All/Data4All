@@ -1,18 +1,18 @@
-/*******************************************************************************
+/*
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.model;
 
 import android.os.Parcel;
@@ -32,7 +32,7 @@ public class DeviceOrientation implements Parcelable {
     /** rotation around Y axis. */
     private float roll;
 
-    /** constants for comparison */
+    /** constants for comparison. */
     private final static double EPSILON = 0.00001;
 
     private long timestamp;
@@ -41,18 +41,19 @@ public class DeviceOrientation implements Parcelable {
      * CREATOR that generates instances of {@link DeviceOrientation} from a
      * Parcel.
      */
-    public static final Parcelable.Creator<DeviceOrientation> CREATOR = new Parcelable.Creator<DeviceOrientation>() {
-        public DeviceOrientation createFromParcel(Parcel in) {
-            return new DeviceOrientation(in);
-        }
+    public static final Parcelable.Creator<DeviceOrientation> CREATOR =
+            new Parcelable.Creator<DeviceOrientation>() {
+                public DeviceOrientation createFromParcel(Parcel in) {
+                    return new DeviceOrientation(in);
+                }
 
-        public DeviceOrientation[] newArray(int size) {
-            return new DeviceOrientation[size];
-        }
-    };
+                public DeviceOrientation[] newArray(int size) {
+                    return new DeviceOrientation[size];
+                }
+            };
 
     /**
-     * constructor
+     * constructor.
      * 
      * @param azimuth
      *            the azimuth value

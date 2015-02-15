@@ -1,25 +1,28 @@
-/*******************************************************************************
+/*
  * Copyright (c) 2014, 2015 Data4All
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.model.data;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import java.util.List;
 
 /**
  * This class represents a classified tag. A classified tag is a subclass of
@@ -32,26 +35,29 @@ import java.util.Set;
 public class ClassifiedTag extends Tag {
 
     /**
-     * stores all classified values for the specific tag
+     * stores all classified values for the specific tag.
      */
     private List<String> classifiedValues;
+
 
     /**
      * stores the last classifiedValue Suggestion for the specific tag
      */
     private Set<String> classifiedValuesSuggestion;
 
+
     /**
      * Default constructor.
      * 
-     * @param key
-     * @param type
-     * @param classifiedValues
-     * @param osmObjects
+     * @param id The id of the tag
+     * @param key The key of the tag
+     * @param type The Type of the tag
+     * @param classifiedValues the classifiedValues of the tag
+     * @param osmObjects The OpenStreetObject the tag refers to
      */
-    public ClassifiedTag(String key, InputType type,
+    public ClassifiedTag(int id, String key, InputType type,
             List<String> classifiedValues, int... osmObjects) {
-        super(key, type, osmObjects);
+        super(id, key, type, osmObjects);
         this.classifiedValues = classifiedValues;
         classifiedValuesSuggestion = new LinkedHashSet<String>();
     }
@@ -74,6 +80,7 @@ public class ClassifiedTag extends Tag {
      * @param classifiedValues
      * 
      */
+
     public void setClassifiedValues(List<String> classifiedValues) {
         this.classifiedValues = classifiedValues;
     }
@@ -100,9 +107,9 @@ public class ClassifiedTag extends Tag {
         // create a tag with this suggestion
         ClassifiedTag lastChoice = Tags.getLastChoice();
         if (lastChoice == null) {
-            lastChoice = new ClassifiedTag("Last Choice", getType(),
+            lastChoice = new ClassifiedTag(getHintRessource(), "Last Choice", getType(),
                     Arrays.asList(suggestion), getOsmObjects());
-            Tags.tagList.add(lastChoice);
+            Tags.TAG_LIST.add(lastChoice);
         } else {
             lastChoice.setClassifiedValues(Arrays.asList(suggestion));
             lastChoice.setType(getType());
