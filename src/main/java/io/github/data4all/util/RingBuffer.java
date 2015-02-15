@@ -15,6 +15,10 @@
  */
 package io.github.data4all.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Class RingBuffer.
  * 
@@ -98,9 +102,8 @@ public class RingBuffer<T> {
      * 
      * @return the array with all Data.
      */
-    public T[] getAll() {
-
-        return buffer;
+    public List getAll() {
+        return Arrays.asList(buffer);
     }
 
     /**
