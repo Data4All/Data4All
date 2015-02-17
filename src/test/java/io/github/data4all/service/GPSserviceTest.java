@@ -17,9 +17,11 @@ package io.github.data4all.service;
 
 import static org.junit.Assert.assertEquals;
 import io.github.data4all.model.data.Track;
+import io.github.data4all.util.Optimizer;
 
 import java.lang.reflect.Field;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -32,6 +34,16 @@ import android.location.Location;
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
 public class GPSserviceTest {
+    
+    /**
+     * Clear the Optimizer after every test.
+     * 
+     * @author tbrose
+     */
+    @After
+    public void tearDown() {
+        Optimizer.clear();
+    }
 
     @Test
     public void testGPSservice() throws Exception {
