@@ -38,6 +38,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 
 /**
  * This class handles all database requests for the OSM objects that have to be
@@ -988,12 +989,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         final Cursor cursor = db.query(TABLE_GPSTRACK, new String[] {
                 KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_TRACKNAME + "=?",
-                new String[] {name}, null, null, null, null);
+                new String[] {name }, null, null, null, null);
 
         if (cursor != null) {
             cursor.moveToFirst();
         }
-        
+
         track.setTrackName(cursor.getString(0));
 
         final JSONObject json = new JSONObject(cursor.getString(1));
@@ -1006,12 +1007,280 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             timestamps.add(timestamp);
         }
 
-//        final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
-//        track.addTrackPoint(location);
+        // final Map<Tag, String> tagMap = this.getTagMap(tagIDs); -> get track
+        // points!
+        // track.addTrackPoint(location);
 
         cursor.close();
 
         return track;
+    }
+
+    /**
+     * This method deletes a specific GPS track from the database.
+     * 
+     * @param track
+     *            the {@link Track} object whose data should be deleted
+     */
+    public void deleteGPSTrack(Track track) { // NOSONAR
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_GPSTRACK, KEY_TRACKNAME + "=?",
+                new String[] {track.getTrackName() });
+
+        final List<Long> timestamps = new ArrayList<Long>();
+
+        for (TrackPoint trackpoint : track.getTrackPoints()) {
+            timestamps.add(trackpoint.getTime());
+        }
+        // this.deleteTagMap(tagIDs); -> delete track points!
+    }
+
+    /**
+     * This method returns the number of GPS tracks currently stored in the
+     * database.
+     * 
+     * @return the number of GPS tracks
+     */
+    public int getGPSTrackCount() {
+
+        final SQLiteDatabase db = getReadableDatabase();
+
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GPSTRACK,
+                null);
+        final int count = cursor.getCount();
+        cursor.close();
+
+        return count;
+    }
+
+    /**
+     * This method updates the data for a specific GPS track stored in the
+     * database.
+     * 
+     * @param track
+     *            the {@link Track} object for which the data should be updated
+     * @return the number of rows that have been updated
+     * @throws JSONException
+     *             if the JSON object can't be initialized
+     */
+    public int updateGPSTrack(Track track) // NOSONAR
+            throws JSONException {
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final ContentValues values = new ContentValues();
+
+        values.put(KEY_TRACKNAME, track.getTrackName());
+
+        int count = 0;
+
+        count += db.update(TABLE_GPSTRACK, values, KEY_TRACKNAME + "=?",
+                new String[] {track.getTrackName() });
+
+        // count += this.updateTagMap(dataElement.getTags()); -> update track
+        // points!
+
+        return count;
+    }
+
+    /**
+     * This method returns a list of all GPS tracks stored in the database and
+     * creates corresponding {@link Track} objects.
+     * 
+     * @return a list of GPS tracks
+     * @throws JSONException
+     *             if JSON object can't be initialized
+     */
+    public List<Track> getAllGPSTracks() throws JSONException {
+
+        final List<Track> gpsTracks = new ArrayList<Track>();
+
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GPSTRACK,
+                null);
+
+        Track track = new Track(); // NOSONAR
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                final JSONObject json = new JSONObject(cursor.getString(1));
+                final JSONArray jArray = json.optJSONArray("timestamparray");
+
+                final List<Long> timestamps = new ArrayList<Long>();
+
+                for (int i = 0; i < jArray.length(); i++) {
+                    final long timestamp = jArray.optInt(i);
+                    timestamps.add(timestamp);
+                }
+
+                // final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
+                // dataElement.addTags(tagMap); -> get track points!
+
+                gpsTracks.add(track);
+            } while (cursor.moveToNext());
+        }
+        return gpsTracks;
+    }
+
+    // -------------------------------------------------------------------------
+    // TRACKPOINT CRUD
+
+    /**
+     * This method creates and stores new trackpoints in the database. The data
+     * is taken from the {@link TrackPoint} objects that are passed to the
+     * method.
+     * 
+     * @param trackPoints
+     *            the {@link List} from which the trackpoints will be taken
+     */
+    public void createTrackPoints(List<TrackPoint> trackPoints) {
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final ContentValues values = new ContentValues();
+
+        for (TrackPoint point : trackPoints) {
+            values.put(KEY_LAT, point.getLat());
+            values.put(KEY_LON, point.getLon());
+            values.put(KEY_ALT, point.getAlt());
+            values.put(KEY_TIME, point.getTime());
+            db.insert(TABLE_TRACKPOINT, null, values);
+        }
+    }
+
+    /**
+     * This method returns the data for specific trackpointss stored in the
+     * database and creates a list of corresponding {@link TrackPoint} objects.
+     * 
+     * @param timestamps
+     *            the timestamps of the desired trackpoints
+     * @return a {@link List} of the desired trackpoints
+     */
+    public List<TrackPoint> getTrackPoints(List<Long> timestamps) {
+
+        final SQLiteDatabase db = getReadableDatabase();
+
+        final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+
+        for (long time : timestamps) {
+            final Cursor cursor = db
+                    .query(TABLE_TRACKPOINT, new String[] {KEY_LAT, KEY_LON,
+                            KEY_ALT, KEY_TIME },
+                            KEY_TIME + "=?",
+                            new String[] {String.valueOf(time) }, null, null,
+                            null, null);
+
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+
+            Location loc = new Location("provider");
+            loc.setLatitude(cursor.getDouble(0));
+            loc.setLongitude(cursor.getDouble(1));
+            loc.setAltitude(cursor.getDouble(2));
+            loc.setTime(cursor.getLong(3));
+
+            TrackPoint point = new TrackPoint(loc);
+
+            trackPoints.add(point);
+            cursor.close();
+        }
+        return trackPoints;
+    }
+
+    /**
+     * This method deletes specific trackpoints from the database.
+     * 
+     * @param timestamps
+     *            the timestamps of the trackpoints that should be deleted
+     */
+    public void deleteTrackPoints(List<Long> timestamps) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        for (long time : timestamps) {
+            db.delete(TABLE_TRACKPOINT, KEY_TIME + "=?",
+                    new String[] {String.valueOf(time) });
+        }
+    }
+
+    /**
+     * This method returns the number of trackpoints currently stored in the
+     * database.
+     * 
+     * @return the number of trackpoints
+     */
+    public int getTrackPointCount() {
+        final SQLiteDatabase db = getReadableDatabase();
+
+        final Cursor cursor = db
+                .rawQuery("SELECT * FROM " + TABLE_TRACKPOINT, null);
+        final int count = cursor.getCount();
+        cursor.close();
+
+        return count;
+    }
+
+    /**
+     * This method updates the data for specific trackpoints stored in the
+     * database.
+     * 
+     * @param trackPoints
+     *            a list of {@link TrackPoint}s that should be updated
+     * @return the number of rows that have been updated
+     */
+    public int updateTrackPoints(List<TrackPoint> trackPoints) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final ContentValues values = new ContentValues();
+
+        int count = 0;
+
+        for (TrackPoint point : trackPoints) {
+            values.put(KEY_LAT, point.getLat());
+            values.put(KEY_LON, point.getLon());
+            values.put(KEY_ALT, point.getAlt());
+            values.put(KEY_TIME, point.getTime());
+
+            if (this.checkIfRecordExists(TABLE_TRACKPOINT, KEY_TIME,
+                    point.getTime())) {
+                count += db.update(TABLE_TRACKPOINT, values, KEY_TIME + "=?",
+                        new String[] {String.valueOf(point.getTime()) });
+            } else {
+                db.insert(TABLE_TRACKPOINT, null, values);
+            }
+        }
+        return count;
+    }
+
+    /**
+     * This method returns a list of all trackpoints stored in the database and
+     * creates corresponding {@link TrackPoint} objects.
+     * 
+     * @return a list of trackpoints
+     */
+    public List<TrackPoint> getAllTrackPoints() {
+        final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TRACKPOINT, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                
+                Location loc = new Location("provider");
+                loc.setLatitude(cursor.getDouble(0));
+                loc.setLongitude(cursor.getDouble(1));
+                loc.setAltitude(cursor.getDouble(2));
+                loc.setTime(cursor.getLong(3));
+                
+                final TrackPoint point = new TrackPoint(loc);
+                trackPoints.add(point);
+            } while (cursor.moveToNext());
+        }
+        return trackPoints;
     }
 
     // ---auxiliary functions---------------------------------------------------
