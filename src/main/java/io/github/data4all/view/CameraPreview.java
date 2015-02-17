@@ -67,23 +67,34 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 	public CameraPreview(Context context) {
 		super(context);
-		init(context);
+		this.init(context);
 	}
 
+	/**
+	 * 
+	 * @param context
+	 * @param attributeSet
+	 */
 	public CameraPreview(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
-		init(context);
+		this.init(context);
 
 	}
 
+	/**
+	 * 
+	 * @param context
+	 * @param attrs
+	 * @param defStyle
+	 */
 	public CameraPreview(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		init(context);
+		this.init(context);
 	}
 
 	private void init(Context context) {
 
-		SurfaceView mSurfaceView = new SurfaceView(context);
+		final SurfaceView mSurfaceView = new SurfaceView(context);
 		addView(mSurfaceView);
 		mHolder = mSurfaceView.getHolder();
 		mHolder.addCallback(this);
@@ -125,9 +136,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 			final int width = r - l;
 			final int height = b - t;
 
-			//TODO:@Andre brauchst du das noch? Da die nicht mehr verwendet werden
-			// Hab die Berechnung unten auskommentiert da diese dazu geführt hatte das man im
-			//landscape einen weißen Rand oben hattest
+			
 			int previewWidth = width;
 			int previewHeight = height;
 
@@ -165,9 +174,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 				}
 			}
 
-			//final int scaledChildHeight = previewHeight * width / previewWidth;
-
-			child.layout(0, 0, width, height); // second int edited to 0
+			child.layout(0, 0, width, height);
 		}
 	}
 
@@ -234,7 +241,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		if (mSupportedFlashModes != null
 				&& mSupportedFlashModes
 						.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
-			params.setFocusMode(Camera.Parameters.FLASH_MODE_AUTO);
+			params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+
+			Log.i(TAG, "DEEEEBUG :" + params.getFlashMode());
 		}
 		return params;
 	}
@@ -257,11 +266,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 		Log.d(TAG, "surfaceChanged is called");
 
-		try {
-			mCamera.stopPreview();
-		} catch (Exception e) {
-			Log.e(TAG, " tried to stop a non-existent preview");
-		}
+		mCamera.stopPreview();
 
 		if (mCamera == null) {
 			Log.e(TAG, " mCamera is null");
@@ -302,6 +307,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		case Surface.ROTATION_270:
 			degrees = 270;
 			break;
+		default:
+			degrees = 0;
+			break;
 		}
 
 		int result;
@@ -316,8 +324,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		Log.i(TAG, "DEBUG: " + result);
 
 		params.setRotation(info.orientation);
-				
-		mCamera.setDisplayOrientation(result);  
+
+		mCamera.setDisplayOrientation(result);
 
 		mCamera.setParameters(params);
 
@@ -339,11 +347,11 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 	 */
 	private Size getOptimalPictureSize(List<Size> sizes, double targetRatio) {
 		Log.d(TAG, "OptimalPictureSize targetRatio: " + targetRatio);
-		final double ASPECT_TOLERANCE = 0.1;
+		final double aspectTolerance = 0.1;
 		// if no supported preview sizes, return null
-		if (sizes == null)
+		if (sizes == null) {
 			return null;
-
+		}
 		Size optimalSize = null;
 
 		int resolution = 0;
@@ -356,7 +364,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 			int currentResolution = size.width * size.height;
 
-			if (Math.abs(ratio - targetRatio) < ASPECT_TOLERANCE
+			if (Math.abs(ratio - targetRatio) < aspectTolerance
 					&& currentResolution > resolution) {
 				optimalSize = size;
 				resolution = currentResolution;
@@ -376,9 +384,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		// calculate the ratio of preview display
 		double targetRatio = ((double) w) / ((double) h);
 		// if no supported preview sizes, return null
-		if (sizes == null)
+		if (sizes == null) {
 			return null;
-
+		}
 		Size optimalSize = null;
 		double minDiff = Double.MAX_VALUE;
 
@@ -392,9 +400,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 			Log.d(TAG, "currentSize width:" + size.width);
 			Log.d(TAG, "currentSize heigth:" + size.height);
 
-			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
 				continue;
-
+			}
 			if (Math.abs(size.height - targetHeight) < minDiff) {
 				optimalSize = size;
 				minDiff = Math.abs(size.height - targetHeight);

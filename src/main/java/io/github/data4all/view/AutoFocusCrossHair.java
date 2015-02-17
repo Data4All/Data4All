@@ -15,6 +15,7 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.R;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -34,8 +35,12 @@ import android.view.View;
 
 public class AutoFocusCrossHair extends View {
 
-	// private Point mLocationPoint;
 
+	/**
+	 * Public Constructor for creating the AutoFocus Cross Hair
+	 * @param context 
+	 * @param attrs
+	 */
 	public AutoFocusCrossHair(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
@@ -44,12 +49,18 @@ public class AutoFocusCrossHair extends View {
 		this.setBackgroundResource(resid);
 	}
 
+	/**
+	 * method to set the image on the view
+	 */
 	public void showStart() {
-		// setDrawable(R.drawable.focus_crosshair_image);
+		this.setDrawable(R.drawable.crosshair);
 	}
 
+	/**
+	 * method to remove Image from view
+	 */
 	public void clear() {
-		setBackgroundDrawable(null);
+		this.setBackgroundResource(0);
 	}
 
 }
