@@ -54,7 +54,7 @@ public class Tagging {
         case 2:
             return Tags.getAllWayTags();
         case 3:
-            return Tags.getAllAreaTags();
+            return Tags.getAllBuildingTags();
         case 4:
             return Tags.getAllAreaTags();
         }
