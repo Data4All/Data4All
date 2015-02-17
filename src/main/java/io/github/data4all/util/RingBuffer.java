@@ -15,7 +15,6 @@
  */
 package io.github.data4all.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,8 +25,8 @@ import java.util.List;
  * 
  * @author konerman
  *
- * @param T
- *            the
+ * @param <T>
+ *            The type of Objects in this RingBuffer
  */
 public class RingBuffer<T> {
 
@@ -43,22 +42,29 @@ public class RingBuffer<T> {
     /* fill level of the buffer */
     private int entries;
 
-    /* the capacity of the buffer */
-    private int buffercapacity;
-
     /**
      * creates the ringpuffer.
      * 
      * @param capacity
      *            the maximum of items in the Ringbuffer
      */
-    @SuppressWarnings("unchecked")
     public RingBuffer(int capacity) {
+        this.init(capacity);
+    }
 
+    /**
+     * Initialize this RingBuffer with the given capacity.
+     * 
+     * @author tbrose
+     * 
+     * @param capacity
+     *            The capacity of the RingBuffer
+     */
+    @SuppressWarnings("unchecked")
+    private void init(int capacity) {
         buffer = (T[]) new Object[capacity];
         head = 0;
         entries = 0;
-        setBuffercapacity(capacity);
     }
 
     /**
@@ -91,7 +97,7 @@ public class RingBuffer<T> {
      */
 
     public T get(int position) {
-        if (getSize() > 0) {
+        if (this.getSize() > 0) {
             return buffer[position];
         }
         return null;
@@ -127,17 +133,22 @@ public class RingBuffer<T> {
      * @return the last added entry of the buffer.
      */
     public T getLast() {
-        if (getSize() > 0) {
+        if (this.getSize() > 0) {
             return buffer[index];
         }
         return null;
     }
 
     public int getBuffercapacity() {
-        return buffercapacity;
+        return buffer.length;
     }
 
-    public void setBuffercapacity(int buffercapacity) {
-        this.buffercapacity = buffercapacity;
+    /**
+     * Removes all objects in this RingBuffer.
+     * 
+     * @author tbrose
+     */
+    public void clear() {
+        this.init(buffer.length);
     }
 }
