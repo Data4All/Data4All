@@ -29,22 +29,15 @@ import android.location.Location;
 
 public final class Optimizer {
 
-    /**
-     * Private Constructor, prevents instantiation.
-     */
-    private Optimizer() {
-
-    }
-
     // The timeDifference at which one location should be significant older
     // or newer than another one, 1000 is one second
     public static final double TIME_DIFFERENCE = 1000;
 
     // The accuracy difference at which one location should be significant more
     // accurate than another one
-    public static final int ACCURACY_DIFFERENCE = 50;
+    public static final int ACC_DIFF = 50;
 
-    // Size of the two ringbuffers
+    // Size of the two ringbuffer
     public static final int RB_SIZE = 20;
 
     // a new Ringbuffer for saving the location objects
@@ -53,6 +46,13 @@ public final class Optimizer {
     // a new Ringbuffer for saving the DevicePosition objects
     private static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(
             RB_SIZE);
+
+    /**
+     * Private Constructor, prevents instantiation.
+     */
+    private Optimizer() {
+
+    }
 
     /**
      * Put a Location object to the Location RingBuffer.
@@ -93,12 +93,13 @@ public final class Optimizer {
     }
 
     /**
-     * Give the current DevicePosition.
+     * Give the current DeviceOrientation object which has the pitch, roll and
+     * azimuth values.
      * 
-     * @return the current best DevicePosition
+     * @return the current DeviceOrientation
      */
-    public static DeviceOrientation currentBestPos() {
-        return posRB.get(posRB.getIndex());
+    public static DeviceOrientation currentDeviceOrientation() {
+        return posRB.getLast();
     }
 
     /**
@@ -133,17 +134,16 @@ public final class Optimizer {
      * 
      * @return true if the first location is better than the second
      */
-    protected static boolean isBetterLocation(Location location,
-            Location currentBestLocation) {
+    protected static boolean isBetterLocation(Location loc,
+            Location currentBestLoc) {
 
-        if (currentBestLocation == null) {
+        if (currentBestLoc == null) {
             // A new location is always better than no location
             return true;
         }
 
         // Check whether the new location fix is newer or older
-        final long timeDelta = location.getTime()
-                - currentBestLocation.getTime();
+        final long timeDelta = loc.getTime() - currentBestLoc.getTime();
         final boolean isSignificantlyNewer = timeDelta > (TIME_DIFFERENCE);
         final boolean isSignificantlyOlder = timeDelta < -(TIME_DIFFERENCE);
         final boolean isNewer = timeDelta > 0;
@@ -160,24 +160,21 @@ public final class Optimizer {
         }
 
         // Check whether the new location fix is more or less accurate
-        final int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation
+        final int accuracyDelta = (int) (loc.getAccuracy() - currentBestLoc
                 .getAccuracy());
         final boolean isLessAccurate = accuracyDelta > 0;
         final boolean isMoreAccurate = accuracyDelta < 0;
-        final boolean isSignificantlyLessAccurate = accuracyDelta > ACCURACY_DIFFERENCE;
+        final boolean isSignifLessAccurate = accuracyDelta > ACC_DIFF;
 
         // Check if the old and new location are from the same provider
-        final boolean isFromSameProvider = isSameProvider(
-                location.getProvider(), currentBestLocation.getProvider());
+        final boolean isFromSameProvider = isSameProvider(loc.getProvider(),
+                currentBestLoc.getProvider());
 
         // Determine location quality using a combination of timeliness and
         // accuracy
-        if (isMoreAccurate) {
-            return true;
-        } else if (isNewer && !isLessAccurate) {
-            return true;
-        } else if (isNewer && !isSignificantlyLessAccurate
-                && isFromSameProvider) {
+        if ((isMoreAccurate)
+                || (isNewer && !isLessAccurate)
+                || (isNewer && !isSignifLessAccurate && isFromSameProvider)) {
             return true;
         }
         return false;
