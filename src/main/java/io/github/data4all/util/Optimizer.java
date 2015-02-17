@@ -195,4 +195,14 @@ public final class Optimizer {
         }
         return provider1.equals(provider2);
     }
+
+    /**
+     * Clear all stored locations of the Optimizer.
+     * 
+     * @author tbrose
+     */
+    public static void clear() {
+        locRB.clear();
+        posRB.clear();
+    }
 }
