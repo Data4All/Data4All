@@ -30,8 +30,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -41,7 +39,8 @@ import android.widget.Toast;
  * This activity is used to to create and handle the lifecycle. It produces the
  * layout. checks for the existence of a camera and generates the animations.
  * This activity stands in connection with the classes {@link CameraPreview
- * } and {@link AutoFocusCrossHair}.
+ * } and
+ * {@link AutoFocusCrossHair}.
  * 
  * @author Andre Koch
  * @CreationDate 09.02.2015
@@ -59,7 +58,6 @@ public class CameraActivity extends Activity {
 	private CameraPreview cameraPreview;
 	private ImageButton btnCapture;
 	private AutoFocusCrossHair mAutoFocusCrossHair;
-	private Animation crossHair;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +73,7 @@ public class CameraActivity extends Activity {
 
 		// Checking camera availability
 		Log.d(TAG, "check if device support Camera");
-		if (!isDeviceSupportCamera()) {
+		if (!this.isDeviceSupportCamera()) {
 			Toast.makeText(getApplicationContext(),
 					getString(R.string.noCamSupported), Toast.LENGTH_LONG)
 					.show();
@@ -89,9 +87,8 @@ public class CameraActivity extends Activity {
 		btnCapture.setOnClickListener(btnCaptureOnClickListener);
 
 		// Set the Focus animation
-		
-		// mAutoFocusCrossHair = (AutoFocusCrossHair)
-		// findViewById(R.id.af_crosshair);
+
+		mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
 		// crossHair = AnimationUtils.loadAnimation(this,R.anim.crossHair);
 		// mAutoFocusCrossHair.clearAnimation();
 		// mAutoFocusCrossHair.setAnimation(crossHair);
@@ -101,51 +98,30 @@ public class CameraActivity extends Activity {
 	private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			mAutoFocusCrossHair.showStart();
 
 			mCamera.autoFocus(new AutoFocusCallback() {
 				@Override
 				public void onAutoFocus(boolean success, Camera camera) {
 
-					// mAutoFocusCrossHair.showStart();
 					// mAutoFocusCrossHair.startAnimation(crossHair);
 
 					if (success) {
 						mCamera.takePicture(shutterCallback, null,
 								new CapturePictureHandler(
 										getApplicationContext()));
-					} else {						
-						//TODO animate fail of focus
+					} else {
+						// TODO animate fail of focus
 						mCamera.takePicture(shutterCallback, null,
 								new CapturePictureHandler(
 										getApplicationContext()));
 					}
 				}
 			});
-
 			// After photo is taken, disable button for clicking twice
 			btnCapture.setOnClickListener(null);
 			btnCapture.setClickable(false);
-
 		}
-	};
-
-	private AnimationListener animation = new AnimationListener() {
-
-		@Override
-		public void onAnimationEnd(Animation arg0) {
-			mAutoFocusCrossHair.clear();
-		}
-
-		@Override
-		public void onAnimationRepeat(Animation arg0) {
-
-		}
-
-		@Override
-		public void onAnimationStart(Animation arg0) {
-
-		}
-
 	};
 
 	@Override
@@ -157,6 +133,7 @@ public class CameraActivity extends Activity {
 		if (mCamera == null) {
 			Log.d(TAG, "camera is null, so we have to recreate");
 			this.createCamera();
+			mAutoFocusCrossHair.clear();
 		}
 
 		btnCapture.setOnClickListener(btnCaptureOnClickListener);
@@ -173,6 +150,7 @@ public class CameraActivity extends Activity {
 			Log.d(TAG, "camera is not null on pause, so release it");
 			cameraPreview.setCamera(null);
 			this.releaseCamera();
+			mAutoFocusCrossHair.clear();
 		}
 
 		btnCapture.setOnClickListener(null);
@@ -233,21 +211,16 @@ public class CameraActivity extends Activity {
 	public Camera getCameraInstance() {
 		Log.d(TAG, "try to get an instance of camera");
 		Camera camera = null;
-		try {
-			this.releaseCamera();
-			camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
 
-		} catch (RuntimeException ex) {
-			Log.e(TAG, "failed to get an instance of camera", ex);
-		}
-    
+		this.releaseCamera();
+		camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
 
 		return camera;
 	}
 
-	ShutterCallback shutterCallback = new ShutterCallback() {
+	private ShutterCallback shutterCallback = new ShutterCallback() {
 		public void onShutter() {
-
+			Log.d(TAG, "onShutter is called");
 		}
 	};
 

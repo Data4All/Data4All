@@ -24,7 +24,7 @@ import android.preference.PreferenceFragment;
  * 
  * @author tbrose
  */
-public class SettingsActivity extends BasicActivity {
+public class SettingsActivity extends AbstractActivity {
     /*
      * (non-Javadoc)
      * 

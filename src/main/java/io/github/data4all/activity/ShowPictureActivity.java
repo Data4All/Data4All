@@ -48,7 +48,7 @@ import android.widget.ImageView;
  * 
  * @author vkochno
  */
-public class ShowPictureActivity extends BasicActivity {
+public class ShowPictureActivity extends AbstractActivity {
 
     private static final String TAG = ShowPictureActivity.class.getSimpleName();
 
