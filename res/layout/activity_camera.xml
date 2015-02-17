@@ -9,7 +9,15 @@
         android:layout_height="match_parent" >
     </io.github.data4all.view.CameraPreview>
 
-   
+    <io.github.data4all.view.AutoFocusCrossHair
+        android:id="@+id/af_crosshair"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="142dp"
+        android:clipChildren="false" />
+
     <ImageButton
         android:id="@+id/btnCapture"
         style="@style/imageButtonCamAction"
