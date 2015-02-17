@@ -45,7 +45,6 @@ import android.widget.Toast;
 
 /**
  * PreviewClass for camera.
- * 
  * This class serves as Previewclass for the camera . This class creates the
  * preview with all associated views and handles the control of the camera in
  * cooperation with the {@link CameraActivity}.
@@ -59,199 +58,204 @@ import android.widget.Toast;
 
 public class CapturePictureHandler implements PictureCallback {
 
-    private static final String TAG = CapturePictureHandler.class.getSimpleName();
-    
-    // Actual Activity for the context
-    private final Context context;
+	private static final String TAG = CapturePictureHandler.class
+			.getSimpleName();
 
-    // The file into which the picture is saved
-    private File photoFile;
+	// Actual Activity for the context
+	private final Context context;
 
-    // The directory where the pictures are saved into
-    private static final String DIRECTORY = "/Data4all";
-    
-    // The fileformat of the saved picture
-    private static final String FILE_FORMAT = ".jpeg";
-    
-    // The name of the extra info for the filepath in the intent for the new
-    private static final String FILEPATH = "file_path";
-   
-    // Name and object of the DeviceOrientation to give to the next activity
-    private static final String DEVICE_ORIENTATION = "current_orientation";
-    
-    private DeviceOrientation currentRingBufferBestPosition = null;
-    
-    private static final String SCREEN_ORIENTATION = "SCREEN_ORIENTATION";
-    // Name and object of the TransformationParamBean to give to the next
-    
-    // activity
-    private static final String TRANSFORM_BEAN = "transform_bean";
-    
-    private TransformationParamBean transformBean;
+	// The file into which the picture is saved
+	private File photoFile;
 
-    /**
-     * Default constructor.
-     * 
-     * @param context
-     *            The Application context
-     */
-    public CapturePictureHandler(Context context) {
-        this.context = context;
-    }
+	// The directory where the pictures are saved into
+	private static final String DIRECTORY = "/Data4all";
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
-     *      android.hardware.Camera)
-     */
-    @Override
-    public void onPictureTaken(byte[] raw, Camera camera) {
-        Log.d(TAG, "onPictureTaken isSave the Picture");
+	// The fileformat of the saved picture
+	private static final String FILE_FORMAT = ".jpeg";
 
-        final Camera.Parameters params = camera.getParameters();
-        
-        
-        final double horizontalViewAngle = Math.toRadians(params
-                .getHorizontalViewAngle());
-        final double verticalViewAngle = Math.toRadians(params
-                .getVerticalViewAngle());
-        final Size pictureSize = params.getPictureSize();
-        final Location currentLocation = Optimizer.currentBestLoc();
-      transformBean =
-                new TransformationParamBean(this.getDeviceHeight(),
-                        horizontalViewAngle, verticalViewAngle,
-                        pictureSize.width, pictureSize.height, currentLocation);
-       
-         DeviceOrientation currentOrientation = Optimizer.currentDeviceOrientation();
+	// The name of the extra info for the filepath in the intent for the new
+	private static final String FILEPATH = "file_path";
 
+	// Name and object of the DeviceOrientation to give to the next activity
+	private static final String DEVICE_ORIENTATION = "current_orientation";
 
-        // Start a thread to save the Raw Image in JPEG into SDCard
-        new SavePhotoTask(params).execute(raw);
-    }
+	private DeviceOrientation currentOrientation;
 
-    /**
-     * Reads the height of the device in condition of the bodyheight from the
-     * preferences.
-     * 
-     * If the preference is empty or not set the default value is stored.
-     * 
-     * @return The height of the device or {@code 0} if the preference is not
-     *         set or empty
-     */
-    private double getDeviceHeight() {
-        final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        final Resources res = context.getResources();
-        final String key = res.getString(R.string.pref_bodyheight_key);
-        final String height = prefs.getString(key, null);
-        if (TextUtils.isEmpty(height)) {
-            final int defaultValue = res.getInteger(0);
-            // Save the default value
-            prefs.edit().putString(key, "" + defaultValue).commit();
-            return (defaultValue - 20) / 100.0;
-        } else {
-            final double bodyHeight = Integer.parseInt(height);
-            return (bodyHeight - 20) / 100.0;
-        }
-    }
+	private static final String SCREEN_ORIENTATION = "SCREEN_ORIENTATION";
+	// Name and object of the TransformationParamBean to give to the next
 
-    /**
-     * @Description: An inner Class for saving a picture in storage in a thread.
-     */
-    class SavePhotoTask extends AsyncTask<byte[], String, String> {
+	// activity
+	private static final String TRANSFORM_BEAN = "transform_bean";
 
-        Camera.Parameters params;
+	private TransformationParamBean transformBean;
 
-        public SavePhotoTask(Camera.Parameters params) {
-            this.params = params;
-        }
+	/**
+	 * Default constructor.
+	 * 
+	 * @param context
+	 *            The Application context
+	 */
+	public CapturePictureHandler(Context context) {
+		this.context = context;
+	}
 
-        @Override
-        protected String doInBackground(byte[]... photoData) {
-            try {
-                photoFile = CapturePictureHandler.this.createFile();
+	/**
+	 * 
+	 * (non-Javadoc).
+	 * 
+	 * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
+	 *      android.hardware.Camera)
+	 */
+	@Override
+	public void onPictureTaken(byte[] raw, Camera camera) {
+		Log.d(TAG, "onPictureTaken isSave the Picture");
 
-                Log.d(TAG, "Picturepath:" + photoFile.getPath());
+		final Camera.Parameters params = camera.getParameters();
 
-                FileOutputStream fos = new FileOutputStream(photoFile.getPath());
-                fos.write(photoData[0]);
-                fos.flush();
-                fos.close();
+		final double horizontalViewAngle = Math.toRadians(params
+				.getHorizontalViewAngle());
+		final double verticalViewAngle = Math.toRadians(params
+				.getVerticalViewAngle());
+		final Size pictureSize = params.getPictureSize();
+		final Location currentLocation = Optimizer.currentBestLoc();
+		transformBean = new TransformationParamBean(this.getDeviceHeight(),
+				horizontalViewAngle, verticalViewAngle, pictureSize.width,
+				pictureSize.height, currentLocation);
 
-            } catch (IOException ex) {
-                Log.e(TAG, "Fail to save picture", ex);
-            }
+		currentOrientation = Optimizer.currentDeviceOrientation();
 
-            return "successful";
-        }
+		// Start a thread to save the Raw Image in JPEG into SDCard
+		new SavePhotoTask(params).execute(raw);
+	}
 
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.equals("successful")) {
-                Log.d(TAG, "Picture successfully saved");
+	/**
+	 * Reads the height of the device in condition of the bodyheight from the
+	 * preferences.
+	 * 
+	 * If the preference is empty or not set the default value is stored.
+	 * 
+	 * @return The height of the device or {@code 0} if the preference is not
+	 *         set or empty
+	 */
+	private double getDeviceHeight() {
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		final Resources res = context.getResources();
+		final String key = res.getString(R.string.pref_bodyheight_key);
+		final String height = prefs.getString(key, null);
+		if (TextUtils.isEmpty(height)) {
+			final int defaultValue = res.getInteger(R.integer.pref_bodyheight_default);
+			// Save the default value
+			prefs.edit().putString(key, "" + defaultValue).commit();
+			return (defaultValue - 20) / 100.0;
+		} else {
+			final double bodyHeight = Integer.parseInt(height);
+			return (bodyHeight - 20) / 100.0;
+		}
+	}
 
-                Intent intent = new Intent();
-                intent.setClass(context, ShowPictureActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(FILEPATH, photoFile.getPath());
-                intent.putExtra(DEVICE_ORIENTATION, currentRingBufferBestPosition);
-                intent.putExtra(TRANSFORM_BEAN, transformBean);
-                intent.putExtra(SCREEN_ORIENTATION, getRotationToOrientation());
+	/**
+	 * @Description: An inner Class for saving a picture in storage in a thread.
+	 */
+	class SavePhotoTask extends AsyncTask<byte[], String, String> {
 
-                context.startActivity(intent);
+		private Camera.Parameters params;
 
-            } else {
-                Toast.makeText(context, "Failed on taking picture",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
+		/**
+		 * Default Constructor for saving photo task.
+		 * @param params camera params
+		 */
+		public SavePhotoTask(Camera.Parameters params) {
+			this.params = params;
+		}
 
-    }
+		@Override
+		protected String doInBackground(byte[]... photoData) {
+			try {
+				photoFile = CapturePictureHandler.this.createFile();
 
-    public int getRotationToOrientation() {
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(0, info);
-        
-        WindowManager winManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
+				Log.d(TAG, "Picturepath:" + photoFile.getPath());
 
-        int rotation = winManager.getDefaultDisplay().getRotation();
+				final FileOutputStream fos = new FileOutputStream(photoFile.getPath());
+				fos.write(photoData[0]);
+				fos.flush();
+				fos.close();
 
-        int requestedOrientation = 0 ;
+			} catch (IOException ex) {
+				Log.e(TAG, "Fail to save picture", ex);
+			}
 
-        switch (rotation) {
-        case Surface.ROTATION_0:
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-            break;
-        case Surface.ROTATION_90:
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-            break;
-        case Surface.ROTATION_180:
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-            break;
-        case Surface.ROTATION_270:
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-            break;
-        }
-        
-        return requestedOrientation;
-    }
+			return "successful";
+		}
 
+		@Override
+		protected void onPostExecute(String result) {
+			if (result.equals("successful")) {
+				Log.d(TAG, "Picture successfully saved");
 
-    private File createFile() {
+				final Intent intent = new Intent();
+				intent.setClass(context, ShowPictureActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.putExtra(FILEPATH, photoFile.getPath());
+				intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+				intent.putExtra(TRANSFORM_BEAN, transformBean);
+				intent.putExtra(SCREEN_ORIENTATION, getOrientationForRotation());
 
-        // Create a new folder on the internal storage named Data4all
-        final File folder = new File(Environment.getExternalStorageDirectory()
-                + DIRECTORY);
-        if (!folder.exists()) {
-           Log.i(TAG, "Folder was created");
-           folder.mkdir();
-           Log.i(TAG, "Folder was created");
-        }
+				context.startActivity(intent);
 
-        // Save the file to the folder in the internal storage
-        return new File(Environment.getExternalStorageDirectory() + DIRECTORY,
-                System.currentTimeMillis() + FILE_FORMAT);
-    }
+			} else {
+				Toast.makeText(context, "Failed on taking picture",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
+	}
+
+	public int getOrientationForRotation() {
+		final Camera.CameraInfo info = new Camera.CameraInfo();
+		Camera.getCameraInfo(0, info);
+
+		final WindowManager winManager = (WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE);
+
+		final int rotation = winManager.getDefaultDisplay().getRotation();
+
+		int requestedOrientation = 0;
+
+		switch (rotation) {
+		case Surface.ROTATION_0:
+			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+			break;
+		case Surface.ROTATION_90:
+			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+			break;
+		case Surface.ROTATION_180:
+			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+			break;
+		case Surface.ROTATION_270:
+			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+			break;
+		default:
+			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+			break;
+		}
+
+		return requestedOrientation;
+	}
+
+	private File createFile() {
+
+		// Create a new folder on the internal storage named Data4all
+		final File folder = new File(Environment.getExternalStorageDirectory()
+				+ DIRECTORY);
+		if (!folder.exists()) {
+			Log.i(TAG, "Folder was created");
+			folder.mkdir();
+			Log.i(TAG, "Folder was created");
+		}
+
+		// Save the file to the folder in the internal storage
+		return new File(Environment.getExternalStorageDirectory() + DIRECTORY,
+				System.currentTimeMillis() + FILE_FORMAT);
+	}
 }
