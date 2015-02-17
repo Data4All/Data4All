@@ -35,7 +35,7 @@ import android.view.MenuItem;
  * 
  */
 
-public abstract class BasicActivity extends Activity {
+public abstract class AbstractActivity extends Activity {
 
     /*
      * (non-Javadoc)
