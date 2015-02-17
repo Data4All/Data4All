@@ -32,7 +32,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -241,7 +240,7 @@ public class CameraActivity extends Activity {
 		} catch (RuntimeException ex) {
 			Log.e(TAG, "failed to get an instance of camera", ex);
 		}
-    }
+    
 
 		return camera;
 	}

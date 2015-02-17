@@ -21,12 +21,14 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.util.Optimizer;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.hardware.Camera;
@@ -35,6 +37,8 @@ import android.hardware.Camera.Size;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -119,7 +123,7 @@ public class CapturePictureHandler implements PictureCallback {
                         horizontalViewAngle, verticalViewAngle,
                         pictureSize.width, pictureSize.height, currentLocation);
        
-         currentOrientation = Optimizer.currentDeviceOrientation();
+         DeviceOrientation currentOrientation = Optimizer.currentDeviceOrientation();
 
 
         // Start a thread to save the Raw Image in JPEG into SDCard
