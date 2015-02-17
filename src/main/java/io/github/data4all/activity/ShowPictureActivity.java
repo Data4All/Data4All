@@ -124,8 +124,8 @@ public class ShowPictureActivity extends BasicActivity {
         }
         
         if (getIntent().hasExtra("file_path")) {
-            this.setBackground(Uri.fromFile((File) getIntent().getExtras().get(
-                    "file_path")));
+            this.setBackground((String) getIntent().getExtras().get(
+                    "file_path"));
 
         } else {
             Log.e(this.getClass().toString(), "ERROR, no file found in intent");
@@ -261,29 +261,38 @@ public class ShowPictureActivity extends BasicActivity {
      * 
      * @author vkochno
      */
-    private void setBackground(Uri selectedImage) {
+    private void setBackground(String selectedImage) {
         // try to convert a image to a bitmap
         try {
             bitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(), selectedImage);
+                    this.getContentResolver(), Uri.fromFile(new File(selectedImage)));
             final Display d = getWindowManager().getDefaultDisplay();
             
             Log.i(TAG, "geeeet "+SCREEN_ORIENTATION);
             
-            if (SCREEN_ORIENTATION == 1) {
+            if (SCREEN_ORIENTATION != 0) {
                 Log.i(TAG, "NIIIICE ONE "+SCREEN_ORIENTATION);
                 // get the display size
                 final Point size = new Point();
                 d.getSize(size);
-                final int width = size.x;
-                final int height = size.y;
-                // scaled bitmap
-                final Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
-                        height, width, true);
+                int width = 0;
+                int height = 0;
+               
                 // create a matrix object
                 final Matrix matrix = new Matrix();
                 // clockwise by 90 degrees
+                if (SCREEN_ORIENTATION == 1) {
                 matrix.postRotate(90);
+                width = size.x;
+                height = size.y;
+                } else{
+                	matrix.postRotate(180);
+                	width = size.y;
+                    height = size.x;
+                }
+                // scaled bitmap
+                final Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
+                        height, width, true);
                 // create a new bitmap from the original using the matrix to
                 // transform the result
                 bitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,

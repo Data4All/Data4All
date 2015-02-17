@@ -125,6 +125,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 			final int width = r - l;
 			final int height = b - t;
 
+			//TODO:@Andre brauchst du das noch? Da die nicht mehr verwendet werden
+			// Hab die Berechnung unten auskommentiert da diese dazu geführt hatte das man im
+			//landscape einen weißen Rand oben hattest
 			int previewWidth = width;
 			int previewHeight = height;
 
@@ -162,9 +165,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 				}
 			}
 
-			final int scaledChildHeight = previewHeight * width / previewWidth;
+			//final int scaledChildHeight = previewHeight * width / previewWidth;
 
-			child.layout(0, height - scaledChildHeight, width, height);
+			child.layout(0, 0, width, height); // second int edited to 0
 		}
 	}
 
@@ -211,7 +214,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 				// set the picture type for taking photo
 				params.setPictureFormat(ImageFormat.JPEG);
-				params.set("jpeg-quality", 90);
+				params.set("jpeg-quality", 5);
 
 				setFocusModes(params);
 
