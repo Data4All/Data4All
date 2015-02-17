@@ -67,5 +67,9 @@
     <string name="redo">Redo Function</string>
     
     <string name="undo">Undo Function</string>
+    
+    <string name="upload_caption">Upload to OpenStreetMap</string>
+    
+    <string name="upload_upload_text">"Objects to upload: "</string>
 
 </resources>
