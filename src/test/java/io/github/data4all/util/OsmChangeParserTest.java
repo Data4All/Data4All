@@ -68,7 +68,8 @@ public class OsmChangeParserTest {
                 Robolectric.buildActivity(MapViewActivity.class).get()
                         .getApplicationContext();
         Log.d("test", "start the Request");
-        new OscUploadHelper(act, elems, "upload test");
+        final OscUploadHelper oscUploadHelper = new OscUploadHelper(act, elems);
+        oscUploadHelper.uploadElements("upload test");
 
     }
 

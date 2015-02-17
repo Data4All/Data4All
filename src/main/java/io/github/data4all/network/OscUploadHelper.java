@@ -15,7 +15,9 @@
  */
 package io.github.data4all.network;
 
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.User;
 import io.github.data4all.task.RequestChangesetIDFromOsmTask;
 import io.github.data4all.task.UploadingOsmChangeFileToOpenStreetMapTask;
 import io.github.data4all.util.OsmChangeParser;
@@ -26,11 +28,10 @@ import java.util.List;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import android.content.Context;
-import android.preference.PreferenceManager;
 
 /**
  * the OsCUploadHelper handles the whole Uploading Process from requesting
- * changeSet, parsing into Osc and uploading to the OSM API
+ * changeSet, parsing into Osc and uploading to the OSM API.
  * 
  * @author Richard
  * 
@@ -48,23 +49,29 @@ public class OscUploadHelper {
      *            Context of the Application
      * @param elems
      *            List of Elements which should be uploaded
-     * @param comment
-     *            Comment of the Upload, should contain what was uploaded
      */
 
-    public OscUploadHelper(Context context, List<AbstractDataElement> elems,
-            String comment) {
-        OAuthParameters params = OAuthParameters.CURRENT;
+    public OscUploadHelper(Context context, List<AbstractDataElement> elems) {
+        final OAuthParameters params = OAuthParameters.CURRENT;
         consumer =
                 new CommonsHttpOAuthConsumer(params.getConsumerKey(),
                         params.getConsumerSecret());
         this.context = context;
         this.elems = elems;
-        consumer.setTokenWithSecret(
-                PreferenceManager.getDefaultSharedPreferences(context)
-                        .getString("oauth_token", null),
-                PreferenceManager.getDefaultSharedPreferences(context)
-                        .getString("oauth_token_secret", null));
+        final DataBaseHandler db = new DataBaseHandler(context);
+        final User user = db.getAllUser().get(0);
+        db.close();
+        consumer.setTokenWithSecret(user.getOAuthToken(),
+                user.getOauthTokenSecret());
+    }
+
+    /**
+     * Uploads the constructor given elements to OSM.
+     * 
+     * @param comment
+     *            Comment of the Upload, should contain what was uploaded
+     */
+    public void uploadElements(String comment) {
         new RequestChangesetIDFromOsmTask(context, consumer, comment, this)
                 .execute();
     }
