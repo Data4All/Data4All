@@ -241,6 +241,7 @@ public class CameraActivity extends Activity {
 		} catch (RuntimeException ex) {
 			Log.e(TAG, "failed to get an instance of camera", ex);
 		}
+    }
 
 		return camera;
 	}

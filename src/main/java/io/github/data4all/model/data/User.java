@@ -36,8 +36,8 @@ public class User implements Parcelable {
     /**
      * Default constructor.
      * 
-     * @param oauthToken
-     * @param oauthTokenSecret
+     * @param oauthToken The OAuth token
+     * @param oauthTokenSecret The OAuth secret token
      */
     public User(String oauthToken, String oauthTokenSecret) {
         this.oauthToken = oauthToken;
@@ -47,9 +47,9 @@ public class User implements Parcelable {
     /**
      * Default constructor.
      * 
-     * @param username
-     * @param oauthToken
-     * @param oauthTokenSecret
+     * @param username The name of the user
+     * @param oauthToken The OAuth token
+     * @param oauthTokenSecret The OAuth secret token
      */
     public User(String username, String oauthToken, String oauthTokenSecret) {
         this.username = username;
@@ -63,14 +63,6 @@ public class User implements Parcelable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getLoginToken() {
-        return oauthToken;
-    }
-
-    public void setLoginToken(String loginToken) {
-        this.oauthToken = loginToken;
     }
 
     public String getOAuthToken() {
@@ -92,7 +84,7 @@ public class User implements Parcelable {
     /**
      * Constructor to create a User from a parcel.
      * 
-     * @param in
+     * @param in The parcel to read from
      */
     private User(Parcel in) {
         this.username = in.readString();

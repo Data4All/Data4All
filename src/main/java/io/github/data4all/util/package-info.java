@@ -13,4 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * Provides common utility classes such as a RingBuffer, NetworkState, Optimizer
+ * and XML utilities.
+ */
 package io.github.data4all.util;
+

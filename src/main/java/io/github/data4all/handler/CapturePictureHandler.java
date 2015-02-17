@@ -15,6 +15,7 @@
  */
 package io.github.data4all.handler;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
@@ -83,6 +85,12 @@ public class CapturePictureHandler implements PictureCallback {
     
     private TransformationParamBean transformBean;
 
+    /**
+     * Default constructor.
+     * 
+     * @param context
+     *            The Application context
+     */
     public CapturePictureHandler(Context context) {
         this.context = context;
     }
@@ -106,18 +114,46 @@ public class CapturePictureHandler implements PictureCallback {
                 .getVerticalViewAngle());
         final Size pictureSize = params.getPictureSize();
         final Location currentLocation = Optimizer.currentBestLoc();
-        transformBean = new TransformationParamBean(1.7, horizontalViewAngle,
-                verticalViewAngle, pictureSize.width, pictureSize.height,
-                currentLocation);
-        
-        currentRingBufferBestPosition = Optimizer.currentBestPos();
+      transformBean =
+                new TransformationParamBean(this.getDeviceHeight(),
+                        horizontalViewAngle, verticalViewAngle,
+                        pictureSize.width, pictureSize.height, currentLocation);
+       
+         currentOrientation = Optimizer.currentDeviceOrientation();
+
 
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask(params).execute(raw);
     }
 
-    /*
-     * An inner Class for saving a picture in storage in a thread
+    /**
+     * Reads the height of the device in condition of the bodyheight from the
+     * preferences.
+     * 
+     * If the preference is empty or not set the default value is stored.
+     * 
+     * @return The height of the device or {@code 0} if the preference is not
+     *         set or empty
+     */
+    private double getDeviceHeight() {
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        final Resources res = context.getResources();
+        final String key = res.getString(R.string.pref_bodyheight_key);
+        final String height = prefs.getString(key, null);
+        if (TextUtils.isEmpty(height)) {
+            final int defaultValue = res.getInteger(0);
+            // Save the default value
+            prefs.edit().putString(key, "" + defaultValue).commit();
+            return (defaultValue - 20) / 100.0;
+        } else {
+            final double bodyHeight = Integer.parseInt(height);
+            return (bodyHeight - 20) / 100.0;
+        }
+    }
+
+    /**
+     * @Description: An inner Class for saving a picture in storage in a thread.
      */
     class SavePhotoTask extends AsyncTask<byte[], String, String> {
 
@@ -130,7 +166,7 @@ public class CapturePictureHandler implements PictureCallback {
         @Override
         protected String doInBackground(byte[]... photoData) {
             try {
-                photoFile = createFile();
+                photoFile = CapturePictureHandler.this.createFile();
 
                 Log.d(TAG, "Picturepath:" + photoFile.getPath());
 
@@ -141,7 +177,6 @@ public class CapturePictureHandler implements PictureCallback {
 
             } catch (IOException ex) {
                 Log.e(TAG, "Fail to save picture", ex);
-                return ex.getMessage();
             }
 
             return "successful";

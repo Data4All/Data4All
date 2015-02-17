@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:defaultValue="@integer/pref_bodyheight_default"
+        android:dialogTitle="@string/pref_bodyheight_dialog_title"
+        android:dialogMessage="@string/pref_bodyheight_dialog_message"
+        android:inputType="number"
+        android:key="@string/pref_bodyheight_key"
+        android:maxLength="3"
+        android:summary="@string/pref_bodyheight_summary"
+        android:title="@string/pref_bodyheight_title" />
+
+</PreferenceScreen>

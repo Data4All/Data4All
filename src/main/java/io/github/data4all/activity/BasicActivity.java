@@ -64,7 +64,7 @@ public abstract class BasicActivity extends Activity {
             status = true;
             break;
         case R.id.action_settings:
-            // TODO startActivity(new Intent(this, SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
             status = true;
             break;
         case R.id.action_camera:
