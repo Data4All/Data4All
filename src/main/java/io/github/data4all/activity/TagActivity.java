@@ -137,15 +137,6 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                     final ClassifiedTag classifiedTag) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                         TagActivity.this);
-
-                array =
-                        tagMap.get(key)
-                                .getClassifiedValues()
-                                .toArray(
-                                        new String[tagMap.get(key)
-                                                .getClassifiedValues().size()]);
-               
-
                 alertDialogBuilder.setTitle("Select Tag");
                 alertDialogBuilder.setItems(array,
                         new DialogInterface.OnClickListener() {
@@ -155,19 +146,6 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                     int which) {
 
                                 String value = (String) array[which];
-
-                                array = classifiedTag
-                                        .getAllClassifiedValues()
-                                        .toArray(
-                                                new String[classifiedTag
-                                                        .getAllClassifiedValues()
-                                                        .size()]);
-
-                                final AlertDialog.Builder alertDialogBuilder = createItemViewDialog(classifiedTag);
-
-                                alert1 = alertDialogBuilder.create();
-                                alert1.show();
-
                                 map = new LinkedHashMap<Tag, String>();
                                 map.put(tagMap.get(key), value);
 
