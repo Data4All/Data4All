@@ -22,6 +22,7 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
+import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
 
 import java.util.ArrayList;
@@ -31,14 +32,18 @@ import java.util.Map.Entry;
 
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import android.R.color;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +67,12 @@ public class ResultViewActivity extends BasicActivity implements
     private static final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
     private MapController mapController;
     private MyLocationNewOverlay myLocationOverlay;
+    
+    // Minimal Zoom Level
+    protected static final int MINIMAL_ZOOM_LEVEL = 10;
+
+    // Maximal Zoom Level
+    protected static final int MAXIMAL_ZOOM_LEVEL = 20;
 
     // Default Zoom Level
     private static final int DEFAULT_ZOOM_LEVEL = 18;
@@ -82,9 +93,10 @@ public class ResultViewActivity extends BasicActivity implements
 
     // The list of all Keys
     private List<String> keyList;
-    private CharSequence[] array;
     private AlertDialog alert;
     private Map<String, ClassifiedTag> tagMap;
+    private Resources res;
+    private Map<String,Tag> mapTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,34 +107,22 @@ public class ResultViewActivity extends BasicActivity implements
         mapView.setTileSource(OSM_TILESOURCE);
         mapView.setTileSource(DEFAULT_TILESOURCE);
         mapController = (MapController) this.mapView.getController();
-        mapController.setZoom(DEFAULT_ZOOM_LEVEL);
-        if (element instanceof Node) {
-            final Node node = (Node) element;
-            mapController.setCenter(node.toGeoPoint());
-            mapController.animateTo(node.toGeoPoint());
-        } else {
-            final PolyElement way = (PolyElement) element;
-            mapController.setCenter(way.getFirstNode().toGeoPoint());
-        }
+        mapController.setZoom(MINIMAL_ZOOM_LEVEL);
+        mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
         mapView.getOverlays().add(myLocationOverlay);
         listView = (ListView) this.findViewById(R.id.listViewResult);
         // The Sorted Keys of the ShowPictureActivity
-        array =
-                Tagging.getArrayKeys(getIntent().getExtras().getInt("TYPE_DEF"));
-        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"));
-        output();
+        res = getResources();
+        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"), res);
+        mapTag = Tagging.getUnclassifiedMapKeys(element.getTags(), res);
+        this.output();
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     final int position, long id) {
-                Log.i(TAG,
-                        Boolean.toString(Tagging.isClassifiedTag(
-                                keyList.get(position), array)));
-                Log.i(TAG, keyList.get(position));
-                Log.i(TAG, Integer.toString(endList.size()));
-                Log.i(TAG, Integer.toString(position));
+            	Log.i(TAG, "Tagkey" + keyList.get(position));
                 // Change Classified Tags
-                if (Tagging.isClassifiedTag(keyList.get(position), array)) {
+                if (Tagging.isClassifiedTag(keyList.get(position), res)) {
                     Log.i(TAG, "Classified Tag");
                     final AlertDialog.Builder alertDialog =
                             new AlertDialog.Builder(ResultViewActivity.this,
@@ -149,6 +149,7 @@ public class ResultViewActivity extends BasicActivity implements
                                 }
                             });
                     alert = alertDialog.create();
+                    alert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
                     alert.show();
                 }
                 // Change Unclasssified Tags
@@ -160,6 +161,7 @@ public class ResultViewActivity extends BasicActivity implements
                     dialog.setTitle(keyList.get(position));
                     final Button okay = new Button(ResultViewActivity.this);
                     final EditText text = new EditText(ResultViewActivity.this);
+                    text.setTextColor(-1);
                     final LinearLayout layout =
                             (LinearLayout) dialog
                                     .findViewById(R.id.dialogDynamic);
@@ -168,8 +170,7 @@ public class ResultViewActivity extends BasicActivity implements
                     okay.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View arg0) {
-                            element.addOrUpdateTag(tagMap.get(keyList
-                                    .get(position)), text.getText().toString());
+                            element.addOrUpdateTag(mapTag.get(keyList.get(position)), text.getText().toString());
                             output();
                             dialog.dismiss();
                         }
@@ -204,14 +205,17 @@ public class ResultViewActivity extends BasicActivity implements
         }
         return super.onOptionsItemSelected(item);
     }
-
+    /**
+     * Shows the Tags in a List 
+     */
     private void output() {
         endList = new ArrayList<String>();
         keyList = new ArrayList<String>();
         for (Entry entry : element.getTags().entrySet()) {
             final Tag tagKey =  (Tag) entry.getKey();
-            keyList.add(tagKey.getKey());
-            endList.add(tagKey.getKey() + "=" + element.getTags().get(tagKey.getKey()));
+            Log.i(TAG, tagKey.getKey());
+            keyList.add(res.getString(tagKey.getNameRessource()));
+            endList.add(res.getString(tagKey.getNameRessource()) + "=" + element.getTags().get(tagKey));
         }
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(this,
@@ -219,6 +223,17 @@ public class ResultViewActivity extends BasicActivity implements
         listView.setAdapter(adapter);
     }
 
+    public void onResume(){
+    	super.onResume();
+    	BoundingBoxE6 boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+    	Log.i(TAG, boundingBox.toString());
+    	
+    	mapView.zoomToBoundingBox(boundingBox);
+    	mapView.postInvalidate();
+    	//mapView.setScrollableAreaLimit(boundingBox);
+    	
+    }
+   
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.buttonResult) {
@@ -243,7 +258,9 @@ public class ResultViewActivity extends BasicActivity implements
             alert = builder.create();
             alert.show();
         } else if (v.getId() == R.id.buttonResultToCamera) {
-            startActivity(new Intent(this, CameraActivity.class));
+        	Log.i(TAG, MapUtil.getBoundingBoxForOsmElement(element).toString());
+        	mapView.zoomToBoundingBox(MapUtil.getBoundingBoxForOsmElement(element));
+           // startActivity(new Intent(this, CameraActivity.class));
         }
     }
 }

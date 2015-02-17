@@ -33,16 +33,22 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -74,7 +80,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     private Map<String, ClassifiedTag> tagMap;
     private static final String TAG = "TagActivity";
     private AbstractDataElement element; 
-
+    private Resources res;
     /**
      * Called when the activity is first created.
      * 
@@ -90,9 +96,22 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         setContentView(R.layout.activity_tag);
         element = getIntent().getParcelableExtra(OSM);
-        final AlertDialog.Builder alertDialog =
+        res = getResources();
+        createAlertDialogKey();
+        
+    }
+    
+    
+    /**
+     * Creates the Dialog to choose the Key from the classified Tags 
+     * 
+     */
+    
+    private void createAlertDialogKey(){
+    	final AlertDialog.Builder alertDialog =
                 new AlertDialog.Builder(TagActivity.this,
                         android.R.style.Theme_Holo_Dialog_MinWidth);
         final LayoutInflater inflater = getLayoutInflater();
@@ -103,60 +122,89 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         final ImageButton speechStart =
                 (ImageButton) view.findViewById(R.id.speech);
         speechStart.setOnClickListener(this);
-
-        if (getIntent().hasExtra("TYPE_DEF")) {
             array =
                     Tagging.getArrayKeys(getIntent().getExtras().getInt(
-                            "TYPE_DEF"));
+                            "TYPE_DEF"), res);
             tagMap =
                     Tagging.getMapKeys(getIntent().getExtras().getInt(
-                            "TYPE_DEF"));
-        }
-
-        alertDialog.setItems(array, new DialogInterface.OnClickListener() {
+                            "TYPE_DEF"), res);       
+            alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 key = (String) array[which];
-                array =
-                        tagMap.get(key)
-                                .getClassifiedValues()
-                                .toArray(
-                                        new String[tagMap.get(key)
-                                                .getClassifiedValues().size()]);
-                final AlertDialog.Builder alertDialogBuilder =
-                        new AlertDialog.Builder(TagActivity.this);
-                alertDialogBuilder.setTitle("Select Tag");
-                alertDialogBuilder.setItems(array,
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                final String value = (String) array[which];
-                                Log.i(TAG, value);
-                                map = new LinkedHashMap<Tag, String>();
-                                element.addOrUpdateTag(tagMap.get(key), value);
-                                Log.i(TAG, tagMap.get(key) + value);
-                                if (key.equals("building")
-                                        || key.equals("amenity")) {
-                                    createDialog(Tags.getAllAddressTags(),
-                                            "Add Address",
-                                            key.equals("building"), true);
-                                } else {
-                                    finish();
-                                }
-                            }
-                        });
-
-                alert1 = alertDialogBuilder.create();
-                alert1.show();
+                createAlertDialogValue();
             }
 
         });
         alert = alertDialog.create();
-
+        //fixes the Back Button
+        alert.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+					KeyEvent event) {
+				if(keyCode == KeyEvent.KEYCODE_BACK){
+					return true;
+				}
+				return true;
+			}
+		});
+        
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         alert.show();
 
     }
+    
+    /**
+     * Creates the Dialog to choose the Value of the ClassifiedTag 
+     *  
+     */
+    
+    private void createAlertDialogValue(){
+        array =
+                tagMap.get(key)
+                        .getClassifiedValues()
+                        .toArray(
+                                new String[tagMap.get(key)
+                                        .getClassifiedValues().size()]);
+        final AlertDialog.Builder alertDialogBuilder =
+                new AlertDialog.Builder(TagActivity.this);
+        alertDialogBuilder.setTitle("Select Tag");
+        alertDialogBuilder.setItems(array,
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                            int which) {
+                        final String value = (String) array[which];
+                        
+                        map = new LinkedHashMap<Tag, String>();
+                        map.put(tagMap.get(key), value);
+                        Log.i(TAG, tagMap.get(key) + value);
+             
+                            createDialog(Tags.getAllAddressTags(),
+                                    "Add Address",
+                                     true);
+                     
+                    }
+                });
+
+        alert1 = alertDialogBuilder.create();
+        alert1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alert1.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+					KeyEvent event) {
+				if(keyCode == KeyEvent.KEYCODE_BACK){
+					alert1.dismiss();
+					createAlertDialogKey();
+					return true;
+				}
+				return true;
+			}
+		});
+        alert1.show();
+    }
+    
+    
 
     @Override
     public void onClick(View v) {
@@ -177,7 +225,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             }
             map = Tagging.addressToTag(tags, map);
             dialog1.dismiss();
-            createDialog(Tags.getAllContactTags(), "Add Contacts", true, false);
+            createDialog(Tags.getAllContactTags(), "Add Contacts", false);
 
             break;
         case R.id.buttonFinish:
@@ -220,49 +268,20 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void createDialog(ArrayList<Tag> arrayList, String title,
-            final Boolean but, final Boolean first1) {
-        dialog1 = new Dialog(this);
-        dialog1.setContentView(R.layout.dialog_dynamic);
-        dialog1.setTitle(title);
-        // dialog1.getWindow().setBackgroundDrawable(new
-        // ColorDrawable(Color.parseColor("#E6808080")));
-        final LinearLayout layout =
-                (LinearLayout) dialog1.findViewById(R.id.dialogDynamic);
-        final Button next = new Button(this);
-        final Button finish = new Button(this);
-        next.setText(R.string.next);
-        finish.setText(R.string.finish);
-        next.setId(R.id.buttonNext);
-        finish.setId(R.id.buttonFinish);
-        first = first1;
-        edit = new ArrayList<EditText>();
-        for (int i = 0; i < arrayList.size(); i++) {
-            final EditText text = new EditText(this);
-            text.setHint(arrayList.get(i).getHintRessource());
-            text.setHintTextColor(Color.DKGRAY);
-            text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                    LayoutParams.WRAP_CONTENT));
-            // text.setInputType(arrayList.get(i).getType());
-            edit.add(text);
-            layout.addView(text);
-        }
-        finish.setOnClickListener(this);
-        next.setOnClickListener(this);
-        if (!but) {
-            layout.addView(next);
-        }
-        layout.addView(finish);
-        dialog1.show();
-    }
+    /**
+     * Creates the Dialog for the unclassified Tags
+     * 
+     * @param arrayList List of Unclassified Tags
+     * @param title The String which is the Title of the Dialog
+     * @param first1 Is a Boolean to check if its the first time call of the Method
+     */
 
     public void createDialog(List<Tag> arrayList, String title,
-            final Boolean but, final Boolean first1) {
+            final Boolean first1) {
+    	
         dialog1 = new Dialog(this);
         dialog1.setContentView(R.layout.dialog_dynamic);
         dialog1.setTitle(title);
-        // dialog1.getWindow().setBackgroundDrawable(new
-        // ColorDrawable(Color.parseColor("#E6808080")));
         final LinearLayout layout =
                 (LinearLayout) dialog1.findViewById(R.id.dialogDynamic);
         final Button next = new Button(this);
@@ -275,27 +294,56 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         edit = new ArrayList<EditText>();
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
+            
             text.setHint(arrayList.get(i).getHintRessource());
             text.setHintTextColor(Color.DKGRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
-            // text.setInputType(arrayList.get(i).getType());
+            text.setInputType(InputType.TYPE_CLASS_TEXT);
             edit.add(text);
             layout.addView(text);
         }
         finish.setOnClickListener(this);
         next.setOnClickListener(this);
-        if (!but) {
+
+     
+        if (Tagging.isContactTags(Tags.getAllContactTags().get(0).getOsmObjects(), getIntent().getExtras().getInt(
+                "TYPE_DEF" )) && first) {
             layout.addView(next);
         }
         layout.addView(finish);
+    
+        final InputMethodManager imm = (InputMethodManager) this
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        
+        dialog1.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+					KeyEvent event) {
+				if(imm.isAcceptingText()){
+				if(keyCode == KeyEvent.KEYCODE_BACK){				   
+					Log.i(TAG, "first " + first);
+					if (first) {
+						dialog1.dismiss();
+						createAlertDialogValue();
+						return true;
+					}
+					else {
+						dialog1.dismiss();
+						createDialog(Tags.getAllAddressTags(), "Add Address", true);
+						return true;
+					}
+				}}
+				return false;
+			}
+		});
+    
         dialog1.show();
     }
 
     @Override
     public void finish() {
         element.setTags(map);
-        Log.i(TAG, "map " + element.getTags().get(map.get(tagMap.get(key))));
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));

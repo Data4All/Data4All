@@ -15,6 +15,7 @@
  */
 package io.github.data4all.util;
 
+import io.github.data4all.R;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
@@ -23,6 +24,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import android.content.res.Resources;
+import android.util.Log;
 
 /**
  * 
@@ -33,12 +38,12 @@ import java.util.Map;
  *
  */
 public class Tagging {
-
+	private static final String TAG = "Tagging";
     /**
      * Private Constructor, prevents instantiation.
      */
     private Tagging() {
-
+    	
     }
 
     /**
@@ -61,39 +66,38 @@ public class Tagging {
         return null;
     }
 
-    public static String[] getArrayKeys(int type) {
-        final String[] array = new String[getKeys(type).size()];
-        for (int i = 0; i < getKeys(type).size(); i++) {
-            array[i] = getKeys(type).get(i).getKey();
+    public static String[] getArrayKeys(int type, Resources res) {
+    	List<Tag> tags = getKeys(type);
+    	
+        final String[] array = new String[tags.size()];
+        for (int i = 0; i < tags.size(); i++) {
+            array[i] = res.getString(tags.get(i).getNameRessource());
         }
         return array;
     }
 
-    public static Map<String, ClassifiedTag> getMapKeys(int type) {
+    public static Map<String, ClassifiedTag> getMapKeys(int type, Resources res) {
         final Map<String, ClassifiedTag> map =
                 new HashMap<String, ClassifiedTag>();
         for (int i = 0; i < getKeys(type).size(); i++) {
-            map.put(getKeys(type).get(i).getKey(),
+            map.put(res.getString(getKeys(type).get(i).getNameRessource()),
                     (ClassifiedTag) getKeys(type).get(i));
         }
         return map;
     }
-
-    /**
-     * 
-     * 
-     * 
-     * @param key
-     * 
-     * @param value
-     * 
-     * @return a HashMap with the Keys and Values
-     */
-    public static Map<String, String> hashMapTag(String key, String value) {
-        final Map<String, String> map = new HashMap<String, String>();
-        map.put(key, value);
+    
+    public static Map<String, Tag> getUnclassifiedMapKeys(Map <Tag, String> tagMap, Resources res) {
+        final Map<String, Tag> map =
+                new HashMap<String, Tag>();
+        for (Entry entry : tagMap.entrySet()) {
+        	
+        	  final Tag tagKey =   (Tag) entry.getKey();
+        	  Log.i(TAG,"bla" + tagKey.getKey());
+        	  map.put(res.getString(tagKey.getNameRessource()), tagKey);
+        }
         return map;
     }
+
 
     public static Map<Tag, String> addressToTag(List<String> addressTags,
             Map<Tag, String> map) {
@@ -119,12 +123,24 @@ public class Tagging {
         return map;
     }
 
-    public static Boolean isClassifiedTag(String key, CharSequence[] array) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(key)) {
+    public static Boolean isClassifiedTag(String key, Resources res) {
+    	List<ClassifiedTag> classifiedTags =  Tags.getAllClassifiedTags();
+        for (int i = 0; i < classifiedTags.size(); i++) {
+            if (res.getString(classifiedTags.get(i).getNameRessource()).equals(key)) {
                 return true;
             }
         }
         return false;
+    }
+    
+    public static Boolean isContactTags(int [] types, int type){
+    	for (int i = 0; i < types.length; i++) {
+    		Log.i(TAG, String.valueOf(types [i]));
+    		Log.i(TAG, String.valueOf(type));
+			if(types [i] == type){
+				return true;
+			}
+		}
+		return false;
     }
 }
