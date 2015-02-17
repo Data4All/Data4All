@@ -99,7 +99,7 @@ public class CapturePictureHandler implements PictureCallback {
 
         final Camera.Parameters params = camera.getParameters();
         
-        // WTF
+        
         final double horizontalViewAngle = Math.toRadians(params
                 .getHorizontalViewAngle());
         final double verticalViewAngle = Math.toRadians(params
