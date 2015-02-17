@@ -16,7 +16,8 @@
 package io.github.data4all.model.map;
 
 import io.github.data4all.R;
-import io.github.data4all.activity.MapActivity;
+import io.github.data4all.activity.BasicActivity;
+import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -35,27 +36,29 @@ import android.view.MotionEvent;
 public class MapMarker extends Marker implements
         DialogInterface.OnClickListener {
 
-    private MapActivity mapActivity;
-
+    private BasicActivity activity;
+    private D4AMapView mapView;
+    
     /**
      * Default constructor.
      * 
      * @param ctx
      *            the Context for the Overlay
      */
-    public MapMarker(MapActivity ctx, MapView mv) {
+    public MapMarker(BasicActivity ctx, D4AMapView mv) {
         super(mv, new DefaultResourceProxyImpl(mv.getContext()));
-        mapActivity = ctx;
+        this.activity = ctx;
+        this.mapView = mv;
 
     }
-
+    
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
         final AlertDialog.Builder builder =
                 new AlertDialog.Builder(mapView.getContext());
-        builder.setMessage(mapActivity.getString(R.string.deleteDialog))
-                .setPositiveButton(mapActivity.getString(R.string.yes), this)
-                .setNegativeButton(mapActivity.getString(R.string.no), this)
+        builder.setMessage(activity.getString(R.string.deleteDialog))
+                .setPositiveButton(activity.getString(R.string.yes), this)
+                .setNegativeButton(activity.getString(R.string.no), this)
                 .show();
 
         return true;
@@ -67,7 +70,7 @@ public class MapMarker extends Marker implements
         switch (which) {
         case DialogInterface.BUTTON_POSITIVE:
             // Yes button clicked
-            mapActivity.removeOverlayFromMap(this);
+            mapView.removeOverlayFromMap(this);
             break;
         case DialogInterface.BUTTON_NEGATIVE:
             // No button clicked

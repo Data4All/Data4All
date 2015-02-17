@@ -17,27 +17,16 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.PolyElement.PolyElementType;
-import io.github.data4all.model.map.MapLine;
-import io.github.data4all.model.map.MapMarker;
-import io.github.data4all.model.map.MapPolygon;
+import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.bonuspack.overlays.Polygon;
-import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
@@ -70,7 +59,7 @@ public class MapActivity extends BasicActivity {
     private static final String TAG = "MapActivity";
 
     // OsmDroid Mapview
-    protected MapView mapView;
+    protected D4AMapView mapView;
 
     // ImageView
     protected ImageView view;
@@ -135,7 +124,7 @@ public class MapActivity extends BasicActivity {
     }
 
     protected void setUpMapView() {
-        mapView = (MapView) this.findViewById(R.id.mapview);
+        mapView = (D4AMapView) this.findViewById(R.id.mapview);
 
         // Add Satellite Map TileSource
         MapBoxTileSource.retrieveMapBoxMapId(this);
@@ -170,116 +159,102 @@ public class MapActivity extends BasicActivity {
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
 
-    /**
-     * Removes an Overlay from the Map.
-     *
-     * @param overlay
-     *            the Overlay which should be removed from the map
-     **/
-    public void removeOverlayFromMap(Overlay overlay) {
-        if (mapView.getOverlays().contains(overlay)) {
-            mapView.getOverlays().remove(overlay);
-            mapView.postInvalidate();
-        }
-
-    }
-
-    /**
-     * Adds an OsmElement as an Overlay to the Map.
-     *
-     * @param element
-     *            the OsmElement which should be added to the map
-     **/
-    protected void addOsmElementToMap(AbstractDataElement element) {
-        if (element != null) {
-            // if the Element is a Node
-            if (element instanceof Node) {
-                final Node node = (Node) element;
-                Log.i(TAG, "Add Node with Coordinates "
-                        + node.toGeoPoint().toString());
-                this.addNodeToMap(node);
-                // if the Element is Way
-            } else if (element instanceof PolyElement) {
-                final PolyElement polyElement = (PolyElement) element;
-
-                // if the Element is an Path
-                if (polyElement.getType() == PolyElementType.WAY) {
-                    Log.i(TAG,
-                            "Add Path with Coordinates "
-                                    + polyElement.toString());
-                    this.addPathToMap(polyElement);
-                    // if the Element is an Area
-                } else {
-                    Log.i(TAG,
-                            "Add Area with Coordinates "
-                                    + polyElement.toString());
-                    this.addAreaToMap(polyElement);
-                }
-            }
-        }
-    }
-
-    /**
-     * Adds an Node as an Overlay to the Map.
-     *
-     * @param node
-     *            the node which should be added to the map
-     **/
-    protected void addNodeToMap(Node node) {
-        final Marker poi = new MapMarker(this, mapView);
-        Log.i(TAG, "Set Node Points to " + node.toString());
-        // disable InfoWindow
-        poi.setInfoWindow(null);
-        poi.setPosition(node.toGeoPoint());
-        mapView.getOverlays().add(poi);
-        mapView.postInvalidate();
-    }
-
-    /**
-     * Adds an area as an Overlay to the Map.
-     *
-     * @param polyElement
-     *            the area which should be added to the map
-     **/
-    protected void addAreaToMap(PolyElement polyElement) {
-        final Polygon area = new MapPolygon(this);
-
-        Log.i(TAG, "Set Area Points to " + polyElement.toString());
-        area.setPoints(polyElement.getGeoPoints());
-
-        Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
-        area.setFillColor(DEFAULT_FILL_COLOR);
-
-        Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
-        area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-
-        Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
-        area.setStrokeColor(DEFAULT_STROKE_COLOR);
-
-        mapView.getOverlays().add(area);
-        mapView.postInvalidate();
-    }
-
-    /**
-     * Adds an Path as an Overlay to the Map.
-     *
-     * @param polyElement
-     *            the path which should be added to the map
-     **/
-    protected void addPathToMap(PolyElement polyElement) {
-        final Polyline path = new MapLine(this);
-
-        Log.i(TAG, "Set Path Points to " + polyElement.toString());
-        path.setPoints(polyElement.getGeoPoints());
-
-        Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
-        path.setColor(DEFAULT_STROKE_COLOR);
-
-        Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
-        path.setWidth(DEFAULT_STROKE_WIDTH);
-        mapView.getOverlays().add(path);
-        mapView.postInvalidate();
-    }
+//    /**
+//     * Adds an OsmElement as an Overlay to the Map.
+//     *
+//     * @param element
+//     *            the OsmElement which should be added to the map
+//     **/
+//    protected void addOsmElementToMap(AbstractDataElement element) {
+//        if (element != null) {
+//            // if the Element is a Node
+//            if (element instanceof Node) {
+//                final Node node = (Node) element;
+//                Log.i(TAG, "Add Node with Coordinates "
+//                        + node.toGeoPoint().toString());
+//                this.addNodeToMap(node);
+//                // if the Element is Way
+//            } else if (element instanceof PolyElement) {
+//                final PolyElement polyElement = (PolyElement) element;
+//
+//                // if the Element is an Path
+//                if (polyElement.getType() == PolyElementType.WAY) {
+//                    Log.i(TAG,
+//                            "Add Path with Coordinates "
+//                                    + polyElement.toString());
+//                    this.addPathToMap(polyElement);
+//                    // if the Element is an Area
+//                } else {
+//                    Log.i(TAG,
+//                            "Add Area with Coordinates "
+//                                    + polyElement.toString());
+//                    this.addAreaToMap(polyElement);
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Adds an Node as an Overlay to the Map.
+//     *
+//     * @param node
+//     *            the node which should be added to the map
+//     **/
+//    protected void addNodeToMap(Node node) {
+//        final Marker poi = new MapMarker(this, mapView);
+//        Log.i(TAG, "Set Node Points to " + node.toString());
+//        // disable InfoWindow
+//        poi.setInfoWindow(null);
+//        poi.setPosition(node.toGeoPoint());
+//        mapView.getOverlays().add(poi);
+//        mapView.postInvalidate();
+//    }
+//
+//    /**
+//     * Adds an area as an Overlay to the Map.
+//     *
+//     * @param polyElement
+//     *            the area which should be added to the map
+//     **/
+//    protected void addAreaToMap(PolyElement polyElement) {
+//        final Polygon area = new MapPolygon(this);
+//
+//        Log.i(TAG, "Set Area Points to " + polyElement.toString());
+//        area.setPoints(polyElement.getGeoPoints());
+//
+//        Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
+//        area.setFillColor(DEFAULT_FILL_COLOR);
+//
+//        Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
+//        area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+//
+//        Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
+//        area.setStrokeColor(DEFAULT_STROKE_COLOR);
+//
+//        mapView.getOverlays().add(area);
+//        mapView.postInvalidate();
+//    }
+//
+//    /**
+//     * Adds an Path as an Overlay to the Map.
+//     *
+//     * @param polyElement
+//     *            the path which should be added to the map
+//     **/
+//    protected void addPathToMap(PolyElement polyElement) {
+//        final Polyline path = new MapLine(this);
+//
+//        Log.i(TAG, "Set Path Points to " + polyElement.toString());
+//        path.setPoints(polyElement.getGeoPoints());
+//
+//        Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
+//        path.setColor(DEFAULT_STROKE_COLOR);
+//
+//        Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
+//        path.setWidth(DEFAULT_STROKE_WIDTH);
+//        mapView.getOverlays().add(path);
+//        mapView.postInvalidate();
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle state) {

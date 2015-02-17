@@ -4,15 +4,14 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <org.osmdroid.views.MapView
+    <io.github.data4all.view.D4AMapView
         android:id="@+id/mapviewResult"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" >
-    </org.osmdroid.views.MapView>
-
+        android:layout_marginTop="10dp" />
+    
     <ImageButton
         android:id="@+id/buttonResult"
         style="@style/imageButtonOkay"

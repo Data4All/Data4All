@@ -52,7 +52,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         setContentView(R.layout.activity_map_preview);
         setUpMapView();
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        addOsmElementToMap(element);
+        mapView.addOsmElementToMap(this, element);
         view = (ImageView) findViewById(R.id.imageView1);
         if (savedInstanceState != null) {
             loadState(savedInstanceState);

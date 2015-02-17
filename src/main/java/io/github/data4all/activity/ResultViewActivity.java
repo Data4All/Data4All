@@ -19,11 +19,10 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
+import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +33,7 @@ import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import android.R.color;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -61,21 +57,12 @@ import android.widget.ListView;
 public class ResultViewActivity extends BasicActivity implements
         OnClickListener {
     private static final String TAG = "ResultViewActivity";
-    private MapView mapView;
+    private D4AMapView mapView;
 
     // Default OpenStreetMap TileSource
     private static final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
     private MapController mapController;
-    private MyLocationNewOverlay myLocationOverlay;
-    
-    // Minimal Zoom Level
-    protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
-    // Maximal Zoom Level
-    protected static final int MAXIMAL_ZOOM_LEVEL = 20;
-
-    // Default Zoom Level
-    private static final int DEFAULT_ZOOM_LEVEL = 18;
     private static final ITileSource DEFAULT_TILESOURCE =
             TileSourceFactory.MAPNIK;
 
@@ -102,15 +89,16 @@ public class ResultViewActivity extends BasicActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_view);
-        mapView = (MapView) this.findViewById(R.id.mapviewResult);
+        mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
         mapView.setTileSource(OSM_TILESOURCE);
         mapView.setTileSource(DEFAULT_TILESOURCE);
         mapController = (MapController) this.mapView.getController();
-        mapController.setZoom(MINIMAL_ZOOM_LEVEL);
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-        myLocationOverlay = new MyLocationNewOverlay(this, mapView);
-        mapView.getOverlays().add(myLocationOverlay);
+        BoundingBoxE6 boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+        mapView.setBoundingBox(boundingBox);
+        mapView.setScrollable(false);
+        mapView.addOsmElementToMap(this, element);
         listView = (ListView) this.findViewById(R.id.listViewResult);
         // The Sorted Keys of the ShowPictureActivity
         res = getResources();
@@ -221,17 +209,6 @@ public class ResultViewActivity extends BasicActivity implements
                 new ArrayAdapter<String>(this,
                         android.R.layout.simple_list_item_1, endList);
         listView.setAdapter(adapter);
-    }
-
-    public void onResume(){
-    	super.onResume();
-    	BoundingBoxE6 boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
-    	Log.i(TAG, boundingBox.toString());
-    	
-    	mapView.zoomToBoundingBox(boundingBox);
-    	mapView.postInvalidate();
-    	//mapView.setScrollableAreaLimit(boundingBox);
-    	
     }
    
     @Override
