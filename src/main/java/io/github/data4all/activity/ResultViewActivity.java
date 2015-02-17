@@ -21,6 +21,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.Tagging;
 
 import java.util.ArrayList;
@@ -254,10 +255,16 @@ public class ResultViewActivity extends BasicActivity implements
     private void output() {
         endList = new ArrayList<String>();
         keyList = new ArrayList<String>();
-        for (Entry entry : element.getTags().entrySet()) {
-            final String key = (String) entry.getKey();
+//        DataBaseHandler db = new DataBaseHandler(this);
+        for (Entry<Tag, String> entry : element.getTags().entrySet()) {
+             String key =  entry.getKey().getKey();
+            //get the origin key from last Choice
+            if(key.equalsIgnoreCase("Last Choice")){
+              key = entry.getKey().getOriginKey();   
+            }
             keyList.add(key);
-            endList.add(key + "=" + element.getTags().get(key));
+            endList.add(key + "=" + element.getTags().get(entry.getKey()));
+//            db.updateTagMap(element.getTags());
         }
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(this,
