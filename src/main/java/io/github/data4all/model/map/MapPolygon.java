@@ -52,7 +52,11 @@ public class MapPolygon extends Polygon implements
         this.mapView = mv;
 
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see org.osmdroid.views.overlay.Overlay#onLongPress(android.view.MotionEvent, org.osmdroid.views.MapView)
+     */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
         final AlertDialog.Builder builder =
@@ -66,6 +70,10 @@ public class MapPolygon extends Polygon implements
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
+     */
     @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {

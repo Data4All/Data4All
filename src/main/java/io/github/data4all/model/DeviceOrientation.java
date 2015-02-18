@@ -75,7 +75,7 @@ public class DeviceOrientation implements Parcelable {
     /**
      * Constructor to create a node from a parcel.
      * 
-     * @param in
+     * @param in The Parcel to read from
      */
     private DeviceOrientation(Parcel in) {
         azimuth = in.readFloat();

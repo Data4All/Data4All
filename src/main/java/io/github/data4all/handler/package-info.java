@@ -13,4 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * This package contain classes which offer Subroutines to handle Events.
+ */
 package io.github.data4all.handler;
+

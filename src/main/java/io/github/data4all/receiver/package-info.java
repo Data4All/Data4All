@@ -13,4 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * A Receiver receives Intents and typically does something useful in response,
+ * such as interpreting them to generate output.
+ */
 package io.github.data4all.receiver;
+

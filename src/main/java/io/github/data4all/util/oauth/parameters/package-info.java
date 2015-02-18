@@ -13,19 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.data4all.exceptions;
+/**
+ * This package provides parameters for various endpoints of the OSM-API.
+ */
+package io.github.data4all.util.oauth.parameters;
 
-public class OsmException extends Exception {
-
-    private static final long serialVersionUID = 2900660063579152782L;
-
-    public OsmException(final String string) {
-        super(string);
-    }
-
-    public OsmException(final String string, final Throwable e) {
-        super(string);
-        initCause(e);
-    }
-
-}

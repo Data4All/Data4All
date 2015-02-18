@@ -13,4 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * A Fragment is a piece of an application's user interface or behavior that can
+ * be placed in an Activity. Interaction with fragments is done through
+ * FragmentManager,
+ */
 package io.github.data4all.fragment;
+

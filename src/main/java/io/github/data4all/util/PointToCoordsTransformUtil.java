@@ -38,7 +38,7 @@ import android.location.Location;
  */
 public class PointToCoordsTransformUtil {
     /** Logger tag for this class. */
-    final static String TAG = "PointToWorldCoords";
+    private final static String TAG = "PointToWorldCoords";
     /** osmID for the node. */
     private int osmID = -1;
     /** height of the device from the ground. */
@@ -74,6 +74,8 @@ public class PointToCoordsTransformUtil {
      * 
      * @param points
      *            List of Point
+     * @param rotation
+     *            rotation of the device
      * @return rotation List of Node
      */
     public List<Node> transform(List<Point> points, int rotation) {
@@ -98,6 +100,10 @@ public class PointToCoordsTransformUtil {
             int rotation) {
         this.tps = tps;
         final List<Node> nodes = new ArrayList<Node>();
+        Log.d(TAG, "Orientation: " + Math.toDegrees(deviceOrientation.getAzimuth())
+                + " ; " + Math.toDegrees(deviceOrientation.getPitch())
+                + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
+        
         // get the set height
         this.height = tps.getHeight();
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
@@ -113,7 +119,7 @@ public class PointToCoordsTransformUtil {
             // transforms local coordinates in global GPS-coordinates set to.
             // Node.
             if (coord != null) {
-                final Node node = calculateGPSPoint(tps.getLocation(), coord);
+                final Node node = this.calculateGPSPoint(tps.getLocation(), coord);
                 Log.d(TAG,
                         "Calculated Lat: " + node.getLat() + " Lon: "
                                 + node.getLon());
@@ -137,6 +143,7 @@ public class PointToCoordsTransformUtil {
      */
     public double[] calculateCoordFromPoint(TransformationParamBean tps,
             DeviceOrientation deviceOrientation, Point point) {
+        
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
@@ -145,10 +152,14 @@ public class PointToCoordsTransformUtil {
                         tps.getCameraMaxPitchAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll =
-                -calculateAngleFromPixel(point.getY(), yAxis,
+                -this.calculateAngleFromPixel(point.getY(), yAxis,
                         tps.getCameraMaxRotationAngle());
         final double pitch = -deviceOrientation.getPitch();
-        final double roll = -deviceOrientation.getRoll();
+        final double roll = deviceOrientation.getRoll();
+        
+
+        Log.i(TAG, "Punkt: " + point.getX() + " , " + point.getY());
+        
         final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
         vector[2] = -1;
@@ -189,13 +200,14 @@ public class PointToCoordsTransformUtil {
         if (finalVector[2] >= 0) {
             Log.wtf(TAG,
                     "Vector is directed to the sky, cannot calculate coords",
-                    null);
-            return null;
+                    null);       
+            return new double[3];
         }
         // collides vector with the xy-plane
         final double tempXX = finalVector[0] * (height / -finalVector[2]);
         final double tempYY = finalVector[1] * (height / -finalVector[2]);
         final double[] coord = new double[3];
+        Log.i(TAG, "Coord: " + tempXX + " , " + tempYY);
         // Rotate Vector with azimuth (z is fix))
         Log.d(TAG, "AZIMUTH: " + azimuth);
         coord[0] =
@@ -224,8 +236,7 @@ public class PointToCoordsTransformUtil {
         }
         final double percent = (2 * pixel - axis) / axis;
         final double z = Math.sin(maxAngle / 2);
-        final double angle = Math.asin(z * percent);
-        return angle;
+        return Math.asin(z * percent);
     }
 
     /**
@@ -279,32 +290,34 @@ public class PointToCoordsTransformUtil {
      * @return the new calculated point
      */
     public Point changePixelCoordSystem(Point point, int rotation) {
+        Point returnpoint;
         if (point != null) {
             if (rotation == 0) {
                 Log.d(TAG, "Device orientation was portrait");
                 // device was in portrait mode
                 xAxis = tps.getPhotoHeight();
                 yAxis = tps.getPhotoWidth();
-                return new Point(xAxis - point.getY() + 1, yAxis - point.getX()
-                        + 1);
+                returnpoint = new Point(xAxis - point.getY() + 1, yAxis
+                        - point.getX() + 1);
             } else if (rotation == 1) {
                 Log.d(TAG, "Device orientation was landscape counter-clockwise");
                 // device was in landscape mode and the home-button to the right
                 xAxis = tps.getPhotoWidth();
                 yAxis = tps.getPhotoHeight();
-                return new Point(xAxis - point.getX() + 1, point.getY());
+                returnpoint = new Point(xAxis - point.getX() + 1, point.getY());
             } else if (rotation == 3) {
                 Log.d(TAG, "Device orientation was landscape clockwise");
                 // device was in landscape mode and the home-button to the left
                 xAxis = tps.getPhotoWidth();
                 yAxis = tps.getPhotoHeight();
-                return new Point(point.getX(), yAxis - point.getY() + 1);
+                returnpoint = new Point(point.getX(), yAxis - point.getY() + 1);
             } else {
                 Log.wtf(TAG, "No device orientation identifiable!!", null);
                 xAxis = tps.getPhotoHeight();
                 yAxis = tps.getPhotoWidth();
-                return point;
+                returnpoint = point;
             }
+            return returnpoint;
         } else {
             Log.d(TAG, "No point to change");
             return null;

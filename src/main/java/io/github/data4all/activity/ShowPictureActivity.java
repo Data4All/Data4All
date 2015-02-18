@@ -69,12 +69,13 @@ public class ShowPictureActivity extends BasicActivity {
     private TransformationParamBean transformBean;
     private DeviceOrientation currentOrientation;
 
-    /**
-     * public standard constructor.
-     */
-    public ShowPictureActivity() {
-        super();
-    }
+
+	/**
+	 * public standard constructor.<br\>
+	 */
+	public ShowPictureActivity() {
+		super();
+	}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,14 +142,14 @@ public class ShowPictureActivity extends BasicActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
-
-        this.onClickBuilding(null);
     }
 
-    /**
-     * OnClick method to finish the current drawing.
+
+	 /**
+     * OnClick method to finish the current drawing.<br\>     
      * 
-     * @param view
+     * * @param view
+     * current view used this method
      */
     public void onClickOkay(View view) {
         // 0 or Rotation0 if portrait
@@ -166,74 +167,79 @@ public class ShowPictureActivity extends BasicActivity {
         startActivity(intent);
     }
 
-    /**
-     * Define method to draw a point.<br\>
-     * 
-     * @param view
-     */
-    public void onClickPoint(View view) {
-        touchView.clearMotions();
-        touchView.setInterpretationType(TouchView.InterpretationType.POINT);
-        touchView.invalidate();
-        intent.putExtra(TYPE, POINT);
-    }
+	/**
+	 * Define method to draw a point.<br\>
+	 * 
+	 * @param view
+     * current view used this method
+	 */
+	public void onClickPoint(View view) {
+		touchView.clearMotions();
+		touchView.setInterpretationType(TouchView.InterpretationType.POINT);
+		touchView.invalidate();
+		intent.putExtra(TYPE, POINT);
+	}
 
-    /**
-     * Define method to draw a way.<br\>
-     * 
-     * @param view
-     */
-    public void onClickPath(View view) {
-        touchView.clearMotions();
-        touchView.setInterpretationType(TouchView.InterpretationType.WAY);
-        touchView.invalidate();
-        intent.putExtra(TYPE, WAY);
-    }
+	/**
+	 * Define method to draw a way.<br\>
+	 * 
+	 * @param view
+     * current view used this method
+	 */
+	public void onClickPath(View view) {
+		touchView.clearMotions();
+		touchView.setInterpretationType(TouchView.InterpretationType.WAY);
+		touchView.invalidate();
+		intent.putExtra(TYPE, WAY);
+	}
 
-    /**
-     * Define method to draw a area.<br\>
-     * 
-     * @param view
-     */
-    public void onClickArea(View view) {
-        touchView.clearMotions();
-        touchView.setInterpretationType(TouchView.InterpretationType.AREA);
-        touchView.invalidate();
-        intent.putExtra(TYPE, AREA);
+	/**
+	 * Define method to draw a area.<br\>
+	 * 
+	 * @param view
+     * current view used this method
+	 */
+	public void onClickArea(View view) {
+		touchView.clearMotions();
+		touchView.setInterpretationType(TouchView.InterpretationType.AREA);
+		touchView.invalidate();
+		intent.putExtra(TYPE, AREA);
+	}
 
-    }
+	/**
+	 * Define method to draw a building.<br\>
+	 * 
+	 * @param view
+     * current view used this method
+	 */
+	public void onClickBuilding(View view) {
+		touchView.clearMotions();
+		touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
+		touchView.invalidate();
+		intent.putExtra(TYPE, BUILDING);
+	}
 
-    /**
-     * Define method to draw a building.<br\>
-     * 
-     * @param view
-     */
-    public void onClickBuilding(View view) {
-        touchView.clearMotions();
-        touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
-        touchView.invalidate();
-        intent.putExtra(TYPE, BUILDING);
-    }
+	/**
+	 * Method to use the redo function.<br\>
+	 * 
+	 * @param view
+     * current view used this method
+	 */
+	public void onClickRedo(View view) {
+		touchView.redo();
+		touchView.invalidate();
+	}
 
-    /**
-     * Method to use the redo function.<br\>
-     * 
-     * @param view
-     */
-    public void onClickRedo(View view) {
-        touchView.redo();
-        touchView.invalidate();
-    }
-
-    /**
-     * Method to use the undo function.<br\>
-     * 
-     * @param view
-     */
-    public void onClickUndo(View view) {
-        touchView.undo();
-        touchView.invalidate();
-    }
+	/**
+	 * Method to use the undo function.<br\>
+	 * 
+	 * @param view
+     * current view used this method
+	 */
+	public void onClickUndo(View view) {
+		touchView.undo();
+		touchView.invalidate();
+	}
 
     /**
      * Get a Uri of a Image and set this to local ImageView.<br\>

@@ -39,9 +39,9 @@ import android.os.IBinder;
 public class OrientationListener extends Service implements SensorEventListener {
 
     /** sensor accelerometer. */
-    Sensor accelerometer;
+    private Sensor accelerometer;
     /** sensor magnetic_field. */
-    Sensor magnetometer;
+    private Sensor magnetometer;
     /** sensorManager. */
     private SensorManager sManager;
 
@@ -130,6 +130,10 @@ public class OrientationListener extends Service implements SensorEventListener 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);
                 // saving the new model with the orientation in the RingBuffer
+                Log.d(TAG,
+                        "Orientation " + Math.toDegrees(orientation[0]) + " ; "
+                                + Math.toDegrees(orientation[1]) + " ; "
+                                + Math.toDegrees(orientation[2]));
                 Optimizer.putPos(new DeviceOrientation(orientation[0],
                         orientation[1], orientation[LAST_INDEX], System
                                 .currentTimeMillis()));

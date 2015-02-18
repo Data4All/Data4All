@@ -13,4 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * Custom Log class to enable and disable logging.
+ */
 package io.github.data4all.logger;
+

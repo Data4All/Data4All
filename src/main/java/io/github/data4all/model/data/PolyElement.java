@@ -113,8 +113,7 @@ public class PolyElement extends AbstractDataElement {
      * Adds a new node to the PolyElement. If the last node equals the new node
      * you have to use append to define a closed PolyElement.
      * 
-     * @param node
-     *            the node to add
+     * @param node The node to add       
      * @return success of the operation
      */
     public boolean addNode(final Node node) {
@@ -182,7 +181,7 @@ public class PolyElement extends AbstractDataElement {
                     if (newNodes.size() > 1) {
                         Log.i(getClass().getSimpleName(), "retrying addNodes");
                         newNodes.remove(newNodes.size() - 1);
-                        addNodes(newNodes, atBeginning);
+                        this.addNodes(newNodes, atBeginning);
                     }
                     return;
                 }
@@ -196,7 +195,7 @@ public class PolyElement extends AbstractDataElement {
                     if (newNodes.size() > 1) {
                         Log.i(getClass().getSimpleName(), "retrying addNodes");
                         newNodes.remove(0);
-                        addNodes(newNodes, atBeginning);
+                        this.addNodes(newNodes, atBeginning);
                     }
                     return;
                 }
@@ -331,7 +330,7 @@ public class PolyElement extends AbstractDataElement {
     /**
      * Returns true if the node is part of the PolyElement.
      * 
-     * @param node
+     * @param node The Node 
      * @return true/false
      */
     public boolean hasNode(final Node node) {
