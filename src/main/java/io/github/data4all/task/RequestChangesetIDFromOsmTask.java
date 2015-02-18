@@ -15,6 +15,8 @@
  */
 package io.github.data4all.task;
 
+import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.User;
 import io.github.data4all.network.OscUploadHelper;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
@@ -28,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import oauth.signpost.OAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
@@ -40,11 +43,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
-import io.github.data4all.logger.Log;
-import android.widget.Toast;
 
 /**
  * Task to request a changeSetID from OpenStreetMap.
@@ -53,17 +53,18 @@ import android.widget.Toast;
  *
  */
 
-public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
+public class RequestChangesetIDFromOsmTask extends
+        AsyncTask<Void, Void, Integer> {
 
     private static final String TAG = RequestChangesetIDFromOsmTask.class
             .getSimpleName();
-    private Context context;
 
     private HttpPut request;
 
     private OAuthConsumer consumer;
     private File changeSetXML;
-    private OscUploadHelper helper;
+
+    private OscUploadHelper helper = null;
 
     /**
      * HTTP result code or -1 in case of internal error.
@@ -75,22 +76,39 @@ public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
      * 
      * Sets the Parameter values to the local attributes.
      * 
-     * @param context
-     *            the Context of the Application
-     * @param consumer
-     *            the OAuthConusmer used for authentication
+     * @param user
+     *            the user used for authentication
+     * @param comment
+     *            the Comment for this ChangeSet, should include what is
+     *            uploaded
+     */
+    public RequestChangesetIDFromOsmTask(User user, String comment) {
+        this(user, comment, null);
+    }
+
+    /**
+     * Constructor of the RequestChangesetIDFromOpenStreetMapTask.
+     * 
+     * Sets the Parameter values to the local attributes.
+     * 
+     * @param user
+     *            the user used for authentication
      * @param comment
      *            the Comment for this ChangeSet, should include what is
      *            uploaded
      * @param helper
      *            the OscUploadHelper which started the task
      */
-    public RequestChangesetIDFromOsmTask(Context context,
-            OAuthConsumer consumer, String comment, OscUploadHelper helper) {
-
+    public RequestChangesetIDFromOsmTask(User user, String comment,
+            OscUploadHelper helper) {
         this.helper = helper;
-        this.context = context;
-        this.consumer = consumer;
+        final OAuthParameters params = OAuthParameters.CURRENT;
+        this.consumer =
+                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
+                        params.getConsumerSecret());
+        consumer.setTokenWithSecret(user.getOAuthToken(),
+                user.getOauthTokenSecret());
+
         changeSetXML =
                 new File(Environment.getExternalStorageDirectory()
                         .getAbsolutePath() + "/getChangesetID.xml");
@@ -146,40 +164,11 @@ public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
     }
 
     /**
-     * Displays what happened.
-     */
-    @Override
-    protected void onPostExecute(Void result) {
-        switch (statusCode) {
-        case -1:
-            // Internal error, the request didn't start at all
-            Log.d(TAG, "Internal error, the request did not start at all");
-            break;
-        case HttpStatus.SC_OK:
-            // Success ! Update database and close activity
-            Log.d(TAG, "Success");
-            break;
-        case HttpStatus.SC_UNAUTHORIZED:
-            // Does not have authorization
-            Log.d(TAG, "Does not have authorization");
-            break;
-        case HttpStatus.SC_INTERNAL_SERVER_ERROR:
-            Toast.makeText(context, "INTERNAL SERVER ERROR", Toast.LENGTH_LONG)
-                    .show();
-            Log.d(TAG, "INTERNAL SERVER ERROR");
-            break;
-        default:
-            // unknown error
-            Log.d(TAG, "Unknown error");
-        }
-    }
-
-    /**
      * Sending the Request and analyzes the response and starts the Uploading.
      * Task through the helper if the response was positive.
      */
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Integer doInBackground(Void... params) {
         try {
             final DefaultHttpClient httpClient = new DefaultHttpClient();
 
@@ -197,7 +186,10 @@ public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
                         new BufferedReader(new InputStreamReader(is));
                 final String line = in.readLine();
                 changesetId = Integer.parseInt(line);
-                helper.parseAndUpload(changesetId);
+                if (helper != null) {
+                    helper.parseAndUpload(changesetId);
+                }
+                return changesetId;
             }
             Log.d(TAG, "OSM ChangeSetID response Entity: " + responseEntity);
             Log.d(TAG, "OSM ChangeSetID response: " + changesetId);
@@ -209,6 +201,33 @@ public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
         }
 
         return null;
+    }
+
+    /**
+     * Displays what happened.
+     */
+    @Override
+    protected void onPostExecute(Integer result) {
+        switch (statusCode) {
+        case -1:
+            // Internal error, the request didn't start at all
+            Log.d(TAG, "Internal error, the request did not start at all");
+            break;
+        case HttpStatus.SC_OK:
+            // Success ! Update database and close activity
+            Log.d(TAG, "Success");
+            break;
+        case HttpStatus.SC_UNAUTHORIZED:
+            // Does not have authorization
+            Log.d(TAG, "Does not have authorization");
+            break;
+        case HttpStatus.SC_INTERNAL_SERVER_ERROR:
+            Log.d(TAG, "INTERNAL SERVER ERROR");
+            break;
+        default:
+            // unknown error
+            Log.d(TAG, "Unknown error");
+        }
     }
 
 }

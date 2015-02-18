@@ -41,6 +41,8 @@ public class OscUploadHelper {
     private OAuthConsumer consumer;
     private Context context;
     private List<AbstractDataElement> elems;
+    
+    private User user;
 
     /**
      * Constructor of the OscUploadHelper starts with the ChangeSetRequest.
@@ -59,7 +61,7 @@ public class OscUploadHelper {
         this.context = context;
         this.elems = elems;
         final DataBaseHandler db = new DataBaseHandler(context);
-        final User user = db.getAllUser().get(0);
+        user = db.getAllUser().get(0);
         db.close();
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
@@ -72,7 +74,7 @@ public class OscUploadHelper {
      *            Comment of the Upload, should contain what was uploaded
      */
     public void uploadElements(String comment) {
-        new RequestChangesetIDFromOsmTask(context, consumer, comment, this)
+        new RequestChangesetIDFromOsmTask(user, comment, this)
                 .execute();
     }
 
