@@ -13,12 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.data4all;
 
-public class Server {
+/**
+ * Activity classes for user interaction.
+ */
+package io.github.data4all.activity;
 
-    public Server() {
-
-    }
-
-}

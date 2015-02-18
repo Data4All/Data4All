@@ -13,4 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * This classes represents the basic building block for user interface
+ * components. A View occupies a rectangular area on the screen and is
+ * responsible for drawing and event handling.
+ */
 package io.github.data4all.view;
+

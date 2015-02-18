@@ -30,8 +30,8 @@ public class BasicSensorSmoother implements SensorSmoother {
      * @See: 
      *       http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
      */
- // if ALPHA = 1 OR 0, no filter applies.
-    static final float ALPHA = 0.25f; 
+    // if ALPHA = 1 OR 0, no filter applies.
+    static final float ALPHA = 0.25f;
 
     /*
      * (non-Javadoc)

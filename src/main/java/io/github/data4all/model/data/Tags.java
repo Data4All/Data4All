@@ -57,7 +57,7 @@ public final class Tags {
     /**
      * Returns a Tag with the passed id.
      * 
-     * @param id
+     * @param id The ID of the tag
      * @return tag object
      */
     public static Tag getTagWithId(int id) {
