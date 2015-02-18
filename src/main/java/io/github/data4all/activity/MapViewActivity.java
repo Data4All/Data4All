@@ -60,34 +60,14 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
-        setUpMapView();
+        setUpLoadingScreen();        
+        setUpMapView(savedInstanceState);
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
-        // Set ImageView for Loading Screen
-        view = (ImageView) findViewById(R.id.imageView1);
-
-        // for setting the actualZoomLevel and Center Position on Orientation
-        // Change
-        if (savedInstanceState != null) {
-            loadState(savedInstanceState);
-            view.setVisibility(View.GONE);
-        } else {
-            // fading out the loading screen
-            view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-                    .withEndAction(new Runnable() {
-                        public void run() {
-                            view.setVisibility(View.GONE);
-                        }
-                    }).start();
-        }
-
-        // Set Zoomlevel
-        setZoomLevel(actualZoomLevel);
 
         // Set Listener for Buttons
-
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -106,6 +86,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -134,6 +118,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onResume()
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -141,18 +129,16 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-
-        if (actualCenter != null) {
-            setCenter(actualCenter);
-        } else if (myLocationOverlay.getMyLocation() != null) {
-            actualCenter = myLocationOverlay.getMyLocation();
-            setCenter(actualCenter);
-        }
+        
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
     }
 
+    /*
+     * (non-Javadoc)
+     * @see io.github.data4all.activity.MapActivity#onPause()
+     */
     @Override
     public void onPause() {
         super.onPause();

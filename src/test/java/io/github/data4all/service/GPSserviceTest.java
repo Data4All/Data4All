@@ -16,7 +16,12 @@
 package io.github.data4all.service;
 
 import static org.junit.Assert.assertEquals;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.util.Optimizer;
 
+import java.lang.reflect.Field;
+
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -24,16 +29,27 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.content.Intent;
+import android.location.Location;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
 public class GPSserviceTest {
+    
+    /**
+     * Clear the Optimizer after every test.
+     * 
+     * @author tbrose
+     */
+    @After
+    public void tearDown() {
+        Optimizer.clear();
+    }
 
     @Test
     public void testGPSservice() throws Exception {
 
-        Intent startIntent =
-                new Intent(Robolectric.application, GPSservice.class);
+        Intent startIntent = new Intent(Robolectric.application,
+                GPSservice.class);
         GPSservice service = new GPSservice();
 
         service.onStartCommand(startIntent, 0, 0);
@@ -41,6 +57,22 @@ public class GPSserviceTest {
         assertEquals("io.github.data4all.service.GPSservice", startIntent
                 .getComponent().getClassName());
 
+    }
+
+    /**
+     * Tests, if there is no exception thrown if the method is called for the
+     * first time.
+     * 
+     * @author tbrose
+     */
+    @Test
+    public void test_onLocationChanged_firstChange() throws Exception {
+        GPSservice service = new GPSservice();
+        Field trackField = GPSservice.class.getDeclaredField("track");
+        trackField.setAccessible(true);
+        trackField.set(service, new Track());
+
+        service.onLocationChanged(new Location("TEST"));
     }
 
 }
