@@ -72,4 +72,6 @@
     
     <string name="upload_upload_text">"Objects to upload: "</string>
 
+    <string name="upload_cancle">Cancle</string>
+    
 </resources>

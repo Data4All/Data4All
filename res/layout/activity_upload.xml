@@ -65,4 +65,16 @@
         android:enabled="false"
         android:text="@string/upload_data" />
 
+    <Button
+        android:id="@+id/upload_cancle_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upload_progress"
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickUpload"
+        android:enabled="false"
+        android:visibility="gone"
+        android:text="@string/upload_cancle" />
+
 </RelativeLayout>

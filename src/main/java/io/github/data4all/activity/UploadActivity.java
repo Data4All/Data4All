@@ -18,22 +18,18 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.User;
-import io.github.data4all.util.NetworkState;
-import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
-import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
-import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
-import io.github.data4all.util.oauth.parameters.OAuthParameters;
+import io.github.data4all.service.UploadService;
 
-import java.util.List;
+import org.json.JSONException;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -44,7 +40,10 @@ import android.widget.ProgressBar;
 public class UploadActivity extends BasicActivity {
 
     public static final String TAG = UploadActivity.class.getSimpleName();
-    ProgressBar progress;
+    private ProgressBar progress;
+    private TextView countText;
+    private View uploadButton;
+    private View cancleButton;
 
     /*
      * (non-Javadoc)
@@ -56,6 +55,31 @@ public class UploadActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
         progress = (ProgressBar) findViewById(R.id.upload_progress);
+        countText = (TextView) findViewById(R.id.upload_count_text);
+        uploadButton = findViewById(R.id.upload_upload_button);
+        cancleButton = findViewById(R.id.upload_cancle_button);
+        this.readObjectCount();
+    }
+
+    /**
+     * Reads the number of Objects to Upload.
+     */
+    private void readObjectCount() {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        int count = 0;
+        try {
+            count = db.getAllDataElements().size();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        db.close();
+
+        countText.setText(Integer.toString(count));
+        if (count > 0) {
+            uploadButton.setEnabled(true);
+        } else {
+            uploadButton.setEnabled(false);
+        }
     }
 
     /**
@@ -69,19 +93,82 @@ public class UploadActivity extends BasicActivity {
             progress.setVisibility(View.VISIBLE);
         } else {
             progress.setVisibility(View.INVISIBLE);
+            progress.setIndeterminate(true);
         }
     }
 
     /**
-     * Starts the login process if there is a network connection and the
-     * username and password fields are not empty.
+     * Starts the upload process.
      * 
      * @param v
      *            The view which was clicked
      */
     public void onClickUpload(View v) {
         if (v.getId() == R.id.upload_upload_button) {
-            
+            showProgress(true);
+
+            final Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, UploadService.UPLOAD);
+            intent.putExtra(UploadService.HANDLER, new MyReceiver());
+
+            startService(intent);
+
+            v.setVisibility(View.GONE);
+            this.cancleButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Stops the upload process.
+     * 
+     * @param v
+     *            The view which was clicked
+     */
+    public void onClickCancle(View v) {
+        if (v.getId() == R.id.upload_cancle_button) {
+            showProgress(true);
+
+            final Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, UploadService.CANCLE);
+            intent.putExtra(UploadService.HANDLER, new MyReceiver());
+
+            startService(intent);
+
+            v.setVisibility(View.GONE);
+            this.uploadButton.setVisibility(View.VISIBLE);
+            showProgress(false);
+        }
+    }
+
+    /**
+     * 
+     * @author tbrose
+     */
+    private class MyReceiver extends ResultReceiver {
+        public MyReceiver() {
+            super(new Handler());
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see android.os.ResultReceiver#onReceiveResult(int,
+         * android.os.Bundle)
+         */
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            Log.v("UploadActivity$MyHandler", resultData.toString());
+            if (resultCode == UploadService.MAX_PROGRESS) {
+                progress.setMax(resultData.getInt(UploadService.MESSAGE));
+                progress.setIndeterminate(false);
+            } else if (resultCode == UploadService.CURRENT_PROGRESS) {
+                progress.setProgress(resultData.getInt(UploadService.MESSAGE));
+            } else if (resultCode == UploadService.ERROR) {
+                showProgress(false);
+                final String msg = resultData.getString(UploadService.MESSAGE);
+                Toast.makeText(UploadActivity.this, msg, Toast.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 }
