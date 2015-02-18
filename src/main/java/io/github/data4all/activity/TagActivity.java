@@ -18,6 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.SpeechRecognition;
@@ -159,13 +160,9 @@ public class TagActivity extends BasicActivity implements OnClickListener {
      */
     
     private void createAlertDialogValue(){
-        array =
-                tagMap.get(key)
-                        .getClassifiedValues()
-                        .toArray(
-                                new String[tagMap.get(key)
-                                        .getClassifiedValues().size()]);
-        final AlertDialog.Builder alertDialogBuilder =
+        array = Tagging.ClassifiedValueList(tagMap.get(key).getClassifiedValues(), res);
+        final Map< String, ClassifiedValue> classifiedMap = Tagging.classifiedValueMap(tagMap.get(key).getClassifiedValues(), res); 
+            final AlertDialog.Builder alertDialogBuilder =
                 new AlertDialog.Builder(TagActivity.this);
         alertDialogBuilder.setTitle("Select Tag");
         alertDialogBuilder.setItems(array,
@@ -175,10 +172,11 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                     public void onClick(DialogInterface dialog,
                             int which) {
                         final String value = (String) array[which];
+                        String realValue = classifiedMap.get(value).getKey();
                         
                         map = new LinkedHashMap<Tag, String>();
-                        map.put(tagMap.get(key), value);
-                        Log.i(TAG, tagMap.get(key) + value);
+                        map.put(tagMap.get(key), realValue);
+                        Log.i(TAG, tagMap.get(key) + realValue);
              
                             createDialog(Tags.getAllAddressTags(),
                                     "Add Address",
@@ -253,8 +251,8 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             final List<String> matchesText =
                     data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             SpeechRecognition.splitStrings(matchesText);
-            final Map<String, String> map =
-                    SpeechRecognition.speechToTag(matchesText);
+           // final Map<String, String> map =
+             //       SpeechRecognition.speechToTag(matchesText);
             matchesText.clear();
             for (Entry entry : map.entrySet()) {
                 final String key = (String) entry.getKey();
@@ -295,11 +293,15 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             
-            text.setHint(arrayList.get(i).getHintRessource());
+            Log.i(TAG, arrayList.get(0).toString());
+            Log.i(TAG, arrayList.get(1).toString());
+            Log.i(TAG, arrayList.get(2).toString());
+            Log.i(TAG, arrayList.get(3).toString());
+            text.setHint(arrayList.get(i).getNameRessource());
             text.setHintTextColor(Color.DKGRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
-            text.setInputType(InputType.TYPE_CLASS_TEXT);
+            text.setInputType(arrayList.get(i).getType());
             edit.add(text);
             layout.addView(text);
         }
