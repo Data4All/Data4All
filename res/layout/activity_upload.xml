@@ -51,8 +51,8 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/upload_count_layout"
         android:layout_margin="20dp"
-        android:indeterminate="false"
-        android:visibility="visible" />
+        android:indeterminate="true"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/upload_upload_button"
@@ -62,6 +62,7 @@
         android:layout_below="@+id/upload_progress"
         android:layout_centerHorizontal="true"
         android:onClick="onClickUpload"
+        android:enabled="false"
         android:text="@string/upload_data" />
 
 </RelativeLayout>
