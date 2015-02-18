@@ -17,6 +17,7 @@ package io.github.data4all.util;
 
 import io.github.data4all.R;
 import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 
@@ -142,5 +143,23 @@ public class Tagging {
 			}
 		}
 		return false;
+    }
+    
+    public static Map<String, ClassifiedValue> classifiedValueMap (List<ClassifiedValue> list, Resources res){
+    	 Map<String, ClassifiedValue> map;
+    	 map = new HashMap<String, ClassifiedValue>();
+    	 for (int i = 0; i < list.size(); i++) {
+			map.put(res.getString(list.get(i).getNameRessource()), list.get(i));
+		}
+    	return map;
+    	
+    }
+    
+    public static String[] ClassifiedValueList (List<ClassifiedValue> list, Resources res){
+    	String [] listValue = new String [list.size()];
+    	for (int i = 0; i < list.size(); i++) {
+			listValue [i] = res.getString(list.get(i).getNameRessource());
+		}
+    	return listValue;
     }
 }

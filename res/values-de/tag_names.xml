@@ -59,22 +59,17 @@
     <string name="name_amenity_water_point">Wasserstelle</string>
     <string name="name_amenity_fire_station">Feuerwehr</string>
     <string name="name_amenity_public_building">Öffentliche Einrichtung</string>
-
+    
     <!-- classified tags_ building -->
     <string name="name_building">Gebäude</string>
-    <string name="name_building_apartments">Wohnungen</string>
-    <string name="name_building_farm">farm</string>
-    <string name="name_building_hotel">Hotel</string>
+    <string name="name_building_residential">Wohngebäude</string>
+    <string name="name_building_garage">Garage</string>
     <string name="name_building_house">Wohnhaus</string>
-    <string name="name_building_commercial">Geschäft</string>
-    <string name="name_building_industrial">Industrie</string>
+    <string name="name_building_apartments">Wohnungen</string>
     <string name="name_building_retail">Einzelhandel</string>
-    <string name="name_building_warehouse">Warenhaus</string>
-    <string name="name_building_church">Kirche</string>
-    <string name="name_building_hospital">Krankenhaus</string>
-    <string name="name_building_train_station">Bahnhof</string>
-    <string name="name_building_university">Universität</string>
-
+    <string name="name_building_industrial">Industrie</string>
+    <string name="name_building_commercial">Geschäft</string>
+    
     <!-- classified tags_ landuse -->
     <string name="name_landuse">Landnutzung</string>
     <string name="name_landuse_commercial">Gewebepark</string>

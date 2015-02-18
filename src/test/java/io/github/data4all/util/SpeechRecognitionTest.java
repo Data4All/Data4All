@@ -73,7 +73,7 @@ public class SpeechRecognitionTest {
         SpeechRecognition.splitStrings(list);
         assertFalse(list.equals(list1));
     }
-
+/**
     @Test
     public void splitStringsEmptyListTest() {
         List<String> list1 = new ArrayList<String>();
@@ -121,5 +121,5 @@ public class SpeechRecognitionTest {
         map.put("highway", "motorway");
         assertEquals(map, SpeechRecognition.speechToTag(list1));
     }
-
+*/
 }

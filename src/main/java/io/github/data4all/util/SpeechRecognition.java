@@ -42,7 +42,7 @@ public final class SpeechRecognition {
      *            is a Array List from the results of the SpeechRecognition
      * @return The HashMap of the matching Tags
      */
-    public static Map<String, String> speechToTag(List<String> matchesText) {
+ /**   public static Map<String, String> speechToTag(List<String> matchesText) {
         final Map<String, String> map = new HashMap<String, String>();
         List<ClassifiedTag> tagData = new ArrayList<ClassifiedTag>();
         tagData = (ArrayList<ClassifiedTag>) Tags.getAllClassifiedTags();
@@ -61,7 +61,7 @@ public final class SpeechRecognition {
         }
         return map;
     }
-
+*/
     /**
      * splitString splits all the Strings and adds them to the ArrayList.
      * 

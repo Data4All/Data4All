@@ -30,7 +30,7 @@ public class ClassifiedTag extends Tag {
     /**
      * stores all classified values for the specific tag.
      */
-    private List<String> classifiedValues;
+    private List<ClassifiedValue> classifiedValues;
 
     /**
      * Default constructor.
@@ -41,17 +41,17 @@ public class ClassifiedTag extends Tag {
      * @param classifiedValues the classifiedValues of the tag
      * @param osmObjects The OpenStreetObject the tag refers to
      */
-    public ClassifiedTag(int id, String key, InputType type,
-            List<String> classifiedValues, int... osmObjects) {
+    public ClassifiedTag(int id, String key, int type,
+            List<ClassifiedValue> classifiedValues, int... osmObjects) {
         super(id, key, type, osmObjects);
         this.classifiedValues = classifiedValues;
     }
 
-    public List<String> getClassifiedValues() {
+    public List<ClassifiedValue> getClassifiedValues() {
         return classifiedValues;
     }
 
-    public void setClassifiedValues(List<String> classifiedValues) {
+    public void setClassifiedValues(List<ClassifiedValue> classifiedValues) {
         this.classifiedValues = classifiedValues;
     }
 
