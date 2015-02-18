@@ -27,8 +27,8 @@
         android:label="@string/app_name"
         android:theme="@style/D4ATheme" >
         <meta-data
-            android:name="MAPBOX_MAPID"
-            android:value="data4all.c248803d" />  
+            android:name="MAPBOX_AUTHKEY"
+            android:value="pk.eyJ1IjoiZGF0YTRhbGwiLCJhIjoiYlNHWlFSayJ9.vN6iDHPsVupbT9yXdlT9Xg" />  
 
         <activity android:name=".activity.MapViewActivity" >
             <intent-filter>

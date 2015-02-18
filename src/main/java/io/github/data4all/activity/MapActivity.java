@@ -17,15 +17,12 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.view.D4AMapView;
 
-import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
-
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -107,7 +104,7 @@ public class MapActivity extends BasicActivity {
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
-    protected static final int MAXIMAL_ZOOM_LEVEL = 20;
+    protected static final int MAXIMAL_ZOOM_LEVEL = 18;
 
     // Default Stroke width
     protected static final float DEFAULT_STROKE_WIDTH = 3.0f;
@@ -119,12 +116,14 @@ public class MapActivity extends BasicActivity {
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
     // Default Satellite Map Tilesource
-    protected OnlineTileSourceBase satMap;
+    protected MapBoxTileSourceV4 satMap;
 
-    protected static final String SAT_MAP_NAME = "MapBoxSatelliteLabelled";
+    protected static final String SAT_MAP_NAME = "mapbox.streets-satellite";
 
     // Default OpenStreetMap TileSource
-    protected static final ITileSource OSM_TILESRC = TileSourceFactory.MAPQUESTOSM;
+    protected MapBoxTileSourceV4 osmMap;
+
+    protected static final String OSM_MAP_NAME = "mapbox.streets";
 
     CacheManager cacheManager;
 
@@ -138,12 +137,17 @@ public class MapActivity extends BasicActivity {
     protected void setUpMapView(Bundle savedInstanceState) {
         mapView = (D4AMapView) this.findViewById(R.id.mapview);
 
+        MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
+        
         // Add Satellite Map TileSource
-        MapBoxTileSource.retrieveMapBoxMapId(this);
-        satMap = new MapBoxTileSource(SAT_MAP_NAME,
-                ResourceProxy.string.mapquest_aerial , 1, 19, 256, ".png");
+        satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL, MAXIMAL_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(satMap);
 
+        // Add OSM Map TileSource
+        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL, MAXIMAL_ZOOM_LEVEL);
+        TileSourceFactory.addTileSource(osmMap);
+        mapTileSource = osmMap;
+        
         // Activate Multi Touch Control
         Log.i(TAG, "Activate Multi Touch Controls");
         mapView.setMultiTouchControls(true);
@@ -161,7 +165,6 @@ public class MapActivity extends BasicActivity {
         // Change
         loadState(savedInstanceState);
 
-        
         cacheManager = new CacheManager(mapView);
 
         // Set MapTileSource
@@ -175,7 +178,7 @@ public class MapActivity extends BasicActivity {
 
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
-    
+
     protected void setUpLoadingScreen() {
         // Set ImageView for Loading Screen
         view = (ImageView) findViewById(R.id.imageView1);
@@ -193,7 +196,7 @@ public class MapActivity extends BasicActivity {
     /**
      * Downloades the Maptiles for the Actual Bounding Box.
      **/
-    protected void downloadMapTiles(){
+    protected void downloadMapTiles() {
         cacheManager.downloadAreaAsync(this, mapView.getBoundingBox(),
                 actualZoomLevel, actualZoomLevel);
 
@@ -201,6 +204,7 @@ public class MapActivity extends BasicActivity {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
      */
     @Override
@@ -222,6 +226,7 @@ public class MapActivity extends BasicActivity {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onPause()
      */
     @Override
@@ -250,14 +255,13 @@ public class MapActivity extends BasicActivity {
      * @return the actual position
      **/
     protected IGeoPoint getMyLocation() {
-        final LocationManager locationManager =
-                (LocationManager) this
-                        .getSystemService(Context.LOCATION_SERVICE);
+        final LocationManager locationManager = (LocationManager) this
+                .getSystemService(Context.LOCATION_SERVICE);
         final Criteria criteria = new Criteria();
-        final String provider =
-                locationManager.getBestProvider(criteria, false);
-        final Location currentLocation =
-                locationManager.getLastKnownLocation(provider);
+        final String provider = locationManager
+                .getBestProvider(criteria, false);
+        final Location currentLocation = locationManager
+                .getLastKnownLocation(provider);
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
@@ -296,8 +300,8 @@ public class MapActivity extends BasicActivity {
     protected void switchMaps() {
         // switch to OSM Map
         final String mts = mapView.getTileProvider().getTileSource().name();
-        if ("MapBoxSatelliteLabelled".equals(mts)) {
-            setMapTileSource(OSM_TILESRC);
+        if (SAT_MAP_NAME.equals(mts)) {
+            setMapTileSource(osmMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
@@ -314,14 +318,14 @@ public class MapActivity extends BasicActivity {
      * Set the Maptilesource for the mapview.
      * 
      * @param src
-     *            the Maptilesource wich should be set
+     *            the Maptilesource which should be set
      **/
     protected void setMapTileSource(ITileSource src) {
         if (src != null) {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            //downloadMapTiles();
+            downloadMapTiles();
         }
 
     }
@@ -358,15 +362,17 @@ public class MapActivity extends BasicActivity {
                 bt.setImageResource(R.drawable.ic_map);
             }
         } else {
-            mapTileSource = OSM_TILESRC;
+            mapTileSource = osmMap;
         }
     }
+
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onDestroy()
      */
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         mapView.getTileProvider().clearTileCache();
         System.gc();
