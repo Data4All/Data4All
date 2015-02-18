@@ -22,6 +22,8 @@ import java.util.Arrays;
 
 import org.apache.tools.ant.types.resources.selectors.InstanceOf;
 
+import android.text.InputType;
+
 /**
  * This class represents a predefined osm tag. The name and hint for a specific
  * tag is defined in the tag_name.xml and tag_hint.xml.
@@ -85,6 +87,7 @@ public class Tag {
     public Tag(int id, String key, int type, int... osmObjects) {
         this.id = id;
         this.key = key;
+        this.type = type;
         try {
             this.nameRessource =
                     (Integer) R.string.class.getDeclaredField(
@@ -101,27 +104,10 @@ public class Tag {
         } catch (NoSuchFieldException e) {
             Log.e(TAG, "NoSuchFieldException", e);
         }
-        this.type = type;
+        
         this.setOsmObjects(osmObjects);
     }
 
-    /**
-     * Default constructor to create a tag.
-     * 
-     * @param key The key of the tag
-     * @param nameRessource The reference to the name ressource
-     * @param hintRessource The reference to the hint ressource
-     * @param type The InputType for the tag
-     */
-    public Tag(int id, String key, int nameRessource, int hintRessource,
-            int type, int... osmObjects) {
-        this.id = id;
-        this.key = key;
-        this.nameRessource = nameRessource;
-        this.hintRessource = hintRessource;
-        this.type = type;
-        this.setOsmObjects(osmObjects);
-    }
 
     public int getHintRessource() {
         return hintRessource;
@@ -178,6 +164,7 @@ public class Tag {
     public String toString() {
         return "key: " + key + " nameRessource: " + nameRessource
                 + " hintRessource: " + hintRessource + " osmObjects: "
+                + "type:" + type
                 + Arrays.toString(osmObjects);
     }
 

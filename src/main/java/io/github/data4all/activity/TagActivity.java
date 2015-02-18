@@ -161,7 +161,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     
     private void createAlertDialogValue(){
         array = Tagging.ClassifiedValueList(tagMap.get(key).getClassifiedValues(), res);
-        final Map< String, ClassifiedValue> classifiedMap = Tagging.classifiedValueMap(tagMap.get(key).getClassifiedValues(), res); 
+        final Map< String, ClassifiedValue> classifiedMap = Tagging.classifiedValueMap(tagMap.get(key).getClassifiedValues(), res, false); 
             final AlertDialog.Builder alertDialogBuilder =
                 new AlertDialog.Builder(TagActivity.this);
         alertDialogBuilder.setTitle("Select Tag");
@@ -172,11 +172,12 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                     public void onClick(DialogInterface dialog,
                             int which) {
                         final String value = (String) array[which];
-                        String realValue = classifiedMap.get(value).getKey();
+                        String realValue = classifiedMap.get(value).getValue();
                         
                         map = new LinkedHashMap<Tag, String>();
                         map.put(tagMap.get(key), realValue);
                         Log.i(TAG, tagMap.get(key) + realValue);
+                    
              
                             createDialog(Tags.getAllAddressTags(),
                                     "Add Address",
@@ -293,11 +294,8 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             
-            Log.i(TAG, arrayList.get(0).toString());
-            Log.i(TAG, arrayList.get(1).toString());
-            Log.i(TAG, arrayList.get(2).toString());
-            Log.i(TAG, arrayList.get(3).toString());
-            text.setHint(arrayList.get(i).getNameRessource());
+            //Log.i(TAG, arrayList.get(i).toString());
+            text.setHint(arrayList.get(i).getHintRessource());
             text.setHintTextColor(Color.DKGRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
@@ -324,7 +322,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 					KeyEvent event) {
 				if(imm.isAcceptingText()){
 				if(keyCode == KeyEvent.KEYCODE_BACK){				   
-					Log.i(TAG, "first " + first);
+					//Log.i(TAG, "first " + first);
 					if (first) {
 						dialog1.dismiss();
 						createAlertDialogValue();

@@ -20,6 +20,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
@@ -85,6 +86,8 @@ public class ResultViewActivity extends BasicActivity implements
     private Map<String, ClassifiedTag> tagMap;
     private Resources res;
     private Map<String,Tag> mapTag;
+    private Map< String, ClassifiedValue> classifiedMap;
+    private String value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,22 +121,20 @@ public class ResultViewActivity extends BasicActivity implements
                                     android.R.style.Theme_Holo_Dialog_MinWidth);
                     alertDialog.setTitle("Select Tag");
                     final CharSequence[] showArray;
-                    showArray =
-                            tagMap.get(keyList.get(position))
-                                    .getClassifiedValues()
-                                    .toArray(
-                                            new String[tagMap
-                                                    .get(keyList.get(position))
-                                                    .getClassifiedValues()
-                                                    .size()]);
+                    showArray = Tagging.ClassifiedValueList(tagMap.get(keyList.get(position)).getClassifiedValues(), res);
+                    classifiedMap = Tagging.classifiedValueMap(tagMap.get(keyList.get(position)).getClassifiedValues(), res, false); 
                     alertDialog.setItems(showArray,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog,
                                         int which) {
+                                	value = (String) showArray[which];
+                                    String realValue = classifiedMap.get(value).getValue();
+                                    Log.i(TAG, "Value " + realValue);
+                                    Log.i(TAG, tagMap.get(keyList.get(position)).toString());
                                     element.addOrUpdateTag(
                                             tagMap.get(keyList.get(position)),
-                                            (String) showArray[which]);
+                                            realValue);
                                     output();
                                 }
                             });
@@ -200,11 +201,30 @@ public class ResultViewActivity extends BasicActivity implements
     private void output() {
         endList = new ArrayList<String>();
         keyList = new ArrayList<String>();
+        ArrayList<Tag> tagList = new ArrayList<Tag>();
         for (Entry entry : element.getTags().entrySet()) {
             final Tag tagKey =  (Tag) entry.getKey();
+            tagList.add(tagKey);
             Log.i(TAG, tagKey.getKey());
             keyList.add(res.getString(tagKey.getNameRessource()));
-            endList.add(element.getTags().get(tagKey));
+            if(Tagging.isClassifiedTag(getString(tagKey.getNameRessource()), res)){
+            	try {
+					endList.add(getString( (Integer) R.string.class.getDeclaredField(
+					        "name_" + tagKey.getKey() + "_" +element.getTags().get(tagKey).replaceAll(":", "_")).get(null)));
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }else {
+            	endList.add(element.getTags().get(tagKey));
+            }
+            
         }
         
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
@@ -235,8 +255,7 @@ public class ResultViewActivity extends BasicActivity implements
             alert.show();
         } else if (v.getId() == R.id.buttonResultToCamera) {
         	Log.i(TAG, MapUtil.getBoundingBoxForOsmElement(element).toString());
-        	mapView.zoomToBoundingBox(MapUtil.getBoundingBoxForOsmElement(element));
-           // startActivity(new Intent(this, CameraActivity.class));
+        	startActivity(new Intent(this, CameraActivity.class));
         }
     }
 }

@@ -17,6 +17,8 @@ package io.github.data4all.model.data;
 
 import java.util.List;
 
+import android.text.InputType;
+
 /**
  * This class represents a classified tag. A classified tag is a subclass of
  * tag. classifiedTags are tags where the user can choose input/value from

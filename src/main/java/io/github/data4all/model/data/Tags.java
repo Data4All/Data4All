@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.renderscript.Type;
 import android.text.InputType;
 
 /**
@@ -50,7 +51,8 @@ public final class Tags {
      * list of all contact tags.
      */
     public static final List<Tag> contactTagList = new ArrayList<Tag>();
-
+    
+    
     private Tags() {
 
     }
@@ -206,18 +208,18 @@ public final class Tags {
     static {
         // address tags
         ADDRESS_TAG_LIST.add(new Tag(1, "addr:street",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, WAY_TAG, BUILDING_TAG,
+                1, NODE_TAG, WAY_TAG, BUILDING_TAG,
                 AREA_TAG));
         ADDRESS_TAG_LIST.add(new Tag(2, "addr:housenumber",
-                InputType.TYPE_CLASS_NUMBER, NODE_TAG, WAY_TAG, BUILDING_TAG,
+                2, NODE_TAG, WAY_TAG, BUILDING_TAG,
                 AREA_TAG));
         ADDRESS_TAG_LIST.add(new Tag(3, "addr:postcode",
-                InputType.TYPE_CLASS_NUMBER, NODE_TAG, WAY_TAG, BUILDING_TAG,
+                2, NODE_TAG, WAY_TAG, BUILDING_TAG,
                 AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(4, "addr:city", InputType.TYPE_CLASS_TEXT,
+        ADDRESS_TAG_LIST.add(new Tag(4, "addr:city", 1,
                 NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
         ADDRESS_TAG_LIST.add(new Tag(5, "addr:country",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, WAY_TAG, BUILDING_TAG,
+                1, NODE_TAG, WAY_TAG, BUILDING_TAG,
                 AREA_TAG));
     }
 
@@ -227,13 +229,13 @@ public final class Tags {
     static {
         // contact tags
         contactTagList.add(new Tag(6, "contact:phone",
-                InputType.TYPE_CLASS_PHONE, NODE_TAG, BUILDING_TAG));
+                3, NODE_TAG, BUILDING_TAG));
         contactTagList.add(new Tag(7, "contact:fax",
-                InputType.TYPE_CLASS_PHONE, NODE_TAG, BUILDING_TAG));
+                3, NODE_TAG, BUILDING_TAG));
         contactTagList.add(new Tag(8, "contact:website",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, BUILDING_TAG));
+                1, NODE_TAG, BUILDING_TAG));
         contactTagList.add(new Tag(9, "contact:email",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, BUILDING_TAG));
+                1, NODE_TAG, BUILDING_TAG));
     }
 
     /**
@@ -333,7 +335,7 @@ public final class Tags {
         landuseValues.add(new ClassifiedValue(148, landuse, "industrial"));
         landuseValues.add(new ClassifiedValue(149, landuse, "commercial"));
         landuseValues.add(new ClassifiedValue(150, landuse, "construction"));
-        landuseValues.add(new ClassifiedValue(151, landuse, "millitary"));
+        landuseValues.add(new ClassifiedValue(151, landuse, "military"));
         TAG_LIST.add(new ClassifiedTag(14, "landuse", -1, landuseValues,
                 new int[] {AREA_TAG}));
 

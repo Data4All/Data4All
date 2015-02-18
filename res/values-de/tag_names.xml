@@ -2,7 +2,7 @@
 <resources>
 
     <!-- address tags -->
-    <string name="name_addr_street">STraße</string>
+    <string name="name_addr_street">Straße</string>
     <string name="name_addr_housenumber">Hausnummer</string>
     <string name="name_addr_postcode">Postleitzahl</string>
     <string name="name_addr_city">Stadt</string>

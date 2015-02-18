@@ -145,11 +145,15 @@ public class Tagging {
 		return false;
     }
     
-    public static Map<String, ClassifiedValue> classifiedValueMap (List<ClassifiedValue> list, Resources res){
+    public static Map<String, ClassifiedValue> classifiedValueMap (List<ClassifiedValue> list, Resources res, boolean international){
     	 Map<String, ClassifiedValue> map;
     	 map = new HashMap<String, ClassifiedValue>();
     	 for (int i = 0; i < list.size(); i++) {
+    		if(international){
+    			map.put(list.get(i).getValue(), list.get(i));
+    		}else{
 			map.put(res.getString(list.get(i).getNameRessource()), list.get(i));
+    		}
 		}
     	return map;
     	
@@ -162,4 +166,5 @@ public class Tagging {
 		}
     	return listValue;
     }
+   
 }
