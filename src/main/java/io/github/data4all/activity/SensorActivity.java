@@ -28,6 +28,7 @@ import android.widget.TextView;
  * this activity will measures the tilting motion and orientation of a mobile
  * phone(accelerometer) and the rate or rotation in rad/s around a device's x,
  * y, and z axis(Gyroscope).
+ * @author Steeve
  */
 public class SensorActivity extends Activity implements SensorEventListener {
 
