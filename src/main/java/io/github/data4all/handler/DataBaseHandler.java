@@ -47,7 +47,7 @@ import android.location.Location;
  * @author Kristin Dahnken
  * 
  */
-public class DataBaseHandler extends SQLiteOpenHelper {
+public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -960,7 +960,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             timestamps.add(trackpoint.getTime());
         }
 
-        // this.createTagMap(tagMap);
+        this.createTrackPoints(track.getTrackPoints());
 
         final JSONObject json = new JSONObject();
         json.put("timestamparray", new JSONArray(timestamps));
@@ -985,7 +985,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         final SQLiteDatabase db = getReadableDatabase();
 
-        Track track = new Track();
+        final Track track = new Track();
 
         final Cursor cursor = db.query(TABLE_GPSTRACK, new String[] {
                 KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_TRACKNAME + "=?",
@@ -1007,9 +1007,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             timestamps.add(timestamp);
         }
 
-        // final Map<Tag, String> tagMap = this.getTagMap(tagIDs); -> get track
-        // points!
-        // track.addTrackPoint(location);
+        final List<TrackPoint> trackPoints = this.getTrackPoints(timestamps);
+        track.setTrackPoints(trackPoints);
 
         cursor.close();
 
@@ -1022,7 +1021,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param track
      *            the {@link Track} object whose data should be deleted
      */
-    public void deleteGPSTrack(Track track) { // NOSONAR
+    public void deleteGPSTrack(Track track) {
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -1034,7 +1033,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         for (TrackPoint trackpoint : track.getTrackPoints()) {
             timestamps.add(trackpoint.getTime());
         }
-        // this.deleteTagMap(tagIDs); -> delete track points!
+        this.deleteTrackPoints(timestamps);
     }
 
     /**
@@ -1065,8 +1064,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @throws JSONException
      *             if the JSON object can't be initialized
      */
-    public int updateGPSTrack(Track track) // NOSONAR
-            throws JSONException {
+    public int updateGPSTrack(Track track) throws JSONException {
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -1079,8 +1077,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         count += db.update(TABLE_GPSTRACK, values, KEY_TRACKNAME + "=?",
                 new String[] {track.getTrackName() });
 
-        // count += this.updateTagMap(dataElement.getTags()); -> update track
-        // points!
+        count += this.updateTrackPoints(track.getTrackPoints());
 
         return count;
     }
@@ -1101,7 +1098,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GPSTRACK,
                 null);
 
-        Track track = new Track(); // NOSONAR
+        final Track track = new Track();
 
         if (cursor.moveToFirst()) {
             do {
@@ -1116,8 +1113,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     timestamps.add(timestamp);
                 }
 
-                // final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
-                // dataElement.addTags(tagMap); -> get track points!
+                final List<TrackPoint> trackPoints = this
+                        .getTrackPoints(timestamps);
+                track.setTrackPoints(trackPoints);
 
                 gpsTracks.add(track);
             } while (cursor.moveToNext());
@@ -1152,7 +1150,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * This method returns the data for specific trackpointss stored in the
+     * This method returns the data for specific trackpoints stored in the
      * database and creates a list of corresponding {@link TrackPoint} objects.
      * 
      * @param timestamps
@@ -1168,7 +1166,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         for (long time : timestamps) {
             final Cursor cursor = db
                     .query(TABLE_TRACKPOINT, new String[] {KEY_LAT, KEY_LON,
-                            KEY_ALT, KEY_TIME },
+                            KEY_ALT, KEY_TIME, },
                             KEY_TIME + "=?",
                             new String[] {String.valueOf(time) }, null, null,
                             null, null);
@@ -1177,13 +1175,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 cursor.moveToFirst();
             }
 
-            Location loc = new Location("provider");
+            final Location loc = new Location("provider");
             loc.setLatitude(cursor.getDouble(0));
             loc.setLongitude(cursor.getDouble(1));
             loc.setAltitude(cursor.getDouble(2));
             loc.setTime(cursor.getLong(3));
 
-            TrackPoint point = new TrackPoint(loc);
+            final TrackPoint point = new TrackPoint(loc);
 
             trackPoints.add(point);
             cursor.close();
@@ -1265,17 +1263,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
 
         final SQLiteDatabase db = getReadableDatabase();
-        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TRACKPOINT, null);
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TRACKPOINT,
+                null);
 
         if (cursor.moveToFirst()) {
             do {
-                
-                Location loc = new Location("provider");
+
+                final Location loc = new Location("provider");
                 loc.setLatitude(cursor.getDouble(0));
                 loc.setLongitude(cursor.getDouble(1));
                 loc.setAltitude(cursor.getDouble(2));
                 loc.setTime(cursor.getLong(3));
-                
+
                 final TrackPoint point = new TrackPoint(loc);
                 trackPoints.add(point);
             } while (cursor.moveToNext());
