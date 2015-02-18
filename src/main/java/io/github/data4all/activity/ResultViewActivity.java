@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
@@ -99,7 +100,7 @@ public class ResultViewActivity extends BasicActivity implements
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
         mapView.addOsmElementToMap(this, element);
-        listView = (ListView) this.findViewById(R.id.listViewResult);
+        listView = (ListView) this.findViewById(R.id.listViewResultView);
         // The Sorted Keys of the ShowPictureActivity
         res = getResources();
         tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"), res);
@@ -203,12 +204,10 @@ public class ResultViewActivity extends BasicActivity implements
             final Tag tagKey =  (Tag) entry.getKey();
             Log.i(TAG, tagKey.getKey());
             keyList.add(res.getString(tagKey.getNameRessource()));
-            endList.add(res.getString(tagKey.getNameRessource()) + "=" + element.getTags().get(tagKey));
+            endList.add(element.getTags().get(tagKey));
         }
-        final ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this,
-                        android.R.layout.simple_list_item_1, endList);
-        listView.setAdapter(adapter);
+        
+        listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
     }
    
     @Override

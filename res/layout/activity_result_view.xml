@@ -23,12 +23,13 @@
         android:contentDescription="@string/returnToCamera" />
 
     <ListView
-        android:id="@+id/listViewResult"
+        android:id="@+id/listViewResultView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/mapviewResult" >
+        android:layout_below="@+id/mapviewResult"
+        android:layout_marginTop="10dp"  >
 
     </ListView>
 
