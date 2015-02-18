@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 /**
  * Main Activity that shows the default MapView.
@@ -60,8 +59,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
-        setUpLoadingScreen();        
         setUpMapView(savedInstanceState);
+        setUpLoadingScreen();        
+        
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
