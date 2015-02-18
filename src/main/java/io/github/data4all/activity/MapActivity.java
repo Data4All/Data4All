@@ -22,9 +22,6 @@ import io.github.data4all.view.D4AMapView;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
-import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.bonuspack.overlays.Polygon;
-import org.osmdroid.bonuspack.overlays.Polyline;
 
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
@@ -138,7 +135,7 @@ public class MapActivity extends BasicActivity {
         super();
     }
 
-    protected void setUpMapView() {
+    protected void setUpMapView(Bundle savedInstanceState) {
         mapView = (D4AMapView) this.findViewById(R.id.mapview);
 
         // Add Satellite Map TileSource

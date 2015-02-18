@@ -56,7 +56,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         setUpLoadingScreen();
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        mapView.addOsmElementToMap(element);
+        mapView.addOsmElementToMap(this,element);
 
         mapController.setZoom(actualZoomLevel);
         mapController.setCenter(actualCenter);
