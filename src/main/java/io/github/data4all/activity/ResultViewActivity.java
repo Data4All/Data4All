@@ -265,7 +265,7 @@ public class ResultViewActivity extends BasicActivity implements
             final Intent intent = new Intent(this, MapViewActivity.class);
             final Intent intent1 = new Intent(this, LoginActivity.class);
             intent.putExtra("OSM_Element", element);
-            builder.setPositiveButton(R.string.ok,
+            builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             startActivity(intent1);

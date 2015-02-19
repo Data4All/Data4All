@@ -129,7 +129,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                         android.R.style.Theme_Holo_Dialog_MinWidth);
         final LayoutInflater inflater = getLayoutInflater();
         final View view = inflater.inflate(R.drawable.header_listview, null);
-        ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
+        ((TextView) view.findViewById(R.id.titleDialog)).setText(R.string.selectTag);
         ;
         alertDialog.setCustomTitle(view);
         final ImageButton speechStart =
@@ -177,10 +177,9 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                 new AlertDialog.Builder(TagActivity.this);
             final LayoutInflater inflater = getLayoutInflater();
             final View view = inflater.inflate(R.drawable.header_listview, null);
-            ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
+            ((TextView) view.findViewById(R.id.titleDialog)).setText(R.string.selectTag);
             ;
             alertDialogBuilder.setCustomTitle(view);
-        alertDialogBuilder.setTitle("Select Tag");
         alertDialogBuilder.setItems(array,
                 new DialogInterface.OnClickListener() {
 
@@ -196,7 +195,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                     
              
                             createDialog(Tags.getAllAddressTags(),
-                                    "Add Address",
+                                    getString(R.string.AddAddress),
                                      true);
                      
                     }
@@ -234,7 +233,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             break;
         case R.id.buttonNext:
         	editTextToMap(first);
-            createDialog(Tags.getAllContactTags(), "Add Contacts", false);
+            createDialog(Tags.getAllContactTags(), getString(R.string.AddContact), false);
             break;
         case R.id.buttonFinish:
             editTextToMap(first);
@@ -350,7 +349,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
 					}
 					else {
 						dialog1.dismiss();
-						createDialog(Tags.getAllAddressTags(), "Add Address", true);
+						createDialog(Tags.getAllAddressTags(), getString(R.string.AddAddress), true);
 						return true;
 					}
 				}}
