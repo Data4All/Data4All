@@ -25,6 +25,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -261,6 +262,7 @@ public class DataBaseHandlerTest {
         assertEquals(0, dbHandler.getTagMapCount());
     }
     @Test
+    @Ignore
     public void testTrackPointCRUD() {
         Location loc1 = new Location("User");
         loc1.setAltitude(10.10);

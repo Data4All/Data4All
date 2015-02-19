@@ -266,12 +266,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
                 final User user = new User(cursor.getString(0),
                         cursor.getString(1), cursor.getString(2));
                 users.add(user);
-            } while (cursor.moveToNext());
+            }
         }
 
         return users;
@@ -384,13 +384,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
                 final Node node = new Node(Long.parseLong(cursor.getString(0)),
                         Double.parseDouble(cursor.getString(1)),
                         Double.parseDouble(cursor.getString(2)));
                 nodes.add(node);
-            } while (cursor.moveToNext());
+            }
         }
 
         return nodes;
@@ -570,8 +570,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT,
                 null);
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
                 final PolyElement polyElement = new PolyElement(
                         Long.parseLong(cursor.getString(0)),
                         PolyElementType.valueOf(cursor.getString(1)));
@@ -589,7 +589,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 polyElement.addNodes(nodes, false);
 
                 polyElements.add(polyElement);
-            } while (cursor.moveToNext());
+            }
         }
 
         return polyElements;
@@ -790,9 +790,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         AbstractDataElement dataElement; // NOSONAR
 
-        if (cursor.moveToFirst()) {
-            do {
-
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
                 if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID,
                         cursor.getInt(0))) {
                     dataElement = this.getPolyElement(cursor.getInt(0));
@@ -814,7 +813,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 dataElement.addTags(tagMap);
 
                 dataElements.add(dataElement);
-            } while (cursor.moveToNext());
+            }
         }
 
         return dataElements;
@@ -864,11 +863,11 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                             new String[] {String.valueOf(id) }, null, null,
                             null, null);
 
-            if (cursor != null) {
-                cursor.moveToFirst();
+            if (cursor != null && cursor.moveToFirst()) {
+                tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
+                cursor.close();
             }
-            tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
-            cursor.close();
+
         }
         return tagMap;
     }
@@ -1100,8 +1099,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Track track = new Track();
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
 
                 final JSONObject json = new JSONObject(cursor.getString(1));
                 final JSONArray jArray = json.optJSONArray("timestamparray");
@@ -1118,7 +1117,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 track.setTrackPoints(trackPoints);
 
                 gpsTracks.add(track);
-            } while (cursor.moveToNext());
+            }
         }
         return gpsTracks;
     }
@@ -1266,8 +1265,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TRACKPOINT,
                 null);
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
 
                 final Location loc = new Location("provider");
                 loc.setLatitude(cursor.getDouble(0));
@@ -1277,7 +1276,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
                 final TrackPoint point = new TrackPoint(loc);
                 trackPoints.add(point);
-            } while (cursor.moveToNext());
+            }
         }
         return trackPoints;
     }
