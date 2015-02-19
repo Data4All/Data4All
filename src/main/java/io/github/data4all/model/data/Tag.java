@@ -17,7 +17,6 @@ package io.github.data4all.model.data;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-
 import java.util.Arrays;
 
 import org.apache.tools.ant.types.resources.selectors.InstanceOf;
@@ -36,7 +35,7 @@ public class Tag {
     /**
      * The log-tag for this class.
      */
-    private static final String TAG = Tag.class.getSimpleName();
+    private static final String LOG_TAG = Tag.class.getSimpleName();
 
     /**
      * id to identify the tag.
@@ -80,14 +79,14 @@ public class Tag {
     /**
      * Constructor to create nameRessource and hintRessource from the key.
      * 
-     * @param key The key of the tag
-     * @param type The InputType of the tag
-     * @param osmObjects The osm objects the tag refers to
+     * @param id The ID of the Tag.
+     * @param key The Key of the Tag.
+     * @param type The InputType method. 
+     * @param osmObjects The osm Objects the Tag refers to.
      */
     public Tag(int id, String key, int type, int... osmObjects) {
         this.id = id;
         this.key = key;
-        this.type = type;
         try {
             this.nameRessource =
                     (Integer) R.string.class.getDeclaredField(
@@ -98,16 +97,15 @@ public class Tag {
                                 "hint_" + key.replaceAll(":", "_")).get(null);
             }
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "IllegalArgumentException", e);
+            Log.e(LOG_TAG, "IllegalArgumentException", e);
         } catch (IllegalAccessException e) {
-            Log.e(TAG, "IllegalAccessException", e);
+            Log.e(LOG_TAG, "IllegalAccessException", e);
         } catch (NoSuchFieldException e) {
-            Log.e(TAG, "NoSuchFieldException", e);
+            Log.e(LOG_TAG, "NoSuchFieldException", e);
         }
         
         this.setOsmObjects(osmObjects);
     }
-
 
     public int getHintRessource() {
         return hintRessource;
