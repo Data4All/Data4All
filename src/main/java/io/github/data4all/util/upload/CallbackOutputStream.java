@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * A custom OutputStream which encapsulates the {@link OutputStream} to provide
+ * a callback for the progress of reading.
+ * 
  * @author tbrose
  */
 public final class CallbackOutputStream extends OutputStream {
@@ -27,8 +30,13 @@ public final class CallbackOutputStream extends OutputStream {
     private int currentRead;
 
     /**
+     * Constructs a OutputStream which pipes the content to write to
+     * {@code outstream} and calls the callback {@code callback}.
+     * 
      * @param outstream
+     *            The stream to write to
      * @param callback
+     *            The callback to call
      */
     public CallbackOutputStream(OutputStream outstream,
             Callback<Integer> callback) {

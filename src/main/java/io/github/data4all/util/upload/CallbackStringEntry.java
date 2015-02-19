@@ -22,18 +22,27 @@ import java.io.UnsupportedEncodingException;
 import org.apache.http.entity.StringEntity;
 
 /**
+ * A custom StringEntity which encapsulates the {@link OutputStream} with a
+ * {@link CallbackOutputStream} to provide a callback for the progress of
+ * reading from its String content.
  * 
  * @author tbrose
  */
-public final class MyStringEntry extends StringEntity {
+public final class CallbackStringEntry extends StringEntity {
     private Callback<Integer> callback;
 
     /**
+     * Constructs a StringEntity with the content {@code content} and the
+     * callback {@code callback}.
+     * 
      * @param content
+     *            Content to be used
      * @param callback
+     *            The callback to call
      * @throws UnsupportedEncodingException
+     *             If the default HTTP charset is not supported
      */
-    public MyStringEntry(String content, Callback<Integer> callback)
+    public CallbackStringEntry(String content, Callback<Integer> callback)
             throws UnsupportedEncodingException {
         super(content);
         this.callback = callback;
@@ -42,8 +51,7 @@ public final class MyStringEntry extends StringEntity {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.apache.http.entity.StringEntity#writeTo(java.io.OutputStream)
+     * @see org.apache.http.entity.StringEntity#writeTo(java.io.OutputStream)
      */
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
