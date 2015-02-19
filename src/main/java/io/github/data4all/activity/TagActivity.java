@@ -154,7 +154,12 @@ public class TagActivity extends BasicActivity implements OnClickListener {
                                         || "building".equals(classifiedTag
                                                 .getOriginKey())
                                         || "amenity".equals(classifiedTag
-                                                .getOriginKey())) {
+                                                .getOriginKey()) || key.equals("barrier")
+                                                ||"barrier".equals(classifiedTag
+                                                        .getOriginKey())
+                                                        || key.equals("landuse")
+                                                        ||"landuse".equals(classifiedTag
+                                                                .getOriginKey())) {
                                     createDialog(Tags.getAllAddressTags(),
                                             "Add Address",
                                             false, true);
