@@ -31,12 +31,20 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 
 /**
+ * Service to upload objects to the OSM API.
  * 
  * @author tbrose
  */
 public class UploadService extends IntentService {
+    
+    /**
+     * Logger.
+     */
     private static final String TAG = UploadService.class.getSimpleName();
 
+    /**
+     * Key/Message for handling intent extras.
+     */
     public static final String ACTION =
             "io.github.data4all.service.UploadService:ACTION";
     public static final String HANDLER =
@@ -44,6 +52,9 @@ public class UploadService extends IntentService {
     public static final String MESSAGE =
             "io.github.data4all.service.UploadService:MESSAGE";
 
+    /**
+     * Codes to identify different events.
+     */
     public static final int UPLOAD = 1;
     public static final int CANCLE = 2;
 
@@ -56,7 +67,10 @@ public class UploadService extends IntentService {
     private volatile HttpCloseable currentConnection;
 
     /**
+     * Constructs a new UploadService with an new Handler.
+     * 
      * @param name
+     *            Used to name the worker thread, important only for debugging
      */
     public UploadService() {
         super(UploadService.class.getSimpleName());
@@ -80,8 +94,10 @@ public class UploadService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    /**
+    /*
+     * (non-Javadoc)
      * 
+     * @see android.app.IntentService#onHandleIntent(android.content.Intent)
      */
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -97,6 +113,15 @@ public class UploadService extends IntentService {
         }
     }
 
+    /**
+     * Requests a new Changeset ID from the OSM API, parses the OSM elements
+     * from the Database and starts the upload.
+     * 
+     * @param receiver
+     *            The ResultReceiver instance
+     * @param user
+     *            The User to the data from
+     */
     private void uploadElems(final ResultReceiver receiver, final User user) {
         try {
             // Request the changesetId
@@ -150,18 +175,54 @@ public class UploadService extends IntentService {
         }
     }
 
+    /**
+     * Deliver a result to this receiver. Will call {@link #onReceiveResult},
+     * always asynchronously if the receiver has supplied a Handler in which to
+     * dispatch the result.
+     * 
+     * @param receiver
+     *            The ResultReceiver
+     * @param code
+     *            Arbitrary result code to deliver, as defined by you.
+     * @param data
+     *            Additional data provided by you.
+     */
     private static void send(ResultReceiver receiver, int code, int data) {
         final Bundle bundle = new Bundle();
         bundle.putInt(MESSAGE, data);
         send(receiver, code, bundle);
     }
 
+    /**
+     * Deliver a result to this receiver. Will call {@link #onReceiveResult},
+     * always asynchronously if the receiver has supplied a Handler in which to
+     * dispatch the result.
+     * 
+     * @param receiver
+     *            The ResultReceiver
+     * @param code
+     *            Arbitrary result code to deliver, as defined by you.
+     * @param data
+     *            Additional data provided by you.
+     */
     private static void send(ResultReceiver receiver, int code, String data) {
         final Bundle bundle = new Bundle();
         bundle.putString(MESSAGE, data);
         send(receiver, code, bundle);
     }
 
+    /**
+     * Deliver a result to this receiver. Will call {@link #onReceiveResult},
+     * always asynchronously if the receiver has supplied a Handler in which to
+     * dispatch the result.
+     * 
+     * @param receiver
+     *            The ResultReceiver
+     * @param code
+     *            Arbitrary result code to deliver, as defined by you.
+     * @param data
+     *            Additional data provided by you.
+     */
     private static void send(ResultReceiver receiver, int code, Bundle data) {
         if (receiver != null) {
             receiver.send(code, data);
@@ -169,14 +230,14 @@ public class UploadService extends IntentService {
     }
 
     /**
-     * 
+     * Call back (send) the current progress at some convenient time to the {@link ResultReceiver}.
      * @author tbrose
      */
     private class MyCallback implements Callback<Integer> {
         private ResultReceiver receiver;
 
         /**
-         * 
+         * Constructs a new {@link MyCallback}.
          * @param receiver
          */
         public MyCallback(ResultReceiver receiver) {

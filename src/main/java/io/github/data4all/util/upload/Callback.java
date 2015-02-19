@@ -16,15 +16,15 @@
 package io.github.data4all.util.upload;
 
 /**
- * 
+ * Interface to handle a generic Callback.
  * @author tbrose
  *
- * @param <T>
+ * @param <T> The argument type which should be delivered by the callback. 
  */
 public interface Callback<T> {
     /**
-     * 
-     * @param t
+     * This method handles the callback (execute it).
+     * @param t The argument which should be delivered through the callback. 
      */
     void callback(T t);
 }

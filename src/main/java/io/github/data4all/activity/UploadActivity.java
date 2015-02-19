@@ -36,13 +36,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * 
- * 
+ * Activity to upload objects to the OSM API.
  * @author tbrose
- *
  */
 public class UploadActivity extends BasicActivity {
 
+    
     public static final String TAG = UploadActivity.class.getSimpleName();
     private ProgressBar progress;
     private View indetermineProgress;
@@ -192,7 +191,7 @@ public class UploadActivity extends BasicActivity {
     }
 
     /**
-     * 
+     * IPC to receive a callback result from the UploadService.
      * @author tbrose
      */
     private class MyReceiver extends ResultReceiver {

@@ -16,7 +16,7 @@
 package io.github.data4all.util.oauth.exception;
 
 /**
- * Indicates an failure in a osm progress.
+ * Indicates an failure in an osm progress.
  * 
  * @author tbrose
  */

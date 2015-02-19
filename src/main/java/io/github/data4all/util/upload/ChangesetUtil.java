@@ -42,6 +42,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.json.JSONException;
 
 import android.content.Context;
+import android.os.ResultReceiver;
 
 /**
  * This class provides several methods for creating, parsing and uploading
@@ -59,6 +60,13 @@ public final class ChangesetUtil {
     private ChangesetUtil() {
     }
 
+    /**
+     * Returns a Changeset-Request to send to the OSM API.
+     * 
+     * @param comment
+     *            The Comment specified for by the User.
+     * @return The Changeset-Request.
+     */
     private static String getChangesetRequest(String comment) {
         return "<osm>\n<changeset>\n"
                 + "<tag k=\"created_by\" v=\"Data4All\"/>\n"
@@ -66,14 +74,25 @@ public final class ChangesetUtil {
                 + "</changeset>\n</osm>";
     }
 
+    /**
+     * Creates a {@link HttpPut} request and signs it by writing an OAuth
+     * signature to it.
+     * 
+     * @param user
+     *            The {@link User} account to sign the {@link HttpPut} with.
+     * @return A {@link HttpPut} Request.
+     * @throws OsmException
+     *             Indicates an failure in an osm progess.
+     */
     private static HttpPut getChangeSetPut(User user) throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
-                params.getConsumerKey(), params.getConsumerSecret());
+        final OAuthConsumer consumer =
+                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
+                        params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPut httpPut = new HttpPut(params.getScopeUrl()
-                + "api/0.6/changeset/create");
+        final HttpPut httpPut =
+                new HttpPut(params.getScopeUrl() + "api/0.6/changeset/create");
         try {
             consumer.sign(httpPut);
         } catch (OAuthMessageSignerException e) {
@@ -90,12 +109,12 @@ public final class ChangesetUtil {
      * Requests a changeset-id from the OSM-API.
      * 
      * @param user
-     *            The user to request a id for
+     *            The {@link User} to request a id for.
      * @param comment
-     *            The changeset-comment
-     * @return the changeset-id
+     *            The Comment for the Changeset.
+     * @return The Changeset ID.
      * @throws OsmException
-     *             If the changeset-id cannot be grabbed
+     *             If the Changeset ID cannot be grabbed.
      */
     public static CloseableRequest requestId(final User user,
             final String comment) throws OsmException {
@@ -112,11 +131,16 @@ public final class ChangesetUtil {
     }
 
     /**
+     * Parses all objects from the database into an xml structure to create a
+     * new Changeset.
      * 
      * @param context
+     *            The application context for the {@link DataBaseHandler}.
      * @param changesetId
-     * @return
+     *            The Changeset ID from the OSM API.
+     * @return The created Changeset.
      * @throws OsmException
+     *             Indicates an failure in an osm progess.
      */
     public static String getChangesetXml(Context context, int changesetId)
             throws OsmException {
@@ -142,15 +166,29 @@ public final class ChangesetUtil {
         }
     }
 
+    /**
+     * Returns a {@link HttpPost} containing the Changeset ID which is signed by
+     * the OAuth {@link User}.
+     * 
+     * @param user
+     *            The OAuth {@link User}.
+     * @param id
+     *            The Changeset ID.
+     * @return The signed {@link HttpPost}.
+     * @throws OsmException
+     *             Indicates an failure in an osm progess.
+     */
     private static HttpPost getUploadPost(User user, int id)
             throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
-                params.getConsumerKey(), params.getConsumerSecret());
+        final OAuthConsumer consumer =
+                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
+                        params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPost httpPost = new HttpPost(params.getScopeUrl()
-                + "api/0.6/changeset/" + id + "/upload");
+        final HttpPost httpPost =
+                new HttpPost(params.getScopeUrl() + "api/0.6/changeset/" + id
+                        + "/upload");
         try {
             consumer.sign(httpPost);
         } catch (OAuthMessageSignerException e) {
@@ -168,12 +206,14 @@ public final class ChangesetUtil {
     }
 
     /**
+     * Returns a {@link CloseableUpload} containing all nessesary informations
+     * for the upload to the OSM API.
      * 
-     * @param user
-     * @param changesetId
-     * @param changesetXml
-     * @param callback
-     * @throws OsmException
+     * @param user The {@link User} who uploads the Changeset.
+     * @param changesetId The Changeset ID.
+     * @param changesetXml The Changeset which should be uploaded.
+     * @param callback The callback object for interaction with the {@link ResultReceiver}.
+     * @throws OsmException Indicates an failure in an osm progess.
      */
     public static CloseableUpload upload(User user, int changesetId,
             String changesetXml, Callback<Integer> callback)
@@ -191,15 +231,24 @@ public final class ChangesetUtil {
         }
     }
 
+    /**
+     * Returns a {@link HttpPut} which closes the Changeset with the given ID.
+     * @param user The {@link User} account to sign the {@link HttpPut}. 
+     * @param changeSetId The Changeset ID.
+     * @return The signed {@link HttpPut}.
+     * @throws OsmException Indicates an failure in an osm progess.
+     */
     private static HttpPut getChangeSetClose(User user, long changeSetId)
             throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
-                params.getConsumerKey(), params.getConsumerSecret());
+        final OAuthConsumer consumer =
+                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
+                        params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPut httpPut = new HttpPut(params.getScopeUrl()
-                + "api/0.6/changeset/" + changeSetId + "/close");
+        final HttpPut httpPut =
+                new HttpPut(params.getScopeUrl() + "api/0.6/changeset/"
+                        + changeSetId + "/close");
         try {
             consumer.sign(httpPut);
         } catch (OAuthMessageSignerException e) {
