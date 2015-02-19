@@ -62,28 +62,23 @@
 
     <!-- classified tags_ building -->
     <string name="name_building">Building</string>
+    <string name="name_building_residential">Residential</string>
+    <string name="name_building_garage">Garage</string>
+    <string name="name_building_house">House</string>
     <string name="name_building_apartments">Apartments</string>
-    <string name="name_building_farm">farm</string>
-    <string name="name_building_hotel">hotel</string>
-    <string name="name_building_house">house</string>
-    <string name="name_building_commercial">commercial</string>
-    <string name="name_building_industrial">industrial</string>
-    <string name="name_building_retail">retail</string>
-    <string name="name_building_warehouse">warehouse</string>
-    <string name="name_building_church">church</string>
-    <string name="name_building_hospital">hospital</string>
-    <string name="name_building_train_station">train_station</string>
-    <string name="name_building_university">university</string>
+    <string name="name_building_retail">Retail</string>
+    <string name="name_building_industrial">Industrial</string>
+    <string name="name_building_commercial">Commercial</string>
 
     <!-- classified tags_ landuse -->
     <string name="name_landuse">Landuse</string>
+    <string name="name_landuse_forest">Forest</string>
+    <string name="name_landuse_residential">Residential</string>
+    <string name="name_landuse_grass">Grass</string>
+    <string name="name_landuse_farmland">Farmland</string>
+    <string name="name_landuse_industrial">Industrial</string>
     <string name="name_landuse_commercial">Commercial</string>
     <string name="name_landuse_construction">Construction</string>
-    <string name="name_landuse_farmland">Farmland</string>
-    <string name="name_landuse_forest">Forest</string>
-    <string name="name_landuse_grass">Grass</string>
-    <string name="name_landuse_industrial">Industrial</string>
-    <string name="name_landuse_military">Military</string>
-    <string name="name_landuse_residential">Residential</string>
+    <string name="name_landuse_military">Military</string>   
 
 </resources>

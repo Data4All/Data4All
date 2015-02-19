@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 /**
  * Activity to show an Osm_Element on a Preview Map.
@@ -43,26 +42,24 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private AbstractDataElement element;
 
     public MapPreviewActivity() {
-
+        super();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
-        setUpMapView();
+        setUpMapView(savedInstanceState);
+        setUpLoadingScreen();
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        addOsmElementToMap(element);
-        view = (ImageView) findViewById(R.id.imageView1);
-        if (savedInstanceState != null) {
-            loadState(savedInstanceState);
-        }
-
-        view.setVisibility(View.GONE);
+        mapView.addOsmElementToMap(this, element);
 
         mapController.setZoom(actualZoomLevel);
-        mapController.setCenter(actualCenter);
-
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -76,20 +73,22 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         satelliteMap.setOnClickListener(this);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onStart()
+     */
     @Override
     protected void onStart() {
         super.onStart();
-        if (element instanceof Node) {
-            final Node node = (Node) element;
-            mapController.setCenter(node.toGeoPoint());
-            mapController.animateTo(node.toGeoPoint());
-        } else {
-            final PolyElement polyElement = (PolyElement) element;
-            mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
-            mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
-        }
+        setCenter(MapUtil.getCenterFromOsmElement(element));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -107,6 +106,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /*
+     * Starts new Tagactivity with Osm Object and Type Definition in the Intent
+     */
     private void accept() {
         final Intent intent = new Intent(this, TagActivity.class);
 

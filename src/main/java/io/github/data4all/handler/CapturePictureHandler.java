@@ -104,7 +104,7 @@ public class CapturePictureHandler implements PictureCallback {
                 new TransformationParamBean(this.getDeviceHeight(),
                         horizontalViewAngle, verticalViewAngle,
                         pictureSize.width, pictureSize.height, currentLocation);
-        currentOrientation = Optimizer.currentBestPos();
+        currentOrientation = Optimizer.currentDeviceOrientation();
 
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask().execute(raw);

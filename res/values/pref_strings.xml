@@ -8,5 +8,9 @@
     <string name="pref_bodyheight_dialog_message">Please enter the height in cm</string>
 
     <integer name="pref_bodyheight_default">180</integer>
-
+    
+    <string name="pref_currentuser_title">Current user</string>
+	<string name="pref_currentuser_dialog_title">Logout</string>
+    <string name="pref_currentuser_dialog_message">Do you want to logout?</string>
+    <string name="pref_currentuser_null">Not logged in</string>
 </resources>

@@ -133,13 +133,16 @@ public class GPSservice extends Service implements LocationListener {
         Optimizer.putLoc(loc);
 
         final Location tp = Optimizer.currentBestLoc();
+        final TrackPoint last = track.getLastTrackPoint();
 
-        // check if new Location is already stored
-        if (this.sameTrackPoints(track.getLastTrackPoint(), tp)) {
-            track.addTrackPoint(tp);
-            // After ten trackpoints updateDatabase
-            if ((track.getTrackPoints().size() % 10) == 0) {
-                // dbHandler.updateTrack(track);
+        if(last != null && tp != null) {
+            // check if new Location is already stored
+            if (this.sameTrackPoints(last, tp)) {
+                track.addTrackPoint(tp);
+                // After ten trackpoints updateDatabase
+                if ((track.getTrackPoints().size() % 10) == 0) {
+                    // dbHandler.updateTrack(track);
+                }
             }
         }
     }
