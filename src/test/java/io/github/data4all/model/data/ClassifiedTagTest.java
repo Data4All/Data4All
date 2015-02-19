@@ -1,15 +1,18 @@
 package io.github.data4all.model.data;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.osmdroid.tileprovider.util.CloudmadeUtil;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -24,14 +27,16 @@ import org.robolectric.annotation.Config;
 public class ClassifiedTagTest {
 
     private ClassifiedTag classifiedTag;
-    private ArrayList<String> classifiedValues;
-
+    private List<String> highwayValues;
+    private ClassifiedTag lastChoice;
+    Tag highway = new Tag(10, "highway", null, Tag.WAY_TAG );
+    
+    
     @Before
     public void setUp() {
-        classifiedValues = new ArrayList<String>(Arrays.asList("motorway",
+        highwayValues = new ArrayList<String>(Arrays.asList("motorway",
                 "residential", "service", "track", "footway", "road"));
-//        classifiedTag = new ClassifiedTag("highway", null, classifiedValues,
-//                Tag.WAY_TAG);
+        classifiedTag = new ClassifiedTag(10,"highway",null,highwayValues,Tag.WAY_TAG);
     }
 
     /**
@@ -40,9 +45,7 @@ public class ClassifiedTagTest {
      */
     @Test
     public void test_getClassifiedValues_WithoutSuggestion() {
-
-        assertTrue(classifiedTag.getClassifiedValuesSuggestion().isEmpty());
-        assertEquals(classifiedTag.getClassifiedValues(), classifiedValues);
+        assertEquals(classifiedTag.getClassifiedValues(), highwayValues);
     }
 
     /**
@@ -51,12 +54,18 @@ public class ClassifiedTagTest {
      */
     @Test
     public void test_getClassifiedValues_WithSuggestion() {
-
+        
+        lastChoice = Tags.getLastChoice();
+        assertNull(lastChoice);
         classifiedTag.addSuggestion("path");
-        assertFalse(classifiedTag.getClassifiedValuesSuggestion().isEmpty());
-        assertEquals(classifiedTag.getClassifiedValues(),
-                classifiedTag.getClassifiedValuesSuggestion());
+        lastChoice = new ClassifiedTag(10, "Last Choice", null,
+                Arrays.asList("path"), Tag.WAY_TAG);
+        Tags.TAG_LIST.add(lastChoice);
+        lastChoice = Tags.getLastChoice();
+        assertNotNull(lastChoice);
+        assertEquals(lastChoice.getClassifiedValues(),classifiedTag.getClassifiedValues());    
     }
+
     
     /**
      * create a new ArrayList of classifiedValues
