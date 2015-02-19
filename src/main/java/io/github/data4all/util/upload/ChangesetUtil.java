@@ -228,10 +228,7 @@ public final class ChangesetUtil {
      */
     public static CloseableCloseRequest closeId(final User user,
             final long changesetId) throws OsmException {
-
         final HttpPut request = getChangeSetClose(user, changesetId);
-
         return new CloseableCloseRequest(request);
-
     }
 }
