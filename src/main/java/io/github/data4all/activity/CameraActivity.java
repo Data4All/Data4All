@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -89,27 +90,27 @@ public class CameraActivity extends Activity {
 		btnCapture.setOnClickListener(btnCaptureOnClickListener);
 
 		// Set the Focus animation
-
 		mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
-	
+
 
 		mAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
 		updateAssistView(0.5);
 	}
 
-	
+
 
 	
 	private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			mAutoFocusCrossHair.showStart();
+			mAutoFocusCrossHair.doAnimation();
 
 			mCamera.autoFocus(new AutoFocusCallback() {
 				@Override
 				public void onAutoFocus(boolean success, Camera camera) {
 
-					mAutoFocusCrossHair.animate();
+					
 
 					if (success) {
 						mCamera.takePicture(shutterCallback, null,
