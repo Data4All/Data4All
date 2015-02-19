@@ -37,10 +37,10 @@ import android.view.animation.ScaleAnimation;
 
 public class AutoFocusCrossHair extends View {
 
-
 	/**
 	 * Public Constructor for creating the AutoFocus Cross Hair
-	 * @param context 
+	 * 
+	 * @param context
 	 * @param attrs
 	 */
 	public AutoFocusCrossHair(Context context, AttributeSet attrs) {
@@ -57,27 +57,26 @@ public class AutoFocusCrossHair extends View {
 	public void showStart() {
 		this.setDrawable(R.drawable.crosshair);
 	}
-	
-	
-	public void doAnimation(){
-		
+
+	public void doAnimation() {
+
 		scaleView(this, 1.0f, 1.5f);
-		
+
 	}
-	
-	
-	public void scaleView(View v, float startScale, float endScale) {
-		Animation anim = new ScaleAnimation(
-	            1.0f, 1.5f, // Start and end values for the X axis scaling
-	            startScale, endScale, // Start and end values for the Y axis scaling
-	            Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-	            Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
-	    anim.setFillAfter(true); // Needed to keep the result of the animation
-	    anim.setDuration(500);
-	    v.startAnimation(anim);
+
+	private void scaleView(View v, float startScale, float endScale) {
+		Animation anim = new ScaleAnimation(1.0f, 1.5f, // Start and end values
+														// for the X axis
+														// scaling
+				startScale, endScale, // Start and end values for the Y axis
+										// scaling
+				Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+				Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
+		anim.setFillAfter(true); // Needed to keep the result of the animation
+		anim.setDuration(500);
+		v.startAnimation(anim);
 	}
-	
-	
+
 	/**
 	 * method to remove Image from view
 	 */

@@ -214,11 +214,12 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 						(mPreviewSize.width * 1.0)
 								/ (mPreviewSize.height * 1.0));
 
+				Log.i(TAG, "SAVE SIZE "+mPhotoSize.width+mPhotoSize.height );
 				params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
 
 				// set the picture type for taking photo
 				params.setPictureFormat(ImageFormat.JPEG);
-				params.setJpegQuality(5);
+				params.setJpegQuality(100);
 				params.setZoom(0);
 
 				setFocusModes(params);
@@ -354,7 +355,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		for (Size size : sizes) {
 			double ratio = ((double) size.width) / (double) (size.height);
 
-			//Log.d(TAG, "OptimalPictureSize ratio: " + ratio);
+			Log.d(TAG, "OptimalPictureSize ratio: " + ratio);
 
 			int currentResolution = size.width * size.height;
 

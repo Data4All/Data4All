@@ -92,14 +92,10 @@ public class CameraActivity extends Activity {
 		// Set the Focus animation
 		mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
 
-
 		mAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
 		updateAssistView(0.5);
 	}
 
-
-
-	
 	private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -109,8 +105,6 @@ public class CameraActivity extends Activity {
 			mCamera.autoFocus(new AutoFocusCallback() {
 				@Override
 				public void onAutoFocus(boolean success, Camera camera) {
-
-					
 
 					if (success) {
 						mCamera.takePicture(shutterCallback, null,

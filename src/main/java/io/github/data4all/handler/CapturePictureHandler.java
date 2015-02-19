@@ -44,10 +44,9 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
- * PreviewClass for camera.
- * This class serves as Previewclass for the camera . This class creates the
- * preview with all associated views and handles the control of the camera in
- * cooperation with the {@link CameraActivity}.
+ * PreviewClass for camera. This class serves as Previewclass for the camera .
+ * This class creates the preview with all associated views and handles the
+ * control of the camera in cooperation with the {@link CameraActivity}.
  * 
  * @author Andre Koch
  * @CreationDate 09.02.2015
@@ -144,7 +143,8 @@ public class CapturePictureHandler implements PictureCallback {
 		final String key = res.getString(R.string.pref_bodyheight_key);
 		final String height = prefs.getString(key, null);
 		if (TextUtils.isEmpty(height)) {
-			final int defaultValue = res.getInteger(R.integer.pref_bodyheight_default);
+			final int defaultValue = res
+					.getInteger(R.integer.pref_bodyheight_default);
 			// Save the default value
 			prefs.edit().putString(key, "" + defaultValue).commit();
 			return (defaultValue - 20) / 100.0;
@@ -163,7 +163,9 @@ public class CapturePictureHandler implements PictureCallback {
 
 		/**
 		 * Default Constructor for saving photo task.
-		 * @param params camera params
+		 * 
+		 * @param params
+		 *            camera params
 		 */
 		public SavePhotoTask(Camera.Parameters params) {
 			this.params = params;
@@ -176,7 +178,8 @@ public class CapturePictureHandler implements PictureCallback {
 
 				Log.d(TAG, "Picturepath:" + photoFile.getPath());
 
-				final FileOutputStream fos = new FileOutputStream(photoFile.getPath());
+				final FileOutputStream fos = new FileOutputStream(
+						photoFile.getPath());
 				fos.write(photoData[0]);
 				fos.flush();
 				fos.close();
