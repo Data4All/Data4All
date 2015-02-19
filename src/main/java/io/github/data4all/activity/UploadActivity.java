@@ -89,15 +89,17 @@ public class UploadActivity extends BasicActivity {
      */
     private void showProgress(boolean show) {
         if (show) {
-            progress.setVisibility(View.VISIBLE);
+            this.progress.setMax(0);
+            this.progress.setProgress(0);
+            this.progress.setIndeterminate(true);
+            this.progress.setVisibility(View.VISIBLE);
 
             this.uploadButton.setEnabled(false);
             this.uploadButton.setVisibility(View.GONE);
             this.cancleButton.setEnabled(true);
             this.cancleButton.setVisibility(View.VISIBLE);
         } else {
-            progress.setVisibility(View.INVISIBLE);
-            progress.setIndeterminate(true);
+            this.progress.setVisibility(View.INVISIBLE);
 
             this.cancleButton.setEnabled(false);
             this.cancleButton.setVisibility(View.GONE);
@@ -107,7 +109,7 @@ public class UploadActivity extends BasicActivity {
     }
 
     /**
-     * Called when the upload succeeds
+     * Called when the upload succeeds.
      */
     public void onSuccess() {
         this.showProgress(false);
