@@ -13,13 +13,6 @@
     <string name="action_map">Map</string>
     <string name="action_help">Help</string>
     <string name="action_login">Login</string>
-    <string name="title_activity_tag">TagActivity</string>
-    <string name="tag">Start Tagging</string>
-    <string name="houseNumber">house number</string>
-    <string name="street">street</string>
-    <string name="postCode">postcode</string>
-    <string name="city">city</string>
-    <string name="country">country</string>
     <string name="next">Next</string>
     <string name="finish">Finish</string>
     <string name="phone">phone</string>
@@ -27,7 +20,6 @@
     <string name="website">website</string>
     <string name="email">email</string>
     <string name="title_activity_login">Login</string>
-    <string name="getUsernameButton">show Username</string>
     <!-- Strings Content Description ImageButtons on MapViewActivity -->
     <string name="returnToActualPosition">My Position</string>
     <string name="returnToCamera">Camera</string>
@@ -46,15 +38,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="resultViewAlertDialogMessage">Upload now</string>
-    <string name="ok">Ok</string>
-    <string name="noCamSupported">Sorry Your device doesnt support camera</string>
-    <string name="CamWithAutoFocus">This Camera use Autofocus</string>
-    <string name="start_image_capture">Take a New Picture</string>
-    <string name="capture_image">Snap it!</string>
-    <string name="save_image">Save Picture</string>
-    <string name="recapture_image">Retake Picture</string>
-    <string name="capturing_image">Taking New Picture</string>
-    <string name="done">Done</string>
+    <string name="ok">OK</string>
+    <string name="noCamSupported">Sorry Your device does not support camera</string>
     <string name="redo">Redo Function</string>
     <string name="undo">Undo Function</string>
 
