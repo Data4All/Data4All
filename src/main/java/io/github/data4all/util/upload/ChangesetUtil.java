@@ -222,7 +222,7 @@ public final class ChangesetUtil {
             final HttpPost request = getUploadPost(user, changesetId);
 
             // Setting the Entity
-            final HttpEntity entity = new MyStringEntry(changesetXml, callback);
+            final HttpEntity entity = new CallbackStringEntry(changesetXml, callback);
             request.setEntity(entity);
 
             return new CloseableUpload(request);
