@@ -55,7 +55,8 @@ public class AutoFocusCrossHair extends View {
 	public void showStart() {
 		this.setDrawable(R.drawable.crosshair);
 	}
-
+	
+	
 	/**
 	 * method to remove Image from view
 	 */

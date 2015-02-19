@@ -107,10 +107,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-		final int width = resolveSize(getSuggestedMinimumWidth(),
-				widthMeasureSpec);
-		final int height = resolveSize(getSuggestedMinimumHeight(),
-				heightMeasureSpec);
+		final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+		final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
 
 		setMeasuredDimension(width, height);
 
@@ -131,18 +129,17 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		Log.d(TAG, "onLayout is called");
 
 		if (changed && getChildCount() > 0) {
-			final View child = getChildAt(0);
+			View child = getChildAt(0);
 
-			final int width = r - l;
-			final int height = b - t;
+			int width = r - l;
+			int height = b - t;
 
-			
 			int previewWidth = width;
 			int previewHeight = height;
 
 			if (mPreviewSize != null) {
 
-				final Display display = ((WindowManager) context
+				Display display = ((WindowManager) context
 						.getSystemService(Context.WINDOW_SERVICE))
 						.getDefaultDisplay();
 
@@ -221,7 +218,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 				// set the picture type for taking photo
 				params.setPictureFormat(ImageFormat.JPEG);
-				params.set("jpeg-quality", 5);
+				params.setJpegQuality(100);
+				params.setZoom(0);
 
 				setFocusModes(params);
 
@@ -243,7 +241,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 						.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
 			params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
 
-			Log.i(TAG, "DEEEEBUG :" + params.getFlashMode());
 		}
 		return params;
 	}
@@ -319,13 +316,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		} else { // back-facing
 			result = (info.orientation - degrees + 360) % 360;
 		}
-		Log.i(TAG, "DEBUG: " + info.orientation);
-		Log.i(TAG, "DEBUG: " + degrees);
-		Log.i(TAG, "DEBUG: " + result);
+		
+		mCamera.setDisplayOrientation(result);
 
 		params.setRotation(info.orientation);
-
-		mCamera.setDisplayOrientation(result);
 
 		mCamera.setParameters(params);
 
@@ -360,7 +354,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		for (Size size : sizes) {
 			double ratio = ((double) size.width) / (double) (size.height);
 
-			Log.d(TAG, "OptimalPictureSize ratio: " + ratio);
+			//Log.d(TAG, "OptimalPictureSize ratio: " + ratio);
 
 			int currentResolution = size.width * size.height;
 
@@ -397,8 +391,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		for (Size size : sizes) {
 			double ratio = ((double) size.width) / (double) (size.height);
 
-			Log.d(TAG, "currentSize width:" + size.width);
-			Log.d(TAG, "currentSize heigth:" + size.height);
+			//Log.d(TAG, "currentSize width:" + size.width);
+			//Log.d(TAG, "currentSize heigth:" + size.height);
 
 			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
 				continue;
@@ -420,8 +414,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 				}
 			}
 		}
-		Log.d(TAG, "optimalSize width:" + optimalSize.width);
-		Log.d(TAG, "optimalSize heigth:" + optimalSize.height);
+		//Log.d(TAG, "optimalSize width:" + optimalSize.width);
+		//Log.d(TAG, "optimalSize heigth:" + optimalSize.height);
 
 		return optimalSize;
 	}

@@ -15,8 +15,14 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.R;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -33,6 +39,13 @@ import android.view.View;
  */
 
 public class CaptureAssistView extends View {
+
+	private int previewWidth;
+	private double percentage;
+
+	private Paint cameraCrossPaint;
+	private Paint cameraStopPaint;
+	private Paint invalidRegionPaint;
 
 	private static final String TAG = CaptureAssistView.class.getSimpleName();
 
@@ -52,7 +65,23 @@ public class CaptureAssistView extends View {
 	}
 
 	private void initView() {
-
+		Log.i(TAG, "init View is called");
+		
 	}
 
+	public void setInvalidRegion(double _precentage) {
+		Log.i(TAG, "setInvalidRegion is called");
+		this.percentage = _precentage;
+		Log.i(TAG, "percentage:"+this.percentage);
+	}
+
+	
+	@Override
+	protected void onDraw(Canvas canvas) {
+		Log.i(TAG, "onDraw is called");
+		
+
+		//canvas.restore();
+
+	}
 }

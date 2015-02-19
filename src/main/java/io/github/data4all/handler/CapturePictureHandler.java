@@ -108,7 +108,7 @@ public class CapturePictureHandler implements PictureCallback {
 	 */
 	@Override
 	public void onPictureTaken(byte[] raw, Camera camera) {
-		Log.d(TAG, "onPictureTaken isSave the Picture");
+		Log.d(TAG, "onPictureTaken is called");
 
 		final Camera.Parameters params = camera.getParameters();
 

@@ -20,6 +20,7 @@ import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
+import io.github.data4all.view.CaptureAssistView;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -58,6 +59,7 @@ public class CameraActivity extends Activity {
 	private CameraPreview cameraPreview;
 	private ImageButton btnCapture;
 	private AutoFocusCrossHair mAutoFocusCrossHair;
+	private CaptureAssistView mAssistView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,12 +91,15 @@ public class CameraActivity extends Activity {
 		// Set the Focus animation
 
 		mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
-		// crossHair = AnimationUtils.loadAnimation(this,R.anim.crossHair);
-		// mAutoFocusCrossHair.clearAnimation();
-		// mAutoFocusCrossHair.setAnimation(crossHair);
+	
 
+		mAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
+		updateAssistView(0.5);
 	}
 
+	
+
+	
 	private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -104,7 +109,7 @@ public class CameraActivity extends Activity {
 				@Override
 				public void onAutoFocus(boolean success, Camera camera) {
 
-					// mAutoFocusCrossHair.startAnimation(crossHair);
+					mAutoFocusCrossHair.animate();
 
 					if (success) {
 						mCamera.takePicture(shutterCallback, null,
@@ -123,6 +128,17 @@ public class CameraActivity extends Activity {
 			btnCapture.setClickable(false);
 		}
 	};
+
+	/**
+	 * This method is called when the position of the mobile phones has changed
+	 * and the assist view must be adapted.
+	 * 
+	 * @param precentage
+	 */
+	public void updateAssistView(double precentage) {
+		mAssistView.setInvalidRegion(precentage);
+		mAssistView.invalidate();
+	}
 
 	@Override
 	protected void onResume() {
