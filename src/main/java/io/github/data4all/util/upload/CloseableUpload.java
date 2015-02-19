@@ -75,6 +75,10 @@ public class CloseableUpload implements HttpCloseable {
             if (!this.isStopped) {
                 throw new OsmException(e);
             }
+        } catch (IllegalStateException e) {
+            if (!this.isStopped) {
+                throw new OsmException(e);
+            }
         } finally {
             this.httpClient.getConnectionManager().shutdown();
         }
