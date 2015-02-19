@@ -86,4 +86,17 @@
     <string name="name_landuse_military">Military</string>
     <string name="name_landuse_residential">Residential</string>
 
+    <!-- address tags -->
+    <string name="hint_addr_street">Main Street</string>
+    <string name="hint_addr_housenumber">1234</string>
+    <string name="hint_addr_postcode">123456</string>
+    <string name="hint_addr_city">Anytown</string>
+    <string name="hint_addr_country">USA</string>
+
+    <!-- contact tags -->
+    <string name="hint_contact_phone">+01 234567890</string>
+    <string name="hint_contact_fax">+01 234567890</string>
+    <string name="hint_contact_website">http_//www.website.com</string>
+    <string name="hint_contact_email">foo@bar.com</string>
+
 </resources>
