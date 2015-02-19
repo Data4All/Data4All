@@ -37,9 +37,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
  */
 public class CloseableRequest implements HttpCloseable {
 
-    private final HttpPut request;
+    private final HttpPut httpRequest;
     private final DefaultHttpClient httpClient;
-    private boolean stop;
+    private boolean isStopped;
 
     /**
      * Constructs a changeset-id-request with the given request.
@@ -48,7 +48,7 @@ public class CloseableRequest implements HttpCloseable {
      *            The request to use for the id-request
      */
     public CloseableRequest(HttpPut request) {
-        this.request = request;
+        this.httpRequest = request;
         this.httpClient = new DefaultHttpClient();
     }
 
@@ -59,11 +59,11 @@ public class CloseableRequest implements HttpCloseable {
      *             In case of problems with the upload
      */
     public int request() throws OsmException {
-        this.stop = false;
+        this.isStopped = false;
 
         try {
             // Sending the Request
-            final HttpResponse response = this.httpClient.execute(request);
+            final HttpResponse response = this.httpClient.execute(httpRequest);
 
             // Looking if the Request was successful and then starting the
             // Upload Task through the helper
@@ -77,11 +77,11 @@ public class CloseableRequest implements HttpCloseable {
                 throw new OsmException("Wrong statusCode returned: " + code);
             }
         } catch (ClientProtocolException e) {
-            if (!this.stop) {
+            if (!this.isStopped) {
                 throw new OsmException(e);
             }
         } catch (IOException e) {
-            if (!this.stop) {
+            if (!this.isStopped) {
                 throw new OsmException(e);
             }
         } finally {
@@ -98,7 +98,7 @@ public class CloseableRequest implements HttpCloseable {
     @Override
     public void stop() {
         Log.d("CloseableRequest", "stopping request");
-        this.stop = true;
+        this.isStopped = true;
         this.httpClient.getConnectionManager().shutdown();
     }
 }

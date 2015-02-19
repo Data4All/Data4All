@@ -15,20 +15,18 @@
  */
 package io.github.data4all.activity;
 
-import java.util.List;
-
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.UploadService;
-import io.github.data4all.util.Optimizer;
+
+import java.util.List;
 
 import org.json.JSONException;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -72,12 +70,7 @@ public class UploadActivity extends BasicActivity {
      */
     private void readObjectCount() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        int count = 0;
-        try {
-            count = db.getAllDataElements().size();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        final int count = db.getDataElementCount();
         db.close();
 
         countText.setText(Integer.toString(count));
@@ -114,19 +107,22 @@ public class UploadActivity extends BasicActivity {
     }
 
     /**
-     * 
+     * Called when the upload succeeds
      */
     public void onSuccess() {
-        showProgress(false);
-        String msg = "Successfully uploaded";
+        this.showProgress(false);
+        final String msg = "Successfully uploaded";
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     /**
+     * Called when the upload fails.
      * 
+     * @param msg
+     *            The description of the error
      */
     public void onError(String msg) {
-        showProgress(false);
+        this.showProgress(false);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
@@ -143,7 +139,7 @@ public class UploadActivity extends BasicActivity {
             intent.putExtra(UploadService.HANDLER, new MyReceiver());
 
             startService(intent);
-            showProgress(true);
+            this.showProgress(true);
         }
     }
 
@@ -160,7 +156,7 @@ public class UploadActivity extends BasicActivity {
             intent.putExtra(UploadService.HANDLER, new MyReceiver());
 
             startService(intent);
-            showProgress(false);
+            this.showProgress(false);
         }
     }
 
@@ -169,10 +165,14 @@ public class UploadActivity extends BasicActivity {
      */
     public void onClickAdd(View v) throws JSONException {
         final DataBaseHandler db = new DataBaseHandler(this);
-        db.createDataElement(new Node(-db.getDataElementCount() - 1,
-                53.55095672607422, 9.997346878051758));
+        int count = db.getDataElementCount();
+        for (int i = 0; i < 25; i++) {
+            db.createDataElement(new Node(count + 1, 53.55095672607422,
+                    9.997346878051758));
+            count++;
+        }
         db.close();
-        readObjectCount();
+        this.readObjectCount();
     }
 
     /**
@@ -186,7 +186,7 @@ public class UploadActivity extends BasicActivity {
             db.deleteDataElement(elem);
         }
         db.close();
-        readObjectCount();
+        this.readObjectCount();
     }
 
     /**
@@ -194,6 +194,11 @@ public class UploadActivity extends BasicActivity {
      * @author tbrose
      */
     private class MyReceiver extends ResultReceiver {
+        /**
+         * Constructs a new MyReceiver with an new Handler.
+         * 
+         * @see Handler
+         */
         public MyReceiver() {
             super(new Handler());
         }
@@ -206,7 +211,12 @@ public class UploadActivity extends BasicActivity {
          */
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            Log.v("UploadActivity$MyHandler", resultData.toString());
+            if (resultData == null) {
+                Log.v("UploadActivity$MyHandler", "data=null");
+            } else {
+                Log.v("UploadActivity$MyHandler",
+                        "data=" + resultData.toString());
+            }
             if (resultCode == UploadService.CURRENT_PROGRESS) {
                 progress.setProgress(resultData.getInt(UploadService.MESSAGE));
             } else if (resultCode == UploadService.MAX_PROGRESS) {
