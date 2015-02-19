@@ -15,6 +15,7 @@
  */
 package io.github.data4all.util.upload;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.util.oauth.exception.OsmException;
 
 import java.io.IOException;
@@ -60,10 +61,10 @@ public class CloseableUpload implements HttpCloseable {
         try {
             // Sending the Request
             final HttpResponse response = this.httpClient.execute(request);
-
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            final int code = response.getStatusLine().getStatusCode();
+            if (code != HttpStatus.SC_OK) {
                 if (!this.stop) {
-                    throw new OsmException("Wrong statusCode returned");
+                    throw new OsmException("Wrong statusCode returned: " + code);
                 }
             }
         } catch (ClientProtocolException e) {
@@ -86,6 +87,7 @@ public class CloseableUpload implements HttpCloseable {
      */
     @Override
     public void stop() {
+        Log.d("CloseableUpload", "stopping upload");
         this.stop = true;
         this.httpClient.getConnectionManager().shutdown();
     }

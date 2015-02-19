@@ -15,14 +15,20 @@
  */
 package io.github.data4all.activity;
 
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.service.UploadService;
+import io.github.data4all.util.Optimizer;
 
 import org.json.JSONException;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -91,10 +97,37 @@ public class UploadActivity extends BasicActivity {
     private void showProgress(boolean show) {
         if (show) {
             progress.setVisibility(View.VISIBLE);
+
+            this.uploadButton.setEnabled(false);
+            this.uploadButton.setVisibility(View.GONE);
+            this.cancleButton.setEnabled(true);
+            this.cancleButton.setVisibility(View.VISIBLE);
         } else {
             progress.setVisibility(View.INVISIBLE);
             progress.setIndeterminate(true);
+
+            this.cancleButton.setEnabled(false);
+            this.cancleButton.setVisibility(View.GONE);
+            this.uploadButton.setEnabled(true);
+            this.uploadButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * 
+     */
+    public void onSuccess() {
+        showProgress(false);
+        String msg = "Successfully uploaded";
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * 
+     */
+    public void onError(String msg) {
+        showProgress(false);
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -105,16 +138,12 @@ public class UploadActivity extends BasicActivity {
      */
     public void onClickUpload(View v) {
         if (v.getId() == R.id.upload_upload_button) {
-            showProgress(true);
-
             final Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.ACTION, UploadService.UPLOAD);
             intent.putExtra(UploadService.HANDLER, new MyReceiver());
 
             startService(intent);
-
-            v.setVisibility(View.GONE);
-            this.cancleButton.setVisibility(View.VISIBLE);
+            showProgress(true);
         }
     }
 
@@ -126,18 +155,38 @@ public class UploadActivity extends BasicActivity {
      */
     public void onClickCancle(View v) {
         if (v.getId() == R.id.upload_cancle_button) {
-            showProgress(true);
-
             final Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.ACTION, UploadService.CANCLE);
             intent.putExtra(UploadService.HANDLER, new MyReceiver());
 
             startService(intent);
-
-            v.setVisibility(View.GONE);
-            this.uploadButton.setVisibility(View.VISIBLE);
             showProgress(false);
         }
+    }
+
+    /**
+     * @throws JSONException
+     */
+    public void onClickAdd(View v) throws JSONException {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        db.createDataElement(new Node(-db.getDataElementCount() - 1,
+                53.55095672607422, 9.997346878051758));
+        db.close();
+        readObjectCount();
+    }
+
+    /**
+     * @throws JSONException
+     */
+    public void onClickDelete(View v) throws JSONException {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<AbstractDataElement> allDataElements =
+                db.getAllDataElements();
+        for (AbstractDataElement elem : allDataElements) {
+            db.deleteDataElement(elem);
+        }
+        db.close();
+        readObjectCount();
     }
 
     /**
@@ -158,16 +207,16 @@ public class UploadActivity extends BasicActivity {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             Log.v("UploadActivity$MyHandler", resultData.toString());
-            if (resultCode == UploadService.MAX_PROGRESS) {
+            if (resultCode == UploadService.CURRENT_PROGRESS) {
+                progress.setProgress(resultData.getInt(UploadService.MESSAGE));
+            } else if (resultCode == UploadService.MAX_PROGRESS) {
                 progress.setMax(resultData.getInt(UploadService.MESSAGE));
                 progress.setIndeterminate(false);
-            } else if (resultCode == UploadService.CURRENT_PROGRESS) {
-                progress.setProgress(resultData.getInt(UploadService.MESSAGE));
             } else if (resultCode == UploadService.ERROR) {
-                showProgress(false);
                 final String msg = resultData.getString(UploadService.MESSAGE);
-                Toast.makeText(UploadActivity.this, msg, Toast.LENGTH_LONG)
-                        .show();
+                UploadActivity.this.onError(msg);
+            } else if (resultCode == UploadService.SUCCESS) {
+                UploadActivity.this.onSuccess();
             }
         }
     }
