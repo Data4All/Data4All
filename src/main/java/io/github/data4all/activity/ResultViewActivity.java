@@ -276,7 +276,7 @@ public class ResultViewActivity extends BasicActivity implements
             builder.setMessage(R.string.resultViewAlertDialogMessage);
             final Intent intent = new Intent(this, MapViewActivity.class);
             final Intent intent1 = new Intent(this, LoginActivity.class);
-            builder.setPositiveButton(R.string.ok,
+            builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             startActivity(intent1);
