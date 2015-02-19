@@ -45,6 +45,7 @@ public class UploadActivity extends BasicActivity {
 
     public static final String TAG = UploadActivity.class.getSimpleName();
     private ProgressBar progress;
+    private View indetermineProgress;
     private TextView countText;
     private View uploadButton;
     private View cancleButton;
@@ -59,6 +60,7 @@ public class UploadActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
         progress = (ProgressBar) findViewById(R.id.upload_progress);
+        indetermineProgress = findViewById(R.id.upload_indetermine_progress);
         countText = (TextView) findViewById(R.id.upload_count_text);
         uploadButton = findViewById(R.id.upload_upload_button);
         cancleButton = findViewById(R.id.upload_cancle_button);
@@ -89,10 +91,7 @@ public class UploadActivity extends BasicActivity {
      */
     private void showProgress(boolean show) {
         if (show) {
-            this.progress.setMax(0);
-            this.progress.setProgress(0);
-            this.progress.setIndeterminate(true);
-            this.progress.setVisibility(View.VISIBLE);
+            this.indetermineProgress.setVisibility(View.VISIBLE);
 
             this.uploadButton.setEnabled(false);
             this.uploadButton.setVisibility(View.GONE);
@@ -100,6 +99,7 @@ public class UploadActivity extends BasicActivity {
             this.cancleButton.setVisibility(View.VISIBLE);
         } else {
             this.progress.setVisibility(View.INVISIBLE);
+            this.indetermineProgress.setVisibility(View.INVISIBLE);
 
             this.cancleButton.setEnabled(false);
             this.cancleButton.setVisibility(View.GONE);
@@ -136,12 +136,12 @@ public class UploadActivity extends BasicActivity {
      */
     public void onClickUpload(View v) {
         if (v.getId() == R.id.upload_upload_button) {
+            this.showProgress(true);
             final Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.ACTION, UploadService.UPLOAD);
             intent.putExtra(UploadService.HANDLER, new MyReceiver());
 
             startService(intent);
-            this.showProgress(true);
         }
     }
 
@@ -223,7 +223,9 @@ public class UploadActivity extends BasicActivity {
                 progress.setProgress(resultData.getInt(UploadService.MESSAGE));
             } else if (resultCode == UploadService.MAX_PROGRESS) {
                 progress.setMax(resultData.getInt(UploadService.MESSAGE));
-                progress.setIndeterminate(false);
+                progress.setProgress(0);
+                progress.setVisibility(View.VISIBLE);
+                indetermineProgress.setVisibility(View.INVISIBLE);
             } else if (resultCode == UploadService.ERROR) {
                 final String msg = resultData.getString(UploadService.MESSAGE);
                 UploadActivity.this.onError(msg);
