@@ -70,17 +70,29 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     protected static final String OSM = "OSM_ELEMENT";
     private static final int REQUEST_CODE = 1234;
     final Context context = this;
+    // The Key of the Classified Tag
     private String key;
+    // The map in where the selected Tags are saved
     private Map<Tag, String> map;
+    // The list of all shown edittext 
     private List<EditText> edit;
+    // The boolean if the createDialog is started the first time
     private Boolean first;
+    // The Dialog of Unclassified Tags
     private Dialog dialog1;
+    // The array with all the Choices of the Classified tags
     private CharSequence[] array;
+    // The alertDialog of the Classified keys
     private AlertDialog alert;
+    // the alerDialog of the Classified Values
     private AlertDialog alert1;
+    // The map were the String are saved wiht the real Tag
     private Map<String, ClassifiedTag> tagMap;
+    // The logger
     private static final String TAG = "TagActivity";
+    // The abstractDataElement of the Intent
     private AbstractDataElement element; 
+    // The Ressource
     private Resources res;
     /**
      * Called when the activity is first created.
@@ -109,8 +121,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     /**
      * Creates the Dialog to choose the Key from the classified Tags 
      * 
-     */
-    
+     */    
     private void createAlertDialogKey(){
     	final AlertDialog.Builder alertDialog =
                 new AlertDialog.Builder(TagActivity.this,
@@ -157,8 +168,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
     /**
      * Creates the Dialog to choose the Value of the ClassifiedTag 
      *  
-     */
-    
+     */   
     private void createAlertDialogValue(){
         array = Tagging.ClassifiedValueList(tagMap.get(key).getClassifiedValues(), res);
         final Map< String, ClassifiedValue> classifiedMap = Tagging.classifiedValueMap(tagMap.get(key).getClassifiedValues(), res, false); 
@@ -217,33 +227,37 @@ public class TagActivity extends BasicActivity implements OnClickListener {
             alert.dismiss();
             break;
         case R.id.buttonNext:
-            final List<String> tags = new ArrayList<String>();
-
-            for (int i = 0; i < edit.size(); i++) {
-                tags.add(edit.get(i).getText().toString());
-            }
-            map = Tagging.addressToTag(tags, map);
-            dialog1.dismiss();
+        	editTextToMap(first);
             createDialog(Tags.getAllContactTags(), "Add Contacts", false);
-
             break;
         case R.id.buttonFinish:
-            final List<String> tags1 = new ArrayList<String>();
-
-            for (int i = 0; i < edit.size(); i++) {
-                tags1.add(edit.get(i).getText().toString());
-            }
-            if (first) {
-                map = Tagging.addressToTag(tags1, map);
-            } else {
-                map = Tagging.contactToTag(tags1, map);
-            }
-            dialog1.dismiss();
+            editTextToMap(first);
             finish();
             break;
+        default:
+        	break;    	
         }
     }
 
+    /**
+     * saves all the edited Tags to the Map
+     * 
+     * @param first if true address tags else contact
+     */
+    private void editTextToMap(boolean first) {
+    	final List<String> tags = new ArrayList<String>();
+
+        for (int i = 0; i < edit.size(); i++) {
+            tags.add(edit.get(i).getText().toString());
+        }
+        if (first) {
+            map = Tagging.addressToTag(tags, map);
+        } else {
+            map = Tagging.contactToTag(tags, map);
+        }
+        dialog1.dismiss();
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
@@ -256,7 +270,7 @@ public class TagActivity extends BasicActivity implements OnClickListener {
              //       SpeechRecognition.speechToTag(matchesText);
             matchesText.clear();
             for (Entry entry : map.entrySet()) {
-                final String key = (String) entry.getKey();
+                key = (String) entry.getKey();
                 matchesText.add(key + "=" + map.get(key));
             }
             final ArrayAdapter<String> adapter =

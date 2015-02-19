@@ -41,6 +41,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -81,16 +82,22 @@ public class ResultViewActivity extends BasicActivity implements
 
     // The list of all Keys
     private List<String> keyList;
+    // The alertDialog of the Classified tags
     private AlertDialog alert;
+    // The Map with the String and the ClassifiedTag
     private Map<String, ClassifiedTag> tagMap;
+    // The Rescources
     private Resources res;
+    // The Map wiht the String and the Tag
     private Map<String,Tag> mapTag;
+    // The Map with the String and ClassifiedValue
     private Map< String, ClassifiedValue> classifiedMap;
-    private String value;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Here is the OsmDroidMap created
         setContentView(R.layout.activity_result_view);
         mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
@@ -102,8 +109,8 @@ public class ResultViewActivity extends BasicActivity implements
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
         mapView.addOsmElementToMap(this, element);
+        // Here the List of tags is created
         listView = (ListView) this.findViewById(R.id.listViewResultView);
-        // The Sorted Keys of the ShowPictureActivity
         res = getResources();
         tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"), res);
         mapTag = Tagging.getUnclassifiedMapKeys(element.getTags(), res);
@@ -182,8 +189,9 @@ public class ResultViewActivity extends BasicActivity implements
     }
     
     /**
+     * Changes the Classified Tags with the selected String and saves the new one
      * 
-     * @param position is the position of the 
+     * @param selectedString is the Selected String
      */
     
     private void changeClassifiedTag(final String selectedString){
@@ -200,7 +208,7 @@ public class ResultViewActivity extends BasicActivity implements
                     @Override
                     public void onClick(DialogInterface dialog,
                             int which) {
-                    	value = (String) showArray[which];
+                    	String value = (String) showArray[which];
                         String realValue = classifiedMap.get(value).getValue();
                         Log.i(TAG, "Value " + realValue);
                         Log.i(TAG, tagMap.get(selectedString).toString());
@@ -216,8 +224,9 @@ public class ResultViewActivity extends BasicActivity implements
     }
     
     /**
-     * 
-     * @param positio
+     * Changes the selected Unclassified Tag and saves the new one in
+     * element
+     * @param selectedString is the String which is selected
      */
     private void changeUnclassifiedTag(final String selectedString) {
     	dialog =
@@ -227,7 +236,10 @@ public class ResultViewActivity extends BasicActivity implements
         dialog.setTitle(selectedString);
         final Button okay = new Button(ResultViewActivity.this);
         final EditText text = new EditText(ResultViewActivity.this);
-        text.setTextColor(-1);
+        text.setTextColor(Color.WHITE);
+        text.setInputType(mapTag.get(selectedString).getType());
+        okay.setText(R.string.ok);
+        okay.setTextColor(Color.WHITE);
         final LinearLayout layout =
                 (LinearLayout) dialog
                         .findViewById(R.id.dialogDynamic);
