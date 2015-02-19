@@ -27,8 +27,8 @@ import java.util.List;
 import android.text.InputType;
 
 /**
- * List of tags for osm elements: - unclassifiedTags: user have to input text
- * manually to set the value - classifiedTags: user can choose the input from
+ * List of tags for osm elements unclassifiedTags: user have to input text
+ * manually to set the value / classifiedTags: user can choose the input from
  * listed values.
  * 
  * @author fkirchge, optimized by tbrose
@@ -49,7 +49,7 @@ public final class Tags {
     /**
      * list of all contact tags.
      */
-    public static final List<Tag> contactTagList = new ArrayList<Tag>();
+    public static final List<Tag> CONTACT_TAG_LIST = new ArrayList<Tag>();
 
     private Tags() {
 
@@ -59,6 +59,7 @@ public final class Tags {
      * Returns a Tag with the passed id.
      * 
      * @param id
+     *            The ID of the Tag
      * @return tag object
      */
     public static Tag getTagWithId(int id) {
@@ -71,14 +72,14 @@ public final class Tags {
     }
 
     /**
-     * returns an arraylist containing all address tags.
+     * returns an ArrayList containing all address tags.
      */
     public static List<Tag> getAllAddressTags() {
         return ADDRESS_TAG_LIST;
     }
 
     /**
-     * returns an arraylist containing all classified and unclassified tags
+     * returns an ArrayList containing all classified and unclassified tags
      * which are relevant for relation objects.
      * 
      * @return tagList
@@ -116,14 +117,14 @@ public final class Tags {
     }
 
     /**
-     * returns an arraylist containing all contact tags.
+     * returns an ArrayList containing all contact tags.
      */
     public static List<Tag> getAllContactTags() {
-        return contactTagList;
+        return CONTACT_TAG_LIST;
     }
 
     /**
-     * returns an arraylist containing all classified and unclassified tags
+     * returns an ArrayList containing all classified and unclassified tags
      * which are relevant for node objects.
      * 
      * @return tagList
@@ -146,7 +147,7 @@ public final class Tags {
     }
 
     /**
-     * returns an arraylist containing all classified and unclassified tags
+     * returns an ArrayList containing all classified and unclassified tags
      * which are relevant for relation objects.
      * 
      * @return tagList
@@ -169,7 +170,7 @@ public final class Tags {
     }
 
     /**
-     * returns an arraylist containing all classified and unclassified tags.
+     * returns an ArrayList containing all classified and unclassified tags.
      * 
      * @return tagList
      */
@@ -178,7 +179,7 @@ public final class Tags {
     }
 
     /**
-     * returns an arraylist containing all classified and unclassified tags
+     * returns an ArrayList containing all classified and unclassified tags
      * which are relevant for way objects.
      * 
      * @return tagList
@@ -201,10 +202,9 @@ public final class Tags {
     }
 
     /**
-     * fills the addressTagList arraylist with address tags
+     * fills the ADDRESS_TAG_LIST ArrayList with address tags.
      */
     static {
-        // address tags
         ADDRESS_TAG_LIST.add(new Tag(1, "addr:street",
                 InputType.TYPE_CLASS_TEXT, NODE_TAG, WAY_TAG, BUILDING_TAG,
                 AREA_TAG));
@@ -222,34 +222,29 @@ public final class Tags {
     }
 
     /**
-     * fills the contactTagList arraylist with contact tags.
+     * fills the CONTACT_TAG_LIST ArrayList with contact tags.
      */
     static {
-        // contact tags
-        contactTagList.add(new Tag(6, "contact:phone",
+        CONTACT_TAG_LIST.add(new Tag(6, "contact:phone",
                 InputType.TYPE_CLASS_PHONE, NODE_TAG, BUILDING_TAG));
-        contactTagList.add(new Tag(7, "contact:fax",
+        CONTACT_TAG_LIST.add(new Tag(7, "contact:fax",
                 InputType.TYPE_CLASS_PHONE, NODE_TAG, BUILDING_TAG));
-        contactTagList.add(new Tag(8, "contact:website",
+        CONTACT_TAG_LIST.add(new Tag(8, "contact:website",
                 InputType.TYPE_CLASS_TEXT, NODE_TAG, BUILDING_TAG));
-        contactTagList.add(new Tag(9, "contact:email",
+        CONTACT_TAG_LIST.add(new Tag(9, "contact:email",
                 InputType.TYPE_CLASS_TEXT, NODE_TAG, BUILDING_TAG));
     }
 
     /**
-     * fills the tagList arraylist with all classified and unclassified tags.
-     * 
-     * convention for osmObject IDs: 1: Node 2: Way 3: Relation (Building) 4:
-     * Area
+     * fills the tagList ArrayList with the unclassified tags. Tags: contact and
+     * address tags.
      */
     static {
-
-        // address tags
         TAG_LIST.addAll(ADDRESS_TAG_LIST);
+        TAG_LIST.addAll(CONTACT_TAG_LIST);
+    }
 
-        // contact tags
-        TAG_LIST.addAll(contactTagList);
-
+    static {
         // classified tag: highway
         final String highway = "highway";
         final List<ClassifiedValue> highwayValues =
@@ -264,7 +259,13 @@ public final class Tags {
         TAG_LIST.add(new ClassifiedTag(10, "highway", -1, highwayValues,
                 WAY_TAG));
 
-        // classified tag: barrier
+    }
+
+    /**
+     * Creates the ClassifiedTag "barrier" and adds predefined ClassifiedValues.
+     * Values: fence, wall, gate, bollard, citywall (ordered by frequency).
+     */
+    static {
         final String barrier = "barrier";
         final List<ClassifiedValue> barrierValues =
                 new LinkedList<ClassifiedValue>();
@@ -276,7 +277,16 @@ public final class Tags {
         TAG_LIST.add(new ClassifiedTag(11, "barrier", -1, barrierValues,
                 NODE_TAG, WAY_TAG, AREA_TAG));
 
-        // classified tag: amenity
+    }
+
+    /**
+     * Creates the ClassifiedTag "amenity" and adds predefined ClassifiedValues.
+     * Values: parking, school, restaurant, bench, fuel, bank, fast_food, cafe,
+     * pharmacy, hospital, post_office, pub, public_building, toilets, bar,
+     * fire_station, police, library, university, college, marketplace, taxi,
+     * cinema, embassy, water_point (ordered by frequency).
+     */
+    static {
         final String amenity = "amenity";
         final List<ClassifiedValue> amenityValues =
                 new LinkedList<ClassifiedValue>();
@@ -308,7 +318,14 @@ public final class Tags {
         TAG_LIST.add(new ClassifiedTag(12, "amenity", -1, amenityValues,
                 new int[] {NODE_TAG, BUILDING_TAG}));
 
-        // classified tag: building
+    }
+
+    /**
+     * Creates the ClassifiedTag "building" and adds predefined
+     * ClassifiedValues. Values: house, residential, garage, apartments,
+     * industrial, commercial, retail (ordered by frequency).
+     */
+    static {
         final String building = "building";
         final List<ClassifiedValue> buildingValues =
                 new LinkedList<ClassifiedValue>();
@@ -321,8 +338,14 @@ public final class Tags {
         buildingValues.add(new ClassifiedValue(143, building, "retail"));
         TAG_LIST.add(new ClassifiedTag(13, "building", -1, buildingValues,
                 new int[] {BUILDING_TAG}));
+    }
 
-        // classified tag: landuse
+    /**
+     * Creates the ClassifiedTag "landuse" and adds predefined ClassifiedValues.
+     * Values: forest, residential, grass, farmland, industrial, commercial,
+     * construction, military (ordered by frequency).
+     */
+    static {
         final String landuse = "landuse";
         final List<ClassifiedValue> landuseValues =
                 new LinkedList<ClassifiedValue>();
@@ -333,10 +356,9 @@ public final class Tags {
         landuseValues.add(new ClassifiedValue(148, landuse, "industrial"));
         landuseValues.add(new ClassifiedValue(149, landuse, "commercial"));
         landuseValues.add(new ClassifiedValue(150, landuse, "construction"));
-        landuseValues.add(new ClassifiedValue(151, landuse, "millitary"));
+        landuseValues.add(new ClassifiedValue(151, landuse, "military"));
         TAG_LIST.add(new ClassifiedTag(14, "landuse", -1, landuseValues,
                 new int[] {AREA_TAG}));
-
     }
 
 }
