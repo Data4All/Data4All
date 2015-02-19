@@ -209,11 +209,18 @@ public final class ChangesetUtil {
      * Returns a {@link CloseableUpload} containing all nessesary informations
      * for the upload to the OSM API.
      * 
-     * @param user The {@link User} who uploads the Changeset.
-     * @param changesetId The Changeset ID.
-     * @param changesetXml The Changeset which should be uploaded.
-     * @param callback The callback object for interaction with the {@link ResultReceiver}.
-     * @throws OsmException Indicates an failure in an osm progess.
+     * @param user
+     *            The {@link User} who uploads the Changeset.
+     * @param changesetId
+     *            The Changeset ID.
+     * @param changesetXml
+     *            The Changeset which should be uploaded.
+     * @param callback
+     *            The callback object for interaction with the
+     *            {@link ResultReceiver}.
+     * @return {@link CloseableUpload} object
+     * @throws OsmException
+     *             Indicates an failure in an osm progess.
      */
     public static CloseableUpload upload(User user, int changesetId,
             String changesetXml, Callback<Integer> callback)
@@ -222,7 +229,8 @@ public final class ChangesetUtil {
             final HttpPost request = getUploadPost(user, changesetId);
 
             // Setting the Entity
-            final HttpEntity entity = new CallbackStringEntry(changesetXml, callback);
+            final HttpEntity entity =
+                    new CallbackStringEntry(changesetXml, callback);
             request.setEntity(entity);
 
             return new CloseableUpload(request);
@@ -233,10 +241,14 @@ public final class ChangesetUtil {
 
     /**
      * Returns a {@link HttpPut} which closes the Changeset with the given ID.
-     * @param user The {@link User} account to sign the {@link HttpPut}. 
-     * @param changeSetId The Changeset ID.
+     * 
+     * @param user
+     *            The {@link User} account to sign the {@link HttpPut}.
+     * @param changeSetId
+     *            The Changeset ID.
      * @return The signed {@link HttpPut}.
-     * @throws OsmException Indicates an failure in an osm progess.
+     * @throws OsmException
+     *             Indicates an failure in an osm progess.
      */
     private static HttpPut getChangeSetClose(User user, long changeSetId)
             throws OsmException {

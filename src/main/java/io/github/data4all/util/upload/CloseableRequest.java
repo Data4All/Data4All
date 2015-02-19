@@ -55,6 +55,7 @@ public class CloseableRequest implements HttpCloseable {
     /**
      * Starts the upload of the request to OSM.
      * 
+     * @return status code of the request
      * @throws OsmException
      *             In case of problems with the upload
      */

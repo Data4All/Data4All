@@ -38,7 +38,7 @@ import android.content.Context;
 
 /**
  * The OsmChangeParser is a util for Parsing a List of DataElements into a File
- * which can then be uploaded to the OSM API
+ * which can then be uploaded to the OSM API.
  * 
  * @author Richard
  * @author tbrose (rearranging)
@@ -90,9 +90,10 @@ public final class OsmChangeParser {
      * Parses a List of OsmElements into the OSM Change Format.
      * 
      * @param elems
-     *            the List of Element which should be uploaded
+     *            the List of Element which should be uploaded.
      * @param changesetID
-     *            the changesetID required for the upload
+     *            the changesetID required for the upload.
+     * @param writer {@link PrintWriter} object.
      */
     public static void parseElements(List<AbstractDataElement> elems,
             long changesetID, PrintWriter writer) {

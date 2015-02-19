@@ -62,10 +62,8 @@ public class CloseableUpload implements HttpCloseable {
             // Sending the Request
             final HttpResponse response = this.httpClient.execute(httpRequest);
             final int code = response.getStatusLine().getStatusCode();
-            if (code != HttpStatus.SC_OK) {
-                if (!this.isStopped) {
-                    throw new OsmException("Wrong statusCode returned: " + code);
-                }
+            if (code != HttpStatus.SC_OK && !this.isStopped) {
+                throw new OsmException("Wrong statusCode returned: " + code);
             }
         } catch (ClientProtocolException e) {
             if (!this.isStopped) {

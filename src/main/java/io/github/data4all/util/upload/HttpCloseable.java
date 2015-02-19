@@ -25,5 +25,5 @@ public interface HttpCloseable {
     /**
      * Immediately stops this HTTP request.
      */
-    public abstract void stop();
+    void stop();
 }
