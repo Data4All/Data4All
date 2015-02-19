@@ -41,12 +41,6 @@ public class ClassifiedTag extends Tag {
 
 
     /**
-     * stores the last classifiedValue Suggestion for the specific tag
-     */
-    private Set<String> classifiedValuesSuggestion;
-
-
-    /**
      * Default constructor.
      * 
      * @param id The id of the tag
@@ -59,7 +53,8 @@ public class ClassifiedTag extends Tag {
             List<String> classifiedValues, int... osmObjects) {
         super(id, key, type, osmObjects);
         this.classifiedValues = classifiedValues;
-        classifiedValuesSuggestion = new LinkedHashSet<String>();
+        lastChoice = null;
+       
     }
 
     /**
@@ -70,10 +65,10 @@ public class ClassifiedTag extends Tag {
      * 
      */
     public List<String> getClassifiedValues() {
-        if (classifiedValuesSuggestion.isEmpty()) {
+        if (lastChoice == null) {
             return classifiedValues;
         }
-        return new ArrayList<String>(classifiedValuesSuggestion);
+        return lastChoice.getClassifiedValues();
     }
 
     /**
@@ -85,13 +80,7 @@ public class ClassifiedTag extends Tag {
         this.classifiedValues = classifiedValues;
     }
 
-    /**
-     * @param classifiedValuesSuggestion
-     *            get the list of all classifiedValuesSuggestion
-     */
-    public Set<String> getClassifiedValuesSuggestion() {
-        return classifiedValuesSuggestion;
-    }
+  
 
     /**
      * @param suggestion
@@ -105,7 +94,7 @@ public class ClassifiedTag extends Tag {
     public void addSuggestion(String suggestion) {
 
         // create a tag with this suggestion
-        ClassifiedTag lastChoice = Tags.getLastChoice();
+          lastChoice = Tags.getLastChoice();
         if (lastChoice == null) {
             lastChoice = new ClassifiedTag(getHintRessource(), "Last Choice", getType(),
                     Arrays.asList(suggestion), getOsmObjects());
