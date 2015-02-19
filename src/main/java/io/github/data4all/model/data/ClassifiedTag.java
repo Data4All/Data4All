@@ -38,6 +38,7 @@ public class ClassifiedTag extends Tag {
      * stores all classified values for the specific tag.
      */
     private List<String> classifiedValues;
+    private ClassifiedTag lastChoice;
 
 
     /**
