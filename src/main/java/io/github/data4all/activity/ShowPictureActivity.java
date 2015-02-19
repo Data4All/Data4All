@@ -24,7 +24,7 @@ import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
-import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
+import io.github.data4all.model.drawing.RedoUndoV2.UndoRedoListener;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
 

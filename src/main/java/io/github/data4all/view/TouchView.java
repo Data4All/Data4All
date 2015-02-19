@@ -23,8 +23,8 @@ import io.github.data4all.model.drawing.DrawingMotion;
 import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.Point;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.RedoUndo;
-import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
+import io.github.data4all.model.drawing.RedoUndoV2;
+import io.github.data4all.model.drawing.RedoUndoV2.UndoRedoListener;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
@@ -105,7 +105,7 @@ public class TouchView extends View {
 	/**
 	 * The current used RedoUndo object
 	 */
-	private RedoUndo redoUndo;
+	private RedoUndoV2 redoUndo;
 
 	/**
 	 * The current used RedoUndo listener.
@@ -186,7 +186,7 @@ public class TouchView extends View {
 	public void clearMotions() {
 		if (polygon != null) {
 			polygon.clear();
-			redoUndo = new RedoUndo();
+			redoUndo = new RedoUndoV2();
 			this.undoUseable();
 			this.redoUseable();
 		}
@@ -207,7 +207,7 @@ public class TouchView extends View {
 		areaPaint.setColor(MotionInterpreter.AREA_COLOR);
 		areaPaint.setStyle(Paint.Style.FILL);
 		areaPaint.setAlpha(100);
-		redoUndo = new RedoUndo();
+		redoUndo = new RedoUndoV2();
 	}
 
 	/*
@@ -263,7 +263,7 @@ public class TouchView extends View {
 		case MotionEvent.ACTION_UP:
 			handleMotion(event, "end");
 			polygon = newPolygon;
-			redoUndo = new RedoUndo(polygon);
+			redoUndo = new RedoUndoV2(polygon);
 			undoUseable();
 			redoUseable();
 			isPoint = false;
@@ -284,8 +284,10 @@ public class TouchView extends View {
 		Runnable aRunnable = new Runnable() {
 			public void run() {
 				Log.e(this.getClass().getSimpleName(), "Long");
-				deletePoint(new Point(paramPointMover.getX(),
-						paramPointMover.getY()));
+				Point point = new Point(paramPointMover.getX(),
+						paramPointMover.getY());
+				redoUndo.add(point,"DELET",polygon.indexOf(point));
+				deletePoint(point);
 			}
 		};
 
@@ -452,9 +454,23 @@ public class TouchView extends View {
 	 * @author vkochno
 	 */
 	public void redo() {
-		newPolygon = redoUndo.redo();
+		Point point = redoUndo.redo();
+		String action = redoUndo.getAction();
+		if(action.equals("ADD")){
+			newPolygon.add(redoUndo.getLocation(),point);
+		}
+		if(action.equals("DELET")){
+			newPolygon.remove(point);
+		}
+		if(action.equals("MOVE_FROM")){
+			mover = new PointMover(redoUndo.getLocation());
+			Point pointTo = redoUndo.redo();
+			mover.moveTo(pointTo.getX(), pointTo.getY());
+		}
+		
 		polygon = newPolygon;
 		redoUseable();
+		undoUseable();
 	}
 
 	/**
@@ -463,11 +479,20 @@ public class TouchView extends View {
 	 * @author vkochno
 	 */
 	public void undo() {
-		newPolygon = redoUndo.undo();
-		polygon = newPolygon;
-		if (undoRedoListener != null) {
-			undoRedoListener.canRedo(true);
+		String action = redoUndo.getAction();
+		if(action.equals("ADD")){
+			newPolygon.remove(redoUndo.undo());
 		}
+		if(action.equals("DELET")){
+			newPolygon.add(redoUndo.getLocation(),redoUndo.undo());
+		}
+		if(action.equals("MOVE_TO")){
+			mover = new PointMover(redoUndo.getLocation());
+			Point pointTo = redoUndo.undo();
+			mover.moveTo(pointTo.getX(), pointTo.getY());
+		}	
+		polygon = newPolygon;
+		redoUseable();
 		undoUseable();
 	}
 
