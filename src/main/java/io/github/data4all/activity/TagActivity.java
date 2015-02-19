@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.R.color;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -174,6 +175,11 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         final Map< String, ClassifiedValue> classifiedMap = Tagging.classifiedValueMap(tagMap.get(key).getClassifiedValues(), res, false); 
             final AlertDialog.Builder alertDialogBuilder =
                 new AlertDialog.Builder(TagActivity.this);
+            final LayoutInflater inflater = getLayoutInflater();
+            final View view = inflater.inflate(R.drawable.header_listview, null);
+            ((TextView) view.findViewById(R.id.titleDialog)).setText("Select Tag");
+            ;
+            alertDialogBuilder.setCustomTitle(view);
         alertDialogBuilder.setTitle("Select Tag");
         alertDialogBuilder.setItems(array,
                 new DialogInterface.OnClickListener() {
