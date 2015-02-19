@@ -1,50 +1,65 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.github.data4all.activity.LoginActivity" >
+    android:layout_height="match_parent" >
 
-    <CheckBox
-        android:id="@+id/checkBox1"
+    <ImageView
+        android:id="@+id/osm_logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="OSM Logo"
+        android:src="@drawable/osm_logo" />
+
+    <TextView
+        android:id="@+id/osm_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/osm_logo"
+        android:layout_centerHorizontal="true"
+        android:text="Login to OpenStreetMap"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/osm_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/osm_desc"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Username"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/osm_pass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/osm_name"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:singleLine="true" />
+
+    <Button
+        android:id="@+id/osm_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/osm_pass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:onClick="onClickStart"
+        android:text="Login" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/stayLoggedIn" />
-
-    <Button
-        android:id="@+id/loginButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/checkBox1"
-        android:layout_centerHorizontal="true"
-        android:text="@string/loginButton" />
-
-    <Button
-        android:id="@+id/deleteButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="false"
-        android:layout_marginBottom="26dp"
-        android:text="@string/deleteButton" />
-    
-
-    <Button
-        android:id="@+id/getUsernameButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/deleteButton"
-        android:layout_alignLeft="@+id/deleteButton"
-        android:layout_marginBottom="30dp"
-        android:text="Username" />
+        android:visibility="gone" />
 
 </RelativeLayout>

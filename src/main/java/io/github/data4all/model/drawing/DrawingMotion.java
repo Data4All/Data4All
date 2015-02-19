@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.model.drawing;
 
 import java.util.ArrayList;
@@ -5,10 +20,10 @@ import java.util.List;
 
 /**
  * The DrawingMotion stores the path of a motion and provides methods to
- * determine the behavior to the motion<br/>
- * <br/>
- * It is used by the painting component to store the user input<br/>
- * Also its used by the MotionInterpreters to interpret the user input
+ * determine the behavior to the motion.<br/>
+ * <p/>
+ * It is used by the painting component to store the user input.<br/>
+ * Also its used by the MotionInterpreters to interpret the user input.
  * 
  * An activity can easily implement the usage of DrawingMotion by overwriting
  * the onTouchEvent-method as following:
@@ -35,18 +50,32 @@ import java.util.List;
  * @author tbrose
  */
 public class DrawingMotion {
+    
     /**
-     * The default tolerance for a Point
+     * The default tolerance for a Point.
      */
     public static final float POINT_TOLERANCE = 5f;
 
     /**
-     * List of all added Points
+     * List of all added Points.
      */
-    private List<Point> points = new ArrayList<Point>();
+    private List<Point> points = new ArrayList<Point>();    
     
     /**
-     * Adds a Point to the DrawingMotion
+     * Calculates the euclidean distance between point a and point b.
+     * 
+     * @param a
+     *            the first point
+     * @param b
+     *            the second point
+     * @return the euclidean distance between point a and point b
+     */
+    private static float delta(Point a, Point b) {
+        return (float) Math.hypot(a.getX() - b.getX(), a.getY() - b.getY());
+    }
+
+    /**
+     * Adds a Point to the DrawingMotion.
      * 
      * @param x
      *            the x value of the point
@@ -58,59 +87,28 @@ public class DrawingMotion {
     }
 
     /**
-     * Calculates if this DrawingMotion is a Path <br/>
-     * A DrawingMotion with zero entries is not a Path <br/>
-     * A DrawingMotion with more entries is a Path if it is not a point
+     * Calculates the average point over all points in this motion.
      * 
-     * @return true - if the motion has a path-size over zero and is not a point <br/>
-     *         false otherwise
-     * 
-     * @see DrawingMotion#isPoint()
-     * @see DrawingMotion#POINT_TOLERANCE
+     * @return The average point over all points or {@code null} if there is no
+     *         point in this motion
      */
-    public boolean isPath() {
-        return !(getPathSize() == 0) && !isPoint();
-    }
-
-    /**
-     * Calculates if this DrawingMotion is a Point <br/>
-     * A DrawingMotion with zero entries is not a Point <br/>
-     * A DrawingMotion with more entries is a Point, if all the Points describes
-     * a spot on the screen with at least {@link DrawingMotion#POINT_TOLERANCE
-     * POINT_TOLERANCE} difference from the start-point of the motion
-     * 
-     * @return true - if all Points in the motion are on the given tolerance
-     *         spot around the starting point <br/>
-     *         false otherwise
-     * 
-     * @see DrawingMotion#POINT_TOLERANCE
-     */
-    public boolean isPoint() {
-        if (getPathSize() == 0) {
-            return false;
-        }
-        for (Point p : points) {
-            if (delta(getStart(), p) > POINT_TOLERANCE) {
-                return false;
+    public Point average() {
+        if (this.getPathSize() == 0) {
+            return null;
+        } else {
+            float x = 0;
+            float y = 0;
+            for (Point p : this.getPoints()) {
+                x += p.getX();
+                y += p.getY();
             }
+            return new Point(x / this.getPathSize(), y / this.getPathSize());
         }
-        return true;
-    }
-
-    /**
-     * Returns the first point of this DrawingMotion if there is at least one
-     * point in this motion
-     * 
-     * @return the first point of the motion or null if there is no point in the
-     *         motion
-     */
-    public Point getStart() {
-        return points.isEmpty() ? null : points.get(0);
     }
 
     /**
      * Returns the last point of this DrawingMotion if there is at least one
-     * point in this motion
+     * point in this motion.
      * 
      * @return the last point of the motion or null if there is no point in the
      *         motion
@@ -120,7 +118,7 @@ public class DrawingMotion {
     }
 
     /**
-     * Returns the number of points in this DrawingMotion
+     * Returns the number of points in this DrawingMotion.
      * 
      * @return the number of points
      */
@@ -129,21 +127,13 @@ public class DrawingMotion {
     }
 
     /**
-     * Returns a copy of the points in this DrawingMotion
+     * Returns a copy of the point at the given index.
      * 
-     * @return a copy of the points in this DrawingMotion
-     */
-    public List<Point> getPoints() {
-        return new ArrayList<Point>(points);
-    }
-
-    /**
-     * Returns a copy of the point at the given index
-     * 
+     * @param index
+     *            the given index
+     * @return a copy of the point at the given index
      * @throws IndexOutOfBoundsException
      *             if the given index is out of the bounds
-     * 
-     * @return a copy of the point at the given index
      */
     public Point getPoint(int index) {
         if (index < 0 || index >= points.size()) {
@@ -155,35 +145,63 @@ public class DrawingMotion {
     }
 
     /**
-     * Calculates the average point over all points in this motion
+     * Returns a copy of the points in this DrawingMotion.
      * 
-     * @return The average point over all points or {@code null} if there is no
-     *         point in this motion
+     * @return a copy of the points in this DrawingMotion
      */
-    public Point average() {
-        if (getPathSize() == 0) {
-            return null;
-        } else {
-            float x = 0;
-            float y = 0;
-            for (Point p : getPoints()) {
-                x += p.getX();
-                y += p.getY();
-            }
-            return new Point(x / getPathSize(), y / getPathSize());
-        }
+    public List<Point> getPoints() {
+        return new ArrayList<Point>(points);
     }
 
     /**
-     * Calculates the euclidean distance between point a and point b
+     * Returns the first point of this DrawingMotion if there is at least one
+     * point in this motion.
      * 
-     * @param a
-     *            the first point
-     * @param b
-     *            the second point
-     * @return the euclidean distance between point a and point b
+     * @return the first point of the motion or null if there is no point in the
+     *         motion
      */
-    private static float delta(Point a, Point b) {
-        return (float) Math.hypot(a.getX() - b.getX(), a.getY() - b.getY());
+    public Point getStart() {
+        return points.isEmpty() ? null : points.get(0);
+    }
+
+    /**
+     * Calculates if this DrawingMotion is a Path. <br/>
+     * A DrawingMotion with zero entries is not a Path. <br/>
+     * A DrawingMotion with more entries is a Path if it is not a point.
+     * 
+     * @return true - if the motion has a path-size over zero and is not a
+     *         point. <br/>
+     *         false otherwise
+     * 
+     * @see DrawingMotion#isPoint()
+     * @see DrawingMotion#POINT_TOLERANCE
+     */
+    public boolean isPath() {
+        return !(this.getPathSize() == 0) && !isPoint();
+    }
+
+    /**
+     * Calculates if this DrawingMotion is a Point. <br/>
+     * A DrawingMotion with zero entries is not a Point. <br/>
+     * A DrawingMotion with more entries is a Point, if all the Points describes
+     * a spot on the screen with at least {@link DrawingMotion#POINT_TOLERANCE
+     * POINT_TOLERANCE} difference from the start-point of the motion.
+     * 
+     * @return true - if all Points in the motion are on the given tolerance
+     *         spot around the starting point <br/>
+     *         false otherwise
+     * 
+     * @see DrawingMotion#POINT_TOLERANCE
+     */
+    public boolean isPoint() {
+        if (this.getPathSize() == 0) {
+            return false;
+        }
+        for (Point p : points) {
+            if (delta(this.getStart(), p) > POINT_TOLERANCE) {
+                return false;
+            }
+        }
+        return true;
     }
 }

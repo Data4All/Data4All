@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.view;
 
 import io.github.data4all.logger.Log;
@@ -33,8 +48,8 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
     private Size mPhotoSize;
     private static Context context;
 
-    public static int containerWidth = 0;
-    public static int containerHeight = 0;
+    public static final int containerWidth = 0;
+    public static final int containerHeight = 0;
 
     public CaptureCameraSurfaceView(Context context) {
         super(context);
@@ -74,13 +89,13 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
             // Center the child SurfaceView within the parent.
             if (width * previewHeight > height * previewWidth) {
-                final int scaledChildWidth = previewWidth * height
-                        / previewHeight;
+                final int scaledChildWidth =
+                        previewWidth * height / previewHeight;
                 child.layout((width - scaledChildWidth) / 2, 0,
                         (width + scaledChildWidth) / 2, height);
             } else {
-                final int scaledChildHeight = previewHeight * width
-                        / previewWidth;
+                final int scaledChildHeight =
+                        previewHeight * width / previewWidth;
                 child.layout(0, (height - scaledChildHeight) / 2, width,
                         (height + scaledChildHeight) / 2);
             }
@@ -89,8 +104,7 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
     }
 
     private void init(Context context) {
-
-        SurfaceView mSurfaceView = new SurfaceView(context);
+        final SurfaceView mSurfaceView = new SurfaceView(context);
 
         addView(mSurfaceView);
         mHolder = mSurfaceView.getHolder();
@@ -124,12 +138,13 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
      * Set the Camera Display Orientation when the Surface is changed
      */
     public static void setCameraDisplayOrientation() {
-        Camera.CameraInfo info = new Camera.CameraInfo();
+        final Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
-        WindowManager winManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-        int rotation = winManager.getDefaultDisplay().getRotation();
+        final WindowManager winManager =
+                (WindowManager) context
+                        .getSystemService(Context.WINDOW_SERVICE);
+        final int rotation = winManager.getDefaultDisplay().getRotation();
 
         int degrees = 0;
 
@@ -158,6 +173,7 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
         mCamera.setDisplayOrientation(result);
     }
 
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
         try {
@@ -167,10 +183,10 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
                 // Open Camera Instance and assign to the reference
 
                 // retrieve the parameters of cameras
-                Camera.Parameters params = mCamera.getParameters();
+                final Camera.Parameters params = mCamera.getParameters();
 
                 // set the picture size for taking photo
-                List<Size> sizes = params.getSupportedPictureSizes();
+                final List<Size> sizes = params.getSupportedPictureSizes();
                 // See which sizes the camera supports and choose one of those
                 mPhotoSize = sizes.get(0);
                 params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
@@ -185,15 +201,17 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
         }
     }
 
+    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
             int height) {
 
         setCameraDisplayOrientation();
-        Camera.Parameters parameters = mCamera.getParameters();
+        final Camera.Parameters parameters = mCamera.getParameters();
         parameters.setPreviewSize(width, height);
         mCamera.startPreview();
     }
 
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
 
         if (mCamera != null) {

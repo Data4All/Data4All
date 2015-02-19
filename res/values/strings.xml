@@ -41,7 +41,9 @@
     <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
     <string name="deleteButton">Logout</string>
     <string name="getUsernameButton">show Username</string>
-
+    <string name="noLocationFound">"No Location found. Turn your GPS Signal on </string>
+    
+    
     <!-- Strings Content Description ImageButtons on MapViewActivity -->
     <string name="returnToActualPosition">My Position</string>
     <string name="returnToCamera">Camera</string>
@@ -61,7 +63,14 @@
     <string name="no">No</string>
 
     
-    <string name="resultViewAlertDialogMessage">Upload now</string>
+    <string name="resultViewAlertDialogMessage">Upload now?</string>
     <string name="ok">Ok</string>
+    
+    <string name="redo">Redo Function</string>
+    
+    <string name="undo">Undo Function</string>
+    <string name="SelectTag">Select Tag</string>
+    <string name="AddAddress">Add Address</string>
+    <string name="AddContact">Add Contact</string>
 
 </resources>
