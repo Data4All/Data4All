@@ -47,7 +47,7 @@ import android.content.Context;
  * This class provides several methods for creating, parsing and uploading
  * changssets.
  * 
- * @author Richard (first implementations)
+ * @author Richard (first implementations, + added the closeChangeset)
  * @author tbrose (sourcecode rearrangement)
  *
  */
@@ -68,13 +68,12 @@ public final class ChangesetUtil {
 
     private static HttpPut getChangeSetPut(User user) throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer =
-                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
-                        params.getConsumerSecret());
+        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
+                params.getConsumerKey(), params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPut httpPut =
-                new HttpPut(params.getScopeUrl() + "api/0.6/changeset/create");
+        final HttpPut httpPut = new HttpPut(params.getScopeUrl()
+                + "api/0.6/changeset/create");
         try {
             consumer.sign(httpPut);
         } catch (OAuthMessageSignerException e) {
@@ -98,13 +97,13 @@ public final class ChangesetUtil {
      * @throws OsmException
      *             If the changeset-id cannot be grabbed
      */
-    public static CloseableRequest requestId(final User user, final String comment)
-            throws OsmException {
+    public static CloseableRequest requestId(final User user,
+            final String comment) throws OsmException {
         try {
             final HttpPut request = getChangeSetPut(user);
             // Add the xml-request-string
             request.setEntity(new StringEntity(getChangesetRequest(comment)));
-            
+
             return new CloseableRequest(request);
 
         } catch (UnsupportedEncodingException e) {
@@ -146,14 +145,12 @@ public final class ChangesetUtil {
     private static HttpPost getUploadPost(User user, int id)
             throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer =
-                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
-                        params.getConsumerSecret());
+        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
+                params.getConsumerKey(), params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPost httpPost =
-                new HttpPost(params.getScopeUrl() + "api/0.6/changeset/" + id
-                        + "/upload");
+        final HttpPost httpPost = new HttpPost(params.getScopeUrl()
+                + "api/0.6/changeset/" + id + "/upload");
         try {
             consumer.sign(httpPost);
         } catch (OAuthMessageSignerException e) {
@@ -178,8 +175,9 @@ public final class ChangesetUtil {
      * @param callback
      * @throws OsmException
      */
-    public static CloseableUpload upload(User user, int changesetId, String changesetXml,
-            Callback<Integer> callback) throws OsmException {
+    public static CloseableUpload upload(User user, int changesetId,
+            String changesetXml, Callback<Integer> callback)
+            throws OsmException {
         try {
             final HttpPost request = getUploadPost(user, changesetId);
 
@@ -191,5 +189,49 @@ public final class ChangesetUtil {
         } catch (UnsupportedEncodingException e) {
             throw new OsmException(e);
         }
+    }
+
+    private static HttpPut getChangeSetClose(User user, long changeSetId)
+            throws OsmException {
+        final OAuthParameters params = OAuthParameters.CURRENT;
+        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
+                params.getConsumerKey(), params.getConsumerSecret());
+        consumer.setTokenWithSecret(user.getOAuthToken(),
+                user.getOauthTokenSecret());
+        final HttpPut httpPut = new HttpPut(params.getScopeUrl()
+                + "api/0.6/changeset/" + changeSetId + "/close");
+        try {
+            consumer.sign(httpPut);
+        } catch (OAuthMessageSignerException e) {
+            throw new OsmException(e);
+        } catch (OAuthExpectationFailedException e) {
+            throw new OsmException(e);
+        } catch (OAuthCommunicationException e) {
+            throw new OsmException(e);
+        }
+        final BasicHttpParams httpParams = new BasicHttpParams();
+        httpParams.setParameter("id", changeSetId);
+        httpPut.setParams(httpParams);
+        return httpPut;
+    }
+
+    /**
+     * Requests a Closure of a changesetId from the OSM-API.
+     * 
+     * @param user
+     *            The user to request the Closure of the id
+     * @param changesetId
+     *            The Id of the changeSet which should be closed
+     * @return The ClosableCloseRequest which sends the Request
+     * @throws OsmException
+     *             If the changesetId cannot be grabbed
+     */
+    public static CloseableCloseRequest closeId(final User user,
+            final long changesetId) throws OsmException {
+
+        final HttpPut request = getChangeSetClose(user, changesetId);
+
+        return new CloseableCloseRequest(request);
+
     }
 }
