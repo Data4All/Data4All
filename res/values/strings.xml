@@ -41,7 +41,9 @@
     <string name="loginRedirectMessage">You will be redirected to OpenStreetMap Login</string>
     <string name="deleteButton">Logout</string>
     <string name="getUsernameButton">show Username</string>
-
+    <string name="noLocationFound">"No Location found. Turn your GPS Signal on </string>
+    
+    
     <!-- Strings Content Description ImageButtons on MapViewActivity -->
     <string name="returnToActualPosition">My Position</string>
     <string name="returnToCamera">Camera</string>

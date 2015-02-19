@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.json.JSONException;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
@@ -65,8 +67,7 @@ public class ResultViewActivity extends BasicActivity implements
     private static final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
     private MapController mapController;
 
-    private static final ITileSource DEFAULT_TILESOURCE =
-            TileSourceFactory.MAPNIK;
+    private static final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
 
     // Listview for the Dialog
     private ListView listView;
@@ -89,10 +90,9 @@ public class ResultViewActivity extends BasicActivity implements
     // The Rescources
     private Resources res;
     // The Map wiht the String and the Tag
-    private Map<String,Tag> mapTag;
+    private Map<String, Tag> mapTag;
     // The Map with the String and ClassifiedValue
-    private Map< String, ClassifiedValue> classifiedMap;
-
+    private Map<String, ClassifiedValue> classifiedMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,33 +105,35 @@ public class ResultViewActivity extends BasicActivity implements
         mapView.setTileSource(DEFAULT_TILESOURCE);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-        BoundingBoxE6 boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+        BoundingBoxE6 boundingBox = MapUtil
+                .getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
         mapView.addOsmElementToMap(this, element);
         // Here the List of tags is created
         listView = (ListView) this.findViewById(R.id.listViewResultView);
         res = getResources();
-        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"), res);
+        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
+                res);
         mapTag = Tagging.getUnclassifiedMapKeys(element.getTags(), res);
         this.output();
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     final int position, long id) {
-            	Log.i(TAG, "Tagkey" + keyList.get(position));
+                Log.i(TAG, "Tagkey" + keyList.get(position));
                 String selectedString = keyList.get(position);
                 if (Tagging.isClassifiedTag(keyList.get(position), res)) {
-                	changeClassifiedTag(selectedString);
+                    changeClassifiedTag(selectedString);
                 } else {
-                    changeUnclassifiedTag(selectedString);               
-                  }
+                    changeUnclassifiedTag(selectedString);
+                }
             }
         });
-        final ImageButton resultButton =
-                (ImageButton) this.findViewById(R.id.buttonResult);
+        final ImageButton resultButton = (ImageButton) this
+                .findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
-        final ImageButton resultButtonToCamera =
-                (ImageButton) this.findViewById(R.id.buttonResultToCamera);
+        final ImageButton resultButtonToCamera = (ImageButton) this
+                .findViewById(R.id.buttonResultToCamera);
         resultButtonToCamera.setOnClickListener(this);
     }
 
@@ -153,85 +155,94 @@ public class ResultViewActivity extends BasicActivity implements
         }
         return super.onOptionsItemSelected(item);
     }
+
     /**
-     * Shows the Tags in a List 
+     * Shows the Tags in a List
      */
     private void output() {
         endList = new ArrayList<String>();
         keyList = new ArrayList<String>();
         ArrayList<Tag> tagList = new ArrayList<Tag>();
         for (Entry entry : element.getTags().entrySet()) {
-            final Tag tagKey =  (Tag) entry.getKey();
+            final Tag tagKey = (Tag) entry.getKey();
             tagList.add(tagKey);
             Log.i(TAG, tagKey.getKey());
             keyList.add(res.getString(tagKey.getNameRessource()));
-            if(Tagging.isClassifiedTag(getString(tagKey.getNameRessource()), res)){
-            	try {
-					endList.add(getString( (Integer) R.string.class.getDeclaredField(
-					        "name_" + tagKey.getKey() + "_" +element.getTags().get(tagKey).replaceAll(":", "_")).get(null)));
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NoSuchFieldException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }else {
-            	endList.add(element.getTags().get(tagKey));
+            if (Tagging.isClassifiedTag(getString(tagKey.getNameRessource()),
+                    res)) {
+                try {
+                    endList.add(getString((Integer) R.string.class
+                            .getDeclaredField(
+                                    "name_"
+                                            + tagKey.getKey()
+                                            + "_"
+                                            + element.getTags().get(tagKey)
+                                                    .replaceAll(":", "_")).get(
+                                    null)));
+                } catch (IllegalArgumentException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (NoSuchFieldException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else {
+                endList.add(element.getTags().get(tagKey));
             }
-            
+
         }
-        
+
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
     }
-    
+
     /**
-     * Changes the Classified Tags with the selected String and saves the new one
+     * Changes the Classified Tags with the selected String and saves the new
+     * one
      * 
-     * @param selectedString is the Selected String
+     * @param selectedString
+     *            is the Selected String
      */
-    
-    private void changeClassifiedTag(final String selectedString){
+
+    private void changeClassifiedTag(final String selectedString) {
         Log.i(TAG, "Classified Tag");
-        final AlertDialog.Builder alertDialog =
-                new AlertDialog.Builder(ResultViewActivity.this,
-                        android.R.style.Theme_Holo_Dialog_MinWidth);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
         alertDialog.setTitle("Select Tag");
         final CharSequence[] showArray;
-        showArray = Tagging.ClassifiedValueList(tagMap.get(selectedString).getClassifiedValues(), res);
-        classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString).getClassifiedValues(), res, false); 
-        alertDialog.setItems(showArray,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,
-                            int which) {
-                    	String value = (String) showArray[which];
-                        String realValue = classifiedMap.get(value).getValue();
-                        Log.i(TAG, "Value " + realValue);
-                        Log.i(TAG, tagMap.get(selectedString).toString());
-                        element.addOrUpdateTag(
-                                tagMap.get(selectedString),
-                                realValue);
-                        output();
-                    }
-                });
+        showArray = Tagging.ClassifiedValueList(tagMap.get(selectedString)
+                .getClassifiedValues(), res);
+        classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString)
+                .getClassifiedValues(), res, false);
+        alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String value = (String) showArray[which];
+                String realValue = classifiedMap.get(value).getValue();
+                Log.i(TAG, "Value " + realValue);
+                Log.i(TAG, tagMap.get(selectedString).toString());
+                element.addOrUpdateTag(tagMap.get(selectedString), realValue);
+                output();
+            }
+        });
         alert = alertDialog.create();
-        alert.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alert.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
         alert.show();
     }
-    
+
     /**
-     * Changes the selected Unclassified Tag and saves the new one in
-     * element
-     * @param selectedString is the String which is selected
+     * Changes the selected Unclassified Tag and saves the new one in element
+     * 
+     * @param selectedString
+     *            is the String which is selected
      */
     private void changeUnclassifiedTag(final String selectedString) {
-    	dialog =
-                new Dialog(ResultViewActivity.this,
-                        android.R.style.Theme_Holo_Dialog_MinWidth);
+        dialog = new Dialog(ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
         dialog.setContentView(R.layout.dialog_dynamic);
         dialog.setTitle(selectedString);
         final Button okay = new Button(ResultViewActivity.this);
@@ -240,31 +251,31 @@ public class ResultViewActivity extends BasicActivity implements
         text.setInputType(mapTag.get(selectedString).getType());
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
-        final LinearLayout layout =
-                (LinearLayout) dialog
-                        .findViewById(R.id.dialogDynamic);
+        final LinearLayout layout = (LinearLayout) dialog
+                .findViewById(R.id.dialogDynamic);
         layout.addView(text);
         layout.addView(okay);
         okay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                element.addOrUpdateTag(mapTag.get(selectedString), text.getText().toString());
+                element.addOrUpdateTag(mapTag.get(selectedString), text
+                        .getText().toString());
                 output();
                 dialog.dismiss();
             }
         });
         dialog.show();
     }
-   
+
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.buttonResult) {
-            final AlertDialog.Builder builder =
-                    new AlertDialog.Builder(ResultViewActivity.this);
+            addOsmElementToDB(element);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                    ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
             final Intent intent = new Intent(this, MapViewActivity.class);
             final Intent intent1 = new Intent(this, LoginActivity.class);
-            intent.putExtra("OSM_Element", element);
             builder.setPositiveButton(R.string.ok,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -280,8 +291,26 @@ public class ResultViewActivity extends BasicActivity implements
             alert = builder.create();
             alert.show();
         } else if (v.getId() == R.id.buttonResultToCamera) {
-        	Log.i(TAG, MapUtil.getBoundingBoxForOsmElement(element).toString());
-        	startActivity(new Intent(this, CameraActivity.class));
+            addOsmElementToDB(element);
+            Log.i(TAG, MapUtil.getBoundingBoxForOsmElement(element).toString());
+            startActivity(new Intent(this, CameraActivity.class));
         }
     }
+
+    /**
+     * Adds an Osm Element to the DataBase
+     * 
+     * @param the Data Element to add
+     **/
+    private void addOsmElementToDB(AbstractDataElement dataElement) {
+        DataBaseHandler db = new DataBaseHandler(this);
+        try {
+            db.createDataElement(dataElement);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        db.close();
+    }
+
 }

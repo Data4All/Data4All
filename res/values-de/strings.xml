@@ -42,6 +42,8 @@
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Passenden Tag auswählen</string>
     
+    <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie ihr GPS Signal ein.</string>
+    
         <!-- Delete Dialog -->
     <string name="deleteDialog">Wollen sie dieses Objekt wirklich löschen?</string>
     <string name="yes">Ja</string>

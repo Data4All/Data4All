@@ -37,6 +37,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Super Class for all Map Activities.
@@ -134,20 +135,29 @@ public class MapActivity extends BasicActivity {
         super();
     }
 
+    /**
+     * Prepares the Mapview. Min/Max Zoomlevel, TileSources, etc.
+     * 
+     * 
+     * @param savedInstanceState
+     *            the old Preferences
+     */
     protected void setUpMapView(Bundle savedInstanceState) {
         mapView = (D4AMapView) this.findViewById(R.id.mapview);
 
         MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
-        
+
         // Add Satellite Map TileSource
-        satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL, MAXIMAL_ZOOM_LEVEL);
+        satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                MAXIMAL_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(satMap);
 
         // Add OSM Map TileSource
-        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL, MAXIMAL_ZOOM_LEVEL);
+        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                MAXIMAL_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(osmMap);
         mapTileSource = osmMap;
-        
+
         // Activate Multi Touch Control
         Log.i(TAG, "Activate Multi Touch Controls");
         mapView.setMultiTouchControls(true);
@@ -173,12 +183,15 @@ public class MapActivity extends BasicActivity {
         // Set Zoomlevel
         setZoomLevel(actualZoomLevel);
 
-        // Set Zoomlevel
+        // Set Center
         setCenter(actualCenter);
 
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
 
+    /**
+     * Shows Loading Screen
+     **/
     protected void setUpLoadingScreen() {
         // Set ImageView for Loading Screen
         view = (ImageView) findViewById(R.id.imageView1);
@@ -265,6 +278,10 @@ public class MapActivity extends BasicActivity {
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
+        } else {
+            String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
         }
         return null;
 
@@ -289,9 +306,16 @@ public class MapActivity extends BasicActivity {
      *            the Center which should be set
      **/
     protected void setCenter(IGeoPoint point) {
-        // Set ZoomCenter
-        Log.i(TAG, "Set Mapcenter to " + point.toString());
-        mapController.setCenter(point);
+        if (point == null) {
+            String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            // Set ZoomCenter
+            Log.i(TAG, "Set Mapcenter to " + point.toString());
+            mapController.setCenter(point);
+        }
+
     }
 
     /**
@@ -350,7 +374,7 @@ public class MapActivity extends BasicActivity {
             actCentLat = (Double) savedInstanceState.getSerializable(CENT_LAT);
             actCentLong = (Double) savedInstanceState.getSerializable(CENT_LON);
             actualCenter = new GeoPoint(actCentLat, actCentLong);
-        } else if (this.getMyLocation() != null) {
+        } else {
             actualCenter = this.getMyLocation();
         }
         if (savedInstanceState != null

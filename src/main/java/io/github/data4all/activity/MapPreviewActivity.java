@@ -42,11 +42,12 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private AbstractDataElement element;
 
     public MapPreviewActivity() {
-
+        super();
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
@@ -56,10 +57,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         setUpLoadingScreen();
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        mapView.addOsmElementToMap(this,element);
+        mapView.addOsmElementToMap(this, element);
 
         mapController.setZoom(actualZoomLevel);
-        mapController.setCenter(actualCenter);
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -75,24 +75,18 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onStart()
      */
     @Override
     protected void onStart() {
         super.onStart();
-        if (element instanceof Node) {
-            final Node node = (Node) element;
-            mapController.setCenter(node.toGeoPoint());
-            mapController.animateTo(node.toGeoPoint());
-        } else {
-            final PolyElement polyElement = (PolyElement) element;
-            mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
-            mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
-        }
+        setCenter(MapUtil.getCenterFromOsmElement(element));
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.view.View.OnClickListener#onClick(android.view.View)
      */
     @Override
@@ -112,6 +106,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /*
+     * Starts new Tagactivity with Osm Object and Type Definition in the Intent
+     */
     private void accept() {
         final Intent intent = new Intent(this, TagActivity.class);
 
