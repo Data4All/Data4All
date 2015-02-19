@@ -218,7 +218,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 				// set the picture type for taking photo
 				params.setPictureFormat(ImageFormat.JPEG);
-				params.setJpegQuality(100);
+				params.setJpegQuality(5);
 				params.setZoom(0);
 
 				setFocusModes(params);
