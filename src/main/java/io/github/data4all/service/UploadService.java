@@ -18,16 +18,12 @@ package io.github.data4all.service;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.User;
-import io.github.data4all.task.RequestChangesetIDFromOsmTask;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
 import io.github.data4all.util.upload.ChangesetUtil;
 import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
-
-import java.util.concurrent.ExecutionException;
-
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
@@ -125,8 +121,14 @@ public class UploadService extends IntentService {
             final CloseableUpload upload =
                     ChangesetUtil.upload(user, requestId, changesetXml,
                             new MyCallback(receiver));
-
+            this.currentConnection = upload;
             upload.upload();
+
+            if (stopNext) {
+                stopNext = false;
+                return;
+            }
+            
             send(receiver, SUCCESS, (Bundle) null);
         } catch (OsmException e) {
             Log.e(TAG, "", e);
