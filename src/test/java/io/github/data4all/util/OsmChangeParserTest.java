@@ -17,11 +17,13 @@ package io.github.data4all.util;
 
 import static org.junit.Assert.assertTrue;
 import io.github.data4all.activity.MapViewActivity;
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.User;
 import io.github.data4all.network.OscUploadHelper;
 
 import java.io.File;
@@ -37,6 +39,7 @@ import android.content.Context;
 
 /**
  * Test for getting changeSetID, parsing Osc and uploading Osc
+ * 
  * @author Richard
  */
 
@@ -53,8 +56,7 @@ public class OsmChangeParserTest {
     @Test
     public void uploadTest() {
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
-        ArrayList<AbstractDataElement> elems =
-                new ArrayList<AbstractDataElement>();
+        ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
         Node node1 = new Node(-1, 23, 23);
         Node node2 = new Node(-2, 24, 24);
         Node node3 = new Node(-3, 25, 25);
@@ -64,13 +66,18 @@ public class OsmChangeParserTest {
         elems.add(node1);
         elems.add(node3);
         elems.add(way1);
-        Context act =
-                Robolectric.buildActivity(MapViewActivity.class).get()
-                        .getApplicationContext();
+        Context act = Robolectric.application;
+
+        final DataBaseHandler db = new DataBaseHandler(act);
+        final User user = new User("TEST", "pizza", "kaese");
+        db.createUser(user);
+
         Log.d("test", "start the Request");
         final OscUploadHelper oscUploadHelper = new OscUploadHelper(act, elems);
         oscUploadHelper.uploadElements("upload test");
 
+        db.deleteUser(user);
+        db.close();
     }
 
     /**
@@ -79,8 +86,7 @@ public class OsmChangeParserTest {
      */
     @Test
     public void parseTest() {
-        ArrayList<AbstractDataElement> elems =
-                new ArrayList<AbstractDataElement>();
+        ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
         Node node1 = new Node(-1, 23, 23);
         Node node2 = new Node(-2, 24, 24);
         Node node3 = new Node(-3, 25, 25);
@@ -90,13 +96,11 @@ public class OsmChangeParserTest {
         elems.add(node1);
         elems.add(node3);
         elems.add(way1);
-        Context act =
-                Robolectric.buildActivity(MapViewActivity.class).get()
-                        .getApplicationContext();
+        Context act = Robolectric.buildActivity(MapViewActivity.class).get()
+                .getApplicationContext();
 
-        File file =
-                new File(act.getFilesDir().getAbsolutePath()
-                        + "/OsmChangeUpload.osc");
+        File file = new File(act.getFilesDir().getAbsolutePath()
+                + "/OsmChangeUpload.osc");
         OsmChangeParser.parseElements(act, elems, 13);
 
         assertTrue(file.length() > 0);
