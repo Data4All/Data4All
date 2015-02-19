@@ -21,6 +21,7 @@ import io.github.data4all.model.data.User;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
 import io.github.data4all.util.upload.ChangesetUtil;
+import io.github.data4all.util.upload.CloseableCloseRequest;
 import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
@@ -98,6 +99,7 @@ public class UploadService extends IntentService {
 
     private void uploadElems(final ResultReceiver receiver, final User user) {
         try {
+            // Request the changesetId
             final CloseableRequest request =
                     ChangesetUtil.requestId(user,
                             "User-triggered upload via App");
@@ -117,6 +119,7 @@ public class UploadService extends IntentService {
                 return;
             }
 
+            // Upload the changeset
             send(receiver, MAX_PROGRESS, changesetXml.length());
             final CloseableUpload upload =
                     ChangesetUtil.upload(user, requestId, changesetXml,
@@ -128,7 +131,18 @@ public class UploadService extends IntentService {
                 stopNext = false;
                 return;
             }
-            
+
+            // Close the changeset
+            final CloseableCloseRequest closeId =
+                    ChangesetUtil.closeId(user, requestId);
+            this.currentConnection = closeId;
+            closeId.request();
+
+            if (stopNext) {
+                stopNext = false;
+                return;
+            }
+
             send(receiver, SUCCESS, (Bundle) null);
         } catch (OsmException e) {
             Log.e(TAG, "", e);
