@@ -307,13 +307,13 @@ public class TagActivity extends BasicActivity implements OnClickListener {
         edit = new ArrayList<EditText>();
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
-            
-            //Log.i(TAG, arrayList.get(i).toString());
             text.setHint(arrayList.get(i).getHintRessource());
             text.setHintTextColor(Color.DKGRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
+            Log.i(TAG, "TYpoe " + arrayList.get(i).getType());
             text.setInputType(arrayList.get(i).getType());
+            Log.i(TAG, text.toString());
             edit.add(text);
             layout.addView(text);
         }

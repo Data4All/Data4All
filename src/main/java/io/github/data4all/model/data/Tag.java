@@ -87,6 +87,7 @@ public class Tag {
     public Tag(int id, String key, int type, int... osmObjects) {
         this.id = id;
         this.key = key;
+        this.type = type;
         try {
             this.nameRessource =
                     (Integer) R.string.class.getDeclaredField(
