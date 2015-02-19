@@ -31,17 +31,13 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Point;
-import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -70,7 +66,6 @@ public class ShowPictureActivity extends AbstractActivity {
 	private int SCREEN_ORIENTATION;
 	private ImageButton undo;
 	private ImageButton redo;
-	private Point point;
 
 	// the current TransformationBean and device orientation when the picture
 	// was taken
@@ -269,12 +264,8 @@ public class ShowPictureActivity extends AbstractActivity {
 			bitmap = MediaStore.Images.Media.getBitmap(
 					this.getContentResolver(),
 					Uri.fromFile(new File(selectedImage)));
-			final Display d = getWindowManager().getDefaultDisplay();
-
-			Log.i(TAG, "geeeet " + SCREEN_ORIENTATION);
 
 			if (SCREEN_ORIENTATION != 0) {
-				Log.i(TAG, "NIIIICE ONE " + SCREEN_ORIENTATION);
 				bitmap = loadFromCamera(this,
 						Uri.fromFile(new File(selectedImage)));
 			}
@@ -292,7 +283,7 @@ public class ShowPictureActivity extends AbstractActivity {
 	private Bitmap loadFromCamera(Context context, Uri photoUri)
 			throws FileNotFoundException, IOException {
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 3;
+		options.inSampleSize = 4;
 
 		AssetFileDescriptor fileDescriptor = null;
 		fileDescriptor = getContentResolver().openAssetFileDescriptor(photoUri,
@@ -300,12 +291,8 @@ public class ShowPictureActivity extends AbstractActivity {
 
 		Bitmap photo = BitmapFactory.decodeFileDescriptor(
 				fileDescriptor.getFileDescriptor(), null, options);
-		if (photo != null) {
-			DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-			int maxDim = Math.max(metrics.widthPixels, metrics.heightPixels);
-			Log.i(TAG, "metricsPixels width: "+metrics.widthPixels+" height: "+ metrics.heightPixels);
+		if (photo != null) {			
 			int rotation = getRotationFor(context, photoUri);
-			Log.i(TAG, "rotation: " + rotation);
 			photo = scaleAndRotate(photo, rotation);
 			return photo;
 		}
@@ -316,8 +303,6 @@ public class ShowPictureActivity extends AbstractActivity {
 
 	private int getRotationFor(Context context, Uri photoUri) {
 		if (SCREEN_ORIENTATION != 0) {
-			Log.i(TAG, "NIIIICE ONE " + SCREEN_ORIENTATION);
-
 			// clockwise by 90 degrees
 			if (SCREEN_ORIENTATION == 1) {
 				return 90;
