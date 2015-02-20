@@ -195,11 +195,15 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 KEY_TOKEN, KEY_TOKENSECRET, }, KEY_USERNAME + "=?",
                 new String[] {username }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
+        String uName = "";
+        String token = "";
+        String tokenSecret = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            uName = cursor.getString(0);
+            token = cursor.getString(1);
+            tokenSecret = cursor.getString(2);
         }
-        final User user = new User(cursor.getString(0), cursor.getString(1),
-                cursor.getString(2));
+        final User user = new User(uName, token, tokenSecret);
 
         cursor.close();
 
@@ -313,12 +317,16 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 KEY_LAT, KEY_LON, }, KEY_OSMID + "=?",
                 new String[] {String.valueOf(id) }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
+        long osmid = 0;
+        double lat = 0;
+        double lon = 0;
+
+        if (cursor != null && cursor.moveToFirst()) {
+            osmid = cursor.getLong(0);
+            lat = cursor.getDouble(1);
+            lon = cursor.getDouble(2);
         }
-        final Node node = new Node(Long.parseLong(cursor.getString(0)),
-                Double.parseDouble(cursor.getString(1)),
-                Double.parseDouble(cursor.getString(2)));
+        final Node node = new Node(osmid, lat, lon);
 
         cursor.close();
 
@@ -453,13 +461,17 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 KEY_OSMID, KEY_TYPE, KEY_NODEIDS, }, KEY_OSMID + "=?",
                 new String[] {String.valueOf(id) }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
+        long osmid = 0;
+        PolyElementType type = PolyElementType.AREA;
+        String toJson = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            osmid = cursor.getLong(0);
+            type = PolyElementType.valueOf(cursor.getString(1));
+            toJson = cursor.getString(2);
         }
-        final PolyElement polyElement = new PolyElement(Long.parseLong(cursor
-                .getString(0)), PolyElementType.valueOf(cursor.getString(1)));
+        final PolyElement polyElement = new PolyElement(osmid, type);
 
-        final JSONObject json = new JSONObject(cursor.getString(2));
+        final JSONObject json = new JSONObject(toJson);
         final JSONArray jArray = json.optJSONArray("nodeIDarray");
 
         final List<Node> nodes = new ArrayList<Node>();
@@ -662,29 +674,29 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 KEY_OSMID, KEY_TAGIDS, }, KEY_OSMID + "=?",
                 new String[] {String.valueOf(id) }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
         if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID, id)) {
             dataElement = this.getPolyElement(id);
         } else {
             dataElement = this.getNode(id);
         }
 
-        final JSONObject json = new JSONObject(cursor.getString(1));
-        final JSONArray jArray = json.optJSONArray("tagIDarray");
+        if (cursor != null && cursor.moveToFirst()) {
 
-        final List<Integer> tagIDs = new ArrayList<Integer>();
+            final JSONObject json = new JSONObject(cursor.getString(1));
+            final JSONArray jArray = json.optJSONArray("tagIDarray");
 
-        for (int i = 0; i < jArray.length(); i++) {
-            final int tagID = jArray.optInt(i);
-            tagIDs.add(tagID);
+            final List<Integer> tagIDs = new ArrayList<Integer>();
+
+            for (int i = 0; i < jArray.length(); i++) {
+                final int tagID = jArray.optInt(i);
+                tagIDs.add(tagID);
+            }
+
+            final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
+            dataElement.addTags(tagMap);
+
+            cursor.close();
         }
-
-        final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
-        dataElement.addTags(tagMap);
-
-        cursor.close();
 
         return dataElement;
     }
@@ -990,27 +1002,25 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_TRACKNAME + "=?",
                 new String[] {name }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
+        if (cursor != null && cursor.moveToFirst()) {
+            track.setTrackName(cursor.getString(0));
+
+            final JSONObject json = new JSONObject(cursor.getString(1));
+            final JSONArray jArray = json.optJSONArray("timestamparray");
+
+            final List<Long> timestamps = new ArrayList<Long>();
+
+            for (int i = 0; i < jArray.length(); i++) {
+                final long timestamp = jArray.optInt(i);
+                timestamps.add(timestamp);
+            }
+
+            final List<TrackPoint> trackPoints = this
+                    .getTrackPoints(timestamps);
+            track.setTrackPoints(trackPoints);
+
+            cursor.close();
         }
-
-        track.setTrackName(cursor.getString(0));
-
-        final JSONObject json = new JSONObject(cursor.getString(1));
-        final JSONArray jArray = json.optJSONArray("timestamparray");
-
-        final List<Long> timestamps = new ArrayList<Long>();
-
-        for (int i = 0; i < jArray.length(); i++) {
-            final long timestamp = jArray.optInt(i);
-            timestamps.add(timestamp);
-        }
-
-        final List<TrackPoint> trackPoints = this.getTrackPoints(timestamps);
-        track.setTrackPoints(trackPoints);
-
-        cursor.close();
-
         return track;
     }
 
@@ -1170,15 +1180,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                             new String[] {String.valueOf(time) }, null, null,
                             null, null);
 
-            if (cursor != null) {
-                cursor.moveToFirst();
-            }
-
             final Location loc = new Location("provider");
-            loc.setLatitude(cursor.getDouble(0));
-            loc.setLongitude(cursor.getDouble(1));
-            loc.setAltitude(cursor.getDouble(2));
-            loc.setTime(cursor.getLong(3));
+            if (cursor != null && cursor.moveToFirst()) {
+                loc.setLatitude(cursor.getDouble(0));
+                loc.setLongitude(cursor.getDouble(1));
+                loc.setAltitude(cursor.getDouble(2));
+                loc.setTime(cursor.getLong(3));
+            }
 
             final TrackPoint point = new TrackPoint(loc);
 
