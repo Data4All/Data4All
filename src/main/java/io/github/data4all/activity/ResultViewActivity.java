@@ -57,7 +57,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-public class ResultViewActivity extends BasicActivity implements
+public class ResultViewActivity extends AbstractActivity implements
         OnClickListener {
     private static final String TAG = "ResultViewActivity";
     private D4AMapView mapView;

@@ -40,7 +40,7 @@ import android.widget.EditText;
  * @author tbrose
  *
  */
-public class LoginActivity extends BasicActivity {
+public class LoginActivity extends AbstractActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 

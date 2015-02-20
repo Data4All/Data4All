@@ -63,7 +63,7 @@ import android.widget.TextView;
  * @author Maurice Boyke
  *
  */
-public class TagActivity extends BasicActivity implements OnClickListener {
+public class TagActivity extends AbstractActivity implements OnClickListener {
 
     // OSMElement Key
     protected static final String OSM = "OSM_ELEMENT";

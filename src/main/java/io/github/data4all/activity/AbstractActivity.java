@@ -23,17 +23,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 /**
- * this class serves as a global class for all activities. It includes methods
- * that are needed for more than one activities, such as the implementation of
- * the action bar.
+ * global activity for all children activities.
  * 
- * This class inherits from activity
+ * This activity serves as a global class for all subclasses . Contains all the
+ * methods that are relevant for all. For example the title bar.
  * 
- * 
- * @author AndreKoch
+ * @author Andre Koch
+ * @CreationDate 10.01.2015
+ * @LastUpdate 12.02.2015
+ * @version 1.2
  * 
  */
-public class BasicActivity extends Activity {
+
+public abstract class AbstractActivity extends Activity {
 
     /*
      * (non-Javadoc)
@@ -47,30 +49,45 @@ public class BasicActivity extends Activity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /*                                           
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onOptionsItemSelected(android.view.Menu)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
+        boolean status;
         switch (item.getItemId()) {
         case R.id.upload_data:
             startActivity(new Intent(this, LoginActivity.class));
-            return true;
+            status = true;
+            break;
         case R.id.action_settings:
             startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+            status = true;
+            break;
         case R.id.action_camera:
             startActivity(new Intent(this, CameraActivity.class));
-            return true;
+            status = true;
+            break;
         case R.id.action_map:
             startActivity(new Intent(this, MapViewActivity.class));
-            return true;
+            status = true;
+            break;
         case R.id.action_help:
             // TODO set help activity here
-            return true;
+            status = true;
+            break;
         case R.id.action_login:
             startActivity(new Intent(this, LoginActivity.class));
-            return true;
+            status = true;
+            break;
         default:
             return super.onOptionsItemSelected(item);
         }
+
+        return status;
+
     }
 }
