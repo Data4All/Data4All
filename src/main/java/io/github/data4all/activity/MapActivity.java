@@ -125,7 +125,7 @@ public class MapActivity extends AbstractActivity {
 
     protected static final String OSM_MAP_NAME = "mapbox.streets";
 
-    CacheManager cacheManager;
+    protected CacheManager cacheManager;
 
     /**
      * Default constructor.
@@ -172,24 +172,24 @@ public class MapActivity extends AbstractActivity {
 
         // for setting the actualZoomLevel and Center Position on Orientation
         // Change
-        loadState(savedInstanceState);
+        this.loadState(savedInstanceState);
 
         cacheManager = new CacheManager(mapView);
 
         // Set MapTileSource
-        setMapTileSource(mapTileSource);
+        this.setMapTileSource(mapTileSource);
 
         // Set Zoomlevel
-        setZoomLevel(actualZoomLevel);
+        this.setZoomLevel(actualZoomLevel);
 
         // Set Center
-        setCenter(actualCenter);
+        this.setCenter(actualCenter);
 
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
 
     /**
-     * Shows Loading Screen
+     * Shows Loading Screen.
      **/
     protected void setUpLoadingScreen() {
         // Set ImageView for Loading Screen
@@ -302,7 +302,7 @@ public class MapActivity extends AbstractActivity {
      **/
     protected void setCenter(IGeoPoint point) {
         if (point == null) {
-            String text = getString(R.string.noLocationFound);
+            final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
@@ -321,13 +321,13 @@ public class MapActivity extends AbstractActivity {
         // switch to OSM Map
         final String mts = mapView.getTileProvider().getTileSource().name();
         if (SAT_MAP_NAME.equals(mts)) {
-            setMapTileSource(osmMap);
+            this.setMapTileSource(osmMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
             // switch to Satellite Map
         } else {
-            setMapTileSource(satMap);
+            this.setMapTileSource(satMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_map);
             mapView.postInvalidate();
@@ -345,8 +345,8 @@ public class MapActivity extends AbstractActivity {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            downloadMapTiles();
-            setUpLoadingScreen();
+            this.downloadMapTiles();
+            this.setUpLoadingScreen();
         }
 
     }
@@ -376,7 +376,7 @@ public class MapActivity extends AbstractActivity {
         }
         if (savedInstanceState != null
                 && savedInstanceState.getSerializable(M_T_P) != null) {
-            String mTS = (String) savedInstanceState.getSerializable(M_T_P);
+            final String mTS = (String) savedInstanceState.getSerializable(M_T_P);
             if (mTS.equals(SAT_MAP_NAME)) {
                 mapTileSource = satMap;
                 final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
@@ -396,7 +396,6 @@ public class MapActivity extends AbstractActivity {
     public void onDestroy() {
         super.onDestroy();
         mapView.getTileProvider().clearTileCache();
-        System.gc();
     }
 
 }

@@ -47,6 +47,10 @@ public class MapLine extends Polyline implements
      * 
      * @param ctx
      *            the Context for the Overlay
+     *            
+     * @param mv the Mapview
+     * 
+     * @param ele the associateded OsmElement
      */
     public MapLine(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
         super(ctx);
@@ -90,7 +94,7 @@ public class MapLine extends Polyline implements
             // Yes button clicked
             mapView.removeOverlayFromMap(this);
             if (activity instanceof MapViewActivity) {
-                DataBaseHandler db = new DataBaseHandler(activity);
+                final DataBaseHandler db = new DataBaseHandler(activity);
                 db.deleteDataElement(element);
                 db.close();
             }

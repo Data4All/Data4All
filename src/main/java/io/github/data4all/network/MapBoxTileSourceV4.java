@@ -23,7 +23,7 @@ import org.osmdroid.tileprovider.util.ManifestUtil;
 import android.content.Context;
 
 /**
- * MapBox Interface for the new Version 4 Api
+ * MapBox Interface for the new Version 4 Api.
  * 
  * @author Oliver Schwartz
  *
@@ -31,7 +31,7 @@ import android.content.Context;
 public class MapBoxTileSourceV4 extends OnlineTileSourceBase {
 
     // Mapbox Api version 4 Base URL
-    private static final String[] mapBoxBaseUrl = new String[] {
+    private static final String[] MAPBOX_BASE_URL = new String[] {
             "http://a.tiles.mapbox.com/v4/", "http://b.tiles.mapbox.com/v4/",
             "http://c.tiles.mapbox.com/v4/", "http://d.tiles.mapbox.com/v4/" };
 
@@ -45,7 +45,7 @@ public class MapBoxTileSourceV4 extends OnlineTileSourceBase {
     private static String mapBoxAuthKey = "";
 
     /**
-     * Sets minimal/maximal Zoomlevel and the MapId
+     * Sets minimal/maximal Zoomlevel and the MapId.
      * 
      * @param mapId
      *            MapId of the intended Map
@@ -57,7 +57,7 @@ public class MapBoxTileSourceV4 extends OnlineTileSourceBase {
     public MapBoxTileSourceV4(String mapId, int min, int max) {
 
         super(mapId, ResourceProxy.string.mapbox, min, max, 256, ".png",
-                mapBoxBaseUrl);
+                MAPBOX_BASE_URL);
         mapBoxMapId = mapId;
     }
 
@@ -79,7 +79,7 @@ public class MapBoxTileSourceV4 extends OnlineTileSourceBase {
      */
     @Override
     public String getTileURLString(final MapTile aMapTile) {
-        StringBuffer url = new StringBuffer(getBaseUrl());
+        final StringBuilder url = new StringBuilder(getBaseUrl());
         url.append(mapBoxMapId);
         url.append("/");
         url.append(aMapTile.getZoomLevel());
@@ -90,8 +90,6 @@ public class MapBoxTileSourceV4 extends OnlineTileSourceBase {
         url.append(".png?access_token=");
         url.append(mapBoxAuthKey);
 
-        String res = url.toString();
-
-        return res;
+        return url.toString();
     }
 }

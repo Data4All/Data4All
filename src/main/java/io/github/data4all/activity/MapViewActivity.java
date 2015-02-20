@@ -68,9 +68,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
 
-        DataBaseHandler db = new DataBaseHandler(this);
+        final DataBaseHandler db = new DataBaseHandler(this);
         try {
-            List<AbstractDataElement> list = db.getAllDataElements();
+            final List<AbstractDataElement> list = db.getAllDataElements();
             mapView.addOsmElementsToMap(this, list);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -120,7 +120,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Make Photo
         case R.id.to_camera:
             if (myLocationOverlay.getMyLocation() == null) {
-                String text = getString(R.string.noLocationFound);
+                final String text = getString(R.string.noLocationFound);
                 Toast.makeText(getApplicationContext(), text,
                         Toast.LENGTH_SHORT).show();
             } else {
@@ -176,7 +176,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void createNewPOI() {
         final GeoPoint myPosition = myLocationOverlay.getMyLocation();
         if (myPosition == null) {
-            String text = getString(R.string.noLocationFound);
+            final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {

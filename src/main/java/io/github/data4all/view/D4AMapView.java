@@ -41,7 +41,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * MapView with Function to add OSM Object and set scrollable modus
+ * MapView with Function to add OSM Object and set scrollable modus.
  * 
  * @author Oliver Schwartz
  */
@@ -62,7 +62,11 @@ public class D4AMapView extends MapView {
     private BoundingBoxE6 boundingBox;
 
     /**
-     * Default Constructor
+     * Default Constructor.
+     * 
+     * @param context The invoking Activity
+     * 
+     * @param attrs Attributes which are defined
      * 
      **/
     public D4AMapView(Context context, AttributeSet attrs) {
@@ -70,7 +74,7 @@ public class D4AMapView extends MapView {
     }
 
     /**
-     * Setter for the Bounding Box of the Mapview
+     * Setter for the Bounding Box of the Mapview.
      * 
      * @param boundingBox
      *            the BoundingBox to set
@@ -119,9 +123,9 @@ public class D4AMapView extends MapView {
      **/
     public void addOsmElementsToMap(AbstractActivity ctx,
             List<AbstractDataElement> list) {
-        if (list != null && list.size() > 0) {
+        if (list != null && !list.isEmpty()) {
             for (AbstractDataElement elem : list) {
-                addOsmElementToMap(ctx, elem);
+                this.addOsmElementToMap(ctx, elem);
             }
         }
     }
@@ -136,9 +140,9 @@ public class D4AMapView extends MapView {
      **/
     public void addOsmElementToMap(AbstractActivity ctx, AbstractDataElement elem) {
         if (elem != null) {
-            DataBaseHandler db = new DataBaseHandler(ctx);
+            final DataBaseHandler db = new DataBaseHandler(ctx);
             int count = db.getDataElementCount();
-            elem.setOsmId(++count);
+            elem.setOsmId(count+1);
             db.close();
             // if the Element is a Node
             if (elem instanceof Node) {

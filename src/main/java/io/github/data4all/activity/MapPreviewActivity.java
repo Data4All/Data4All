@@ -39,6 +39,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     // The OsmElement which should be added
     private AbstractDataElement element;
 
+    /**
+     * Standard Constructor
+     **/
     public MapPreviewActivity() {
         super();
     }
@@ -85,35 +88,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     protected void onStart() {
         super.onStart();
         setCenter(MapUtil.getCenterFromOsmElement(element));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onResume()
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Enable User Position display
-        // Log.i(TAG, "Enable User Position Display");
-        // myLocationOverlay.enableMyLocation();
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.github.data4all.activity.MapActivity#onPause()
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        // Disable Actual Location Overlay
-        // Log.i(TAG, "Disable Actual Location Overlay");
-        // myLocationOverlay.disableMyLocation();
     }
 
     /*
