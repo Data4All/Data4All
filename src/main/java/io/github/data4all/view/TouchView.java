@@ -175,6 +175,7 @@ public class TouchView extends View {
             redoUndo = new RedoUndo();
             this.undoUseable();
             this.redoUseable();
+            undoRedoListener.okUseable(hasEnoughNodes());
         }
     }
 
@@ -359,7 +360,6 @@ public class TouchView extends View {
     }
 
     public void setInterpretationType(InterpretationType type) {
-    	undoRedoListener.okUseable(hasEnoughNodes());
         switch (type) {
         case AREA:
             interpreter = new AreaMotionInterpreter(pointTrans);
