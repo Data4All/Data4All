@@ -126,6 +126,8 @@ public class LoginActivity extends AbstractActivity {
      */
     public void onClickStart(View v) {
         if (v.getId() == R.id.osm_login) {
+            osmName.setError(null);
+            osmPass.setError(null);
             final String username = osmName.getText().toString().trim();
             final String password = osmPass.getText().toString().trim();
 
