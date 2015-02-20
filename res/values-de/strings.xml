@@ -53,7 +53,6 @@
     <string name="drawArea">Zeichne eine Fläche </string>
     <string name="drawBuilding">Zeichne ein Gebäude</string>
     <!-- Delete Dialog -->
-    <string name="resultViewAlertDialogMessage">jetzt Hochladen</string>
     <string name="ok">Ok</string>
     <string name="noCamSupported">Sorry, du hast keine Kamera</string>
     <string name="redo">Redo</string>

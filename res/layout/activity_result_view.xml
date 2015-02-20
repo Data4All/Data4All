@@ -15,7 +15,7 @@
     <ImageButton
         android:id="@+id/buttonResult"
         style="@style/imageButtonOkay"
-        android:contentDescription="@string/return_to_position" />
+        android:contentDescription="@string/returnToActualPosition" />
 
     <ImageButton
         android:id="@+id/buttonResultToCamera"

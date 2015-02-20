@@ -16,7 +16,7 @@
 package io.github.data4all.model.map;
 
 import io.github.data4all.R;
-import io.github.data4all.activity.BasicActivity;
+import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -39,7 +39,7 @@ public class MapLine extends Polyline implements
         DialogInterface.OnClickListener {
 
     private AbstractDataElement element;
-    private BasicActivity activity;
+    private AbstractActivity activity;
     private D4AMapView mapView;
 
     /**
@@ -48,7 +48,7 @@ public class MapLine extends Polyline implements
      * @param ctx
      *            the Context for the Overlay
      */
-    public MapLine(BasicActivity ctx, D4AMapView mv, AbstractDataElement ele) {
+    public MapLine(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
         super(ctx);
         this.element = ele;
         this.activity = ctx;
