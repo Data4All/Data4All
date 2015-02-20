@@ -205,15 +205,18 @@ public class GPSservice extends Service implements LocationListener {
     public void onProviderDisabled(String provider) {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
-        if (track.getTrackPoints().isEmpty()) {
-            // track does not contain any trackpoints and gps is not available,
-            // so clear track
-            // dbHandler.deleteTrack(track);
-            track = null;
-        } else {
-            // Track with trackpoints exist, so save it to database
-            // dbHandler.updateTrack(track);
-            track = null; // override current track with null
+        if (track != null) {
+            if (track.getTrackPoints().isEmpty()) {
+                // track does not contain any trackpoints and gps is not
+                // available,
+                // so clear track
+                // dbHandler.deleteTrack(track);
+                track = null;
+            } else {
+                // Track with trackpoints exist, so save it to database
+                // dbHandler.updateTrack(track);
+                track = null; // override current track with null
+            }
         }
         // TODO localization
         Toast.makeText(getBaseContext(),
