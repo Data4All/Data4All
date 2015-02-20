@@ -25,7 +25,6 @@ import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
 import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
-import java.net.URL;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -46,7 +45,11 @@ public class LoginActivity extends AbstractActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 
-    private static final String OSM_REGISTRATION_URL = "https://www.openstreetmap.org/user/new";
+    /**
+     * Url to register a new User at OSM.
+     */
+    private static final String OSM_REGISTRATION_URL =
+            "https://www.openstreetmap.org/user/new";
 
     private EditText osmName;
     private EditText osmPass;
@@ -137,10 +140,10 @@ public class LoginActivity extends AbstractActivity {
 
             if (TextUtils.isEmpty(username)) {
                 osmName.requestFocus();
-                osmName.setError("Username is empty");
+                osmName.setError(getString(R.string.login_alertdialog_nousername));
             } else if (TextUtils.isEmpty(password)) {
                 osmPass.requestFocus();
-                osmPass.setError("Password is empty");
+                osmPass.setError(getString(R.string.login_alertdialog_nopassword));
             } else if (!NetworkState.isNetworkAvailable(this)) {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.login_alertdialog_nonetwork_title)
@@ -153,7 +156,7 @@ public class LoginActivity extends AbstractActivity {
             }
         }
         if (v.getId() == R.id.osm_register) {
-            Intent intent =
+            final Intent intent =
                     new Intent(Intent.ACTION_VIEW,
                             Uri.parse(OSM_REGISTRATION_URL));
             startActivity(intent);
@@ -203,11 +206,13 @@ public class LoginActivity extends AbstractActivity {
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {
                 Log.e(TAG, "Login to osm failed:", e);
-                this.showDialog("Access denied",
-                        "Username or Password may be incorrect");
+                this.showDialog(
+                        getString(R.string.login_alertdialog_accessdenied_title),
+                        getString(R.string.login_alertdialog_accessdenied_message));
             } catch (OsmOAuthAuthorizationException e) {
                 Log.e(TAG, "Osm OAuth failed:", e);
-                this.showDialog("Error", e.getLocalizedMessage());
+                this.showDialog(getString(R.string.login_alertdialog_error),
+                        e.getLocalizedMessage());
             } finally {
                 runOnUiThread(new Runnable() {
                     @Override

@@ -20,17 +20,13 @@
     <string name="loginRedirectMessage">Sie werden zum OpenStreetMap Login weitergeleitet.</string>
     <string name="deleteButton">Token löschen</string>
     <string name="alreadyLoggedIn">Sie sind bereits eingeloggt.</string>
-    
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Passenden Tag auswählen</string>
-    
-
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie ihr GPS Signal ein.</string>
-   
     <string name="AddAddress">Addresse hinzufügen</string>
     <string name="AddContact">Kontakt hinzufügen</string>
-	<string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
-        <!-- Delete Dialog -->
+    <string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
+    <!-- Delete Dialog -->
 
     <string name="deleteDialog">Wollen sie dieses Objekt wirklich löschen?</string>
     <string name="yes">Ja</string>
@@ -57,15 +53,20 @@
     <string name="noCamSupported">Sorry, du hast keine Kamera</string>
     <string name="redo">Redo</string>
     <string name="undo">Undo</string>
-        
+
     <!-- Login Activity Strings -->
     <string name="login_logo_description">OSM Logo</string>
     <string name="login_text">Anmeldung bei OpenStreetMap</string>
     <string name="login_hint_username">Benutzername</string>
     <string name="login_hint_password">Passwort</string>
-	<string name="login_button">Anmelden</string>
-	<string name="login_button_registration">Registieren</string>
+    <string name="login_button">Anmelden</string>
+    <string name="login_button_registration">Registieren</string>
     <string name="login_alertdialog_nonetwork_title">Netzwerk nicht verfügbar</string>
     <string name="login_alertdialog_nonetwork_message">Bitte verbinde das Gerät mit dem Internet.</string>
-	
+    <string name="login_alertdialog_accessdenied_title">Zugriff verweigert</string>
+    <string name="login_alertdialog_accessdenied_message">Benutzername oder Passwort nicht korrekt.</string>
+    <string name="login_alertdialog_error">Fehler</string>
+    <string name="login_alertdialog_nousername">Kein Benutzername angeben</string>
+    <string name="login_alertdialog_nopassword">Kein Passwort angegeben</string>
+
 </resources>

@@ -63,5 +63,10 @@
 	<string name="login_button_registration">Register</string>
     <string name="login_alertdialog_nonetwork_title">Network unavailable</string>
     <string name="login_alertdialog_nonetwork_message">Please connect your device to the internet.</string>
-	
+    <string name="login_alertdialog_accessdenied_title">Access denied</string>
+	<string name="login_alertdialog_accessdenied_message">Username or Password may be incorrect.</string>
+	<string name="login_alertdialog_error">Error</string>
+	<string name="login_alertdialog_nousername">Username is empty</string>
+	<string name="login_alertdialog_nopassword">Password is empty</string>
+    
 </resources>
