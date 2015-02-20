@@ -49,6 +49,7 @@ import android.widget.ImageView;
  * 
  * @author vkochno
  */
+
 public class ShowPictureActivity extends AbstractActivity {
 
 	private static final String TAG = ShowPictureActivity.class.getSimpleName();
@@ -66,6 +67,7 @@ public class ShowPictureActivity extends AbstractActivity {
 	private int SCREEN_ORIENTATION;
 	private ImageButton undo;
 	private ImageButton redo;
+	private ImageButton ok;
 
 	// the current TransformationBean and device orientation when the picture
 	// was taken
@@ -93,7 +95,8 @@ public class ShowPictureActivity extends AbstractActivity {
 		undo.setVisibility(View.GONE);
 		redo = (ImageButton) findViewById(R.id.redobtn);
 		redo.setVisibility(View.GONE);
-
+		ok = (ImageButton) findViewById(R.id.okbtn);
+		ok.setVisibility(View.GONE);
 		touchView.setUndoRedoListener(new UndoRedoListener() {
 			@Override
 			public void canUndo(boolean state) {
@@ -114,6 +117,14 @@ public class ShowPictureActivity extends AbstractActivity {
 					redo.setVisibility(View.GONE);
 				}
 			}
+			@Override
+		public void okUseable(boolean state){
+			if(state){
+				 ok.setVisibility(View.VISIBLE);
+			} else{
+				ok.setVisibility(View.INVISIBLE);
+			}
+		}
 		});
 
 		if (getIntent().hasExtra("SCREEN_ORIENTATION")) {

@@ -185,5 +185,12 @@ public class RedoUndo {
          *            The current redo state
          */
         void canRedo(boolean state);
-    }
+        
+        /**
+         * Informas about the enough notes state
+         * @param state the current enough note state
+         */
+		void okUseable(boolean state);
+	}
+
 }

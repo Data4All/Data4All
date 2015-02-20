@@ -175,6 +175,7 @@ public class TouchView extends View {
             redoUndo = new RedoUndo();
             this.undoUseable();
             this.redoUseable();
+            undoRedoListener.okUseable(hasEnoughNodes());
         }
     }
 
@@ -250,6 +251,7 @@ public class TouchView extends View {
             handleMotion(event, "start");
             polygon = newPolygon;
             redoUndo = new RedoUndo(polygon);
+            undoRedoListener.okUseable(hasEnoughNodes());
             undoUseable();
             redoUseable();
             break;
@@ -357,14 +359,6 @@ public class TouchView extends View {
         }
     }
 
-    /**
-     * Sets the type of interpretation for this {@link TouchView}.
-     * 
-     * @param type
-     *            The {@link InterpretationType} to set
-     * @throws IllegalArgumentException
-     *             if {@code type} is {@code null}
-     */
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:
@@ -393,6 +387,7 @@ public class TouchView extends View {
         newPolygon = redoUndo.redo();
         polygon = newPolygon;
         redoUseable();
+    	undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     /**
@@ -407,6 +402,7 @@ public class TouchView extends View {
             undoRedoListener.canRedo(true);
         }
         undoUseable();
+    	undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     /**
@@ -452,17 +448,32 @@ public class TouchView extends View {
     }
 
     /**
-     * Set the actual PointToCoordsTransformUtil with the actual location and
-     * camera parameters.
+     * Returns <code>true</code> if the drawing has the minimum of nodes for its
+     * InterpretationType.
      * 
-     * @author sbollen
+     * @author konerman
+     * 
+     * @return <code>true</code> if the polygon has enough nodes;
+     *         <code>false</code> otherwise
+     */
+    public boolean hasEnoughNodes() {
+        return interpreter.minNodes() <= polygon.size();
+    }
+
+    /**
+     * Set the actual PointToCoordsTransformUtil with the actual location and
+     * camera parameters
+     *
      * @param pointTrans
      *            the actual object
+     * 
+     * @author sbollen
      */
     public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;
     }
 
+    
     /**
      * Sets the {@link UndoRedoListener} to use.
      * 

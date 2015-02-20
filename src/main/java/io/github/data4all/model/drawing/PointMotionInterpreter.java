@@ -36,7 +36,7 @@ import java.util.List;
 public class PointMotionInterpreter implements MotionInterpreter {
 
     private PointToCoordsTransformUtil pointTrans;
-
+    private static final int MIN_NODES = 1;
     /**
      * Creates an PointMotionInterpreter with the specified transformation
      * utility.
@@ -96,4 +96,13 @@ public class PointMotionInterpreter implements MotionInterpreter {
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#minNodes()
+     */
+    @Override
+    public int minNodes() {
+        return MIN_NODES;
+    }
 }
