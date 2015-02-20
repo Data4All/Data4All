@@ -72,6 +72,8 @@ public class DataBaseHandlerTest {
 
         assertEquals("abcde12345", dbHandler.getUser("Liadan").getOAuthToken());
         assertEquals("abc", dbHandler.getUser("Manus").getOauthTokenSecret());
+        
+        List<User> users = dbHandler.getAllUser();
 
         user1.setOAuthToken("xyz97");
         user2.setOauthTokenSecret("ads8790");
@@ -87,6 +89,7 @@ public class DataBaseHandlerTest {
         dbHandler.deleteUser(user2);
 
         assertEquals(0, dbHandler.getUserCount());
+        
     }
 
     @Test
@@ -264,7 +267,6 @@ public class DataBaseHandlerTest {
     }
 
     @Test
-    // @Ignore
     public void testTrackPointCRUD() {
         Location loc1 = new Location("User");
         loc1.setAltitude(10.10);
@@ -312,10 +314,10 @@ public class DataBaseHandlerTest {
 
         assertEquals(1, dbHandler.getTrackPointCount());
     }
-    
+
     @Test
-    @Ignore
-    public void testTrackCRUD() throws JSONException{
+    // @Ignore
+    public void testTrackCRUD() throws JSONException {
         Location loc1 = new Location("User");
         loc1.setAltitude(10.10);
         loc1.setLatitude(10.10);
@@ -341,11 +343,26 @@ public class DataBaseHandlerTest {
         trackPoints.add(tp1);
         trackPoints.add(tp2);
         trackPoints.add(tp3);
-        
+
         Track track = new Track();
         track.setTrackPoints(trackPoints);
-        
+
         dbHandler.createGPSTrack(track);
+        
+        assertEquals(1, dbHandler.getGPSTrackCount());
+        
+        Track reTrack = dbHandler.getGPSTrack(track.getTrackName());
+        
+        assertEquals(track.getTrackName(), reTrack.getTrackName());
+        
+        track.setTrackName("2015_02_20_15_18_25");
+        
+        dbHandler.updateGPSTrack(track);
+                
+        reTrack = dbHandler.getGPSTrack(track.getTrackName());
+        
+//        assertEquals(track.getTrackName(), reTrack.getTrackName());
+        
     }
 
     @After
