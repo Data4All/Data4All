@@ -23,6 +23,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
+import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
@@ -33,8 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.json.JSONException;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 
@@ -64,10 +63,17 @@ public class ResultViewActivity extends BasicActivity implements
     private D4AMapView mapView;
 
     // Default OpenStreetMap TileSource
-    private static final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
-    private MapController mapController;
+    protected MapBoxTileSourceV4 osmMap;
 
-    private static final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+    protected static final String OSM_MAP_NAME = "mapbox.streets";
+    
+    // Minimal Zoom Level
+    protected static final int MINIMAL_ZOOM_LEVEL = 10;
+
+    // Maximal Zoom Level
+    protected static final int MAXIMAL_ZOOM_LEVEL = 18;
+    
+    private MapController mapController;
 
     // Listview for the Dialog
     private ListView listView;
@@ -97,12 +103,14 @@ public class ResultViewActivity extends BasicActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                MAXIMAL_ZOOM_LEVEL);
+        
         // Here is the OsmDroidMap created
         setContentView(R.layout.activity_result_view);
         mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        mapView.setTileSource(OSM_TILESOURCE);
-        mapView.setTileSource(DEFAULT_TILESOURCE);
+        mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
         BoundingBoxE6 boundingBox = MapUtil
