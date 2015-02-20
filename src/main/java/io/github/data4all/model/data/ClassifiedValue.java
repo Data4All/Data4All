@@ -26,7 +26,7 @@ import io.github.data4all.logger.Log;
  *
  */
 public class ClassifiedValue {
-    
+
     /**
      * The log-tag for this class.
      */
@@ -36,7 +36,7 @@ public class ClassifiedValue {
      * id to identify the tag.
      */
     private int id;
-    
+
     /**
      * key for the internal representation in osm e.g. addr:street.
      */
@@ -55,13 +55,16 @@ public class ClassifiedValue {
     /**
      * Constructor to create nameRessource and hintRessource from the key.
      * 
-     * @param id The id of the ClassifiedValue 
-     * @param key The key of the ClassifiedValue
-     * @param value The value of the ClassifiedValue
+     * @param id
+     *            The id of the ClassifiedValue
+     * @param key
+     *            The key of the ClassifiedValue
+     * @param value
+     *            The value of the ClassifiedValue
      */
     public ClassifiedValue(int id, String key, String value) {
         this.id = id;
-        this.setKey(key); 
+        this.setKey(key);
         this.value = value;
         try {
             this.setNameRessource((Integer) R.string.class.getDeclaredField(
@@ -82,7 +85,7 @@ public class ClassifiedValue {
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public String getKey() {
         return key;
     }

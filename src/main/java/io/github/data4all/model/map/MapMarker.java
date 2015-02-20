@@ -90,7 +90,7 @@ public class MapMarker extends Marker implements
         case DialogInterface.BUTTON_POSITIVE:
             // Yes button clicked
             mapView.removeOverlayFromMap(this);
-            if(activity instanceof MapViewActivity){
+            if (activity instanceof MapViewActivity) {
                 DataBaseHandler db = new DataBaseHandler(activity);
                 db.deleteDataElement(element);
                 db.close();

@@ -53,8 +53,8 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -300,7 +300,8 @@ public class ResultViewActivity extends BasicActivity implements
     /**
      * Adds an Osm Element to the DataBase
      * 
-     * @param the Data Element to add
+     * @param the
+     *            Data Element to add
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         DataBaseHandler db = new DataBaseHandler(this);

@@ -65,13 +65,13 @@ public class DeviceOrientationTest {
     @Test
     public void test_parcelable_node() {
         Parcel newParcel = Parcel.obtain();
-        DeviceOrientation testDeviceOrientation =
-                new DeviceOrientation(10, 20, 30, 1234567);
+        DeviceOrientation testDeviceOrientation = new DeviceOrientation(10, 20,
+                30, 1234567);
 
         testDeviceOrientation.writeToParcel(newParcel, 0);
         newParcel.setDataPosition(0);
-        DeviceOrientation deParcelDeviceOrientation =
-                DeviceOrientation.CREATOR.createFromParcel(newParcel);
+        DeviceOrientation deParcelDeviceOrientation = DeviceOrientation.CREATOR
+                .createFromParcel(newParcel);
 
         assertEquals(testDeviceOrientation.getAzimuth(),
                 deParcelDeviceOrientation.getAzimuth(), 0);

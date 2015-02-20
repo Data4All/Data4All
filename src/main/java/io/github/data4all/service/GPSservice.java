@@ -66,11 +66,9 @@ public class GPSservice extends Service implements LocationListener {
         dbHandler = new DataBaseHandler(this.getApplicationContext());
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
-        final PowerManager powerManager =
-                (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock =
-                powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                        "MyWakelockTag");
+        final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
         wakeLock.acquire();
 
         // new track is initialized and gets timestamp.
@@ -135,7 +133,7 @@ public class GPSservice extends Service implements LocationListener {
         final Location tp = Optimizer.currentBestLoc();
         final TrackPoint last = track.getLastTrackPoint();
 
-        if(last != null && tp != null) {
+        if (last != null && tp != null) {
             // check if new Location is already stored
             if (this.sameTrackPoints(last, tp)) {
                 track.addTrackPoint(tp);

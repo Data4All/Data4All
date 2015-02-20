@@ -113,8 +113,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      */
     @Override
     public AbstractDataElement create(List<Point> polygon, int rotation) {
-        final PolyElement element =
- new PolyElement(-1,
+        final PolyElement element = new PolyElement(-1,
                 PolyElementType.BUILDING);
 
         final List<Node> nodeList = pointTrans.transform(polygon, rotation);

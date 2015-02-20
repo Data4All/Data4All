@@ -184,9 +184,8 @@ public class LoginActivity extends BasicActivity {
         @Override
         public void run() {
             try {
-                final User user =
-                        new OsmOAuthAuthorizationClient(OAuthParameters.CURRENT)
-                                .authorise(username, password);
+                final User user = new OsmOAuthAuthorizationClient(
+                        OAuthParameters.CURRENT).authorise(username, password);
                 LoginActivity.this.saveUser(user);
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {

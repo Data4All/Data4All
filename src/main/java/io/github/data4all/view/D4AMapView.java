@@ -15,8 +15,6 @@
  */
 package io.github.data4all.view;
 
-import java.util.List;
-
 import io.github.data4all.activity.BasicActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
@@ -27,6 +25,8 @@ import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
+
+import java.util.List;
 
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
@@ -117,15 +117,15 @@ public class D4AMapView extends MapView {
      * @param list
      *            the list of OsmElements which should be added to the map
      **/
-    public void addOsmElementsToMap(BasicActivity ctx, List<AbstractDataElement> list) {
+    public void addOsmElementsToMap(BasicActivity ctx,
+            List<AbstractDataElement> list) {
         if (list != null && list.size() > 0) {
-            for(AbstractDataElement elem : list){
+            for (AbstractDataElement elem : list) {
                 addOsmElementToMap(ctx, elem);
             }
         }
     }
-    
-    
+
     /**
      * Adds an OsmElement as an Overlay to the Map.
      * 

@@ -50,7 +50,7 @@ import java.util.List;
  * @author tbrose
  */
 public class DrawingMotion {
-    
+
     /**
      * The default tolerance for a Point.
      */
@@ -59,8 +59,8 @@ public class DrawingMotion {
     /**
      * List of all added Points.
      */
-    private List<Point> points = new ArrayList<Point>();    
-    
+    private List<Point> points = new ArrayList<Point>();
+
     /**
      * Calculates the euclidean distance between point a and point b.
      * 

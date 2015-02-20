@@ -15,7 +15,15 @@
  */
 package io.github.data4all.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.Tags;
+import io.github.data4all.model.data.User;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -29,14 +37,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Tag;
-import io.github.data4all.model.data.Tags;
-import io.github.data4all.model.data.User;
-import io.github.data4all.model.data.PolyElement.PolyElementType;
 
 /**
  * This class tests all methods of the DataBaseHandler.

@@ -17,8 +17,6 @@ package io.github.data4all.model.data;
 
 import java.util.List;
 
-import android.text.InputType;
-
 /**
  * This class represents a classified tag. A classified tag is a subclass of
  * tag. classifiedTags are tags where the user can choose input/value from
@@ -37,11 +35,16 @@ public class ClassifiedTag extends Tag {
     /**
      * Default constructor.
      * 
-     * @param id The id of the tag
-     * @param key The key of the tag
-     * @param type The Type of the tag
-     * @param classifiedValues the classifiedValues of the tag
-     * @param osmObjects The OpenStreetObject the tag refers to
+     * @param id
+     *            The id of the tag
+     * @param key
+     *            The key of the tag
+     * @param type
+     *            The Type of the tag
+     * @param classifiedValues
+     *            the classifiedValues of the tag
+     * @param osmObjects
+     *            The OpenStreetObject the tag refers to
      */
     public ClassifiedTag(int id, String key, int type,
             List<ClassifiedValue> classifiedValues, int... osmObjects) {

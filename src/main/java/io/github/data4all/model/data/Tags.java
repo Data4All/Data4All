@@ -247,8 +247,7 @@ public final class Tags {
     static {
         // classified tag: highway
         final String highway = "highway";
-        final List<ClassifiedValue> highwayValues =
-                new LinkedList<ClassifiedValue>();
+        final List<ClassifiedValue> highwayValues = new LinkedList<ClassifiedValue>();
         highwayValues.add(new ClassifiedValue(101, highway, "residential"));
         highwayValues.add(new ClassifiedValue(102, highway, "service"));
         highwayValues.add(new ClassifiedValue(103, highway, "track"));
@@ -267,8 +266,7 @@ public final class Tags {
      */
     static {
         final String barrier = "barrier";
-        final List<ClassifiedValue> barrierValues =
-                new LinkedList<ClassifiedValue>();
+        final List<ClassifiedValue> barrierValues = new LinkedList<ClassifiedValue>();
         barrierValues.add(new ClassifiedValue(107, barrier, "fence"));
         barrierValues.add(new ClassifiedValue(108, barrier, "wall"));
         barrierValues.add(new ClassifiedValue(109, barrier, "gate"));
@@ -288,8 +286,7 @@ public final class Tags {
      */
     static {
         final String amenity = "amenity";
-        final List<ClassifiedValue> amenityValues =
-                new LinkedList<ClassifiedValue>();
+        final List<ClassifiedValue> amenityValues = new LinkedList<ClassifiedValue>();
         amenityValues.add(new ClassifiedValue(112, amenity, "parking"));
         amenityValues.add(new ClassifiedValue(113, amenity, "school"));
         amenityValues.add(new ClassifiedValue(114, amenity, "restaurant"));
@@ -316,7 +313,7 @@ public final class Tags {
         amenityValues.add(new ClassifiedValue(135, amenity, "embassy"));
         amenityValues.add(new ClassifiedValue(136, amenity, "water_point"));
         TAG_LIST.add(new ClassifiedTag(12, "amenity", -1, amenityValues,
-                new int[] {NODE_TAG, BUILDING_TAG}));
+                new int[] { NODE_TAG, BUILDING_TAG }));
 
     }
 
@@ -327,8 +324,7 @@ public final class Tags {
      */
     static {
         final String building = "building";
-        final List<ClassifiedValue> buildingValues =
-                new LinkedList<ClassifiedValue>();
+        final List<ClassifiedValue> buildingValues = new LinkedList<ClassifiedValue>();
         buildingValues.add(new ClassifiedValue(137, building, "house"));
         buildingValues.add(new ClassifiedValue(138, building, "residential"));
         buildingValues.add(new ClassifiedValue(139, building, "garage"));
@@ -337,7 +333,7 @@ public final class Tags {
         buildingValues.add(new ClassifiedValue(142, building, "commercial"));
         buildingValues.add(new ClassifiedValue(143, building, "retail"));
         TAG_LIST.add(new ClassifiedTag(13, "building", -1, buildingValues,
-                new int[] {BUILDING_TAG}));
+                new int[] { BUILDING_TAG }));
     }
 
     /**
@@ -347,8 +343,7 @@ public final class Tags {
      */
     static {
         final String landuse = "landuse";
-        final List<ClassifiedValue> landuseValues =
-                new LinkedList<ClassifiedValue>();
+        final List<ClassifiedValue> landuseValues = new LinkedList<ClassifiedValue>();
         landuseValues.add(new ClassifiedValue(144, landuse, "forest"));
         landuseValues.add(new ClassifiedValue(145, landuse, "residential"));
         landuseValues.add(new ClassifiedValue(146, landuse, "grass"));
@@ -358,7 +353,7 @@ public final class Tags {
         landuseValues.add(new ClassifiedValue(150, landuse, "construction"));
         landuseValues.add(new ClassifiedValue(151, landuse, "military"));
         TAG_LIST.add(new ClassifiedTag(14, "landuse", -1, landuseValues,
-                new int[] {AREA_TAG}));
+                new int[] { AREA_TAG }));
     }
 
 }

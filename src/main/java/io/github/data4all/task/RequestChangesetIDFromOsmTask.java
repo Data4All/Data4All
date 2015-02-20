@@ -15,6 +15,7 @@
  */
 package io.github.data4all.task;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.network.OscUploadHelper;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
@@ -43,7 +44,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
-import io.github.data4all.logger.Log;
 import android.widget.Toast;
 
 /**
@@ -91,14 +91,12 @@ public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
         this.helper = helper;
         this.context = context;
         this.consumer = consumer;
-        changeSetXML =
-                new File(Environment.getExternalStorageDirectory()
-                        .getAbsolutePath() + "/getChangesetID.xml");
+        changeSetXML = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/getChangesetID.xml");
 
         try {
-            final PrintWriter writer =
-                    new PrintWriter(new BufferedWriter(new FileWriter(
-                            changeSetXML)));
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(
+                    new FileWriter(changeSetXML)));
 
             writer.println("<osm>");
             writer.println("<changeset>");
@@ -124,16 +122,14 @@ public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
 
         try {
             // Prepare request
-            request =
-                    new HttpPut(OAuthParameters.CURRENT.getScopeUrl()
-                            + "api/0.6/changeset/create");
+            request = new HttpPut(OAuthParameters.CURRENT.getScopeUrl()
+                    + "api/0.6/changeset/create");
 
             // Sign the request with oAuth
             consumer.sign(request);
 
             // Adding the Entity to the Request
-            final HttpEntity entity =
-                    new FileEntity(changeSetXML, "text/plain");
+            final HttpEntity entity = new FileEntity(changeSetXML, "text/plain");
             request.setEntity(entity);
 
         } catch (OAuthMessageSignerException e) {
@@ -193,8 +189,8 @@ public class RequestChangesetIDFromOsmTask extends AsyncTask<Void, Void, Void> {
             // Upload Task through the helper
             if (statusCode == HttpStatus.SC_OK) {
                 final InputStream is = responseEntity.getContent();
-                final BufferedReader in =
-                        new BufferedReader(new InputStreamReader(is));
+                final BufferedReader in = new BufferedReader(
+                        new InputStreamReader(is));
                 final String line = in.readLine();
                 changesetId = Integer.parseInt(line);
                 helper.parseAndUpload(changesetId);

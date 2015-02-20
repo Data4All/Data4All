@@ -60,17 +60,16 @@ public class Track implements Parcelable {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<Track> CREATOR =
-            new Parcelable.Creator<Track>() {
+    public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
 
-                public Track createFromParcel(Parcel in) {
-                    return new Track(in);
-                }
+        public Track createFromParcel(Parcel in) {
+            return new Track(in);
+        }
 
-                public Track[] newArray(int size) {
-                    return new Track[size];
-                }
-            };
+        public Track[] newArray(int size) {
+            return new Track[size];
+        }
+    };
 
     /**
      * Constructor to create a Track from a parcel.
@@ -133,6 +132,7 @@ public class Track implements Parcelable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -147,6 +147,7 @@ public class Track implements Parcelable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.os.Parcelable#describeContents()
      */
     @Override

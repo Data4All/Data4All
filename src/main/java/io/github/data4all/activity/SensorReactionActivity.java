@@ -204,10 +204,9 @@ public class SensorReactionActivity extends Activity implements
             }
 
             if (showDialog == null) {
-                showDialog =
-                        new AlertDialog.Builder(this).setTitle("Delay:")
-                                .setMessage(message + reactionTime)
-                                .setPositiveButton("Okay", null).create();
+                showDialog = new AlertDialog.Builder(this).setTitle("Delay:")
+                        .setMessage(message + reactionTime)
+                        .setPositiveButton("Okay", null).create();
             } else {
                 showDialog.setMessage(message + reactionTime);
             }

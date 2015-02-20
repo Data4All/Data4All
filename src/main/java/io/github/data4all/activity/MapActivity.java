@@ -30,7 +30,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -197,13 +196,16 @@ public class MapActivity extends BasicActivity {
         view = (ImageView) findViewById(R.id.imageView1);
 
         // fading out the loading screen
-        // view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-        // .withEndAction(new Runnable() {
-        // public void run() {
+        if (view.getVisibility() == View.GONE) {
+            view.setVisibility(View.VISIBLE);
+        }
+        view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+                .withEndAction(new Runnable() {
+                    public void run() {
+                        view.setVisibility(View.GONE);
+                    }
+                }).start();
         // view.setVisibility(View.GONE);
-        // }
-        // }).start();
-        view.setVisibility(View.GONE);
     }
 
     /**
@@ -270,18 +272,11 @@ public class MapActivity extends BasicActivity {
     protected IGeoPoint getMyLocation() {
         final LocationManager locationManager = (LocationManager) this
                 .getSystemService(Context.LOCATION_SERVICE);
-        final Criteria criteria = new Criteria();
-        final String provider = locationManager
-                .getBestProvider(criteria, false);
         final Location currentLocation = locationManager
-                .getLastKnownLocation(provider);
+                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
-        } else {
-            String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-                    .show();
         }
         return null;
 
@@ -313,6 +308,7 @@ public class MapActivity extends BasicActivity {
         } else {
             // Set ZoomCenter
             Log.i(TAG, "Set Mapcenter to " + point.toString());
+            mapController.animateTo(point);
             mapController.setCenter(point);
         }
 
@@ -350,6 +346,7 @@ public class MapActivity extends BasicActivity {
             mapTileSource = src;
             mapView.setTileSource(src);
             downloadMapTiles();
+            setUpLoadingScreen();
         }
 
     }

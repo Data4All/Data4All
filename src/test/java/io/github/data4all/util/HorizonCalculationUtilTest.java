@@ -15,7 +15,9 @@
  *******************************************************************************/
 package io.github.data4all.util;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import io.github.data4all.model.DeviceOrientation;
 

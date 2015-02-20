@@ -172,8 +172,7 @@ public final class Optimizer {
 
         // Determine location quality using a combination of timeliness and
         // accuracy
-        if ((isMoreAccurate)
-                || (isNewer && !isLessAccurate)
+        if ((isMoreAccurate) || (isNewer && !isLessAccurate)
                 || (isNewer && !isSignifLessAccurate && isFromSameProvider)) {
             return true;
         }

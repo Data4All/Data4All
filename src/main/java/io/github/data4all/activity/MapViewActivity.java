@@ -15,15 +15,14 @@
  */
 package io.github.data4all.activity;
 
-import java.util.List;
-
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
-import io.github.data4all.util.MapUtil;
+
+import java.util.List;
 
 import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
@@ -97,17 +96,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         newPoint.setOnClickListener(this);
 
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onStart()
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        
-    }
 
     /*
      * (non-Javadoc)
@@ -133,8 +121,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         case R.id.to_camera:
             if (myLocationOverlay.getMyLocation() == null) {
                 String text = getString(R.string.noLocationFound);
-                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(getApplicationContext(), text,
+                        Toast.LENGTH_SHORT).show();
             } else {
                 startActivity(new Intent(this, CameraActivity.class));
             }
@@ -160,7 +148,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
@@ -178,7 +165,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Disable Actual Location Overlay
         Log.i(TAG, "Disable Actual Location Overlay");
         myLocationOverlay.disableMyLocation();
-
         // Pause the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));

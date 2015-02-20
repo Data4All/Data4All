@@ -46,13 +46,13 @@ public class TransformationParamBeanTest {
         Location location = new Location("test");
         location.setLatitude(10);
         location.setLongitude(20);
-        TransformationParamBean testBean =
-                new TransformationParamBean(10, 20, 30, 40, 50, location);
+        TransformationParamBean testBean = new TransformationParamBean(10, 20,
+                30, 40, 50, location);
 
         testBean.writeToParcel(newParcel, 0);
         newParcel.setDataPosition(0);
-        TransformationParamBean deParcelBean =
-                TransformationParamBean.CREATOR.createFromParcel(newParcel);
+        TransformationParamBean deParcelBean = TransformationParamBean.CREATOR
+                .createFromParcel(newParcel);
 
         assertEquals(testBean.getHeight(), deParcelBean.getHeight(), 0);
         assertEquals(testBean.getCameraMaxRotationAngle(),

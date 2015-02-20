@@ -18,8 +18,6 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,11 +53,16 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
         setUpMapView(savedInstanceState);
-        setUpLoadingScreen();
+        view.setVisibility(View.GONE);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
         mapView.addOsmElementToMap(this, element);
 
         mapController.setZoom(actualZoomLevel);
+
+        // Set Overlay for the actual Position
+        Log.i(TAG, "Added User Location Overlay to the map");
+        mapView.getOverlays().add(myLocationOverlay);
+
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -82,6 +85,35 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     protected void onStart() {
         super.onStart();
         setCenter(MapUtil.getCenterFromOsmElement(element));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Enable User Position display
+        // Log.i(TAG, "Enable User Position Display");
+        // myLocationOverlay.enableMyLocation();
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.activity.MapActivity#onPause()
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // Disable Actual Location Overlay
+        // Log.i(TAG, "Disable Actual Location Overlay");
+        // myLocationOverlay.disableMyLocation();
     }
 
     /*

@@ -69,13 +69,12 @@ public class ShowPictureActivity extends BasicActivity {
     private TransformationParamBean transformBean;
     private DeviceOrientation currentOrientation;
 
-
-	/**
-	 * public standard constructor.<br\>
-	 */
-	public ShowPictureActivity() {
-		super();
-	}
+    /**
+     * public standard constructor.<br\>
+     */
+    public ShowPictureActivity() {
+        super();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,13 +121,12 @@ public class ShowPictureActivity extends BasicActivity {
         }
 
         if (getIntent().hasExtra("transform_bean")) {
-            transformBean =
-                    getIntent().getExtras().getParcelable("transform_bean");
+            transformBean = getIntent().getExtras().getParcelable(
+                    "transform_bean");
         }
         if (getIntent().hasExtra("current_orientation")) {
-            currentOrientation =
-                    getIntent().getExtras()
-                            .getParcelable("current_orientation");
+            currentOrientation = getIntent().getExtras().getParcelable(
+                    "current_orientation");
         }
         // Set the display size as photo size to get a coordinate system for the
         // drawn points
@@ -144,20 +142,17 @@ public class ShowPictureActivity extends BasicActivity {
                 transformBean, currentOrientation));
     }
 
-
-	 /**
-     * OnClick method to finish the current drawing.<br\>     
+    /**
+     * OnClick method to finish the current drawing.<br\>
      * 
-     * * @param view
-     * current view used this method
+     * * @param view current view used this method
      */
     public void onClickOkay(View view) {
         // 0 or Rotation0 if portrait
         // 90 or Rotation1 if home-button to the right
         // 270 or Rotation3 if home-button to the left
-        final int rotation =
-                ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                        .getDefaultDisplay().getRotation();
+        final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getRotation();
 
         // create an abstract data element from the given data and pass it to
         // the next
@@ -167,79 +162,79 @@ public class ShowPictureActivity extends BasicActivity {
         startActivity(intent);
     }
 
-	/**
-	 * Define method to draw a point.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickPoint(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.POINT);
-		touchView.invalidate();
-		intent.putExtra(TYPE, POINT);
-	}
+    /**
+     * Define method to draw a point.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickPoint(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.POINT);
+        touchView.invalidate();
+        intent.putExtra(TYPE, POINT);
+    }
 
-	/**
-	 * Define method to draw a way.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickPath(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.WAY);
-		touchView.invalidate();
-		intent.putExtra(TYPE, WAY);
-	}
+    /**
+     * Define method to draw a way.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickPath(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.WAY);
+        touchView.invalidate();
+        intent.putExtra(TYPE, WAY);
+    }
 
-	/**
-	 * Define method to draw a area.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickArea(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.AREA);
-		touchView.invalidate();
-		intent.putExtra(TYPE, AREA);
-	}
+    /**
+     * Define method to draw a area.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickArea(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.AREA);
+        touchView.invalidate();
+        intent.putExtra(TYPE, AREA);
+    }
 
-	/**
-	 * Define method to draw a building.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickBuilding(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
-		touchView.invalidate();
-		intent.putExtra(TYPE, BUILDING);
-	}
+    /**
+     * Define method to draw a building.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickBuilding(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
+        touchView.invalidate();
+        intent.putExtra(TYPE, BUILDING);
+    }
 
-	/**
-	 * Method to use the redo function.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickRedo(View view) {
-		touchView.redo();
-		touchView.invalidate();
-	}
+    /**
+     * Method to use the redo function.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickRedo(View view) {
+        touchView.redo();
+        touchView.invalidate();
+    }
 
-	/**
-	 * Method to use the undo function.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickUndo(View view) {
-		touchView.undo();
-		touchView.invalidate();
-	}
+    /**
+     * Method to use the undo function.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickUndo(View view) {
+        touchView.undo();
+        touchView.invalidate();
+    }
 
     /**
      * Get a Uri of a Image and set this to local ImageView.<br\>
@@ -252,9 +247,8 @@ public class ShowPictureActivity extends BasicActivity {
     private void setBackground(Uri selectedImage) {
         // try to convert a image to a bitmap
         try {
-            bitmap =
-                    MediaStore.Images.Media.getBitmap(
-                            this.getContentResolver(), selectedImage);
+            bitmap = MediaStore.Images.Media.getBitmap(
+                    this.getContentResolver(), selectedImage);
             final Display d = getWindowManager().getDefaultDisplay();
             if (d.getRotation() == Surface.ROTATION_0) {
                 // get the display size
@@ -264,8 +258,8 @@ public class ShowPictureActivity extends BasicActivity {
                 final int height = size.y;
 
                 // scaled bitmap
-                final Bitmap scaledBitmap =
-                        Bitmap.createScaledBitmap(bitmap, height, width, true);
+                final Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
+                        height, width, true);
 
                 // create a matrix object
                 final Matrix matrix = new Matrix();
@@ -274,10 +268,9 @@ public class ShowPictureActivity extends BasicActivity {
 
                 // create a new bitmap from the original using the matrix to
                 // transform the result
-                bitmap =
-                        Bitmap.createBitmap(scaledBitmap, 0, 0,
-                                scaledBitmap.getWidth(),
-                                scaledBitmap.getHeight(), matrix, true);
+                bitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
+                        scaledBitmap.getWidth(), scaledBitmap.getHeight(),
+                        matrix, true);
             }
 
             // set the imageview bitmap-resource

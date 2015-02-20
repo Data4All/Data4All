@@ -17,13 +17,11 @@ package io.github.data4all.model.map;
 
 import io.github.data4all.R;
 import io.github.data4all.activity.BasicActivity;
-import io.github.data4all.activity.MapActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.view.D4AMapView;
 
-import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.views.MapView;
 

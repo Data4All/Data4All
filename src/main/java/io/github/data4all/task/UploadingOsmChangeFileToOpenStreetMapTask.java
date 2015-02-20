@@ -48,8 +48,8 @@ import android.widget.Toast;
 public class UploadingOsmChangeFileToOpenStreetMapTask extends
         AsyncTask<Void, Void, Void> {
 
-    private static final String TAG =
-            UploadingOsmChangeFileToOpenStreetMapTask.class.getSimpleName();
+    private static final String TAG = UploadingOsmChangeFileToOpenStreetMapTask.class
+            .getSimpleName();
     private Context context;
 
     private HttpPost request;
@@ -80,9 +80,8 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends
 
         this.context = context;
         this.consumer = consumer;
-        oscFile =
-                new File(context.getFilesDir().getAbsolutePath()
-                        + "/OsmChangeUpload.osc");
+        oscFile = new File(context.getFilesDir().getAbsolutePath()
+                + "/OsmChangeUpload.osc");
         this.id = id;
     }
 
@@ -94,9 +93,8 @@ public class UploadingOsmChangeFileToOpenStreetMapTask extends
 
         try {
             // Prepare request
-            request =
-                    new HttpPost(OAuthParameters.CURRENT.getScopeUrl()
-                            + "api/0.6/changeset/" + id + "/upload");
+            request = new HttpPost(OAuthParameters.CURRENT.getScopeUrl()
+                    + "api/0.6/changeset/" + id + "/upload");
             // Sign the request with oAuth
             this.consumer.sign(request);
 
