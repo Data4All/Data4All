@@ -50,7 +50,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton5"
+        android:id="@+id/okButton"
         style="@style/imageButtonOkay"
         android:contentDescription="@string/noDescription"
         android:onClick="onClickOkay" />

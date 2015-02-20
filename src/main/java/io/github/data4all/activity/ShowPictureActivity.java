@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -43,6 +44,7 @@ public class ShowPictureActivity extends BasicActivity {
     private static final String OSM_ELEMENT = "OSM_ELEMENT";
     private Button undo;
     private Button redo;
+    private ImageButton ok;
 
     Bitmap bitmap;
 
@@ -63,7 +65,7 @@ public class ShowPictureActivity extends BasicActivity {
 	intent = new Intent(this, MapPreviewActivity.class);
 	undo = (Button) findViewById(R.id.undobtn);
 	redo = (Button) findViewById(R.id.redobtn);
-
+	ok = (ImageButton) findViewById(R.id.okButton);
 	touchView.setUndoRedoListener(new UndoRedoListener() {
         
         @Override
@@ -75,6 +77,14 @@ public class ShowPictureActivity extends BasicActivity {
         public void canRedo(boolean state) {
             redo.setEnabled(state);
         }
+        @Override
+		public void okUseable(boolean state){
+			if(state){
+				 ok.setVisibility(View.VISIBLE);
+			} else{
+				ok.setVisibility(View.INVISIBLE);
+			}
+		}
     });
 	
 	if (getIntent().hasExtra("file_path")) {

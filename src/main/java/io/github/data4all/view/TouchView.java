@@ -159,6 +159,7 @@ public class TouchView extends View {
             handleMotion(event, "start");
             polygon = newPolygon;
             redoUndo = new RedoUndo(polygon);
+            undoRedoListener.okUseable(hasEnoughNodes());
             break;
         case MotionEvent.ACTION_MOVE:
             handleMotion(event, "move");
@@ -295,6 +296,7 @@ public class TouchView extends View {
     }
 
     public void setInterpretationType(InterpretationType type) {
+    	undoRedoListener.okUseable(hasEnoughNodes());
         switch (type) {
         case AREA:
             interpreter = new AreaMotionInterpreter(pointTrans);
@@ -321,6 +323,7 @@ public class TouchView extends View {
         newPolygon = redoUndo.redo();
         polygon = newPolygon;
         redoUseable();
+    	undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     public void undo() {
@@ -330,6 +333,7 @@ public class TouchView extends View {
             undoRedoListener.canRedo(true);
         }
         undoUseable();
+    	undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     public boolean redoUseable() {
