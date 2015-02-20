@@ -72,7 +72,7 @@
     
     <!-- classified tags_ landuse -->
     <string name="name_landuse">Landnutzung</string>
-    <string name="name_landuse_commercial">Gewebepark</string>
+    <string name="name_landuse_commercial">Gewerbepark</string>
     <string name="name_landuse_construction">Baustelle</string>
     <string name="name_landuse_farmland">Ackerland</string>
     <string name="name_landuse_forest">Wald</string>

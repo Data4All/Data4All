@@ -270,7 +270,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
                 final User user = new User(cursor.getString(0),
                         cursor.getString(1), cursor.getString(2));
@@ -392,7 +392,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
                 final Node node = new Node(Long.parseLong(cursor.getString(0)),
                         Double.parseDouble(cursor.getString(1)),
@@ -582,7 +582,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT,
                 null);
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
                 final PolyElement polyElement = new PolyElement(
                         Long.parseLong(cursor.getString(0)),
@@ -802,7 +802,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         AbstractDataElement dataElement; // NOSONAR
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
                 if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID,
                         cursor.getInt(0))) {
@@ -1109,7 +1109,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Track track = new Track();
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
 
                 final JSONObject json = new JSONObject(cursor.getString(1));
@@ -1273,7 +1273,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TRACKPOINT,
                 null);
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
 
                 final Location loc = new Location("provider");

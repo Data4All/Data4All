@@ -384,10 +384,14 @@ public class TouchView extends View {
      * @author vkochno
      */
     public void redo() {
+        if (interpreter instanceof BuildingMotionInterpreter) {
+            redoUndo.redo();
+        }
         newPolygon = redoUndo.redo();
         polygon = newPolygon;
+        undoUseable();
         redoUseable();
-    	undoRedoListener.okUseable(hasEnoughNodes());
+        undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     /**
@@ -396,13 +400,17 @@ public class TouchView extends View {
      * @author vkochno
      */
     public void undo() {
+        if (interpreter instanceof BuildingMotionInterpreter) {
+            redoUndo.undo();
+        }
         newPolygon = redoUndo.undo();
-        polygon = newPolygon;
         if (undoRedoListener != null) {
             undoRedoListener.canRedo(true);
         }
+        polygon = newPolygon;
+        redoUseable();
         undoUseable();
-    	undoRedoListener.okUseable(hasEnoughNodes());
+        undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     /**
@@ -411,7 +419,10 @@ public class TouchView extends View {
      * @return If redo can be used
      */
     public boolean redoUseable() {
-        if (redoUndo.getCurrent() == redoUndo.getMax()) {
+        if (!(interpreter instanceof BuildingMotionInterpreter)
+                && redoUndo.getCurrent() == redoUndo.getMax()
+                || interpreter instanceof BuildingMotionInterpreter
+                && redoUndo.getCurrent() == redoUndo.getMax()) {
             Log.d(this.getClass().getSimpleName(), "false redo");
             if (undoRedoListener != null) {
                 undoRedoListener.canRedo(false);
@@ -432,7 +443,11 @@ public class TouchView extends View {
      * @return If undo can be used
      */
     public boolean undoUseable() {
-        if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
+        if (!(interpreter instanceof BuildingMotionInterpreter)
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                || interpreter instanceof BuildingMotionInterpreter
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                && redoUndo.getMax() == 4) {
             Log.d(this.getClass().getSimpleName(), "true undo");
             if (undoRedoListener != null) {
                 undoRedoListener.canUndo(true);
@@ -473,7 +488,6 @@ public class TouchView extends View {
         this.pointTrans = pointTrans;
     }
 
-    
     /**
      * Sets the {@link UndoRedoListener} to use.
      * 

@@ -64,9 +64,11 @@ public class D4AMapView extends MapView {
     /**
      * Default Constructor.
      * 
-     * @param context The invoking Activity
+     * @param context
+     *            The invoking Activity
      * 
-     * @param attrs Attributes which are defined
+     * @param attrs
+     *            Attributes which are defined
      * 
      **/
     public D4AMapView(Context context, AttributeSet attrs) {
@@ -94,6 +96,9 @@ public class D4AMapView extends MapView {
         super.onLayout(changed, l, t, r, b);
         if (this.boundingBox != null) {
             this.zoomToBoundingBox(this.boundingBox);
+            this.boundingBox = null;
+        }
+        if (!scrollable) {
             this.setScrollableAreaLimit(this.boundingBox);
         }
 
@@ -138,11 +143,12 @@ public class D4AMapView extends MapView {
      * @param elem
      *            the OsmElement which should be added to the map
      **/
-    public void addOsmElementToMap(AbstractActivity ctx, AbstractDataElement elem) {
+    public void addOsmElementToMap(AbstractActivity ctx,
+            AbstractDataElement elem) {
         if (elem != null) {
             final DataBaseHandler db = new DataBaseHandler(ctx);
             int count = db.getDataElementCount();
-            elem.setOsmId(count+1);
+            elem.setOsmId(count + 1);
             db.close();
             // if the Element is a Node
             if (elem instanceof Node) {

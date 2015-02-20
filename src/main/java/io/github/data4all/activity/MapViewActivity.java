@@ -21,6 +21,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
+import io.github.data4all.util.Optimizer;
 
 import java.util.List;
 
@@ -119,7 +120,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         // Make Photo
         case R.id.to_camera:
-            if (myLocationOverlay.getMyLocation() == null) {
+            if (Optimizer.currentLocation() == null) {
                 final String text = getString(R.string.noLocationFound);
                 Toast.makeText(getApplicationContext(), text,
                         Toast.LENGTH_SHORT).show();

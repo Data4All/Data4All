@@ -104,7 +104,9 @@ public class MapActivity extends AbstractActivity {
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
-    protected static final int MAXIMAL_ZOOM_LEVEL = 18;
+    protected static final int MAXIMAL_OSM_ZOOM_LEVEL = 22;
+
+    protected static final int MAXIMAL_SATELLITE_ZOOM_LEVEL = 18;
 
     // Default Stroke width
     protected static final float DEFAULT_STROKE_WIDTH = 3.0f;
@@ -143,17 +145,19 @@ public class MapActivity extends AbstractActivity {
      */
     protected void setUpMapView(Bundle savedInstanceState) {
         mapView = (D4AMapView) this.findViewById(R.id.mapview);
-
+        // Set ImageView for Loading Screen
+        view = (ImageView) findViewById(R.id.imageView1);
+        
         MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
 
         // Add Satellite Map TileSource
         satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_ZOOM_LEVEL);
+                MAXIMAL_SATELLITE_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(satMap);
 
         // Add OSM Map TileSource
         osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_ZOOM_LEVEL);
+                MAXIMAL_OSM_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(osmMap);
         mapTileSource = osmMap;
 
@@ -165,8 +169,8 @@ public class MapActivity extends AbstractActivity {
         Log.i(TAG, "Set minimal Zoomlevel to " + MINIMAL_ZOOM_LEVEL);
         mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
 
-        Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_ZOOM_LEVEL);
-        mapView.setMaxZoomLevel(MAXIMAL_ZOOM_LEVEL);
+        Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_OSM_ZOOM_LEVEL);
+        mapView.setMaxZoomLevel(MAXIMAL_OSM_ZOOM_LEVEL);
 
         mapController = (MapController) this.mapView.getController();
 
@@ -192,8 +196,6 @@ public class MapActivity extends AbstractActivity {
      * Shows Loading Screen.
      **/
     protected void setUpLoadingScreen() {
-        // Set ImageView for Loading Screen
-        view = (ImageView) findViewById(R.id.imageView1);
 
         // fading out the loading screen
         if (view.getVisibility() == View.GONE) {
@@ -322,11 +324,16 @@ public class MapActivity extends AbstractActivity {
         final String mts = mapView.getTileProvider().getTileSource().name();
         if (SAT_MAP_NAME.equals(mts)) {
             this.setMapTileSource(osmMap);
+            mapView.setMaxZoomLevel(MAXIMAL_OSM_ZOOM_LEVEL);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
             // switch to Satellite Map
         } else {
+            if (mapView.getZoomLevel() > MAXIMAL_SATELLITE_ZOOM_LEVEL) {
+                setZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
+            }
+            mapView.setMaxZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
             this.setMapTileSource(satMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_map);
@@ -345,8 +352,8 @@ public class MapActivity extends AbstractActivity {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            this.downloadMapTiles();
-            this.setUpLoadingScreen();
+            //this.downloadMapTiles();
+            //this.setUpLoadingScreen();
         }
 
     }
@@ -376,7 +383,8 @@ public class MapActivity extends AbstractActivity {
         }
         if (savedInstanceState != null
                 && savedInstanceState.getSerializable(M_T_P) != null) {
-            final String mTS = (String) savedInstanceState.getSerializable(M_T_P);
+            final String mTS = (String) savedInstanceState
+                    .getSerializable(M_T_P);
             if (mTS.equals(SAT_MAP_NAME)) {
                 mapTileSource = satMap;
                 final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
