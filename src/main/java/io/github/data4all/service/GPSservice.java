@@ -15,6 +15,7 @@
  */
 package io.github.data4all.service;
 
+import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
@@ -220,7 +221,7 @@ public class GPSservice extends Service implements LocationListener {
         }
         // TODO localization
         Toast.makeText(getBaseContext(),
-                "Gps turned off, GPS tracking not possible ", Toast.LENGTH_LONG)
+                R.string.noLocationFound, Toast.LENGTH_LONG)
                 .show();
     }
 

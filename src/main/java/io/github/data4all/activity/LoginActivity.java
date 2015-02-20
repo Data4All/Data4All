@@ -78,6 +78,7 @@ public class LoginActivity extends AbstractActivity {
     private boolean isLoggedIn() {
         final DataBaseHandler database = new DataBaseHandler(this);
         final List<User> users = database.getAllUser();
+        Log.i(TAG, "" + users.size());
         database.close();
         return !users.isEmpty();
     }
@@ -133,15 +134,14 @@ public class LoginActivity extends AbstractActivity {
 
             if (TextUtils.isEmpty(username)) {
                 osmName.requestFocus();
-                osmName.setError("Username is empty");
+                osmName.setError(getString(R.string.login_username_empty));
             } else if (TextUtils.isEmpty(password)) {
                 osmPass.requestFocus();
-                osmPass.setError("Password is empty");
+                osmPass.setError(getString(R.string.login_password_empty));
             } else if (!NetworkState.isNetworkAvailable(this)) {
                 new AlertDialog.Builder(this)
-                        .setTitle("Network unavailable")
-                        .setMessage(
-                                "Please connect your device to the internet")
+                        .setTitle(R.string.no_network_title)
+                        .setMessage(R.string.no_network_message)
                         .show();
             } else {
                 this.showProgress(true);
@@ -192,8 +192,8 @@ public class LoginActivity extends AbstractActivity {
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {
                 Log.e(TAG, "Login to osm failed:", e);
-                this.showDialog("Access denied",
-                        "Username or Password may be incorrect");
+                this.showDialog(getString(R.string.login_access_dialog_title),
+                        getString(R.string.login_access_dialog_mes));
             } catch (OsmOAuthAuthorizationException e) {
                 Log.e(TAG, "Osm OAuth failed:", e);
                 this.showDialog("Error", e.getLocalizedMessage());

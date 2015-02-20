@@ -51,10 +51,7 @@
         <activity
             android:name=".activity.TagActivity"
             android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
-        <activity
-            android:name=".activity.LoginActivity"
-            android:label="@string/title_activity_login" >
-        </activity>
+        <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.BasicActivity" />
         <activity
             android:name=".activity.PrepareRequestTokenActivity"
@@ -73,12 +70,9 @@
         <activity android:name=".activity.SensorReactionActivity" />
 
         <service
-            android:name=".service.GPSservice"
-            android:label="GPS Service" >
-        </service>
+            android:name=".service.GPSservice" />
         <service
-            android:name=".service.OrientationListener"
-            android:enabled="true" />
+            android:name=".service.OrientationListener" />
     </application>
 
 </manifest>

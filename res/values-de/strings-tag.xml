@@ -18,7 +18,7 @@
     <string name="name_highway">Verkehrsweg</string>
     <string name="name_highway_motorway">Autobahn</string>
     <string name="name_highway_residential">Wohngebiets-Straße</string>
-    <string name="name_highway_service">Erschließungsweg</string>
+    <string name="name_highway_service">Zugangsweg</string>
     <string name="name_highway_track">Feldweg</string>
     <string name="name_highway_footway">Fußweg</string>
     <string name="name_highway_road">Straße</string>

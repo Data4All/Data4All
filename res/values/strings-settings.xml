@@ -3,7 +3,7 @@
 
     <string name="pref_bodyheight_key" translatable="false">PREF_BODY_HEIGHT</string>
     <string name="pref_bodyheight_title">Bodyheight</string>
-    <string name="pref_bodyheight_summary">Set your bodyheigh</string>
+    <string name="pref_bodyheight_summary">Set your bodyheight</string>
     <string name="pref_bodyheight_dialog_title">Set your bodyheight</string>
     <string name="pref_bodyheight_dialog_message">Please enter the height in cm</string>
 
