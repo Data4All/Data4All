@@ -100,10 +100,12 @@ public class PointToCoordsTransformUtil {
             int rotation) {
         this.tps = tps;
         final List<Node> nodes = new ArrayList<Node>();
-        Log.d(TAG, "Orientation: " + Math.toDegrees(deviceOrientation.getAzimuth())
-                + " ; " + Math.toDegrees(deviceOrientation.getPitch())
-                + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
-        
+        Log.d(TAG,
+                "Orientation: "
+                        + Math.toDegrees(deviceOrientation.getAzimuth())
+                        + " ; " + Math.toDegrees(deviceOrientation.getPitch())
+                        + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
+
         // get the set height
         this.height = tps.getHeight();
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
@@ -113,13 +115,14 @@ public class PointToCoordsTransformUtil {
             point = this.changePixelCoordSystem(point, rotation);
             Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
             // calculates local coordinates in meter first
-            final double[] coord =
-                    this.calculateCoordFromPoint(tps, deviceOrientation, point);
+            final double[] coord = this.calculateCoordFromPoint(tps,
+                    deviceOrientation, point);
             Log.d(TAG, "Calculated local Coords:" + coord[0] + "  " + coord[1]);
             // transforms local coordinates in global GPS-coordinates set to.
             // Node.
             if (coord != null) {
-                final Node node = this.calculateGPSPoint(tps.getLocation(), coord);
+                final Node node = this.calculateGPSPoint(tps.getLocation(),
+                        coord);
                 Log.d(TAG,
                         "Calculated Lat: " + node.getLat() + " Lon: "
                                 + node.getLon());
@@ -143,23 +146,20 @@ public class PointToCoordsTransformUtil {
      */
     public double[] calculateCoordFromPoint(TransformationParamBean tps,
             DeviceOrientation deviceOrientation, Point point) {
-        
+
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
-        final double pixelpitch =
-                this.calculateAngleFromPixel(point.getX(), xAxis,
-                        tps.getCameraMaxPitchAngle());
+        final double pixelpitch = this.calculateAngleFromPixel(point.getX(),
+                xAxis, tps.getCameraMaxPitchAngle());
         // gets an angle for the point on the roll axis
-        final double pixelroll =
-                -this.calculateAngleFromPixel(point.getY(), yAxis,
-                        tps.getCameraMaxRotationAngle());
+        final double pixelroll = -this.calculateAngleFromPixel(point.getY(),
+                yAxis, tps.getCameraMaxRotationAngle());
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
-        
 
         Log.i(TAG, "Punkt: " + point.getX() + " , " + point.getY());
-        
+
         final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
         vector[2] = -1;
@@ -172,35 +172,31 @@ public class PointToCoordsTransformUtil {
         vector2[2] = vector[1] * Math.sin(pitch) + vector[2] * Math.cos(pitch);
         // rotate around line through origin with pitch angle
         final double[] finalVector = new double[3];
-        finalVector[0] =
-                vector2[0] * Math.cos(roll) - vector2[1] * Math.sin(pitch)
-                        * Math.sin(roll) + vector2[2] * Math.cos(pitch)
-                        * Math.sin(roll);
-        finalVector[1] =
-                vector2[0]
-                        * Math.sin(roll)
-                        * Math.sin(pitch)
-                        + vector2[1]
-                        * (Math.cos(pitch) * Math.cos(pitch)
-                                * (1 - Math.cos(roll)) + Math.cos(roll))
-                        + vector2[2] * Math.cos(pitch) * Math.sin(pitch)
-                        * (1 - Math.cos(roll));
-        finalVector[2] =
-                -vector2[0]
-                        * Math.cos(pitch)
-                        * Math.sin(roll)
-                        + vector2[1]
-                        * Math.sin(pitch)
-                        * Math.cos(pitch)
-                        * (1 - Math.cos(roll))
-                        + vector2[2]
-                        * (Math.sin(pitch) * Math.sin(pitch)
-                                * (1 - Math.cos(roll)) + Math.cos(roll));
+        finalVector[0] = vector2[0] * Math.cos(roll) - vector2[1]
+                * Math.sin(pitch) * Math.sin(roll) + vector2[2]
+                * Math.cos(pitch) * Math.sin(roll);
+        finalVector[1] = vector2[0]
+                * Math.sin(roll)
+                * Math.sin(pitch)
+                + vector2[1]
+                * (Math.cos(pitch) * Math.cos(pitch) * (1 - Math.cos(roll)) + Math
+                        .cos(roll)) + vector2[2] * Math.cos(pitch)
+                * Math.sin(pitch) * (1 - Math.cos(roll));
+        finalVector[2] = -vector2[0]
+                * Math.cos(pitch)
+                * Math.sin(roll)
+                + vector2[1]
+                * Math.sin(pitch)
+                * Math.cos(pitch)
+                * (1 - Math.cos(roll))
+                + vector2[2]
+                * (Math.sin(pitch) * Math.sin(pitch) * (1 - Math.cos(roll)) + Math
+                        .cos(roll));
         // returns null, if the vector points to the sky
         if (finalVector[2] >= 0) {
             Log.wtf(TAG,
                     "Vector is directed to the sky, cannot calculate coords",
-                    null);       
+                    null);
             return new double[3];
         }
         // collides vector with the xy-plane
@@ -210,10 +206,8 @@ public class PointToCoordsTransformUtil {
         Log.i(TAG, "Coord: " + tempXX + " , " + tempYY);
         // Rotate Vector with azimuth (z is fix))
         Log.d(TAG, "AZIMUTH: " + azimuth);
-        coord[0] =
-                ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
-        coord[1] =
-                ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
+        coord[0] = ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
+        coord[1] = ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
         coord[2] = 0;
         return coord;
     }

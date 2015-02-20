@@ -17,39 +17,26 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.PolyElement.PolyElementType;
-import io.github.data4all.model.map.MapLine;
-import io.github.data4all.model.map.MapMarker;
-import io.github.data4all.model.map.MapPolygon;
+import io.github.data4all.network.MapBoxTileSourceV4;
+import io.github.data4all.view.D4AMapView;
 
-import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
-import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.bonuspack.overlays.Polygon;
-import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Super Class for all Map Activities.
@@ -72,7 +59,7 @@ public class MapActivity extends BasicActivity {
     private static final String TAG = "MapActivity";
 
     // OsmDroid Mapview
-    protected MapView mapView;
+    protected D4AMapView mapView;
 
     // ImageView
     protected ImageView view;
@@ -117,7 +104,7 @@ public class MapActivity extends BasicActivity {
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
-    protected static final int MAXIMAL_ZOOM_LEVEL = 20;
+    protected static final int MAXIMAL_ZOOM_LEVEL = 18;
 
     // Default Stroke width
     protected static final float DEFAULT_STROKE_WIDTH = 3.0f;
@@ -129,12 +116,14 @@ public class MapActivity extends BasicActivity {
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
     // Default Satellite Map Tilesource
-    protected OnlineTileSourceBase satMap;
+    protected MapBoxTileSourceV4 satMap;
 
-    protected static final String SAT_MAP_NAME = "MapBoxSatelliteLabelled";
+    protected static final String SAT_MAP_NAME = "mapbox.streets-satellite";
 
     // Default OpenStreetMap TileSource
-    protected static final ITileSource OSM_TILESRC = TileSourceFactory.MAPQUESTOSM;
+    protected MapBoxTileSourceV4 osmMap;
+
+    protected static final String OSM_MAP_NAME = "mapbox.streets";
 
     CacheManager cacheManager;
 
@@ -145,14 +134,28 @@ public class MapActivity extends BasicActivity {
         super();
     }
 
+    /**
+     * Prepares the Mapview. Min/Max Zoomlevel, TileSources, etc.
+     * 
+     * 
+     * @param savedInstanceState
+     *            the old Preferences
+     */
     protected void setUpMapView(Bundle savedInstanceState) {
-        mapView = (MapView) this.findViewById(R.id.mapview);
+        mapView = (D4AMapView) this.findViewById(R.id.mapview);
+
+        MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
 
         // Add Satellite Map TileSource
-        MapBoxTileSource.retrieveMapBoxMapId(this);
-        satMap = new MapBoxTileSource(SAT_MAP_NAME,
-                ResourceProxy.string.mapquest_aerial , 1, 19, 256, ".png");
+        satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                MAXIMAL_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(satMap);
+
+        // Add OSM Map TileSource
+        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                MAXIMAL_ZOOM_LEVEL);
+        TileSourceFactory.addTileSource(osmMap);
+        mapTileSource = osmMap;
 
         // Activate Multi Touch Control
         Log.i(TAG, "Activate Multi Touch Controls");
@@ -171,7 +174,6 @@ public class MapActivity extends BasicActivity {
         // Change
         loadState(savedInstanceState);
 
-        
         cacheManager = new CacheManager(mapView);
 
         // Set MapTileSource
@@ -180,149 +182,44 @@ public class MapActivity extends BasicActivity {
         // Set Zoomlevel
         setZoomLevel(actualZoomLevel);
 
-        // Set Zoomlevel
+        // Set Center
         setCenter(actualCenter);
 
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
 
-    
+    /**
+     * Shows Loading Screen
+     **/
     protected void setUpLoadingScreen() {
         // Set ImageView for Loading Screen
         view = (ImageView) findViewById(R.id.imageView1);
 
         // fading out the loading screen
-        // view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-        // .withEndAction(new Runnable() {
-        // public void run() {
+        if (view.getVisibility() == View.GONE) {
+            view.setVisibility(View.VISIBLE);
+        }
+        view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+                .withEndAction(new Runnable() {
+                    public void run() {
+                        view.setVisibility(View.GONE);
+                    }
+                }).start();
         // view.setVisibility(View.GONE);
-        // }
-        // }).start();
-        view.setVisibility(View.GONE);
     }
 
     /**
      * Downloades the Maptiles for the Actual Bounding Box.
      **/
-    protected void downloadMapTiles(){
+    protected void downloadMapTiles() {
         cacheManager.downloadAreaAsync(this, mapView.getBoundingBox(),
                 actualZoomLevel, actualZoomLevel);
 
     }
-    
-    /**
-     * Removes an Overlay from the Map.
-     *
-     * @param overlay
-     *            the Overlay which should be removed from the map
-     **/
-    public void removeOverlayFromMap(Overlay overlay) {
-        if (mapView.getOverlays().contains(overlay)) {
-            mapView.getOverlays().remove(overlay);
-            mapView.postInvalidate();
-        }
-
-    }
-
-    /**
-     * Adds an OsmElement as an Overlay to the Map.
-     *
-     * @param element
-     *            the OsmElement which should be added to the map
-     **/
-    protected void addOsmElementToMap(AbstractDataElement element) {
-        if (element != null) {
-            // if the Element is a Node
-            if (element instanceof Node) {
-                final Node node = (Node) element;
-                Log.i(TAG, "Add Node with Coordinates "
-                        + node.toGeoPoint().toString());
-                this.addNodeToMap(node);
-                // if the Element is Way
-            } else if (element instanceof PolyElement) {
-                final PolyElement polyElement = (PolyElement) element;
-
-                // if the Element is an Path
-                if (polyElement.getType() == PolyElementType.WAY) {
-                    Log.i(TAG,
-                            "Add Path with Coordinates "
-                                    + polyElement.toString());
-                    this.addPathToMap(polyElement);
-                    // if the Element is an Area
-                } else {
-                    Log.i(TAG,
-                            "Add Area with Coordinates "
-                                    + polyElement.toString());
-                    this.addAreaToMap(polyElement);
-                }
-            }
-        }
-    }
-
-    /**
-     * Adds an Node as an Overlay to the Map.
-     *
-     * @param node
-     *            the node which should be added to the map
-     **/
-    protected void addNodeToMap(Node node) {
-        final Marker poi = new MapMarker(this, mapView);
-        Log.i(TAG, "Set Node Points to " + node.toString());
-        // disable InfoWindow
-        poi.setInfoWindow(null);
-        poi.setPosition(node.toGeoPoint());
-        mapView.getOverlays().add(poi);
-        mapView.postInvalidate();
-    }
-
-    /**
-     * Adds an area as an Overlay to the Map.
-     *
-     * @param polyElement
-     *            the area which should be added to the map
-     **/
-    protected void addAreaToMap(PolyElement polyElement) {
-        final Polygon area = new MapPolygon(this);
-
-        Log.i(TAG, "Set Area Points to " + polyElement.toString());
-        area.setPoints(polyElement.getGeoPoints());
-
-        Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
-        area.setFillColor(DEFAULT_FILL_COLOR);
-
-        Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
-        area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-
-        Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
-        area.setStrokeColor(DEFAULT_STROKE_COLOR);
-
-        mapView.getOverlays().add(area);
-        mapView.postInvalidate();
-    }
-
-    /**
-     * Adds an Path as an Overlay to the Map.
-     *
-     * @param polyElement
-     *            the path which should be added to the map
-     **/
-    protected void addPathToMap(PolyElement polyElement) {
-        final Polyline path = new MapLine(this);
-
-        Log.i(TAG, "Set Path Points to " + polyElement.toString());
-        path.setPoints(polyElement.getGeoPoints());
-
-        Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
-        path.setColor(DEFAULT_STROKE_COLOR);
-
-        Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
-        path.setWidth(DEFAULT_STROKE_WIDTH);
-        mapView.getOverlays().add(path);
-        mapView.postInvalidate();
-    }
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
      */
     @Override
@@ -344,6 +241,7 @@ public class MapActivity extends BasicActivity {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onPause()
      */
     @Override
@@ -372,14 +270,10 @@ public class MapActivity extends BasicActivity {
      * @return the actual position
      **/
     protected IGeoPoint getMyLocation() {
-        final LocationManager locationManager =
-                (LocationManager) this
-                        .getSystemService(Context.LOCATION_SERVICE);
-        final Criteria criteria = new Criteria();
-        final String provider =
-                locationManager.getBestProvider(criteria, false);
-        final Location currentLocation =
-                locationManager.getLastKnownLocation(provider);
+        final LocationManager locationManager = (LocationManager) this
+                .getSystemService(Context.LOCATION_SERVICE);
+        final Location currentLocation = locationManager
+                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
@@ -407,9 +301,17 @@ public class MapActivity extends BasicActivity {
      *            the Center which should be set
      **/
     protected void setCenter(IGeoPoint point) {
-        // Set ZoomCenter
-        Log.i(TAG, "Set Mapcenter to " + point.toString());
-        mapController.setCenter(point);
+        if (point == null) {
+            String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            // Set ZoomCenter
+            Log.i(TAG, "Set Mapcenter to " + point.toString());
+            mapController.animateTo(point);
+            mapController.setCenter(point);
+        }
+
     }
 
     /**
@@ -418,8 +320,8 @@ public class MapActivity extends BasicActivity {
     protected void switchMaps() {
         // switch to OSM Map
         final String mts = mapView.getTileProvider().getTileSource().name();
-        if ("MapBoxSatelliteLabelled".equals(mts)) {
-            setMapTileSource(OSM_TILESRC);
+        if (SAT_MAP_NAME.equals(mts)) {
+            setMapTileSource(osmMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
@@ -436,14 +338,15 @@ public class MapActivity extends BasicActivity {
      * Set the Maptilesource for the mapview.
      * 
      * @param src
-     *            the Maptilesource wich should be set
+     *            the Maptilesource which should be set
      **/
     protected void setMapTileSource(ITileSource src) {
         if (src != null) {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            //downloadMapTiles();
+            downloadMapTiles();
+            setUpLoadingScreen();
         }
 
     }
@@ -468,7 +371,7 @@ public class MapActivity extends BasicActivity {
             actCentLat = (Double) savedInstanceState.getSerializable(CENT_LAT);
             actCentLong = (Double) savedInstanceState.getSerializable(CENT_LON);
             actualCenter = new GeoPoint(actCentLat, actCentLong);
-        } else if (this.getMyLocation() != null) {
+        } else {
             actualCenter = this.getMyLocation();
         }
         if (savedInstanceState != null
@@ -480,15 +383,17 @@ public class MapActivity extends BasicActivity {
                 bt.setImageResource(R.drawable.ic_map);
             }
         } else {
-            mapTileSource = OSM_TILESRC;
+            mapTileSource = osmMap;
         }
     }
+
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onDestroy()
      */
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         mapView.getTileProvider().clearTileCache();
         System.gc();

@@ -15,7 +15,6 @@
  */
 package io.github.data4all.util.oauth.parameters;
 
-
 /**
  * @author tbrose
  *

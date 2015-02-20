@@ -16,10 +16,15 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 
+import java.util.List;
+
+import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
 
 import android.content.Intent;
@@ -27,7 +32,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Main Activity that shows the default MapView.
@@ -47,25 +52,31 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         super();
     }
 
-    /**
-     * Called when the activity is first created.
+    /*
+     * (non-Javadoc)
      * 
-     * @param savedInstanceState
-     *            If the activity is being re-initialized after previously being
-     *            shut down then this Bundle contains the data it most recently
-     *            supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it
-     *            is null.</b>
+     * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
-        setUpLoadingScreen();        
         setUpMapView(savedInstanceState);
+        setUpLoadingScreen();
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
+
+        DataBaseHandler db = new DataBaseHandler(this);
+        try {
+            List<AbstractDataElement> list = db.getAllDataElements();
+            mapView.addOsmElementsToMap(this, list);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        db.close();
 
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
@@ -88,6 +99,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.view.View.OnClickListener#onClick(android.view.View)
      */
     @Override
@@ -107,7 +119,13 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         // Make Photo
         case R.id.to_camera:
-            startActivity(new Intent(this, CameraActivity.class));
+            if (myLocationOverlay.getMyLocation() == null) {
+                String text = getString(R.string.noLocationFound);
+                Toast.makeText(getApplicationContext(), text,
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                startActivity(new Intent(this, CameraActivity.class));
+            }
             break;
         // Add new POI to the Map
         case R.id.new_point:
@@ -120,6 +138,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onResume()
      */
     @Override
@@ -129,7 +148,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
@@ -137,6 +155,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     /*
      * (non-Javadoc)
+     * 
      * @see io.github.data4all.activity.MapActivity#onPause()
      */
     @Override
@@ -146,7 +165,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Disable Actual Location Overlay
         Log.i(TAG, "Disable Actual Location Overlay");
         myLocationOverlay.disableMyLocation();
-
         // Pause the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
@@ -157,23 +175,28 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
      **/
     private void createNewPOI() {
         final GeoPoint myPosition = myLocationOverlay.getMyLocation();
-        final Intent intent = new Intent(this, MapPreviewActivity.class);
-        final Node poi =
-                new Node(-1, myPosition.getLatitude(),
-                        myPosition.getLongitude());
+        if (myPosition == null) {
+            String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            final Intent intent = new Intent(this, MapPreviewActivity.class);
+            final Node poi = new Node(-1, myPosition.getLatitude(),
+                    myPosition.getLongitude());
 
-        // Set Type Definition for Intent to Node
-        Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
-        intent.putExtra(TYPE, NODE_TYPE_DEF);
+            // Set Type Definition for Intent to Node
+            Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
+            intent.putExtra(TYPE, NODE_TYPE_DEF);
 
-        // Set OsmElement for Intent to POI
-        Log.i(TAG, "Set Intent Extra " + OSM + " to Node with Coordinates "
-                + poi.toString());
-        intent.putExtra(OSM, poi);
+            // Set OsmElement for Intent to POI
+            Log.i(TAG, "Set Intent Extra " + OSM + " to Node with Coordinates "
+                    + poi.toString());
+            intent.putExtra(OSM, poi);
 
-        // Start MapPreview Activity
-        Log.i(TAG, "Start MapPreview Activity");
-        startActivity(intent);
+            // Start MapPreview Activity
+            Log.i(TAG, "Start MapPreview Activity");
+            startActivity(intent);
+        }
     }
 
     /**
@@ -182,6 +205,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void returnToActualPosition() {
         if (myLocationOverlay.getMyLocation() != null) {
             setCenter(myLocationOverlay.getMyLocation());
+        } else {
+            String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 }

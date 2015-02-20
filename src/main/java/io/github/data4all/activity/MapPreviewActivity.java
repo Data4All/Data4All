@@ -18,8 +18,6 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,11 +40,12 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private AbstractDataElement element;
 
     public MapPreviewActivity() {
-
+        super();
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
@@ -54,11 +53,16 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
         setUpMapView(savedInstanceState);
-        setUpLoadingScreen();
+        view.setVisibility(View.GONE);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        addOsmElementToMap(element);
+        mapView.addOsmElementToMap(this, element);
+
         mapController.setZoom(actualZoomLevel);
-        mapController.setCenter(actualCenter);
+
+        // Set Overlay for the actual Position
+        Log.i(TAG, "Added User Location Overlay to the map");
+        mapView.getOverlays().add(myLocationOverlay);
+
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -74,24 +78,47 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onStart()
      */
     @Override
     protected void onStart() {
         super.onStart();
-        if (element instanceof Node) {
-            final Node node = (Node) element;
-            mapController.setCenter(node.toGeoPoint());
-            mapController.animateTo(node.toGeoPoint());
-        } else {
-            final PolyElement polyElement = (PolyElement) element;
-            mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
-            mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
-        }
+        setCenter(MapUtil.getCenterFromOsmElement(element));
     }
 
     /*
      * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Enable User Position display
+        // Log.i(TAG, "Enable User Position Display");
+        // myLocationOverlay.enableMyLocation();
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.activity.MapActivity#onPause()
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // Disable Actual Location Overlay
+        // Log.i(TAG, "Disable Actual Location Overlay");
+        // myLocationOverlay.disableMyLocation();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see android.view.View.OnClickListener#onClick(android.view.View)
      */
     @Override
@@ -111,6 +138,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /*
+     * Starts new Tagactivity with Osm Object and Type Definition in the Intent
+     */
     private void accept() {
         final Intent intent = new Intent(this, TagActivity.class);
 

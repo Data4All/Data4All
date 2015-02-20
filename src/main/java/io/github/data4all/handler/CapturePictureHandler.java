@@ -94,16 +94,15 @@ public class CapturePictureHandler implements PictureCallback {
 
         // get the current data which is necessary for creating an osm element
         final Camera.Parameters params = camera.getParameters();
-        final double horizontalViewAngle =
-                Math.toRadians(params.getHorizontalViewAngle());
-        final double verticalViewAngle =
-                Math.toRadians(params.getVerticalViewAngle());
+        final double horizontalViewAngle = Math.toRadians(params
+                .getHorizontalViewAngle());
+        final double verticalViewAngle = Math.toRadians(params
+                .getVerticalViewAngle());
         final Size pictureSize = params.getSupportedPictureSizes().get(0);
         final Location currentLocation = Optimizer.currentBestLoc();
-        transformBean =
-                new TransformationParamBean(this.getDeviceHeight(),
-                        horizontalViewAngle, verticalViewAngle,
-                        pictureSize.width, pictureSize.height, currentLocation);
+        transformBean = new TransformationParamBean(this.getDeviceHeight(),
+                horizontalViewAngle, verticalViewAngle, pictureSize.width,
+                pictureSize.height, currentLocation);
         currentOrientation = Optimizer.currentDeviceOrientation();
 
         // Start a thread to save the Raw Image in JPEG into SDCard
@@ -120,8 +119,8 @@ public class CapturePictureHandler implements PictureCallback {
      *         set or empty
      */
     private double getDeviceHeight() {
-        final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
         final Resources res = context.getResources();
         final String key = res.getString(R.string.pref_bodyheight_key);
         final String height = prefs.getString(key, null);
@@ -148,8 +147,8 @@ public class CapturePictureHandler implements PictureCallback {
 
                 Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
                 // Open file channel
-                final FileOutputStream fos =
-                        new FileOutputStream(photoFile.getPath());
+                final FileOutputStream fos = new FileOutputStream(
+                        photoFile.getPath());
                 fos.write(photoData[0]);
                 fos.flush();
                 fos.close();
@@ -168,8 +167,8 @@ public class CapturePictureHandler implements PictureCallback {
 
                 // Passes the filepath, location and device orientation to the
                 // ShowPictureActivity
-                final Intent intent =
-                        new Intent(context, ShowPictureActivity.class);
+                final Intent intent = new Intent(context,
+                        ShowPictureActivity.class);
                 intent.putExtra(FILEPATH, photoFile);
                 intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
@@ -193,8 +192,8 @@ public class CapturePictureHandler implements PictureCallback {
         // Image Type is JPEG
 
         // Create a new folder on the internal storage named Data4all
-        final File folder =
-                new File(Environment.getExternalStorageDirectory() + DIRECTORY);
+        final File folder = new File(Environment.getExternalStorageDirectory()
+                + DIRECTORY);
         if (!folder.exists() && folder.mkdirs()) {
             Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
                     .show();

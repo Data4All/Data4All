@@ -1,39 +1,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayoutResultView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-        
-        <org.osmdroid.views.MapView
-            android:id="@+id/mapviewResult"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" >
-        </org.osmdroid.views.MapView>
-       
-        <ListView
-            android:id="@+id/listViewResult"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/mapviewResult" >
 
-        </ListView>
-
-        <Button
-            android:id="@+id/buttonResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-             />
-
-        <Button
-            android:id="@+id/buttonResultToCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:text="Camera" />
+    <io.github.data4all.view.D4AMapView
+        android:id="@+id/mapviewResult"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
     
+    <ImageButton
+        android:id="@+id/buttonResult"
+        style="@style/imageButtonOkay"
+        android:contentDescription="@string/return_to_position" />
+
+    <ImageButton
+        android:id="@+id/buttonResultToCamera"
+        style="@style/imageButtonReturnToCamera"
+        android:contentDescription="@string/returnToCamera" />
+
+    <ListView
+        android:id="@+id/listViewResultView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/mapviewResult"
+        android:layout_marginTop="10dp"  >
+
+    </ListView>
+
 </RelativeLayout>

@@ -40,30 +40,29 @@ public class TransformationParamBean implements Parcelable {
      * CREATOR that generates instances of {@link TransformationParamBean} from
      * a Parcel.
      */
-    public static final Parcelable.Creator<TransformationParamBean> CREATOR =
-            new Parcelable.Creator<TransformationParamBean>() {
-                public TransformationParamBean createFromParcel(Parcel in) {
-                    return new TransformationParamBean(in);
-                }
+    public static final Parcelable.Creator<TransformationParamBean> CREATOR = new Parcelable.Creator<TransformationParamBean>() {
+        public TransformationParamBean createFromParcel(Parcel in) {
+            return new TransformationParamBean(in);
+        }
 
-                public TransformationParamBean[] newArray(int size) {
-                    return new TransformationParamBean[size];
-                }
-            };
+        public TransformationParamBean[] newArray(int size) {
+            return new TransformationParamBean[size];
+        }
+    };
 
     /**
      * @param height
-     *      camera height in m
+     *            camera height in m
      * @param cameraMaxRotationAngle
-     *      the maximum of the camerarotationangle
+     *            the maximum of the camerarotationangle
      * @param cameraMaxPitchAngle
-     *      the maximum of the camerapitchangle
+     *            the maximum of the camerapitchangle
      * @param photoWidth
-     *      the width of the devicedisplay
+     *            the width of the devicedisplay
      * @param photoHeight
-     *      the height of the devicedisplay
+     *            the height of the devicedisplay
      * @param location
-     *      location of the device
+     *            location of the device
      */
     public TransformationParamBean(double height,
             double cameraMaxRotationAngle, double cameraMaxPitchAngle,
@@ -79,7 +78,8 @@ public class TransformationParamBean implements Parcelable {
     /**
      * Constructor to create a TransformationParamBean from a parcel.
      * 
-     * @param in The parcel to read from
+     * @param in
+     *            The parcel to read from
      */
     private TransformationParamBean(Parcel in) {
         height = in.readDouble();

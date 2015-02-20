@@ -18,6 +18,9 @@ package io.github.data4all.model.data;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 /**
  * Tests if the methods in Tags.java return the correct number of elements.
@@ -25,6 +28,8 @@ import org.junit.Test;
  * @author fkirchge
  *
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
 public class TagsTest {
 
     /**
@@ -33,7 +38,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllNodeTags() {
-        assertEquals(3, Tags.getAllNodeTags().size());
+        assertEquals(2, Tags.getAllNodeTags().size());
     }
 
     /**
@@ -51,7 +56,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllRelationTags() {
-        assertEquals(3, Tags.getAllBuildingTags().size());
+        assertEquals(2, Tags.getAllBuildingTags().size());
     }
 
     /**

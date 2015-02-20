@@ -57,17 +57,16 @@ public class PolyElement extends AbstractDataElement {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<PolyElement> CREATOR =
-            new Parcelable.Creator<PolyElement>() {
+    public static final Parcelable.Creator<PolyElement> CREATOR = new Parcelable.Creator<PolyElement>() {
 
-                public PolyElement createFromParcel(Parcel in) {
-                    return new PolyElement(in);
-                }
+        public PolyElement createFromParcel(Parcel in) {
+            return new PolyElement(in);
+        }
 
-                public PolyElement[] newArray(int size) {
-                    return new PolyElement[size];
-                }
-            };
+        public PolyElement[] newArray(int size) {
+            return new PolyElement[size];
+        }
+    };
 
     /**
      * Default Constructor.
@@ -113,7 +112,8 @@ public class PolyElement extends AbstractDataElement {
      * Adds a new node to the PolyElement. If the last node equals the new node
      * you have to use append to define a closed PolyElement.
      * 
-     * @param node The node to add       
+     * @param node
+     *            The node to add
      * @return success of the operation
      */
     public boolean addNode(final Node node) {
@@ -266,8 +266,7 @@ public class PolyElement extends AbstractDataElement {
      * @return list of points
      */
     public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
-        final List<org.osmdroid.util.GeoPoint> points =
-                new LinkedList<org.osmdroid.util.GeoPoint>();
+        final List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
         for (Node n : nodes) {
             points.add(n.toGeoPoint());
         }
@@ -302,8 +301,7 @@ public class PolyElement extends AbstractDataElement {
      * @return list of points
      */
     public List<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
-        final List<org.osmdroid.util.GeoPoint> points =
-                new ArrayList<org.osmdroid.util.GeoPoint>();
+        final List<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
         for (Node n : nodes) {
             points.add(n.toGeoPoint());
         }
@@ -330,7 +328,8 @@ public class PolyElement extends AbstractDataElement {
     /**
      * Returns true if the node is part of the PolyElement.
      * 
-     * @param node The Node 
+     * @param node
+     *            The Node
      * @return true/false
      */
     public boolean hasNode(final Node node) {

@@ -34,8 +34,8 @@ public class LoginActivityTest {
 
     @Test
     public void testInstanziation() {
-        LoginActivity activity =
-                Robolectric.buildActivity(LoginActivity.class).create().get();
+        LoginActivity activity = Robolectric.buildActivity(LoginActivity.class)
+                .create().get();
         assertThat(activity, notNullValue());
     }
 }

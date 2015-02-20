@@ -30,9 +30,8 @@ public class SettingsActivityTest {
 
     @Test
     public void testInstanziation() {
-        SettingsActivity activity =
-                Robolectric.buildActivity(SettingsActivity.class).create()
-                        .get();
+        SettingsActivity activity = Robolectric
+                .buildActivity(SettingsActivity.class).create().get();
         assertThat(activity, notNullValue());
     }
 }
