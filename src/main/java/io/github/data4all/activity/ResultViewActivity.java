@@ -71,7 +71,7 @@ public class ResultViewActivity extends AbstractActivity implements
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
-    protected static final int MAXIMAL_ZOOM_LEVEL = 18;
+    protected static final int MAXIMAL_ZOOM_LEVEL = 22;
     
     private MapController mapController;
 
