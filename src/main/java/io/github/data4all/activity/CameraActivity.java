@@ -18,10 +18,12 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.logger.Log;
+import io.github.data4all.service.OrientationListener;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
 import io.github.data4all.view.CaptureAssistView;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -146,6 +148,9 @@ public class CameraActivity extends Activity {
 			this.createCamera();
 			mAutoFocusCrossHair.clear();
 		}
+		
+		// Start the Device Orientation listener
+		startService(new Intent(this, OrientationListener.class));
 
 		btnCapture.setOnClickListener(btnCaptureOnClickListener);
 		btnCapture.setClickable(true);
@@ -163,6 +168,8 @@ public class CameraActivity extends Activity {
 			this.releaseCamera();
 			mAutoFocusCrossHair.clear();
 		}
+		
+		stopService(new Intent(this, OrientationListener.class));
 
 		btnCapture.setOnClickListener(null);
 		btnCapture.setClickable(false);
