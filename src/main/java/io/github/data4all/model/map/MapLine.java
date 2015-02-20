@@ -47,10 +47,12 @@ public class MapLine extends Polyline implements
      * 
      * @param ctx
      *            the Context for the Overlay
-     *            
-     * @param mv the Mapview
      * 
-     * @param ele the associateded OsmElement
+     * @param mv
+     *            the Mapview
+     * 
+     * @param ele
+     *            the associateded OsmElement
      */
     public MapLine(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
         super(ctx);
@@ -69,13 +71,14 @@ public class MapLine extends Polyline implements
      */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(
-                mapView.getContext());
-        builder.setMessage(activity.getString(R.string.deleteDialog))
-                .setPositiveButton(activity.getString(R.string.yes), this)
-                .setNegativeButton(activity.getString(R.string.no), this)
-                .show();
-
+        if (activity instanceof MapViewActivity) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                    mapView.getContext());
+            builder.setMessage(activity.getString(R.string.deleteDialog))
+                    .setPositiveButton(activity.getString(R.string.yes), this)
+                    .setNegativeButton(activity.getString(R.string.no), this)
+                    .show();
+        }
         return true;
 
     }
@@ -93,11 +96,9 @@ public class MapLine extends Polyline implements
         case DialogInterface.BUTTON_POSITIVE:
             // Yes button clicked
             mapView.removeOverlayFromMap(this);
-            if (activity instanceof MapViewActivity) {
-                final DataBaseHandler db = new DataBaseHandler(activity);
-                db.deleteDataElement(element);
-                db.close();
-            }
+            final DataBaseHandler db = new DataBaseHandler(activity);
+            db.deleteDataElement(element);
+            db.close();
             break;
         case DialogInterface.BUTTON_NEGATIVE:
             // No button clicked

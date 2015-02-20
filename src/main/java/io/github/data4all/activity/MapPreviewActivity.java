@@ -15,6 +15,8 @@
  */
 package io.github.data4all.activity;
 
+import org.osmdroid.util.BoundingBoxE6;
+
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -39,6 +41,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     // The OsmElement which should be added
     private AbstractDataElement element;
 
+    private BoundingBoxE6 boundingBox;
+
     /**
      * Standard Constructor
      **/
@@ -59,8 +63,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         view.setVisibility(View.GONE);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
         mapView.addOsmElementToMap(this, element);
-
-        mapController.setZoom(actualZoomLevel);
+        boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+        mapView.setBoundingBox(boundingBox);
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
@@ -100,6 +104,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         switch (v.getId()) {
         case R.id.return_to_actual_Position:
             mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
+            mapView.zoomToBoundingBox(boundingBox);
             break;
         case R.id.switch_maps:
             switchMaps();

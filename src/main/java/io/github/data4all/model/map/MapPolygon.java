@@ -47,12 +47,15 @@ public class MapPolygon extends Polygon implements
      * 
      * @param ctx
      *            the Context for the Overlay
-     *            
-     * @param mv the Mapview
      * 
-     * @param ele the associateded OsmElement
+     * @param mv
+     *            the Mapview
+     * 
+     * @param ele
+     *            the associateded OsmElement
      */
-    public MapPolygon(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
+    public MapPolygon(AbstractActivity ctx, D4AMapView mv,
+            AbstractDataElement ele) {
         super(ctx);
         this.element = ele;
         this.activity = ctx;
@@ -69,13 +72,14 @@ public class MapPolygon extends Polygon implements
      */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(
+        if (activity instanceof MapViewActivity) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
                 mapView.getContext());
-        builder.setMessage(activity.getString(R.string.deleteDialog))
+            builder.setMessage(activity.getString(R.string.deleteDialog))
                 .setPositiveButton(activity.getString(R.string.yes), this)
                 .setNegativeButton(activity.getString(R.string.no), this)
                 .show();
-
+        }
         return true;
 
     }
@@ -93,11 +97,9 @@ public class MapPolygon extends Polygon implements
         case DialogInterface.BUTTON_POSITIVE:
             // Yes button clicked
             mapView.removeOverlayFromMap(this);
-            if (activity instanceof MapViewActivity) {
-                final DataBaseHandler db = new DataBaseHandler(activity);
-                db.deleteDataElement(element);
-                db.close();
-            }
+            final DataBaseHandler db = new DataBaseHandler(activity);
+            db.deleteDataElement(element);
+            db.close();
             break;
         case DialogInterface.BUTTON_NEGATIVE:
             // No button clicked
