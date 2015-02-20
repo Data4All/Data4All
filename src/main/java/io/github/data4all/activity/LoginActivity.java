@@ -25,10 +25,12 @@ import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
 import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
+import java.net.URL;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -43,6 +45,8 @@ import android.widget.EditText;
 public class LoginActivity extends AbstractActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
+
+    private static final String OSM_REGISTRATION_URL = "https://www.openstreetmap.org/user/new";
 
     private EditText osmName;
     private EditText osmPass;
@@ -139,14 +143,20 @@ public class LoginActivity extends AbstractActivity {
                 osmPass.setError("Password is empty");
             } else if (!NetworkState.isNetworkAvailable(this)) {
                 new AlertDialog.Builder(this)
-                        .setTitle("Network unavailable")
+                        .setTitle(R.string.login_alertdialog_nonetwork_title)
                         .setMessage(
-                                "Please connect your device to the internet")
+                                R.string.login_alertdialog_nonetwork_message)
                         .show();
             } else {
                 this.showProgress(true);
                 new Thread(new Authentisator(username, password)).start();
             }
+        }
+        if (v.getId() == R.id.osm_register) {
+            Intent intent =
+                    new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(OSM_REGISTRATION_URL));
+            startActivity(intent);
         }
     }
 
@@ -186,8 +196,9 @@ public class LoginActivity extends AbstractActivity {
         @Override
         public void run() {
             try {
-                final User user = new OsmOAuthAuthorizationClient(
-                        OAuthParameters.CURRENT).authorise(username, password);
+                final User user =
+                        new OsmOAuthAuthorizationClient(OAuthParameters.CURRENT)
+                                .authorise(username, password);
                 LoginActivity.this.saveUser(user);
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {

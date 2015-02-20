@@ -57,5 +57,15 @@
     <string name="noCamSupported">Sorry, du hast keine Kamera</string>
     <string name="redo">Redo</string>
     <string name="undo">Undo</string>
-
+        
+    <!-- Login Activity Strings -->
+    <string name="login_logo_description">OSM Logo</string>
+    <string name="login_text">Anmeldung bei OpenStreetMap</string>
+    <string name="login_hint_username">Benutzername</string>
+    <string name="login_hint_password">Passwort</string>
+	<string name="login_button">Anmelden</string>
+	<string name="login_button_registration">Registieren</string>
+    <string name="login_alertdialog_nonetwork_title">Netzwerk nicht verfügbar</string>
+    <string name="login_alertdialog_nonetwork_message">Bitte verbinde das Gerät mit dem Internet.</string>
+	
 </resources>

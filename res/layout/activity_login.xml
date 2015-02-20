@@ -8,7 +8,7 @@
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:contentDescription="OSM Logo"
+        android:contentDescription="@string/login_logo_description"
         android:src="@drawable/osm_logo" />
 
     <TextView
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/osm_logo"
         android:layout_centerHorizontal="true"
-        android:text="Login to OpenStreetMap"
+        android:text="@string/login_text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
@@ -28,7 +28,7 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:gravity="center"
-        android:hint="Username"
+        android:hint="@string/login_hint_username"
         android:singleLine="true" />
 
     <EditText
@@ -39,7 +39,7 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:gravity="center"
-        android:hint="Password"
+        android:hint="@string/login_hint_password"
         android:inputType="textPassword"
         android:singleLine="true" />
 
@@ -51,7 +51,17 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:onClick="onClickStart"
-        android:text="Login" />
+        android:text="@string/login_button" />
+
+    <Button
+        android:id="@+id/osm_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/osm_login"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:onClick="onClickStart"
+        android:text="@string/login_button_registration" />
 
     <ProgressBar
         android:id="@+id/progress"
