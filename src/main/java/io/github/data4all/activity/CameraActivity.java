@@ -63,7 +63,7 @@ public class CameraActivity extends Activity {
     private CaptureAssistView mAssistView;
 
     private OrientationEventListener listener;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate is called");
@@ -89,9 +89,6 @@ public class CameraActivity extends Activity {
             Log.d(TAG, "device supports no camera");
             return;
         }
-        
-        
-        
 
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
@@ -110,45 +107,58 @@ public class CameraActivity extends Activity {
                     mCurrentOrientation = newOrientation;
                 }
             }
-            
-            /**
-            *
-            * @param from The old device rotation and current button rotation
-            * @param to The new device rotation and
-            */
-           private void rotateButton(int from, final int to) {
-               if (from == 0 && to == 1) {
-                   btnCapture.setRotation(359.9f);
-                   btnCapture.animate().rotation(270f).setInterpolator(new DecelerateInterpolator()).setDuration(500).start();
-               } else if (from == 1 && to == 0) {
-                   backRotating = true;
-                   btnCapture.animate().rotation(359.9f).setInterpolator(new DecelerateInterpolator()).setDuration(500).withEndAction(new Runnable() {
-                       @Override
-                       public void run() {
-                           btnCapture.setRotation(0f);
-                           backRotating = false;
-                       }
-                   }).start();
 
-               } else if (backRotating && to == 3) {
-                   backRotating = true;
-                   btnCapture.animate().rotation(359.9f).setDuration(100).withEndAction(new Runnable() {
-                       @Override
-                       public void run() {
-                           btnCapture.setRotation(0f);
-                           backRotating = false;
-                           btnCapture.animate().rotation((3-((to+3)%4))*90).setInterpolator(new DecelerateInterpolator()).setDuration(400).start();
-                       }
-                   }).start();
-               } else {
-                   btnCapture.animate().rotation((3-((to+3)%4))*90).setInterpolator(new DecelerateInterpolator()).setDuration(500).start();
-               }
-           }
+            /**
+             *
+             * @param from
+             *            The old device rotation and current button rotation
+             * @param to
+             *            The new device rotation and
+             */
+            private void rotateButton(int from, final int to) {
+                if (from == 0 && to == 1) {
+                    btnCapture.setRotation(359.9f);
+                    btnCapture.animate().rotation(270f)
+                            .setInterpolator(new DecelerateInterpolator())
+                            .setDuration(500).start();
+                } else if (from == 1 && to == 0) {
+                    backRotating = true;
+                    btnCapture.animate().rotation(359.9f)
+                            .setInterpolator(new DecelerateInterpolator())
+                            .setDuration(500).withEndAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnCapture.setRotation(0f);
+                                    backRotating = false;
+                                }
+                            }).start();
+
+                } else if (backRotating && to == 3) {
+                    backRotating = true;
+                    btnCapture.animate().rotation(359.9f).setDuration(100)
+                            .withEndAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnCapture.setRotation(0f);
+                                    backRotating = false;
+                                    btnCapture
+                                            .animate()
+                                            .rotation((3 - ((to + 3) % 4)) * 90)
+                                            .setInterpolator(
+                                                    new DecelerateInterpolator())
+                                            .setDuration(400).start();
+                                }
+                            }).start();
+                } else {
+                    btnCapture.animate().rotation((3 - ((to + 3) % 4)) * 90)
+                            .setInterpolator(new DecelerateInterpolator())
+                            .setDuration(500).start();
+                }
+            }
         };
 
         // Set the Focus animation
-        mAutoFocusCrossHair =
-                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
 
         mAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
         updateAssistView(0.5);
@@ -165,14 +175,13 @@ public class CameraActivity extends Activity {
                 public void onAutoFocus(boolean success, Camera camera) {
 
                     if (success) {
+                        mAutoFocusCrossHair.success();
                         mCamera.takePicture(shutterCallback, null,
-                                new CapturePictureHandler(
-                                        getApplicationContext()));
+                                new CapturePictureHandler(CameraActivity.this));
                     } else {
-                        // TODO animate fail of focus
+                        mAutoFocusCrossHair.fail();
                         mCamera.takePicture(shutterCallback, null,
-                                new CapturePictureHandler(
-                                        getApplicationContext()));
+                                new CapturePictureHandler(CameraActivity.this));
                     }
                 }
             });
