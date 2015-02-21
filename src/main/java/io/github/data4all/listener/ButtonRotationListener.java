@@ -32,11 +32,26 @@ public class ButtonRotationListener extends OrientationEventListener {
      */
     private int currentOrientation;
 
+    /**
+     * Constructs a ButtonRotationListener with the given {@code context} which
+     * rotates the views in {@code viewsToRotate}.
+     * 
+     * @param context
+     *            The context for the OrientationEventListener
+     * 
+     * @param viewsToRotate
+     *            The views to rotate
+     */
     public ButtonRotationListener(Context context, List<View> viewsToRotate) {
         super(context);
         this.viewsToRotate = viewsToRotate;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.OrientationEventListener#onOrientationChanged(int)
+     */
     @Override
     public void onOrientationChanged(int orientation) {
         int newOrientation = ((orientation + 45) % 360) / 90;
@@ -88,7 +103,6 @@ public class ButtonRotationListener extends OrientationEventListener {
                             backRotating = false;
                         }
                     }).start();
-
         } else if (backRotating && to == 3) {
             backRotating = true;
             view.animate().rotation(359.9f).setDuration(100)
@@ -110,5 +124,4 @@ public class ButtonRotationListener extends OrientationEventListener {
                     .setDuration(500).start();
         }
     }
-
 }
