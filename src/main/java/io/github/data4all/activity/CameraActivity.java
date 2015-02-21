@@ -123,7 +123,6 @@ public class CameraActivity extends Activity {
             this.createCamera();
             cameraPreview.setCamera(mCamera);
             mCamera.startPreview();
-            mAutoFocusCrossHair.clear();
         }
 
         btnCapture.setEnabled(true);
@@ -139,7 +138,6 @@ public class CameraActivity extends Activity {
             Log.d(TAG, "camera is not null on pause, so release it");
             cameraPreview.setCamera(null);
             this.releaseCamera();
-            mAutoFocusCrossHair.clear();
         }
 
         btnCapture.setEnabled(false);
