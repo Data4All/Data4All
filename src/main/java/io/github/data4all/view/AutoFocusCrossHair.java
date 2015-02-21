@@ -56,13 +56,14 @@ public class AutoFocusCrossHair extends View {
      * method to set the image on the view
      */
     public void showStart() {
+        this.setScaleX(1f);
+        this.setScaleY(1f);
+        this.setAlpha(1f);
         this.setDrawable(R.drawable.crosshair);
     }
 
     public void doAnimation() {
-
         scaleView(this, 1.0f, 1.5f);
-
     }
 
     private void scaleView(View v, float startScale, float endScale) {
