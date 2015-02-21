@@ -34,10 +34,11 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -116,17 +117,8 @@ public class ShowPictureActivity extends AbstractActivity {
 			}
 		});
 
-		if (getIntent().hasExtra("SCREEN_ORIENTATION")) {
-			SCREEN_ORIENTATION = getIntent().getExtras().getInt(
-					"SCREEN_ORIENTATION");
-
-			Log.i(TAG, "intent deliever :" + SCREEN_ORIENTATION);
-			setRequestedOrientation(SCREEN_ORIENTATION);
-		}
-
 		if (getIntent().hasExtra("file_path")) {
-			this.setBackground((String) getIntent().getExtras()
-					.get("file_path"));
+			this.setBackground((File) getIntent().getSerializableExtra("file_path"));
 
 		} else {
 			Log.e(this.getClass().toString(), "ERROR, no file found in intent");
@@ -255,90 +247,46 @@ public class ShowPictureActivity extends AbstractActivity {
 	/**
 	 * Get a Uri of a Image and set this to local ImageView.<br\>
 	 *
-	 * @param selectedImage
+	 * @param file
 	 *            Uri for the selected Image
 	 */
-	private void setBackground(String selectedImage) {
-		// try to convert a image to a bitmap
-		try {
-			bitmap = MediaStore.Images.Media.getBitmap(
-					this.getContentResolver(),
-					Uri.fromFile(new File(selectedImage)));
+	private void setBackground(File file) {
+	    WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int rotation = (3 - ((display.getRotation() + 2) % 4)) * 90;
+        
+        Log.d("ROTATION", "" + display.getRotation());
 
-			if (SCREEN_ORIENTATION != 0) {
-				bitmap = loadFromCamera(this,
-						Uri.fromFile(new File(selectedImage)));
-			}
-
-			// set the imageview bitmap-resource
-			imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			imageView.setImageBitmap(bitmap);
-		} catch (FileNotFoundException e) {
-			Log.e(this.getClass().toString(), "ERROR, no file found" + e);
-		} catch (IOException e) {
-			Log.e(this.getClass().toString(), "ERROR, file is no image" + e);
-		}
+        try {
+            imageView.setImageBitmap(loadFromCamera(Uri.fromFile(file), rotation));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
-
-	private Bitmap loadFromCamera(Context context, Uri photoUri)
-			throws FileNotFoundException, IOException {
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 4;
-
-		AssetFileDescriptor fileDescriptor = null;
-		fileDescriptor = getContentResolver().openAssetFileDescriptor(photoUri,
-				"r");
-
-		Bitmap photo = BitmapFactory.decodeFileDescriptor(
-				fileDescriptor.getFileDescriptor(), null, options);
-		if (photo != null) {			
-			int rotation = getRotationFor(context, photoUri);
-			photo = scaleAndRotate(photo, rotation);
-			return photo;
-		}
-		return null;
-	}
-
 	
+	private Bitmap loadFromCamera(Uri photoUri, int rotation)
+            throws IOException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
 
-	private int getRotationFor(Context context, Uri photoUri) {
-		if (SCREEN_ORIENTATION != 0) {
-			// clockwise by 90 degrees
-			if (SCREEN_ORIENTATION == 1) {
-				return 90;
-			} else {
-				return 180;
-			}
-		} else {
-			return 0;
-		}
-	}
+        AssetFileDescriptor fileDescriptor = null;
+        fileDescriptor =
+                getContentResolver().openAssetFileDescriptor(photoUri, "r");
 
-	
-	
-	 private Bitmap scaleAndRotate(Bitmap bitmap, int rotation) {
-	        DisplayMetrics metrics = getResources().getDisplayMetrics();
-	        float scaleX = 1;
-	        float scaleY = 1;
-	        if(rotation == 90) {
-	            scaleX = metrics.heightPixels * 1.0f / bitmap.getWidth();
-	            scaleY = metrics.widthPixels * 1.0f / bitmap.getHeight();
-	        } else if (rotation == 180) {
-	            scaleY = metrics.widthPixels * 1.0f / bitmap.getWidth();
-	            scaleX = metrics.heightPixels * 1.0f / bitmap.getHeight();   
-	        }
-	        
-	        Log.d(TAG, "bmpx: " + bitmap.getWidth() + " bmpy: " + bitmap.getHeight());
-	        Log.d(TAG, "scrx: " + metrics.widthPixels + " scry: " + metrics.heightPixels);
-	        Log.d(TAG, "scalex: " + scaleX + " scaley: " + scaleY);
-	        
-	        Matrix matrix = new Matrix();
-	        matrix.postScale(scaleX, scaleY);
-	        matrix.postRotate(rotation);
+        Bitmap photo =
+                BitmapFactory.decodeFileDescriptor(
+                        fileDescriptor.getFileDescriptor(), null, options);
+        if (photo != null) {
+            photo = scaleAndRotate(photo, rotation);
+            return photo;
+        }
+        return null;
+    }
 
-	        Bitmap scaled =
-	                Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-	                        bitmap.getHeight(), matrix, true);
-	        return scaled;
-	    }
+    private static Bitmap scaleAndRotate(Bitmap bitmap, int rotation) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotation);
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                bitmap.getHeight(), matrix, true);
+    }
 }
