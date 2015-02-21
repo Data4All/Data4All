@@ -3,7 +3,7 @@
     package="io.github.data4all"
     android:versionCode="1"
     android:versionName="0.1" >
-
+    
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="21" />
@@ -40,7 +40,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity
             android:name=".activity.CameraActivity"
-            android:configChanges="keyboardHidden|screenSize" />
+            android:configChanges="keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.ResultViewActivity" />
         <activity android:name=".activity.MapActivity" />
         <activity android:name=".activity.SettingsActivity" />
