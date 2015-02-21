@@ -19,6 +19,7 @@ import io.github.data4all.R;
 import io.github.data4all.activity.CameraActivity;
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.util.Optimizer;
 
@@ -75,6 +76,8 @@ public class CapturePictureHandler implements PictureCallback {
     // The fileformat of the saved picture
     private static final String FILE_FORMAT = ".jpeg";
 
+    public static final String CURRENT_ORIENTATION = "current_orientation";
+
     private TransformationParamBean transformBean;
 
     /**
@@ -111,7 +114,7 @@ public class CapturePictureHandler implements PictureCallback {
                 pictureSize.height, currentLocation);
 
         // Start a thread to save the Raw Image in JPEG into SDCard
-        new SavePhotoTask().execute(raw);
+        new SavePhotoTask(Optimizer.currentDeviceOrientation()).execute(raw);
     }
 
     /**
@@ -147,13 +150,16 @@ public class CapturePictureHandler implements PictureCallback {
      */
     class SavePhotoTask extends AsyncTask<byte[], String, String> {
 
+        private DeviceOrientation deviceOrientation;
+
         /**
          * Default Constructor for saving photo task.
          * 
-         * @param params
-         *            camera params
+         * @param deviceOrientation
+         *            the curretn device orientation
          */
-        public SavePhotoTask() {
+        public SavePhotoTask(DeviceOrientation deviceOrientation) {
+            this.deviceOrientation = deviceOrientation;
         }
 
         @Override
@@ -186,6 +192,7 @@ public class CapturePictureHandler implements PictureCallback {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(FILE_EXTRA, photoFile);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
+                intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
 
                 context.startActivity(intent);
 
