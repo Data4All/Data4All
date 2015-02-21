@@ -15,6 +15,7 @@
     <ImageButton
         android:id="@+id/btnCapture"
         style="@style/imageButtonCamAction"
-        android:contentDescription="@string/noDescription" />
+        android:contentDescription="@string/noDescription"
+        android:layout_marginBottom="40dp" />
 
 </RelativeLayout>
