@@ -57,6 +57,9 @@ public class CapturePictureHandler implements PictureCallback {
     // The name of the extra info for the filepath in the intent for the new
     public static final String FILE_EXTRA = "file_path";
 
+    // Name of the TransformationParamBean to give to the next activity
+    public static final String TRANSFORM_BEAN = "transform_bean";
+
     private static final String TAG = CapturePictureHandler.class
             .getSimpleName();
 
@@ -71,10 +74,6 @@ public class CapturePictureHandler implements PictureCallback {
 
     // The fileformat of the saved picture
     private static final String FILE_FORMAT = ".jpeg";
-
-    // Name and object of the TransformationParamBean to give to the next
-    // activity
-    private static final String TRANSFORM_BEAN = "transform_bean";
 
     private TransformationParamBean transformBean;
 
