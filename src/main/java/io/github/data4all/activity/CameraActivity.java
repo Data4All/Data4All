@@ -71,16 +71,6 @@ public class CameraActivity extends Activity {
         Log.i(TAG, "onCreate is called");
         super.onCreate(savedInstanceState);
 
-        // remove title and status bar
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-
-        setContentView(R.layout.activity_camera);
-
         // Checking camera availability
         if (!this.isDeviceSupportCamera()) {
             Toast.makeText(getApplicationContext(),
@@ -91,6 +81,16 @@ public class CameraActivity extends Activity {
             return;
         }
 
+        // remove title and status bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
+        setContentView(R.layout.activity_camera);
+
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
         setListener(btnCapture);
@@ -100,6 +100,46 @@ public class CameraActivity extends Activity {
 
         // Set the Focus animation
         mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i(TAG, "onResume is called");
+
+        super.onResume();
+
+        if (mCamera == null) {
+            Log.d(TAG, "camera is null, so we have to recreate");
+            this.createCamera();
+            cameraPreview.setCamera(mCamera);
+            mCamera.startPreview();
+            mAutoFocusCrossHair.clear();
+        }
+
+        btnCapture.setEnabled(true);
+        listener.enable();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i(TAG, "onPause is called");
+        super.onPause();
+
+        if (mCamera != null) {
+            Log.d(TAG, "camera is not null on pause, so release it");
+            cameraPreview.setCamera(null);
+            this.releaseCamera();
+            mAutoFocusCrossHair.clear();
+        }
+
+        btnCapture.setEnabled(false);
+        listener.disable();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.releaseCamera();
     }
 
     /**
@@ -148,40 +188,6 @@ public class CameraActivity extends Activity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        Log.i(TAG, "onResume is called");
-
-        super.onResume();
-
-        if (mCamera == null) {
-            Log.d(TAG, "camera is null, so we have to recreate");
-            this.createCamera();
-            cameraPreview.setCamera(mCamera);
-            mCamera.startPreview();
-            mAutoFocusCrossHair.clear();
-        }
-
-        btnCapture.setEnabled(true);
-        listener.enable();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.i(TAG, "onPause is called");
-        super.onPause();
-
-        if (mCamera != null) {
-            Log.d(TAG, "camera is not null on pause, so release it");
-            cameraPreview.setCamera(null);
-            this.releaseCamera();
-            mAutoFocusCrossHair.clear();
-        }
-
-        btnCapture.setEnabled(false);
-        listener.disable();
-    }
-
     /**
      * This method setup the camera.It calls a method from @CameraPreview and
      * sets all camera parameters.
@@ -220,12 +226,6 @@ public class CameraActivity extends Activity {
             mCamera.release();
             mCamera = null;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.releaseCamera();
     }
 
     /**
