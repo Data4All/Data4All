@@ -58,7 +58,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     private List<Size> mSupportedPreviewSizes;
     private List<Size> mSupportedPictureSizes;
     private List<String> mSupportedFlashModes;
-    private List<String> mAutoFocus;
     private Camera.Parameters params;
 
     public static int containerWidth = 0;
@@ -163,8 +162,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
             mSupportedFlashModes = mCamera.getParameters()
                     .getSupportedFlashModes();
 
-            mAutoFocus = mCamera.getParameters().getSupportedFocusModes();
-
             requestLayout();
         }
 
@@ -180,24 +177,24 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                 // retrieve the parameters of cameras
                 params = mCamera.getParameters();
 
-                Log.d("SIZE", "h: " + mPreviewSize.height + " w: "
+                Log.v("SIZE", "h: " + mPreviewSize.height + " w: "
                         + mPreviewSize.width);
-                Log.d("SIZE", "h: " + mPreviewHeight + " w: " + mPreviewWidth);
+                Log.v("SIZE", "h: " + mPreviewHeight + " w: " + mPreviewWidth);
 
                 for (Camera.Size size : mSupportedPreviewSizes) {
-                    Log.d("PREVIEW_SIZES", "h: " + size.height + " w: "
+                    Log.v("PREVIEW_SIZES", "h: " + size.height + " w: "
                             + size.width);
                 }
 
                 for (Camera.Size size : mSupportedPictureSizes) {
-                    Log.d("PICTURE_SIZES", "h: " + size.height + " w: "
+                    Log.v("PICTURE_SIZES", "h: " + size.height + " w: "
                             + size.width);
                 }
 
                 mPreviewSize = getOptimalSize(mSupportedPreviewSizes,
                         mPreviewWidth, mPreviewHeight);
 
-                Log.d("PREF_PREVIEW_SIZE", "h: " + mPreviewSize.height + " w: "
+                Log.v("PREF_PREVIEW_SIZE", "h: " + mPreviewSize.height + " w: "
                         + mPreviewSize.width);
 
                 params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
@@ -205,7 +202,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                 mPhotoSize = getOptimalSize(mSupportedPictureSizes,
                         mPreviewWidth, mPreviewHeight);
 
-                Log.d("PREF_PICTURE_SIZE", "h: " + mPhotoSize.height + " w: "
+                Log.v("PREF_PICTURE_SIZE", "h: " + mPhotoSize.height + " w: "
                         + mPhotoSize.width);
 
                 params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
@@ -216,8 +213,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                 params.setPictureFormat(ImageFormat.JPEG);
                 params.setJpegQuality(10);
                 params.setZoom(0);
-
-                setFocusModes(params);
 
                 setFlashModes(params);
 
@@ -234,21 +229,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         if (mSupportedFlashModes != null
                 && mSupportedFlashModes
-                        .contains(Camera.Parameters.FLASH_MODE_AUTO)) {
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+                        .contains(Camera.Parameters.FLASH_MODE_OFF)) {
+            params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
 
-        }
-        return params;
-    }
-
-    private Camera.Parameters setFocusModes(Camera.Parameters params) {
-        Log.d(TAG, "setFocusModes is called");
-
-        if (mAutoFocus
-                .contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        } else if (mAutoFocus.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         }
         return params;
     }
