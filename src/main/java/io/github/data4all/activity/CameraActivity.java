@@ -30,6 +30,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -60,11 +61,13 @@ public class CameraActivity extends Activity {
     private static final String TAG = CameraActivity.class.getSimpleName();
 
     private Camera mCamera;
+
     private CameraPreview cameraPreview;
     private ImageButton btnCapture;
     private AutoFocusCrossHair mAutoFocusCrossHair;
 
     private OrientationEventListener listener;
+    private ShutterCallback shutterCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,6 +103,13 @@ public class CameraActivity extends Activity {
 
         // Set the Focus animation
         mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+
+        shutterCallback = new ShutterCallback() {
+            public void onShutter() {
+                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(200);
+            }
+        };
     }
 
     @Override
@@ -141,6 +151,11 @@ public class CameraActivity extends Activity {
         super.onDestroy();
         this.releaseCamera();
     }
+
+    /* ********************************************************** *
+     * ********************************************************** *
+     * **********************************************************
+     */
 
     /**
      * Set the camera-action listener to the given image-button.
@@ -240,11 +255,4 @@ public class CameraActivity extends Activity {
 
         return camera;
     }
-
-    private ShutterCallback shutterCallback = new ShutterCallback() {
-        public void onShutter() {
-            Log.d(TAG, "onShutter is called");
-        }
-    };
-
 }
