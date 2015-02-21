@@ -17,10 +17,13 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
+import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
-import io.github.data4all.view.CaptureAssistView;
+
+import java.util.Arrays;
+
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -30,9 +33,9 @@ import android.os.Bundle;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -60,7 +63,6 @@ public class CameraActivity extends Activity {
     private CameraPreview cameraPreview;
     private ImageButton btnCapture;
     private AutoFocusCrossHair mAutoFocusCrossHair;
-    private CaptureAssistView mAssistView;
 
     private OrientationEventListener listener;
 
@@ -80,7 +82,6 @@ public class CameraActivity extends Activity {
         setContentView(R.layout.activity_camera);
 
         // Checking camera availability
-        Log.d(TAG, "check if device support Camera");
         if (!this.isDeviceSupportCamera()) {
             Toast.makeText(getApplicationContext(),
                     getString(R.string.noCamSupported), Toast.LENGTH_LONG)
@@ -92,114 +93,59 @@ public class CameraActivity extends Activity {
 
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
-        btnCapture.setOnClickListener(btnCaptureOnClickListener);
+        setListener(btnCapture);
 
-        listener = new OrientationEventListener(this) {
-            private int mCurrentOrientation;
-            private boolean backRotating;
-
-            @Override
-            public void onOrientationChanged(int orientation) {
-                int newOrientation = ((orientation + 45) % 360) / 90;
-                if (newOrientation != mCurrentOrientation) {
-                    Log.d("BLUB", "New orientation: " + newOrientation);
-                    rotateButton(mCurrentOrientation, newOrientation);
-                    mCurrentOrientation = newOrientation;
-                }
-            }
-
-            /**
-             *
-             * @param from
-             *            The old device rotation and current button rotation
-             * @param to
-             *            The new device rotation and
-             */
-            private void rotateButton(int from, final int to) {
-                if (from == 0 && to == 1) {
-                    btnCapture.setRotation(359.9f);
-                    btnCapture.animate().rotation(270f)
-                            .setInterpolator(new DecelerateInterpolator())
-                            .setDuration(500).start();
-                } else if (from == 1 && to == 0) {
-                    backRotating = true;
-                    btnCapture.animate().rotation(359.9f)
-                            .setInterpolator(new DecelerateInterpolator())
-                            .setDuration(500).withEndAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    btnCapture.setRotation(0f);
-                                    backRotating = false;
-                                }
-                            }).start();
-
-                } else if (backRotating && to == 3) {
-                    backRotating = true;
-                    btnCapture.animate().rotation(359.9f).setDuration(100)
-                            .withEndAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    btnCapture.setRotation(0f);
-                                    backRotating = false;
-                                    btnCapture
-                                            .animate()
-                                            .rotation((3 - ((to + 3) % 4)) * 90)
-                                            .setInterpolator(
-                                                    new DecelerateInterpolator())
-                                            .setDuration(400).start();
-                                }
-                            }).start();
-                } else {
-                    btnCapture.animate().rotation((3 - ((to + 3) % 4)) * 90)
-                            .setInterpolator(new DecelerateInterpolator())
-                            .setDuration(500).start();
-                }
-            }
-        };
+        listener = new ButtonRotationListener(this,
+                Arrays.asList((View) btnCapture));
 
         // Set the Focus animation
         mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
-
-        mAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
-        updateAssistView(0.5);
     }
 
-    private OnClickListener btnCaptureOnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mAutoFocusCrossHair.showStart();
-            mAutoFocusCrossHair.doAnimation();
-
-            mCamera.autoFocus(new AutoFocusCallback() {
-                @Override
-                public void onAutoFocus(boolean success, Camera camera) {
-
-                    if (success) {
-                        mAutoFocusCrossHair.success();
-                        mCamera.takePicture(shutterCallback, null,
-                                new CapturePictureHandler(CameraActivity.this));
-                    } else {
-                        mAutoFocusCrossHair.fail();
-                        mCamera.takePicture(shutterCallback, null,
-                                new CapturePictureHandler(CameraActivity.this));
-                    }
-                }
-            });
-            // After photo is taken, disable button for clicking twice
-            btnCapture.setOnClickListener(null);
-            btnCapture.setClickable(false);
-        }
-    };
-
     /**
-     * This method is called when the position of the mobile phones has changed
-     * and the assist view must be adapted.
+     * Set the camera-action listener to the given image-button.
      * 
-     * @param precentage
+     * @param button
+     *            The image-button to use.
+     * 
+     * @author tbrose
      */
-    public void updateAssistView(double precentage) {
-        mAssistView.setInvalidRegion(precentage);
-        mAssistView.invalidate();
+    private void setListener(ImageButton button) {
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // After photo is taken, disable button for clicking twice
+                btnCapture.setEnabled(false);
+                mCamera.takePicture(shutterCallback, null,
+                        new CapturePictureHandler(CameraActivity.this));
+            }
+        });
+
+        button.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // After photo is taken, disable button for clicking twice
+                btnCapture.setEnabled(false);
+
+                mAutoFocusCrossHair.showStart();
+                mAutoFocusCrossHair.doAnimation();
+                mCamera.autoFocus(new AutoFocusCallback() {
+                    @Override
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        if (success) {
+                            mAutoFocusCrossHair.success();
+                            mCamera.takePicture(shutterCallback, null,
+                                    new CapturePictureHandler(
+                                            CameraActivity.this));
+                        } else {
+                            mAutoFocusCrossHair.fail();
+                            btnCapture.setEnabled(true);
+                        }
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     @Override
@@ -211,12 +157,12 @@ public class CameraActivity extends Activity {
         if (mCamera == null) {
             Log.d(TAG, "camera is null, so we have to recreate");
             this.createCamera();
+            cameraPreview.setCamera(mCamera);
+            mCamera.startPreview();
             mAutoFocusCrossHair.clear();
         }
 
-        btnCapture.setOnClickListener(btnCaptureOnClickListener);
-        btnCapture.setClickable(true);
-
+        btnCapture.setEnabled(true);
         listener.enable();
     }
 
@@ -232,9 +178,7 @@ public class CameraActivity extends Activity {
             mAutoFocusCrossHair.clear();
         }
 
-        btnCapture.setOnClickListener(null);
-        btnCapture.setClickable(false);
-
+        btnCapture.setEnabled(false);
         listener.disable();
     }
 
@@ -281,7 +225,6 @@ public class CameraActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         this.releaseCamera();
     }
 
