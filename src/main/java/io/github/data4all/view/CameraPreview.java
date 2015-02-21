@@ -180,9 +180,11 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 				Log.d("SIZE", "w: " + mPreviewSize.width + " h: " + mPreviewSize.height);
                 Log.d("SIZE", "w: " + mPreviewWidth + " h: " + mPreviewHeight);
 
-				params.setPreviewSize(mPreviewWidth, mPreviewHeight);
+                mPreviewSize = getOptimalSize(mSupportedPreviewSizes, mPreviewWidth, mPreviewWidth);
+                
+				params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 
-				mPhotoSize = getOptimalSize(mSupportedPictureSizes, mPreviewSize.width, mPreviewSize.height);
+				mPhotoSize = getOptimalSize(mSupportedPictureSizes, mPreviewWidth, mPreviewWidth);
 
 				params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
 				
