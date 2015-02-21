@@ -29,59 +29,92 @@ import android.view.animation.ScaleAnimation;
  * status of the autofocus.
  * 
  * @author Andre Koch
+ * @author tbrose (Marked additions)
  * @CreationDate 12.02.2015
- * @LastUpdate 12.02.2015
- * @version 1.0
+ * @LastUpdate 21.02.2015
+ * @version 1.1
  * 
  */
 
 public class AutoFocusCrossHair extends View {
 
-	/**
-	 * Public Constructor for creating the AutoFocus Cross Hair
-	 * 
-	 * @param context
-	 * @param attrs
-	 */
-	public AutoFocusCrossHair(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    /**
+     * Public Constructor for creating the AutoFocus Cross Hair
+     * 
+     * @param context
+     * @param attrs
+     */
+    public AutoFocusCrossHair(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	private void setDrawable(int resid) {
-		this.setBackgroundResource(resid);
-	}
+    private void setDrawable(int resid) {
+        this.setBackgroundResource(resid);
+    }
 
-	/**
-	 * method to set the image on the view
-	 */
-	public void showStart() {
-		this.setDrawable(R.drawable.crosshair);
-	}
+    /**
+     * method to set the image on the view
+     */
+    public void showStart() {
+        this.setDrawable(R.drawable.crosshair);
+    }
 
-	public void doAnimation() {
+    public void doAnimation() {
 
-		scaleView(this, 1.0f, 1.5f);
+        scaleView(this, 1.0f, 1.5f);
 
-	}
+    }
 
-	private void scaleView(View v, float startScale, float endScale) {
-		Animation anim = new ScaleAnimation(1.0f, 1.5f, // Start and end values
-														// for the X axis
-														// scaling
-				startScale, endScale, // Start and end values for the Y axis
-										// scaling
-				Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-				Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
-		anim.setFillAfter(true); // Needed to keep the result of the animation
-		anim.setDuration(500);
-		v.startAnimation(anim);
-	}
+    private void scaleView(View v, float startScale, float endScale) {
+        Animation anim = new ScaleAnimation(1.0f, 1.5f, // Start and end values
+                                                        // for the X axis
+                                                        // scaling
+                startScale, endScale, // Start and end values for the Y axis
+                                      // scaling
+                Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
+        anim.setFillAfter(true); // Needed to keep the result of the animation
+        anim.setDuration(500);
+        v.startAnimation(anim);
+    }
 
-	/**
-	 * method to remove Image from view
-	 */
-	public void clear() {
-		this.setBackgroundResource(0);
-	}
+    /**
+     * Animate the success of autofocus.
+     * 
+     * @author tbrose
+     */
+    public void success() {
+        this.setDrawable(R.drawable.crosshair_success);
+        this.animate().alpha(0f).setStartDelay(400).setDuration(100)
+        .withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                AutoFocusCrossHair.this.clear();
+            }
+        }).start();
+    }
+
+    /**
+     * Animate the fail of autofocus.
+     * 
+     * @author tbrose
+     */
+    public void fail() {
+        this.setDrawable(R.drawable.crosshair_fail);
+        this.animate().alpha(0f).setStartDelay(250).setDuration(250)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        AutoFocusCrossHair.this.clear();
+                    }
+                }).start();
+    }
+
+    /**
+     * method to remove Image from view
+     */
+    public void clear() {
+        this.setBackgroundResource(0);
+    }
 
 }
