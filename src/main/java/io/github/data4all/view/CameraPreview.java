@@ -40,9 +40,10 @@ import android.view.WindowManager;
  * cooperation with the {@link CameraActivity}.
  * 
  * @author Andre Koch
+ * @author tbrose
  * @CreationDate 09.02.2015
- * @LastUpdate 12.02.2015
- * @version 1.1
+ * @LastUpdate 21.02.2015
+ * @version 1.2
  * 
  */
 
@@ -111,10 +112,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        final int width =
-                resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-        final int height =
-                resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+        final int width = resolveSize(getSuggestedMinimumWidth(),
+                widthMeasureSpec);
+        final int height = resolveSize(getSuggestedMinimumHeight(),
+                heightMeasureSpec);
 
         setMeasuredDimension(width, height);
 
@@ -124,9 +125,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         }
 
         if (mSupportedPreviewSizes != null) {
-            mPreviewSize =
-                    getOptimalPreviewSize(mSupportedPreviewSizes,
-                            containerWidth, containerHeight);
+            mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes,
+                    containerWidth, containerHeight);
         }
 
     }
@@ -154,14 +154,14 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         if (mCamera != null) {
 
             // get a group of supported preview size
-            mSupportedPreviewSizes =
-                    mCamera.getParameters().getSupportedPreviewSizes();
+            mSupportedPreviewSizes = mCamera.getParameters()
+                    .getSupportedPreviewSizes();
 
-            mSupportedPictureSizes =
-                    mCamera.getParameters().getSupportedPictureSizes();
+            mSupportedPictureSizes = mCamera.getParameters()
+                    .getSupportedPictureSizes();
 
-            mSupportedFlashModes =
-                    mCamera.getParameters().getSupportedFlashModes();
+            mSupportedFlashModes = mCamera.getParameters()
+                    .getSupportedFlashModes();
 
             mAutoFocus = mCamera.getParameters().getSupportedFocusModes();
 
@@ -183,28 +183,30 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                 Log.d("SIZE", "h: " + mPreviewSize.height + " w: "
                         + mPreviewSize.width);
                 Log.d("SIZE", "h: " + mPreviewHeight + " w: " + mPreviewWidth);
-                
-                for(Camera.Size size : mSupportedPreviewSizes) {
-                    Log.d("PREVIEW_SIZES", "h: " + size.height + " w: " + size.width);
+
+                for (Camera.Size size : mSupportedPreviewSizes) {
+                    Log.d("PREVIEW_SIZES", "h: " + size.height + " w: "
+                            + size.width);
                 }
 
-                for(Camera.Size size : mSupportedPictureSizes) {
-                    Log.d("PICTURE_SIZES", "h: " + size.height + " w: " + size.width);
+                for (Camera.Size size : mSupportedPictureSizes) {
+                    Log.d("PICTURE_SIZES", "h: " + size.height + " w: "
+                            + size.width);
                 }
 
-                mPreviewSize =
-                        getOptimalSize(mSupportedPreviewSizes, mPreviewWidth,
-                                mPreviewHeight);
-                
-                Log.d("PREF_PREVIEW_SIZE", "h: " + mPreviewSize.height + " w: " + mPreviewSize.width);
+                mPreviewSize = getOptimalSize(mSupportedPreviewSizes,
+                        mPreviewWidth, mPreviewHeight);
+
+                Log.d("PREF_PREVIEW_SIZE", "h: " + mPreviewSize.height + " w: "
+                        + mPreviewSize.width);
 
                 params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 
-                mPhotoSize =
-                        getOptimalSize(mSupportedPictureSizes, mPreviewWidth,
-                                mPreviewHeight);
-                
-                Log.d("PREF_PICTURE_SIZE", "h: " + mPhotoSize.height + " w: " + mPhotoSize.width);
+                mPhotoSize = getOptimalSize(mSupportedPictureSizes,
+                        mPreviewWidth, mPreviewHeight);
+
+                Log.d("PREF_PICTURE_SIZE", "h: " + mPhotoSize.height + " w: "
+                        + mPhotoSize.width);
 
                 params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
 
@@ -278,9 +280,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
-        WindowManager winManager =
-                (WindowManager) context
-                        .getSystemService(Context.WINDOW_SERVICE);
+        WindowManager winManager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
 
         int rotation = winManager.getDefaultDisplay().getRotation();
 
@@ -352,7 +353,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         }
 
         double minDiff = Double.MAX_VALUE;
-        
+
         // Try to find an size match aspect ratio and size
         if (optimalSize == null) {
             for (Size size : sizes) {
