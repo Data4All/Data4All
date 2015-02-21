@@ -19,12 +19,14 @@ import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
+import io.github.data4all.service.OrientationListener;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
 
 import java.util.Arrays;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -115,8 +117,9 @@ public class CameraActivity extends Activity {
     @Override
     protected void onResume() {
         Log.i(TAG, "onResume is called");
-
         super.onResume();
+        
+        this.startService(new Intent(this, OrientationListener.class));
 
         if (mCamera == null) {
             Log.d(TAG, "camera is null, so we have to recreate");
@@ -132,6 +135,10 @@ public class CameraActivity extends Activity {
     @Override
     protected void onPause() {
         Log.i(TAG, "onPause is called");
+        super.onPause();
+        
+        this.stopService(new Intent(this, OrientationListener.class));
+        
         super.onPause();
 
         if (mCamera != null) {
