@@ -38,7 +38,8 @@
         <activity android:name=".activity.SensorActivity" />
         <activity
             android:name=".activity.ShowPictureActivity"
-            android:configChanges="keyboardHidden|screenSize" />
+            android:configChanges="keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.CameraActivity"
             android:configChanges="keyboardHidden|screenSize"
