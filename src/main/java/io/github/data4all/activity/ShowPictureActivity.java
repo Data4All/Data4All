@@ -138,6 +138,11 @@ public class ShowPictureActivity extends AbstractActivity {
                     CapturePictureHandler.TRANSFORM_BEAN);
         }
 
+        if (getIntent().hasExtra(CapturePictureHandler.CURRENT_ORIENTATION)) {
+            currentOrientation = getIntent().getExtras().getParcelable(
+                    CapturePictureHandler.CURRENT_ORIENTATION);
+        }
+
         // Set the display size as photo size to get a coordinate system for the
         // drawn points
         transformBean.setPhotoWidth(getBaseContext().getResources()
