@@ -85,6 +85,8 @@ public class AutoFocusCrossHair extends View {
      */
     public void success() {
         this.setDrawable(R.drawable.crosshair_success);
+        this.setScaleX(1.5f);
+        this.setScaleY(1.5f);
         this.animate().alpha(0f).setStartDelay(400).setDuration(100)
         .withEndAction(new Runnable() {
             @Override
@@ -101,6 +103,8 @@ public class AutoFocusCrossHair extends View {
      */
     public void fail() {
         this.setDrawable(R.drawable.crosshair_fail);
+        this.setScaleX(1.5f);
+        this.setScaleY(1.5f);
         this.animate().alpha(0f).setStartDelay(250).setDuration(250)
                 .withEndAction(new Runnable() {
                     @Override
