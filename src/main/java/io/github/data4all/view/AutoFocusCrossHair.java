@@ -56,10 +56,8 @@ public class AutoFocusCrossHair extends View {
      * method to set the image on the view
      */
     public void showStart() {
-        this.setScaleX(1f);
-        this.setScaleY(1f);
-        this.setAlpha(1f);
         this.setDrawable(R.drawable.crosshair);
+        this.setVisibility(View.VISIBLE);
     }
 
     public void doAnimation() {
@@ -118,8 +116,12 @@ public class AutoFocusCrossHair extends View {
     /**
      * method to remove Image from view
      */
-    public void clear() {
+    private void clear() {
         this.setBackgroundResource(0);
+        this.setScaleX(1f);
+        this.setScaleY(1f);
+        this.setAlpha(1f);
+        this.setVisibility(View.GONE);
     }
 
 }
