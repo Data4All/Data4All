@@ -65,6 +65,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 	private Context context;
 
+    private int mPreviewWidth;
+
+    private int mPreviewHeight;
+
 	public CameraPreview(Context context) {
 		super(context);
 		this.init(context);
@@ -129,47 +133,12 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 		Log.d(TAG, "onLayout is called");
 
 		if (changed && getChildCount() > 0) {
-			View child = getChildAt(0);
+			final View child = getChildAt(0);
 
-			int width = r - l;
-			int height = b - t;
-
-			int previewWidth = width;
-			int previewHeight = height;
-
-			if (mPreviewSize != null) {
-
-				Display display = ((WindowManager) context
-						.getSystemService(Context.WINDOW_SERVICE))
-						.getDefaultDisplay();
-
-				Log.d(TAG,
-						"The Device has the Orientation :"
-								+ display.getRotation());
-
-				switch (display.getRotation()) {
-				case Surface.ROTATION_0:
-					previewWidth = mPreviewSize.height;
-					previewHeight = mPreviewSize.width;
-					break;
-				case Surface.ROTATION_90:
-					previewWidth = mPreviewSize.width;
-					previewHeight = mPreviewSize.height;
-					break;
-				case Surface.ROTATION_180:
-					previewWidth = mPreviewSize.height;
-					previewHeight = mPreviewSize.width;
-					break;
-				case Surface.ROTATION_270:
-					previewWidth = mPreviewSize.width;
-					previewHeight = mPreviewSize.height;
-					break;
-				default:
-					previewWidth = mPreviewSize.height;
-					previewHeight = mPreviewSize.width;
-					break;
-				}
-			}
+			final int width = r - l;
+			final int height = b - t;
+            mPreviewWidth = height;
+            mPreviewHeight = width;
 
 			child.layout(0, 0, width, height);
 		}
@@ -207,14 +176,17 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
 				// retrieve the parameters of cameras
 				params = mCamera.getParameters();
+				
+				Log.d("SIZE", "w: " + mPreviewSize.width + " h: " + mPreviewSize.height);
+                Log.d("SIZE", "w: " + mPreviewWidth + " h: " + mPreviewHeight);
 
-				params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
+				params.setPreviewSize(mPreviewWidth, mPreviewHeight);
 
-				mPhotoSize = getOptimalPictureSize(mSupportedPictureSizes,
-						(mPreviewSize.width * 1.0)
-								/ (mPreviewSize.height * 1.0));
+				mPhotoSize = getOptimalSize(mSupportedPictureSizes, mPreviewWidth, mPreviewHeight);
 
 				params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
+				
+				params.setRotation(90);
 
 				// set the picture type for taking photo
 				params.setPictureFormat(ImageFormat.JPEG);
@@ -270,7 +242,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 			return;
 		}
 
-		setCameraDisplayOrientation();
+		this.setCameraDisplayOrientation();
 
 		mCamera.startPreview();
 
@@ -339,38 +311,36 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 	/*
 	 * @Function: get optimal picture size according to camera view angles
 	 */
-	private Size getOptimalPictureSize(List<Size> sizes, double targetRatio) {
-		//Log.d(TAG, "OptimalPictureSize targetRatio: " + targetRatio);
-		final double aspectTolerance = 0.1;
-		// if no supported preview sizes, return null
-		if (sizes == null) {
-			return null;
-		}
-		Size optimalSize = null;
+	private static Size getOptimalSize(List<Size> sizes, int w, int h) {
+	    final double ASPECT_TOLERANCE = 0.1;
+        double targetRatio = (double) h / w;
+        
+        if (sizes == null) return null;
 
-		int resolution = 0;
+        Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
 
-		// Try to find an size match aspect ratio and size
-		for (Size size : sizes) {
-			double ratio = ((double) size.width) / (double) (size.height);
+        // Try to find an size match aspect ratio and size
+        for (Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(size.height - h) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - h);
+            }
+        }
 
-			//Log.d(TAG, "OptimalPictureSize ratio: " + ratio);
-
-			int currentResolution = size.width * size.height;
-
-			if (Math.abs(ratio - targetRatio) < aspectTolerance
-					&& currentResolution > resolution) {
-				optimalSize = size;
-				resolution = currentResolution;
-			}
-		}
-
-		// TODO fix this
-		if (optimalSize == null) {
-			optimalSize = sizes.get(0);
-		}
-
-		return optimalSize;
+        // Cannot find the one match the aspect ratio, ignore the requirement
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Size size : sizes) {
+                if (Math.abs(size.height - h) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - h);
+                }
+            }
+        }
+        return optimalSize;
 	}
 
 	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
