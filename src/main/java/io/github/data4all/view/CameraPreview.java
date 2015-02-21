@@ -15,7 +15,9 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.activity.CameraActivity;
 import io.github.data4all.logger.Log;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -24,7 +26,6 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.AttributeSet;
-import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
