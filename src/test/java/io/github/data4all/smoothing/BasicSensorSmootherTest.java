@@ -15,7 +15,8 @@
  */
 package io.github.data4all.smoothing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -81,9 +82,9 @@ public class BasicSensorSmootherTest {
         output[0] = 3.0f;
         output[1] = 2.0f;
         output[2] = 0.0f;
-        
+
         float[] filteredValues = basicSmoothing.filter(input, output);
-        //if ALPHA is 0.25
+        // if ALPHA is 0.25
         assertEquals(filteredValues[0], 4.125f, 0.1);
         assertEquals(filteredValues[1], 0.875f, 0.1);
         assertEquals(filteredValues[2], 0.0f, 0.1);

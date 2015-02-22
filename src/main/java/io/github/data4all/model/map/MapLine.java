@@ -16,7 +16,11 @@
 package io.github.data4all.model.map;
 
 import io.github.data4all.R;
-import io.github.data4all.activity.MapActivity;
+import io.github.data4all.activity.AbstractActivity;
+import io.github.data4all.activity.MapViewActivity;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.views.MapView;
@@ -34,39 +38,67 @@ import android.view.MotionEvent;
 public class MapLine extends Polyline implements
         DialogInterface.OnClickListener {
 
-    private MapActivity mapActivity;
+    private AbstractDataElement element;
+    private AbstractActivity activity;
+    private D4AMapView mapView;
 
     /**
      * Default constructor.
      * 
      * @param ctx
      *            the Context for the Overlay
+     * 
+     * @param mv
+     *            the Mapview
+     * 
+     * @param ele
+     *            the associateded OsmElement
      */
-    public MapLine(MapActivity ctx) {
+    public MapLine(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
         super(ctx);
-        mapActivity = ctx;
+        this.element = ele;
+        this.activity = ctx;
+        this.mapView = mv;
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.osmdroid.views.overlay.Overlay#onLongPress(android.view.MotionEvent,
+     * org.osmdroid.views.MapView)
+     */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-        final AlertDialog.Builder builder =
-                new AlertDialog.Builder(mapView.getContext());
-        builder.setMessage(mapActivity.getString(R.string.deleteDialog))
-                .setPositiveButton(mapActivity.getString(R.string.yes), this)
-                .setNegativeButton(mapActivity.getString(R.string.no), this)
-                .show();
-
+        if (activity instanceof MapViewActivity) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                    mapView.getContext());
+            builder.setMessage(activity.getString(R.string.deleteDialog))
+                    .setPositiveButton(activity.getString(R.string.yes), this)
+                    .setNegativeButton(activity.getString(R.string.no), this)
+                    .show();
+        }
         return true;
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * android.content.DialogInterface.OnClickListener#onClick(android.content
+     * .DialogInterface, int)
+     */
     @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
         case DialogInterface.BUTTON_POSITIVE:
             // Yes button clicked
-            mapActivity.removeOverlayFromMap(this);
+            mapView.removeOverlayFromMap(this);
+            final DataBaseHandler db = new DataBaseHandler(activity);
+            db.deleteDataElement(element);
+            db.close();
             break;
         case DialogInterface.BUTTON_NEGATIVE:
             // No button clicked

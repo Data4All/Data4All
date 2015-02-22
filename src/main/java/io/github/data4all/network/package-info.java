@@ -13,4 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * These classes provide system-independent network communication.
+ */
 package io.github.data4all.network;
+

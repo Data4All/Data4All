@@ -26,7 +26,7 @@ import org.robolectric.annotation.Config;
 @Config(emulateSdk = 18)
 public class ClassifiedTagTest {
 
-    private ClassifiedTag classifiedTag;
+    /*private ClassifiedTag classifiedTag;
     private List<String> highwayValues;
     private ClassifiedTag lastChoice;
     Tag highway = new Tag(10, "highway", null, Tag.WAY_TAG );
@@ -39,19 +39,19 @@ public class ClassifiedTagTest {
         classifiedTag = new ClassifiedTag(10,"highway",null,highwayValues,Tag.WAY_TAG);
     }
 
-    /**
+    *//**
      * test the method getClassifiedValues() from the class ClassifiedTag, when
      * there was not suggestion added
-     */
+     *//*
     @Test
     public void test_getClassifiedValues_WithoutSuggestion() {
         assertEquals(classifiedTag.getClassifiedValues(), highwayValues);
     }
 
-    /**
+    *//**
      * test the method getClassifiedValues() from the class ClassifiedTag, when
      * a suggestion was added
-     */
+     *//*
     @Test
     public void test_getClassifiedValues_WithSuggestion() {
         
@@ -67,16 +67,16 @@ public class ClassifiedTagTest {
     }
 
     
-    /**
+    *//**
      * create a new ArrayList of classifiedValues
      * and test the method getAllClassifiedValues() from the class ClassifiedTag
-     */
+     *//*
     @Test
     public void test_getAllClassifiedValues() {
         ArrayList<String> classifiedValues1 = new ArrayList<String>(Arrays.asList(
                 "citywall", "fence", "wall", "bollard", "gate"));
         classifiedTag.setClassifiedValues(classifiedValues1);
         assertEquals(classifiedValues1, classifiedTag.getAllClassifiedValues());
-    }
+    }*/
 
 }

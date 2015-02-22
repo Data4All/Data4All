@@ -15,147 +15,214 @@
  */
 package io.github.data4all.activity;
 
-import io.github.data4all.Constants;
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.User;
-import io.github.data4all.task.RetrieveUsernameTask;
-import oauth.signpost.OAuth;
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import io.github.data4all.util.NetworkState;
+import io.github.data4all.util.oauth.OsmOAuthAuthorizationClient;
+import io.github.data4all.util.oauth.exception.OsmLoginFailedException;
+import io.github.data4all.util.oauth.exception.OsmOAuthAuthorizationException;
+import io.github.data4all.util.oauth.parameters.OAuthParameters;
+
+import java.util.List;
+
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Toast;
+import android.widget.EditText;
 
 /**
  * Activity to start authentication process.
  * 
- * @author sb
+ * @author tbrose
  *
  */
-public class LoginActivity extends BasicActivity {
+public class LoginActivity extends AbstractActivity {
 
-    final String TAG = getClass().getSimpleName();
-    private SharedPreferences prefs;
-    protected String xml;
+    public static final String TAG = LoginActivity.class.getSimpleName();
 
+    private EditText osmName;
+    private EditText osmPass;
+    private View progress;
+
+    /**
+     * Sole Constructor.
+     */
+    public LoginActivity() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        Log.d(TAG,
-                "SharedPreferences:"
-                        + PreferenceManager.getDefaultSharedPreferences(
-                                getBaseContext()).getAll());
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
-        final Button loginButton = (Button) findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-                // By checking oauth tokens will be saved permanently
-                // Otherwise they will be destroyed on by calling onDestroy()
-                final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox1);
-
-                // Already got token?
-                if (!prefs.contains(OAuth.OAUTH_TOKEN)
-                        && !prefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
-
-                    // Setting flag to remember tokens
-                    setTemporaryFlag(!checkBox.isChecked());
-
-                    // Starting oAuth process
-                    startActivity(new Intent().setClass(v.getContext(),
-                            PrepareRequestTokenActivity.class));
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            R.string.alreadyLoggedIn, Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        });
-
-        // Delete tokens
-        final Button deleteButton = (Button) findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                deleteTokenFromSharedPreferences();
-            }
-        });
-
-        final Button getUsernameButton =
-                (Button) findViewById(R.id.getUsernameButton);
-        getUsernameButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                if (!prefs.contains("USERNAME")) {
-                    final OAuthConsumer consumer =
-                            new CommonsHttpOAuthConsumer(
-                                    Constants.CONSUMER_KEY,
-                                    Constants.CONSUMER_SECRET);
-                    consumer.setTokenWithSecret(
-                            prefs.getString(OAuth.OAUTH_TOKEN, null),
-                            prefs.getString(OAuth.OAUTH_TOKEN_SECRET, null));
-
-                    new RetrieveUsernameTask(Constants.API_USERDETAILS,
-                            consumer, prefs).execute();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            prefs.getString("USERNAME", "NULL"),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy()");
-        // Delete OAuthToken when onDestroy() is called
-        if (isTokenTemporary()) {
-            deleteTokenFromSharedPreferences();
+        if (this.isLoggedIn()) {
+            this.nextActivity();
+        } else {
+            this.setContentView(R.layout.activity_login);
+            this.osmName = (EditText) findViewById(R.id.osm_name);
+            this.osmPass = (EditText) findViewById(R.id.osm_pass);
+            this.progress = findViewById(R.id.progress);
         }
     }
 
-    protected User returnUser() {
-        return new User(prefs.getString("USERNAME", null), prefs.getString(
-                OAuth.OAUTH_TOKEN, null), prefs.getString(
-                OAuth.OAUTH_TOKEN_SECRET, null));
-
+    /**
+     * @return If the user is currently logged in.
+     */
+    private boolean isLoggedIn() {
+        final DataBaseHandler database = new DataBaseHandler(this);
+        final List<User> users = database.getAllUser();
+        Log.i(TAG, "" + users.size());
+        database.close();
+        return !users.isEmpty();
     }
 
-    private void deleteTokenFromSharedPreferences() {
-        if (prefs.contains(OAuth.OAUTH_TOKEN)
-                && prefs.contains(OAuth.OAUTH_TOKEN_SECRET)) {
-            final Editor ed = prefs.edit();
-            ed.remove(OAuth.OAUTH_TOKEN);
-            ed.remove(OAuth.OAUTH_TOKEN_SECRET);
-            ed.remove("USERNAME");
-            ed.remove("IS_TEMPORARY");
-            ed.commit();
+    /**
+     * Saves the user in the database.
+     * 
+     * @param user
+     *            The user to save
+     */
+    private void saveUser(User user) {
+        final DataBaseHandler database = new DataBaseHandler(this);
+        database.createUser(user);
+        database.close();
+    }
+
+    /**
+     * Starts the next activity. Used when the user is logged in.
+     */
+    private void nextActivity() {
+        // TODO: Open right activity
+        this.startActivity(new Intent(this, MapViewActivity.class));
+        this.finish();
+    }
+
+    /**
+     * Show or hide the progress bar.
+     * 
+     * @param show
+     *            Whether or not the progress bar should be shown
+     */
+    private void showProgress(boolean show) {
+        if (show) {
+            progress.setVisibility(View.VISIBLE);
+        } else {
+            progress.setVisibility(View.GONE);
         }
-        Log.d(TAG, "SharedPreferences:" + prefs.getAll());
     }
 
-    private boolean isTokenTemporary() {
-        return prefs.getBoolean("IS_TEMPORARY", false);
+    /**
+     * Starts the login process if there is a network connection and the
+     * username and password fields are not empty.
+     * 
+     * @param v
+     *            The view which was clicked
+     */
+    public void onClickStart(View v) {
+        if (v.getId() == R.id.osm_login) {
+            osmName.setError(null);
+            osmPass.setError(null);
+            final String username = osmName.getText().toString().trim();
+            final String password = osmPass.getText().toString().trim();
+
+            if (TextUtils.isEmpty(username)) {
+                osmName.requestFocus();
+                osmName.setError(getString(R.string.login_username_empty));
+            } else if (TextUtils.isEmpty(password)) {
+                osmPass.requestFocus();
+                osmPass.setError(getString(R.string.login_password_empty));
+            } else if (!NetworkState.isNetworkAvailable(this)) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.no_network_title)
+                        .setMessage(R.string.no_network_message)
+                        .show();
+            } else {
+                this.showProgress(true);
+                new Thread(new Authentisator(username, password)).start();
+            }
+        }
     }
 
-    private void setTemporaryFlag(boolean b) {
-        final Editor ed = prefs.edit();
-        ed.putBoolean("IS_TEMPORARY", b);
-        ed.commit();
-        Log.i(TAG, "SharedPreferences:" + prefs.getAll());
+    /**
+     * Starts an authorization-attempt via {@link OsmOAuthAuthorizationClient}.
+     * 
+     * @author tbrose
+     *
+     */
+    private final class Authentisator implements Runnable {
+        /**
+         * The username to login with.
+         */
+        private final String username;
+
+        /**
+         * The password to login with.
+         */
+        private final String password;
+
+        /**
+         * Constructs a new Authentisator with the given credentials.
+         * 
+         * @param username
+         *            The username to login with.
+         * @param password
+         *            The password to login with.
+         */
+        private Authentisator(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        /**
+         * Make an attempt to get a token for the given credentials.
+         */
+        @Override
+        public void run() {
+            try {
+                final User user = new OsmOAuthAuthorizationClient(
+                        OAuthParameters.CURRENT).authorise(username, password);
+                LoginActivity.this.saveUser(user);
+                LoginActivity.this.nextActivity();
+            } catch (OsmLoginFailedException e) {
+                Log.e(TAG, "Login to osm failed:", e);
+                this.showDialog(getString(R.string.login_access_dialog_title),
+                        getString(R.string.login_access_dialog_mes));
+            } catch (OsmOAuthAuthorizationException e) {
+                Log.e(TAG, "Osm OAuth failed:", e);
+                this.showDialog("Error", e.getLocalizedMessage());
+            } finally {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoginActivity.this.showProgress(false);
+                    }
+                });
+            }
+        }
+
+        /**
+         * Shows a {@link AlertDialog} via the UiThread.
+         * 
+         * @param title
+         *            The title of the dialog
+         * @param content
+         *            The message of the dialog
+         */
+        public void showDialog(final String title, final String content) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new AlertDialog.Builder(LoginActivity.this).setTitle(title)
+                            .setMessage(content).show();
+                }
+            });
+        }
     }
 }

@@ -41,16 +41,15 @@ public class Node extends AbstractDataElement {
     /**
      * CREATOR that generates instances of {@link Node} from a Parcel.
      */
-    public static final Parcelable.Creator<Node> CREATOR =
-            new Parcelable.Creator<Node>() {
-                public Node createFromParcel(Parcel in) {
-                    return new Node(in);
-                }
+    public static final Parcelable.Creator<Node> CREATOR = new Parcelable.Creator<Node>() {
+        public Node createFromParcel(Parcel in) {
+            return new Node(in);
+        }
 
-                public Node[] newArray(int size) {
-                    return new Node[size];
-                }
-            };
+        public Node[] newArray(int size) {
+            return new Node[size];
+        }
+    };
 
     /**
      * Default Constructor.

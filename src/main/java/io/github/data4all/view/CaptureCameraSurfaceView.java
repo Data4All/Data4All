@@ -89,13 +89,13 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
 
             // Center the child SurfaceView within the parent.
             if (width * previewHeight > height * previewWidth) {
-                final int scaledChildWidth =
-                        previewWidth * height / previewHeight;
+                final int scaledChildWidth = previewWidth * height
+                        / previewHeight;
                 child.layout((width - scaledChildWidth) / 2, 0,
                         (width + scaledChildWidth) / 2, height);
             } else {
-                final int scaledChildHeight =
-                        previewHeight * width / previewWidth;
+                final int scaledChildHeight = previewHeight * width
+                        / previewWidth;
                 child.layout(0, (height - scaledChildHeight) / 2, width,
                         (height + scaledChildHeight) / 2);
             }
@@ -141,9 +141,8 @@ public class CaptureCameraSurfaceView extends ViewGroup implements
         final Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
-        final WindowManager winManager =
-                (WindowManager) context
-                        .getSystemService(Context.WINDOW_SERVICE);
+        final WindowManager winManager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
         final int rotation = winManager.getDefaultDisplay().getRotation();
 
         int degrees = 0;

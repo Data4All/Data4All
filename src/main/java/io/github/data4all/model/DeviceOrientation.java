@@ -41,16 +41,15 @@ public class DeviceOrientation implements Parcelable {
      * CREATOR that generates instances of {@link DeviceOrientation} from a
      * Parcel.
      */
-    public static final Parcelable.Creator<DeviceOrientation> CREATOR =
-            new Parcelable.Creator<DeviceOrientation>() {
-                public DeviceOrientation createFromParcel(Parcel in) {
-                    return new DeviceOrientation(in);
-                }
+    public static final Parcelable.Creator<DeviceOrientation> CREATOR = new Parcelable.Creator<DeviceOrientation>() {
+        public DeviceOrientation createFromParcel(Parcel in) {
+            return new DeviceOrientation(in);
+        }
 
-                public DeviceOrientation[] newArray(int size) {
-                    return new DeviceOrientation[size];
-                }
-            };
+        public DeviceOrientation[] newArray(int size) {
+            return new DeviceOrientation[size];
+        }
+    };
 
     /**
      * constructor.
@@ -76,6 +75,7 @@ public class DeviceOrientation implements Parcelable {
      * Constructor to create a node from a parcel.
      * 
      * @param in
+     *            The Parcel to read from
      */
     private DeviceOrientation(Parcel in) {
         azimuth = in.readFloat();

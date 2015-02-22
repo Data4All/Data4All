@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- address tags -->
+    <string name="name_addr_street">Straße</string>
+    <string name="name_addr_housenumber">Hausnummer</string>
+    <string name="name_addr_postcode">Postleitzahl</string>
+    <string name="name_addr_city">Stadt</string>
+    <string name="name_addr_country">Land</string>
+
+    <!-- contact tags -->
+    <string name="name_contact_phone">Tel.-Nr.</string>
+    <string name="name_contact_fax">Fax-Nr.</string>
+    <string name="name_contact_website">Website</string>
+    <string name="name_contact_email">Email</string>
+
+    <!-- classified tags_ highway -->
+    <string name="name_highway">Verkehrsweg</string>
+    <string name="name_highway_motorway">Autobahn</string>
+    <string name="name_highway_residential">Wohngebiets-Straße</string>
+    <string name="name_highway_service">Zugangsweg</string>
+    <string name="name_highway_track">Feldweg</string>
+    <string name="name_highway_footway">Fußweg</string>
+    <string name="name_highway_road">Straße</string>
+    <string name="name_highway_path">Weg</string>
+
+    <!-- classified tags_ barrier -->
+    <string name="name_barrier">Absperrung</string>
+    <string name="name_barrier_citywall">Wallanlage</string>
+    <string name="name_barrier_fence">Zaun</string>
+    <string name="name_barrier_wall">Mauer</string>
+    <string name="name_barrier_bollard">Pfeiler</string>
+    <string name="name_barrier_gate">Tor</string>
+
+    <!-- classified tags_ amenity -->
+    <string name="name_amenity">Einrichtung</string>
+    <string name="name_amenity_bar">Bar</string>
+    <string name="name_amenity_cafe">Cafe</string>
+    <string name="name_amenity_restaurant">Restaurant</string>
+    <string name="name_amenity_fast_food">Fast Food</string>
+    <string name="name_amenity_pub">Kneipe</string>
+    <string name="name_amenity_college">Hochschule</string>
+    <string name="name_amenity_library">Bücherrei</string>
+    <string name="name_amenity_school">Schule</string>
+    <string name="name_amenity_university">Universität</string>
+    <string name="name_amenity_parking">Parkplatz</string>
+    <string name="name_amenity_taxi">Taxi</string>
+    <string name="name_amenity_fuel">Tankstelle</string>
+    <string name="name_amenity_bank">Bank</string>
+    <string name="name_amenity_hospital">Klinikum</string>
+    <string name="name_amenity_pharmacy">Apotheke</string>
+    <string name="name_amenity_cinema">Kino</string>
+    <string name="name_amenity_bench">Bank</string>
+    <string name="name_amenity_embassy">Botschaft</string>
+    <string name="name_amenity_marketplace">Marktplatz</string>
+    <string name="name_amenity_police">Polizei</string>
+    <string name="name_amenity_post_office">Postamt</string>
+    <string name="name_amenity_toilets">Toilette</string>
+    <string name="name_amenity_water_point">Wasserstelle</string>
+    <string name="name_amenity_fire_station">Feuerwehr</string>
+    <string name="name_amenity_public_building">Öffentliche Einrichtung</string>
+    
+    <!-- classified tags_ building -->
+    <string name="name_building">Gebäude</string>
+    <string name="name_building_residential">Wohngebäude</string>
+    <string name="name_building_garage">Garage</string>
+    <string name="name_building_house">Wohnhaus</string>
+    <string name="name_building_apartments">Wohnungen</string>
+    <string name="name_building_retail">Einzelhandel</string>
+    <string name="name_building_industrial">Industrie</string>
+    <string name="name_building_commercial">Geschäft</string>
+    
+    <!-- classified tags_ landuse -->
+    <string name="name_landuse">Landnutzung</string>
+    <string name="name_landuse_commercial">Gewerbepark</string>
+    <string name="name_landuse_construction">Baustelle</string>
+    <string name="name_landuse_farmland">Ackerland</string>
+    <string name="name_landuse_forest">Wald</string>
+    <string name="name_landuse_grass">Grasfläche</string>
+    <string name="name_landuse_industrial">Industriegebiet</string>
+    <string name="name_landuse_military">Militär</string>
+    <string name="name_landuse_residential">Wohngebiet</string>
+
+</resources>

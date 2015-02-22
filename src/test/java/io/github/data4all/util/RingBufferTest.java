@@ -99,12 +99,12 @@ public class RingBufferTest {
         RingBuffer ringBuffer = new RingBuffer(4);
         ringBuffer.put(loc1);
         ringBuffer.put(loc2);
-        assertEquals(4, ringBuffer.getAll().length);
+        assertEquals(4, ringBuffer.getAll().size());
         ringBuffer.put(loc3);
         ringBuffer.put(loc4);
-        assertEquals(4, ringBuffer.getAll().length);
+        assertEquals(4, ringBuffer.getAll().size());
         ringBuffer.put(loc5);
-        assertEquals("blub", 4, ringBuffer.getAll().length);
+        assertEquals("blub", 4, ringBuffer.getAll().size());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

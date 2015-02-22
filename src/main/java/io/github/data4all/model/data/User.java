@@ -37,7 +37,9 @@ public class User implements Parcelable {
      * Default constructor.
      * 
      * @param oauthToken
+     *            The OAuth token
      * @param oauthTokenSecret
+     *            The OAuth secret token
      */
     public User(String oauthToken, String oauthTokenSecret) {
         this.oauthToken = oauthToken;
@@ -48,8 +50,11 @@ public class User implements Parcelable {
      * Default constructor.
      * 
      * @param username
+     *            The name of the user
      * @param oauthToken
+     *            The OAuth token
      * @param oauthTokenSecret
+     *            The OAuth secret token
      */
     public User(String username, String oauthToken, String oauthTokenSecret) {
         this.username = username;
@@ -63,14 +68,6 @@ public class User implements Parcelable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getLoginToken() {
-        return oauthToken;
-    }
-
-    public void setLoginToken(String loginToken) {
-        this.oauthToken = loginToken;
     }
 
     public String getOAuthToken() {
@@ -93,6 +90,7 @@ public class User implements Parcelable {
      * Constructor to create a User from a parcel.
      * 
      * @param in
+     *            The parcel to read from
      */
     private User(Parcel in) {
         this.username = in.readString();
@@ -103,17 +101,16 @@ public class User implements Parcelable {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<User> CREATOR =
-            new Parcelable.Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
 
-                public User createFromParcel(Parcel in) {
-                    return new User(in);
-                }
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
 
-                public User[] newArray(int size) {
-                    return new User[size];
-                }
-            };
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     /**
      * Writes the nodes to the given parcel.

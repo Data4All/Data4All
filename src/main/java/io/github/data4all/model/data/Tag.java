@@ -16,6 +16,7 @@
 package io.github.data4all.model.data;
 
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
 
 import java.util.Arrays;
 
@@ -29,11 +30,9 @@ import java.util.Arrays;
 public class Tag {
 
     /**
-     * defines different input types.
+     * The log-tag for this class.
      */
-    public static enum InputType {
-        KEYBOARD, NUMPAD;
-    }
+    private static final String LOG_TAG = Tag.class.getSimpleName();
 
     /**
      * id to identify the tag.
@@ -59,7 +58,7 @@ public class Tag {
      * type defines if the tagging activity should display a keyboard or a
      * numpad as input method.
      */
-    private InputType type;
+    private int type;
 
     /**
      * store the last Tag value e.g the last value for addr:street.  
@@ -87,51 +86,34 @@ public class Tag {
     /**
      * Constructor to create nameRessource and hintRessource from the key.
      * 
+     * @param id
+     *            The ID of the Tag.
      * @param key
+     *            The Key of the Tag.
      * @param type
+     *            The InputType method.
      * @param osmObjects
+     *            The osm Objects the Tag refers to.
      */
-    public Tag(int id, String key, InputType type, int... osmObjects) {
+    public Tag(int id, String key, int type, int... osmObjects) {
         this.id = id;
         this.key = key;
+        this.type = type;
         try {
-            this.nameRessource =
-                    (Integer) R.string.class.getDeclaredField(
-                            "name_" + key.replaceAll(":", "_")).get(null);
-            if (type != null) {
-                this.hintRessource =
-                        (Integer) R.string.class.getDeclaredField(
-                                "hint_" + key.replaceAll(":", "_")).get(null);
+            this.nameRessource = (Integer) R.string.class.getDeclaredField(
+                    "name_" + key.replaceAll(":", "_")).get(null);
+            if (type != -1) {
+                this.hintRessource = (Integer) R.string.class.getDeclaredField(
+                        "hint_" + key.replaceAll(":", "_")).get(null);
             }
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(LOG_TAG, "IllegalArgumentException", e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(LOG_TAG, "IllegalAccessException", e);
         } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(LOG_TAG, "NoSuchFieldException", e);
         }
-        this.type = type;
-        this.setOsmObjects(osmObjects);
-    }
 
-    /**
-     * Default constructor to create a tag.
-     * 
-     * @param key
-     * @param nameRessource
-     * @param hintRessource
-     * @param type
-     */
-    public Tag(int id, String key, int nameRessource, int hintRessource,
-            InputType type, int... osmObjects) {
-        this.id = id;
-        this.key = key;
-        this.nameRessource = nameRessource;
-        this.hintRessource = hintRessource;
-        this.type = type;
         this.setOsmObjects(osmObjects);
     }
 
@@ -155,7 +137,7 @@ public class Tag {
         return osmObjects;
     }
 
-    public InputType getType() {
+    public int getType() {
         return type;
     }
 
@@ -179,7 +161,7 @@ public class Tag {
         this.osmObjects = osmObjects;
     }
 
-    public void setType(InputType type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -190,11 +172,10 @@ public class Tag {
     public String toString() {
         return "key: " + key + " nameRessource: " + nameRessource
                 + " hintRessource: " + hintRessource + " osmObjects: "
-                + Arrays.toString(osmObjects);
+                + "type:" + type + Arrays.toString(osmObjects);
     }
 
 
-    
     public String getOriginKey() {
         return originKey;
     }
@@ -213,3 +194,4 @@ public class Tag {
     }
 
 }
+

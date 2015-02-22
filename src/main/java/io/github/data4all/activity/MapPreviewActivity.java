@@ -15,18 +15,17 @@
  */
 package io.github.data4all.activity;
 
+import org.osmdroid.util.BoundingBoxE6;
+
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 /**
  * Activity to show an Osm_Element on a Preview Map.
@@ -42,26 +41,34 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     // The OsmElement which should be added
     private AbstractDataElement element;
 
-    public MapPreviewActivity() {
+    private BoundingBoxE6 boundingBox;
 
+    /**
+     * Standard Constructor
+     **/
+    public MapPreviewActivity() {
+        super();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
-        setUpMapView();
-        element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        addOsmElementToMap(element);
-        view = (ImageView) findViewById(R.id.imageView1);
-        if (savedInstanceState != null) {
-            loadState(savedInstanceState);
-        }
-
+        setUpMapView(savedInstanceState);
         view.setVisibility(View.GONE);
+        element = getIntent().getParcelableExtra("OSM_ELEMENT");
+        mapView.addOsmElementToMap(this, element);
+        boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+        mapView.setBoundingBox(boundingBox);
 
-        mapController.setZoom(actualZoomLevel);
-        mapController.setCenter(actualCenter);
+        // Set Overlay for the actual Position
+        Log.i(TAG, "Added User Location Overlay to the map");
+        mapView.getOverlays().add(myLocationOverlay);
 
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
@@ -76,25 +83,28 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         satelliteMap.setOnClickListener(this);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onStart()
+     */
     @Override
     protected void onStart() {
         super.onStart();
-        if (element instanceof Node) {
-            final Node node = (Node) element;
-            mapController.setCenter(node.toGeoPoint());
-            mapController.animateTo(node.toGeoPoint());
-        } else {
-            final PolyElement polyElement = (PolyElement) element;
-            mapController.setCenter(polyElement.getFirstNode().toGeoPoint());
-            mapController.animateTo(polyElement.getFirstNode().toGeoPoint());
-        }
+        setCenter(MapUtil.getCenterFromOsmElement(element));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.return_to_actual_Position:
             mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
+            mapView.zoomToBoundingBox(boundingBox);
             break;
         case R.id.switch_maps:
             switchMaps();
@@ -107,6 +117,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /*
+     * Starts new Tagactivity with Osm Object and Type Definition in the Intent
+     */
     private void accept() {
         final Intent intent = new Intent(this, TagActivity.class);
 

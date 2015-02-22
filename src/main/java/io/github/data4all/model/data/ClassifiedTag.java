@@ -29,7 +29,7 @@ import java.util.List;
  * tag. classifiedTags are tags where the user can choose input/value from
  * listed values.
  * 
- * @author fkirchge, Steeve
+ * @author fkirchge
  *
  */
 public class ClassifiedTag extends Tag {
@@ -37,47 +37,37 @@ public class ClassifiedTag extends Tag {
     /**
      * stores all classified values for the specific tag.
      */
-    private List<String> classifiedValues;
-    private ClassifiedTag lastChoice;
+
+    private List<ClassifiedValue> classifiedValues;
 
 
     /**
      * Default constructor.
      * 
-     * @param id The id of the tag
-     * @param key The key of the tag
-     * @param type The Type of the tag
-     * @param classifiedValues the classifiedValues of the tag
-     * @param osmObjects The OpenStreetObject the tag refers to
+     * @param id
+     *            The id of the tag
+     * @param key
+     *            The key of the tag
+     * @param type
+     *            The Type of the tag
+     * @param classifiedValues
+     *            the classifiedValues of the tag
+     * @param osmObjects
+     *            The OpenStreetObject the tag refers to
      */
-    public ClassifiedTag(int id, String key, InputType type,
-            List<String> classifiedValues, int... osmObjects) {
+    public ClassifiedTag(int id, String key, int type,
+            List<ClassifiedValue> classifiedValues, int... osmObjects) {
         super(id, key, type, osmObjects);
         this.classifiedValues = classifiedValues;
-        lastChoice = null;
+       
        
     }
 
-    /**
-     * @return classifiedValues or classifiedValuesSuggestion
-     * 
-     *         when the list of suggestion Values is empty , then get the
-     *         classifiedValues when not then get classifiedValuesSuggestion
-     * 
-     */
-    public List<String> getClassifiedValues() {
-        if (lastChoice == null) {
-            return classifiedValues;
-        }
-        return lastChoice.getClassifiedValues();
+    public List<ClassifiedValue> getClassifiedValues() {
+        return classifiedValues;
     }
 
-    /**
-     * @param classifiedValues
-     * 
-     */
-
-    public void setClassifiedValues(List<String> classifiedValues) {
+    public void setClassifiedValues(List<ClassifiedValue> classifiedValues) {
         this.classifiedValues = classifiedValues;
     }
 
@@ -92,10 +82,10 @@ public class ClassifiedTag extends Tag {
      *    when lastChoice is not null then update suggestion.
      *          
      */
-    public void addSuggestion(String suggestion) {
+    public void addSuggestion(ClassifiedValue suggestion) {
 
         // create a tag with this suggestion
-          lastChoice = Tags.getLastChoice();
+          ClassifiedTag lastChoice = Tags.getLastChoice();
         if (lastChoice == null) {
             lastChoice = new ClassifiedTag(getHintRessource(), "Last Choice", getType(),
                     Arrays.asList(suggestion), getOsmObjects());
@@ -119,7 +109,7 @@ public class ClassifiedTag extends Tag {
      *                     get all classifiedValues
      * 
      */
-    public List<String> getAllClassifiedValues() {
+    public List<ClassifiedValue> getAllClassifiedValues() {
         return classifiedValues;
     }
 

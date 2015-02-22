@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ *
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.model;
 
 import static org.junit.Assert.*;
@@ -6,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.json.JSONException;
 import org.junit.After;
@@ -19,11 +32,14 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import io.github.data4all.model.DataBaseHandler;
+import android.location.Location;
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 
@@ -56,6 +72,8 @@ public class DataBaseHandlerTest {
 
         assertEquals("abcde12345", dbHandler.getUser("Liadan").getOAuthToken());
         assertEquals("abc", dbHandler.getUser("Manus").getOauthTokenSecret());
+        
+        List<User> users = dbHandler.getAllUser();
 
         user1.setOAuthToken("xyz97");
         user2.setOauthTokenSecret("ads8790");
@@ -71,6 +89,7 @@ public class DataBaseHandlerTest {
         dbHandler.deleteUser(user2);
 
         assertEquals(0, dbHandler.getUserCount());
+        
     }
 
     @Test
@@ -245,6 +264,105 @@ public class DataBaseHandlerTest {
         dbHandler.deleteTagMap(tagIDs);
 
         assertEquals(0, dbHandler.getTagMapCount());
+    }
+
+    @Test
+    public void testTrackPointCRUD() {
+        Location loc1 = new Location("User");
+        loc1.setAltitude(10.10);
+        loc1.setLatitude(10.10);
+        loc1.setLongitude(10.10);
+        loc1.setTime(10000);
+        TrackPoint tp1 = new TrackPoint(loc1);
+
+        Location loc2 = new Location("User");
+        loc2.setAltitude(11.11);
+        loc2.setLatitude(11.11);
+        loc2.setLongitude(11.11);
+        loc2.setTime(20000);
+        TrackPoint tp2 = new TrackPoint(loc2);
+
+        Location loc3 = new Location("User");
+        loc3.setAltitude(12.12);
+        loc3.setLatitude(12.12);
+        loc3.setLongitude(12.12);
+        loc3.setTime(30000);
+        TrackPoint tp3 = new TrackPoint(loc3);
+
+        List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+        trackPoints.add(tp1);
+        trackPoints.add(tp2);
+        trackPoints.add(tp3);
+
+        dbHandler.createTrackPoints(trackPoints);
+
+        List<Long> timestamps = new ArrayList<Long>();
+        timestamps.add(loc1.getTime());
+        timestamps.add(loc2.getTime());
+        timestamps.add(loc3.getTime());
+
+        trackPoints = dbHandler.getTrackPoints(timestamps);
+
+        assertEquals(10.10, trackPoints.get(0).getAlt(), 0.0);
+        assertEquals(11.11, trackPoints.get(1).getLat(), 0.0);
+        assertEquals(12.12, trackPoints.get(2).getLon(), 0.0);
+
+        assertEquals(3, dbHandler.getTrackPointCount());
+
+        timestamps.remove(2);
+        dbHandler.deleteTrackPoints(timestamps);
+
+        assertEquals(1, dbHandler.getTrackPointCount());
+    }
+
+    @Test
+    // @Ignore
+    public void testTrackCRUD() throws JSONException {
+        Location loc1 = new Location("User");
+        loc1.setAltitude(10.10);
+        loc1.setLatitude(10.10);
+        loc1.setLongitude(10.10);
+        loc1.setTime(10000);
+        TrackPoint tp1 = new TrackPoint(loc1);
+
+        Location loc2 = new Location("User");
+        loc2.setAltitude(11.11);
+        loc2.setLatitude(11.11);
+        loc2.setLongitude(11.11);
+        loc2.setTime(20000);
+        TrackPoint tp2 = new TrackPoint(loc2);
+
+        Location loc3 = new Location("User");
+        loc3.setAltitude(12.12);
+        loc3.setLatitude(12.12);
+        loc3.setLongitude(12.12);
+        loc3.setTime(30000);
+        TrackPoint tp3 = new TrackPoint(loc3);
+
+        List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+        trackPoints.add(tp1);
+        trackPoints.add(tp2);
+        trackPoints.add(tp3);
+
+        Track track = new Track();
+        track.setTrackPoints(trackPoints);
+
+        dbHandler.createGPSTrack(track);
+        
+        assertEquals(1, dbHandler.getGPSTrackCount());
+        
+        Track reTrack = dbHandler.getGPSTrack(track.getTrackName());
+        
+        assertEquals(track.getTrackName(), reTrack.getTrackName());
+        
+        track.setTrackName("2015_02_20_15_18_25");
+        
+        dbHandler.updateGPSTrack(track);
+                
+        reTrack = dbHandler.getGPSTrack(track.getTrackName());
+        
+//        assertEquals(track.getTrackName(), reTrack.getTrackName());
+        
     }
 
     @After

@@ -175,6 +175,7 @@ public class TouchView extends View {
             redoUndo = new RedoUndo();
             this.undoUseable();
             this.redoUseable();
+            undoRedoListener.okUseable(hasEnoughNodes());
         }
     }
 
@@ -250,6 +251,7 @@ public class TouchView extends View {
             handleMotion(event, "start");
             polygon = newPolygon;
             redoUndo = new RedoUndo(polygon);
+            undoRedoListener.okUseable(hasEnoughNodes());
             undoUseable();
             redoUseable();
             break;
@@ -357,14 +359,6 @@ public class TouchView extends View {
         }
     }
 
-    /**
-     * Sets the type of interpretation for this {@link TouchView}.
-     * 
-     * @param type
-     *            The {@link InterpretationType} to set
-     * @throws IllegalArgumentException
-     *             if {@code type} is {@code null}
-     */
     public void setInterpretationType(InterpretationType type) {
         switch (type) {
         case AREA:
@@ -390,9 +384,14 @@ public class TouchView extends View {
      * @author vkochno
      */
     public void redo() {
+        if (interpreter instanceof BuildingMotionInterpreter) {
+            redoUndo.redo();
+        }
         newPolygon = redoUndo.redo();
         polygon = newPolygon;
+        undoUseable();
         redoUseable();
+        undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     /**
@@ -401,12 +400,17 @@ public class TouchView extends View {
      * @author vkochno
      */
     public void undo() {
+        if (interpreter instanceof BuildingMotionInterpreter) {
+            redoUndo.undo();
+        }
         newPolygon = redoUndo.undo();
-        polygon = newPolygon;
         if (undoRedoListener != null) {
             undoRedoListener.canRedo(true);
         }
+        polygon = newPolygon;
+        redoUseable();
         undoUseable();
+        undoRedoListener.okUseable(hasEnoughNodes());
     }
 
     /**
@@ -415,7 +419,10 @@ public class TouchView extends View {
      * @return If redo can be used
      */
     public boolean redoUseable() {
-        if (redoUndo.getCurrent() == redoUndo.getMax()) {
+        if (!(interpreter instanceof BuildingMotionInterpreter)
+                && redoUndo.getCurrent() == redoUndo.getMax()
+                || interpreter instanceof BuildingMotionInterpreter
+                && redoUndo.getCurrent() == redoUndo.getMax()) {
             Log.d(this.getClass().getSimpleName(), "false redo");
             if (undoRedoListener != null) {
                 undoRedoListener.canRedo(false);
@@ -436,7 +443,11 @@ public class TouchView extends View {
      * @return If undo can be used
      */
     public boolean undoUseable() {
-        if (redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0) {
+        if (!(interpreter instanceof BuildingMotionInterpreter)
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                || interpreter instanceof BuildingMotionInterpreter
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                && redoUndo.getMax() == 4) {
             Log.d(this.getClass().getSimpleName(), "true undo");
             if (undoRedoListener != null) {
                 undoRedoListener.canUndo(true);
@@ -452,12 +463,26 @@ public class TouchView extends View {
     }
 
     /**
-     * Set the actual PointToCoordsTransformUtil with the actual location and
-     * camera parameters.
+     * Returns <code>true</code> if the drawing has the minimum of nodes for its
+     * InterpretationType.
      * 
-     * @author sbollen
+     * @author konerman
+     * 
+     * @return <code>true</code> if the polygon has enough nodes;
+     *         <code>false</code> otherwise
+     */
+    public boolean hasEnoughNodes() {
+        return interpreter.minNodes() <= polygon.size();
+    }
+
+    /**
+     * Set the actual PointToCoordsTransformUtil with the actual location and
+     * camera parameters
+     *
      * @param pointTrans
      *            the actual object
+     * 
+     * @author sbollen
      */
     public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
         this.pointTrans = pointTrans;

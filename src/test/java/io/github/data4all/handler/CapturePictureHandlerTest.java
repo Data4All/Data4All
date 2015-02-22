@@ -45,7 +45,7 @@ public class CapturePictureHandlerTest {
      */
     @Before
     public void setUp() throws Exception {
-        cphandler = new CapturePictureHandler();
+        cphandler = new CapturePictureHandler(null);
         ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
 
     }
@@ -56,9 +56,8 @@ public class CapturePictureHandlerTest {
 
         try {
             // Reflect the private method convertToDMS for testing
-            convertToDMS =
-                    CapturePictureHandler.class.getDeclaredMethod(
-                            "convertToDMS", Double.class);
+            convertToDMS = CapturePictureHandler.class.getDeclaredMethod(
+                    "convertToDMS", Double.class);
             convertToDMS.setAccessible(true);
 
             // normal positive input
@@ -109,9 +108,8 @@ public class CapturePictureHandlerTest {
 
         try {
             // Reflect the private method convertToDegree for testing
-            convertToDegree =
-                    CapturePictureHandler.class.getDeclaredMethod(
-                            "convertToDegree", String.class);
+            convertToDegree = CapturePictureHandler.class.getDeclaredMethod(
+                    "convertToDegree", String.class);
             convertToDegree.setAccessible(true);
 
             // normal positive input
