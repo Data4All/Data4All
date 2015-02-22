@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -95,7 +94,7 @@ public class CameraActivity extends Activity {
 		mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
 
 		mAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
-		updateAssistView(0.5);
+		this.updateAssistView(0.5);
 	}
 
 	private OnClickListener btnCaptureOnClickListener = new OnClickListener() {

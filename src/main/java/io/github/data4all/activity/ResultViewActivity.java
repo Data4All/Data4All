@@ -189,13 +189,13 @@ public class ResultViewActivity extends AbstractActivity implements
                                     null)));
                 } catch (IllegalArgumentException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Log.e(TAG, "", e);
                 } catch (IllegalAccessException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Log.e(TAG, "", e);
                 } catch (NoSuchFieldException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Log.e(TAG, "", e);
                 }
             } else {
                 endList.add(element.getTags().get(tagKey));
