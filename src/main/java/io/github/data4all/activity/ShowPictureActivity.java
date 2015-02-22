@@ -298,16 +298,13 @@ public class ShowPictureActivity extends AbstractActivity {
         try {
             Uri uri = Uri.fromFile(file);
             ExifInterface exif = new ExifInterface(uri.getPath());
-            int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-            Log.v("IMG_ORIENTATION", "" + rotation);
-            imageView.setImageBitmap(loadFromCamera(uri, 90));
+            imageView.setImageBitmap(loadFromCamera(uri));
         } catch (IOException e) {
             Log.e(TAG, "Error while setBackground(File)", e);
         }
     }
 
-    private Bitmap loadFromCamera(Uri photoUri, int rotation)
+    private Bitmap loadFromCamera(Uri photoUri)
             throws IOException {
         AssetFileDescriptor fileDescriptor = getContentResolver()
                 .openAssetFileDescriptor(photoUri, "r");
@@ -315,15 +312,17 @@ public class ShowPictureActivity extends AbstractActivity {
         Bitmap photo = BitmapFactory.decodeFileDescriptor(
                 fileDescriptor.getFileDescriptor(), null, null);
         if (photo != null) {
-            return scaleAndRotate(photo, rotation);
+            return scaleAndRotate(photo);
         } else {
             return null;
         }
     }
 
-    private static Bitmap scaleAndRotate(Bitmap bitmap, int rotation) {
+    private static Bitmap scaleAndRotate(Bitmap bitmap) {
         Matrix matrix = new Matrix();
-        matrix.postRotate(rotation);
+        if(bitmap.getHeight() < bitmap.getWidth()) {
+            matrix.postRotate(90);
+        }
 
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
