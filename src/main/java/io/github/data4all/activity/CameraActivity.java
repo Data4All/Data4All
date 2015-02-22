@@ -22,19 +22,20 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.service.OrientationListener;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
+
 import java.util.Arrays;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
+import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -113,6 +114,8 @@ public class CameraActivity extends Activity {
                 vibrator.vibrate(200);
             }
         };
+
+        Log.d("HAS_NAVBAR", "" + hasNavBar(getResources()));
     }
 
     @SuppressLint("InlinedApi")
@@ -123,6 +126,14 @@ public class CameraActivity extends Activity {
             flags |= 4096;
         }
         return flags;
+    }
+
+    public static boolean hasNavBar(Resources resources) {
+        int id = resources.getIdentifier("config_showNavigationBar", "bool", "android");
+        if (id > 0)
+            return resources.getBoolean(id);
+        else
+            return false;
     }
 
     @Override
