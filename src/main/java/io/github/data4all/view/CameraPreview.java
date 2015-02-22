@@ -208,7 +208,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
                 params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
 
-                params.setRotation(90);
+                // params.setRotation(90);
 
                 // set the picture type for taking photo
                 params.setPictureFormat(ImageFormat.JPEG);
@@ -218,6 +218,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                 setFlashModes(params);
 
                 mCamera.setParameters(params);
+
+                this.setCameraDisplayOrientation();
             }
         } catch (IOException ex) {
             Log.e(TAG, "IOException caused by setPreviewDisplay()", ex);
@@ -260,49 +262,21 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
      * Set the Camera Display Orientation when the view changed
      */
     private void setCameraDisplayOrientation() {
-
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
-        WindowManager winManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-
-        int rotation = winManager.getDefaultDisplay().getRotation();
-
-        int degrees = 0;
-
-        switch (rotation) {
-        case Surface.ROTATION_0:
-            degrees = 0;
-            break;
-        case Surface.ROTATION_90:
-            degrees = 90;
-            break;
-        case Surface.ROTATION_180:
-            degrees = 180;
-            break;
-        case Surface.ROTATION_270:
-            degrees = 270;
-            break;
-        default:
-            degrees = 0;
-            break;
-        }
-
-        int result;
+        int rotation;
         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360; // compensate the mirror
+            rotation = 360 - info.orientation; // compensate the mirror
         } else { // back-facing
-            result = (info.orientation - degrees + 360) % 360;
+            rotation = info.orientation;
         }
+        
+        Log.v("CAM_ORIENTATION", "" + info.orientation);
 
-        mCamera.setDisplayOrientation(result);
-
+        mCamera.setDisplayOrientation(rotation);
         params.setRotation(info.orientation);
-
         mCamera.setParameters(params);
-
     }
 
     @Override
