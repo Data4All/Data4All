@@ -22,17 +22,19 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.service.OrientationListener;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
-
 import java.util.Arrays;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -90,9 +92,11 @@ public class CameraActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
+        getWindow().getDecorView().setSystemUiVisibility(getFlags());
+
+        int navigationHeight = AbstractActivity.navigationHeight(this);
+        Log.v("NAV_SIZE", "" + navigationHeight);
 
         setContentView(R.layout.activity_camera);
 
@@ -114,11 +118,21 @@ public class CameraActivity extends Activity {
         };
     }
 
+    @SuppressLint("InlinedApi")
+    private int getFlags() {
+        int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            flags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        return flags;
+    }
+
     @Override
     protected void onResume() {
         Log.i(TAG, "onResume is called");
         super.onResume();
-        
+
         this.startService(new Intent(this, OrientationListener.class));
 
         if (mCamera == null) {
@@ -136,9 +150,9 @@ public class CameraActivity extends Activity {
     protected void onPause() {
         Log.i(TAG, "onPause is called");
         super.onPause();
-        
+
         this.stopService(new Intent(this, OrientationListener.class));
-        
+
         super.onPause();
 
         if (mCamera != null) {
