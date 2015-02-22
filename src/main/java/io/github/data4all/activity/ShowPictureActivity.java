@@ -38,6 +38,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -174,7 +175,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private int getFlags() {
         int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= 19) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             flags |= 4096;
         }
         return flags;
@@ -295,7 +296,12 @@ public class ShowPictureActivity extends AbstractActivity {
      */
     private void setBackground(File file) {
         try {
-            imageView.setImageBitmap(loadFromCamera(Uri.fromFile(file), 90));
+            Uri uri = Uri.fromFile(file);
+            ExifInterface exif = new ExifInterface(uri.getPath());
+            int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+            Log.v("IMG_ORIENTATION", "" + rotation);
+            imageView.setImageBitmap(loadFromCamera(uri, 90));
         } catch (IOException e) {
             Log.e(TAG, "Error while setBackground(File)", e);
         }
