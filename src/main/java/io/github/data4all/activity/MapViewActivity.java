@@ -75,7 +75,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             mapView.addOsmElementsToMap(this, list);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "", e);
         }
         db.close();
 

@@ -317,7 +317,7 @@ public class ResultViewActivity extends AbstractActivity implements
             db.createDataElement(dataElement);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "", e);
         }
         db.close();
     }
