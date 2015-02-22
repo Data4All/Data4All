@@ -95,9 +95,6 @@ public class CameraActivity extends Activity {
 
         getWindow().getDecorView().setSystemUiVisibility(getFlags());
 
-        int navigationHeight = AbstractActivity.navigationHeight(this);
-        Log.v("NAV_SIZE", "" + navigationHeight);
-
         setContentView(R.layout.activity_camera);
 
         // Set the capturing button
