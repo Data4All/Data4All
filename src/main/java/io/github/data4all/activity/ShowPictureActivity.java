@@ -365,7 +365,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private double getScreenRation() {
         Point size = getIntent().getParcelableExtra(
                 CapturePictureHandler.SIZE_EXTRA);
-        Log.v("SCREEN_DIMENSION", "h:" + size.y + " w: " + size.x);
-        return (double) size.y / (double) size.x;
+        Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
+        return (double) size.x / (double) size.y;
     }
 }
