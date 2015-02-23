@@ -105,6 +105,8 @@ public class PointToCoordsTransformUtil {
                         + Math.toDegrees(deviceOrientation.getAzimuth())
                         + " ; " + Math.toDegrees(deviceOrientation.getPitch())
                         + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
+        Log.d(TAG, "TPS-DATA Camera-Pitch-Angle: " + tps.getCameraMaxPitchAngle() + " Rotation-Angle: "
+                + tps.getCameraMaxRotationAngle() );
 
         // get the set height
         this.height = tps.getHeight();
@@ -151,14 +153,13 @@ public class PointToCoordsTransformUtil {
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
         final double pixelpitch = this.calculateAngleFromPixel(point.getX(),
-                xAxis, tps.getCameraMaxPitchAngle());
+                xAxis, tps.getCameraMaxRotationAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll = -this.calculateAngleFromPixel(point.getY(),
-                yAxis, tps.getCameraMaxRotationAngle());
+                yAxis, tps.getCameraMaxPitchAngle());
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
 
-        Log.i(TAG, "Punkt: " + point.getX() + " , " + point.getY());
 
         final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
