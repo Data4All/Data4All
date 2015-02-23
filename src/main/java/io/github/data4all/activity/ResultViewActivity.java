@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -204,6 +205,8 @@ public class ResultViewActivity extends AbstractActivity implements
         }
 
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
+        LastChoiceHandler.getInstance().setLastChoice(getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
+        LastChoiceHandler.getInstance().save(this);
     }
 
     /**
