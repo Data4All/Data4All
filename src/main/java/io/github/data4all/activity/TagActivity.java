@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
@@ -141,7 +142,13 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 key = (String) array[which];
+                //jump in ResultviewActivity, when lastChoice is selected
+                if("Last Choice".equalsIgnoreCase(key)){
+                    map=LastChoiceHandler.getInstance().getLastChoice(getIntent().getExtras().getInt("TYPE_DEF"));
+                    finish();
+                }else{
                 createAlertDialogValue();
+                }
             }
 
         });
@@ -260,6 +267,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         } else {
             map = Tagging.contactToTag(tags, map);
         }
+        LastChoiceHandler.getInstance().setLastChoice(getIntent().getExtras().getInt("TYPE_DEF"),map);
+        LastChoiceHandler.getInstance().save(this);
         dialog1.dismiss();
     }
 
