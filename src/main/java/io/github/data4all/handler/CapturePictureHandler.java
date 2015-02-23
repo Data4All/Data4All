@@ -181,7 +181,7 @@ public class CapturePictureHandler implements PictureCallback {
                 Log.d(TAG, "Picturepath:" + photoFile.getPath());
 
                 final FileOutputStream fos = new FileOutputStream(
-                        photoFile.getPath());
+                        photoFile);
                 fos.write(photoData[0]);
                 fos.flush();
                 fos.close();
@@ -218,17 +218,14 @@ public class CapturePictureHandler implements PictureCallback {
 
     private File createFile() {
         // Create a new folder on the internal storage named Data4all
-        final File folder = new File(Environment.getExternalStorageDirectory()
-                + DIRECTORY);
+        final File folder = new File(Environment.getExternalStorageDirectory(), DIRECTORY);
         if (!folder.exists()) {
-            folder.mkdir();
+            folder.mkdirs();
             Log.i(TAG, "Folder was created");
         }
 
         // Save the file to the folder in the internal storage
-        final File extern = Environment.getExternalStorageDirectory();
         final String name = System.currentTimeMillis() + FILE_FORMAT;
-
-        return new File(new File(extern, DIRECTORY), name);
+        return new File(folder, name);
     }
 }
