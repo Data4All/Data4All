@@ -64,7 +64,7 @@ public final class Tags {
      */
     public static Tag getTagWithId(int id) {
         for (Tag t : TAG_LIST) {
-            if (t.getId() == id) {
+            if (t.getId() == id || t.getId()+5000 ==id) {
                 return t;
             }
         }
@@ -356,18 +356,6 @@ public final class Tags {
                 new int[] { AREA_TAG }));
     }
     
-    /**
-     *  @author Steeve
-     *  @return ClassifiedTag
-     *                    get LastChoice
-     */
-    public static ClassifiedTag getLastChoice(){
-        for(Tag t : TAG_LIST){
-            if(t instanceof ClassifiedTag && t.getKey().equalsIgnoreCase("last choice")){
-                return (ClassifiedTag)t;
-            }
-        }
-        return null;
-    }
+   
 
 }
