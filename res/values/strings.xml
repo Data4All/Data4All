@@ -44,12 +44,19 @@
     <string name="passwordHint">Your Password</string>
     <string name="loginDescription">Login to OpenStreetMap</string>
     <string name="loginButton">Sign in</string>
-     <string name="registerButton">register now</string>
+    <string name="registerButton">register now</string>
     <string name="osmLogo">Open-Street-Map Logo</string>
     <string name="login_username_empty">Username is empty</string>
     <string name="login_password_empty">Password is empty</string>
     <string name="login_access_dialog_title">Authentification error</string>
     <string name="login_access_dialog_mes">Username or Password may be incorrect</string>
+    <string name="login_alertdialog_error">Error</string>
+    <string name="login_alertdialog_nonetwork_title">Network unavailable</string>
+    <string name="login_alertdialog_nonetwork_message">Please connect your device to the internet.</string>
+    <string name="login_alertdialog_accessdenied_title">access denied</string>
+    <string name="login_alertdialog_accessdenied_message">username or password are incorrect.</string>
+    <string name="login_alertdialog_nousername">no username</string>
+    <string name="login_alertdialog_nopassword">no passwort</string>
 
     <!-- for tags -->
     <string name="SelectTag">Select Tag</string>
