@@ -15,6 +15,7 @@
  */
 package io.github.data4all.util;
 
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
@@ -74,7 +75,7 @@ public class Tagging {
         for (int i = 0; i < tags.size(); i++) {
             array[i] = res.getString(tags.get(i).getNameRessource());
         }
-        return array;
+        return LastChoiceHandler.addLastChoiceForType(type,array);
     }
 
     public static Map<String, ClassifiedTag> getMapKeys(int type, Resources res) {
