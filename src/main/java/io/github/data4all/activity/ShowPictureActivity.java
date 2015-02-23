@@ -297,7 +297,6 @@ public class ShowPictureActivity extends AbstractActivity {
     private void setBackground(File file) {
         try {
             Uri uri = Uri.fromFile(file);
-            ExifInterface exif = new ExifInterface(uri.getPath());
             imageView.setImageBitmap(loadFromCamera(uri));
         } catch (IOException e) {
             Log.e(TAG, "Error while setBackground(File)", e);
