@@ -369,11 +369,11 @@ public class ShowPictureActivity extends AbstractActivity {
         Display d = getWindowManager().getDefaultDisplay();
 
         DisplayMetrics realDisplayMetrics = new DisplayMetrics();
-        d.getRealMetrics(realDisplayMetrics);
+        d.getMetrics(realDisplayMetrics);
 
         double realHeight = realDisplayMetrics.heightPixels;
         double realWidth = realDisplayMetrics.widthPixels;
-        Log.v("REAL_DIMENSION", "h:" + realHeight + " w: " + realWidth);
+        Log.v("SCREEN_DIMENSION", "h:" + realHeight + " w: " + realWidth);
         return realHeight / realWidth;
     }
 }
