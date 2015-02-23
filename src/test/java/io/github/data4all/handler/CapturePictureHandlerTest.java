@@ -45,7 +45,7 @@ public class CapturePictureHandlerTest {
      */
     @Before
     public void setUp() throws Exception {
-        cphandler = new CapturePictureHandler(null);
+        cphandler = new CapturePictureHandler(null, null);
         ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
 
     }

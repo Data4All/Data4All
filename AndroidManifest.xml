@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -28,7 +29,7 @@
         android:theme="@style/D4ATheme" >
         <meta-data
             android:name="MAPBOX_AUTHKEY"
-            android:value="pk.eyJ1IjoiZGF0YTRhbGwiLCJhIjoiYlNHWlFSayJ9.vN6iDHPsVupbT9yXdlT9Xg" />  
+            android:value="pk.eyJ1IjoiZGF0YTRhbGwiLCJhIjoiYlNHWlFSayJ9.vN6iDHPsVupbT9yXdlT9Xg" />
 
         <activity android:name=".activity.MapViewActivity" >
             <intent-filter>
@@ -41,10 +42,12 @@
         <activity android:name=".activity.SensorActivity" />
         <activity
             android:name=".activity.ShowPictureActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:configChanges="keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.CameraActivity"
-            android:configChanges="keyboardHidden|screenSize" />
+            android:configChanges="keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.ResultViewActivity" />
         <activity android:name=".activity.MapActivity" />
         <activity android:name=".activity.SettingsActivity" />
@@ -69,10 +72,8 @@
         </activity>
         <activity android:name=".activity.SensorReactionActivity" />
 
-        <service
-            android:name=".service.GPSservice" />
-        <service
-            android:name=".service.OrientationListener" />
+        <service android:name=".service.GPSservice" />
+        <service android:name=".service.OrientationListener" />
     </application>
 
 </manifest>

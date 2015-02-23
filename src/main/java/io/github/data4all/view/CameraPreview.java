@@ -15,22 +15,22 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.activity.CameraActivity;
 import io.github.data4all.logger.Log;
+
 import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.AttributeSet;
-import android.view.Display;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 /**
  * PreviewClass for camera.
@@ -40,9 +40,10 @@ import android.view.WindowManager;
  * cooperation with the {@link CameraActivity}.
  * 
  * @author Andre Koch
+ * @author tbrose
  * @CreationDate 09.02.2015
- * @LastUpdate 12.02.2015
- * @version 1.1
+ * @LastUpdate 21.02.2015
+ * @version 1.2
  * 
  */
 
@@ -57,19 +58,15 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     private List<Size> mSupportedPreviewSizes;
     private List<Size> mSupportedPictureSizes;
     private List<String> mSupportedFlashModes;
-    private List<String> mAutoFocus;
     private Camera.Parameters params;
 
-    private static int containerWidth;
-    private static int containerHeight;
+    public static int containerWidth = 0;
+    public static int containerHeight = 0;
 
-    private Context context;
+    private int mPreviewWidth;
 
-    /**
-     * Constructor for instantiate CameraPreview
-     * 
-     * @param context
-     */
+    private int mPreviewHeight;
+
     public CameraPreview(Context context) {
         super(context);
         this.init(context);
@@ -84,7 +81,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     public CameraPreview(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.init(context);
-
     }
 
     /**
@@ -100,12 +96,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     }
 
     private void init(Context context) {
-
         final SurfaceView mSurfaceView = new SurfaceView(context);
         addView(mSurfaceView);
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
-        this.context = context;
     }
 
     @Override
@@ -142,43 +136,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
             final int width = r - l;
             final int height = b - t;
-
-            int previewWidth = width;
-            int previewHeight = height;
-
-            if (mPreviewSize != null) {
-
-                Display display = ((WindowManager) context
-                        .getSystemService(Context.WINDOW_SERVICE))
-                        .getDefaultDisplay();
-
-                Log.d(TAG,
-                        "The Device has the Orientation :"
-                                + display.getRotation());
-
-                switch (display.getRotation()) {
-                case Surface.ROTATION_0:
-                    previewWidth = mPreviewSize.height;
-                    previewHeight = mPreviewSize.width;
-                    break;
-                case Surface.ROTATION_90:
-                    previewWidth = mPreviewSize.width;
-                    previewHeight = mPreviewSize.height;
-                    break;
-                case Surface.ROTATION_180:
-                    previewWidth = mPreviewSize.height;
-                    previewHeight = mPreviewSize.width;
-                    break;
-                case Surface.ROTATION_270:
-                    previewWidth = mPreviewSize.width;
-                    previewHeight = mPreviewSize.height;
-                    break;
-                default:
-                    previewWidth = mPreviewSize.height;
-                    previewHeight = mPreviewSize.width;
-                    break;
-                }
-            }
+            mPreviewWidth = height;
+            mPreviewHeight = width;
 
             child.layout(0, 0, width, height);
         }
@@ -200,8 +159,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
             mSupportedFlashModes = mCamera.getParameters()
                     .getSupportedFlashModes();
 
-            mAutoFocus = mCamera.getParameters().getSupportedFocusModes();
-
             requestLayout();
         }
 
@@ -217,24 +174,48 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                 // retrieve the parameters of cameras
                 params = mCamera.getParameters();
 
+                Log.v("SIZE", "h: " + mPreviewSize.height + " w: "
+                        + mPreviewSize.width);
+                Log.v("SIZE", "h: " + mPreviewHeight + " w: " + mPreviewWidth);
+
+                for (Camera.Size size : mSupportedPreviewSizes) {
+                    Log.v("PREVIEW_SIZES", "h: " + size.height + " w: "
+                            + size.width);
+                }
+
+                for (Camera.Size size : mSupportedPictureSizes) {
+                    Log.v("PICTURE_SIZES", "h: " + size.height + " w: "
+                            + size.width);
+                }
+
+                mPreviewSize = getOptimalSize(mSupportedPreviewSizes,
+                        mPreviewWidth, mPreviewHeight);
+
+                Log.v("PREF_PREVIEW_SIZE", "h: " + mPreviewSize.height + " w: "
+                        + mPreviewSize.width);
+
                 params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 
-                mPhotoSize = this.getOptimalPictureSize(mSupportedPictureSizes,
-                        (mPreviewSize.width * 1.0)
-                                / (mPreviewSize.height * 1.0));
+                mPhotoSize = getOptimalSize(mSupportedPictureSizes,
+                        mPreviewWidth, mPreviewHeight);
+
+                Log.v("PREF_PICTURE_SIZE", "h: " + mPhotoSize.height + " w: "
+                        + mPhotoSize.width);
 
                 params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
+
+                // params.setRotation(90);
 
                 // set the picture type for taking photo
                 params.setPictureFormat(ImageFormat.JPEG);
                 params.setJpegQuality(10);
                 params.setZoom(0);
 
-                this.setFocusModes(params);
-
-                this.setFlashModes(params);
+                setFlashModes(params);
 
                 mCamera.setParameters(params);
+
+                this.setCameraDisplayOrientation();
             }
         } catch (IOException ex) {
             Log.e(TAG, "IOException caused by setPreviewDisplay()", ex);
@@ -247,23 +228,15 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         if (mSupportedFlashModes != null
                 && mSupportedFlashModes
-                        .contains(Camera.Parameters.FLASH_MODE_AUTO)) {
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+                        .contains(Camera.Parameters.FLASH_MODE_OFF)) {
+            params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
 
         }
         return params;
     }
 
-    private Camera.Parameters setFocusModes(Camera.Parameters params) {
-        Log.d(TAG, "setFocusModes is called");
-
-        if (mAutoFocus
-                .contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        } else if (mAutoFocus.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        }
-        return params;
+    public Point getViewSize() {
+        return new Point(mPreviewWidth, mPreviewHeight);
     }
 
     @Override
@@ -289,49 +262,21 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
      * Set the Camera Display Orientation when the view changed
      */
     private void setCameraDisplayOrientation() {
-
-        final Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
-        final WindowManager winManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-
-        final int rotation = winManager.getDefaultDisplay().getRotation();
-
-        int degrees = 0;
-
-        switch (rotation) {
-        case Surface.ROTATION_0:
-            degrees = 0;
-            break;
-        case Surface.ROTATION_90:
-            degrees = 90;
-            break;
-        case Surface.ROTATION_180:
-            degrees = 180;
-            break;
-        case Surface.ROTATION_270:
-            degrees = 270;
-            break;
-        default:
-            degrees = 0;
-            break;
-        }
-
-        int result;
+        int rotation;
         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360;
-        } else {
-            result = (info.orientation - degrees + 360) % 360;
+            rotation = 360 - info.orientation; // compensate the mirror
+        } else { // back-facing
+            rotation = info.orientation;
         }
 
-        mCamera.setDisplayOrientation(result);
+        Log.v("CAM_ORIENTATION", "" + info.orientation);
 
+        mCamera.setDisplayOrientation(rotation);
         params.setRotation(info.orientation);
-
         mCamera.setParameters(params);
-
     }
 
     @Override
@@ -348,44 +293,55 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     /*
      * @Function: get optimal picture size according to camera view angles
      */
-    private Size getOptimalPictureSize(List<Size> sizes, double targetRatio) {
-        // Log.d(TAG, "OptimalPictureSize targetRatio: " + targetRatio);
-        final double aspectTolerance = 0.1;
-        // if no supported preview sizes, return null
-        if (sizes == null) {
+    private static Size getOptimalSize(List<Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.1;
+        double targetRatio = (double) h / w;
+
+        if (sizes == null)
             return null;
-        }
+
         Size optimalSize = null;
 
-        int resolution = 0;
-
-        // Try to find an size match aspect ratio and size
+        // Look for the exact size
         for (Size size : sizes) {
-            double ratio = size.width / size.height;
-
-            // Log.d(TAG, "OptimalPictureSize ratio: " + ratio);
-
-            final int currentResolution = size.width * size.height;
-
-            if (Math.abs(ratio - targetRatio) < aspectTolerance
-                    && currentResolution > resolution) {
+            if (Math.abs(size.height - h) < ASPECT_TOLERANCE
+                    && Math.abs(size.width - w) < ASPECT_TOLERANCE) {
                 optimalSize = size;
-                resolution = currentResolution;
             }
         }
 
-        // TODO fix this
+        double minDiff = Double.MAX_VALUE;
+
+        // Try to find an size match aspect ratio and size
         if (optimalSize == null) {
-            optimalSize = sizes.get(0);
+            for (Size size : sizes) {
+                double ratio = (double) size.width / size.height;
+                if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+                    continue;
+                if (Math.abs(size.height - h) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - h);
+                }
+            }
         }
 
+        // Cannot find the one match the aspect ratio, ignore the requirement
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Size size : sizes) {
+                if (Math.abs(size.height - h) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - h);
+                }
+            }
+        }
         return optimalSize;
     }
 
     private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
-        final double aspectTolerance = 0.1;
+        final double ASPECT_TOLERANCE = 0.1;
         // calculate the ratio of preview display
-        final double targetRatio = w / h;
+        double targetRatio = ((double) w) / ((double) h);
         // if no supported preview sizes, return null
         if (sizes == null) {
             return null;
@@ -394,16 +350,16 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         double minDiff = Double.MAX_VALUE;
 
         // Set target Height based on the
-        final int targetHeight = h;
+        int targetHeight = h;
 
         // Try to find an size match aspect ratio and size
         for (Size size : sizes) {
-            final double ratio = size.width / size.height;
+            double ratio = ((double) size.width) / (double) (size.height);
 
             // Log.d(TAG, "currentSize width:" + size.width);
             // Log.d(TAG, "currentSize heigth:" + size.height);
 
-            if (Math.abs(ratio - targetRatio) > aspectTolerance) {
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
                 continue;
             }
             if (Math.abs(size.height - targetHeight) < minDiff) {
@@ -428,5 +384,4 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         return optimalSize;
     }
-
 }
