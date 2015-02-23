@@ -63,6 +63,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private ImageView imageView;
     private Intent intent;
     private static final String TYPE = "TYPE_DEF";
+    private static final String LOCATION = "LOCATION";
     private static final int POINT = 1;
     private static final int BUILDING = 3;
     private static final int WAY = 2;
@@ -152,6 +153,7 @@ public class ShowPictureActivity extends AbstractActivity {
         if (getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
             transformBean = getIntent().getExtras().getParcelable(
                     CapturePictureHandler.TRANSFORM_BEAN);
+            intent.putExtra(LOCATION, transformBean.getLocation());
         }
 
         if (getIntent().hasExtra(CapturePictureHandler.CURRENT_ORIENTATION)) {

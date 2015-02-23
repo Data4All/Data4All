@@ -15,13 +15,19 @@
  */
 package io.github.data4all.activity;
 
+import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.util.GeoPoint;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,8 +67,18 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         setContentView(R.layout.activity_map_preview);
         setUpMapView(savedInstanceState);
         view.setVisibility(View.GONE);
-        element = getIntent().getParcelableExtra("OSM_ELEMENT");
+        if(getIntent().hasExtra("OSM_ELEMENT")){
+            element = getIntent().getParcelableExtra("OSM_ELEMENT");
+        }
         mapView.addOsmElementToMap(this, element);
+        if(getIntent().hasExtra("LOCATION")){
+            Location l = (Location) getIntent().getParcelableExtra("LOCATION");
+            Marker m = new Marker(mapView);
+            m.setPosition(new GeoPoint(l));
+            m.setIcon(new DefaultResourceProxyImpl(this).getDrawable(ResourceProxy.bitmap.person));
+            mapView.getOverlays().add(m);
+        }
+
         boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
 

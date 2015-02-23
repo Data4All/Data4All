@@ -65,10 +65,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         setUpLoadingScreen();
 
-        // Set Overlay for the actual Position
-        Log.i(TAG, "Added User Location Overlay to the map");
-        mapView.getOverlays().add(myLocationOverlay);
-
         final DataBaseHandler db = new DataBaseHandler(this);
         try {
             final List<AbstractDataElement> list = db.getAllDataElements();
@@ -78,6 +74,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             Log.e(TAG, "", e);
         }
         db.close();
+        
+        // Set Overlay for the actual Position
+        Log.i(TAG, "Added User Location Overlay to the map");
+        mapView.getOverlays().add(myLocationOverlay);
 
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
