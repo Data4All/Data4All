@@ -39,10 +39,19 @@
     <string name="no_network_message">Bitte verbinden Sie ihr Gerät mit dem Internet</string>
 
     <!-- for login -->
-    <string name="login_username_empty">Benutzername fehlt</string>
-    <string name="login_password_empty">Passwort fehlt</string>
-    <string name="login_access_dialog_title">Authentifizierungsfehler</string>
-    <string name="login_access_dialog_mes">Benutzername oder Passwort ist falsch</string>
+    <string name="login_logo_description">OSM Logo</string>
+    <string name="login_text">Anmeldung bei OpenStreetMap</string>
+    <string name="login_hint_username">Benutzername</string>
+    <string name="login_hint_password">Passwort</string>
+    <string name="login_button">Anmelden</string>
+    <string name="login_button_registration">Registieren</string>
+    <string name="login_alertdialog_nonetwork_title">Netzwerk nicht verfügbar</string>
+    <string name="login_alertdialog_nonetwork_message">Bitte verbinde das Gerät mit dem Internet.</string>
+    <string name="login_alertdialog_error">Fehler</string>
+    <string name="login_username_empty">Kein Benutzername angeben</string>
+    <string name="login_password_empty">Kein Passwort angegeben</string>
+    <string name="login_access_dialog_title">Zugriff verweigert</string>
+    <string name="login_access_dialog_mes">Benutzername oder Passwort nicht korrekt.</string>
 
     <!-- for tags -->
     <string name="SelectTag">Passenden Tag auswählen</string>
