@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
@@ -73,6 +74,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         try {
             final List<AbstractDataElement> list = db.getAllDataElements();
             mapView.addOsmElementsToMap(this, list);
+            LastChoiceHandler.load(db);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
