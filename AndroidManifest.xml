@@ -3,7 +3,7 @@
     package="io.github.data4all"
     android:versionCode="1"
     android:versionName="0.1" >
-
+    
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="21" />
@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -37,10 +38,12 @@
         <activity android:name=".activity.SensorActivity" />
         <activity
             android:name=".activity.ShowPictureActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:configChanges="keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.CameraActivity"
-            android:configChanges="keyboardHidden|screenSize" />
+            android:configChanges="keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.ResultViewActivity" />
         <activity android:name=".activity.MapActivity" />
         <activity android:name=".activity.SettingsActivity" />
