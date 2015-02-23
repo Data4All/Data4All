@@ -180,7 +180,8 @@ public class CameraActivity extends Activity {
                 // After photo is taken, disable button for clicking twice
                 btnCapture.setEnabled(false);
                 mCamera.takePicture(shutterCallback, null,
-                        new CapturePictureHandler(CameraActivity.this));
+                        new CapturePictureHandler(CameraActivity.this,
+                                cameraPreview));
             }
         });
 
@@ -197,9 +198,11 @@ public class CameraActivity extends Activity {
                     public void onAutoFocus(boolean success, Camera camera) {
                         if (success) {
                             mAutoFocusCrossHair.success();
-                            mCamera.takePicture(shutterCallback, null,
+                            mCamera.takePicture(
+                                    shutterCallback,
+                                    null,
                                     new CapturePictureHandler(
-                                            CameraActivity.this));
+                                            CameraActivity.this, cameraPreview));
                         } else {
                             mAutoFocusCrossHair.fail();
                             btnCapture.setEnabled(true);

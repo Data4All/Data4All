@@ -23,6 +23,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.AttributeSet;
@@ -230,6 +231,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         }
         return params;
+    }
+    
+    public Point getViewSize() {
+        return new Point(mPreviewWidth, mPreviewHeight);
     }
 
     @Override

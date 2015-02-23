@@ -31,18 +31,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -366,14 +363,9 @@ public class ShowPictureActivity extends AbstractActivity {
     }
 
     private double getScreenRation() {
-        Display d = getWindowManager().getDefaultDisplay();
-
-        DisplayMetrics realDisplayMetrics = new DisplayMetrics();
-        d.getMetrics(realDisplayMetrics);
-
-        double realHeight = realDisplayMetrics.heightPixels;
-        double realWidth = realDisplayMetrics.widthPixels;
-        Log.v("SCREEN_DIMENSION", "h:" + realHeight + " w: " + realWidth);
-        return realHeight / realWidth;
+        Point size = getIntent().getParcelableExtra(
+                CapturePictureHandler.SIZE_EXTRA);
+        Log.v("SCREEN_DIMENSION", "h:" + size.y + " w: " + size.x);
+        return (double) size.y / (double) size.x;
     }
 }

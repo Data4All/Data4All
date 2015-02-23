@@ -22,6 +22,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.view.CameraPreview;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +32,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
@@ -55,8 +57,11 @@ import android.widget.Toast;
  */
 
 public class CapturePictureHandler implements PictureCallback {
-    // The name of the extra info for the filepath in the intent for the new
+    // The name of the extra info for the filepath in the intent
     public static final String FILE_EXTRA = "file_path";
+    
+    // The name of the extra info for the preview size in the intent
+    public static final String SIZE_EXTRA = "preview_size";
 
     // Name of the TransformationParamBean to give to the next activity
     public static final String TRANSFORM_BEAN = "transform_bean";
@@ -80,14 +85,17 @@ public class CapturePictureHandler implements PictureCallback {
 
     private TransformationParamBean transformBean;
 
+    private CameraPreview preview;
+
     /**
      * Default constructor.
      * 
      * @param context
      *            The Application context
      */
-    public CapturePictureHandler(Context context) {
+    public CapturePictureHandler(Context context, CameraPreview preview) {
         this.context = context;
+        this.preview = preview;
     }
 
     /**
@@ -114,7 +122,7 @@ public class CapturePictureHandler implements PictureCallback {
                 pictureSize.height, currentLocation);
 
         // Start a thread to save the Raw Image in JPEG into SDCard
-        new SavePhotoTask(Optimizer.currentDeviceOrientation()).execute(raw);
+        new SavePhotoTask(Optimizer.currentDeviceOrientation(), preview.getViewSize()).execute(raw);
     }
 
     /**
@@ -151,15 +159,18 @@ public class CapturePictureHandler implements PictureCallback {
     class SavePhotoTask extends AsyncTask<byte[], String, String> {
 
         private DeviceOrientation deviceOrientation;
+        private Point viewSize;
 
         /**
          * Default Constructor for saving photo task.
          * 
          * @param deviceOrientation
          *            the curretn device orientation
+         * @param viewSize The current preview size
          */
-        public SavePhotoTask(DeviceOrientation deviceOrientation) {
+        public SavePhotoTask(DeviceOrientation deviceOrientation, Point viewSize) {
             this.deviceOrientation = deviceOrientation;
+            this.viewSize = viewSize;
         }
 
         @Override
@@ -193,6 +204,7 @@ public class CapturePictureHandler implements PictureCallback {
                 intent.putExtra(FILE_EXTRA, photoFile);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
                 intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
+                intent.putExtra(SIZE_EXTRA, viewSize);
 
                 context.startActivity(intent);
 
