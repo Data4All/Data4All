@@ -23,8 +23,8 @@ import io.github.data4all.model.drawing.DrawingMotion;
 import io.github.data4all.model.drawing.MotionInterpreter;
 import io.github.data4all.model.drawing.Point;
 import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.RedoUndoV2;
-import io.github.data4all.model.drawing.RedoUndoV2.UndoRedoListener;
+import io.github.data4all.model.drawing.RedoUndo;
+import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
@@ -39,7 +39,6 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 /**
  * This TouchView listen to MotionEvents from the user, saves them into
@@ -105,7 +104,7 @@ public class TouchView extends View {
 	/**
 	 * The current used RedoUndo object
 	 */
-	private RedoUndoV2 redoUndo;
+	private RedoUndo redoUndo;
 
 	/**
 	 * The current used RedoUndo listener.
@@ -125,6 +124,7 @@ public class TouchView extends View {
 
 	private PointMover mover;
 	private Point startPoint = null;
+	private Point point;
 
 	/**
 	 * Simple constructor to use when creating a view from code.
@@ -186,7 +186,7 @@ public class TouchView extends View {
 	public void clearMotions() {
 		if (polygon != null) {
 			polygon.clear();
-			redoUndo = new RedoUndoV2();
+			redoUndo = new RedoUndo();
 			this.undoUseable();
 			this.redoUseable();
 		}
@@ -207,7 +207,7 @@ public class TouchView extends View {
 		areaPaint.setColor(MotionInterpreter.AREA_COLOR);
 		areaPaint.setStyle(Paint.Style.FILL);
 		areaPaint.setAlpha(100);
-		redoUndo = new RedoUndoV2();
+		redoUndo = new RedoUndo();
 	}
 
 	/*
@@ -262,8 +262,8 @@ public class TouchView extends View {
 			break;
 		case MotionEvent.ACTION_UP:
 			handleMotion(event, "end");
+			redoUndo.setList(newPolygon);
 			polygon = newPolygon;
-			redoUndo = new RedoUndoV2(polygon);
 			undoUseable();
 			redoUseable();
 			isPoint = false;
@@ -307,42 +307,93 @@ public class TouchView extends View {
 	 * @param action
 	 *            the named action which is in progress
 	 */
-	private void handleMotion(MotionEvent event, String action) {
+	private void OLDhandleMotion(MotionEvent event, String action) {
 		if (currentMotion != null) {
-			Point point = lookUp(event.getX(), event.getY(), 50);
-			if (action.equals("start") && point != null) {
-				mover = movePoint(point);
-				startPoint = point;
-				mLongPressed = createRunnable(mover);
-				handler.postDelayed(mLongPressed, 500);
+			if (action.equals("start")){
+			
+			}
+			 if(point != null) {
+				
 			} else {
 				if (action.equals("move") && mover != null) {
-					mover.moveTo(event.getX(), event.getY());
+					
 				} else {
 					currentMotion.addPoint(event.getX(), event.getY());
-					if (action.equals("end") && mover != null) {
+					if (action.equals("end")) {
+						if(mover != null){
 						currentMotion = new DrawingMotion();
-						mover = null;
+						
+						
 						Log.d(this.getClass().getSimpleName(),
 								"Differenz X:"
 										+ Math.abs(startPoint.getX()
-												- point.getX())
+												- event.getX())
 										+ " Differnze Y:"
 										+ Math.abs(startPoint.getY()
-												- point.getY()));
-						if (Math.abs(startPoint.getX() - point.getX()) > 10
-								&& Math.abs(startPoint.getY() - point.getY()) > 10) {
+												- event.getY()));
+						if (Math.abs(startPoint.getX() - event.getX()) > 10
+								&& Math.abs(startPoint.getY() - event.getY()) > 10) {
 							Log.d("", "Long Press cancled");
 							handler.removeCallbacks(mLongPressed);
-						}
+						}}
 					}
 				}
 				isPoint = false;
-				newPolygon = interpreter.interprete(polygon, currentMotion);
+				
+				
 				Log.d(this.getClass().getSimpleName(), "Motion " + action
 						+ ": " + currentMotion.getPathSize() + ", point: "
 						+ currentMotion.isPoint());
 			}
+		}
+	}
+	
+	/**
+	 * Handles the given motion:<br/>
+	 * Add the point to the current motion<br/>
+	 * Logs the motion<br/>
+	 * Apple to move and delete points in the motion<br/>
+	 * Causes the view to redraw itself afterwards
+	 * 
+	 * @param event
+	 *            The touch event
+	 * @param action
+	 *            the named action which is in progress
+	 */
+	private void handleMotion(MotionEvent event, String action) {
+		if (currentMotion != null) {
+			if(action.equals("start")){
+				point = lookUp(event.getX(), event.getY(), 50);
+				if(point != null){
+					mover = movePoint(point);
+					startPoint = point;
+					point = null;
+					mLongPressed = createRunnable(mover);
+					handler.postDelayed(mLongPressed, 500);
+				}else{
+				currentMotion.addPoint(event.getX(), event.getY());
+				}
+			} else if(action.equals("move")){
+				if(mover!=null){
+					mover.moveTo(event.getX(), event.getY());
+					if (Math.abs(startPoint.getX() - event.getX()) > 10
+							&& Math.abs(startPoint.getY() - event.getY()) > 10) {
+						Log.d("", "Long Press cancled");
+						handler.removeCallbacks(mLongPressed);
+					}
+				}else{
+				currentMotion.addPoint(event.getX(), event.getY());
+				}
+			} else if(action.equals("end")){
+				if(mover!=null){
+					redoUndo.add(startPoint, "MOVE_FROM", mover.getIdx());
+					redoUndo.add(polygon.get(mover.getIdx()), "MOVE_TO", mover.getIdx());
+					mover = null;
+				}
+			} else {
+				Log.e(this.getClass().getSimpleName(), "ERROR, No action Found for: " + action);
+			}
+			newPolygon = interpreter.interprete(polygon, currentMotion);
 		}
 	}
 
@@ -480,6 +531,7 @@ public class TouchView extends View {
 	 */
 	public void undo() {
 		String action = redoUndo.getAction();
+		
 		if(action.equals("ADD")){
 			newPolygon.remove(redoUndo.undo());
 		}
@@ -625,6 +677,15 @@ public class TouchView extends View {
 		 */
 		public float getY() {
 			return polygon.get(idx).getY();
+		}
+		
+		/**
+		 * return the location in the polygon of the current moved point
+		 * @return
+		 * location of the point
+		 */
+		public int getIdx(){
+			return this.idx;
 		}
 	}
 }

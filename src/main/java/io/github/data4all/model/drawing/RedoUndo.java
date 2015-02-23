@@ -18,6 +18,7 @@ package io.github.data4all.model.drawing;
 import io.github.data4all.logger.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,10 +31,20 @@ import java.util.List;
 public class RedoUndo {
 
 	/**
-	 * List of all added Points.
+	 * List of all deleted Points.
 	 */
 	private List<Point> motions;
-
+	
+	/**
+	 * List of the action
+	 */
+	private List<String> actions;
+	
+	/**
+	 * List if the location in polygon
+	 */
+	private List<Integer> locations;
+	
 	/**
 	 * length of the list.
 	 */
@@ -49,10 +60,12 @@ public class RedoUndo {
 	 */
 	public RedoUndo() {
 		motions = new ArrayList<Point>();
+		actions = new ArrayList<String>();
+		locations = new ArrayList<Integer>();
 		maxCount = 0;
 		currentCount = 0;
 	}
-
+	
 	/**
 	 * Constructor for using a already created list.
 	 * 
@@ -62,11 +75,20 @@ public class RedoUndo {
 	public RedoUndo(List<Point> points) {
 		if (motions == null) {
 			if (points != null) {
-				motions = points;
+				motions = new ArrayList<Point>();
+				actions = new ArrayList<String>();
+				locations = new ArrayList<Integer>();
 				maxCount = points.size();
 				currentCount = points.size();
+				for(int i = 0 ;i < maxCount;i++){
+					motions.add(points.get(i));
+					actions.add("ADD");
+					locations.add(i);
+				}
 			} else {
 				motions = new ArrayList<Point>();
+				actions = new ArrayList<String>();
+				locations = new ArrayList<Integer>();
 				maxCount = 0;
 				currentCount = 0;
 			}
@@ -83,7 +105,7 @@ public class RedoUndo {
 	 * @param point
 	 *            Point to add
 	 */
-	public void add(Point point) {
+	public void add(Point point,String action,int location) {
 		Log.d(this.getClass().getSimpleName(), "ADD: " + currentCount + ":"
 				+ maxCount);
 		if (maxCount == currentCount) {
@@ -92,19 +114,22 @@ public class RedoUndo {
 		} else {
 			for (int i = currentCount; i <= maxCount; i++) {
 				motions.remove(i);
+				actions.remove(i);
+				locations.remove(i);
 			}
 			currentCount++;
 			maxCount = currentCount;
 		}
 		motions.add(point);
+		actions.add(action);
+		locations.add(location);
 	}
-
-	private void setList(List<Point> newPoly) {
+	
+	public void setList(List<Point> newPoly) {
 		for (Point p : newPoly) {
-			motions.clear();
 			Log.d(this.getClass().getSimpleName(),
 					"motions size" + motions.size());
-			this.add(p);
+			this.add(p,"ADD",maxCount);
 		}
 	}
 
@@ -114,18 +139,14 @@ public class RedoUndo {
 	 * @return 
 	 * 		new list with one step less
 	 */
-	public List<Point> undo() {
+	public Point undo() {
+		currentCount--;
 		Log.d(this.getClass().getSimpleName(), "UNDO: " + currentCount + ":"
-				+ maxCount);
+				+ maxCount + ":" + locations.get(currentCount) + "actionsize:" + actions.size() + "motionsize" + motions.size());
 		if (currentCount != 0 && currentCount <= maxCount) {
-			currentCount--;
-			final List<Point> relist = new ArrayList<Point>();
-			for (int i = 0; i < currentCount; i++) {
-				relist.add(motions.get(i));
-			}
-			return relist;
+			return motions.get(currentCount);
 		}
-		return motions;
+		return null;
 	}
 
 	/**
@@ -134,20 +155,30 @@ public class RedoUndo {
 	 * @return 
 	 * 		new list with one step more
 	 */
-	public List<Point> redo() {
+	public Point redo() {
 		Log.d(this.getClass().getSimpleName(), "REDO: " + currentCount + ":"
-				+ maxCount);
-		if (currentCount < maxCount) {
-			currentCount++;
-			final List<Point> relist = new ArrayList<Point>();
-			for (int i = 0; i < currentCount; i++) {
-				relist.add(motions.get(i));
-			}
-			return relist;
+				+ maxCount + ":" + locations.get(currentCount) + "actionsize:" + actions.size() + "motionsize" + motions.size());
+		if (currentCount != maxCount) {
+			return motions.get(currentCount++);
 		}
-		return motions;
+		return null;
 	}
-
+	
+	/**
+	 * Return a string with contains the current action
+	 * @return
+	 *  a action-string
+	 */
+	public String getAction(){
+		return actions.get(currentCount-1);
+	}
+	
+	/**
+	 * Get the location of a point
+	 */
+	public int getLocation(){
+		return locations.get(currentCount-1);
+	}
 	/**
 	 * Getter for the current step.
 	 * 
