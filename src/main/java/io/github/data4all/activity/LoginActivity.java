@@ -140,10 +140,10 @@ public class LoginActivity extends AbstractActivity {
 
             if (TextUtils.isEmpty(username)) {
                 osmName.requestFocus();
-                osmName.setError(getString(R.string.login_alertdialog_nousername));
+                osmName.setError(getString(R.string.login_username_empty));
             } else if (TextUtils.isEmpty(password)) {
                 osmPass.requestFocus();
-                osmPass.setError(getString(R.string.login_alertdialog_nopassword));
+                osmPass.setError(getString(R.string.login_password_empty));
             } else if (!NetworkState.isNetworkAvailable(this)) {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.login_alertdialog_nonetwork_title)
@@ -207,8 +207,8 @@ public class LoginActivity extends AbstractActivity {
             } catch (OsmLoginFailedException e) {
                 Log.e(TAG, "Login to osm failed:", e);
                 this.showDialog(
-                        getString(R.string.login_alertdialog_accessdenied_title),
-                        getString(R.string.login_alertdialog_accessdenied_message));
+                        getString(R.string.login_access_dialog_title),
+                        getString(R.string.login_access_dialog_mes));
             } catch (OsmOAuthAuthorizationException e) {
                 Log.e(TAG, "Osm OAuth failed:", e);
                 this.showDialog(getString(R.string.login_alertdialog_error),

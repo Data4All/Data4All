@@ -42,31 +42,28 @@
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-
-    
     <string name="resultViewAlertDialogMessage">Upload now?</string>
     <string name="ok">Ok</string>
     <string name="noCamSupported">Sorry Your device does not support camera</string>
-
     <string name="redo">Redo Function</string>
     <string name="undo">Undo Function</string>
     <string name="SelectTag">Select Tag</string>
     <string name="AddAddress">Add Address</string>
     <string name="AddContact">Add Contact</string>
-    
+
     <!-- Login Activity Strings -->
     <string name="login_logo_description">OSM Logo</string>
     <string name="login_text">Login to OpenStreetMap</string>
     <string name="login_hint_username">Username</string>
     <string name="login_hint_password">Password</string>
-	<string name="login_button">Login</string>
-	<string name="login_button_registration">Register</string>
+    <string name="login_button">Login</string>
+    <string name="login_button_registration">Register</string>
     <string name="login_alertdialog_nonetwork_title">Network unavailable</string>
     <string name="login_alertdialog_nonetwork_message">Please connect your device to the internet.</string>
-    <string name="login_alertdialog_accessdenied_title">Access denied</string>
-	<string name="login_alertdialog_accessdenied_message">Username or Password may be incorrect.</string>
-	<string name="login_alertdialog_error">Error</string>
-	<string name="login_alertdialog_nousername">Username is empty</string>
-	<string name="login_alertdialog_nopassword">Password is empty</string>
-    
+    <string name="login_alertdialog_error">Error</string>
+    <string name="login_username_empty">Username is empty</string>
+    <string name="login_password_empty">Password is empty</string>
+    <string name="login_access_dialog_title">Authentification error</string>
+    <string name="login_access_dialog_mes">Username or Password may be incorrect</string>
+
 </resources>
