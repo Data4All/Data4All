@@ -26,12 +26,10 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.AttributeSet;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 /**
  * PreviewClass for camera.
@@ -64,8 +62,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     public static int containerWidth = 0;
     public static int containerHeight = 0;
 
-    private Context context;
-
     private int mPreviewWidth;
 
     private int mPreviewHeight;
@@ -83,7 +79,6 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     public CameraPreview(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.init(context);
-
     }
 
     /**
@@ -98,12 +93,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
     }
 
     private void init(Context context) {
-
         final SurfaceView mSurfaceView = new SurfaceView(context);
         addView(mSurfaceView);
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
-        this.context = context;
     }
 
     @Override
@@ -271,7 +264,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         } else { // back-facing
             rotation = info.orientation;
         }
-        
+
         Log.v("CAM_ORIENTATION", "" + info.orientation);
 
         mCamera.setDisplayOrientation(rotation);

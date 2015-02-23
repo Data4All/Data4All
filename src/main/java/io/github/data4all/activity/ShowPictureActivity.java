@@ -52,7 +52,10 @@ import android.widget.ImageView;
 /**
  * Activity to set a ImageView and use the TouchView to draw.<br\>
  * 
+ * @version 1.1
+ * 
  * @author vkochno
+ * @author tbrose (v 1.1)
  */
 public class ShowPictureActivity extends AbstractActivity {
 
@@ -92,7 +95,9 @@ public class ShowPictureActivity extends AbstractActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().getDecorView().setSystemUiVisibility(getFlags());
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
         setContentView(R.layout.activity_picture);
 
@@ -171,18 +176,8 @@ public class ShowPictureActivity extends AbstractActivity {
 
         listener = new ButtonRotationListener(this, buttons);
 
-        CameraActivity.addNavBarMargin(getResources(),
+        AbstractActivity.addNavBarMargin(getResources(),
                 findViewById(R.id.layout_choose_interpreter));
-    }
-
-    @SuppressLint("InlinedApi")
-    private int getFlags() {
-        int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            flags |= 4096;
-        }
-        return flags;
     }
 
     @Override
@@ -323,7 +318,6 @@ public class ShowPictureActivity extends AbstractActivity {
     private Bitmap scaleAndRotate(Bitmap bitmap) {
         Matrix matrix = new Matrix();
         double scrAR = getScreenRation();
-        double picAR;
 
         // Setup the default 'createBitmap' parameters
         int height = bitmap.getHeight();
@@ -336,7 +330,7 @@ public class ShowPictureActivity extends AbstractActivity {
 
         if (height < width) {
             matrix.postRotate(90);
-            picAR = width / height;
+            double picAR = width / height;
 
             if (scrAR - picAR > 0.1) {
                 // Reduce the height of the image
@@ -350,7 +344,7 @@ public class ShowPictureActivity extends AbstractActivity {
                 width = newWidth;
             }
         } else {
-            picAR = height / width;
+            double picAR = height / width;
 
             if (scrAR - picAR > 0.1) {
                 // Reduce the width of the image

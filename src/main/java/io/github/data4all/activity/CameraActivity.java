@@ -29,19 +29,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ShutterCallback;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -96,7 +92,9 @@ public class CameraActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        getWindow().getDecorView().setSystemUiVisibility(getFlags());
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
         setContentView(R.layout.activity_camera);
 
@@ -116,46 +114,7 @@ public class CameraActivity extends Activity {
                 vibrator.vibrate(200);
             }
         };
-        addNavBarMargin(getResources(), btnCapture);
-    }
-
-    @SuppressLint("InlinedApi")
-    private int getFlags() {
-        int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-        return flags;
-    }
-
-    public static void addNavBarMargin(Resources resources, View view) {
-        if (resources != null) {
-            boolean hasBar = hasNavBar(resources);
-            Log.v("HAS_NAVBAR", "" + hasBar);
-            if (view != null && hasBar) {
-                LayoutParams lp = view.getLayoutParams();
-                if (lp instanceof MarginLayoutParams) {
-                    MarginLayoutParams mlp = (MarginLayoutParams) lp;
-                    mlp.setMargins(0, 0, 0, getNavBarHeight(resources));
-                }
-            }
-        }
-    }
-
-    public static boolean hasNavBar(Resources resources) {
-        int id = resources.getIdentifier("config_showNavigationBar", "bool",
-                "android");
-        if (id > 0)
-            return resources.getBoolean(id);
-        else
-            return false;
-    }
-
-    public static int getNavBarHeight(Resources resources) {
-        int id = resources.getIdentifier("navigation_bar_height", "dimen",
-                "android");
-        if (id > 0) {
-            return resources.getDimensionPixelSize(id);
-        }
-        return 0;
+        AbstractActivity.addNavBarMargin(getResources(), btnCapture);
     }
 
     @Override
