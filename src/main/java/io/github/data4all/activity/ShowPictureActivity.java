@@ -169,6 +169,9 @@ public class ShowPictureActivity extends AbstractActivity {
         buttons.add(findViewById(R.id.imageButton5));
 
         listener = new ButtonRotationListener(this, buttons);
+
+        CameraActivity.addNavBarMargin(getResources(),
+                findViewById(R.id.layout_choose_interpreter));
     }
 
     @SuppressLint("InlinedApi")
@@ -303,8 +306,7 @@ public class ShowPictureActivity extends AbstractActivity {
         }
     }
 
-    private Bitmap loadFromCamera(Uri photoUri)
-            throws IOException {
+    private Bitmap loadFromCamera(Uri photoUri) throws IOException {
         AssetFileDescriptor fileDescriptor = getContentResolver()
                 .openAssetFileDescriptor(photoUri, "r");
 
@@ -319,7 +321,7 @@ public class ShowPictureActivity extends AbstractActivity {
 
     private static Bitmap scaleAndRotate(Bitmap bitmap) {
         Matrix matrix = new Matrix();
-        if(bitmap.getHeight() < bitmap.getWidth()) {
+        if (bitmap.getHeight() < bitmap.getWidth()) {
             matrix.postRotate(90);
         }
 
