@@ -39,6 +39,11 @@
     <string name="no_network_message">Bitte verbinden Sie ihr Gerät mit dem Internet</string>
 
     <!-- for login -->
+    <string name="usernameHint">Dein Benutzername</string>
+    <string name="passwordHint">Dein Passwort</string>
+    <string name="loginDescription">Login für OpenStreetMap</string>
+    <string name="loginButton">Einloggen</string>
+    <string name="osmLogo">Open-Street-Map Logo</string>
     <string name="login_username_empty">Benutzername fehlt</string>
     <string name="login_password_empty">Passwort fehlt</string>
     <string name="login_access_dialog_title">Authentifizierungsfehler</string>

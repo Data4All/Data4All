@@ -17,16 +17,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="19dp"
         android:text="@string/loginDescription"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="57dp" >
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/osm_desc"
+        android:layout_marginRight="64dp"
+        android:layout_marginTop="24dp" >
 
         <EditText
             android:id="@+id/osm_name"
@@ -38,8 +40,6 @@
             android:hint="@string/usernameHint"
             android:padding="10dp"
             android:textColorHint="#cccccc" >
-
-            <requestFocus />
         </EditText>
 
         <EditText
@@ -70,9 +70,10 @@
         android:id="@+id/osm_logo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_below="@+id/osm_desc"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="39dp"
+        android:layout_alignTop="@+id/relativeLayout1"
+        android:layout_marginRight="49dp"
+        android:layout_marginTop="25dp"
+        android:layout_toLeftOf="@+id/relativeLayout1"
         android:contentDescription="@string/osmLogo"
         android:src="@drawable/osm_logo" />
 

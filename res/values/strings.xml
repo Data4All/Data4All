@@ -39,6 +39,11 @@
     <string name="no_network_message">Please connect your device to the internet</string>
 
     <!-- for login -->
+    <string name="usernameHint">Your Username</string>
+    <string name="passwordHint">Your Password</string>
+    <string name="loginDescription">Login to OpenStreetMap</string>
+    <string name="loginButton">Sign in</string>
+    <string name="osmLogo">Open-Street-Map Logo</string>
     <string name="login_username_empty">Username is empty</string>
     <string name="login_password_empty">Password is empty</string>
     <string name="login_access_dialog_title">Authentification error</string>
@@ -57,6 +62,7 @@
 
     <!-- other -->
     <string name="noCamSupported">Sorry, your device has no supported camera</string>
-    <string name="noLocationFound">"No Location found. Turn on location service </string>
+    <string name="noLocationFound">No Location found. Turn on location service </string>
+    <string name="LoginButton">Einloggen</string>
 
 </resources>
