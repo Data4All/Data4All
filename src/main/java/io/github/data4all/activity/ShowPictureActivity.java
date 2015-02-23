@@ -38,10 +38,11 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -319,13 +320,66 @@ public class ShowPictureActivity extends AbstractActivity {
         }
     }
 
-    private static Bitmap scaleAndRotate(Bitmap bitmap) {
+    private Bitmap scaleAndRotate(Bitmap bitmap) {
         Matrix matrix = new Matrix();
-        if (bitmap.getHeight() < bitmap.getWidth()) {
+        double scrAR = getScreenRation();
+        double picAR;
+
+        // Setup the default 'createBitmap' parameters
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+        int x = 0;
+        int y = 0;
+
+        Log.v("INIT_PARAMETER", "x: " + x + " y: " + y + " h: " + height
+                + " w: " + width);
+
+        if (height < width) {
             matrix.postRotate(90);
+            picAR = width / height;
+
+            if (scrAR - picAR > 0.1) {
+                // Reduce the height of the image
+                int newHeight = (int) (width / scrAR);
+                y = (height - newHeight) / 2;
+                height = newHeight;
+            } else if (picAR - scrAR > 0.1) {
+                // Reduce the width of the image
+                int newWidth = (int) (height / scrAR);
+                x = (width - newWidth) / 2;
+                width = newWidth;
+            }
+        } else {
+            picAR = height / width;
+
+            if (scrAR - picAR > 0.1) {
+                // Reduce the width of the image
+                int newWidth = (int) (height / scrAR);
+                x = (width - newWidth) / 2;
+                width = newWidth;
+            } else if (picAR - scrAR > 0.1) {
+                // Reduce the height of the image
+                int newHeight = (int) (width / scrAR);
+                y = (height - newHeight) / 2;
+                height = newHeight;
+            }
         }
 
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                bitmap.getHeight(), matrix, true);
+        Log.v("NEW_PARAMETER", "x: " + x + " y: " + y + " h: " + height
+                + " w: " + width);
+
+        return Bitmap.createBitmap(bitmap, x, y, width, height, matrix, true);
+    }
+
+    private double getScreenRation() {
+        Display d = getWindowManager().getDefaultDisplay();
+
+        DisplayMetrics realDisplayMetrics = new DisplayMetrics();
+        d.getRealMetrics(realDisplayMetrics);
+
+        double realHeight = realDisplayMetrics.heightPixels;
+        double realWidth = realDisplayMetrics.widthPixels;
+        Log.v("REAL_DIMENSION", "h:" + realHeight + " w: " + realWidth);
+        return realHeight / realWidth;
     }
 }
