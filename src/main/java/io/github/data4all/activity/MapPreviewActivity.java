@@ -76,6 +76,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             Marker m = new Marker(mapView);
             m.setPosition(new GeoPoint(l));
             m.setIcon(new DefaultResourceProxyImpl(this).getDrawable(ResourceProxy.bitmap.person));
+            m.setInfoWindow(null);
             mapView.getOverlays().add(m);
         }
 
