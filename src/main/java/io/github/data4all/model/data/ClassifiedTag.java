@@ -16,12 +16,6 @@
 package io.github.data4all.model.data;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import java.util.List;
 
 /**
@@ -73,44 +67,6 @@ public class ClassifiedTag extends Tag {
 
   
 
-    /**
-     * @param suggestion
-     *    lastChoice is a classifiedTag
-     *    it would created, when user mapping a object which belong to the same Category
-     *    as the last object.
-     *    when lastChoice is null, then create a new classifiedTag and add the suggestion
-     *    when lastChoice is not null then update suggestion.
-     *          
-     */
-    public void addSuggestion(ClassifiedValue suggestion) {
-
-        // create a tag with this suggestion
-          ClassifiedTag lastChoice = Tags.getLastChoice();
-        if (lastChoice == null) {
-            lastChoice = new ClassifiedTag(getHintRessource(), "Last Choice", getType(),
-                    Arrays.asList(suggestion), getOsmObjects());
-            Tags.TAG_LIST.add(lastChoice);
-        } else {
-            lastChoice.setClassifiedValues(Arrays.asList(suggestion));
-            lastChoice.setType(getType());
-            lastChoice.setOsmObjects(getOsmObjects());
-
-        }
-        if ("Last Choice".equalsIgnoreCase(getKey())) {
-            lastChoice.setOriginKey(getOriginKey());
-        } else {
-            lastChoice.setOriginKey(getKey());
-        }
-
-    }
-
-    /**
-     * @return classifiedValues 
-     *                     get all classifiedValues
-     * 
-     */
-    public List<ClassifiedValue> getAllClassifiedValues() {
-        return classifiedValues;
-    }
+   
 
 }

@@ -24,7 +24,7 @@ import java.util.Arrays;
  * This class represents a predefined osm tag. The name and hint for a specific
  * tag is defined in the tag_name.xml and tag_hint.xml.
  * 
- * @author fkirchge, tbrose,Steeve
+ * @author fkirchge, tbrose
  *
  */
 public class Tag {
@@ -61,11 +61,6 @@ public class Tag {
     private int type;
 
     /**
-     * store the last Tag value e.g the last value for addr:street.  
-     */
-    private String lastValue;
-
-    /**
      * constant values to define which osmObject the tag refers to.
      */
     public static final int NODE_TAG = 1;
@@ -78,10 +73,6 @@ public class Tag {
      */
     private int[] osmObjects;
     
-    /** 
-     * store the provenance for a Key
-     */
-    private String originKey;
 
     /**
      * Constructor to create nameRessource and hintRessource from the key.
@@ -176,22 +167,7 @@ public class Tag {
     }
 
 
-    public String getOriginKey() {
-        return originKey;
-    }
     
-   
-    public void setOriginKey(String originKey) {
-        this.originKey = originKey;
-    }
-
-    public String getLastValue() {
-        return lastValue;
-    }
-
-    public void setLastValue(String lastValue) {
-        this.lastValue = lastValue;
-    }
 
 }
 

@@ -193,17 +193,4 @@ public abstract class AbstractDataElement implements Parcelable {
         }
     }
     
-    /**
-     * Adds a new tag or updates an existing tag of the element
-     * 
-     * @param key
-     * @param value
-     * @param classifiedTag
-     * 
-     * @author Steeve
-     */
-    public void addOrUpdateSuggestionTag(String key, ClassifiedValue value,
-            ClassifiedTag classifiedTag) {
-        classifiedTag.addSuggestion(value);
-    }
 }
