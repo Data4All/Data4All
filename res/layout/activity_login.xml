@@ -62,6 +62,16 @@
             android:padding="10dp"
             android:text="@string/loginButton" />
 
+    <Button
+        android:id="@+id/osm_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/osm_login"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:onClick="onClickStart"
+        android:text="@string/login_button_registration" />
+
         <Button
             android:id="@+id/osm_register"
             style="@style/DefaultButtonText"

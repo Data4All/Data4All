@@ -29,6 +29,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -43,6 +44,12 @@ import android.widget.EditText;
 public class LoginActivity extends AbstractActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
+
+    /**
+     * Url to register a new User at OSM.
+     */
+    private static final String OSM_REGISTRATION_URL =
+            "https://www.openstreetmap.org/user/new";
 
     private EditText osmName;
     private EditText osmPass;
@@ -148,6 +155,12 @@ public class LoginActivity extends AbstractActivity {
                 new Thread(new Authentisator(username, password)).start();
             }
         }
+        if (v.getId() == R.id.osm_register) {
+            final Intent intent =
+                    new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(OSM_REGISTRATION_URL));
+            startActivity(intent);
+        }
     }
 
     /**
@@ -186,17 +199,20 @@ public class LoginActivity extends AbstractActivity {
         @Override
         public void run() {
             try {
-                final User user = new OsmOAuthAuthorizationClient(
-                        OAuthParameters.CURRENT).authorise(username, password);
+                final User user =
+                        new OsmOAuthAuthorizationClient(OAuthParameters.CURRENT)
+                                .authorise(username, password);
                 LoginActivity.this.saveUser(user);
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {
                 Log.e(TAG, "Login to osm failed:", e);
                 this.showDialog(getString(R.string.login_access_dialog_title),
+
                         getString(R.string.login_access_dialog_mes));
             } catch (OsmOAuthAuthorizationException e) {
                 Log.e(TAG, "Osm OAuth failed:", e);
-                this.showDialog("Error", e.getLocalizedMessage());
+                this.showDialog(getString(R.string.login_alertdialog_error),
+                        e.getLocalizedMessage());
             } finally {
                 runOnUiThread(new Runnable() {
                     @Override
