@@ -43,6 +43,7 @@
     <string name="passwordHint">Dein Passwort</string>
     <string name="loginDescription">Login für OpenStreetMap</string>
     <string name="loginButton">Einloggen</string>
+    <string name="registerButton">Jetzt Registrieren</string>
     <string name="osmLogo">Open-Street-Map Logo</string>
     <string name="login_username_empty">Benutzername fehlt</string>
     <string name="login_password_empty">Passwort fehlt</string>

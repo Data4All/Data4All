@@ -40,9 +40,11 @@
 
     <!-- for login -->
     <string name="usernameHint">Your Username</string>
+    <string name="or">Or</string>
     <string name="passwordHint">Your Password</string>
     <string name="loginDescription">Login to OpenStreetMap</string>
     <string name="loginButton">Sign in</string>
+     <string name="registerButton">register now</string>
     <string name="osmLogo">Open-Street-Map Logo</string>
     <string name="login_username_empty">Username is empty</string>
     <string name="login_password_empty">Password is empty</string>

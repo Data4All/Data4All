@@ -24,9 +24,9 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/osm_logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="57dp" >
+        android:layout_marginTop="22dp" >
 
         <EditText
             android:id="@+id/osm_name"
@@ -37,10 +37,7 @@
             android:ems="10"
             android:hint="@string/usernameHint"
             android:padding="10dp"
-            android:textColorHint="#cccccc" >
-
-            <requestFocus />
-        </EditText>
+            android:textColorHint="#cccccc" />
 
         <EditText
             android:id="@+id/osm_pass"
@@ -64,6 +61,18 @@
             android:background="@drawable/login_button_bg"
             android:padding="10dp"
             android:text="@string/loginButton" />
+
+        <Button
+            android:id="@+id/osm_register"
+            style="@style/DefaultButtonText"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/osm_login"
+            android:background="@drawable/register_button_bg"
+            android:textColor="#ffffff"
+            android:padding="10dp"
+            android:text="@string/registerButton" />
+
     </RelativeLayout>
 
     <ImageView
@@ -72,7 +81,6 @@
         android:layout_height="100dp"
         android:layout_below="@+id/osm_desc"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="39dp"
         android:contentDescription="@string/osmLogo"
         android:src="@drawable/osm_logo" />
 
