@@ -25,7 +25,6 @@ import java.util.Map;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -86,8 +85,15 @@ public class DataBaseHandlerTest {
                 .getOauthTokenSecret());
 
         dbHandler.deleteUser(user1);
-        dbHandler.deleteUser(user2);
 
+        assertEquals(1, dbHandler.getUserCount());
+        
+        dbHandler.createUser(user1);
+        
+        assertEquals(2, dbHandler.getUserCount());
+        
+        dbHandler.deleteAllUser();
+        
         assertEquals(0, dbHandler.getUserCount());
         
     }
@@ -120,9 +126,15 @@ public class DataBaseHandlerTest {
         assertEquals(42.869686, dbHandler.getNode(3).getLon(), 0.0);
 
         dbHandler.deleteNode(node1);
-        dbHandler.deleteNode(node2);
-        dbHandler.deleteNode(node3);
 
+        assertEquals(2, dbHandler.getNodeCount());
+        
+        dbHandler.createNode(node1);
+        
+        assertEquals(3, dbHandler.getNodeCount());
+        
+        dbHandler.deleteAllNode();
+        
         assertEquals(0, dbHandler.getNodeCount());
     }
 
@@ -171,11 +183,19 @@ public class DataBaseHandlerTest {
                 .getType());
 
         dbHandler.deletePolyElement(polyElement1);
-        dbHandler.deletePolyElement(polyElement2);
-        dbHandler.deletePolyElement(polyElement3);
 
+        assertEquals(2, dbHandler.getPolyElementCount());
+        assertEquals(4, dbHandler.getNodeCount());
+        
+        dbHandler.createPolyElement(polyElement1);
+        
+        assertEquals(3, dbHandler.getPolyElementCount());
+        assertEquals(6, dbHandler.getNodeCount());
+        
+        dbHandler.deleteAllPolyElements();
+        
         assertEquals(0, dbHandler.getPolyElementCount());
-        assertEquals(0, dbHandler.getNodeCount());
+        //TODO: delete ONLY the corresponding nodes
 
     }
 
@@ -220,12 +240,22 @@ public class DataBaseHandlerTest {
         assertEquals(PolyElementType.AREA, returnedPE.getType());
         assertEquals(42.1234567, returnedN.getLon(), 0.0);
 
-        dbHandler.deleteDataElement(polyElement1);
         dbHandler.deleteDataElement(node1);
 
-        assertEquals(0, dbHandler.getDataElementCount());
-        assertEquals(0, dbHandler.getPolyElementCount());
+        assertEquals(1, dbHandler.getDataElementCount());
+        assertEquals(1, dbHandler.getPolyElementCount());
         assertEquals(0, dbHandler.getNodeCount());
+        
+        dbHandler.createDataElement(node1);
+        
+        assertEquals(2, dbHandler.getDataElementCount());
+        assertEquals(1, dbHandler.getPolyElementCount());
+        assertEquals(1, dbHandler.getNodeCount());
+        
+        dbHandler.deleteAllDataElements();
+        
+        assertEquals(0, dbHandler.getDataElementCount());
+        // TODO: delete ONLY the corresponding PolyElements / Nodes / TagMaps
 
     }
 
@@ -263,6 +293,14 @@ public class DataBaseHandlerTest {
 
         dbHandler.deleteTagMap(tagIDs);
 
+        assertEquals(0, dbHandler.getTagMapCount());
+        
+        dbHandler.createTagMap(tagMap);
+        
+        assertEquals(3, dbHandler.getTagMapCount());
+        
+        dbHandler.deleteAllTagMap();
+        
         assertEquals(0, dbHandler.getTagMapCount());
     }
 
@@ -310,13 +348,17 @@ public class DataBaseHandlerTest {
         assertEquals(3, dbHandler.getTrackPointCount());
 
         timestamps.remove(2);
+        timestamps.remove(1);
         dbHandler.deleteTrackPoints(timestamps);
 
-        assertEquals(1, dbHandler.getTrackPointCount());
+        assertEquals(2, dbHandler.getTrackPointCount());
+        
+        dbHandler.deleteAllTrackPoints();
+        
+        assertEquals(0, dbHandler.getTrackPointCount());
     }
 
     @Test
-    // @Ignore
     public void testTrackCRUD() throws JSONException {
         Location loc1 = new Location("User");
         loc1.setAltitude(10.10);
