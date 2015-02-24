@@ -56,6 +56,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -169,6 +170,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
      * 
      */
     private void createAlertDialogValue() {
+
         array = Tagging.ClassifiedValueList(tagMap.get(key)
                 .getClassifiedValues(), res);
         final Map<String, ClassifiedValue> classifiedMap = Tagging
@@ -304,6 +306,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         dialog1.setTitle(title);
         final LinearLayout layout = (LinearLayout) dialog1
                 .findViewById(R.id.dialogDynamic);
+        Log.i(TAG, "layout " + layout);
         final Button next = new Button(this);
         final Button finish = new Button(this);
         next.setText(R.string.next);
@@ -362,7 +365,16 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
         dialog1.show();
     }
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    };
+    
+    
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    	super.onRestoreInstanceState(savedInstanceState);
+    };
+    
     @Override
     public void finish() {
         element.setTags(map);
