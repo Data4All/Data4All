@@ -24,7 +24,6 @@ import org.osmdroid.util.GeoPoint;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
 import android.location.Location;

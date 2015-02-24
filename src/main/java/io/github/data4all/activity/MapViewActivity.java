@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.compass.CompassOverlay;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -149,6 +150,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
+
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
