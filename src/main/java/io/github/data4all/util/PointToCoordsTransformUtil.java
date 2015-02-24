@@ -228,12 +228,9 @@ public class PointToCoordsTransformUtil {
      */
     public double calculateAngleFromPixel(double pixel, double axis,
             double maxAngle) {
-        if ((pixel - (axis / 2)) == 0) {
-            return 0;
-        }
-        final double percent = (2 * pixel - axis) / axis;
-        final double z = Math.sin(maxAngle / 2);
-        return Math.asin(z * percent);
+        final double adjacent = (axis / 2) / Math.tan(maxAngle / 2);
+        final double opposite = pixel - (axis / 2);
+        return Math.atan(opposite / adjacent);
     }
 
     /**
