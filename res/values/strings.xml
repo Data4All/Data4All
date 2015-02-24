@@ -39,9 +39,9 @@
     <string name="no_network_message">Please connect your device to the internet</string>
 
     <!-- Login Activity Strings -->
-    <string name="usernameHint">Your Username</string>
+    <string name="usernameHint">username</string>
     <string name="or">Or</string>
-    <string name="passwordHint">Your Password</string>
+    <string name="passwordHint">password</string>
     <string name="loginDescription">Login to OpenStreetMap</string>
     <string name="loginButton">Sign in</string>
     <string name="registerButton">register now</string>

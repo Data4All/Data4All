@@ -58,6 +58,7 @@
             android:layout_width="220dp"
             android:layout_height="50dp"
             android:layout_below="@+id/osm_pass"
+            android:onClick="onClickStart"
             android:background="@drawable/login_button_bg"
             android:padding="10dp"
             android:text="@string/loginButton" />
