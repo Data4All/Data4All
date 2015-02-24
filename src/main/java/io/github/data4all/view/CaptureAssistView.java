@@ -28,8 +28,8 @@ import android.view.View;
 /**
  * AssistView is a helper class to display the optimal picture shooting angle.
  * 
- * This class is drawing red lines into the {@link CameraPreview} and
- * shows unsuitable angles for taking a photo.
+ * This class is drawing red lines into the {@link CameraPreview} and shows
+ * unsuitable angles for taking a photo.
  * 
  * @author Andre Koch
  * @CreationDate 12.02.2015
@@ -40,48 +40,56 @@ import android.view.View;
 
 public class CaptureAssistView extends View {
 
-	private int previewWidth;
-	private double percentage;
+    private double percentage;
 
-	private Paint cameraCrossPaint;
-	private Paint cameraStopPaint;
-	private Paint invalidRegionPaint;
+    private static final String TAG = CaptureAssistView.class.getSimpleName();
 
-	private static final String TAG = CaptureAssistView.class.getSimpleName();
+    /**
+     * 
+     * @param context
+     */
+    public CaptureAssistView(Context context) {
+        super(context);
+        this.initView();
+    }
 
-	public CaptureAssistView(Context context) {
-		super(context);
-		initView();
-	}
+    /**
+     * 
+     * @param context
+     * @param attrs
+     */
+    public CaptureAssistView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        this.initView();
+    }
 
-	public CaptureAssistView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		initView();
-	}
+    /**
+     * 
+     * @param context
+     * @param attrs
+     * @param defStyle
+     */
+    public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        this.initView();
+    }
 
-	public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		initView();
-	}
+    private void initView() {
+        Log.i(TAG, "init View is called");
 
-	private void initView() {
-		Log.i(TAG, "init View is called");
-		
-	}
+    }
 
-	public void setInvalidRegion(double _precentage) {
-		Log.i(TAG, "setInvalidRegion is called");
-		this.percentage = _precentage;
-		Log.i(TAG, "percentage:"+this.percentage);
-	}
+    public void setInvalidRegion(double _precentage) {
+        Log.i(TAG, "setInvalidRegion is called");
+        this.percentage = _precentage;
+        Log.i(TAG, "percentage:" + this.percentage);
+    }
 
-	
-	@Override
-	protected void onDraw(Canvas canvas) {
-		Log.i(TAG, "onDraw is called");
-		
+    @Override
+    protected void onDraw(Canvas canvas) {
+        Log.i(TAG, "onDraw is called");
 
-		//canvas.restore();
+        // canvas.restore();
 
-	}
+    }
 }

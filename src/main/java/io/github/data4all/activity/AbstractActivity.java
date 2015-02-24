@@ -16,11 +16,16 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 
 /**
  * global activity for all children activities.
@@ -49,7 +54,7 @@ public abstract class AbstractActivity extends Activity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    /*                                           
+    /*
      * (non-Javadoc)
      * 
      * @see android.app.Activity#onOptionsItemSelected(android.view.Menu)
@@ -89,5 +94,68 @@ public abstract class AbstractActivity extends Activity {
 
         return status;
 
+    }
+
+    /**
+     * Applies a bottom margin to the given view if the device have a
+     * navigationbar. The margin to set is the height of the navigationbar.
+     * 
+     * @param resources
+     *            The resources to lookup the navigationbar height from
+     * @param view
+     *            The view to set the bottom margin from
+     * 
+     * @author tbrose
+     */
+    public static void addNavBarMargin(Resources resources, View view) {
+        if (resources != null) {
+            boolean hasBar = AbstractActivity.hasNavBar(resources);
+            Log.v("HAS_NAVBAR", "" + hasBar);
+            if (view != null && hasBar) {
+                LayoutParams lp = view.getLayoutParams();
+                if (lp instanceof MarginLayoutParams) {
+                    MarginLayoutParams mlp = (MarginLayoutParams) lp;
+                    mlp.setMargins(0, 0, 0,
+                            AbstractActivity.getNavBarHeight(resources));
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns if the device uses the navigationbar.
+     * 
+     * @param resources
+     *            The resources to lookup if navigationbar is shown
+     * @return if the device uses the navigationbar
+     * 
+     * @author tbrose
+     */
+    public static boolean hasNavBar(Resources resources) {
+        int id = resources.getIdentifier("config_showNavigationBar", "bool",
+                "android");
+        if (id > 0)
+            return resources.getBoolean(id);
+        else
+            return false;
+    }
+
+    /**
+     * Returns the height of the navigationbar. This can be non-zero even if the
+     * device does not use the navigationbar.
+     * 
+     * @param resources
+     *            The resources to lookup the navigationbar height from
+     * @return The height of the navigationbar
+     * 
+     * @author tbrose
+     */
+    public static int getNavBarHeight(Resources resources) {
+        int id = resources.getIdentifier("navigation_bar_height", "dimen",
+                "android");
+        if (id > 0) {
+            return resources.getDimensionPixelSize(id);
+        }
+        return 0;
     }
 }

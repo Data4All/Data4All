@@ -105,6 +105,11 @@ public class PointToCoordsTransformUtil {
                         + Math.toDegrees(deviceOrientation.getAzimuth())
                         + " ; " + Math.toDegrees(deviceOrientation.getPitch())
                         + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
+        Log.d(TAG,
+                "TPS-DATA Max-Camera-Pitch-Angle: "
+                        + tps.getCameraMaxPitchAngle()
+                        + " Max-camera-Rotation-Angle: "
+                        + tps.getCameraMaxRotationAngle());
 
         // get the set height
         this.height = tps.getHeight();
@@ -151,14 +156,12 @@ public class PointToCoordsTransformUtil {
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
         final double pixelpitch = this.calculateAngleFromPixel(point.getX(),
-                xAxis, tps.getCameraMaxPitchAngle());
+                xAxis, tps.getCameraMaxRotationAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll = -this.calculateAngleFromPixel(point.getY(),
-                yAxis, tps.getCameraMaxRotationAngle());
+                yAxis, tps.getCameraMaxPitchAngle());
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
-
-        Log.i(TAG, "Punkt: " + point.getX() + " , " + point.getY());
 
         final double[] vector = new double[3];
         // without any rotation (faced to the ground and the north)
@@ -225,12 +228,9 @@ public class PointToCoordsTransformUtil {
      */
     public double calculateAngleFromPixel(double pixel, double axis,
             double maxAngle) {
-        if ((pixel - (axis / 2)) == 0) {
-            return 0;
-        }
-        final double percent = (2 * pixel - axis) / axis;
-        final double z = Math.sin(maxAngle / 2);
-        return Math.asin(z * percent);
+        final double adjacent = (axis / 2) / Math.tan(maxAngle / 2);
+        final double opposite = pixel - (axis / 2);
+        return Math.atan(opposite / adjacent);
     }
 
     /**

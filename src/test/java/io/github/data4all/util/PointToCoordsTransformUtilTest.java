@@ -123,6 +123,17 @@ public class PointToCoordsTransformUtilTest {
      */
     @Test
     public void calculateAngleFromPixelTest() {
+
+        ArrayList<Double> blub = new ArrayList<Double>();
+        double check = 0;
+        for(int i = 500; i >= 0 ; i = i - 10){
+            double x = Math.toDegrees(util.calculateAngleFromPixel(i, 1000, Math.toRadians(60)));
+            blub.add(x-check);
+            check = x;
+            
+        }
+        double test =  Math.toDegrees(util.calculateAngleFromPixel(1000, 1000, Math.toRadians(60)));
+        
         double angle = util.calculateAngleFromPixel(500, 1000, 40);
         assertThat(angle, is(0.0));
 
