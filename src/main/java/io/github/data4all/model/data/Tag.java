@@ -61,6 +61,11 @@ public class Tag {
     private int type;
 
     /**
+     * store the last Tag value e.g the last value for addr:street.  
+     */
+    private String lastValue;
+
+    /**
      * constant values to define which osmObject the tag refers to.
      */
     public static final int NODE_TAG = 1;
@@ -164,6 +169,14 @@ public class Tag {
         return "key: " + key + " nameRessource: " + nameRessource
                 + " hintRessource: " + hintRessource + " osmObjects: "
                 + "type:" + type + Arrays.toString(osmObjects);
+    }
+
+    public String getLastValue() {
+        return lastValue;
+    }
+
+    public void setLastValue(String lastValue) {
+        this.lastValue = lastValue;
     }
 
 
