@@ -72,5 +72,6 @@
     <!-- other -->
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
+    <string name="retry">Keinen passenden Tag gefunden. Veruschen sie es nochmal.</string>
 
 </resources>
