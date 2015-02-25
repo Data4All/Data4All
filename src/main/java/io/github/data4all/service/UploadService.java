@@ -36,7 +36,13 @@ import android.os.ResultReceiver;
  * @author tbrose
  */
 public class UploadService extends IntentService {
-    
+
+    /**
+     * The comment for the changeset to open.
+     */
+    private static final String CHANGESET_COMMENT =
+            "User-triggered upload via App";
+
     /**
      * Logger.
      */
@@ -124,51 +130,38 @@ public class UploadService extends IntentService {
      */
     private void uploadElems(final ResultReceiver receiver, final User user) {
         try {
-            // Request the changesetId
-            final CloseableRequest request =
-                    ChangesetUtil.requestId(user,
-                            "User-triggered upload via App");
-            this.currentConnection = request;
-            final int requestId = request.request();
-
-            if (stopNext) {
-                stopNext = false;
-                return;
+            int requestId = 0;
+            if (!stopNext) {
+                // Request the changesetId
+                final CloseableRequest request =
+                        ChangesetUtil.requestId(user, CHANGESET_COMMENT);
+                this.currentConnection = request;
+                requestId = request.request();
             }
 
-            final String changesetXml =
-                    ChangesetUtil.getChangesetXml(this, requestId);
-
-            if (stopNext) {
-                stopNext = false;
-                return;
+            String changesetXml = null;
+            if (!stopNext) {
+                changesetXml = ChangesetUtil.getChangesetXml(this, requestId);
             }
-
-            // Upload the changeset
-            send(receiver, MAX_PROGRESS, changesetXml.length());
-            final CloseableUpload upload =
-                    ChangesetUtil.upload(user, requestId, changesetXml,
-                            new MyCallback(receiver));
-            this.currentConnection = upload;
-            upload.upload();
-
-            if (stopNext) {
-                stopNext = false;
-                return;
+            if (!stopNext) {
+                // Upload the changeset
+                send(receiver, MAX_PROGRESS, changesetXml.length());
+                final CloseableUpload upload =
+                        ChangesetUtil.upload(user, requestId, changesetXml,
+                                new MyCallback(receiver));
+                this.currentConnection = upload;
+                upload.upload();
             }
-
-            // Close the changeset
-            final CloseableCloseRequest closeId =
-                    ChangesetUtil.closeId(user, requestId);
-            this.currentConnection = closeId;
-            closeId.request();
-
-            if (stopNext) {
-                stopNext = false;
-                return;
+            if (!stopNext) {
+                // Close the changeset
+                final CloseableCloseRequest closeId =
+                        ChangesetUtil.closeId(user, requestId);
+                this.currentConnection = closeId;
+                closeId.request();
             }
-
-            send(receiver, SUCCESS, (Bundle) null);
+            if (!stopNext) {
+                send(receiver, SUCCESS, (Bundle) null);
+            }
         } catch (OsmException e) {
             Log.e(TAG, "", e);
             send(receiver, ERROR, e.getLocalizedMessage());
@@ -230,7 +223,9 @@ public class UploadService extends IntentService {
     }
 
     /**
-     * Call back (send) the current progress at some convenient time to the {@link ResultReceiver}.
+     * Call back (send) the current progress at some convenient time to the
+     * {@link ResultReceiver}.
+     * 
      * @author tbrose
      */
     private class MyCallback implements Callback<Integer> {
@@ -238,6 +233,7 @@ public class UploadService extends IntentService {
 
         /**
          * Constructs a new {@link MyCallback}.
+         * 
          * @param receiver
          */
         public MyCallback(ResultReceiver receiver) {
