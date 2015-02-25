@@ -195,8 +195,6 @@ public class DataBaseHandlerTest {
         dbHandler.deleteAllPolyElements();
         
         assertEquals(0, dbHandler.getPolyElementCount());
-        //TODO: delete ONLY the corresponding nodes
-
     }
 
     @Test
@@ -255,8 +253,6 @@ public class DataBaseHandlerTest {
         dbHandler.deleteAllDataElements();
         
         assertEquals(0, dbHandler.getDataElementCount());
-        // TODO: delete ONLY the corresponding PolyElements / Nodes / TagMaps
-
     }
 
     @Test
