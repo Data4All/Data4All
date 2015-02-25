@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <item name="spinnerAddressStreet" type="id"/>
+    <item name="spinnerAddressHouseNumber" type="id"/>
+    <item name="spinnerAddressPostcode" type="id"/>
+    <item name="spinnerAddressCity" type="id"/>
+    <item name="spinnerAddressCountry" type="id"/>
+    <item name="spinnerContactPhone" type="id"/>
+    <item name="spinnerContactFax" type="id"/>
+    <item name="spinnerContactWebsite" type="id"/>
+    <item name="spinnerContactEmail" type="id"/>
+</resources>

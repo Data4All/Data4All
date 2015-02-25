@@ -37,7 +37,7 @@ import android.os.Parcelable;
  * object is parsed to a .gpx file
  * 
  * @author sbrede
- *
+ * 
  */
 @SuppressLint("SimpleDateFormat")
 public class Track implements Parcelable {
@@ -50,7 +50,7 @@ public class Track implements Parcelable {
     /**
      * trackName is a Timestamp of format "yyyy_MM_dd_HH_mm_ss".
      */
-    private final String trackName;
+    private String trackName;
 
     /**
      * saves a list of TrackPoints.
@@ -98,6 +98,10 @@ public class Track implements Parcelable {
         return trackName;
     }
 
+    public void setTrackName(String timestamp) {
+        this.trackName = timestamp;
+    }
+
     private String getTimeStamp() {
         return new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
     }
@@ -120,6 +124,17 @@ public class Track implements Parcelable {
     }
 
     /**
+     * Clears the list of TrackPoints belonging to this track and appends
+     * another list of TrackPoints to it.
+     * 
+     * @param trackPoints the given list of TrackPoints
+     */
+    public void setTrackPoints(List<TrackPoint> trackPoints) {
+        tracklist.clear();
+        tracklist.addAll(trackPoints);
+    }
+
+    /**
      * Returns the latest TrakPoint from this track.
      * 
      * @return trackpoint The latest TrackPoint in the list
@@ -133,6 +148,7 @@ public class Track implements Parcelable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -147,6 +163,7 @@ public class Track implements Parcelable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.os.Parcelable#describeContents()
      */
     @Override
@@ -156,7 +173,7 @@ public class Track implements Parcelable {
 
     /**
      * Writes the tracklist and the trackname a parcel.
-     *
+     * 
      * @param dest
      *            destination parcel
      * @param flags

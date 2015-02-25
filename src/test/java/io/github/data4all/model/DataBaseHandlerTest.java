@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -30,11 +31,14 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import android.location.Location;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 
@@ -67,6 +71,8 @@ public class DataBaseHandlerTest {
 
         assertEquals("abcde12345", dbHandler.getUser("Liadan").getOAuthToken());
         assertEquals("abc", dbHandler.getUser("Manus").getOauthTokenSecret());
+        
+        List<User> users = dbHandler.getAllUser();
 
         user1.setOAuthToken("xyz97");
         user2.setOauthTokenSecret("ads8790");
@@ -79,9 +85,17 @@ public class DataBaseHandlerTest {
                 .getOauthTokenSecret());
 
         dbHandler.deleteUser(user1);
-        dbHandler.deleteUser(user2);
 
+        assertEquals(1, dbHandler.getUserCount());
+        
+        dbHandler.createUser(user1);
+        
+        assertEquals(2, dbHandler.getUserCount());
+        
+        dbHandler.deleteAllUser();
+        
         assertEquals(0, dbHandler.getUserCount());
+        
     }
 
     @Test
@@ -112,9 +126,15 @@ public class DataBaseHandlerTest {
         assertEquals(42.869686, dbHandler.getNode(3).getLon(), 0.0);
 
         dbHandler.deleteNode(node1);
-        dbHandler.deleteNode(node2);
-        dbHandler.deleteNode(node3);
 
+        assertEquals(2, dbHandler.getNodeCount());
+        
+        dbHandler.createNode(node1);
+        
+        assertEquals(3, dbHandler.getNodeCount());
+        
+        dbHandler.deleteAllNode();
+        
         assertEquals(0, dbHandler.getNodeCount());
     }
 
@@ -163,11 +183,19 @@ public class DataBaseHandlerTest {
                 .getType());
 
         dbHandler.deletePolyElement(polyElement1);
-        dbHandler.deletePolyElement(polyElement2);
-        dbHandler.deletePolyElement(polyElement3);
 
+        assertEquals(2, dbHandler.getPolyElementCount());
+        assertEquals(4, dbHandler.getNodeCount());
+        
+        dbHandler.createPolyElement(polyElement1);
+        
+        assertEquals(3, dbHandler.getPolyElementCount());
+        assertEquals(6, dbHandler.getNodeCount());
+        
+        dbHandler.deleteAllPolyElements();
+        
         assertEquals(0, dbHandler.getPolyElementCount());
-        assertEquals(0, dbHandler.getNodeCount());
+        //TODO: delete ONLY the corresponding nodes
 
     }
 
@@ -212,12 +240,22 @@ public class DataBaseHandlerTest {
         assertEquals(PolyElementType.AREA, returnedPE.getType());
         assertEquals(42.1234567, returnedN.getLon(), 0.0);
 
-        dbHandler.deleteDataElement(polyElement1);
         dbHandler.deleteDataElement(node1);
 
-        assertEquals(0, dbHandler.getDataElementCount());
-        assertEquals(0, dbHandler.getPolyElementCount());
+        assertEquals(1, dbHandler.getDataElementCount());
+        assertEquals(1, dbHandler.getPolyElementCount());
         assertEquals(0, dbHandler.getNodeCount());
+        
+        dbHandler.createDataElement(node1);
+        
+        assertEquals(2, dbHandler.getDataElementCount());
+        assertEquals(1, dbHandler.getPolyElementCount());
+        assertEquals(1, dbHandler.getNodeCount());
+        
+        dbHandler.deleteAllDataElements();
+        
+        assertEquals(0, dbHandler.getDataElementCount());
+        // TODO: delete ONLY the corresponding PolyElements / Nodes / TagMaps
 
     }
 
@@ -256,6 +294,117 @@ public class DataBaseHandlerTest {
         dbHandler.deleteTagMap(tagIDs);
 
         assertEquals(0, dbHandler.getTagMapCount());
+        
+        dbHandler.createTagMap(tagMap);
+        
+        assertEquals(3, dbHandler.getTagMapCount());
+        
+        dbHandler.deleteAllTagMap();
+        
+        assertEquals(0, dbHandler.getTagMapCount());
+    }
+
+    @Test
+    public void testTrackPointCRUD() {
+        Location loc1 = new Location("User");
+        loc1.setAltitude(10.10);
+        loc1.setLatitude(10.10);
+        loc1.setLongitude(10.10);
+        loc1.setTime(10000);
+        TrackPoint tp1 = new TrackPoint(loc1);
+
+        Location loc2 = new Location("User");
+        loc2.setAltitude(11.11);
+        loc2.setLatitude(11.11);
+        loc2.setLongitude(11.11);
+        loc2.setTime(20000);
+        TrackPoint tp2 = new TrackPoint(loc2);
+
+        Location loc3 = new Location("User");
+        loc3.setAltitude(12.12);
+        loc3.setLatitude(12.12);
+        loc3.setLongitude(12.12);
+        loc3.setTime(30000);
+        TrackPoint tp3 = new TrackPoint(loc3);
+
+        List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+        trackPoints.add(tp1);
+        trackPoints.add(tp2);
+        trackPoints.add(tp3);
+
+        dbHandler.createTrackPoints(trackPoints);
+
+        List<Long> timestamps = new ArrayList<Long>();
+        timestamps.add(loc1.getTime());
+        timestamps.add(loc2.getTime());
+        timestamps.add(loc3.getTime());
+
+        trackPoints = dbHandler.getTrackPoints(timestamps);
+
+        assertEquals(10.10, trackPoints.get(0).getAlt(), 0.0);
+        assertEquals(11.11, trackPoints.get(1).getLat(), 0.0);
+        assertEquals(12.12, trackPoints.get(2).getLon(), 0.0);
+
+        assertEquals(3, dbHandler.getTrackPointCount());
+
+        timestamps.remove(2);
+        timestamps.remove(1);
+        dbHandler.deleteTrackPoints(timestamps);
+
+        assertEquals(2, dbHandler.getTrackPointCount());
+        
+        dbHandler.deleteAllTrackPoints();
+        
+        assertEquals(0, dbHandler.getTrackPointCount());
+    }
+
+    @Test
+    public void testTrackCRUD() throws JSONException {
+        Location loc1 = new Location("User");
+        loc1.setAltitude(10.10);
+        loc1.setLatitude(10.10);
+        loc1.setLongitude(10.10);
+        loc1.setTime(10000);
+        TrackPoint tp1 = new TrackPoint(loc1);
+
+        Location loc2 = new Location("User");
+        loc2.setAltitude(11.11);
+        loc2.setLatitude(11.11);
+        loc2.setLongitude(11.11);
+        loc2.setTime(20000);
+        TrackPoint tp2 = new TrackPoint(loc2);
+
+        Location loc3 = new Location("User");
+        loc3.setAltitude(12.12);
+        loc3.setLatitude(12.12);
+        loc3.setLongitude(12.12);
+        loc3.setTime(30000);
+        TrackPoint tp3 = new TrackPoint(loc3);
+
+        List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+        trackPoints.add(tp1);
+        trackPoints.add(tp2);
+        trackPoints.add(tp3);
+
+        Track track = new Track();
+        track.setTrackPoints(trackPoints);
+
+        dbHandler.createGPSTrack(track);
+        
+        assertEquals(1, dbHandler.getGPSTrackCount());
+        
+        Track reTrack = dbHandler.getGPSTrack(track.getTrackName());
+        
+        assertEquals(track.getTrackName(), reTrack.getTrackName());
+        
+        track.setTrackName("2015_02_20_15_18_25");
+        
+        dbHandler.updateGPSTrack(track);
+                
+        reTrack = dbHandler.getGPSTrack(track.getTrackName());
+        
+//        assertEquals(track.getTrackName(), reTrack.getTrackName());
+        
     }
 
     @After

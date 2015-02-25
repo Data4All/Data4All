@@ -30,12 +30,15 @@ import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 
 /**
  * This class handles all database requests for the OSM objects that have to be
@@ -44,7 +47,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author Kristin Dahnken
  * 
  */
-public class DataBaseHandler extends SQLiteOpenHelper {
+public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -59,6 +62,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_POLYELEMENT = "polyelements";
     private static final String TABLE_USER = "users";
     private static final String TABLE_WAY = "ways";
+    private static final String TABLE_GPSTRACK = "gpstracks";
+    private static final String TABLE_TRACKPOINT = "trackpoints";
 
     // General Column Names
     private static final String KEY_OSMID = "osmid";
@@ -82,6 +87,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_TOKENSECRET = "tokensecret";
+
+    // GPS Track Column Names
+    private static final String KEY_TRACKNAME = "trackname";
+    private static final String KEY_TRACKPOINTS = "trackpointids";
+
+    // GPS Trackpoint Column Names
+    private static final String KEY_ALT = "altitude";
+    private static final String KEY_TIME = "timestamp";
 
     /**
      * Default constructor for the database handler.
@@ -112,12 +125,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
                 + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                 + KEY_TOKENSECRET + " TEXT" + ")";
+        final String CREATE_GPSTRACK_TABLE = "CREATE TABLE " + TABLE_GPSTRACK
+                + " ("
+                + KEY_TRACKNAME + " TEXT PRIMARY KEY," + KEY_TRACKPOINTS
+                + " TEXT" + ")";
+        final String CREATE_TRACKPOINT_TABLE = "CREATE TABLE "
+                + TABLE_TRACKPOINT + " ("
+                + KEY_LAT + " REAL," + KEY_LON + " REAL," + KEY_ALT + " REAL,"
+                + KEY_TIME + " REAL" + ")";
 
         db.execSQL(CREATE_DATAELEMENTS_TABLE);
         db.execSQL(CREATE_NODES_TABLE);
         db.execSQL(CREATE_TAGMAP_TABLE);
         db.execSQL(CREATE_POLYELEMENT_TABLE);
         db.execSQL(CREATE_USERS_TABLE);
+        db.execSQL(CREATE_GPSTRACK_TABLE);
+        db.execSQL(CREATE_TRACKPOINT_TABLE);
     }
 
     // Database handling on upgrade
@@ -130,6 +153,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATAELEMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GPSTRACK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRACKPOINT);
 
         // Recreate tables
         this.onCreate(db);
@@ -170,11 +195,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 KEY_TOKEN, KEY_TOKENSECRET, }, KEY_USERNAME + "=?",
                 new String[] {username }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
+        String uName = "";
+        String token = "";
+        String tokenSecret = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            uName = cursor.getString(0);
+            token = cursor.getString(1);
+            tokenSecret = cursor.getString(2);
         }
-        final User user = new User(cursor.getString(0), cursor.getString(1),
-                cursor.getString(2));
+        final User user = new User(uName, token, tokenSecret);
 
         cursor.close();
 
@@ -192,6 +221,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db.delete(TABLE_USER, KEY_USERNAME + "=?",
                 new String[] {user.getUsername() });
+    }
+
+    /**
+     * This method deletes a specific user from the database via a given ID.
+     * 
+     * @param username
+     *            the ID of the {@link User} object whose data should be deleted
+     */
+    public void deleteUserByID(String username) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_USER, KEY_USERNAME + "=?", new String[] {username });
     }
 
     /**
@@ -241,15 +282,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
                 final User user = new User(cursor.getString(0),
                         cursor.getString(1), cursor.getString(2));
                 users.add(user);
-            } while (cursor.moveToNext());
+            }
         }
 
         return users;
+    }
+
+    /**
+     * This method deletes all entries of the {@link User} table.
+     */
+    public void deleteAllUser() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_USER, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -288,12 +337,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 KEY_LAT, KEY_LON, }, KEY_OSMID + "=?",
                 new String[] {String.valueOf(id) }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
+        long osmid = 0;
+        double lat = 0;
+        double lon = 0;
+
+        if (cursor != null && cursor.moveToFirst()) {
+            osmid = cursor.getLong(0);
+            lat = cursor.getDouble(1);
+            lon = cursor.getDouble(2);
         }
-        final Node node = new Node(Long.parseLong(cursor.getString(0)),
-                Double.parseDouble(cursor.getString(1)),
-                Double.parseDouble(cursor.getString(2)));
+        final Node node = new Node(osmid, lat, lon);
 
         cursor.close();
 
@@ -311,6 +364,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db.delete(TABLE_NODE, KEY_OSMID + "=?",
                 new String[] {String.valueOf(node.getOsmId()) });
+    }
+
+    /**
+     * This method deletes a specific node from the database via a given ID.
+     * 
+     * @param id
+     *            the ID of the {@link Node} object whose data should be deleted
+     */
+    public void deleteNodeByID(long id) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_NODE, KEY_OSMID + "=?",
+                new String[] {String.valueOf(id) });
     }
 
     /**
@@ -359,16 +425,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
                 final Node node = new Node(Long.parseLong(cursor.getString(0)),
                         Double.parseDouble(cursor.getString(1)),
                         Double.parseDouble(cursor.getString(2)));
                 nodes.add(node);
-            } while (cursor.moveToNext());
+            }
         }
 
         return nodes;
+    }
+
+    /**
+     * This method deletes all entries of the {@link Node} table.
+     */
+    public void deleteAllNode() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_NODE, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -428,13 +502,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 KEY_OSMID, KEY_TYPE, KEY_NODEIDS, }, KEY_OSMID + "=?",
                 new String[] {String.valueOf(id) }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
+        long osmid = 0;
+        PolyElementType type = PolyElementType.AREA;
+        String toJson = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            osmid = cursor.getLong(0);
+            type = PolyElementType.valueOf(cursor.getString(1));
+            toJson = cursor.getString(2);
         }
-        final PolyElement polyElement = new PolyElement(Long.parseLong(cursor
-                .getString(0)), PolyElementType.valueOf(cursor.getString(1)));
+        final PolyElement polyElement = new PolyElement(osmid, type);
 
-        final JSONObject json = new JSONObject(cursor.getString(2));
+        final JSONObject json = new JSONObject(toJson);
         final JSONArray jArray = json.optJSONArray("nodeIDarray");
 
         final List<Node> nodes = new ArrayList<Node>();
@@ -468,6 +546,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         for (Node node : polyElement.getNodes()) {
             this.deleteNode(node);
         }
+    }
+
+    /**
+     * This method deletes a specific PolyElement from the database via a given
+     * ID.
+     * 
+     * @param id
+     *            the ID of the {@link PolyElement} object whose data should be
+     *            deleted
+     */
+    public void deletePolyElementByID(long id) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
+                new String[] {String.valueOf(id) });
+        // TODO: delete ONLY the corresponding nodes
     }
 
     /**
@@ -545,8 +639,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POLYELEMENT,
                 null);
 
-        if (cursor.moveToFirst()) {
-            do {
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
                 final PolyElement polyElement = new PolyElement(
                         Long.parseLong(cursor.getString(0)),
                         PolyElementType.valueOf(cursor.getString(1)));
@@ -564,10 +658,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 polyElement.addNodes(nodes, false);
 
                 polyElements.add(polyElement);
-            } while (cursor.moveToNext());
+            }
         }
 
         return polyElements;
+    }
+
+    /**
+     * This method deletes all entries of the {@link PolyElement} table.
+     */
+    public void deleteAllPolyElements() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_POLYELEMENT, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -637,29 +739,29 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 KEY_OSMID, KEY_TAGIDS, }, KEY_OSMID + "=?",
                 new String[] {String.valueOf(id) }, null, null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
         if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID, id)) {
             dataElement = this.getPolyElement(id);
         } else {
             dataElement = this.getNode(id);
         }
 
-        final JSONObject json = new JSONObject(cursor.getString(1));
-        final JSONArray jArray = json.optJSONArray("tagIDarray");
+        if (cursor != null && cursor.moveToFirst()) {
 
-        final List<Integer> tagIDs = new ArrayList<Integer>();
+            final JSONObject json = new JSONObject(cursor.getString(1));
+            final JSONArray jArray = json.optJSONArray("tagIDarray");
 
-        for (int i = 0; i < jArray.length(); i++) {
-            final int tagID = jArray.optInt(i);
-            tagIDs.add(tagID);
+            final List<Integer> tagIDs = new ArrayList<Integer>();
+
+            for (int i = 0; i < jArray.length(); i++) {
+                final int tagID = jArray.optInt(i);
+                tagIDs.add(tagID);
+            }
+
+            final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
+            dataElement.addTags(tagMap);
+
+            cursor.close();
         }
-
-        final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
-        dataElement.addTags(tagMap);
-
-        cursor.close();
 
         return dataElement;
     }
@@ -690,6 +792,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         } else {
             this.deleteNode((Node) dataElement);
         }
+    }
+
+    /**
+     * This method deletes a specific DataElement from the database via a given
+     * ID.
+     * 
+     * @param id
+     *            the ID of the {@link AbstractDataElement} object whose data
+     *            should be deleted
+     */
+    public void deleteDataElementByID(long id) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
+                new String[] {String.valueOf(id) });
+        // TODO: delete ONLY the corresponding PolyElements, Nodes and Tags
     }
 
     /**
@@ -765,9 +883,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         AbstractDataElement dataElement; // NOSONAR
 
-        if (cursor.moveToFirst()) {
-            do {
-
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
                 if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID,
                         cursor.getInt(0))) {
                     dataElement = this.getPolyElement(cursor.getInt(0));
@@ -789,10 +906,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 dataElement.addTags(tagMap);
 
                 dataElements.add(dataElement);
-            } while (cursor.moveToNext());
+            }
         }
 
         return dataElements;
+    }
+
+    /**
+     * This method deletes all entries of the {@link AbstractDataElement} table.
+     */
+    public void deleteAllDataElements() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_DATAELEMENT, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -839,11 +964,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                             new String[] {String.valueOf(id) }, null, null,
                             null, null);
 
-            if (cursor != null) {
-                cursor.moveToFirst();
+            if (cursor != null && cursor.moveToFirst()) {
+                tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
+                cursor.close();
             }
-            tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
-            cursor.close();
+
         }
         return tagMap;
     }
@@ -884,7 +1009,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * database.
      * 
      * @param tagMap
-     *            the {@link map} object for which the data should be updated
+     *            the {@link Map} object for which the data should be updated
      * @return the number of rows that have been updated
      */
     public int updateTagMap(Map<Tag, String> tagMap) {
@@ -908,6 +1033,373 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         }
         return count;
+    }
+
+    /**
+     * This method deletes all entries of the TagMap table.
+     */
+    public void deleteAllTagMap() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TAGMAP, null, null);
+    }
+
+    // -------------------------------------------------------------------------
+    // GPS-TRACK CRUD
+
+    /**
+     * This method creates and stores a new GPS track in the database. The data
+     * is taken from the {@link Track} object that is passed to the method.
+     * 
+     * @param track
+     *            the {@link Track} object from which the data will be taken
+     * @throws JSONException
+     *             if JSON object can't be initialized
+     */
+    public void createGPSTrack(Track track) throws JSONException {
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final List<Long> timestamps = new ArrayList<Long>();
+        final ContentValues values = new ContentValues();
+
+        values.put(KEY_TRACKNAME, track.getTrackName());
+
+        for (TrackPoint trackpoint : track.getTrackPoints()) {
+            timestamps.add(trackpoint.getTime());
+        }
+
+        this.createTrackPoints(track.getTrackPoints());
+
+        final JSONObject json = new JSONObject();
+        json.put("timestamparray", new JSONArray(timestamps));
+        final String arrayList = json.toString();
+
+        values.put(KEY_TRACKPOINTS, arrayList);
+
+        db.insert(TABLE_GPSTRACK, null, values);
+    }
+
+    /**
+     * This method returns the data for a specific GPS track stored in the
+     * database and creates the corresponding {@link Track} object.
+     * 
+     * @param name
+     *            the name of the desired GPS track
+     * @return a {@link Track} object for the desired GPS track
+     * @throws JSONException
+     *             if the JSON object can't be initialized
+     */
+    public Track getGPSTrack(String name) throws JSONException { // NOSONAR
+
+        final SQLiteDatabase db = getReadableDatabase();
+
+        final Track track = new Track();
+
+        final Cursor cursor = db.query(TABLE_GPSTRACK, new String[] {
+                KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_TRACKNAME + "=?",
+                new String[] {name }, null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            track.setTrackName(cursor.getString(0));
+
+            final JSONObject json = new JSONObject(cursor.getString(1));
+            final JSONArray jArray = json.optJSONArray("timestamparray");
+
+            final List<Long> timestamps = new ArrayList<Long>();
+
+            for (int i = 0; i < jArray.length(); i++) {
+                final long timestamp = jArray.optInt(i);
+                timestamps.add(timestamp);
+            }
+
+            final List<TrackPoint> trackPoints = this
+                    .getTrackPoints(timestamps);
+            track.setTrackPoints(trackPoints);
+
+            cursor.close();
+        }
+        return track;
+    }
+
+    /**
+     * This method deletes a specific GPS track from the database.
+     * 
+     * @param track
+     *            the {@link Track} object whose data should be deleted
+     */
+    public void deleteGPSTrack(Track track) { // TODO: delete by ID
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_GPSTRACK, KEY_TRACKNAME + "=?",
+                new String[] {track.getTrackName() });
+
+        final List<Long> timestamps = new ArrayList<Long>();
+
+        for (TrackPoint trackpoint : track.getTrackPoints()) {
+            timestamps.add(trackpoint.getTime());
+        }
+        this.deleteTrackPoints(timestamps);
+    }
+
+    /**
+     * This method returns the number of GPS tracks currently stored in the
+     * database.
+     * 
+     * @return the number of GPS tracks
+     */
+    public int getGPSTrackCount() {
+
+        final SQLiteDatabase db = getReadableDatabase();
+
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GPSTRACK,
+                null);
+        final int count = cursor.getCount();
+        cursor.close();
+
+        return count;
+    }
+
+    /**
+     * This method updates the data for a specific GPS track stored in the
+     * database.
+     * 
+     * @param track
+     *            the {@link Track} object for which the data should be updated
+     * @return the number of rows that have been updated
+     * @throws JSONException
+     *             if the JSON object can't be initialized
+     */
+    public int updateGPSTrack(Track track) throws JSONException {
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final ContentValues values = new ContentValues();
+
+        values.put(KEY_TRACKNAME, track.getTrackName());
+
+        int count = 0;
+
+        count += db.update(TABLE_GPSTRACK, values, KEY_TRACKNAME + "=?",
+                new String[] {track.getTrackName() });
+
+        count += this.updateTrackPoints(track.getTrackPoints());
+
+        return count;
+    }
+
+    /**
+     * This method returns a list of all GPS tracks stored in the database and
+     * creates corresponding {@link Track} objects.
+     * 
+     * @return a list of GPS tracks
+     * @throws JSONException
+     *             if JSON object can't be initialized
+     */
+    public List<Track> getAllGPSTracks() throws JSONException {
+
+        final List<Track> gpsTracks = new ArrayList<Track>();
+
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GPSTRACK,
+                null);
+
+        final Track track = new Track();
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+
+                final JSONObject json = new JSONObject(cursor.getString(1));
+                final JSONArray jArray = json.optJSONArray("timestamparray");
+
+                final List<Long> timestamps = new ArrayList<Long>();
+
+                for (int i = 0; i < jArray.length(); i++) {
+                    final long timestamp = jArray.optInt(i);
+                    timestamps.add(timestamp);
+                }
+
+                final List<TrackPoint> trackPoints = this
+                        .getTrackPoints(timestamps);
+                track.setTrackPoints(trackPoints);
+
+                gpsTracks.add(track);
+            }
+        }
+        return gpsTracks;
+    }
+
+    /**
+     * This method deletes all entries of the {@link Track} table.
+     */
+    public void deleteAllGPSTracks() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_GPSTRACK, null, null);
+    }
+
+    // -------------------------------------------------------------------------
+    // TRACKPOINT CRUD
+
+    /**
+     * This method creates and stores new trackpoints in the database. The data
+     * is taken from the {@link TrackPoint} objects that are passed to the
+     * method.
+     * 
+     * @param trackPoints
+     *            the {@link List} from which the trackpoints will be taken
+     */
+    public void createTrackPoints(List<TrackPoint> trackPoints) {
+
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final ContentValues values = new ContentValues();
+
+        for (TrackPoint point : trackPoints) {
+            values.put(KEY_LAT, point.getLat());
+            values.put(KEY_LON, point.getLon());
+            values.put(KEY_ALT, point.getAlt());
+            values.put(KEY_TIME, point.getTime());
+            db.insert(TABLE_TRACKPOINT, null, values);
+        }
+    }
+
+    /**
+     * This method returns the data for specific trackpoints stored in the
+     * database and creates a list of corresponding {@link TrackPoint} objects.
+     * 
+     * @param timestamps
+     *            the timestamps of the desired trackpoints
+     * @return a {@link List} of the desired trackpoints
+     */
+    public List<TrackPoint> getTrackPoints(List<Long> timestamps) {
+
+        final SQLiteDatabase db = getReadableDatabase();
+
+        final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+
+        for (long time : timestamps) {
+            final Cursor cursor = db
+                    .query(TABLE_TRACKPOINT, new String[] {KEY_LAT, KEY_LON,
+                            KEY_ALT, KEY_TIME, },
+                            KEY_TIME + "=?",
+                            new String[] {String.valueOf(time) }, null, null,
+                            null, null);
+
+            final Location loc = new Location("provider");
+            if (cursor != null && cursor.moveToFirst()) {
+                loc.setLatitude(cursor.getDouble(0));
+                loc.setLongitude(cursor.getDouble(1));
+                loc.setAltitude(cursor.getDouble(2));
+                loc.setTime(cursor.getLong(3));
+            }
+
+            final TrackPoint point = new TrackPoint(loc);
+
+            trackPoints.add(point);
+            cursor.close();
+        }
+        return trackPoints;
+    }
+
+    /**
+     * This method deletes specific trackpoints from the database.
+     * 
+     * @param timestamps
+     *            the timestamps of the trackpoints that should be deleted
+     */
+    public void deleteTrackPoints(List<Long> timestamps) { // TODO: delete by ID
+        final SQLiteDatabase db = getWritableDatabase();
+
+        for (long time : timestamps) {
+            db.delete(TABLE_TRACKPOINT, KEY_TIME + "=?",
+                    new String[] {String.valueOf(time) });
+        }
+    }
+
+    /**
+     * This method returns the number of trackpoints currently stored in the
+     * database.
+     * 
+     * @return the number of trackpoints
+     */
+    public int getTrackPointCount() {
+        final SQLiteDatabase db = getReadableDatabase();
+
+        final Cursor cursor = db
+                .rawQuery("SELECT * FROM " + TABLE_TRACKPOINT, null);
+        final int count = cursor.getCount();
+        cursor.close();
+
+        return count;
+    }
+
+    /**
+     * This method updates the data for specific trackpoints stored in the
+     * database.
+     * 
+     * @param trackPoints
+     *            a list of {@link TrackPoint}s that should be updated
+     * @return the number of rows that have been updated
+     */
+    public int updateTrackPoints(List<TrackPoint> trackPoints) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final ContentValues values = new ContentValues();
+
+        int count = 0;
+
+        for (TrackPoint point : trackPoints) {
+            values.put(KEY_LAT, point.getLat());
+            values.put(KEY_LON, point.getLon());
+            values.put(KEY_ALT, point.getAlt());
+            values.put(KEY_TIME, point.getTime());
+
+            if (this.checkIfRecordExists(TABLE_TRACKPOINT, KEY_TIME,
+                    point.getTime())) {
+                count += db.update(TABLE_TRACKPOINT, values, KEY_TIME + "=?",
+                        new String[] {String.valueOf(point.getTime()) });
+            } else {
+                db.insert(TABLE_TRACKPOINT, null, values);
+            }
+        }
+        return count;
+    }
+
+    /**
+     * This method returns a list of all trackpoints stored in the database and
+     * creates corresponding {@link TrackPoint} objects.
+     * 
+     * @return a list of trackpoints
+     */
+    public List<TrackPoint> getAllTrackPoints() {
+        final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
+
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TRACKPOINT,
+                null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+
+                final Location loc = new Location("provider");
+                loc.setLatitude(cursor.getDouble(0));
+                loc.setLongitude(cursor.getDouble(1));
+                loc.setAltitude(cursor.getDouble(2));
+                loc.setTime(cursor.getLong(3));
+
+                final TrackPoint point = new TrackPoint(loc);
+                trackPoints.add(point);
+            }
+        }
+        return trackPoints;
+    }
+
+    /**
+     * This method deletes all entries of the {@link TrackPoint} table.
+     */
+    public void deleteAllTrackPoints() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TRACKPOINT, null, null);
     }
 
     // ---auxiliary functions---------------------------------------------------
