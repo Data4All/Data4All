@@ -18,14 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Node;
 import io.github.data4all.service.UploadService;
-
-import java.util.List;
-
-import org.json.JSONException;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -112,6 +105,7 @@ public class UploadActivity extends BasicActivity {
      */
     public void onSuccess() {
         this.showProgress(false);
+        this.deleteAllElements();
         final String msg = "Successfully uploaded";
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
@@ -160,32 +154,13 @@ public class UploadActivity extends BasicActivity {
             this.showProgress(false);
         }
     }
-
+    
     /**
-     * @throws JSONException
+     * Deletes all DataElements
      */
-    public void onClickAdd(View v) throws JSONException {
+    private void deleteAllElements() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        int count = db.getDataElementCount();
-        for (int i = 0; i < 25; i++) {
-            db.createDataElement(new Node(count + 1, 53.55095672607422,
-                    9.997346878051758));
-            count++;
-        }
-        db.close();
-        this.readObjectCount();
-    }
-
-    /**
-     * @throws JSONException
-     */
-    public void onClickDelete(View v) throws JSONException {
-        final DataBaseHandler db = new DataBaseHandler(this);
-        final List<AbstractDataElement> allDataElements =
-                db.getAllDataElements();
-        for (AbstractDataElement elem : allDataElements) {
-            db.deleteDataElement(elem);
-        }
+        db.deleteAllDataElements();
         db.close();
         this.readObjectCount();
     }

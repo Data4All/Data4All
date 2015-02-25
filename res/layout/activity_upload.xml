@@ -73,8 +73,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/upload_progress"
         android:layout_centerHorizontal="true"
-        android:onClick="onClickUpload"
         android:enabled="false"
+        android:onClick="onClickUpload"
         android:text="@string/upload_data" />
 
     <Button
@@ -84,30 +84,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/upload_progress"
         android:layout_centerHorizontal="true"
-        android:onClick="onClickCancle"
         android:enabled="false"
-        android:visibility="gone"
-        android:text="@string/upload_cancle" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true" >
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickAdd"
-        android:text="Objekt hinzufügen" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickDelete"
-        android:text="Objekte löschen" />
-    </LinearLayout>
+        android:onClick="onClickCancle"
+        android:text="@string/upload_cancle"
+        android:visibility="gone" />
 
 </RelativeLayout>
