@@ -173,7 +173,7 @@ public class ShowPictureActivity extends AbstractActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
-        this.onClickBuilding(null);
+        this.onClickArea(null);
 
         // Setup the rotation listener
         List<View> buttons = new ArrayList<View>();
@@ -215,7 +215,7 @@ public class ShowPictureActivity extends AbstractActivity {
         // 270 or Rotation3 if home-button to the left
         final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay().getRotation();
-
+        
         // create an abstract data element from the given data and pass it to
         // the next
         // activity
