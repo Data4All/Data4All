@@ -256,7 +256,7 @@ public final class OsmChangeParser {
         final Map<Tag, String> tags =
                 (LinkedHashMap<Tag, String>) relation.getTags();
         for (Node member : relation.getNodes()) {
-            writer.println("<member type=\"Node\" ref=\"" + member.getOsmId()
+            writer.println("<member type=\"node\" ref=\"" + member.getOsmId()
                     + "\" role=\"\"/>");
         }
 
