@@ -67,14 +67,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         setUpLoadingScreen();
 
-        final DataBaseHandler db = new DataBaseHandler(this);
-        try {
-            final List<AbstractDataElement> list = db.getAllDataElements();
+        DataBaseHandler db = new DataBaseHandler(this);
+            List<AbstractDataElement> list = db.getAllDataElements();
             mapView.addOsmElementsToMap(this, list);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            Log.e(TAG, "", e);
-        }
+        
         db.close();
         
         // Set Overlay for the actual Position

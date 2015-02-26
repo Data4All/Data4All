@@ -39,6 +39,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.util.Log;
 
 /**
  * This class handles all database requests for the OSM objects that have to be
@@ -48,6 +49,8 @@ import android.location.Location;
  * 
  */
 public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
+
+    private static final String TAG = "DataBaseHandler";
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -144,6 +147,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_GPSTRACK_TABLE);
         db.execSQL(CREATE_TRACKPOINT_TABLE);
+
+        Log.i(TAG, "Tables have been created.");
     }
 
     // Database handling on upgrade
@@ -158,6 +163,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GPSTRACK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRACKPOINT);
+
+        Log.i(TAG, "Tables have been dropped and will be recreated.");
 
         // Recreate tables
         this.onCreate(db);
@@ -180,7 +187,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_TOKEN, user.getOAuthToken());
         values.put(KEY_TOKENSECRET, user.getOauthTokenSecret());
 
-        db.insert(TABLE_USER, null, values);
+        long rowID = db.insert(TABLE_USER, null, values);
+        Log.i(TAG, "User " + rowID + " has been added.");
     }
 
     /**
@@ -292,7 +300,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 users.add(user);
             }
         }
-
+        Log.i(TAG, users.size() + " users were retrieved from the database.");
         return users;
     }
 
@@ -324,7 +332,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_LAT, node.getLat());
         values.put(KEY_LON, node.getLon());
 
-        db.insert(TABLE_NODE, null, values);
+        long rowID = db.insert(TABLE_NODE, null, values);
+        Log.i(TAG, "Node " + rowID + " has been added.");
     }
 
     /**
@@ -440,7 +449,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 nodes.add(node);
             }
         }
-
+        Log.i(TAG, nodes.size() + " nodes were retrieved from the database.");
         return nodes;
     }
 
@@ -463,11 +472,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param polyElement
      *            the {@link PolyElement} object from which the data will be
      *            taken
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public void createPolyElement(PolyElement polyElement)
-            throws JSONException {
+    public void createPolyElement(PolyElement polyElement) {
         final List<Long> nodeIDs = new ArrayList<Long>();
 
         final SQLiteDatabase db = getWritableDatabase();
@@ -483,14 +489,18 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             nodeIDs.add(node.getOsmId());
             this.createNode(node);
         }
-
         final JSONObject json = new JSONObject();
-        json.put("nodeIDarray", new JSONArray(nodeIDs));
+        try {
+            json.put("nodeIDarray", new JSONArray(nodeIDs));
+        } catch (JSONException e) {
+            // TODO: handle exception
+        }
         final String arrayList = json.toString();
 
         values.put(KEY_NODEIDS, arrayList);
 
-        db.insert(TABLE_POLYELEMENT, null, values);
+        long rowID = db.insert(TABLE_POLYELEMENT, null, values);
+        Log.i(TAG, "PolyElement " + rowID + " has been added.");
     }
 
     /**
@@ -500,10 +510,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param id
      *            the id of the desired poly element
      * @return a {@link PolyElement} object for the desired poly element
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public PolyElement getPolyElement(long id) throws JSONException {
+    public PolyElement getPolyElement(long id) {
 
         final SQLiteDatabase db = getReadableDatabase();
 
@@ -521,15 +529,18 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
         final PolyElement polyElement = new PolyElement(osmid, type);
 
-        final JSONObject json = new JSONObject(toJson);
-        final JSONArray jArray = json.optJSONArray("nodeIDarray");
-
         final List<Node> nodes = new ArrayList<Node>();
+        try {
+            final JSONObject json = new JSONObject(toJson);
+            final JSONArray jArray = json.optJSONArray("nodeIDarray");
 
-        for (int i = 0; i < jArray.length(); i++) {
-            final long nodeID = jArray.optLong(i);
-            final Node node = this.getNode(nodeID);
-            nodes.add(node);
+            for (int i = 0; i < jArray.length(); i++) {
+                final long nodeID = jArray.optLong(i);
+                final Node node = this.getNode(nodeID);
+                nodes.add(node);
+            }
+        } catch (JSONException e) {
+            // TODO: handle exception
         }
 
         polyElement.addNodes(nodes, false);
@@ -564,10 +575,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param id
      *            the ID of the {@link PolyElement} object whose data should be
      *            deleted
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public void deletePolyElementByID(long id) throws JSONException {
+    public void deletePolyElementByID(long id) {
         final SQLiteDatabase db = getWritableDatabase();
 
         PolyElement pE = getPolyElement(id);
@@ -604,10 +613,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the {@link PolyElement} object for which the data should be
      *            updated
      * @return the number of rows that have been updated
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public int updatePolyElement(PolyElement polyElement) throws JSONException {
+    public int updatePolyElement(PolyElement polyElement) {
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -631,7 +638,11 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
 
         final JSONObject json = new JSONObject();
-        json.put("nodeIDarray", new JSONArray(nodeIDs));
+        try {
+            json.put("nodeIDarray", new JSONArray(nodeIDs));
+        } catch (JSONException e) {
+            // TODO: handle exception
+        }
         final String arrayList = json.toString();
 
         values.put(KEY_NODEIDS, arrayList);
@@ -645,10 +656,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * and creates corresponding {@link PolyElement} objects.
      * 
      * @return a list of poly elements
-     * @throws JSONException
-     *             if the JSON object can't be initialized
      */
-    public List<PolyElement> getAllPolyElements() throws JSONException {
+    public List<PolyElement> getAllPolyElements() {
 
         final List<PolyElement> polyElements = new ArrayList<PolyElement>();
 
@@ -662,31 +671,33 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                         Long.parseLong(cursor.getString(0)),
                         PolyElementType.valueOf(cursor.getString(1)));
 
-                final JSONObject json = new JSONObject(cursor.getString(2));
-                final JSONArray jArray = json.optJSONArray("nodeIDarray");
-
                 final List<Node> nodes = new ArrayList<Node>();
+                try {
+                    final JSONObject json = new JSONObject(cursor.getString(2));
+                    final JSONArray jArray = json.optJSONArray("nodeIDarray");
 
-                for (int i = 0; i < jArray.length(); i++) {
-                    final long nodeID = jArray.optLong(i);
-                    final Node node = this.getNode(nodeID);
-                    nodes.add(node);
+                    for (int i = 0; i < jArray.length(); i++) {
+                        final long nodeID = jArray.optLong(i);
+                        final Node node = this.getNode(nodeID);
+                        nodes.add(node);
+                    }
+                } catch (JSONException e) {
+                    // TODO: handle exception
                 }
+
                 polyElement.addNodes(nodes, false);
                 polyElements.add(polyElement);
             }
         }
-
+        Log.i(TAG, polyElements.size()
+                + " poly elements were retrieved from the database.");
         return polyElements;
     }
 
     /**
      * This method deletes all entries of the {@link PolyElement} table.
-     * 
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public void deleteAllPolyElements() throws JSONException {
+    public void deleteAllPolyElements() {
         final SQLiteDatabase db = getWritableDatabase();
 
         List<PolyElement> pEs = getAllPolyElements();
@@ -711,11 +722,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param dataElement
      *            the {@link AbstractDataElement} object from which the data
      *            will be taken
-     * @throws JSONException
-     *             if the JSON object can't be initialized
      */
-    public void createDataElement(AbstractDataElement dataElement) // NOSONAR
-            throws JSONException {
+    public void createDataElement(AbstractDataElement dataElement) { // NOSONAR
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -734,12 +742,17 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         this.createTagMap(tagMap);
 
         final JSONObject json = new JSONObject();
-        json.put("tagIDarray", new JSONArray(tagIDs));
+        try {
+            json.put("tagIDarray", new JSONArray(tagIDs));
+        } catch (JSONException e) {
+            // TODO: handle exception
+        }
         final String arrayList = json.toString();
 
         values.put(KEY_TAGIDS, arrayList);
 
-        db.insert(TABLE_DATAELEMENT, null, values);
+        long rowID = db.insert(TABLE_DATAELEMENT, null, values);
+        Log.i(TAG, "DataElement " + rowID + " has been added.");
 
         if (dataElement instanceof PolyElement) {
             this.createPolyElement((PolyElement) dataElement);
@@ -756,10 +769,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param id
      *            the id of the desired data element
      * @return a {@link AbstractDataElement} object for the desired data element
-     * @throws JSONException
-     *             if the JSON object can't be initialized
      */
-    public AbstractDataElement getDataElement(long id) throws JSONException { // NOSONAR
+    public AbstractDataElement getDataElement(long id) { // NOSONAR
 
         final SQLiteDatabase db = getReadableDatabase();
 
@@ -777,14 +788,17 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         if (cursor != null && cursor.moveToFirst()) {
 
-            final JSONObject json = new JSONObject(cursor.getString(1));
-            final JSONArray jArray = json.optJSONArray("tagIDarray");
-
             final List<Integer> tagIDs = new ArrayList<Integer>();
+            try {
+                final JSONObject json = new JSONObject(cursor.getString(1));
+                final JSONArray jArray = json.optJSONArray("tagIDarray");
 
-            for (int i = 0; i < jArray.length(); i++) {
-                final int tagID = jArray.optInt(i);
-                tagIDs.add(tagID);
+                for (int i = 0; i < jArray.length(); i++) {
+                    final int tagID = jArray.optInt(i);
+                    tagIDs.add(tagID);
+                }
+            } catch (JSONException e) {
+                // TODO: handle exception
             }
 
             final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
@@ -831,10 +845,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param id
      *            the ID of the {@link AbstractDataElement} object whose data
      *            should be deleted
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public void deleteDataElementByID(long id) throws JSONException {
+    public void deleteDataElementByID(long id) {
         final SQLiteDatabase db = getWritableDatabase();
 
         AbstractDataElement dE = getDataElement(id);
@@ -881,11 +893,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the {@link AbstractDataElement} object for which the data
      *            should be updated
      * @return the number of rows that have been updated
-     * @throws JSONException
-     *             if the JSON object can't be initialized
      */
-    public int updateDataElement(AbstractDataElement dataElement) // NOSONAR
-            throws JSONException {
+    public int updateDataElement(AbstractDataElement dataElement) { // NOSONAR
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -916,10 +925,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * and creates corresponding {@link AbstractDataElement} objects.
      * 
      * @return a list of data elements
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public List<AbstractDataElement> getAllDataElements() throws JSONException {
+    public List<AbstractDataElement> getAllDataElements() {
 
         final List<AbstractDataElement> dataElements =
                 new ArrayList<AbstractDataElement>();
@@ -939,14 +946,17 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                     dataElement = this.getNode(cursor.getInt(0));
                 }
 
-                final JSONObject json = new JSONObject(cursor.getString(1));
-                final JSONArray jArray = json.optJSONArray("tagIDarray");
-
                 final List<Integer> tagIDs = new ArrayList<Integer>();
+                try {
+                    final JSONObject json = new JSONObject(cursor.getString(1));
+                    final JSONArray jArray = json.optJSONArray("tagIDarray");
 
-                for (int i = 0; i < jArray.length(); i++) {
-                    final int tagID = jArray.optInt(i);
-                    tagIDs.add(tagID);
+                    for (int i = 0; i < jArray.length(); i++) {
+                        final int tagID = jArray.optInt(i);
+                        tagIDs.add(tagID);
+                    }
+                } catch (JSONException e) {
+                    // TODO: handle exception
                 }
 
                 final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
@@ -956,16 +966,15 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             }
         }
 
+        Log.i(TAG, dataElements.size()
+                + " data elements were retrieved from the database.");
         return dataElements;
     }
 
     /**
      * This method deletes all entries of the {@link AbstractDataElement} table.
-     * 
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public void deleteAllDataElements() throws JSONException {
+    public void deleteAllDataElements() {
         final SQLiteDatabase db = getWritableDatabase();
 
         List<AbstractDataElement> dEs = getAllDataElements();
@@ -1002,7 +1011,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
             values.put(KEY_TAGID, tag.getKey().getId());
             values.put(KEY_VALUE, tag.getValue());
-            db.insert(TABLE_TAGMAP, null, values);
+            long rowID = db.insert(TABLE_TAGMAP, null, values);
+            Log.i(TAG, "Tag " + rowID + " has been added.");
         }
     }
 
@@ -1033,6 +1043,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             }
 
         }
+        Log.i(TAG, tagMap.size() + " tags were retrieved from the database.");
         return tagMap;
     }
 
@@ -1115,10 +1126,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param track
      *            the {@link Track} object from which the data will be taken
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public void createGPSTrack(Track track) throws JSONException {
+    public void createGPSTrack(Track track) {
 
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
@@ -1132,12 +1141,17 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 .getTrackPoints());
 
         final JSONObject json = new JSONObject();
-        json.put("trackpointarray", new JSONArray(trackPointIDs));
+        try {
+            json.put("trackpointarray", new JSONArray(trackPointIDs));
+        } catch (JSONException e) {
+            // TODO: handle exception
+        }
         final String arrayList = json.toString();
 
         values.put(KEY_TRACKPOINTS, arrayList);
 
-        db.insert(TABLE_GPSTRACK, null, values);
+        long rowID = db.insert(TABLE_GPSTRACK, null, values);
+        Log.i(TAG, "GPSTrack " + rowID + " has been added.");
     }
 
     /**
@@ -1147,10 +1161,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param name
      *            the name of the desired GPS track
      * @return a {@link Track} object for the desired GPS track
-     * @throws JSONException
-     *             if the JSON object can't be initialized
      */
-    public Track getGPSTrack(long id) throws JSONException { // NOSONAR
+    public Track getGPSTrack(long id) { // NOSONAR
 
         final SQLiteDatabase db = getReadableDatabase();
 
@@ -1165,14 +1177,17 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             track.setID(cursor.getLong(0));
             track.setTrackName(cursor.getString(1));
 
-            final JSONObject json = new JSONObject(cursor.getString(2));
-            final JSONArray jArray = json.optJSONArray("trackpointarray");
-
             final List<Long> trackPointIDs = new ArrayList<Long>();
+            try {
+                final JSONObject json = new JSONObject(cursor.getString(2));
+                final JSONArray jArray = json.optJSONArray("trackpointarray");
 
-            for (int i = 0; i < jArray.length(); i++) {
-                final long trackPointID = jArray.optInt(i);
-                trackPointIDs.add(trackPointID);
+                for (int i = 0; i < jArray.length(); i++) {
+                    final long trackPointID = jArray.optInt(i);
+                    trackPointIDs.add(trackPointID);
+                }
+            } catch (JSONException e) {
+                // TODO: handle exception
             }
 
             final List<TrackPoint> trackPoints = this
@@ -1230,10 +1245,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param track
      *            the {@link Track} object for which the data should be updated
      * @return the number of rows that have been updated
-     * @throws JSONException
-     *             if the JSON object can't be initialized
      */
-    public int updateGPSTrack(Track track) throws JSONException {
+    public int updateGPSTrack(Track track) {
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -1260,10 +1273,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * creates corresponding {@link Track} objects.
      * 
      * @return a list of GPS tracks
-     * @throws JSONException
-     *             if JSON object can't be initialized
      */
-    public List<Track> getAllGPSTracks() throws JSONException {
+    public List<Track> getAllGPSTracks() {
 
         final List<Track> gpsTracks = new ArrayList<Track>();
 
@@ -1276,14 +1287,18 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         if (cursor != null) {
             while (cursor.moveToNext()) {
 
-                final JSONObject json = new JSONObject(cursor.getString(2));
-                final JSONArray jArray = json.optJSONArray("trackpointarray");
-
                 final List<Long> trackPointIDs = new ArrayList<Long>();
+                try {
+                    final JSONObject json = new JSONObject(cursor.getString(2));
+                    final JSONArray jArray = json
+                            .optJSONArray("trackpointarray");
 
-                for (int i = 0; i < jArray.length(); i++) {
-                    final long id = jArray.optInt(i);
-                    trackPointIDs.add(id);
+                    for (int i = 0; i < jArray.length(); i++) {
+                        final long id = jArray.optInt(i);
+                        trackPointIDs.add(id);
+                    }
+                } catch (JSONException e) {
+                    // TODO: handle exception
                 }
 
                 final List<TrackPoint> trackPoints = this
@@ -1293,6 +1308,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 gpsTracks.add(track);
             }
         }
+        Log.i(TAG, gpsTracks.size()
+                + " GPS tracks were retrieved from the database.");
         return gpsTracks;
     }
 
@@ -1334,6 +1351,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_TIME, point.getTime());
             long rowID = db.insert(TABLE_TRACKPOINT, null, values);
             trackPointIDs.add(rowID);
+            Log.i(TAG, "TrackPoint " + rowID + " has been added.");
         }
         return trackPointIDs;
     }
@@ -1469,6 +1487,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 trackPoints.add(point);
             }
         }
+        Log.i(TAG, trackPoints.size()
+                + " track points were retrieved from the database.");
         return trackPoints;
     }
 
