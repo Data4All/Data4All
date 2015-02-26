@@ -39,6 +39,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.util.Log;
 
 /**
  * This class handles all database requests for the OSM objects that have to be
@@ -48,6 +49,8 @@ import android.location.Location;
  * 
  */
 public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
+
+    private static final String TAG = "DataBaseHandler";
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -144,6 +147,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_GPSTRACK_TABLE);
         db.execSQL(CREATE_TRACKPOINT_TABLE);
+
+        Log.i(TAG, "Tables have been created.");
     }
 
     // Database handling on upgrade
@@ -158,6 +163,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GPSTRACK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRACKPOINT);
+
+        Log.i(TAG, "Tables have been dropped and will be recreated.");
 
         // Recreate tables
         this.onCreate(db);
@@ -180,7 +187,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_TOKEN, user.getOAuthToken());
         values.put(KEY_TOKENSECRET, user.getOauthTokenSecret());
 
-        db.insert(TABLE_USER, null, values);
+        long rowID = db.insert(TABLE_USER, null, values);
+        Log.i(TAG, "User " + rowID + " has been added.");
     }
 
     /**
@@ -292,7 +300,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 users.add(user);
             }
         }
-
+        Log.i(TAG, users.size() + " users were retrieved from the database.");
         return users;
     }
 
@@ -324,7 +332,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_LAT, node.getLat());
         values.put(KEY_LON, node.getLon());
 
-        db.insert(TABLE_NODE, null, values);
+        long rowID = db.insert(TABLE_NODE, null, values);
+        Log.i(TAG, "Node " + rowID + " has been added.");
     }
 
     /**
@@ -440,7 +449,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 nodes.add(node);
             }
         }
-
+        Log.i(TAG, nodes.size() + " nodes were retrieved from the database.");
         return nodes;
     }
 
@@ -490,7 +499,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         values.put(KEY_NODEIDS, arrayList);
 
-        db.insert(TABLE_POLYELEMENT, null, values);
+        long rowID = db.insert(TABLE_POLYELEMENT, null, values);
+        Log.i(TAG, "PolyElement " + rowID + " has been added.");
     }
 
     /**
@@ -679,7 +689,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 polyElements.add(polyElement);
             }
         }
-
+        Log.i(TAG, polyElements.size()
+                + " poly elements were retrieved from the database.");
         return polyElements;
     }
 
@@ -740,7 +751,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         values.put(KEY_TAGIDS, arrayList);
 
-        db.insert(TABLE_DATAELEMENT, null, values);
+        long rowID = db.insert(TABLE_DATAELEMENT, null, values);
+        Log.i(TAG, "DataElement " + rowID + " has been added.");
 
         if (dataElement instanceof PolyElement) {
             this.createPolyElement((PolyElement) dataElement);
@@ -954,6 +966,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             }
         }
 
+        Log.i(TAG, dataElements.size()
+                + " data elements were retrieved from the database.");
         return dataElements;
     }
 
@@ -997,7 +1011,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
             values.put(KEY_TAGID, tag.getKey().getId());
             values.put(KEY_VALUE, tag.getValue());
-            db.insert(TABLE_TAGMAP, null, values);
+            long rowID = db.insert(TABLE_TAGMAP, null, values);
+            Log.i(TAG, "Tag " + rowID + " has been added.");
         }
     }
 
@@ -1028,6 +1043,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             }
 
         }
+        Log.i(TAG, tagMap.size() + " tags were retrieved from the database.");
         return tagMap;
     }
 
@@ -1134,7 +1150,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         values.put(KEY_TRACKPOINTS, arrayList);
 
-        db.insert(TABLE_GPSTRACK, null, values);
+        long rowID = db.insert(TABLE_GPSTRACK, null, values);
+        Log.i(TAG, "GPSTrack " + rowID + " has been added.");
     }
 
     /**
@@ -1291,6 +1308,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 gpsTracks.add(track);
             }
         }
+        Log.i(TAG, gpsTracks.size()
+                + " GPS tracks were retrieved from the database.");
         return gpsTracks;
     }
 
@@ -1332,6 +1351,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_TIME, point.getTime());
             long rowID = db.insert(TABLE_TRACKPOINT, null, values);
             trackPointIDs.add(rowID);
+            Log.i(TAG, "TrackPoint " + rowID + " has been added.");
         }
         return trackPointIDs;
     }
@@ -1467,6 +1487,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 trackPoints.add(point);
             }
         }
+        Log.i(TAG, trackPoints.size()
+                + " track points were retrieved from the database.");
         return trackPoints;
     }
 
