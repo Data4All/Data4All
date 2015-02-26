@@ -117,7 +117,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 + TABLE_DATAELEMENT + " (" + KEY_OSMID
                 + " INTEGER PRIMARY KEY," + KEY_TAGIDS + " TEXT" + ")";
         final String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
-                + KEY_OSMID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_LAT + " REAL,"
+                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT
+                + " REAL,"
                 + KEY_LON + " REAL" + ")";
         final String CREATE_TAGMAP_TABLE = "CREATE TABLE " + TABLE_TAGMAP
                 + " (" + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE
@@ -326,7 +327,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
 
         final ContentValues values = new ContentValues();
-        if (node.getOsmId() > -1) {
+        if (node.getOsmId() != -1) {
             values.put(KEY_OSMID, node.getOsmId());
         }
         values.put(KEY_LAT, node.getLat());
@@ -481,7 +482,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final ContentValues values = new ContentValues();
 
-        if (polyElement.getOsmId() > -1) {
+        if (polyElement.getOsmId() != -1) {
             values.put(KEY_OSMID, polyElement.getOsmId());
         }
         values.put(KEY_TYPE, polyElement.getType().toString());
@@ -732,7 +733,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final List<Integer> tagIDs = new ArrayList<Integer>();
         final ContentValues values = new ContentValues();
 
-        if (dataElement.getOsmId() > -1) {
+        if (dataElement.getOsmId() != -1) {
             values.put(KEY_OSMID, dataElement.getOsmId());
         }
 
@@ -1134,7 +1135,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
-        if (track.getID() > -1) {
+        if (track.getID() != -1) {
             values.put(KEY_INCID, track.getID());
         }
         values.put(KEY_TRACKNAME, track.getTrackName());
@@ -1344,7 +1345,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         List<Long> trackPointIDs = new ArrayList<Long>();
 
         for (TrackPoint point : trackPoints) {
-            if (point.getID() > -1) {
+            if (point.getID() != -1) {
                 values.put(KEY_INCID, point.getID());
             }
             values.put(KEY_LAT, point.getLat());
