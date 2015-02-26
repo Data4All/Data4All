@@ -29,6 +29,11 @@ import android.os.Parcelable;
  *
  */
 public class TrackPoint implements Parcelable {
+    
+    /**
+     * ID of the TrackPoint, set to default.
+     */
+    private long id = -1;
 
     /**
      * Latitude of the Trackpoint.
@@ -92,6 +97,14 @@ public class TrackPoint implements Parcelable {
             this.altitude = Double.NaN;
         }
         this.time = original.getTime();
+    }
+    
+    public void setID(long id){
+        this.id = id;
+    }
+    
+    public long getID(){
+        return id;
     }
 
     public double getLat() {

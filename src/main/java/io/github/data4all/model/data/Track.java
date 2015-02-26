@@ -46,6 +46,11 @@ public class Track implements Parcelable {
      * Logger Tag.
      */
     private static final String TAG = "Track";
+    
+    /**
+     * ID of the TrackPoint, set to default.
+     */
+    private long id = -1;
 
     /**
      * trackName is a Timestamp of format "yyyy_MM_dd_HH_mm_ss".
@@ -100,6 +105,14 @@ public class Track implements Parcelable {
 
     public void setTrackName(String timestamp) {
         this.trackName = timestamp;
+    }
+    
+    public long getID(){
+        return id;
+    }
+    
+    public void setID(long id){
+        this.id = id;
     }
 
     private String getTimeStamp() {

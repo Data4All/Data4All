@@ -1123,13 +1123,16 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
+        if (track.getID() != -1) {
+            values.put(KEY_INCID, track.getID());
+        }
         values.put(KEY_TRACKNAME, track.getTrackName());
 
         List<Long> trackPointIDs = this.createTrackPoints(track
                 .getTrackPoints());
 
         final JSONObject json = new JSONObject();
-        json.put("timestamparray", new JSONArray(trackPointIDs));
+        json.put("trackpointarray", new JSONArray(trackPointIDs));
         final String arrayList = json.toString();
 
         values.put(KEY_TRACKPOINTS, arrayList);
@@ -1147,22 +1150,23 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @throws JSONException
      *             if the JSON object can't be initialized
      */
-    public Track getGPSTrack(String name) throws JSONException { // NOSONAR
+    public Track getGPSTrack(long id) throws JSONException { // NOSONAR
 
-        final SQLiteDatabase db = getReadableDatabase(); // TODO: get by ID
+        final SQLiteDatabase db = getReadableDatabase();
 
         final Track track = new Track();
 
         final Cursor cursor = db.query(TABLE_GPSTRACK, new String[] {
-                KEY_INCID, KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_TRACKNAME
+                KEY_INCID, KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_INCID
                 + "=?",
-                new String[] {name }, null, null, null, null);
+                new String[] {String.valueOf(id) }, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
+            track.setID(cursor.getLong(0));
             track.setTrackName(cursor.getString(1));
 
             final JSONObject json = new JSONObject(cursor.getString(2));
-            final JSONArray jArray = json.optJSONArray("timestamparray");
+            final JSONArray jArray = json.optJSONArray("trackpointarray");
 
             final List<Long> trackPointIDs = new ArrayList<Long>();
 
@@ -1190,15 +1194,15 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(TABLE_GPSTRACK, KEY_TRACKNAME + "=?",
-                new String[] {track.getTrackName() });
+        db.delete(TABLE_GPSTRACK, KEY_INCID + "=?",
+                new String[] {String.valueOf(track.getID()) });
 
-        final List<Long> timestamps = new ArrayList<Long>();
+        final List<Long> trackPointIDs = new ArrayList<Long>();
 
         for (TrackPoint trackpoint : track.getTrackPoints()) {
-            timestamps.add(trackpoint.getTime());
+            trackPointIDs.add(trackpoint.getID());
         }
-        this.deleteTrackPoints(timestamps);
+        this.deleteTrackPoints(trackPointIDs);
     }
 
     /**
@@ -1239,8 +1243,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         int count = 0;
 
-        count += db.update(TABLE_GPSTRACK, values, KEY_TRACKNAME + "=?",
-                new String[] {track.getTrackName() });
+        if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
+            count += db.update(TABLE_GPSTRACK, values, KEY_INCID + "=?",
+                    new String[] {String.valueOf(track.getID()) });
+        } else {
+            db.insert(TABLE_GPSTRACK, null, values);
+        }
 
         count += this.updateTrackPoints(track.getTrackPoints());
 
@@ -1268,18 +1276,18 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         if (cursor != null) {
             while (cursor.moveToNext()) {
 
-                final JSONObject json = new JSONObject(cursor.getString(1));
-                final JSONArray jArray = json.optJSONArray("timestamparray");
+                final JSONObject json = new JSONObject(cursor.getString(2));
+                final JSONArray jArray = json.optJSONArray("trackpointarray");
 
-                final List<Long> timestamps = new ArrayList<Long>();
+                final List<Long> trackPointIDs = new ArrayList<Long>();
 
                 for (int i = 0; i < jArray.length(); i++) {
-                    final long timestamp = jArray.optInt(i);
-                    timestamps.add(timestamp);
+                    final long id = jArray.optInt(i);
+                    trackPointIDs.add(id);
                 }
 
                 final List<TrackPoint> trackPoints = this
-                        .getTrackPoints(timestamps);
+                        .getTrackPoints(trackPointIDs);
                 track.setTrackPoints(trackPoints);
 
                 gpsTracks.add(track);
@@ -1294,6 +1302,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     public void deleteAllGPSTracks() {
         final SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_GPSTRACK, null, null);
+        deleteAllTrackPoints();
     }
 
     // -------------------------------------------------------------------------
@@ -1316,6 +1325,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         List<Long> trackPointIDs = new ArrayList<Long>();
 
         for (TrackPoint point : trackPoints) {
+            if (point.getID() != -1) {
+                values.put(KEY_INCID, point.getID());
+            }
             values.put(KEY_LAT, point.getLat());
             values.put(KEY_LON, point.getLon());
             values.put(KEY_ALT, point.getAlt());
@@ -1334,19 +1346,19 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the timestamps of the desired trackpoints
      * @return a {@link List} of the desired trackpoints
      */
-    public List<TrackPoint> getTrackPoints(List<Long> timestamps) {
+    public List<TrackPoint> getTrackPoints(List<Long> trackPointIDs) {
 
         final SQLiteDatabase db = getReadableDatabase();
 
         final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
 
-        for (long time : timestamps) {
+        for (long id : trackPointIDs) {
             final Cursor cursor = db
                     .query(TABLE_TRACKPOINT, new String[] {KEY_INCID, KEY_LAT,
                             KEY_LON,
                             KEY_ALT, KEY_TIME, },
-                            KEY_TIME + "=?",
-                            new String[] {String.valueOf(time) }, null, null,
+                            KEY_INCID + "=?",
+                            new String[] {String.valueOf(id) }, null, null,
                             null, null);
 
             final Location loc = new Location("provider");
@@ -1358,6 +1370,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             }
 
             final TrackPoint point = new TrackPoint(loc);
+            point.setID(id);
 
             trackPoints.add(point);
             cursor.close();
@@ -1371,12 +1384,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param timestamps
      *            the timestamps of the trackpoints that should be deleted
      */
-    public void deleteTrackPoints(List<Long> timestamps) { // TODO: delete by ID
+    public void deleteTrackPoints(List<Long> trackPointIDs) {
         final SQLiteDatabase db = getWritableDatabase();
 
-        for (long time : timestamps) {
-            db.delete(TABLE_TRACKPOINT, KEY_TIME + "=?",
-                    new String[] {String.valueOf(time) });
+        for (long id : trackPointIDs) {
+            db.delete(TABLE_TRACKPOINT, KEY_INCID + "=?",
+                    new String[] {String.valueOf(id) });
         }
     }
 
@@ -1405,8 +1418,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            a list of {@link TrackPoint}s that should be updated
      * @return the number of rows that have been updated
      */
-    public int updateTrackPoints(List<TrackPoint> trackPoints) { // TODO: update
-                                                                 // via ID
+    public int updateTrackPoints(List<TrackPoint> trackPoints) {
         final SQLiteDatabase db = getWritableDatabase();
 
         final ContentValues values = new ContentValues();
@@ -1419,10 +1431,10 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_ALT, point.getAlt());
             values.put(KEY_TIME, point.getTime());
 
-            if (this.checkIfRecordExists(TABLE_TRACKPOINT, KEY_TIME,
-                    point.getTime())) {
-                count += db.update(TABLE_TRACKPOINT, values, KEY_TIME + "=?",
-                        new String[] {String.valueOf(point.getTime()) });
+            if (this.checkIfRecordExists(TABLE_TRACKPOINT, KEY_INCID,
+                    point.getID())) {
+                count += db.update(TABLE_TRACKPOINT, values, KEY_INCID + "=?",
+                        new String[] {String.valueOf(point.getID()) });
             } else {
                 db.insert(TABLE_TRACKPOINT, null, values);
             }
@@ -1453,6 +1465,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 loc.setTime(cursor.getLong(4));
 
                 final TrackPoint point = new TrackPoint(loc);
+                point.setID(cursor.getLong(0));
                 trackPoints.add(point);
             }
         }
