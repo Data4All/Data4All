@@ -15,6 +15,7 @@
  */
 package io.github.data4all.service;
 
+import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.User;
@@ -26,10 +27,12 @@ import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
 import android.app.IntentService;
-import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.widget.RemoteViews;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.Builder;
 
 /**
  * Service to upload objects to the OSM API.
@@ -77,7 +80,9 @@ public class UploadService extends IntentService {
 
     private volatile boolean stopNext;
     private volatile HttpCloseable currentConnection;
-    private volatile Notification currentNotification;
+    private volatile NotificationCompat.Builder currentNotification;
+
+    private int currentMaxProgress;
 
     /**
      * Constructs a new UploadService with an new Handler.
@@ -153,7 +158,8 @@ public class UploadService extends IntentService {
             }
             if (!stopNext) {
                 // Upload the changeset
-                send(receiver, MAX_PROGRESS, changesetXml.length());
+                currentMaxProgress = changesetXml.length();
+                send(receiver, MAX_PROGRESS, currentMaxProgress);
                 final CloseableUpload upload =
                         ChangesetUtil.upload(user, requestId, changesetXml,
                                 new MyCallback(receiver));
@@ -187,14 +193,17 @@ public class UploadService extends IntentService {
      * @param user
      */
     private void startForeground(User user) {
-        // TODO: Build the notification right
-        Notification notification = new Notification.Builder(this).build();
-        startForeground(NOTIFICATION_ID, notification);
+        currentNotification = new NotificationCompat.Builder(this);
+        currentNotification.setContentTitle("Picture Download")
+            .setContentText("Download in progress");
+            //.setSmallIcon(R.drawable.ic_notification);
+        currentNotification.setProgress(0, 0, false);
+        
+        startForeground(NOTIFICATION_ID, currentNotification.getNotification());
     }
     
     private void updateForeground(int current) {
         if(currentNotification != null) {
-            currentNotification.number = current;
         }
     }
 
