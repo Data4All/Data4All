@@ -117,7 +117,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 + TABLE_DATAELEMENT + " (" + KEY_OSMID
                 + " INTEGER PRIMARY KEY," + KEY_TAGIDS + " TEXT" + ")";
         final String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
-                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
+                + KEY_OSMID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_LAT + " REAL,"
                 + KEY_LON + " REAL" + ")";
         final String CREATE_TAGMAP_TABLE = "CREATE TABLE " + TABLE_TAGMAP
                 + " (" + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE
