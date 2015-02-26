@@ -54,8 +54,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -114,7 +116,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         setContentView(R.layout.activity_tag);
         element = getIntent().getParcelableExtra(OSM);
         res = getResources();
-        createAlertDialogKey();
+        this.createAlertDialogKey();
 
     }
 
@@ -169,6 +171,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
      * 
      */
     private void createAlertDialogValue() {
+
         array = Tagging.ClassifiedValueList(tagMap.get(key)
                 .getClassifiedValues(), res);
         final Map<String, ClassifiedValue> classifiedMap = Tagging
@@ -181,6 +184,10 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
         ;
+        final ImageButton speechStart = (ImageButton) view
+                .findViewById(R.id.speech);
+        speechStart.setOnClickListener(this);
+      
         alertDialogBuilder.setCustomTitle(view);
         alertDialogBuilder.setItems(array,
                 new DialogInterface.OnClickListener() {
@@ -200,22 +207,22 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     }
                 });
 
-        alert1 = alertDialogBuilder.create();
-        alert1.getWindow().setBackgroundDrawable(
+        alert = alertDialogBuilder.create();
+        alert.getWindow().setBackgroundDrawable(
                 new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        alert1.setOnKeyListener(new OnKeyListener() {
+        alert.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode,
                     KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    alert1.dismiss();
+                    alert.dismiss();
                     createAlertDialogKey();
                     return true;
                 }
                 return true;
             }
         });
-        alert1.show();
+        alert.show();
     }
 
     @Override
@@ -230,8 +237,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             alert.dismiss();
             break;
         case R.id.buttonNext:
-            editTextToMap(first);
-            createDialog(Tags.getAllContactTags(),
+            this.editTextToMap(first);
+            this.createDialog(Tags.getAllContactTags(),
                     getString(R.string.AddContact), false);
             break;
         case R.id.buttonFinish:
@@ -266,21 +273,24 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+        	Log.i(TAG, "Speech Start");
             new Dialog(TagActivity.this);
             final ListView textList = (ListView) findViewById(R.id.listView1);
             final List<String> matchesText = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            SpeechRecognition.splitStrings(matchesText);
-            // final Map<String, String> map =
-            // SpeechRecognition.speechToTag(matchesText);
+            map = SpeechRecognition.speechToTag(matchesText,getIntent().getExtras().getInt("TYPE_DEF"), res);
+            Log.i(TAG, map.toString());
             matchesText.clear();
-            for (Entry entry : map.entrySet()) {
-                key = (String) entry.getKey();
-                matchesText.add(key + "=" + map.get(key));
+            Log.i(TAG, "roger in Kambotscha");
+            if(!map.isEmpty()){
+            createDialog(Tags.getAllAddressTags(),
+                    getString(R.string.AddAddress), true);
+            }else {
+            	Toast.makeText(getApplicationContext(), R.string.retry, Toast.LENGTH_SHORT)
+                .show();
+            	createAlertDialogKey();
             }
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, matchesText);
-            textList.setAdapter(adapter);
+         
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -304,6 +314,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         dialog1.setTitle(title);
         final LinearLayout layout = (LinearLayout) dialog1
                 .findViewById(R.id.dialogDynamic);
+        Log.i(TAG, "layout " + layout);
         final Button next = new Button(this);
         final Button finish = new Button(this);
         next.setText(R.string.next);
@@ -315,7 +326,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             text.setHint(arrayList.get(i).getHintRessource());
-            text.setHintTextColor(Color.DKGRAY);
+            text.setHintTextColor(Color.GRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
             Log.i(TAG, "TYpoe " + arrayList.get(i).getType());
@@ -362,7 +373,16 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
         dialog1.show();
     }
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    };
+    
+    
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    	super.onRestoreInstanceState(savedInstanceState);
+    };
+    
     @Override
     public void finish() {
         element.setTags(map);

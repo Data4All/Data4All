@@ -48,12 +48,15 @@
             android:name=".activity.CameraActivity"
             android:configChanges="keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ResultViewActivity" />
+        <activity android:name=".activity.ResultViewActivity"
+             android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".activity.MapActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity
             android:name=".activity.TagActivity"
-            android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
+            android:theme="@android:style/Theme.Holo.Dialog.MinWidth" 
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.BasicActivity" />
         <activity
