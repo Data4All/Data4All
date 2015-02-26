@@ -143,10 +143,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             public void onClick(DialogInterface dialog, int which) {
                 key = (String) array[which];
                 //jump in ResultviewActivity, when lastChoice is selected
-                if("Last Choice".equalsIgnoreCase(key)){
-                    map=LastChoiceHandler.getInstance().getLastChoice(getIntent().getExtras().getInt("TYPE_DEF"));
+                if("Last Choice".equalsIgnoreCase(key)) {
+                    map=LastChoiceHandler.getInstance()
+                            .getLastChoice(getIntent()
+                            .getExtras().getInt("TYPE_DEF"));
                     finish();
-                }else{
+                }else {
                 createAlertDialogValue();
                 }
             }

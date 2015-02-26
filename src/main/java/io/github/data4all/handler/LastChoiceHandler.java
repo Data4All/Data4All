@@ -17,6 +17,7 @@ import android.content.Context;
 /**
  * this class represent the lastchoice from a category
  * this lastchoice appear,when the user taggt a object which belong to the same Category as the last. 
+ * to the same Category as the last. 
  * @author Steeve
  *
  */
@@ -65,8 +66,8 @@ public class LastChoiceHandler {
                 continue;
             }
             if (entry.getKey() instanceof ClassifiedTag) {
-                this.key = (ClassifiedTag) entry.getKey();
-                this.realValue = entry.getValue();
+                this.setKey((ClassifiedTag) entry.getKey());
+                this.setRealValue(entry.getValue());
 
             } else {
                 if (entry.getKey().getId() < 6) {
@@ -85,21 +86,23 @@ public class LastChoiceHandler {
      * @param context
      */
     public void save(Context context) {
-        DataBaseHandler db = new DataBaseHandler(context);
+        final DataBaseHandler db = new DataBaseHandler(context);
         for (Map.Entry<Integer, Map<Tag, String>> entry : typWithLastchoice
                 .entrySet()) {
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                Map<Tag, String> lastChoice = entry.getValue();
+                final Map<Tag, String> lastChoice = entry.getValue();
               //  db.updateTagMap(lastChoice);
                 
-                Map<Tag, String> lastChoiceCopy = new LinkedHashMap<Tag, String>();
+               final Map<Tag, String> lastChoiceCopy = new LinkedHashMap<Tag, String>();
                 for (Map.Entry<Tag, String> entry1 : lastChoice.entrySet()) {
-                    Tag key = entry1.getKey();
-                    Integer id=key.getId()+LAST_CHOICE_ID_PREFIX;
-                    if(key instanceof ClassifiedTag){
-                       lastChoiceCopy.put(new ClassifiedTag(id, key.getKey(), key.getType(), ((ClassifiedTag)key).getClassifiedValues(), key.getOsmObjects()), entry1.getValue());
-                    }else{
-                        lastChoiceCopy.put( new Tag(id,
+                  final  Tag key = entry1.getKey();
+                  final  Integer id=key.getId()+LAST_CHOICE_ID_PREFIX;
+                    if(key instanceof ClassifiedTag) {
+                       lastChoiceCopy.put(new ClassifiedTag(id, key.getKey(), key.getType(), 
+                               ((ClassifiedTag)key).getClassifiedValues(), key.getOsmObjects()), 
+                               entry1.getValue());
+                    }else {
+                        lastChoiceCopy.put(new Tag(id,
                             key.getKey(), key.getType(), key.getOsmObjects()),entry1.getValue());
                     }
                     
@@ -116,13 +119,13 @@ public class LastChoiceHandler {
      * @param db
      */
     public static void load(DataBaseHandler db) {
-        LastChoiceHandler handler = getInstance();
+       final LastChoiceHandler handler = getInstance();
         for (int i = 1; i <= 4; i++) {
             
-            List<Integer> lastChoiceKey = new LinkedList<Integer>();
+            final List<Integer> lastChoiceKey = new LinkedList<Integer>();
           
            
-            List<Tag> tags = Tagging.getKeys(i);
+           final List<Tag> tags = Tagging.getKeys(i);
             for (Tag tag : tags) {
                 lastChoiceKey.add(tag.getId());
             }
@@ -136,7 +139,7 @@ public class LastChoiceHandler {
             }
           
             
-            Map<Tag, String> tagMap = db.getTagMap(lastChoiceKey);
+           final Map<Tag, String> tagMap = db.getTagMap(lastChoiceKey);
             if (tagMap != null && !tagMap.isEmpty()) {
                 handler.setLastChoice(i, tagMap);
             }
@@ -182,7 +185,7 @@ public class LastChoiceHandler {
      */
     public static String[] addLastChoiceForType(int type, String[] array) {
         if (LastChoiceHandler.hasLastChoice(type)) {
-            String[] arrayCopy = new String[array.length + 1];
+           final String[] arrayCopy = new String[array.length + 1];
 
             for (int i = 0; i < array.length; i++) {
                 arrayCopy[i] = array[i];
@@ -191,6 +194,26 @@ public class LastChoiceHandler {
             return arrayCopy;
         }
         return array;
+    }
+
+
+    public ClassifiedTag getKey() {
+        return key;
+    }
+
+
+    public void setKey(ClassifiedTag key) {
+        this.key = key;
+    }
+
+
+    public String getRealValue() {
+        return realValue;
+    }
+
+
+    public void setRealValue(String realValue) {
+        this.realValue = realValue;
     }
 
 }
