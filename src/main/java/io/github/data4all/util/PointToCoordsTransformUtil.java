@@ -39,8 +39,6 @@ import android.location.Location;
 public class PointToCoordsTransformUtil {
     /** Logger tag for this class. */
     private final static String TAG = "PointToWorldCoords";
-    /** osmID for the node. */
-    private int osmID = -1;
     /** height of the device from the ground. */
     private double height;
     /** */
@@ -267,8 +265,7 @@ public class PointToCoordsTransformUtil {
         lat2 = Math.toDegrees(lat2);
         lon2 = Math.toDegrees(lon2);
         // create a new Node with the latitude and longitude values
-        final Node node = new Node(osmID, lat2, lon2);
-        osmID--;
+        final Node node = new Node(-1, lat2, lon2);
         return node;
     }
 

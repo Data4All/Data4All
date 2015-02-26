@@ -204,8 +204,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
-        if (requestCode == 0
-                && (resultCode == RESULT_OK || resultCode == RESULT_CANCELED)) {
+        if (requestCode == 0) {
             final DataBaseHandler db = new DataBaseHandler(this);
             final List<AbstractDataElement> list = db.getAllDataElements();
             mapView.addOsmElementsToMap(this, list);
