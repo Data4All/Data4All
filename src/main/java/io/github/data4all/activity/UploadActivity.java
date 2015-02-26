@@ -54,7 +54,7 @@ public class UploadActivity extends BasicActivity {
     private View cancleButton;
     private D4AMapView mapView;
     private MapController mapController;
-
+    private MapBoxTileSourceV4 osmMap;
     /*
      * (non-Javadoc)
      * 
@@ -70,12 +70,12 @@ public class UploadActivity extends BasicActivity {
         uploadButton = findViewById(R.id.upload_upload_button);
         cancleButton = findViewById(R.id.upload_cancle_button);
         this.readObjectCount();
-        mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
+        mapView = (D4AMapView) this.findViewById(R.id.mapviewupload);
 
         MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
 
         // Add Satellite Map TileSource
-        MapBoxTileSourceV4 osmMap = new MapBoxTileSourceV4(
+        osmMap = new MapBoxTileSourceV4(
                 MapActivity.OSM_MAP_NAME, MapActivity.MINIMAL_ZOOM_LEVEL,
                 MapActivity.MAXIMAL_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(osmMap);
