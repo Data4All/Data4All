@@ -45,6 +45,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Activity to set a ImageView and use the TouchView to draw.<br\>
@@ -210,18 +211,26 @@ public class ShowPictureActivity extends AbstractActivity {
      *            current view used this method
      */
     public void onClickOkay(View view) {
-        // 0 or Rotation0 if portrait
-        // 90 or Rotation1 if home-button to the right
-        // 270 or Rotation3 if home-button to the left
-        final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay().getRotation();
+            //check if we have a location first
+        if (transformBean.getLocation() == null) {
+            final String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            // 0 or Rotation0 if portrait
+            // 90 or Rotation1 if home-button to the right
+            // 270 or Rotation3 if home-button to the left
+            final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                    .getDefaultDisplay().getRotation();
 
-        // create an abstract data element from the given data and pass it to
-        // the next
-        // activity
-        final AbstractDataElement osmElement = touchView.create(rotation);
-        intent.putExtra(OSM_ELEMENT, osmElement);
-        startActivity(intent);
+            // create an abstract data element from the given data and pass it
+            // to
+            // the next
+            // activity
+            final AbstractDataElement osmElement = touchView.create(rotation);
+            intent.putExtra(OSM_ELEMENT, osmElement);
+            startActivity(intent);
+        }
     }
 
     /**
