@@ -324,7 +324,13 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             final Tag tag = arrayList.get(i);
-            if (tag.getLastValue() != null) {
+            ResultViewActivity rs = new ResultViewActivity();
+            if(ResultViewActivity.tmp!=null && tag.getLastValue()!=null && ResultViewActivity.tmp.equals( tag.getLastValue())){
+                text.setText(ResultViewActivity.tmp);
+            }else if (ResultViewActivity.tmp!=null && tag.getLastValue()!=null && !ResultViewActivity.tmp.equals( tag.getLastValue())){
+                text.setText(tag.getLastValue());
+            }
+            else if (tag.getLastValue() != null) {
                 text.setText(tag.getLastValue());
             } else {
                 text.setHint(tag.getHintRessource());
@@ -376,7 +382,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
         dialog1.show();
     }
-
+     
+    
+    
+  
+    
+    
     @Override
     public void finish() {
         element.setTags(map);
