@@ -67,13 +67,13 @@ public class ResultViewActivity extends AbstractActivity implements
     protected MapBoxTileSourceV4 osmMap;
 
     protected static final String OSM_MAP_NAME = "mapbox.streets";
-    
+
     // Minimal Zoom Level
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
     protected static final int MAXIMAL_ZOOM_LEVEL = 22;
-    
+
     private MapController mapController;
 
     // Listview for the Dialog
@@ -100,6 +100,9 @@ public class ResultViewActivity extends AbstractActivity implements
     private Map<String, Tag> mapTag;
     // The Map with the String and ClassifiedValue
     private Map<String, ClassifiedValue> classifiedMap;
+ 
+    public static String tmp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,7 +208,8 @@ public class ResultViewActivity extends AbstractActivity implements
         }
 
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
-        LastChoiceHandler.getInstance().setLastChoice(getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
+        LastChoiceHandler.getInstance().setLastChoice(
+                getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this);
     }
 
@@ -260,6 +264,17 @@ public class ResultViewActivity extends AbstractActivity implements
         final EditText text = new EditText(ResultViewActivity.this);
         text.setTextColor(Color.WHITE);
         text.setInputType(mapTag.get(selectedString).getType());
+        
+        Tag tag = mapTag.get(selectedString);
+        if(tmp!=null && tmp.equals(tag.getLastValue())) {
+                text.setText(tmp);  
+        }else if(tmp!=null && !tmp.equals(tag.getLastValue())){
+            text.setText(tag.getLastValue());
+        }else if(tag.getLastValue()!=null){
+            text.setText(tag.getLastValue());
+        }else {
+            text.setHint(tag.getHintRessource());
+        }
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
         final LinearLayout layout = (LinearLayout) dialog
@@ -269,8 +284,10 @@ public class ResultViewActivity extends AbstractActivity implements
         okay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                element.addOrUpdateTag(mapTag.get(selectedString), text
-                        .getText().toString());
+                element.addOrUpdateTag(mapTag.get(selectedString), text.getText().toString());
+                mapTag.get(selectedString).setLastValue(text.getText().toString());
+                tmp = mapTag.get(selectedString).getLastValue();
+               
                 output();
                 dialog.dismiss();
             }
