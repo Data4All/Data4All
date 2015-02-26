@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import java.util.List;
 
+import org.json.JSONException;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
@@ -40,11 +41,11 @@ import android.widget.Toast;
 
 /**
  * Activity to upload objects to the OSM API.
+ * 
  * @author tbrose
  */
 public class UploadActivity extends BasicActivity {
 
-    
     public static final String TAG = UploadActivity.class.getSimpleName();
     private ProgressBar progress;
     private View indetermineProgress;
@@ -70,22 +71,17 @@ public class UploadActivity extends BasicActivity {
         cancleButton = findViewById(R.id.upload_cancle_button);
         this.readObjectCount();
         mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
-        
+
         MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
 
         // Add Satellite Map TileSource
-        MapBoxTileSourceV4 osmMap = new MapBoxTileSourceV4(MapActivity.OSM_MAP_NAME, MapActivity.MINIMAL_ZOOM_LEVEL,
+        MapBoxTileSourceV4 osmMap = new MapBoxTileSourceV4(
+                MapActivity.OSM_MAP_NAME, MapActivity.MINIMAL_ZOOM_LEVEL,
                 MapActivity.MAXIMAL_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(osmMap);
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
-        mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-        BoundingBoxE6 boundingBox = MapUtil
-                .getBoundingBoxForOsmElement(element);
-        mapView.setBoundingBox(boundingBox);
-        mapView.setScrollable(false);
-        mapView.addOsmElementToMap(this, element);
-        
+        showAllElementsOnMap();
     }
 
     /**
@@ -183,7 +179,7 @@ public class UploadActivity extends BasicActivity {
             this.showProgress(false);
         }
     }
-    
+
     /**
      * Deletes all DataElements
      */
@@ -193,16 +189,34 @@ public class UploadActivity extends BasicActivity {
         db.close();
         this.readObjectCount();
     }
-    
+
     /**
-     * 
+     * Shows all DataElements on the Map.
      */
-    private void showElementsOnMap(List<AbstractDataElement> list){
-        
+    private void showAllElementsOnMap() {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        List<AbstractDataElement> list = null;
+        try {
+            list = db.getAllDataElements();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (list != null && !list.isEmpty()) {
+            mapController.setCenter(MapUtil.getCenterFromOsmElements(list));
+            BoundingBoxE6 boundingBox = MapUtil
+                    .getBoundingBoxForOsmElements(list);
+            mapView.setBoundingBox(boundingBox);
+            mapView.setScrollable(false);
+            mapView.getOverlays().clear();
+            mapView.addOsmElementsToMap(this, list);
+            mapView.postInvalidate();
+        }
     }
 
     /**
      * IPC to receive a callback result from the UploadService.
+     * 
      * @author tbrose
      */
     private class MyReceiver extends ResultReceiver {
