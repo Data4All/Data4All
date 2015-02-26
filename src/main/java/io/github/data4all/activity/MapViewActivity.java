@@ -200,10 +200,29 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
             // Start MapPreview Activity
             Log.i(TAG, "Start MapPreview Activity");
-            startActivity(intent);
+            startActivityForResult(intent, 0);
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
+        if (requestCode == 0
+                && (resultCode == RESULT_OK || resultCode == RESULT_CANCELED)) {
+            final DataBaseHandler db = new DataBaseHandler(this);
+            try {
+                final List<AbstractDataElement> list = db.getAllDataElements();
+                mapView.addOsmElementsToMap(this, list);
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                Log.e(TAG, "", e);
+            }
+            db.close();
+            mapView.postInvalidate();
+        }
+    }
+    
     /**
      * Set the Center to the User Position.
      **/
