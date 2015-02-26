@@ -55,6 +55,7 @@ public class UploadActivity extends BasicActivity {
     private D4AMapView mapView;
     private MapController mapController;
     private MapBoxTileSourceV4 osmMap;
+
     /*
      * (non-Javadoc)
      * 
@@ -75,13 +76,14 @@ public class UploadActivity extends BasicActivity {
         MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
 
         // Add Satellite Map TileSource
-        osmMap = new MapBoxTileSourceV4(
-                MapActivity.OSM_MAP_NAME, MapActivity.MINIMAL_ZOOM_LEVEL,
-                MapActivity.MAXIMAL_ZOOM_LEVEL);
+        osmMap =
+                new MapBoxTileSourceV4(MapActivity.OSM_MAP_NAME,
+                        MapActivity.MINIMAL_ZOOM_LEVEL,
+                        MapActivity.MAXIMAL_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(osmMap);
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
-        showAllElementsOnMap();
+        this.showAllElementsOnMap();
     }
 
     /**
@@ -199,13 +201,12 @@ public class UploadActivity extends BasicActivity {
         try {
             list = db.getAllDataElements();
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "Database throws exception", e);
         }
         if (list != null && !list.isEmpty()) {
             mapController.setCenter(MapUtil.getCenterFromOsmElements(list));
-            BoundingBoxE6 boundingBox = MapUtil
-                    .getBoundingBoxForOsmElements(list);
+            final BoundingBoxE6 boundingBox =
+                    MapUtil.getBoundingBoxForOsmElements(list);
             mapView.setBoundingBox(boundingBox);
             mapView.setScrollable(false);
             mapView.getOverlays().clear();
