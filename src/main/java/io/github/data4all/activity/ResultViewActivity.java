@@ -304,12 +304,8 @@ public class ResultViewActivity extends BasicActivity implements
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         DataBaseHandler db = new DataBaseHandler(this);
-        try {
             db.createDataElement(dataElement);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        
         db.close();
     }
 

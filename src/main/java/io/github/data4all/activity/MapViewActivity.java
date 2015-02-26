@@ -70,13 +70,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         mapView.getOverlays().add(myLocationOverlay);
 
         DataBaseHandler db = new DataBaseHandler(this);
-        try {
             List<AbstractDataElement> list = db.getAllDataElements();
             mapView.addOsmElementsToMap(this, list);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        
         db.close();
 
         // Set Listener for Buttons
