@@ -11,21 +11,21 @@
         android:text="@string/upload_caption"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ImageView
-        android:id="@+id/osm_logo"
+
+    
+        <io.github.data4all.view.D4AMapView
+        android:id="@+id/mapviewupload"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_below="@id/upload_caption"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
-        android:contentDescription="OSM Logo"
-        android:src="@drawable/osm_logo" />
+        android:layout_margin="20dp" />
 
     <RelativeLayout
         android:id="@+id/upload_count_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/osm_logo"
+        android:layout_below="@+id/mapviewupload"
         android:layout_centerHorizontal="true" >
 
         <TextView
