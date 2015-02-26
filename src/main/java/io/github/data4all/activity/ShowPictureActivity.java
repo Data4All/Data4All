@@ -72,6 +72,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private ImageButton undo;
     private ImageButton redo;
     private ImageButton ok;
+    private static final int REQUEST_CODE = 3;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -221,7 +222,7 @@ public class ShowPictureActivity extends AbstractActivity {
         // activity
         final AbstractDataElement osmElement = touchView.create(rotation);
         intent.putExtra(OSM_ELEMENT, osmElement);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     /**
@@ -248,6 +249,21 @@ public class ShowPictureActivity extends AbstractActivity {
         touchView.setInterpretationType(TouchView.InterpretationType.WAY);
         touchView.invalidate();
         intent.putExtra(TYPE, WAY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if(resultCode == RESULT_OK){
+                setResult(RESULT_OK);
+                finish();
+            }
+            if(resultCode == ResultViewActivity.CAMERA_RESULT_CODE){
+                touchView.clearMotions();
+                touchView.invalidate();
+            }
+        }
     }
 
     /**

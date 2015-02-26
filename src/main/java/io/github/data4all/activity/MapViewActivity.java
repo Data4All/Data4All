@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.compass.CompassOverlay;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,6 +46,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     // Logger Tag
     private static final String TAG = "MapViewActivity";
 
+    private static final int REQUEST_CODE = 1;
+    
     /**
      * Default constructor.
      */
@@ -126,7 +127,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
                 Toast.makeText(getApplicationContext(), text,
                         Toast.LENGTH_SHORT).show();
             } else {
-                startActivity(new Intent(this, CameraActivity.class));
+                Intent camera = new Intent(this, CameraActivity.class);
+                startActivity(camera);
             }
             break;
         // Add new POI to the Map

@@ -73,6 +73,10 @@ public class ResultViewActivity extends AbstractActivity implements
     // Maximal Zoom Level
     protected static final int MAXIMAL_ZOOM_LEVEL = 22;
     
+    private static final int REQUEST_CODE = 6;
+    
+    protected static final int CAMERA_RESULT_CODE = 2;
+    
     private MapController mapController;
 
     // Listview for the Dialog
@@ -278,30 +282,30 @@ public class ResultViewActivity extends AbstractActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.buttonResult) {
-            addOsmElementToDB(element);
+            //addOsmElementToDB(element);
             final AlertDialog.Builder builder = new AlertDialog.Builder(
                     ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
-            final Intent intent = new Intent(this, MapViewActivity.class);
-            final Intent intent1 = new Intent(this, LoginActivity.class);
+            final Intent intent = new Intent(this, LoginActivity.class);
             builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivity(intent1);
+                            startActivityForResult(intent, REQUEST_CODE);
                         }
                     });
             builder.setNegativeButton(R.string.no,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivity(intent);
+                            setResult(RESULT_OK);
+                            finish();
                         }
                     });
             alert = builder.create();
             alert.show();
         } else if (v.getId() == R.id.buttonResultToCamera) {
             addOsmElementToDB(element);
-            Log.i(TAG, MapUtil.getBoundingBoxForOsmElement(element).toString());
-            startActivity(new Intent(this, CameraActivity.class));
+            setResult(CAMERA_RESULT_CODE);
+            finish(); 
         }
     }
 
