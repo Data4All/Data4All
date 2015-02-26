@@ -322,11 +322,11 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param node
      *            the {@link Node} object from which the data will be taken
      */
-    public void createNode(Node node) {
+    public long createNode(Node node) {
         final SQLiteDatabase db = getWritableDatabase();
 
         final ContentValues values = new ContentValues();
-        if (node.getOsmId() != -1) {
+        if (node.getOsmId() > -1) {
             values.put(KEY_OSMID, node.getOsmId());
         }
         values.put(KEY_LAT, node.getLat());
@@ -334,6 +334,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         long rowID = db.insert(TABLE_NODE, null, values);
         Log.i(TAG, "Node " + rowID + " has been added.");
+        return rowID;
     }
 
     /**
@@ -480,14 +481,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final ContentValues values = new ContentValues();
 
-        if (polyElement.getOsmId() != -1) {
+        if (polyElement.getOsmId() > -1) {
             values.put(KEY_OSMID, polyElement.getOsmId());
         }
         values.put(KEY_TYPE, polyElement.getType().toString());
 
         for (Node node : polyElement.getNodes()) {
-            nodeIDs.add(node.getOsmId());
-            this.createNode(node);
+            long nodeID = this.createNode(node);
+            nodeIDs.add(nodeID);
         }
         final JSONObject json = new JSONObject();
         try {
@@ -731,7 +732,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final List<Integer> tagIDs = new ArrayList<Integer>();
         final ContentValues values = new ContentValues();
 
-        if (dataElement.getOsmId() != -1) {
+        if (dataElement.getOsmId() > -1) {
             values.put(KEY_OSMID, dataElement.getOsmId());
         }
 
@@ -753,6 +754,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         long rowID = db.insert(TABLE_DATAELEMENT, null, values);
         Log.i(TAG, "DataElement " + rowID + " has been added.");
+        dataElement.setOsmId(rowID);
 
         if (dataElement instanceof PolyElement) {
             this.createPolyElement((PolyElement) dataElement);
@@ -1132,7 +1134,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
-        if (track.getID() != -1) {
+        if (track.getID() > -1) {
             values.put(KEY_INCID, track.getID());
         }
         values.put(KEY_TRACKNAME, track.getTrackName());
@@ -1342,7 +1344,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         List<Long> trackPointIDs = new ArrayList<Long>();
 
         for (TrackPoint point : trackPoints) {
-            if (point.getID() != -1) {
+            if (point.getID() > -1) {
                 values.put(KEY_INCID, point.getID());
             }
             values.put(KEY_LAT, point.getLat());
