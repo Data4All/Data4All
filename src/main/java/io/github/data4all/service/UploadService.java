@@ -26,6 +26,7 @@ import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
@@ -42,6 +43,11 @@ public class UploadService extends IntentService {
      */
     private static final String CHANGESET_COMMENT =
             "User-triggered upload via App";
+
+    /**
+     * The id of the foreground notification.
+     */
+    private static final int NOTIFICATION_ID = 201;
 
     /**
      * Logger.
@@ -71,6 +77,7 @@ public class UploadService extends IntentService {
 
     private volatile boolean stopNext;
     private volatile HttpCloseable currentConnection;
+    private volatile Notification currentNotification;
 
     /**
      * Constructs a new UploadService with an new Handler.
@@ -130,6 +137,7 @@ public class UploadService extends IntentService {
      */
     private void uploadElems(final ResultReceiver receiver, final User user) {
         try {
+            startForeground(user);
             int requestId = 0;
             if (!stopNext) {
                 // Request the changesetId
@@ -160,11 +168,48 @@ public class UploadService extends IntentService {
                 closeId.request();
             }
             if (!stopNext) {
+                stopForeground(SUCCESS);
                 send(receiver, SUCCESS, (Bundle) null);
             }
         } catch (OsmException e) {
             Log.e(TAG, "", e);
+            stopForeground(ERROR);
             send(receiver, ERROR, e.getLocalizedMessage());
+        }
+        if (stopNext) {
+            stopForeground(CANCLE);
+        }
+    }
+
+    /**
+     * TODO
+     * 
+     * @param user
+     */
+    private void startForeground(User user) {
+        // TODO: Build the notification right
+        Notification notification = new Notification.Builder(this).build();
+        startForeground(NOTIFICATION_ID, notification);
+    }
+    
+    private void updateForeground(int current) {
+        if(currentNotification != null) {
+            currentNotification.number = current;
+        }
+    }
+
+    /**
+     * TODO
+     */
+    private void stopForeground(int reason) {
+        stopForeground(true);
+        switch (reason) {
+        case SUCCESS:
+            // TODO: Add success notification
+            break;
+        case ERROR:
+            // TODO: Add error notification
+            break;
         }
     }
 
@@ -249,6 +294,7 @@ public class UploadService extends IntentService {
         @Override
         public void callback(Integer t) {
             send(receiver, CURRENT_PROGRESS, t);
+            updateForeground(t);
         }
     }
 }
