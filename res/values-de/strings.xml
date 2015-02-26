@@ -58,7 +58,7 @@
     <string name="login_access_dialog_mes">Benutzername oder Passwort nicht korrekt.</string>
 
 
-    <!-- for tags -->
+    <!-- for tags --> 
     <string name="SelectTag">Passenden Tag auswählen</string>
     <string name="AddAddress">Adresse hinzufügen</string>
     <string name="AddContact">Kontakt hinzufügen</string>
