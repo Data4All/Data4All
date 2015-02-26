@@ -47,7 +47,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private static final String TAG = "MapViewActivity";
 
     private static final int REQUEST_CODE = 1;
-    
+
     /**
      * Default constructor.
      */
@@ -68,11 +68,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setUpLoadingScreen();
 
         DataBaseHandler db = new DataBaseHandler(this);
-            List<AbstractDataElement> list = db.getAllDataElements();
-            mapView.addOsmElementsToMap(this, list);
-        
+        List<AbstractDataElement> list = db.getAllDataElements();
+        mapView.addOsmElementsToMap(this, list);
+
         db.close();
-        
+
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
@@ -207,18 +207,13 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         if (requestCode == 0
                 && (resultCode == RESULT_OK || resultCode == RESULT_CANCELED)) {
             final DataBaseHandler db = new DataBaseHandler(this);
-            try {
-                final List<AbstractDataElement> list = db.getAllDataElements();
-                mapView.addOsmElementsToMap(this, list);
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                Log.e(TAG, "", e);
-            }
+            final List<AbstractDataElement> list = db.getAllDataElements();
+            mapView.addOsmElementsToMap(this, list);
             db.close();
             mapView.postInvalidate();
         }
     }
-    
+
     /**
      * Set the Center to the User Position.
      **/

@@ -282,7 +282,7 @@ public class ResultViewActivity extends AbstractActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.buttonResult) {
-            //addOsmElementToDB(element);
+            addOsmElementToDB(element);
             final AlertDialog.Builder builder = new AlertDialog.Builder(
                     ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
