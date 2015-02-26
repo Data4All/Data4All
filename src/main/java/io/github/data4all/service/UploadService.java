@@ -142,6 +142,7 @@ public class UploadService extends IntentService {
             String changesetXml = null;
             if (!stopNext) {
                 changesetXml = ChangesetUtil.getChangesetXml(this, requestId);
+                Log.d(TAG, changesetXml);   
             }
             if (!stopNext) {
                 // Upload the changeset

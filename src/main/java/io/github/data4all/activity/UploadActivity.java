@@ -133,7 +133,7 @@ public class UploadActivity extends BasicActivity {
     public void onSuccess() {
         this.showProgress(false);
         this.deleteAllElements();
-        final String msg = "Successfully uploaded";
+        final String msg = getString(R.string.upload_success);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 

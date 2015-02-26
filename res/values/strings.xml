@@ -61,22 +61,20 @@
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-
-    
     <string name="resultViewAlertDialogMessage">Upload now?</string>
     <string name="ok">Ok</string>
-    
-    <string name="redo">Redo Function</string>
-    
+   
+    <string name="redo">Redo Function</string> 
     <string name="undo">Undo Function</string>
-    
-    <string name="upload_caption">Upload to OpenStreetMap</string>
-    
-    <string name="upload_upload_text">"Objects to upload: "</string>
     <string name="SelectTag">Select Tag</string>
     <string name="AddAddress">Add Address</string>
     <string name="AddContact">Add Contact</string>
-
+    
+    <!-- Upload Activity -->
+    <string name="upload_success">Successfully uploaded</string>
+    <string name="upload_caption">Upload to OpenStreetMap</string>
+    <string name="upload_upload_text">"Objects to upload: "</string>
     <string name="upload_cancle">Cancle</string>
+    
     
 </resources>

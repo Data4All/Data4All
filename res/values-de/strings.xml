@@ -4,33 +4,25 @@
     <string name="app_name">Data4All</string>
     <string name="hello">Hallo Data4All!</string>
     <string name="action_settings">Einstellungen</string>
-    
     <string name="sensor_button">Sensor</string>
-    
     <string name="X"> Accelerometer X</string>
     <string name="Y"> Accelerometer Y</string>
     <string name="Z"> Accelerometer Z</string>
-    
-    
     <string name="x"> Gyroskop x</string>
     <string name="y"> Gyroskop y</string>
     <string name="z"> Gyroskop z</string>
-    
     <string name="action_ShowPicture">Bild anzeigen</string>
-    
     <string name="action_camera">Kamera</string>
     <string name="action_map">Karte</string>
     <string name="action_help">Hilfe</string>
     <string name="title_activity_custom_menu">CustomMenuActivity</string>
     <string name="hello_world">Hallo Welt!</string>
-    
     <string name="return_to_position">Meine Position</string>
     <string name="to_camera">Kamera</string>
     <string name="switch_to_satellite">Satellitenkarte</string>
     <string name="switch_to_osm">OpenStreetMap</string>
     <string name="upload_data">Hochladen</string>
     <string name="poi">POI</string>
-    
     <string name="action_login">Einloggen</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="stayLoggedIn">Eingeloggt bleiben?</string>
@@ -38,18 +30,20 @@
     <string name="loginRedirectMessage">Sie werden zum OpenStreetMap Login weitergeleitet.</string>
     <string name="deleteButton">Token löschen</string>
     <string name="alreadyLoggedIn">Sie sind bereits eingeloggt.</string>
-    
     <string name="speechRecognition">Start </string>
     <string name="selectTag">Passenden Tag auswählen</string>
-    
-
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie ihr GPS Signal ein.</string>
-   
     <string name="AddAddress">Addresse hinzufügen</string>
     <string name="AddContact">Kontakt hinzufügen</string>
-	<string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
-        <!-- Delete Dialog -->
+    <string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
+    <!-- Delete Dialog -->
     <string name="deleteDialog">Wollen sie dieses Objekt wirklich löschen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+
+    <!-- Upload Activity -->
+    <string name="upload_success">Erfolgreich hochgeladen</string>
+    <string name="upload_caption">Hochladen zu OpenStreetMap</string>
+    <string name="upload_upload_text">"Hochzuladende Objekte: "</string>
+    <string name="upload_cancle">Abbrechen</string>
 </resources>
