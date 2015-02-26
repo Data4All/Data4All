@@ -11,15 +11,13 @@
         android:text="@string/upload_caption"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-
-    
         <io.github.data4all.view.D4AMapView
         android:id="@+id/mapviewupload"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dp" />
+        android:layout_margin="40dp" />
 
     <RelativeLayout
         android:id="@+id/upload_count_layout"

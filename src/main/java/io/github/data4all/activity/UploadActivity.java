@@ -15,10 +15,20 @@
  */
 package io.github.data4all.activity;
 
+import java.util.List;
+
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.views.MapController;
+
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.service.UploadService;
+import io.github.data4all.util.MapUtil;
+import io.github.data4all.view.D4AMapView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +51,8 @@ public class UploadActivity extends BasicActivity {
     private TextView countText;
     private View uploadButton;
     private View cancleButton;
+    private D4AMapView mapView;
+    private MapController mapController;
 
     /*
      * (non-Javadoc)
@@ -57,6 +69,23 @@ public class UploadActivity extends BasicActivity {
         uploadButton = findViewById(R.id.upload_upload_button);
         cancleButton = findViewById(R.id.upload_cancle_button);
         this.readObjectCount();
+        mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
+        
+        MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
+
+        // Add Satellite Map TileSource
+        MapBoxTileSourceV4 osmMap = new MapBoxTileSourceV4(MapActivity.OSM_MAP_NAME, MapActivity.MINIMAL_ZOOM_LEVEL,
+                MapActivity.MAXIMAL_ZOOM_LEVEL);
+        TileSourceFactory.addTileSource(osmMap);
+        mapView.setTileSource(osmMap);
+        mapController = (MapController) this.mapView.getController();
+        mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
+        BoundingBoxE6 boundingBox = MapUtil
+                .getBoundingBoxForOsmElement(element);
+        mapView.setBoundingBox(boundingBox);
+        mapView.setScrollable(false);
+        mapView.addOsmElementToMap(this, element);
+        
     }
 
     /**
@@ -163,6 +192,13 @@ public class UploadActivity extends BasicActivity {
         db.deleteAllDataElements();
         db.close();
         this.readObjectCount();
+    }
+    
+    /**
+     * 
+     */
+    private void showElementsOnMap(List<AbstractDataElement> list){
+        
     }
 
     /**
