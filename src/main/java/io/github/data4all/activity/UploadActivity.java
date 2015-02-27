@@ -197,12 +197,8 @@ public class UploadActivity extends AbstractActivity {
      */
     private void showAllElementsOnMap() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = null;
-        try {
-            list = db.getAllDataElements();
-        } catch (JSONException e) {
-            Log.e(TAG, "Database throws exception", e);
-        }
+        List<AbstractDataElement> list = db.getAllDataElements();
+
         if (list != null && !list.isEmpty()) {
             mapController.setCenter(MapUtil.getCenterFromOsmElements(list));
             final BoundingBoxE6 boundingBox =

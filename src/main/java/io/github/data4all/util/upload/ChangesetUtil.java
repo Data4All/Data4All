@@ -144,26 +144,22 @@ public final class ChangesetUtil {
      */
     public static String getChangesetXml(Context context, int changesetId)
             throws OsmException {
-        try {
-            final DataBaseHandler db = new DataBaseHandler(context);
-            final List<AbstractDataElement> elems = db.getAllDataElements();
-            db.close();
+        final DataBaseHandler db = new DataBaseHandler(context);
+        final List<AbstractDataElement> elems = db.getAllDataElements();
+        db.close();
 
-            final StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
 
-            final PrintWriter writer = new PrintWriter(new OutputStream() {
-                @Override
-                public void write(int oneByte) throws IOException {
-                    builder.append((char) oneByte);
-                }
-            });
+        final PrintWriter writer = new PrintWriter(new OutputStream() {
+            @Override
+            public void write(int oneByte) throws IOException {
+                builder.append((char) oneByte);
+            }
+        });
 
-            OsmChangeParser.parseElements(elems, changesetId, writer);
-            writer.close();
-            return builder.toString();
-        } catch (JSONException e) {
-            throw new OsmException(e);
-        }
+        OsmChangeParser.parseElements(elems, changesetId, writer);
+        writer.close();
+        return builder.toString();
     }
 
     /**
