@@ -319,11 +319,7 @@ public class ResultViewActivity extends AbstractActivity implements
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         DataBaseHandler db = new DataBaseHandler(this);
-        try {
-            db.createDataElement(dataElement);
-        } catch (JSONException e) {
-            Log.e(TAG, "", e);
-        }
+        db.createDataElement(dataElement);
         db.close();
     }
 
