@@ -111,7 +111,7 @@ public abstract class AbstractActivity extends Activity {
 
     /**
      * Call this when your activity is done and should be closed. The
-     * ActivityResult whish is propagated back is
+     * ActivityResult which is propagated back is
      * {@link AbstractActivity#RESULT_FINISH RESULT_FINISH}.
      * 
      * @author tbrose
