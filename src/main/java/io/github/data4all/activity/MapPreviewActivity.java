@@ -48,6 +48,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     private BoundingBoxE6 boundingBox;
 
+    private static final int REQUEST_CODE = 4;
+
     /**
      * Standard Constructor
      **/
@@ -66,15 +68,16 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         setContentView(R.layout.activity_map_preview);
         setUpMapView(savedInstanceState);
         view.setVisibility(View.GONE);
-        if(getIntent().hasExtra("OSM_ELEMENT")){
+        if (getIntent().hasExtra("OSM_ELEMENT")) {
             element = getIntent().getParcelableExtra("OSM_ELEMENT");
         }
         mapView.addOsmElementToMap(this, element);
-        if(getIntent().hasExtra("LOCATION")){
+        if (getIntent().hasExtra("LOCATION")) {
             Location l = (Location) getIntent().getParcelableExtra("LOCATION");
             Marker m = new Marker(mapView);
             m.setPosition(new GeoPoint(l));
-            m.setIcon(new DefaultResourceProxyImpl(this).getDrawable(ResourceProxy.bitmap.person));
+            m.setIcon(new DefaultResourceProxyImpl(this)
+                    .getDrawable(ResourceProxy.bitmap.person));
             m.setInfoWindow(null);
             mapView.getOverlays().add(m);
         }
@@ -150,7 +153,17 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.toString());
         intent.putExtra(OSM, element);
 
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
+        if (requestCode == REQUEST_CODE
+                && (resultCode == RESULT_OK || resultCode == ResultViewActivity.CAMERA_RESULT_CODE)) {
+            setResult(resultCode);
+            finish();
+        }
+    }
 }
