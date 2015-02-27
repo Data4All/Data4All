@@ -37,6 +37,8 @@
             android:ems="10"
             android:hint="@string/usernameHint"
             android:padding="10dp"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/osm_pass"
             android:textColorHint="#cccccc" />
 
         <EditText

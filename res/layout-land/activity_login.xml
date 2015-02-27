@@ -39,6 +39,8 @@
             android:ems="10"
             android:hint="@string/usernameHint"
             android:padding="10dp"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/osm_pass"
             android:textColorHint="#cccccc" />
 
         <EditText
@@ -61,6 +63,7 @@
             android:layout_height="50dp"
             android:layout_below="@+id/osm_pass"
             android:background="@drawable/login_button_bg"
+            android:onClick="onClickStart"
             android:padding="10dp"
             android:text="@string/loginButton" />
 
@@ -71,6 +74,7 @@
             android:layout_height="50dp"
             android:layout_below="@+id/osm_login"
             android:background="@drawable/register_button_bg"
+            android:onClick="onClickStart"
             android:padding="10dp"
             android:text="@string/registerButton"
             android:textColor="#ffffff" />
