@@ -277,12 +277,8 @@ public class CameraActivity extends Activity {
 		return camera;
 	}
 
-	public void updateCameraAssistView(double precentage) {
-		SharedPreferences settings = getSharedPreferences(null,
-				Context.MODE_PRIVATE);
-		int previewWidth = settings.getInt("camera_preview_width", 0);
-		cameraAssistView.setPreviewWidth(previewWidth);
-		cameraAssistView.setInvalidatedRegionPrecentage(precentage);
+	public void updateCameraAssistView(float[] points) {
+		cameraAssistView.setPoints(points[0], points[1], points[2], points[3]);
 		cameraAssistView.invalidate();
 
 	}

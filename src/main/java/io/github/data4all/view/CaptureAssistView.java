@@ -16,10 +16,13 @@
 package io.github.data4all.view;
 
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
@@ -39,103 +42,82 @@ import android.view.View;
 
 public class CaptureAssistView extends View {
 
-	private int previewWidth;
-	private double percentage;
+    private Paint cameraCrossPaint;
+    private Paint cameraStopPaint;
+    private Paint invalidRegionPaint;
+    private float coordinateLeftX;
+    private float coordinateLeftY;
+    private float coordinateRightX;
+    private float coordinateRightY;
 
-	private Paint cameraCrossPaint;
-	private Paint cameraStopPaint;
-	private Paint invalidRegionPaint;
+    private static final String TAG = CaptureAssistView.class.getSimpleName();
 
-	private static final String TAG = CaptureAssistView.class.getSimpleName();
+    public CaptureAssistView(Context context) {
+        super(context);
+        initView();
+    }
 
-	public CaptureAssistView(Context context) {
-		super(context);
-		initView();
-	}
+    public CaptureAssistView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView();
+    }
 
-	public CaptureAssistView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		initView();
-	}
+    public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initView();
+    }
 
-	public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		initView();
-	}
+    private void initView() {
+        setFocusable(true);
 
-	private void initView() {
-		setFocusable(true);
+        Resources r = this.getResources();
+        cameraCrossPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cameraCrossPaint.setColor(r.getColor(R.color.camera_cross));
+        cameraCrossPaint.setStyle(Paint.Style.STROKE);
+        cameraCrossPaint.setStrokeWidth(4);
 
-		Resources r = this.getResources();
-		cameraCrossPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		cameraCrossPaint.setColor(r.getColor(R.color.camera_cross));
-		cameraCrossPaint.setStyle(Paint.Style.STROKE);
-		cameraCrossPaint.setStrokeWidth(4);
+        cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
+        cameraStopPaint.setStyle(Paint.Style.STROKE);
+        cameraStopPaint.setStrokeWidth(6);
 
-		cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
-		cameraStopPaint.setStyle(Paint.Style.STROKE);
-		cameraStopPaint.setStrokeWidth(6);
+        invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
+        invalidRegionPaint.setStyle(Paint.Style.FILL);
 
-		invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
-		invalidRegionPaint.setStyle(Paint.Style.FILL);
+    }
 
-	}
+    public void setPoints(float leftX, float leftY, float rightX, float rightY) {
+        this.coordinateLeftX = leftX;
+        this.coordinateLeftY = leftY;
+        this.coordinateRightX = rightX;
+        this.coordinateRightY = rightY;
+    }
 
-	public void setInvalidatedRegionPrecentage(double _precentage) {
-		this.percentage = _precentage;
-	}
+    @Override
+    protected void onDraw(Canvas canvas) {
 
-	public void setPreviewWidth(int _previewWidth) {
-		this.previewWidth = _previewWidth;
-	}
+        Path path = getPath();
 
-	@Override
-	protected void onDraw(Canvas canvas) {
+        canvas.drawPath(path, invalidRegionPaint);
 
-		int mMeasuredWidth = getMeasuredWidth();
-		int mMeasuredHeight = getMeasuredHeight();
+        canvas.restore();
 
-		int offWidth = mMeasuredWidth - previewWidth;
+    }
 
-		if (percentage > 0.0) {
+    private Path getPath() {
+        int mMeasuredWidth = getMeasuredWidth();
 
-			RectF invalidateRect = new RectF(offWidth / 2, 0, mMeasuredWidth
-					- offWidth / 2,
-					new Double(mMeasuredHeight * percentage).intValue());
-			canvas.drawRect(invalidateRect, invalidRegionPaint);
-		}
+        Path path = new Path();
+        path.moveTo(0, 0);
+        path.lineTo(coordinateLeftX, coordinateLeftY);
+        path.lineTo(coordinateRightX, coordinateRightY);
+        if (coordinateRightX != mMeasuredWidth || coordinateRightY != 0) {
+            path.lineTo(mMeasuredWidth, 0);
+        }
+        path.lineTo(0, 0);
+        return path;
 
-		if (percentage < 1) {
+    }
 
-			canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
-					mMeasuredHeight / 2, mMeasuredWidth / 2 + mMeasuredWidth
-							/ 12, mMeasuredHeight / 2, cameraCrossPaint);
-
-			canvas.drawLine(mMeasuredWidth / 2, mMeasuredHeight / 2
-					- mMeasuredWidth / 12, mMeasuredWidth / 2, mMeasuredHeight
-					/ 2 + mMeasuredWidth / 12, cameraCrossPaint);
-
-			RectF rollOval = new RectF((mMeasuredWidth / 2) - mMeasuredWidth
-					/ 16, (mMeasuredHeight / 2) - mMeasuredWidth / 16,
-					(mMeasuredWidth / 2) + mMeasuredWidth / 16,
-					(mMeasuredHeight / 2) + mMeasuredWidth / 16);
-
-			canvas.drawRect(rollOval, cameraCrossPaint);
-		} else {
-			canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
-					mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
-							/ 2 + mMeasuredWidth / 12, mMeasuredHeight / 2
-							+ mMeasuredHeight / 8, cameraStopPaint);
-
-			canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
-					mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
-							/ 2 - mMeasuredWidth / 12, mMeasuredHeight / 2
-							+ mMeasuredHeight / 8, cameraStopPaint);
-		}
-
-		canvas.restore();
-
-	}
 }
