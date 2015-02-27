@@ -284,6 +284,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, matchesText);
             textList.setAdapter(adapter);
+        } else if (resultCode == 0) {
+            this.finish();
         }
     }
 
