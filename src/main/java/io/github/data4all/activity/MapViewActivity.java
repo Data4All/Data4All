@@ -25,7 +25,6 @@ import io.github.data4all.util.Optimizer;
 
 import java.util.List;
 
-import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
 
 import android.content.Intent;
@@ -45,8 +44,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     // Logger Tag
     private static final String TAG = "MapViewActivity";
-
-    private static final int REQUEST_CODE = 1;
 
     /**
      * Default constructor.
@@ -112,14 +109,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         // Make Photo
         case R.id.to_camera:
-            if (Optimizer.currentLocation() == null) {
-                final String text = getString(R.string.noLocationFound);
-                Toast.makeText(getApplicationContext(), text,
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Intent camera = new Intent(this, CameraActivity.class);
-                startActivity(camera);
-            }
+            startCamera();
             break;
         // Add new POI to the Map
         case R.id.new_point:
@@ -127,6 +117,17 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         default:
             break;
+        }
+    }
+
+    private void startCamera() {
+        if (Optimizer.currentLocation() == null) {
+            final String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text,
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Intent camera = new Intent(this, CameraActivity.class);
+            startActivity(camera);
         }
     }
 
@@ -207,17 +208,16 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
-        if (requestCode == 0) {
-            final DataBaseHandler db = new DataBaseHandler(this);
-            final List<AbstractDataElement> list = db.getAllDataElements();
-            mapView.addOsmElementsToMap(this, list);
-            db.close();
-            mapView.postInvalidate();
-        }
+    protected void onWorkflowFinished(Intent data) {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<AbstractDataElement> list = db.getAllDataElements();
+        mapView.addOsmElementsToMap(this, list);
+        db.close();
+        mapView.postInvalidate();
     }
 
     /**

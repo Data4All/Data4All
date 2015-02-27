@@ -197,7 +197,7 @@ public class UploadActivity extends AbstractActivity {
      */
     private void showAllElementsOnMap() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
+        final List<AbstractDataElement> list = db.getAllDataElements();
 
         if (list != null && !list.isEmpty()) {
             mapController.setCenter(MapUtil.getCenterFromOsmElements(list));
@@ -209,6 +209,28 @@ public class UploadActivity extends AbstractActivity {
             mapView.addOsmElementsToMap(this, list);
             mapView.postInvalidate();
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        // Ignore - The upload is the last step in the workflow
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#finish()
+     */
+    @Override
+    public void finish() {
+        finishWorkflow();
     }
 
     /**

@@ -94,8 +94,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     // The Ressource
     private Resources res;
 
-    private static final int RESULTVIEW_REQUEST_CODE = 5;
-
     /**
      * Called when the activity is first created.
      * 
@@ -287,14 +285,14 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     android.R.layout.simple_list_item_1, matchesText);
             textList.setAdapter(adapter);
         }
-        if (requestCode == RESULTVIEW_REQUEST_CODE
-                && (resultCode == RESULT_OK
-                        || resultCode == ResultViewActivity.CAMERA_RESULT_CODE || resultCode == RESULT_CANCELED)) {
-            Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: "
-                    + resultCode);
-            setResult(resultCode);
-            finish();
-        }
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow();
     }
 
     /**
@@ -380,6 +378,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
-        startActivityForResult(intent, RESULTVIEW_REQUEST_CODE);
+        startActivityForResult(intent);
     }
 }
