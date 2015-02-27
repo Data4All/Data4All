@@ -67,12 +67,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         setUpLoadingScreen();
 
-        DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
-        mapView.addOsmElementsToMap(this, list);
-
-        db.close();
-
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
@@ -144,6 +138,19 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+        // clear all Overlays
+        mapView.getOverlays().clear();
+        //add osmElements from the database to the map
+        DataBaseHandler db = new DataBaseHandler(this);
+        List<AbstractDataElement> list = db.getAllDataElements();
+        mapView.addOsmElementsToMap(this, list);
+
+        db.close();
+
+        // Set Overlay for the actual Position
+        Log.i(TAG, "Added User Location Overlay to the map");
+        mapView.getOverlays().add(myLocationOverlay);
+
 
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
