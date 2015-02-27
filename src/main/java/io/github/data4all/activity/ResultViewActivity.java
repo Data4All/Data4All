@@ -57,6 +57,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+/**
+ * View after Drawing and Tagging
+ * 
+ * @author Maurice Boyke
+ *
+ */
 public class ResultViewActivity extends AbstractActivity implements
         OnClickListener {
     private static final String TAG = "ResultViewActivity";
@@ -192,13 +198,10 @@ public class ResultViewActivity extends AbstractActivity implements
                                                     .replaceAll(":", "_")).get(
                                     null)));
                 } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
                     Log.e(TAG, "", e);
                 } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
                     Log.e(TAG, "", e);
                 } catch (NoSuchFieldException e) {
-                    // TODO Auto-generated catch block
                     Log.e(TAG, "", e);
                 }
             } else {
@@ -217,7 +220,6 @@ public class ResultViewActivity extends AbstractActivity implements
      * @param selectedString
      *            is the Selected String
      */
-
     private void changeClassifiedTag(final String selectedString) {
         Log.i(TAG, "Classified Tag");
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
