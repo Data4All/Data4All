@@ -183,7 +183,7 @@ public class UploadActivity extends AbstractActivity {
     }
 
     /**
-     * Deletes all DataElements
+     * Deletes all DataElements.
      */
     private void deleteAllElements() {
         final DataBaseHandler db = new DataBaseHandler(this);
@@ -197,7 +197,7 @@ public class UploadActivity extends AbstractActivity {
      */
     private void showAllElementsOnMap() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
+        final List<AbstractDataElement> list = db.getAllDataElements();
 
         if (list != null && !list.isEmpty()) {
             mapController.setCenter(MapUtil.getCenterFromOsmElements(list));

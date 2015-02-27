@@ -48,8 +48,9 @@
             android:name=".activity.CameraActivity"
             android:configChanges="keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ResultViewActivity"
-             android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name=".activity.ResultViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".activity.MapActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity

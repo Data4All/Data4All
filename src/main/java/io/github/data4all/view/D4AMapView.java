@@ -16,7 +16,6 @@
 package io.github.data4all.view;
 
 import io.github.data4all.activity.AbstractActivity;
-import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
