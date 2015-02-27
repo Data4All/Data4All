@@ -74,6 +74,8 @@
     <string name="upload_caption">Hochladen zu OpenStreetMap</string>
     <string name="upload_upload_text">"Hochzuladende Objekte: "</string>
     <string name="upload_cancle">Abbrechen</string>
+      <string name="CancelButton">Abbrechen</string>
+    <string name="UploadButton">Hochladen</string>
 
     <!-- other -->
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
