@@ -140,7 +140,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         super.onResume();
         // clear all Overlays
         mapView.getOverlays().clear();
-        //add osmElements from the database to the map
+        // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
@@ -150,7 +150,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
-
 
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
@@ -173,9 +172,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Disable Actual Location Overlay
         Log.i(TAG, "Disable Actual Location Overlay");
         myLocationOverlay.disableMyLocation();
-        // Pause the GPS tracking
-        Log.i(TAG, "Stop GPSService");
-        stopService(new Intent(this, GPSservice.class));
     }
 
     /**
@@ -231,5 +227,18 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.activity.MapActivity#onDestroy()
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Stop the GPS tracking
+        Log.i(TAG, "Stop GPSService");
+        stopService(new Intent(this, GPSservice.class));
     }
 }

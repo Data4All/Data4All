@@ -137,7 +137,7 @@ public class GPSservice extends Service implements LocationListener {
         
         if (track != null) {
             final Location tp = Optimizer.currentBestLoc();
-            Log.e(TAG, "Track: " + track);
+            Log.d(TAG, "Track: " + track);
             final TrackPoint last = track.getLastTrackPoint();
 
             if (last != null && tp != null) {
