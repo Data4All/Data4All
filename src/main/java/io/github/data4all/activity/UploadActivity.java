@@ -15,13 +15,6 @@
  */
 package io.github.data4all.activity;
 
-import java.util.List;
-
-import org.json.JSONException;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.BoundingBoxE6;
-import org.osmdroid.views.MapController;
-
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
@@ -30,6 +23,13 @@ import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.service.UploadService;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.view.D4AMapView;
+
+import java.util.List;
+
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.views.MapController;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;

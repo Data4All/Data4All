@@ -39,7 +39,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.params.BasicHttpParams;
-import org.json.JSONException;
 
 import android.content.Context;
 import android.os.ResultReceiver;
