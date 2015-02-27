@@ -19,6 +19,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.Tag;
 
 import java.io.BufferedWriter;
@@ -155,15 +156,15 @@ public final class OsmChangeParser {
         writer.println("<create>");
 
         for (Node n : nodes) {
-            Log.i(TAG, "Node parsed" + n.toString());
+            Log.i(TAG, "Node parsed ID:" + n.getOsmId() +" LAT: " +n.getLat() +" LONG: " +n.getLon());
             parseNode(writer, n, changesetID);
-            Log.i(TAG, "Node parsed");
+            Log.i(TAG, "Node parsed ID:" + n.getOsmId() +" LAT: " +n.getLat() +" LONG: " +n.getLon());
         }
         for (PolyElement w : ways) {
             parseWay(writer, w, changesetID);
         }
         for (PolyElement r : relations) {
-            parseRelation(writer, r, changesetID);
+            parseWay(writer, r, changesetID);
         }
 
         writer.println("</create>");
@@ -185,9 +186,12 @@ public final class OsmChangeParser {
      */
     private static void parseNode(PrintWriter writer, Node node,
             long changesetID) {
-        Log.i(TAG, "in die Methode");
         final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
-
+        Log.d(TAG, "<node id=\"" + getId(node.getOsmId()) + TIMESTAMP
+                + dateformat.format(new Date()) + "\" lat=\"" + node.getLat()
+                + "\" lon=\"" + node.getLon() + CHANGESET + changesetID
+                + "\" version=\"1\"");
+        
         writer.print("<node id=\"" + getId(node.getOsmId()) + TIMESTAMP
                 + dateformat.format(new Date()) + "\" lat=\"" + node.getLat()
                 + "\" lon=\"" + node.getLon() + CHANGESET + changesetID
@@ -230,7 +234,9 @@ public final class OsmChangeParser {
         for (Node nd : way.getNodes()) {
             writer.println("<nd ref=\"" + getId(nd.getOsmId()) + "\"/>");
         }
-
+        if (way.getType() != PolyElementType.WAY) {
+            writer.println("<nd ref=\"" + getId(way.getFirstNode().getOsmId()) + "\"/>");
+        }
         for (Tag key : tags.keySet()) {
             writer.println(TAGKEY + key.getKey() + TAGVALUE + tags.get(key)
                     + "\"/>");
