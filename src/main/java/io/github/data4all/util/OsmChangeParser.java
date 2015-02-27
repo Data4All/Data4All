@@ -38,9 +38,10 @@ import android.content.Context;
 
 /**
  * The OsmChangeParser is a util for Parsing a List of DataElements into a File
- * which can then be uploaded to the OSM API
+ * which can then be uploaded to the OSM API.
  * 
  * @author Richard
+ * @author tbrose (rearranging)
  */
 @SuppressLint("SimpleDateFormat")
 public final class OsmChangeParser {
@@ -72,72 +73,104 @@ public final class OsmChangeParser {
     public static void parseElements(Context context,
             List<AbstractDataElement> elems, long changesetID) {
         try {
-            final PrintWriter writer = new PrintWriter(new BufferedWriter(
-                    new FileWriter(new File(context.getFilesDir()
-                            .getAbsolutePath() + "/OsmChangeUpload.osc"))));
-            final List<Node> nodes = new ArrayList<Node>();
-            final List<PolyElement> ways = new ArrayList<PolyElement>();
-            final List<PolyElement> relations = new ArrayList<PolyElement>();
-
-            for (AbstractDataElement osm : elems) {
-                if (osm instanceof Node) {
-                    nodes.add((Node) osm);
-                }
-                if (osm instanceof PolyElement) {
-                    final PolyElement poly = (PolyElement) osm;
-                    for (Node n : poly.getNodes()) {
-                        if (!nodes.contains(n)) {
-                            nodes.add(n);
-                        }
-                    }
-                    switch (poly.getType()) {
-                    case WAY:
-                        ways.add(poly);
-                        break;
-                    case AREA:
-                        relations.add(poly);
-                        break;
-                    case BUILDING:
-                        relations.add(poly);
-                        break;
-                    default:
-                        break;
-                    }
-                }
-
-            }
-
-            // From here Parsing
-
-            writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            writer.println("<osmChange version=\"1\" generator=\"Data4All\">");
-            writer.println("<create>");
-
-            for (Node n : nodes) {
-                Log.i(TAG, "Node parsed" + n.toString());
-                parseNode(writer, n, changesetID);
-                Log.i(TAG, "Node parsed");
-            }
-            for (PolyElement w : ways) {
-                parseWay(writer, w, changesetID);
-            }
-            for (PolyElement r : relations) {
-                parseRelation(writer, r, changesetID);
-            }
-
-            writer.println("</create>");
-            writer.println("</osmChange>");
-
-            writer.flush();
-            Log.i(TAG, "Data is flushed to :"
-                    + context.getFilesDir().getAbsolutePath()
-                    + "/OsmChangeUpload.osc");
+            final PrintWriter writer =
+                    new PrintWriter(new BufferedWriter(new FileWriter(new File(
+                            context.getFilesDir().getAbsolutePath()
+                                    + "/OsmChangeUpload.osc"))));
+            parseElements(elems, changesetID, writer);
             writer.close();
             Log.i(TAG, "Writer is closed");
-
         } catch (IOException e) {
             Log.e(TAG, "Problem in writing the OsmChangeFile", e);
         }
+
+    }
+
+    /**
+     * Parses a List of OsmElements into the OSM Change Format.
+     * 
+     * @param elems
+     *            the List of Element which should be uploaded.
+     * @param changesetID
+     *            the changesetID required for the upload.
+     * @param writer
+     *            {@link PrintWriter} object.
+     */
+    public static void parseElements(List<AbstractDataElement> elems,
+            long changesetID, PrintWriter writer) {
+        final List<Node> nodes = new ArrayList<Node>();
+        final List<PolyElement> ways = new ArrayList<PolyElement>();
+        final List<PolyElement> relations = new ArrayList<PolyElement>();
+
+        for (AbstractDataElement osm : elems) {
+            if (osm instanceof Node) {
+                nodes.add((Node) osm);
+            }
+            if (osm instanceof PolyElement) {
+                handlePolyElement(osm, nodes, ways, relations);
+            }
+        }
+
+        // From here Parsing
+        parseData(nodes, ways, relations, changesetID, writer);
+    }
+
+    /**
+     * @param osm
+     * @param nodes
+     * @param ways
+     * @param relations
+     */
+    private static void handlePolyElement(AbstractDataElement osm,
+            List<Node> nodes, List<PolyElement> ways,
+            List<PolyElement> relations) {
+        final PolyElement poly = (PolyElement) osm;
+        for (Node n : poly.getNodes()) {
+            if (!nodes.contains(n)) {
+                nodes.add(n);
+            }
+        }
+        switch (poly.getType()) {
+        case WAY:
+            ways.add(poly);
+            break;
+        case AREA:
+            relations.add(poly);
+            break;
+        case BUILDING:
+            relations.add(poly);
+            break;
+        default:
+            break;
+        }
+    }
+
+    /**
+     * 
+     */
+    private static void parseData(List<Node> nodes, List<PolyElement> ways,
+            List<PolyElement> relations, long changesetID, PrintWriter writer) {
+        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        writer.println("<osmChange version=\"1\" generator=\"Data4All\">");
+        writer.println("<create>");
+
+        for (Node n : nodes) {
+            Log.i(TAG, "Node parsed" + n.toString());
+            parseNode(writer, n, changesetID);
+            Log.i(TAG, "Node parsed");
+        }
+        for (PolyElement w : ways) {
+            parseWay(writer, w, changesetID);
+        }
+        for (PolyElement r : relations) {
+            parseRelation(writer, r, changesetID);
+        }
+
+        writer.println("</create>");
+        writer.println("</osmChange>");
+
+        writer.flush();
+        Log.i(TAG, "Data is flushed");
     }
 
     /**
@@ -155,13 +188,13 @@ public final class OsmChangeParser {
         Log.i(TAG, "in die Methode");
         final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
 
-        writer.print("<node id=\"" + node.getOsmId() + TIMESTAMP
+        writer.print("<node id=\"" + getId(node.getOsmId()) + TIMESTAMP
                 + dateformat.format(new Date()) + "\" lat=\"" + node.getLat()
                 + "\" lon=\"" + node.getLon() + CHANGESET + changesetID
                 + "\" version=\"1\"");
 
-        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) node
-                .getTags();
+        final Map<Tag, String> tags =
+                (LinkedHashMap<Tag, String>) node.getTags();
         if (tags.isEmpty()) {
             writer.print("/>");
             writer.println();
@@ -189,13 +222,13 @@ public final class OsmChangeParser {
     private static void parseWay(PrintWriter writer, PolyElement way,
             long changesetID) {
         final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
-        writer.println("<way id=\"" + way.getOsmId() + TIMESTAMP
+        writer.println("<way id=\"" + getId(way.getOsmId()) + TIMESTAMP
                 + dateformat.format(new Date()) + CHANGESET + changesetID
                 + "\" version=\"1\">");
-        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) way
-                .getTags();
+        final Map<Tag, String> tags =
+                (LinkedHashMap<Tag, String>) way.getTags();
         for (Node nd : way.getNodes()) {
-            writer.println("<nd ref=\"" + nd.getOsmId() + "\"/>");
+            writer.println("<nd ref=\"" + getId(nd.getOsmId()) + "\"/>");
         }
 
         for (Tag key : tags.keySet()) {
@@ -218,14 +251,14 @@ public final class OsmChangeParser {
     private static void parseRelation(PrintWriter writer, PolyElement relation,
             long changesetID) {
         final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
-        writer.println("<relation id=\"" + relation.getOsmId() + TIMESTAMP
-                + dateformat.format(new Date()) + CHANGESET + changesetID
-                + "\" version=\"1\">");
-        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) relation
-                .getTags();
+        writer.println("<relation id=\"" + getId(relation.getOsmId())
+                + TIMESTAMP + dateformat.format(new Date()) + CHANGESET
+                + changesetID + "\" version=\"1\">");
+        final Map<Tag, String> tags =
+                (LinkedHashMap<Tag, String>) relation.getTags();
         for (Node member : relation.getNodes()) {
-            writer.println("<member type=\"Node\" ref=\"" + member.getOsmId()
-                    + "\" role=\"\"/>");
+            writer.println("<member type=\"node\" ref=\""
+                    + getId(member.getOsmId()) + "\" role=\"\"/>");
         }
 
         for (Tag key : tags.keySet()) {
@@ -233,6 +266,18 @@ public final class OsmChangeParser {
                     + "\"/>");
         }
         writer.println("</relation>");
+    }
+
+    /**
+     * Returns a negative version of the given id.<br/>
+     * If the id is negative, nothing is changed.
+     * 
+     * @param osmId
+     *            The osmId of an object
+     * @return the negative version of this id
+     */
+    private static long getId(long osmId) {
+        return (long) (-1 * Math.abs(osmId));
     }
 
 }

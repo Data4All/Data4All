@@ -103,11 +103,10 @@ public class LoginActivity extends AbstractActivity {
     }
 
     /**
-     * Starts the next activity. Used when the user is logged in.
+     * Starts the UploadActivity. Used when the user is logged in.
      */
     private void nextActivity() {
-        // TODO: Open right activity
-        this.startActivity(new Intent(this, MapViewActivity.class));
+        this.startActivity(new Intent(this, UploadActivity.class));
         this.finish();
     }
 

@@ -61,6 +61,7 @@ public class MapMarker extends Marker implements
         this.element = ele;
         this.activity = ctx;
         this.mapView = mv;
+        setIcon(ctx.getResources().getDrawable(R.drawable.ic_setpoint));
 
     }
 

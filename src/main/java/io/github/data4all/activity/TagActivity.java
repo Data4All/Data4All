@@ -95,6 +95,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     // The Ressource
     private Resources res;
 
+    private static final int RESULTVIEW_REQUEST_CODE = 5;
+
     /**
      * Called when the activity is first created.
      * 
@@ -147,7 +149,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     map=LastChoiceHandler.getInstance()
                             .getLastChoice(getIntent()
                             .getExtras().getInt("TYPE_DEF"));
-                    finish();
+                    redirectToResultView();
                 }else {
                 createAlertDialogValue();
                 }
@@ -161,6 +163,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             public boolean onKey(DialogInterface dialog, int keyCode,
                     KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    setResult(RESULT_FIRST_USER);
+                    finish();
                     return true;
                 }
                 return true;
@@ -198,14 +202,14 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         final String value = (String) array[which];
                         String realValue = classifiedMap.get(value).getValue();
-                       
+
                         map = new LinkedHashMap<Tag, String>();
                         map.put(tagMap.get(key), realValue);
                         Log.i(TAG, tagMap.get(key) + realValue);
 
                         createDialog(Tags.getAllAddressTags(),
                                 getString(R.string.AddAddress), true);
-                        
+
                     }
                 });
 
@@ -245,7 +249,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             break;
         case R.id.buttonFinish:
             editTextToMap(first);
-            finish();
+            redirectToResultView();
             break;
         default:
             break;
@@ -276,6 +280,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             new Dialog(TagActivity.this);
             final ListView textList = (ListView) findViewById(R.id.listView1);
@@ -293,7 +298,14 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     android.R.layout.simple_list_item_1, matchesText);
             textList.setAdapter(adapter);
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULTVIEW_REQUEST_CODE
+                && (resultCode == RESULT_OK
+                        || resultCode == ResultViewActivity.CAMERA_RESULT_CODE || resultCode == RESULT_CANCELED)) {
+            Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: "
+                    + resultCode);
+            setResult(resultCode);
+            finish();
+        }
     }
 
     /**
@@ -384,19 +396,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
         dialog1.show();
     }
-     
-    
-    
-  
-    
-    
-    @Override
-    public void finish() {
+
+    public void redirectToResultView() {
         element.setTags(map);
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
-        super.finish();
-        startActivity(intent);
+        startActivityForResult(intent, RESULTVIEW_REQUEST_CODE);
     }
 }

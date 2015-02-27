@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -66,11 +67,13 @@ public class CapturePictureHandler implements PictureCallback {
     // Name of the TransformationParamBean to give to the next activity
     public static final String TRANSFORM_BEAN = "transform_bean";
 
+    private static final int REQUEST_CODE = 2;
+
     private static final String TAG = CapturePictureHandler.class
             .getSimpleName();
 
     // Actual Activity for the context
-    private final Context context;
+    private final Activity context;
 
     // The file into which the picture is saved
     private File photoFile;
@@ -94,7 +97,7 @@ public class CapturePictureHandler implements PictureCallback {
      *            The Application context
      */
     public CapturePictureHandler(Context context, CameraPreview preview) {
-        this.context = context;
+        this.context = (Activity) context;
         this.preview = preview;
     }
 
@@ -199,15 +202,15 @@ public class CapturePictureHandler implements PictureCallback {
             if (result.equals("successful")) {
                 Log.d(TAG, "Picture successfully saved");
 
-                final Intent intent = new Intent();
-                intent.setClass(context, ShowPictureActivity.class);
+                final Intent intent = new Intent(context,
+                        ShowPictureActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(FILE_EXTRA, photoFile);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
                 intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
                 intent.putExtra(SIZE_EXTRA, viewSize);
 
-                context.startActivity(intent);
+                context.startActivityForResult(intent, REQUEST_CODE);
 
             } else {
                 Toast.makeText(context, "Failed on taking picture",

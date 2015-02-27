@@ -58,6 +58,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+/**
+ * View after Drawing and Tagging
+ * 
+ * @author Maurice Boyke
+ *
+ */
 public class ResultViewActivity extends AbstractActivity implements
         OnClickListener {
     private static final String TAG = "ResultViewActivity";
@@ -67,13 +73,17 @@ public class ResultViewActivity extends AbstractActivity implements
     protected MapBoxTileSourceV4 osmMap;
 
     protected static final String OSM_MAP_NAME = "mapbox.streets";
-
+    
     // Minimal Zoom Level
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
     protected static final int MAXIMAL_ZOOM_LEVEL = 22;
-
+    
+    private static final int REQUEST_CODE = 6;
+    
+    protected static final int CAMERA_RESULT_CODE = 2;
+    
     private MapController mapController;
 
     // Listview for the Dialog
@@ -192,13 +202,10 @@ public class ResultViewActivity extends AbstractActivity implements
                                                     .replaceAll(":", "_")).get(
                                     null)));
                 } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
                     Log.e(TAG, "", e);
                 } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
                     Log.e(TAG, "", e);
                 } catch (NoSuchFieldException e) {
-                    // TODO Auto-generated catch block
                     Log.e(TAG, "", e);
                 }
             } else {
@@ -220,7 +227,6 @@ public class ResultViewActivity extends AbstractActivity implements
      * @param selectedString
      *            is the Selected String
      */
-
     private void changeClassifiedTag(final String selectedString) {
         Log.i(TAG, "Classified Tag");
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
@@ -302,26 +308,26 @@ public class ResultViewActivity extends AbstractActivity implements
             final AlertDialog.Builder builder = new AlertDialog.Builder(
                     ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
-            final Intent intent = new Intent(this, MapViewActivity.class);
-            final Intent intent1 = new Intent(this, LoginActivity.class);
+            final Intent intent = new Intent(this, LoginActivity.class);
             builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivity(intent1);
+                            startActivityForResult(intent, REQUEST_CODE);
                         }
                     });
             builder.setNegativeButton(R.string.no,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivity(intent);
+                            setResult(RESULT_OK);
+                            finish();
                         }
                     });
             alert = builder.create();
             alert.show();
         } else if (v.getId() == R.id.buttonResultToCamera) {
             addOsmElementToDB(element);
-            Log.i(TAG, MapUtil.getBoundingBoxForOsmElement(element).toString());
-            startActivity(new Intent(this, CameraActivity.class));
+            setResult(CAMERA_RESULT_CODE);
+            finish(); 
         }
     }
 
@@ -333,12 +339,7 @@ public class ResultViewActivity extends AbstractActivity implements
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         DataBaseHandler db = new DataBaseHandler(this);
-        try {
-            db.createDataElement(dataElement);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            Log.e(TAG, "", e);
-        }
+        db.createDataElement(dataElement);
         db.close();
     }
 
