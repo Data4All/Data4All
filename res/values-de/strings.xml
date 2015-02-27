@@ -69,6 +69,12 @@
     <string name="website">Website</string>
     <string name="email">Email</string>
 
+    <!-- for upload -->
+    <string name="upload_success">Erfolgreich hochgeladen</string>
+    <string name="upload_caption">Hochladen zu OpenStreetMap</string>
+    <string name="upload_upload_text">"Hochzuladende Objekte: "</string>
+    <string name="upload_cancle">Abbrechen</string>
+
     <!-- other -->
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>

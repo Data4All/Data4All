@@ -72,49 +72,35 @@ public abstract class AbstractActivity extends Activity {
             startActivity(new Intent(this, SettingsActivity.class));
             status = true;
             break;
-        case R.id.action_camera:
-            startActivity(new Intent(this, CameraActivity.class));
-            status = true;
-            break;
-        case R.id.action_map:
-            startActivity(new Intent(this, MapViewActivity.class));
-            status = true;
-            break;
         case R.id.action_help:
             // TODO set help activity here
-            status = true;
-            break;
-        case R.id.action_login:
-            startActivity(new Intent(this, LoginActivity.class));
             status = true;
             break;
         default:
             return super.onOptionsItemSelected(item);
         }
-
         return status;
-
     }
 
     /**
      * Applies a bottom margin to the given view if the device have a
      * navigationbar. The margin to set is the height of the navigationbar.
      * 
+     * @author tbrose
+     * 
      * @param resources
      *            The resources to lookup the navigationbar height from
      * @param view
      *            The view to set the bottom margin from
-     * 
-     * @author tbrose
      */
     public static void addNavBarMargin(Resources resources, View view) {
         if (resources != null) {
-            boolean hasBar = AbstractActivity.hasNavBar(resources);
+            final boolean hasBar = AbstractActivity.hasNavBar(resources);
             Log.v("HAS_NAVBAR", "" + hasBar);
             if (view != null && hasBar) {
-                LayoutParams lp = view.getLayoutParams();
+                final LayoutParams lp = view.getLayoutParams();
                 if (lp instanceof MarginLayoutParams) {
-                    MarginLayoutParams mlp = (MarginLayoutParams) lp;
+                    final MarginLayoutParams mlp = (MarginLayoutParams) lp;
                     mlp.setMargins(0, 0, 0,
                             AbstractActivity.getNavBarHeight(resources));
                 }
@@ -125,34 +111,37 @@ public abstract class AbstractActivity extends Activity {
     /**
      * Returns if the device uses the navigationbar.
      * 
+     * @author tbrose
+     * 
      * @param resources
      *            The resources to lookup if navigationbar is shown
      * @return if the device uses the navigationbar
-     * 
-     * @author tbrose
      */
     public static boolean hasNavBar(Resources resources) {
-        int id = resources.getIdentifier("config_showNavigationBar", "bool",
-                "android");
-        if (id > 0)
+        final int id =
+                resources.getIdentifier("config_showNavigationBar", "bool",
+                        "android");
+        if (id > 0) {
             return resources.getBoolean(id);
-        else
+        } else {
             return false;
+        }
     }
 
     /**
      * Returns the height of the navigationbar. This can be non-zero even if the
      * device does not use the navigationbar.
      * 
+     * @author tbrose
+     * 
      * @param resources
      *            The resources to lookup the navigationbar height from
      * @return The height of the navigationbar
-     * 
-     * @author tbrose
      */
     public static int getNavBarHeight(Resources resources) {
-        int id = resources.getIdentifier("navigation_bar_height", "dimen",
-                "android");
+        final int id =
+                resources.getIdentifier("navigation_bar_height", "dimen",
+                        "android");
         if (id > 0) {
             return resources.getDimensionPixelSize(id);
         }

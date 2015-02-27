@@ -1,0 +1,90 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/upload_caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/upload_caption"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <io.github.data4all.view.D4AMapView
+        android:id="@+id/mapviewupload"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="40dp" />
+
+    <RelativeLayout
+        android:id="@+id/upload_count_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mapviewupload"
+        android:layout_centerHorizontal="true" >
+
+        <TextView
+            android:id="@+id/upload_upload_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_upload_text" />
+
+        <TextView
+            android:id="@+id/upload_count_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/upload_upload_text"
+            android:text="" />
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/upload_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/upload_count_layout"
+        android:layout_margin="20dp"
+        android:indeterminate="false"
+        android:visibility="invisible" />
+
+    <ProgressBar
+        android:id="@+id/upload_indetermine_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/upload_count_layout"
+        android:layout_margin="20dp"
+        android:indeterminate="true"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/upload_upload_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upload_progress"
+        android:layout_centerHorizontal="true"
+        android:enabled="false"
+        android:onClick="onClickUpload"
+        android:text="@string/upload_data" />
+
+    <Button
+        android:id="@+id/upload_cancle_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upload_progress"
+        android:layout_centerHorizontal="true"
+        android:enabled="false"
+        android:onClick="onClickCancle"
+        android:text="@string/upload_cancle"
+        android:visibility="gone" />
+
+</RelativeLayout>
