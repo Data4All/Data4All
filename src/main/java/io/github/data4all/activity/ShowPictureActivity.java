@@ -174,7 +174,7 @@ public class ShowPictureActivity extends AbstractActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
-        this.onClickBuilding(null);
+        this.onClickArea(null);
 
         // Setup the rotation listener
         List<View> buttons = new ArrayList<View>();

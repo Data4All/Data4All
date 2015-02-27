@@ -93,7 +93,8 @@ public final class OsmChangeParser {
      *            the List of Element which should be uploaded.
      * @param changesetID
      *            the changesetID required for the upload.
-     * @param writer {@link PrintWriter} object.
+     * @param writer
+     *            {@link PrintWriter} object.
      */
     public static void parseElements(List<AbstractDataElement> elems,
             long changesetID, PrintWriter writer) {
@@ -187,7 +188,7 @@ public final class OsmChangeParser {
         Log.i(TAG, "in die Methode");
         final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
 
-        writer.print("<node id=\"" + node.getOsmId() + TIMESTAMP
+        writer.print("<node id=\"" + getId(node.getOsmId()) + TIMESTAMP
                 + dateformat.format(new Date()) + "\" lat=\"" + node.getLat()
                 + "\" lon=\"" + node.getLon() + CHANGESET + changesetID
                 + "\" version=\"1\"");
@@ -221,13 +222,13 @@ public final class OsmChangeParser {
     private static void parseWay(PrintWriter writer, PolyElement way,
             long changesetID) {
         final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
-        writer.println("<way id=\"" + way.getOsmId() + TIMESTAMP
+        writer.println("<way id=\"" + getId(way.getOsmId()) + TIMESTAMP
                 + dateformat.format(new Date()) + CHANGESET + changesetID
                 + "\" version=\"1\">");
         final Map<Tag, String> tags =
                 (LinkedHashMap<Tag, String>) way.getTags();
         for (Node nd : way.getNodes()) {
-            writer.println("<nd ref=\"" + nd.getOsmId() + "\"/>");
+            writer.println("<nd ref=\"" + getId(nd.getOsmId()) + "\"/>");
         }
 
         for (Tag key : tags.keySet()) {
@@ -250,14 +251,14 @@ public final class OsmChangeParser {
     private static void parseRelation(PrintWriter writer, PolyElement relation,
             long changesetID) {
         final SimpleDateFormat dateformat = new SimpleDateFormat(TIMEFORMAT);
-        writer.println("<relation id=\"" + relation.getOsmId() + TIMESTAMP
-                + dateformat.format(new Date()) + CHANGESET + changesetID
-                + "\" version=\"1\">");
+        writer.println("<relation id=\"" + getId(relation.getOsmId())
+                + TIMESTAMP + dateformat.format(new Date()) + CHANGESET
+                + changesetID + "\" version=\"1\">");
         final Map<Tag, String> tags =
                 (LinkedHashMap<Tag, String>) relation.getTags();
         for (Node member : relation.getNodes()) {
-            writer.println("<member type=\"node\" ref=\"" + member.getOsmId()
-                    + "\" role=\"\"/>");
+            writer.println("<member type=\"node\" ref=\""
+                    + getId(member.getOsmId()) + "\" role=\"\"/>");
         }
 
         for (Tag key : tags.keySet()) {
@@ -265,6 +266,18 @@ public final class OsmChangeParser {
                     + "\"/>");
         }
         writer.println("</relation>");
+    }
+
+    /**
+     * Returns a negative version of the given id.<br/>
+     * If the id is negative, nothing is changed.
+     * 
+     * @param osmId
+     *            The osmId of an object
+     * @return the negative version of this id
+     */
+    private static long getId(long osmId) {
+        return (long) (-1 * Math.abs(osmId));
     }
 
 }
