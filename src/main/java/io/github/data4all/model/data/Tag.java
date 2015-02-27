@@ -17,11 +17,8 @@ package io.github.data4all.model.data;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+
 import java.util.Arrays;
-
-import org.apache.tools.ant.types.resources.selectors.InstanceOf;
-
-import android.text.InputType;
 
 /**
  * This class represents a predefined osm tag. The name and hint for a specific
@@ -79,23 +76,25 @@ public class Tag {
     /**
      * Constructor to create nameRessource and hintRessource from the key.
      * 
-     * @param id The ID of the Tag.
-     * @param key The Key of the Tag.
-     * @param type The InputType method. 
-     * @param osmObjects The osm Objects the Tag refers to.
+     * @param id
+     *            The ID of the Tag.
+     * @param key
+     *            The Key of the Tag.
+     * @param type
+     *            The InputType method.
+     * @param osmObjects
+     *            The osm Objects the Tag refers to.
      */
     public Tag(int id, String key, int type, int... osmObjects) {
         this.id = id;
         this.key = key;
         this.type = type;
         try {
-            this.nameRessource =
-                    (Integer) R.string.class.getDeclaredField(
-                            "name_" + key.replaceAll(":", "_")).get(null);
+            this.nameRessource = (Integer) R.string.class.getDeclaredField(
+                    "name_" + key.replaceAll(":", "_")).get(null);
             if (type != -1) {
-                this.hintRessource =
-                        (Integer) R.string.class.getDeclaredField(
-                                "hint_" + key.replaceAll(":", "_")).get(null);
+                this.hintRessource = (Integer) R.string.class.getDeclaredField(
+                        "hint_" + key.replaceAll(":", "_")).get(null);
             }
         } catch (IllegalArgumentException e) {
             Log.e(LOG_TAG, "IllegalArgumentException", e);
@@ -104,7 +103,7 @@ public class Tag {
         } catch (NoSuchFieldException e) {
             Log.e(LOG_TAG, "NoSuchFieldException", e);
         }
-        
+
         this.setOsmObjects(osmObjects);
     }
 
@@ -163,8 +162,7 @@ public class Tag {
     public String toString() {
         return "key: " + key + " nameRessource: " + nameRessource
                 + " hintRessource: " + hintRessource + " osmObjects: "
-                + "type:" + type
-                + Arrays.toString(osmObjects);
+                + "type:" + type + Arrays.toString(osmObjects);
     }
 
 }

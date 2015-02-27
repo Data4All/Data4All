@@ -30,7 +30,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -39,13 +38,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-/**
+/** 
  * Super Class for all Map Activities.
  * 
  * @author Oliver Schwartz
  *
  */
-public class MapActivity extends BasicActivity {
+public class MapActivity extends AbstractActivity {
 
     // Node Type Definition Number
     protected static final int NODE_TYPE_DEF = 1;
@@ -105,7 +104,9 @@ public class MapActivity extends BasicActivity {
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
-    protected static final int MAXIMAL_ZOOM_LEVEL = 18;
+    protected static final int MAXIMAL_OSM_ZOOM_LEVEL = 22;
+
+    protected static final int MAXIMAL_SATELLITE_ZOOM_LEVEL = 18;
 
     // Default Stroke width
     protected static final float DEFAULT_STROKE_WIDTH = 3.0f;
@@ -126,7 +127,7 @@ public class MapActivity extends BasicActivity {
 
     protected static final String OSM_MAP_NAME = "mapbox.streets";
 
-    CacheManager cacheManager;
+    protected CacheManager cacheManager;
 
     /**
      * Default constructor.
@@ -144,17 +145,19 @@ public class MapActivity extends BasicActivity {
      */
     protected void setUpMapView(Bundle savedInstanceState) {
         mapView = (D4AMapView) this.findViewById(R.id.mapview);
-
+        // Set ImageView for Loading Screen
+        view = (ImageView) findViewById(R.id.imageView1);
+        
         MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
 
         // Add Satellite Map TileSource
         satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_ZOOM_LEVEL);
+                MAXIMAL_SATELLITE_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(satMap);
 
         // Add OSM Map TileSource
         osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_ZOOM_LEVEL);
+                MAXIMAL_OSM_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(osmMap);
         mapTileSource = osmMap;
 
@@ -166,44 +169,45 @@ public class MapActivity extends BasicActivity {
         Log.i(TAG, "Set minimal Zoomlevel to " + MINIMAL_ZOOM_LEVEL);
         mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
 
-        Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_ZOOM_LEVEL);
-        mapView.setMaxZoomLevel(MAXIMAL_ZOOM_LEVEL);
+        Log.i(TAG, "Set maximal Zoomlevel to " + MAXIMAL_OSM_ZOOM_LEVEL);
+        mapView.setMaxZoomLevel(MAXIMAL_OSM_ZOOM_LEVEL);
 
         mapController = (MapController) this.mapView.getController();
 
         // for setting the actualZoomLevel and Center Position on Orientation
         // Change
-        loadState(savedInstanceState);
+        this.loadState(savedInstanceState);
 
         cacheManager = new CacheManager(mapView);
 
         // Set MapTileSource
-        setMapTileSource(mapTileSource);
+        this.setMapTileSource(mapTileSource);
 
         // Set Zoomlevel
-        setZoomLevel(actualZoomLevel);
+        this.setZoomLevel(actualZoomLevel);
 
         // Set Center
-        setCenter(actualCenter);
+        this.setCenter(actualCenter);
 
         myLocationOverlay = new MyLocationNewOverlay(this, mapView);
     }
 
     /**
-     * Shows Loading Screen
+     * Shows Loading Screen.
      **/
     protected void setUpLoadingScreen() {
-        // Set ImageView for Loading Screen
-        view = (ImageView) findViewById(R.id.imageView1);
 
         // fading out the loading screen
-        // view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
-        // .withEndAction(new Runnable() {
-        // public void run() {
+        if (view.getVisibility() == View.GONE) {
+            view.setVisibility(View.VISIBLE);
+        }
+        view.animate().alpha(0.0F).setDuration(1000).setStartDelay(1500)
+                .withEndAction(new Runnable() {
+                    public void run() {
+                        view.setVisibility(View.GONE);
+                    }
+                }).start();
         // view.setVisibility(View.GONE);
-        // }
-        // }).start();
-        view.setVisibility(View.GONE);
     }
 
     /**
@@ -270,18 +274,11 @@ public class MapActivity extends BasicActivity {
     protected IGeoPoint getMyLocation() {
         final LocationManager locationManager = (LocationManager) this
                 .getSystemService(Context.LOCATION_SERVICE);
-        final Criteria criteria = new Criteria();
-        final String provider = locationManager
-                .getBestProvider(criteria, false);
         final Location currentLocation = locationManager
-                .getLastKnownLocation(provider);
+                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
-        } else {
-            String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-                    .show();
         }
         return null;
 
@@ -307,12 +304,13 @@ public class MapActivity extends BasicActivity {
      **/
     protected void setCenter(IGeoPoint point) {
         if (point == null) {
-            String text = getString(R.string.noLocationFound);
+            final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
             // Set ZoomCenter
             Log.i(TAG, "Set Mapcenter to " + point.toString());
+            mapController.animateTo(point);
             mapController.setCenter(point);
         }
 
@@ -325,13 +323,18 @@ public class MapActivity extends BasicActivity {
         // switch to OSM Map
         final String mts = mapView.getTileProvider().getTileSource().name();
         if (SAT_MAP_NAME.equals(mts)) {
-            setMapTileSource(osmMap);
+            this.setMapTileSource(osmMap);
+            mapView.setMaxZoomLevel(MAXIMAL_OSM_ZOOM_LEVEL);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_sat);
             mapView.postInvalidate();
             // switch to Satellite Map
         } else {
-            setMapTileSource(satMap);
+            if (mapView.getZoomLevel() > MAXIMAL_SATELLITE_ZOOM_LEVEL) {
+                setZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
+            }
+            mapView.setMaxZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
+            this.setMapTileSource(satMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_map);
             mapView.postInvalidate();
@@ -349,7 +352,8 @@ public class MapActivity extends BasicActivity {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            downloadMapTiles();
+            //this.downloadMapTiles();
+            //this.setUpLoadingScreen();
         }
 
     }
@@ -379,7 +383,8 @@ public class MapActivity extends BasicActivity {
         }
         if (savedInstanceState != null
                 && savedInstanceState.getSerializable(M_T_P) != null) {
-            String mTS = (String) savedInstanceState.getSerializable(M_T_P);
+            final String mTS = (String) savedInstanceState
+                    .getSerializable(M_T_P);
             if (mTS.equals(SAT_MAP_NAME)) {
                 mapTileSource = satMap;
                 final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
@@ -399,7 +404,6 @@ public class MapActivity extends BasicActivity {
     public void onDestroy() {
         super.onDestroy();
         mapView.getTileProvider().clearTileCache();
-        System.gc();
     }
 
 }

@@ -156,8 +156,8 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
             final List<TrackPoint> points = track.getTrackPoints();
 
             // Save file in application package
-            final FileOutputStream file =
-                    context.openFileOutput(filename, Context.MODE_PRIVATE);
+            final FileOutputStream file = context.openFileOutput(filename,
+                    Context.MODE_PRIVATE);
 
             // Use PrintWriter is easier, so you can directly pass strings
             final PrintWriter writer = new PrintWriter(file);
@@ -181,8 +181,7 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
                     writer.print("</elem>\n");
                 }
                 writer.print("\t\t\t\t<time>");
-                writer.print(ISO8601FORMAT.format(
-                        new Date(trackPoint.getTime())));
+                writer.print(ISO8601FORMAT.format(new Date(trackPoint.getTime())));
                 writer.print("</time>\n");
                 writer.print("\t\t\t</trkpt>\n");
             }

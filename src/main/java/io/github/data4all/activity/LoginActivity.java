@@ -29,6 +29,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -40,9 +41,15 @@ import android.widget.EditText;
  * @author tbrose
  *
  */
-public class LoginActivity extends BasicActivity {
+public class LoginActivity extends AbstractActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
+
+    /**
+     * Url to register a new User at OSM.
+     */
+    private static final String OSM_REGISTRATION_URL =
+            "https://www.openstreetmap.org/user/new";
 
     private EditText osmName;
     private EditText osmPass;
@@ -78,6 +85,7 @@ public class LoginActivity extends BasicActivity {
     private boolean isLoggedIn() {
         final DataBaseHandler database = new DataBaseHandler(this);
         final List<User> users = database.getAllUser();
+        Log.i(TAG, "" + users.size());
         database.close();
         return !users.isEmpty();
     }
@@ -126,25 +134,32 @@ public class LoginActivity extends BasicActivity {
      */
     public void onClickStart(View v) {
         if (v.getId() == R.id.osm_login) {
+            osmName.setError(null);
+            osmPass.setError(null);
             final String username = osmName.getText().toString().trim();
             final String password = osmPass.getText().toString().trim();
 
             if (TextUtils.isEmpty(username)) {
                 osmName.requestFocus();
-                osmName.setError("Username is empty");
+                osmName.setError(getString(R.string.login_username_empty));
             } else if (TextUtils.isEmpty(password)) {
                 osmPass.requestFocus();
-                osmPass.setError("Password is empty");
+                osmPass.setError(getString(R.string.login_password_empty));
             } else if (!NetworkState.isNetworkAvailable(this)) {
                 new AlertDialog.Builder(this)
-                        .setTitle("Network unavailable")
-                        .setMessage(
-                                "Please connect your device to the internet")
+                        .setTitle(R.string.no_network_title)
+                        .setMessage(R.string.no_network_message)
                         .show();
             } else {
                 this.showProgress(true);
                 new Thread(new Authentisator(username, password)).start();
             }
+        }
+        if (v.getId() == R.id.osm_register) {
+            final Intent intent =
+                    new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(OSM_REGISTRATION_URL));
+            startActivity(intent);
         }
     }
 
@@ -191,11 +206,13 @@ public class LoginActivity extends BasicActivity {
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {
                 Log.e(TAG, "Login to osm failed:", e);
-                this.showDialog("Access denied",
-                        "Username or Password may be incorrect");
+                this.showDialog(getString(R.string.login_access_dialog_title),
+
+                        getString(R.string.login_access_dialog_mes));
             } catch (OsmOAuthAuthorizationException e) {
                 Log.e(TAG, "Osm OAuth failed:", e);
-                this.showDialog("Error", e.getLocalizedMessage());
+                this.showDialog(getString(R.string.login_alertdialog_error),
+                        e.getLocalizedMessage());
             } finally {
                 runOnUiThread(new Runnable() {
                     @Override

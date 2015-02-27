@@ -23,6 +23,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
+import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
@@ -33,8 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.json.JSONException;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 
@@ -53,21 +52,32 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-public class ResultViewActivity extends BasicActivity implements
+public class ResultViewActivity extends AbstractActivity implements
         OnClickListener {
     private static final String TAG = "ResultViewActivity";
     private D4AMapView mapView;
 
     // Default OpenStreetMap TileSource
-    private static final ITileSource OSM_TILESOURCE = TileSourceFactory.MAPNIK;
-    private MapController mapController;
+    protected MapBoxTileSourceV4 osmMap;
 
-    private static final ITileSource DEFAULT_TILESOURCE = TileSourceFactory.MAPNIK;
+    protected static final String OSM_MAP_NAME = "mapbox.streets";
+    
+    // Minimal Zoom Level
+    protected static final int MINIMAL_ZOOM_LEVEL = 10;
+
+    // Maximal Zoom Level
+    protected static final int MAXIMAL_ZOOM_LEVEL = 22;
+    
+    private static final int REQUEST_CODE = 6;
+    
+    protected static final int CAMERA_RESULT_CODE = 2;
+    
+    private MapController mapController;
 
     // Listview for the Dialog
     private ListView listView;
@@ -97,12 +107,14 @@ public class ResultViewActivity extends BasicActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                MAXIMAL_ZOOM_LEVEL);
+        
         // Here is the OsmDroidMap created
         setContentView(R.layout.activity_result_view);
         mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
-        mapView.setTileSource(OSM_TILESOURCE);
-        mapView.setTileSource(DEFAULT_TILESOURCE);
+        mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
         BoundingBoxE6 boundingBox = MapUtil
@@ -181,13 +193,13 @@ public class ResultViewActivity extends BasicActivity implements
                                     null)));
                 } catch (IllegalArgumentException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Log.e(TAG, "", e);
                 } catch (IllegalAccessException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Log.e(TAG, "", e);
                 } catch (NoSuchFieldException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Log.e(TAG, "", e);
                 }
             } else {
                 endList.add(element.getTags().get(tagKey));
@@ -274,38 +286,38 @@ public class ResultViewActivity extends BasicActivity implements
             final AlertDialog.Builder builder = new AlertDialog.Builder(
                     ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
-            final Intent intent = new Intent(this, MapViewActivity.class);
-            final Intent intent1 = new Intent(this, LoginActivity.class);
+            final Intent intent = new Intent(this, LoginActivity.class);
             builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivity(intent1);
+                            startActivityForResult(intent, REQUEST_CODE);
                         }
                     });
             builder.setNegativeButton(R.string.no,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivity(intent);
+                            setResult(RESULT_OK);
+                            finish();
                         }
                     });
             alert = builder.create();
             alert.show();
         } else if (v.getId() == R.id.buttonResultToCamera) {
             addOsmElementToDB(element);
-            Log.i(TAG, MapUtil.getBoundingBoxForOsmElement(element).toString());
-            startActivity(new Intent(this, CameraActivity.class));
+            setResult(CAMERA_RESULT_CODE);
+            finish(); 
         }
     }
 
     /**
      * Adds an Osm Element to the DataBase
      * 
-     * @param the Data Element to add
+     * @param the
+     *            Data Element to add
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         DataBaseHandler db = new DataBaseHandler(this);
-            db.createDataElement(dataElement);
-        
+        db.createDataElement(dataElement);
         db.close();
     }
 

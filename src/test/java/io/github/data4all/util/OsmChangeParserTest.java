@@ -37,6 +37,7 @@ import android.content.Context;
 
 /**
  * Test for getting changeSetID, parsing Osc and uploading Osc
+ * 
  * @author Richard
  */
 
@@ -53,8 +54,7 @@ public class OsmChangeParserTest {
     @Test
     public void uploadTest() {
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
-        ArrayList<AbstractDataElement> elems =
-                new ArrayList<AbstractDataElement>();
+        ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
         Node node1 = new Node(-1, 23, 23);
         Node node2 = new Node(-2, 24, 24);
         Node node3 = new Node(-3, 25, 25);
@@ -64,9 +64,8 @@ public class OsmChangeParserTest {
         elems.add(node1);
         elems.add(node3);
         elems.add(way1);
-        Context act =
-                Robolectric.buildActivity(MapViewActivity.class).get()
-                        .getApplicationContext();
+        Context act = Robolectric.buildActivity(MapViewActivity.class).get()
+                .getApplicationContext();
         Log.d("test", "start the Request");
         new OscUploadHelper(act, elems, "upload test");
 
@@ -78,8 +77,7 @@ public class OsmChangeParserTest {
      */
     @Test
     public void parseTest() {
-        ArrayList<AbstractDataElement> elems =
-                new ArrayList<AbstractDataElement>();
+        ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
         Node node1 = new Node(-1, 23, 23);
         Node node2 = new Node(-2, 24, 24);
         Node node3 = new Node(-3, 25, 25);
@@ -89,13 +87,11 @@ public class OsmChangeParserTest {
         elems.add(node1);
         elems.add(node3);
         elems.add(way1);
-        Context act =
-                Robolectric.buildActivity(MapViewActivity.class).get()
-                        .getApplicationContext();
+        Context act = Robolectric.buildActivity(MapViewActivity.class).get()
+                .getApplicationContext();
 
-        File file =
-                new File(act.getFilesDir().getAbsolutePath()
-                        + "/OsmChangeUpload.osc");
+        File file = new File(act.getFilesDir().getAbsolutePath()
+                + "/OsmChangeUpload.osc");
         OsmChangeParser.parseElements(act, elems, 13);
 
         assertTrue(file.length() > 0);

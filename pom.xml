@@ -100,7 +100,7 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>${android.plugin.version}</version>
+					<version>${android.plugin.version}</version>					
 					<extensions>true</extensions>
 				</plugin>
 				<plugin>

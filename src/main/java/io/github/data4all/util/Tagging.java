@@ -15,7 +15,6 @@
  */
 package io.github.data4all.util;
 
-import io.github.data4all.R;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
@@ -39,12 +38,13 @@ import android.util.Log;
  *
  */
 public class Tagging {
-	private static final String TAG = "Tagging";
+    private static final String TAG = "Tagging";
+
     /**
      * Private Constructor, prevents instantiation.
      */
     private Tagging() {
-    	
+
     }
 
     /**
@@ -68,8 +68,8 @@ public class Tagging {
     }
 
     public static String[] getArrayKeys(int type, Resources res) {
-    	List<Tag> tags = getKeys(type);
-    	
+        List<Tag> tags = getKeys(type);
+
         final String[] array = new String[tags.size()];
         for (int i = 0; i < tags.size(); i++) {
             array[i] = res.getString(tags.get(i).getNameRessource());
@@ -78,27 +78,25 @@ public class Tagging {
     }
 
     public static Map<String, ClassifiedTag> getMapKeys(int type, Resources res) {
-        final Map<String, ClassifiedTag> map =
-                new HashMap<String, ClassifiedTag>();
+        final Map<String, ClassifiedTag> map = new HashMap<String, ClassifiedTag>();
         for (int i = 0; i < getKeys(type).size(); i++) {
             map.put(res.getString(getKeys(type).get(i).getNameRessource()),
                     (ClassifiedTag) getKeys(type).get(i));
         }
         return map;
     }
-    
-    public static Map<String, Tag> getUnclassifiedMapKeys(Map <Tag, String> tagMap, Resources res) {
-        final Map<String, Tag> map =
-                new HashMap<String, Tag>();
+
+    public static Map<String, Tag> getUnclassifiedMapKeys(
+            Map<Tag, String> tagMap, Resources res) {
+        final Map<String, Tag> map = new HashMap<String, Tag>();
         for (Entry entry : tagMap.entrySet()) {
-        	
-        	  final Tag tagKey =   (Tag) entry.getKey();
-        	  Log.i(TAG,"bla" + tagKey.getKey());
-        	  map.put(res.getString(tagKey.getNameRessource()), tagKey);
+
+            final Tag tagKey = (Tag) entry.getKey();
+            Log.i(TAG, "bla" + tagKey.getKey());
+            map.put(res.getString(tagKey.getNameRessource()), tagKey);
         }
         return map;
     }
-
 
     public static Map<Tag, String> addressToTag(List<String> addressTags,
             Map<Tag, String> map) {
@@ -125,46 +123,50 @@ public class Tagging {
     }
 
     public static Boolean isClassifiedTag(String key, Resources res) {
-    	List<ClassifiedTag> classifiedTags =  Tags.getAllClassifiedTags();
+        List<ClassifiedTag> classifiedTags = Tags.getAllClassifiedTags();
         for (int i = 0; i < classifiedTags.size(); i++) {
-            if (res.getString(classifiedTags.get(i).getNameRessource()).equals(key)) {
+            if (res.getString(classifiedTags.get(i).getNameRessource()).equals(
+                    key)) {
                 return true;
             }
         }
         return false;
     }
-    
-    public static Boolean isContactTags(int [] types, int type){
-    	for (int i = 0; i < types.length; i++) {
-    		Log.i(TAG, String.valueOf(types [i]));
-    		Log.i(TAG, String.valueOf(type));
-			if(types [i] == type){
-				return true;
-			}
-		}
-		return false;
+
+    public static Boolean isContactTags(int[] types, int type) {
+        for (int i = 0; i < types.length; i++) {
+            Log.i(TAG, String.valueOf(types[i]));
+            Log.i(TAG, String.valueOf(type));
+            if (types[i] == type) {
+                return true;
+            }
+        }
+        return false;
     }
-    
-    public static Map<String, ClassifiedValue> classifiedValueMap (List<ClassifiedValue> list, Resources res, boolean international){
-    	 Map<String, ClassifiedValue> map;
-    	 map = new HashMap<String, ClassifiedValue>();
-    	 for (int i = 0; i < list.size(); i++) {
-    		if(international){
-    			map.put(list.get(i).getValue(), list.get(i));
-    		}else{
-			map.put(res.getString(list.get(i).getNameRessource()), list.get(i));
-    		}
-		}
-    	return map;
-    	
+
+    public static Map<String, ClassifiedValue> classifiedValueMap(
+            List<ClassifiedValue> list, Resources res, boolean international) {
+        Map<String, ClassifiedValue> map;
+        map = new HashMap<String, ClassifiedValue>();
+        for (int i = 0; i < list.size(); i++) {
+            if (international) {
+                map.put(list.get(i).getValue(), list.get(i));
+            } else {
+                map.put(res.getString(list.get(i).getNameRessource()),
+                        list.get(i));
+            }
+        }
+        return map;
+
     }
-    
-    public static String[] ClassifiedValueList (List<ClassifiedValue> list, Resources res){
-    	String [] listValue = new String [list.size()];
-    	for (int i = 0; i < list.size(); i++) {
-			listValue [i] = res.getString(list.get(i).getNameRessource());
-		}
-    	return listValue;
+
+    public static String[] ClassifiedValueList(List<ClassifiedValue> list,
+            Resources res) {
+        String[] listValue = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            listValue[i] = res.getString(list.get(i).getNameRessource());
+        }
+        return listValue;
     }
-   
+
 }

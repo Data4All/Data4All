@@ -147,9 +147,8 @@ public class OsmOAuthAuthorizationClient {
             is = connection.getInputStream();
             r = new BufferedReader(new InputStreamReader(is, "UTF_8"));
             String c;
-            final Pattern p =
-                    Pattern.compile(".*authenticity_token.*"
-                            + "value=\"([^\"]+)\".*");
+            final Pattern p = Pattern.compile(".*authenticity_token.*"
+                    + "value=\"([^\"]+)\".*");
             while ((c = r.readLine()) != null) {
                 final Matcher m = p.matcher(c);
                 if (m.find()) {
@@ -178,8 +177,8 @@ public class OsmOAuthAuthorizationClient {
      */
     private static SessionId extractOsmSession(HttpURLConnection connection,
             String username) {
-        final List<String> setCookies =
-                connection.getHeaderFields().get("Set-Cookie");
+        final List<String> setCookies = connection.getHeaderFields().get(
+                "Set-Cookie");
         if (setCookies == null) {
             // no cookies set
             return null;
@@ -234,8 +233,8 @@ public class OsmOAuthAuthorizationClient {
         try {
             final StringBuilder sb = new StringBuilder();
 
-            for (final Iterator<Entry<String, String>> it =
-                    parameters.entrySet().iterator(); it.hasNext();) {
+            for (final Iterator<Entry<String, String>> it = parameters
+                    .entrySet().iterator(); it.hasNext();) {
                 final Entry<String, String> entry = it.next();
                 String value = entry.getValue();
                 if (value == null) {
@@ -264,9 +263,8 @@ public class OsmOAuthAuthorizationClient {
     private String buildOsmLogoutUrl() throws OsmOAuthAuthorizationException {
         try {
             final URL autUrl = new URL(parameters.getAuthoriseUrl());
-            final URL url =
-                    new URL("http", autUrl.getHost(), autUrl.getPort(),
-                            "/logout");
+            final URL url = new URL("http", autUrl.getHost(), autUrl.getPort(),
+                    "/logout");
             return url.toString();
         } catch (MalformedURLException e) {
             throw new OsmOAuthAuthorizationException(e);
@@ -371,9 +369,8 @@ public class OsmOAuthAuthorizationClient {
             connection.setDoOutput(true);
             connection.setUseCaches(false);
 
-            final String request =
-                    buildPostRequest(authenticateOsmSessionParams(userName,
-                            password, sessionId.getToken()));
+            final String request = buildPostRequest(authenticateOsmSessionParams(
+                    userName, password, sessionId.getToken()));
 
             connection.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
@@ -471,9 +468,8 @@ public class OsmOAuthAuthorizationClient {
     private void sendAuthorisationRequest(SessionId sessionId, User user)
             throws OsmOAuthAuthorizationException {
         this.fetchOAuthToken(sessionId, user);
-        final String request =
-                buildPostRequest(sendAuthorizationRequestParams(
-                        sessionId.getToken(), user.getOAuthToken()));
+        final String request = buildPostRequest(sendAuthorizationRequestParams(
+                sessionId.getToken(), user.getOAuthToken()));
         try {
             final URL url = new URL(this.parameters.getAuthoriseUrl());
             synchronized (this) {
@@ -579,8 +575,8 @@ public class OsmOAuthAuthorizationClient {
             throw new IllegalArgumentException("Invalid HTTP url");
         }
         Log.d(LOG_TAG, "Open connection to: " + httpURL.toString());
-        final HttpURLConnection connection =
-                (HttpURLConnection) httpURL.openConnection();
+        final HttpURLConnection connection = (HttpURLConnection) httpURL
+                .openConnection();
         connection.setUseCaches(false);
         return connection;
     }

@@ -83,8 +83,8 @@ public final class GeoDataConverter {
         // Get the second value
         final String[] stringS = dms[2].split("/", 2);
         final Double s0 = Double.valueOf(stringS[0]);
-        final Double s1 =
-                Double.valueOf(stringS[1].substring(0, stringS[1].length()));
+        final Double s1 = Double.valueOf(stringS[1].substring(0,
+                stringS[1].length()));
         final Double floatS = s0 / s1;
 
         result = Double.valueOf(floatD + (floatM / 60) + (floatS / 3600));

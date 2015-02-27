@@ -16,6 +16,8 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.CapturePictureHandler;
+import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -25,19 +27,19 @@ import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.Display;
-import android.view.Surface;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -47,15 +49,21 @@ import android.widget.ImageView;
 /**
  * Activity to set a ImageView and use the TouchView to draw.<br\>
  * 
+ * @version 1.1
+ * 
  * @author vkochno
+ * @author tbrose (v 1.1)
  */
-public class ShowPictureActivity extends BasicActivity {
+
+public class ShowPictureActivity extends AbstractActivity {
+
+    private static final String TAG = ShowPictureActivity.class.getSimpleName();
 
     private TouchView touchView;
     private ImageView imageView;
-    private Bitmap bitmap;
     private Intent intent;
     private static final String TYPE = "TYPE_DEF";
+    private static final String LOCATION = "LOCATION";
     private static final int POINT = 1;
     private static final int BUILDING = 3;
     private static final int WAY = 2;
@@ -63,27 +71,37 @@ public class ShowPictureActivity extends BasicActivity {
     private static final String OSM_ELEMENT = "OSM_ELEMENT";
     private ImageButton undo;
     private ImageButton redo;
+    private ImageButton ok;
+    private static final int REQUEST_CODE = 3;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
     private TransformationParamBean transformBean;
     private DeviceOrientation currentOrientation;
 
+    private ButtonRotationListener listener;
 
-	/**
-	 * public standard constructor.<br\>
-	 */
-	public ShowPictureActivity() {
-		super();
-	}
+    /**
+     * public standard constructor.
+     */
+    public ShowPictureActivity() {
+        super();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+
+        // remove title and status bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
         setContentView(R.layout.activity_picture);
+
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
         intent = new Intent(this, MapPreviewActivity.class);
@@ -91,7 +109,8 @@ public class ShowPictureActivity extends BasicActivity {
         undo.setVisibility(View.GONE);
         redo = (ImageButton) findViewById(R.id.redobtn);
         redo.setVisibility(View.GONE);
-
+        ok = (ImageButton) findViewById(R.id.okbtn);
+        ok.setVisibility(View.GONE);
         touchView.setUndoRedoListener(new UndoRedoListener() {
             @Override
             public void canUndo(boolean state) {
@@ -112,24 +131,37 @@ public class ShowPictureActivity extends BasicActivity {
                     redo.setVisibility(View.GONE);
                 }
             }
+
+            @Override
+            public void okUseable(boolean state) {
+                if (state) {
+                    ok.setVisibility(View.VISIBLE);
+                } else {
+                    ok.setVisibility(View.INVISIBLE);
+                }
+            }
         });
 
-        if (getIntent().hasExtra("file_path")) {
-            this.setBackground(Uri.fromFile((File) getIntent().getExtras().get(
-                    "file_path")));
+        if (getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {
+            this.setBackground((File) getIntent().getSerializableExtra(
+                    CapturePictureHandler.FILE_EXTRA));
+
         } else {
-            Log.e(this.getClass().toString(), "ERROR, no file found in intent");
+            Log.e(TAG, "ERROR, no file found in intent");
+            this.finish();
         }
 
-        if (getIntent().hasExtra("transform_bean")) {
-            transformBean =
-                    getIntent().getExtras().getParcelable("transform_bean");
+        if (getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
+            transformBean = getIntent().getExtras().getParcelable(
+                    CapturePictureHandler.TRANSFORM_BEAN);
+            intent.putExtra(LOCATION, transformBean.getLocation());
         }
-        if (getIntent().hasExtra("current_orientation")) {
-            currentOrientation =
-                    getIntent().getExtras()
-                            .getParcelable("current_orientation");
+
+        if (getIntent().hasExtra(CapturePictureHandler.CURRENT_ORIENTATION)) {
+            currentOrientation = getIntent().getExtras().getParcelable(
+                    CapturePictureHandler.CURRENT_ORIENTATION);
         }
+
         // Set the display size as photo size to get a coordinate system for the
         // drawn points
         transformBean.setPhotoWidth(getBaseContext().getResources()
@@ -142,150 +174,228 @@ public class ShowPictureActivity extends BasicActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
+        this.onClickBuilding(null);
+
+        // Setup the rotation listener
+        List<View> buttons = new ArrayList<View>();
+        buttons.add(redo);
+        buttons.add(undo);
+        buttons.add(findViewById(R.id.imageButton1));
+        buttons.add(findViewById(R.id.imageButton2));
+        buttons.add(findViewById(R.id.imageButton3));
+        buttons.add(findViewById(R.id.imageButton4));
+        buttons.add(ok);
+
+        listener = new ButtonRotationListener(this, buttons);
+
+        AbstractActivity.addNavBarMargin(getResources(),
+                findViewById(R.id.layout_choose_interpreter));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        listener.enable();
+    }
 
-	 /**
-     * OnClick method to finish the current drawing.<br\>     
+    @Override
+    protected void onPause() {
+        super.onPause();
+        listener.disable();
+    }
+
+    /**
+     * OnClick method to finish the current drawing.
      * 
-     * * @param view
-     * current view used this method
+     * @param view
+     *            current view used this method
      */
     public void onClickOkay(View view) {
         // 0 or Rotation0 if portrait
         // 90 or Rotation1 if home-button to the right
         // 270 or Rotation3 if home-button to the left
-        final int rotation =
-                ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                        .getDefaultDisplay().getRotation();
+        final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getRotation();
 
         // create an abstract data element from the given data and pass it to
         // the next
         // activity
         final AbstractDataElement osmElement = touchView.create(rotation);
         intent.putExtra(OSM_ELEMENT, osmElement);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
-	/**
-	 * Define method to draw a point.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickPoint(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.POINT);
-		touchView.invalidate();
-		intent.putExtra(TYPE, POINT);
-	}
-
-	/**
-	 * Define method to draw a way.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickPath(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.WAY);
-		touchView.invalidate();
-		intent.putExtra(TYPE, WAY);
-	}
-
-	/**
-	 * Define method to draw a area.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickArea(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.AREA);
-		touchView.invalidate();
-		intent.putExtra(TYPE, AREA);
-	}
-
-	/**
-	 * Define method to draw a building.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickBuilding(View view) {
-		touchView.clearMotions();
-		touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
-		touchView.invalidate();
-		intent.putExtra(TYPE, BUILDING);
-	}
-
-	/**
-	 * Method to use the redo function.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickRedo(View view) {
-		touchView.redo();
-		touchView.invalidate();
-	}
-
-	/**
-	 * Method to use the undo function.<br\>
-	 * 
-	 * @param view
-     * current view used this method
-	 */
-	public void onClickUndo(View view) {
-		touchView.undo();
-		touchView.invalidate();
-	}
+    /**
+     * Define method to draw a point.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickPoint(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.POINT);
+        touchView.invalidate();
+        intent.putExtra(TYPE, POINT);
+    }
 
     /**
-     * Get a Uri of a Image and set this to local ImageView.<br\>
+     * Define method to draw a way.<br\>
      * 
-     * @param selectedImage
-     *            Uri for the selected Image
-     * 
-     * @author vkochno
+     * @param view
+     *            current view used this method
      */
-    private void setBackground(Uri selectedImage) {
-        // try to convert a image to a bitmap
-        try {
-            bitmap =
-                    MediaStore.Images.Media.getBitmap(
-                            this.getContentResolver(), selectedImage);
-            final Display d = getWindowManager().getDefaultDisplay();
-            if (d.getRotation() == Surface.ROTATION_0) {
-                // get the display size
-                final Point size = new Point();
-                d.getSize(size);
-                final int width = size.x;
-                final int height = size.y;
+    public void onClickPath(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.WAY);
+        touchView.invalidate();
+        intent.putExtra(TYPE, WAY);
+    }
 
-                // scaled bitmap
-                final Bitmap scaledBitmap =
-                        Bitmap.createScaledBitmap(bitmap, height, width, true);
-
-                // create a matrix object
-                final Matrix matrix = new Matrix();
-                // clockwise by 90 degrees
-                matrix.postRotate(90);
-
-                // create a new bitmap from the original using the matrix to
-                // transform the result
-                bitmap =
-                        Bitmap.createBitmap(scaledBitmap, 0, 0,
-                                scaledBitmap.getWidth(),
-                                scaledBitmap.getHeight(), matrix, true);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if(resultCode == RESULT_OK){
+                setResult(RESULT_OK);
+                finish();
             }
-
-            // set the imageview bitmap-resource
-            imageView.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            Log.e(this.getClass().toString(), "ERROR, no file found" + e);
-        } catch (IOException e) {
-            Log.e(this.getClass().toString(), "ERROR, file is no image" + e);
+            if(resultCode == ResultViewActivity.CAMERA_RESULT_CODE){
+                touchView.clearMotions();
+                touchView.invalidate();
+            }
         }
+    }
+
+    /**
+     * Define method to draw a area.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickArea(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.AREA);
+        touchView.invalidate();
+        intent.putExtra(TYPE, AREA);
+    }
+
+    /**
+     * Define method to draw a building.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickBuilding(View view) {
+        touchView.clearMotions();
+        touchView.setInterpretationType(TouchView.InterpretationType.BUILDING);
+        touchView.invalidate();
+        intent.putExtra(TYPE, BUILDING);
+    }
+
+    /**
+     * Method to use the redo function.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickRedo(View view) {
+        touchView.redo();
+        touchView.invalidate();
+    }
+
+    /**
+     * Method to use the undo function.<br\>
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickUndo(View view) {
+        touchView.undo();
+        touchView.invalidate();
+    }
+
+    /**
+     * Get the file of an image and set this to local ImageView.
+     *
+     * @param file
+     *            The file of the image to display
+     */
+    private void setBackground(File file) {
+        try {
+            Uri uri = Uri.fromFile(file);
+            imageView.setImageBitmap(loadFromCamera(uri));
+        } catch (IOException e) {
+            Log.e(TAG, "Error while setBackground(File)", e);
+        }
+    }
+
+    private Bitmap loadFromCamera(Uri photoUri) throws IOException {
+        AssetFileDescriptor fileDescriptor = getContentResolver()
+                .openAssetFileDescriptor(photoUri, "r");
+
+        Bitmap photo = BitmapFactory.decodeFileDescriptor(
+                fileDescriptor.getFileDescriptor(), null, null);
+        if (photo != null) {
+            return scaleAndRotate(photo);
+        } else {
+            return null;
+        }
+    }
+
+    private Bitmap scaleAndRotate(Bitmap bitmap) {
+        Matrix matrix = new Matrix();
+        double scrAR = getScreenRation();
+
+        // Setup the default 'createBitmap' parameters
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+        int x = 0;
+        int y = 0;
+
+        Log.v("INIT_PARAMETER", "x: " + x + " y: " + y + " h: " + height
+                + " w: " + width);
+
+        if (height < width) {
+            matrix.postRotate(90);
+            double picAR = width / height;
+
+            if (scrAR - picAR > 0.1) {
+                // Reduce the height of the image
+                int newHeight = (int) (width / scrAR);
+                y = (height - newHeight) / 2;
+                height = newHeight;
+            } else if (picAR - scrAR > 0.1) {
+                // Reduce the width of the image
+                int newWidth = (int) (height / scrAR);
+                x = (width - newWidth) / 2;
+                width = newWidth;
+            }
+        } else {
+            double picAR = height / width;
+
+            if (scrAR - picAR > 0.1) {
+                // Reduce the width of the image
+                int newWidth = (int) (height / scrAR);
+                x = (width - newWidth) / 2;
+                width = newWidth;
+            } else if (picAR - scrAR > 0.1) {
+                // Reduce the height of the image
+                int newHeight = (int) (width / scrAR);
+                y = (height - newHeight) / 2;
+                height = newHeight;
+            }
+        }
+
+        Log.v("NEW_PARAMETER", "x: " + x + " y: " + y + " h: " + height
+                + " w: " + width);
+
+        return Bitmap.createBitmap(bitmap, x, y, width, height, matrix, true);
+    }
+
+    private double getScreenRation() {
+        Point size = getIntent().getParcelableExtra(
+                CapturePictureHandler.SIZE_EXTRA);
+        Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
+        return (double) size.x / (double) size.y;
     }
 }

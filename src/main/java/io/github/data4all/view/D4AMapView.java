@@ -15,9 +15,7 @@
  */
 package io.github.data4all.view;
 
-import java.util.List;
-
-import io.github.data4all.activity.BasicActivity;
+import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -27,6 +25,8 @@ import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
+
+import java.util.List;
 
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
@@ -41,7 +41,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * MapView with Function to add OSM Object and set scrollable modus
+ * MapView with Function to add OSM Object and set scrollable modus.
  * 
  * @author Oliver Schwartz
  */
@@ -62,7 +62,13 @@ public class D4AMapView extends MapView {
     private BoundingBoxE6 boundingBox;
 
     /**
-     * Default Constructor
+     * Default Constructor.
+     * 
+     * @param context
+     *            The invoking Activity
+     * 
+     * @param attrs
+     *            Attributes which are defined
      * 
      **/
     public D4AMapView(Context context, AttributeSet attrs) {
@@ -70,7 +76,7 @@ public class D4AMapView extends MapView {
     }
 
     /**
-     * Setter for the Bounding Box of the Mapview
+     * Setter for the Bounding Box of the Mapview.
      * 
      * @param boundingBox
      *            the BoundingBox to set
@@ -90,6 +96,9 @@ public class D4AMapView extends MapView {
         super.onLayout(changed, l, t, r, b);
         if (this.boundingBox != null) {
             this.zoomToBoundingBox(this.boundingBox);
+            this.boundingBox = null;
+        }
+        if (!scrollable) {
             this.setScrollableAreaLimit(this.boundingBox);
         }
 
@@ -117,15 +126,15 @@ public class D4AMapView extends MapView {
      * @param list
      *            the list of OsmElements which should be added to the map
      **/
-    public void addOsmElementsToMap(BasicActivity ctx, List<AbstractDataElement> list) {
-        if (list != null && list.size() > 0) {
-            for(AbstractDataElement elem : list){
-                addOsmElementToMap(ctx, elem);
+    public void addOsmElementsToMap(AbstractActivity ctx,
+            List<AbstractDataElement> list) {
+        if (list != null && !list.isEmpty()) {
+            for (AbstractDataElement elem : list) {
+                this.addOsmElementToMap(ctx, elem);
             }
         }
     }
-    
-    
+
     /**
      * Adds an OsmElement as an Overlay to the Map.
      * 
@@ -134,12 +143,9 @@ public class D4AMapView extends MapView {
      * @param elem
      *            the OsmElement which should be added to the map
      **/
-    public void addOsmElementToMap(BasicActivity ctx, AbstractDataElement elem) {
+    public void addOsmElementToMap(AbstractActivity ctx,
+            AbstractDataElement elem) {
         if (elem != null) {
-            DataBaseHandler db = new DataBaseHandler(ctx);
-            int count = db.getDataElementCount();
-            elem.setOsmId(++count);
-            db.close();
             // if the Element is a Node
             if (elem instanceof Node) {
                 final Node node = (Node) elem;
@@ -175,7 +181,7 @@ public class D4AMapView extends MapView {
      * @param node
      *            the node which should be added to the map
      **/
-    private void addNodeToMap(BasicActivity ctx, Node node) {
+    private void addNodeToMap(AbstractActivity ctx, Node node) {
         final Marker poi = new MapMarker(ctx, this, node);
         Log.i(TAG, "Set Node Points to " + node.toString());
         // disable InfoWindow
@@ -194,7 +200,7 @@ public class D4AMapView extends MapView {
      * @param polyElement
      *            the area which should be added to the map
      **/
-    private void addAreaToMap(BasicActivity ctx, PolyElement polyElement) {
+    private void addAreaToMap(AbstractActivity ctx, PolyElement polyElement) {
         final Polygon area = new MapPolygon(ctx, this, polyElement);
 
         Log.i(TAG, "Set Area Points to " + polyElement.toString());
@@ -221,7 +227,7 @@ public class D4AMapView extends MapView {
      * @param polyElement
      *            the path which should be added to the map
      **/
-    private void addPathToMap(BasicActivity ctx, PolyElement polyElement) {
+    private void addPathToMap(AbstractActivity ctx, PolyElement polyElement) {
         final Polyline path = new MapLine(ctx, this, polyElement);
 
         Log.i(TAG, "Set Path Points to " + polyElement.toString());

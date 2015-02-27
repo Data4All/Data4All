@@ -55,9 +55,8 @@ public class OscUploadHelper {
     public OscUploadHelper(Context context, List<AbstractDataElement> elems,
             String comment) {
         OAuthParameters params = OAuthParameters.CURRENT;
-        consumer =
-                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
-                        params.getConsumerSecret());
+        consumer = new CommonsHttpOAuthConsumer(params.getConsumerKey(),
+                params.getConsumerSecret());
         this.context = context;
         this.elems = elems;
         consumer.setTokenWithSecret(

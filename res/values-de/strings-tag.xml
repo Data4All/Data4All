@@ -18,7 +18,7 @@
     <string name="name_highway">Verkehrsweg</string>
     <string name="name_highway_motorway">Autobahn</string>
     <string name="name_highway_residential">Wohngebiets-Straße</string>
-    <string name="name_highway_service">Erschließungsweg</string>
+    <string name="name_highway_service">Zugangsweg</string>
     <string name="name_highway_track">Feldweg</string>
     <string name="name_highway_footway">Fußweg</string>
     <string name="name_highway_road">Straße</string>
@@ -72,7 +72,7 @@
     
     <!-- classified tags_ landuse -->
     <string name="name_landuse">Landnutzung</string>
-    <string name="name_landuse_commercial">Gewebepark</string>
+    <string name="name_landuse_commercial">Gewerbepark</string>
     <string name="name_landuse_construction">Baustelle</string>
     <string name="name_landuse_farmland">Ackerland</string>
     <string name="name_landuse_forest">Wald</string>
@@ -80,5 +80,18 @@
     <string name="name_landuse_industrial">Industriegebiet</string>
     <string name="name_landuse_military">Militär</string>
     <string name="name_landuse_residential">Wohngebiet</string>
+    
+     <!-- address tags -->
+    <string name="hint_addr_street">Main Street</string>
+    <string name="hint_addr_housenumber">1234</string>
+    <string name="hint_addr_postcode">123456</string>
+    <string name="hint_addr_city">Anytown</string>
+    <string name="hint_addr_country">USA</string>
+
+    <!-- contact tags -->
+    <string name="hint_contact_phone">+01 234567890</string>
+    <string name="hint_contact_fax">+01 234567890</string>
+    <string name="hint_contact_website">http_//www.website.com</string>
+    <string name="hint_contact_email">foo@bar.com</string>
 
 </resources>

@@ -64,43 +64,50 @@ public class HorizonCalculationUtil {
         final double[] vector2 = new double[3];
         vector2[0] = 0;
         vector2[1] = Math.sin(pitch);
-        vector2[2] = - Math.cos(pitch);
+        vector2[2] = -Math.cos(pitch);
         // rotate around line through origin with pitch angle.
         final double[] vector3 = new double[3];
-        vector3[0] = - vector2[1] * Math.sin(pitch) * Math.sin(roll)
+        vector3[0] = -vector2[1] * Math.sin(pitch) * Math.sin(roll)
                 + vector2[2] * Math.cos(pitch) * Math.sin(roll);
-        vector3[1] = vector2[1] * (Math.cos(pitch) * Math.cos(pitch)
-                * (1 - Math.cos(roll)) + Math.cos(roll)) 
-                + vector2[2] * Math.cos(pitch)
+        vector3[1] = vector2[1]
+                * (Math.cos(pitch) * Math.cos(pitch) * (1 - Math.cos(roll)) + Math
+                        .cos(roll)) + vector2[2] * Math.cos(pitch)
                 * Math.sin(pitch) * (1 - Math.cos(roll));
-        vector3[2] = vector2[1] * Math.sin(pitch) * Math.cos(pitch)
-                * (1 - Math.cos(roll)) + vector2[2] * (Math.sin(pitch)
-                * Math.sin(pitch) * (1 - Math.cos(roll)) + Math.cos(roll));
+        vector3[2] = vector2[1]
+                * Math.sin(pitch)
+                * Math.cos(pitch)
+                * (1 - Math.cos(roll))
+                + vector2[2]
+                * (Math.sin(pitch) * Math.sin(pitch) * (1 - Math.cos(roll)) + Math
+                        .cos(roll));
 
-        //calculate angle between vector and z-axis and subtract from maxhorizon.
+        // calculate angle between vector and z-axis and subtract from
+        // maxhorizon.
         final double angle = maxhorizon - Math.acos(-vector3[2]);
-        //check if the device is looking above the horizon
+        // check if the device is looking above the horizon
         if (angle <= 0) {
             skylook = 1;
         }
-        /*calculate a roatationvector vertical to vector3
-         *with the length of 1 and wich is on the x-y-plane.
+        /*
+         * calculate a roatationvector vertical to vector3with the length of 1
+         * and wich is on the x-y-plane.
          */
         double rotateVectorLengthMultiplicator = Math
                 .sqrt((vector3[0] * vector3[0]) + (vector3[1] * vector3[1]));
         double[] rotateVector = {
                 (-vector3[1] / rotateVectorLengthMultiplicator),
                 (vector3[0] / rotateVectorLengthMultiplicator) };
-        //rotate the (0|0|-1) vector with the calculated angle and rotationvector.
+        // rotate the (0|0|-1) vector with the calculated angle and
+        // rotationvector.
         final double[] vector4 = new double[3];
         vector4[0] = (rotateVector[1] * Math.sin(angle));
         vector4[1] = -(rotateVector[0] * Math.sin(angle));
         vector4[2] = Math.cos(angle);
-        
-        //calculate the pitch- and roll-angles
+
+        // calculate the pitch- and roll-angles
         double horizonPitch = Math.atan(vector4[1] / (-vector[2]));
         double horizonRoll = Math.atan(vector4[0] / (-vector[2]));
-        
+
         float[] point = {
                 this.calculatePixelFromAngle(horizonPitch, maxWidth, maxPitch),
                 this.calculatePixelFromAngle(horizonRoll, maxHeight, maxRoll),

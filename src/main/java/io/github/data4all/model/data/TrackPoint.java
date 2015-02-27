@@ -58,16 +58,15 @@ public class TrackPoint implements Parcelable {
     /**
      * CREATOR that generates instances of {@link TrackPoint} from a Parcel.
      */
-    public static final Parcelable.Creator<TrackPoint> CREATOR =
-            new Parcelable.Creator<TrackPoint>() {
-                public TrackPoint createFromParcel(Parcel in) {
-                    return new TrackPoint(in);
-                }
+    public static final Parcelable.Creator<TrackPoint> CREATOR = new Parcelable.Creator<TrackPoint>() {
+        public TrackPoint createFromParcel(Parcel in) {
+            return new TrackPoint(in);
+        }
 
-                public TrackPoint[] newArray(int size) {
-                    return new TrackPoint[size];
-                }
-            };
+        public TrackPoint[] newArray(int size) {
+            return new TrackPoint[size];
+        }
+    };
 
     /**
      * Constructor to create a {@link TrackPoint} from a parcel.

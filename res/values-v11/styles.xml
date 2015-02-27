@@ -69,7 +69,7 @@
         <item name="android:layout_marginBottom">10dp</item>
         <item name="android:src">@drawable/ic_camaction</item>
     </style>
-    
+
     <style name="imageButtonCamActionLand" parent="imageButtonStyle">
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_centerVertical">true</item>
@@ -77,17 +77,14 @@
         <item name="android:src">@drawable/ic_camaction</item>
     </style>
 
-    
-    
-     <style name="imageButtonDrawPoint" parent="imageButtonStyle">
+    <style name="imageButtonDrawPoint" parent="imageButtonStyle">
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_marginBottom">10dp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:src">@drawable/ic_point</item>
     </style>
-    
-     
+
     <style name="imageButtonDrawWay" parent="imageButtonStyle">
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_alignParentLeft">true</item>
@@ -124,36 +121,39 @@
     <style name="imageViewTakedPicture">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
-        <item name="android:adjustViewBounds">true</item>
-        <item name="android:layout_centerInParent">true</item>
-        <item name="android:scaleType">fitXY</item>
-    </style>
-    
-    <style name="imageViewTakedPictureLand">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">fill_parent</item>
-        <item name="android:adjustViewBounds">true</item>
-        <item name="android:layout_centerInParent">true</item>
-        <item name="android:scaleType">fitXY</item>
     </style>
 
-    
-     <style name="imageButtonUndoPictureActivity" parent="imageButtonStyle">
+    <style name="imageViewTakedPictureLand">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="imageButtonUndoPictureActivity" parent="imageButtonStyle">
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:src">@drawable/ic_undo</item>
     </style>
-    
-     
-      <style name="imageButtonRedoPictureActivity" parent="imageButtonStyle">
+
+    <style name="imageButtonRedoPictureActivity" parent="imageButtonStyle">
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginLeft">120dp</item>
         <item name="android:src">@drawable/ic_redo</item>
     </style>
-    
- 
+
+    <style name="autoFocusCrossHair">
+        <item name="android:layout_width">65dp</item>
+        <item name="android:layout_height">65dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="cameraPreview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
 </resources>

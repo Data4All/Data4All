@@ -15,13 +15,18 @@
  */
 package io.github.data4all.activity;
 
+import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.util.GeoPoint;
+
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,6 +46,13 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     // The OsmElement which should be added
     private AbstractDataElement element;
 
+    private BoundingBoxE6 boundingBox;
+
+    private static final int REQUEST_CODE = 4;
+
+    /**
+     * Standard Constructor
+     **/
     public MapPreviewActivity() {
         super();
     }
@@ -55,11 +67,28 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
         setUpMapView(savedInstanceState);
-        setUpLoadingScreen();
-        element = getIntent().getParcelableExtra("OSM_ELEMENT");
+        view.setVisibility(View.GONE);
+        if (getIntent().hasExtra("OSM_ELEMENT")) {
+            element = getIntent().getParcelableExtra("OSM_ELEMENT");
+        }
         mapView.addOsmElementToMap(this, element);
+        if (getIntent().hasExtra("LOCATION")) {
+            Location l = (Location) getIntent().getParcelableExtra("LOCATION");
+            Marker m = new Marker(mapView);
+            m.setPosition(new GeoPoint(l));
+            m.setIcon(new DefaultResourceProxyImpl(this)
+                    .getDrawable(ResourceProxy.bitmap.person));
+            m.setInfoWindow(null);
+            mapView.getOverlays().add(m);
+        }
 
-        mapController.setZoom(actualZoomLevel);
+        boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+        mapView.setBoundingBox(boundingBox);
+
+        // Set Overlay for the actual Position
+        Log.i(TAG, "Added User Location Overlay to the map");
+        mapView.getOverlays().add(myLocationOverlay);
+
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -94,6 +123,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         switch (v.getId()) {
         case R.id.return_to_actual_Position:
             mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
+            mapView.zoomToBoundingBox(boundingBox);
             break;
         case R.id.switch_maps:
             switchMaps();
@@ -123,7 +153,17 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.toString());
         intent.putExtra(OSM, element);
 
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
+        if (requestCode == REQUEST_CODE
+                && (resultCode == RESULT_OK || resultCode == ResultViewActivity.CAMERA_RESULT_CODE)) {
+            setResult(resultCode);
+            finish();
+        }
+    }
 }

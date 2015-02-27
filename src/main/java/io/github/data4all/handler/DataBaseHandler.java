@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
@@ -39,7 +40,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
-import android.util.Log;
 
 /**
  * This class handles all database requests for the OSM objects that have to be
@@ -117,7 +117,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 + TABLE_DATAELEMENT + " (" + KEY_OSMID
                 + " INTEGER PRIMARY KEY," + KEY_TAGIDS + " TEXT" + ")";
         final String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
-                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
+                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT
+                + " REAL,"
                 + KEY_LON + " REAL" + ")";
         final String CREATE_TAGMAP_TABLE = "CREATE TABLE " + TABLE_TAGMAP
                 + " (" + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE
@@ -322,7 +323,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param node
      *            the {@link Node} object from which the data will be taken
      */
-    public void createNode(Node node) {
+    public long createNode(Node node) {
         final SQLiteDatabase db = getWritableDatabase();
 
         final ContentValues values = new ContentValues();
@@ -334,6 +335,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         long rowID = db.insert(TABLE_NODE, null, values);
         Log.i(TAG, "Node " + rowID + " has been added.");
+        return rowID;
     }
 
     /**
@@ -486,8 +488,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_TYPE, polyElement.getType().toString());
 
         for (Node node : polyElement.getNodes()) {
-            nodeIDs.add(node.getOsmId());
-            this.createNode(node);
+            long nodeID = this.createNode(node);
+            nodeIDs.add(nodeID);
         }
         final JSONObject json = new JSONObject();
         try {
@@ -753,6 +755,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         long rowID = db.insert(TABLE_DATAELEMENT, null, values);
         Log.i(TAG, "DataElement " + rowID + " has been added.");
+        dataElement.setOsmId(rowID);
 
         if (dataElement instanceof PolyElement) {
             this.createPolyElement((PolyElement) dataElement);

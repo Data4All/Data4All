@@ -34,7 +34,7 @@ import android.location.Location;
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
 public class GPSserviceTest {
-    
+
     /**
      * Clear the Optimizer after every test.
      * 

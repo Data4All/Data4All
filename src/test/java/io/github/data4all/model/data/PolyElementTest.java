@@ -232,8 +232,8 @@ public class PolyElementTest {
         assertEquals(PolyElementType.WAY, testPolyElement1.getType());
         PolyElement testPolyElement2 = new PolyElement(1, PolyElementType.AREA);
         assertEquals(PolyElementType.AREA, testPolyElement2.getType());
-        PolyElement testPolyElement3 =
-                new PolyElement(1, PolyElementType.BUILDING);
+        PolyElement testPolyElement3 = new PolyElement(1,
+                PolyElementType.BUILDING);
         assertEquals(PolyElementType.BUILDING, testPolyElement3.getType());
     }
 
@@ -245,8 +245,8 @@ public class PolyElementTest {
     @Test
     public void test_parcelable_PolyElement() {
         Parcel newParcel = Parcel.obtain();
-        PolyElement testPolyElement =
-                new PolyElement(1, PolyElementType.BUILDING);
+        PolyElement testPolyElement = new PolyElement(1,
+                PolyElementType.BUILDING);
 
         testPolyElement.addOrUpdateTag(Tags.getAllAddressTags().get(0), "foo");
         testPolyElement.addOrUpdateTag(Tags.getAllAddressTags().get(1), "bar");
@@ -257,8 +257,8 @@ public class PolyElementTest {
 
         testPolyElement.writeToParcel(newParcel, 0);
         newParcel.setDataPosition(0);
-        PolyElement deParcelPolyElement =
-                PolyElement.CREATOR.createFromParcel(newParcel);
+        PolyElement deParcelPolyElement = PolyElement.CREATOR
+                .createFromParcel(newParcel);
 
         assertEquals(testPolyElement.getOsmId(), deParcelPolyElement.getOsmId());
 

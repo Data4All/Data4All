@@ -15,8 +15,16 @@
  *******************************************************************************/
 package io.github.data4all.util;
 
+import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.*;
+import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.model.drawing.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +32,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.TransformationParamBean;
-import io.github.data4all.model.drawing.Point;
-import io.github.data4all.util.PointToCoordsTransformUtil;
-
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -122,6 +123,17 @@ public class PointToCoordsTransformUtilTest {
      */
     @Test
     public void calculateAngleFromPixelTest() {
+
+        ArrayList<Double> blub = new ArrayList<Double>();
+        double check = 0;
+        for(int i = 500; i >= 0 ; i = i - 10){
+            double x = Math.toDegrees(util.calculateAngleFromPixel(i, 1000, Math.toRadians(60)));
+            blub.add(x-check);
+            check = x;
+            
+        }
+        double test =  Math.toDegrees(util.calculateAngleFromPixel(1000, 1000, Math.toRadians(60)));
+        
         double angle = util.calculateAngleFromPixel(500, 1000, 40);
         assertThat(angle, is(0.0));
 
@@ -160,7 +172,7 @@ public class PointToCoordsTransformUtilTest {
         assertThat(coord[1], is(0.0));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(1, 500));
-        assertThat(coord[0], closeTo(0.0,0.00001));
+        assertThat(coord[0], closeTo(0.0, 0.00001));
         assertThat(coord[1], lessThan(0.0));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(500, 1));
