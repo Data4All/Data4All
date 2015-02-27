@@ -224,6 +224,18 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     }
 
     /**
+     * This method deletes a specific user from the database via a given ID.
+     * 
+     * @param username
+     *            the ID of the {@link User} object whose data should be deleted
+     */
+    public void deleteUserByID(String username) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_USER, KEY_USERNAME + "=?", new String[] {username });
+    }
+
+    /**
      * This method returns the number of users currently stored in the database.
      * 
      * @return the number of users
@@ -279,6 +291,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
 
         return users;
+    }
+
+    /**
+     * This method deletes all entries of the {@link User} table.
+     */
+    public void deleteAllUser() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_USER, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -347,6 +367,19 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     }
 
     /**
+     * This method deletes a specific node from the database via a given ID.
+     * 
+     * @param id
+     *            the ID of the {@link Node} object whose data should be deleted
+     */
+    public void deleteNodeByID(long id) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_NODE, KEY_OSMID + "=?",
+                new String[] {String.valueOf(id) });
+    }
+
+    /**
      * This method returns the number of nodes currently stored in the database.
      * 
      * @return the number of nodes
@@ -402,6 +435,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
 
         return nodes;
+    }
+
+    /**
+     * This method deletes all entries of the {@link Node} table.
+     */
+    public void deleteAllNode() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_NODE, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -508,6 +549,22 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     }
 
     /**
+     * This method deletes a specific PolyElement from the database via a given
+     * ID.
+     * 
+     * @param id
+     *            the ID of the {@link PolyElement} object whose data should be
+     *            deleted
+     */
+    public void deletePolyElementByID(long id) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
+                new String[] {String.valueOf(id) });
+        // TODO: delete ONLY the corresponding nodes
+    }
+
+    /**
      * This method returns the number of poly elements currently stored in the
      * database.
      * 
@@ -605,6 +662,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
 
         return polyElements;
+    }
+
+    /**
+     * This method deletes all entries of the {@link PolyElement} table.
+     */
+    public void deleteAllPolyElements() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_POLYELEMENT, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -730,6 +795,22 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     }
 
     /**
+     * This method deletes a specific DataElement from the database via a given
+     * ID.
+     * 
+     * @param id
+     *            the ID of the {@link AbstractDataElement} object whose data
+     *            should be deleted
+     */
+    public void deleteDataElementByID(long id) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
+                new String[] {String.valueOf(id) });
+        // TODO: delete ONLY the corresponding PolyElements, Nodes and Tags
+    }
+
+    /**
      * This method returns the number of data elements currently stored in the
      * database.
      * 
@@ -831,6 +912,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         return dataElements;
     }
 
+    /**
+     * This method deletes all entries of the {@link AbstractDataElement} table.
+     */
+    public void deleteAllDataElements() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_DATAELEMENT, null, null);
+    }
+
     // -------------------------------------------------------------------------
     // TAG MAP CRUD
 
@@ -920,7 +1009,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * database.
      * 
      * @param tagMap
-     *            the {@link map} object for which the data should be updated
+     *            the {@link Map} object for which the data should be updated
      * @return the number of rows that have been updated
      */
     public int updateTagMap(Map<Tag, String> tagMap) {
@@ -944,6 +1033,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         }
         return count;
+    }
+
+    /**
+     * This method deletes all entries of the TagMap table.
+     */
+    public void deleteAllTagMap() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TAGMAP, null, null);
     }
 
     // -------------------------------------------------------------------------
@@ -1030,7 +1127,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param track
      *            the {@link Track} object whose data should be deleted
      */
-    public void deleteGPSTrack(Track track) {
+    public void deleteGPSTrack(Track track) { // TODO: delete by ID
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -1132,6 +1229,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         return gpsTracks;
     }
 
+    /**
+     * This method deletes all entries of the {@link Track} table.
+     */
+    public void deleteAllGPSTracks() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_GPSTRACK, null, null);
+    }
+
     // -------------------------------------------------------------------------
     // TRACKPOINT CRUD
 
@@ -1202,7 +1307,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param timestamps
      *            the timestamps of the trackpoints that should be deleted
      */
-    public void deleteTrackPoints(List<Long> timestamps) {
+    public void deleteTrackPoints(List<Long> timestamps) { // TODO: delete by ID
         final SQLiteDatabase db = getWritableDatabase();
 
         for (long time : timestamps) {
@@ -1287,6 +1392,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             }
         }
         return trackPoints;
+    }
+
+    /**
+     * This method deletes all entries of the {@link TrackPoint} table.
+     */
+    public void deleteAllTrackPoints() {
+        final SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TRACKPOINT, null, null);
     }
 
     // ---auxiliary functions---------------------------------------------------

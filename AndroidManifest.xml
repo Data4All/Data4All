@@ -54,29 +54,20 @@
         <activity android:name=".activity.SettingsActivity" />
         <activity
             android:name=".activity.TagActivity"
-            android:theme="@android:style/Theme.Holo.Dialog.MinWidth" 
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
-        
+            android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
         <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.UploadActivity" />
         <activity android:name=".activity.BasicActivity" />
-        <activity
-            android:name=".activity.PrepareRequestTokenActivity"
-            android:launchMode="singleTask" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="callback"
-                    android:scheme="x-oauthflow" />
-            </intent-filter>
-        </activity>
         <activity android:name=".activity.SensorReactionActivity" />
 
-        <service android:name=".service.GPSservice" />
-        <service android:name=".service.OrientationListener" />
+        <service android:name=".service.UploadService" />
+        <service
+            android:name=".service.GPSservice"
+            android:label="GPS Service" >
+        </service>
+        <service
+            android:name=".service.OrientationListener"
+            android:enabled="true" />
     </application>
 
 </manifest>

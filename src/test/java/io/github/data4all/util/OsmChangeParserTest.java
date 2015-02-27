@@ -16,64 +16,33 @@
 package io.github.data4all.util;
 
 import static org.junit.Assert.assertTrue;
-import io.github.data4all.activity.MapViewActivity;
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
-import io.github.data4all.network.OscUploadHelper;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import android.content.Context;
-
 /**
- * Test for getting changeSetID, parsing Osc and uploading Osc
+ * Test for parsing Osc
  * 
  * @author Richard
  */
-
-// Use Robolectric
 @RunWith(RobolectricTestRunner.class)
-// EmulateSdk-18 because Robolectric cannot handle Sdk-19+
 @Config(emulateSdk = 18)
 public class OsmChangeParserTest {
 
     /**
-     * This test doesn't work in JUnit, because of missing Authorization, copy
-     * test on Button to test it (please only on the development API)
-     */
-    @Test
-    public void uploadTest() {
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
-        ArrayList<AbstractDataElement> elems = new ArrayList<AbstractDataElement>();
-        Node node1 = new Node(-1, 23, 23);
-        Node node2 = new Node(-2, 24, 24);
-        Node node3 = new Node(-3, 25, 25);
-        PolyElement way1 = new PolyElement(-4, PolyElementType.WAY);
-        way1.addNode(node1);
-        way1.addNode(node2);
-        elems.add(node1);
-        elems.add(node3);
-        elems.add(way1);
-        Context act = Robolectric.buildActivity(MapViewActivity.class).get()
-                .getApplicationContext();
-        Log.d("test", "start the Request");
-        new OscUploadHelper(act, elems, "upload test");
-
-    }
-
-    /**
-     * This test checks if the File created by the Parser exists and is not
-     * empty
+     * This test checks if the XML created by the Parser is not empty and
+     * contains the changeset- and element-ids.
      */
     @Test
     public void parseTest() {
@@ -87,15 +56,25 @@ public class OsmChangeParserTest {
         elems.add(node1);
         elems.add(node3);
         elems.add(way1);
-        Context act = Robolectric.buildActivity(MapViewActivity.class).get()
-                .getApplicationContext();
 
-        File file = new File(act.getFilesDir().getAbsolutePath()
-                + "/OsmChangeUpload.osc");
-        OsmChangeParser.parseElements(act, elems, 13);
+        final StringBuilder builder = new StringBuilder();
 
-        assertTrue(file.length() > 0);
-        assertTrue(file.exists());
+        OsmChangeParser.parseElements(elems, 13, new PrintWriter(
+                new OutputStream() {
+
+                    @Override
+                    public void write(int oneByte) throws IOException {
+                        builder.append((char) oneByte);
+                    }
+                }));
+
+        assertTrue(builder.length() > 0);
+        assertTrue(builder.toString().contains("13"));
+
+        assertTrue(builder.toString().contains("-1"));
+        assertTrue(builder.toString().contains("-2"));
+        assertTrue(builder.toString().contains("-3"));
+        assertTrue(builder.toString().contains("-4"));
     }
 
 }
