@@ -34,22 +34,22 @@ public class RedoUndo {
 	 * List of all deleted Points.
 	 */
 	private List<Point> motions;
-	
+
 	/**
 	 * List of the action
 	 */
 	private List<String> actions;
-	
+
 	/**
 	 * List if the location in polygon
 	 */
 	private List<Integer> locations;
-	
+
 	/**
 	 * length of the list.
 	 */
 	private int maxCount;
-	
+
 	/**
 	 * current position.
 	 */
@@ -65,7 +65,7 @@ public class RedoUndo {
 		maxCount = 0;
 		currentCount = 0;
 	}
-	
+
 	/**
 	 * Constructor for using a already created list.
 	 * 
@@ -80,7 +80,7 @@ public class RedoUndo {
 				locations = new ArrayList<Integer>();
 				maxCount = points.size();
 				currentCount = points.size();
-				for(int i = 0 ;i < maxCount;i++){
+				for (int i = 0; i < maxCount; i++) {
 					motions.add(points.get(i));
 					actions.add("ADD");
 					locations.add(i);
@@ -105,45 +105,56 @@ public class RedoUndo {
 	 * @param point
 	 *            Point to add
 	 */
-	public void add(Point point,String action,int location) {
-		Log.d(this.getClass().getSimpleName(), "ADD: " + currentCount + ":"
-				+ maxCount);
-		if (maxCount == currentCount) {
-			maxCount++;
-			currentCount++;
-		} else {
-			for (int i = currentCount; i <= maxCount; i++) {
+	public void add(Point point, String action, int location) {
+		Log.d(this.getClass().getSimpleName(), "ADDACTION:" + action
+				+ currentCount + ":" + maxCount);
+		if (maxCount != currentCount) {
+			for (int i = currentCount; i < motions.size(); i++) {
 				motions.remove(i);
 				actions.remove(i);
 				locations.remove(i);
 			}
-			currentCount++;
-			maxCount = currentCount;
 		}
-		motions.add(point);
-		actions.add(action);
-		locations.add(location);
+		if (action.equals("DELET")
+				&& actions.get(actions.size()-1).equals("MOVE_FROM") ||
+				action.equals("DELET")
+				&& actions.get(actions.size()-1).equals("DELET")) {
+			actions.set(actions.size()-1,action);
+		}else{
+		if (action.equals("MOVE_TO")
+				&& actions.get(actions.size()-1).equals("MOVE_TO")) {
+			motions.set(actions.size()-1, point);
+		} else {
+			motions.add(point);
+			actions.add(action);
+			locations.add(location);
+		}}
+		currentCount++;
+		maxCount = currentCount;
 	}
-	
+
 	public void setList(List<Point> newPoly) {
 		for (Point p : newPoly) {
 			Log.d(this.getClass().getSimpleName(),
 					"motions size" + motions.size());
-			this.add(p,"ADD",maxCount);
+			this.add(p, "ADD", maxCount);
 		}
 	}
 
 	/**
 	 * Go a step back and return a new list.
 	 * 
-	 * @return 
-	 * 		new list with one step less
+	 * @return new list with one step less
 	 */
 	public Point undo() {
 		currentCount--;
 		Log.d(this.getClass().getSimpleName(), "UNDO: " + currentCount + ":"
-				+ maxCount + ":" + locations.get(currentCount) + "actionsize:" + actions.size() + "motionsize" + motions.size());
-		if (currentCount != 0 && currentCount <= maxCount) {
+				+ maxCount + ":" +" Locationsize:" + locations.size() + "actionsize:"
+				+ actions.size() + "motionsize" + motions.size());
+		for(String s:actions){
+			Log.d(this.getClass().getSimpleName(), s);
+		}
+		if (currentCount >= 0 && currentCount <= maxCount) {
 			return motions.get(currentCount);
 		}
 		return null;
@@ -152,38 +163,41 @@ public class RedoUndo {
 	/**
 	 * Go a step forward,if there is a point, and return a new list.
 	 * 
-	 * @return 
-	 * 		new list with one step more
+	 * @return new list with one step more
 	 */
 	public Point redo() {
 		Log.d(this.getClass().getSimpleName(), "REDO: " + currentCount + ":"
-				+ maxCount + ":" + locations.get(currentCount) + "actionsize:" + actions.size() + "motionsize" + motions.size());
+				+ maxCount + ":" + locations.get(currentCount) + "actionsize:"
+				+ actions.size() + "motionsize" + motions.size());
+		for(String s:actions){
+			Log.d(this.getClass().getSimpleName(), s);
+		}
 		if (currentCount != maxCount) {
 			return motions.get(currentCount++);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return a string with contains the current action
-	 * @return
-	 *  a action-string
+	 * 
+	 * @return a action-string
 	 */
-	public String getAction(){
-		return actions.get(currentCount-1);
+	public String getAction() {
+		return actions.get(currentCount);
 	}
-	
+
 	/**
 	 * Get the location of a point
 	 */
-	public int getLocation(){
-		return locations.get(currentCount-1);
+	public int getLocation() {
+		return locations.get(currentCount);
 	}
+
 	/**
 	 * Getter for the current step.
 	 * 
-	 * @return 
-	 * 		current position in the list
+	 * @return current position in the list
 	 */
 	public int getCurrent() {
 		return currentCount;
@@ -192,8 +206,7 @@ public class RedoUndo {
 	/**
 	 * Getter for the max length.
 	 * 
-	 * @return 
-	 * 		max length of the list
+	 * @return max length of the list
 	 */
 	public int getMax() {
 		return maxCount;

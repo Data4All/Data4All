@@ -262,7 +262,6 @@ public class TouchView extends View {
 			break;
 		case MotionEvent.ACTION_UP:
 			handleMotion(event, "end");
-			redoUndo.setList(newPolygon);
 			polygon = newPolygon;
 			undoUseable();
 			redoUseable();
@@ -276,78 +275,7 @@ public class TouchView extends View {
 		return true;
 	}
 
-	final Handler handler = new Handler();
-	Runnable mLongPressed;
-
-	private Runnable createRunnable(final PointMover paramPointMover) {
-
-		Runnable aRunnable = new Runnable() {
-			public void run() {
-				Log.e(this.getClass().getSimpleName(), "Long");
-				Point point = new Point(paramPointMover.getX(),
-						paramPointMover.getY());
-				redoUndo.add(point,"DELET",polygon.indexOf(point));
-				deletePoint(point);
-			}
-		};
-
-		return aRunnable;
-
-	}
-
-	/**
-	 * Handles the given motion:<br/>
-	 * Add the point to the current motion<br/>
-	 * Logs the motion<br/>
-	 * Apple to move and delete points in the motion<br/>
-	 * Causes the view to redraw itself afterwards
-	 * 
-	 * @param event
-	 *            The touch event
-	 * @param action
-	 *            the named action which is in progress
-	 */
-	private void OLDhandleMotion(MotionEvent event, String action) {
-		if (currentMotion != null) {
-			if (action.equals("start")){
-			
-			}
-			 if(point != null) {
-				
-			} else {
-				if (action.equals("move") && mover != null) {
-					
-				} else {
-					currentMotion.addPoint(event.getX(), event.getY());
-					if (action.equals("end")) {
-						if(mover != null){
-						currentMotion = new DrawingMotion();
-						
-						
-						Log.d(this.getClass().getSimpleName(),
-								"Differenz X:"
-										+ Math.abs(startPoint.getX()
-												- event.getX())
-										+ " Differnze Y:"
-										+ Math.abs(startPoint.getY()
-												- event.getY()));
-						if (Math.abs(startPoint.getX() - event.getX()) > 10
-								&& Math.abs(startPoint.getY() - event.getY()) > 10) {
-							Log.d("", "Long Press cancled");
-							handler.removeCallbacks(mLongPressed);
-						}}
-					}
-				}
-				isPoint = false;
-				
-				
-				Log.d(this.getClass().getSimpleName(), "Motion " + action
-						+ ": " + currentMotion.getPathSize() + ", point: "
-						+ currentMotion.isPoint());
-			}
-		}
-	}
-	
+	private boolean isDelete = false;
 	/**
 	 * Handles the given motion:<br/>
 	 * Add the point to the current motion<br/>
@@ -366,36 +294,44 @@ public class TouchView extends View {
 				point = lookUp(event.getX(), event.getY(), 50);
 				if(point != null){
 					mover = movePoint(point);
+					isDelete = true;
 					startPoint = point;
 					point = null;
-					mLongPressed = createRunnable(mover);
-					handler.postDelayed(mLongPressed, 500);
 				}else{
 				currentMotion.addPoint(event.getX(), event.getY());
 				}
 			} else if(action.equals("move")){
 				if(mover!=null){
-					mover.moveTo(event.getX(), event.getY());
 					if (Math.abs(startPoint.getX() - event.getX()) > 10
 							&& Math.abs(startPoint.getY() - event.getY()) > 10) {
 						Log.d("", "Long Press cancled");
-						handler.removeCallbacks(mLongPressed);
+						mover.moveTo(event.getX(), event.getY());
+						isDelete = false;
+						redoUndo.add(new Point(event.getX(), event.getY()), "MOVE_TO", mover.getIdx());
 					}
 				}else{
 				currentMotion.addPoint(event.getX(), event.getY());
 				}
 			} else if(action.equals("end")){
-				if(mover!=null){
-					redoUndo.add(startPoint, "MOVE_FROM", mover.getIdx());
-					redoUndo.add(polygon.get(mover.getIdx()), "MOVE_TO", mover.getIdx());
+				if(isDelete){
+					redoUndo.add(startPoint,"DELET",mover.getIdx());
+					deletePoint(startPoint);
 					mover = null;
-				}
+					isDelete=false;
+				}else{
+				if(mover!=null){
+					
+					//redoUndo.add(polygon.get(mover.getIdx()), "MOVE_TO", mover.getIdx());
+					mover = null;
+				} else {
+					redoUndo = new RedoUndo(newPolygon);
+				}}
 			} else {
 				Log.e(this.getClass().getSimpleName(), "ERROR, No action Found for: " + action);
 			}
 			newPolygon = interpreter.interprete(polygon, currentMotion);
-		}
-	}
+		}}
+	
 
 	/**
 	 * Deletes a Point of the polygon.
@@ -463,6 +399,7 @@ public class TouchView extends View {
 	 */
 	public PointMover movePoint(Point point) {
 		final int i = polygon.indexOf(point);
+		redoUndo.add(point, "MOVE_FROM", i);
 		if (i == -1) {
 			Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
 			return null;
@@ -505,16 +442,18 @@ public class TouchView extends View {
 	 * @author vkochno
 	 */
 	public void redo() {
-		Point point = redoUndo.redo();
 		String action = redoUndo.getAction();
+		int location = redoUndo.getLocation();
+		Point point = redoUndo.redo();
+		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if(action.equals("ADD")){
-			newPolygon.add(redoUndo.getLocation(),point);
+			newPolygon.add(point);
 		}
 		if(action.equals("DELET")){
 			newPolygon.remove(point);
 		}
-		if(action.equals("MOVE_FROM")){
-			mover = new PointMover(redoUndo.getLocation());
+		if(action.equals("MOVE_TO") || action.equals("MOVE_FROM")){
+			mover = new PointMover(location);
 			Point pointTo = redoUndo.redo();
 			mover.moveTo(pointTo.getX(), pointTo.getY());
 		}
@@ -530,16 +469,19 @@ public class TouchView extends View {
 	 * @author vkochno
 	 */
 	public void undo() {
+		Point point = redoUndo.undo();
 		String action = redoUndo.getAction();
-		
+		int location = redoUndo.getLocation();
+		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if(action.equals("ADD")){
-			newPolygon.remove(redoUndo.undo());
+			newPolygon.remove(point);
 		}
 		if(action.equals("DELET")){
-			newPolygon.add(redoUndo.getLocation(),redoUndo.undo());
+			newPolygon.add(location,point);
 		}
-		if(action.equals("MOVE_TO")){
+		if(action.equals("MOVE_FROM") || action.equals("MOVE_TO")){
 			mover = new PointMover(redoUndo.getLocation());
+			redoUndo.undo();
 			Point pointTo = redoUndo.undo();
 			mover.moveTo(pointTo.getX(), pointTo.getY());
 		}	
