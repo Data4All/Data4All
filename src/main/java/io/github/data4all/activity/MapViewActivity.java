@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.compass.CompassOverlay;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,6 +45,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     // Logger Tag
     private static final String TAG = "MapViewActivity";
+
+    private static final int REQUEST_CODE = 1;
 
     /**
      * Default constructor.
@@ -66,16 +67,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         setUpLoadingScreen();
 
-        final DataBaseHandler db = new DataBaseHandler(this);
-        try {
-            final List<AbstractDataElement> list = db.getAllDataElements();
-            mapView.addOsmElementsToMap(this, list);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            Log.e(TAG, "", e);
-        }
+        DataBaseHandler db = new DataBaseHandler(this);
+        List<AbstractDataElement> list = db.getAllDataElements();
+        mapView.addOsmElementsToMap(this, list);
+
         db.close();
-        
+
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
@@ -126,7 +123,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
                 Toast.makeText(getApplicationContext(), text,
                         Toast.LENGTH_SHORT).show();
             } else {
-                startActivity(new Intent(this, CameraActivity.class));
+                Intent camera = new Intent(this, CameraActivity.class);
+                startActivity(camera);
             }
             break;
         // Add new POI to the Map
@@ -198,7 +196,20 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
             // Start MapPreview Activity
             Log.i(TAG, "Start MapPreview Activity");
-            startActivity(intent);
+            startActivityForResult(intent, 0);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
+        if (requestCode == 0) {
+            final DataBaseHandler db = new DataBaseHandler(this);
+            final List<AbstractDataElement> list = db.getAllDataElements();
+            mapView.addOsmElementsToMap(this, list);
+            db.close();
+            mapView.postInvalidate();
         }
     }
 

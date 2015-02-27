@@ -54,10 +54,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -96,6 +94,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     // The Ressource
     private Resources res;
 
+    private static final int RESULTVIEW_REQUEST_CODE = 5;
+
     /**
      * Called when the activity is first created.
      * 
@@ -116,7 +116,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         setContentView(R.layout.activity_tag);
         element = getIntent().getParcelableExtra(OSM);
         res = getResources();
-        this.createAlertDialogKey();
+        createAlertDialogKey();
 
     }
 
@@ -154,6 +154,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             public boolean onKey(DialogInterface dialog, int keyCode,
                     KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    setResult(RESULT_FIRST_USER);
+                    finish();
                     return true;
                 }
                 return true;
@@ -171,7 +173,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
      * 
      */
     private void createAlertDialogValue() {
-
         array = Tagging.ClassifiedValueList(tagMap.get(key)
                 .getClassifiedValues(), res);
         final Map<String, ClassifiedValue> classifiedMap = Tagging
@@ -184,10 +185,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
         ;
-        final ImageButton speechStart = (ImageButton) view
-                .findViewById(R.id.speech);
-        speechStart.setOnClickListener(this);
-      
         alertDialogBuilder.setCustomTitle(view);
         alertDialogBuilder.setItems(array,
                 new DialogInterface.OnClickListener() {
@@ -207,22 +204,22 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     }
                 });
 
-        alert = alertDialogBuilder.create();
-        alert.getWindow().setBackgroundDrawable(
+        alert1 = alertDialogBuilder.create();
+        alert1.getWindow().setBackgroundDrawable(
                 new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        alert.setOnKeyListener(new OnKeyListener() {
+        alert1.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode,
                     KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    alert.dismiss();
+                    alert1.dismiss();
                     createAlertDialogKey();
                     return true;
                 }
                 return true;
             }
         });
-        alert.show();
+        alert1.show();
     }
 
     @Override
@@ -237,13 +234,13 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             alert.dismiss();
             break;
         case R.id.buttonNext:
-            this.editTextToMap(first);
-            this.createDialog(Tags.getAllContactTags(),
+            editTextToMap(first);
+            createDialog(Tags.getAllContactTags(),
                     getString(R.string.AddContact), false);
             break;
         case R.id.buttonFinish:
             editTextToMap(first);
-            finish();
+            redirectToResultView();
             break;
         default:
             break;
@@ -272,27 +269,32 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-        	Log.i(TAG, "Speech Start");
             new Dialog(TagActivity.this);
             final ListView textList = (ListView) findViewById(R.id.listView1);
             final List<String> matchesText = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            map = SpeechRecognition.speechToTag(matchesText,getIntent().getExtras().getInt("TYPE_DEF"), res);
-            Log.i(TAG, map.toString());
+            SpeechRecognition.splitStrings(matchesText);
+            // final Map<String, String> map =
+            // SpeechRecognition.speechToTag(matchesText);
             matchesText.clear();
-            Log.i(TAG, "roger in Kambotscha");
-            if(!map.isEmpty()){
-            createDialog(Tags.getAllAddressTags(),
-                    getString(R.string.AddAddress), true);
-            }else {
-            	Toast.makeText(getApplicationContext(), R.string.retry, Toast.LENGTH_SHORT)
-                .show();
-            	createAlertDialogKey();
+            for (Entry entry : map.entrySet()) {
+                key = (String) entry.getKey();
+                matchesText.add(key + "=" + map.get(key));
             }
-         
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, matchesText);
+            textList.setAdapter(adapter);
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULTVIEW_REQUEST_CODE
+                && (resultCode == RESULT_OK
+                        || resultCode == ResultViewActivity.CAMERA_RESULT_CODE || resultCode == RESULT_CANCELED)) {
+            Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: "
+                    + resultCode);
+            setResult(resultCode);
+            finish();
+        }
     }
 
     /**
@@ -314,7 +316,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         dialog1.setTitle(title);
         final LinearLayout layout = (LinearLayout) dialog1
                 .findViewById(R.id.dialogDynamic);
-        Log.i(TAG, "layout " + layout);
         final Button next = new Button(this);
         final Button finish = new Button(this);
         next.setText(R.string.next);
@@ -326,7 +327,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             text.setHint(arrayList.get(i).getHintRessource());
-            text.setHintTextColor(Color.GRAY);
+            text.setHintTextColor(Color.DKGRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
             Log.i(TAG, "TYpoe " + arrayList.get(i).getType());
@@ -373,23 +374,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
         dialog1.show();
     }
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    	super.onSaveInstanceState(outState);
-    };
-    
-    
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-    	super.onRestoreInstanceState(savedInstanceState);
-    };
-    
-    @Override
-    public void finish() {
+
+    public void redirectToResultView() {
         element.setTags(map);
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
-        super.finish();
-        startActivity(intent);
+        startActivityForResult(intent, RESULTVIEW_REQUEST_CODE);
     }
 }

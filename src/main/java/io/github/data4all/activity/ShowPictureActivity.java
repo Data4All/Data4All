@@ -45,7 +45,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Activity to set a ImageView and use the TouchView to draw.<br\>
@@ -73,6 +72,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private ImageButton undo;
     private ImageButton redo;
     private ImageButton ok;
+    private static final int REQUEST_CODE = 3;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -174,7 +174,7 @@ public class ShowPictureActivity extends AbstractActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
-        this.onClickArea(null);
+        this.onClickBuilding(null);
 
         // Setup the rotation listener
         List<View> buttons = new ArrayList<View>();
@@ -211,26 +211,18 @@ public class ShowPictureActivity extends AbstractActivity {
      *            current view used this method
      */
     public void onClickOkay(View view) {
-            //check if we have a location first
-        if (transformBean.getLocation() == null) {
-            final String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            // 0 or Rotation0 if portrait
-            // 90 or Rotation1 if home-button to the right
-            // 270 or Rotation3 if home-button to the left
-            final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                    .getDefaultDisplay().getRotation();
+        // 0 or Rotation0 if portrait
+        // 90 or Rotation1 if home-button to the right
+        // 270 or Rotation3 if home-button to the left
+        final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getRotation();
 
-            // create an abstract data element from the given data and pass it
-            // to
-            // the next
-            // activity
-            final AbstractDataElement osmElement = touchView.create(rotation);
-            intent.putExtra(OSM_ELEMENT, osmElement);
-            startActivity(intent);
-        }
+        // create an abstract data element from the given data and pass it to
+        // the next
+        // activity
+        final AbstractDataElement osmElement = touchView.create(rotation);
+        intent.putExtra(OSM_ELEMENT, osmElement);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     /**
@@ -257,6 +249,21 @@ public class ShowPictureActivity extends AbstractActivity {
         touchView.setInterpretationType(TouchView.InterpretationType.WAY);
         touchView.invalidate();
         intent.putExtra(TYPE, WAY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if(resultCode == RESULT_OK){
+                setResult(RESULT_OK);
+                finish();
+            }
+            if(resultCode == ResultViewActivity.CAMERA_RESULT_CODE){
+                touchView.clearMotions();
+                touchView.invalidate();
+            }
+        }
     }
 
     /**

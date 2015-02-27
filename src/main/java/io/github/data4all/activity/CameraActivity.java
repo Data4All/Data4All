@@ -62,6 +62,8 @@ public class CameraActivity extends Activity {
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();
 
+    private static final int REQUEST_CODE = 2;
+
     private Camera mCamera;
 
     private CameraPreview cameraPreview;
@@ -262,5 +264,17 @@ public class CameraActivity extends Activity {
         camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
 
         return camera;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
+        if (requestCode == REQUEST_CODE
+                && (resultCode == RESULT_OK || resultCode == RESULT_CANCELED)) {
+            setResult(resultCode);
+            this.releaseCamera();
+            finish();
+        }
     }
 }
