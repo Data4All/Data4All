@@ -367,17 +367,15 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         return rowID;
     }
 
-    public long createNode(Node n, long row) {
+    private void createNode(Node n, long id) {
         final SQLiteDatabase db = getWritableDatabase();
-        long newRow = row+1;
-        Log.i(TAG, "trying to add node with " + newRow);
+        Log.i(TAG, "trying to add node with " + id);
         ContentValues values = new ContentValues();
-        values.put(KEY_OSMID, newRow);
+        values.put(KEY_OSMID, id);
         values.put(KEY_LAT, n.getLat());
         values.put(KEY_LON, n.getLon());
         long rowID = db.insert(TABLE_NODE, null, values);
-        Log.i(TAG, "Node " + rowID + " has been added.");
-        return rowID;
+        n.setOsmId(rowID);
     }
 
     /**
@@ -551,34 +549,42 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         Log.i(TAG, "PolyElement " + rowID + " has been added.");
     }
 
-    public void createPolyElement(PolyElement polyElement, long row) {
-        final List<Long> nodeIDs = new ArrayList<Long>();
+    private void createPolyElement(PolyElement elem, long nextId) {
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
-        long index = row++;
-        long lastID = index;
-        for (Node node : polyElement.getNodes()) {
-            lastID = this.createNode(node, index);
-            index++;
-            nodeIDs.add(lastID);
+        createPolyElementNodes(elem, nextId);
+
+        final List<Long> nodeIDs = new ArrayList<Long>();
+        for (Node node : elem.getNodes()) {
+            nodeIDs.add(node.getOsmId());
         }
 
         final JSONObject json = new JSONObject();
         try {
             json.put("nodeIDarray", new JSONArray(nodeIDs));
         } catch (JSONException e) {
-            // TODO: handle exception
+            // ignore exception
         }
         final String arrayList = json.toString();
 
-        values.put(KEY_OSMID, ++index);
-        Log.i(TAG, "trying to add polyelement " + index);
-        Log.i(TAG, "index should be " + index);
-        values.put(KEY_TYPE, polyElement.getType().toString());
+        values.put(KEY_OSMID, elem.getOsmId());
+        values.put(KEY_TYPE, elem.getType().toString());
+        values.put(KEY_NODEIDS, arrayList);
         long rowID = db.insert(TABLE_POLYELEMENT, null, values);
         Log.i(TAG, "PolyElement " + rowID + " has been added.");
     }
+
+    private void createPolyElementNodes(PolyElement elem, long nextId) {
+        for (Node node : elem.getNodes()) {
+            this.createNode(node, nextId);
+            node.setOsmId(nextId);
+            nextId++;
+        }
+        elem.setOsmId(nextId);
+    }
+    
+    
 
     /**
      * This method returns the data for a specific poly element stored in the
@@ -809,20 +815,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final List<Integer> tagIDs = new ArrayList<Integer>();
         final ContentValues values = new ContentValues();
 
-        long newId;
-
         if (dataElement instanceof Node) {
-            newId = createNode((Node) dataElement, getLastId());
+            createNode((Node) dataElement, getNextId());
         } else {
-            // newId = createNodes(((PolyElement)dataElement).getNodes(),
-            // getLastId());
-            newId = getLastId();
-            createPolyElement((PolyElement) dataElement, newId);
-            newId++;
+            createPolyElement((PolyElement) dataElement, getNextId());
         }
-
-        dataElement.setOsmId(newId);
-        values.put(KEY_OSMID, newId);
+        
 
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
             tagIDs.add(tag.getKey().getId());
@@ -838,6 +836,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
         final String arrayList = json.toString();
 
+        values.put(KEY_OSMID, dataElement.getOsmId());
         values.put(KEY_TAGIDS, arrayList);
 
         long rowID = db.insert(TABLE_DATAELEMENT, null, values);
@@ -849,7 +848,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @return the last used ID.
      */
-    private long getLastId() {
+    private long getNextId() {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor =
                 db.rawQuery("SELECT " + KEY_OSMID + " FROM "
@@ -861,7 +860,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             Log.d(TAG, "LAST ID: " + lastId);
         }
         cursor.close();
-        return lastId;
+        return lastId + 1;
     }
 
     /**
