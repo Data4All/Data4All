@@ -16,6 +16,7 @@
 package io.github.data4all.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -337,6 +338,21 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         Log.i(TAG, "Node " + rowID + " has been added.");
         return rowID;
     }
+    
+    public long createNodes(List<Node> nodes, long idIndex) {
+        final SQLiteDatabase db = getWritableDatabase();
+        long index = idIndex++;
+        long rowID = index;
+        for (Node n : nodes) {
+            ContentValues values = new ContentValues();
+            values.put(KEY_OSMID, index++);
+            values.put(KEY_LAT, n.getLat());
+            values.put(KEY_LON, n.getLon());
+            rowID = db.insert(TABLE_NODE, null, values);
+            Log.i(TAG, "Node " + rowID + " has been added.");
+        }
+        return rowID;
+    }
 
     /**
      * This method returns the data for a specific node stored in the database
@@ -487,10 +503,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
         values.put(KEY_TYPE, polyElement.getType().toString());
 
+
         for (Node node : polyElement.getNodes()) {
             long nodeID = this.createNode(node);
             nodeIDs.add(nodeID);
         }
+        
         final JSONObject json = new JSONObject();
         try {
             json.put("nodeIDarray", new JSONArray(nodeIDs));
@@ -732,11 +750,19 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Map<Tag, String> tagMap = dataElement.getTags();
         final List<Integer> tagIDs = new ArrayList<Integer>();
         final ContentValues values = new ContentValues();
-
-        if (dataElement.getOsmId() != -1) {
-            values.put(KEY_OSMID, dataElement.getOsmId());
+        
+        long newId;
+        
+        if (dataElement instanceof Node) {
+            newId = createNodes(Arrays.asList((Node) dataElement), getLastId());
+        } else {
+            newId = createNodes(((PolyElement)dataElement).getNodes(), getLastId());
+            newId++;
         }
-
+        
+        dataElement.setOsmId(newId);
+        values.put(KEY_OSMID, newId);
+        
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
             tagIDs.add(tag.getKey().getId());
         }
@@ -755,13 +781,17 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         long rowID = db.insert(TABLE_DATAELEMENT, null, values);
         Log.i(TAG, "DataElement " + rowID + " has been added.");
-        dataElement.setOsmId(rowID);
+    }
 
-        if (dataElement instanceof PolyElement) {
-            this.createPolyElement((PolyElement) dataElement);
-        } else {
-            this.createNode((Node) dataElement);
+    private long getLastId() {
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT " +KEY_OSMID + " FROM " + TABLE_DATAELEMENT + " order by " +KEY_OSMID + " DESC limit 1", null);
+        long lastId = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            cursor.getLong(0);
         }
+        cursor.close();
+        return lastId;
     }
 
     /**
