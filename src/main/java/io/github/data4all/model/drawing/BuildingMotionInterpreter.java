@@ -40,7 +40,7 @@ import android.graphics.Color;
 public class BuildingMotionInterpreter implements MotionInterpreter {
 
     private PointToCoordsTransformUtil pointTrans;
-    private final int MIN_NODES = 4;
+    private final static int MIN_NODES = 4;
     
     /**
      * Creates an BuildingMotionInterpreter with the specified transformation

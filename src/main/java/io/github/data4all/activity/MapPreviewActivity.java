@@ -48,8 +48,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     private BoundingBoxE6 boundingBox;
 
-    private static final int REQUEST_CODE = 4;
-
     /**
      * Standard Constructor
      **/
@@ -153,17 +151,14 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.toString());
         intent.putExtra(OSM, element);
 
-        startActivityForResult(intent, REQUEST_CODE);
+        startActivityForResult(intent);
     }
 
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
-        if (requestCode == REQUEST_CODE
-                && (resultCode == RESULT_OK || resultCode == ResultViewActivity.CAMERA_RESULT_CODE)) {
-            setResult(resultCode);
-            finish();
-        }
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow();
     }
 }

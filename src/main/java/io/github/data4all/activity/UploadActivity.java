@@ -211,6 +211,28 @@ public class UploadActivity extends AbstractActivity {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        // Ignore - The upload is the last step in the workflow
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#finish()
+     */
+    @Override
+    public void finish() {
+        finishWorkflow();
+    }
+
     /**
      * IPC to receive a callback result from the UploadService.
      * 

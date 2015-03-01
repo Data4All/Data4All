@@ -106,8 +106,7 @@ public class LoginActivity extends AbstractActivity {
      * Starts the UploadActivity. Used when the user is logged in.
      */
     private void nextActivity() {
-        this.startActivity(new Intent(this, UploadActivity.class));
-        this.finish();
+        this.startActivityForResult(new Intent(this, UploadActivity.class));
     }
 
     /**
@@ -160,6 +159,14 @@ public class LoginActivity extends AbstractActivity {
                             Uri.parse(OSM_REGISTRATION_URL));
             startActivity(intent);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow();
     }
 
     /**

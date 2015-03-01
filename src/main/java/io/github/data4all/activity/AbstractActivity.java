@@ -28,19 +28,31 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 
 /**
- * global activity for all children activities.
+ * Global activity for all children activities.
  * 
- * This activity serves as a global class for all subclasses . Contains all the
+ * This activity serves as a global class for all subclasses. Contains all the
  * methods that are relevant for all. For example the title bar.
  * 
  * @author Andre Koch
+ * @author tbrose
  * @CreationDate 10.01.2015
- * @LastUpdate 12.02.2015
- * @version 1.2
+ * @LastUpdate 27.02.2015
+ * @version 1.3
  * 
  */
 
 public abstract class AbstractActivity extends Activity {
+
+    /**
+     * The default requestcode for
+     * {@link AbstractActivity#startActivityForResult(Intent)
+     * startActivityForResult(Intent)}.
+     * 
+     * @see AbstractActivity#startActivityForResult(android.content.Intent)
+     */
+    public static final int WORKFLOW_CODE = 9999;
+
+    public static final int RESULT_FINISH = 9998;
 
     /*
      * (non-Javadoc)
@@ -81,6 +93,62 @@ public abstract class AbstractActivity extends Activity {
         }
         return status;
     }
+
+    /**
+     * Same as calling startActivityForResult(Intent, int) with
+     * {@link AbstractActivity#WORKFLOW_CODE WORKFLOW_CODE}.
+     * 
+     * @author tbrose
+     * 
+     * @param intent
+     *            The intent to start.
+     * @see android.app.Activity#startActivityForResult(android.content.Intent,
+     *      int)
+     */
+    public void startActivityForResult(Intent intent) {
+        super.startActivityForResult(intent, WORKFLOW_CODE);
+    }
+
+    /**
+     * Call this when your activity is done and should be closed. The
+     * ActivityResult which is propagated back is
+     * {@link AbstractActivity#RESULT_FINISH RESULT_FINISH}.
+     * 
+     * @author tbrose
+     * 
+     * @see AbstractActivity#startActivityForResult(Intent)
+     * @see AbstractActivity#WORKFLOW_CODE
+     */
+    public void finishWorkflow() {
+        super.setResult(RESULT_FINISH);
+        super.finish();
+    }
+
+    /**
+     * @author tbrose
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(getClass().getSimpleName(), "onActivityResult(" + requestCode
+                + ", " + resultCode + ", " + data + ");");
+        if (requestCode == WORKFLOW_CODE && resultCode == RESULT_FINISH) {
+            this.onWorkflowFinished(data);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    /**
+     * Is called when the called activity finished the workflow with
+     * {@link AbstractActivity#RESULT_FINISH RESULT_FINISH}.
+     * 
+     * @author tbrose
+     * 
+     * @param data
+     *            An Intent, which can return result data to the caller (various
+     *            data can be attached to Intent "extras").
+     */
+    protected abstract void onWorkflowFinished(Intent data);
 
     /**
      * Applies a bottom margin to the given view if the device have a
