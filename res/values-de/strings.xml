@@ -52,4 +52,9 @@
     <string name="deleteDialog">Wollen sie dieses Objekt wirklich löschen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+
+    <string name="upload_to_openstreetmap">Hochladen zu OpenStreetMap</string>
+    <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
+    <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
+    <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
 </resources>
