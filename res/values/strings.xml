@@ -78,5 +78,10 @@
     <string name="AddContact">Add Contact</string>
 
     <string name="upload_cancle">Cancle</string>
-    
+
+    <string name="upload_to_openstreetmap">Upload to OpenStreetMap</string>
+    <string name="upload_to_openstreetmap_progress">Download for %s in progress</string>
+    <string name="upload_to_openstreetmap_success">Changes successfully uploaded</string>
+    <string name="upload_to_openstreetmap_error">Upload failed</string>
+
 </resources>
