@@ -19,10 +19,6 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import java.util.Arrays;
 
-import org.apache.tools.ant.types.resources.selectors.InstanceOf;
-
-import android.text.InputType;
-
 /**
  * This class represents a predefined osm tag. The name and hint for a specific
  * tag is defined in the tag_name.xml and tag_hint.xml.
