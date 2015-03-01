@@ -81,6 +81,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     private static final String KEY_LON = "lon";
 
     // TagMap Column Names
+    private static final String KEY_ID = "id";
     private static final String KEY_TAGID = "tagid";
     private static final String KEY_VALUE = "value";
 
@@ -122,8 +123,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                         + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
                         + KEY_LON + " REAL" + ")";
         final String CREATE_TAGMAP_TABLE =
-                "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_TAGID
-                        + " INTEGER PRIMARY KEY," + KEY_VALUE + " TEXT" + ")";
+                "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_ID
+                        + " INTEGER PRIMARY KEY," + KEY_TAGID + " INTEGER,"
+                        + KEY_VALUE + " TEXT" + ")";
         final String CREATE_POLYELEMENT_TABLE =
                 "CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
                         + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
@@ -583,8 +585,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
         elem.setOsmId(nextId);
     }
-    
-    
 
     /**
      * This method returns the data for a specific poly element stored in the
@@ -820,7 +820,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         } else {
             createPolyElement((PolyElement) dataElement, getNextId());
         }
-        
 
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
             tagIDs.add(tag.getKey().getId());
