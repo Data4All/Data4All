@@ -50,7 +50,9 @@ public final class CallbackOutputStream extends OutputStream {
     @Override
     public void write(int oneByte) throws IOException {
         currentRead++;
-        callback.callback(currentRead);
+        if(currentRead % callback.interval() == 0) {
+            callback.callback(currentRead);
+        }
         outstream.write(oneByte);
     }
 }
