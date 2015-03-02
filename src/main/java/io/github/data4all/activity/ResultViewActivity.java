@@ -30,6 +30,7 @@ import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -182,11 +183,11 @@ public class ResultViewActivity extends AbstractActivity implements
      * Shows the Tags in a List
      */
     private void output() {
-        endList = new ArrayList<String>();
-        keyList = new ArrayList<String>();
-        ArrayList<Tag> tagList = new ArrayList<Tag>();
-        for (Entry entry : element.getTags().entrySet()) {
-            final Tag tagKey = (Tag) entry.getKey();
+        endList = new LinkedList<String>();
+        keyList = new LinkedList<String>();
+        List<Tag> tagList = new LinkedList<Tag>();
+        for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+            final Tag tagKey = entry.getKey();
             tagList.add(tagKey);
             Log.i(TAG, tagKey.getKey());
             keyList.add(res.getString(tagKey.getNameRessource()));
@@ -272,11 +273,8 @@ public class ResultViewActivity extends AbstractActivity implements
         text.setInputType(mapTag.get(selectedString).getType());
         
         Tag tag = mapTag.get(selectedString);
-        if(tmp!=null && tmp.equals(tag.getLastValue())) {
-                text.setText(tmp);  
-        }else if(tmp!=null && !tmp.equals(tag.getLastValue())){
-            text.setText(tag.getLastValue());
-        }else if(tag.getLastValue()!=null){
+        //check if tag has a last value(e.g street,country, etc...)
+         if(tag.getLastValue()!=null){
             text.setText(tag.getLastValue());
         }else {
             text.setHint(tag.getHintRessource());
