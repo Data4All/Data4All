@@ -145,7 +145,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
-
+        //load lastChoice from database
+        LastChoiceHandler.load(db);
         db.close();
 
         // Set Overlay for the actual Position
@@ -216,7 +217,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             final DataBaseHandler db = new DataBaseHandler(this);
             final List<AbstractDataElement> list = db.getAllDataElements();
             mapView.addOsmElementsToMap(this, list);
-            LastChoiceHandler.load(db);
             db.close();
             mapView.postInvalidate();
         }
