@@ -17,14 +17,28 @@ package io.github.data4all.util.upload;
 
 /**
  * Interface to handle a generic Callback.
+ * 
  * @author tbrose
  *
- * @param <T> The argument type which should be delivered by the callback. 
+ * @param <T>
+ *            The argument type which should be delivered by the callback.
  */
 public interface Callback<T> {
     /**
      * This method handles the callback (execute it).
-     * @param t The argument which should be delivered through the callback. 
+     * 
+     * @param t
+     *            The argument which should be delivered through the callback.
      */
     void callback(T t);
+
+    /**
+     * To prevent a callback flood the callback can specify an interval for the
+     * callback.<br/>
+     * If a callback returns {@code n}, only every {@code n}-th callback-event
+     * will call the callback-method.
+     * 
+     * @return The requested interval of the callback.
+     */
+    int interval();
 }
