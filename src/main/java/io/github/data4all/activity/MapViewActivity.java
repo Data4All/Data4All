@@ -75,6 +75,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
 
+        if (isLocationServiceEnabled()) {
+            callGPSsettings();
+        }
+
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
@@ -128,12 +132,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     }
 
     private void startCamera() {
-        final GeoPoint myPosition = myLocationOverlay.getMyLocation();
-        if (myPosition == null) {
-            // final String text = getString(R.string.noLocationFound);
-            // Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-            // .show();
-            callGPSsettings();
+        if (Optimizer.currentLocation() == null) {
+            final String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
         } else {
             Intent camera = new Intent(this, CameraActivity.class);
             startActivity(camera);
@@ -190,11 +192,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void createNewPOI() {
         final GeoPoint myPosition = myLocationOverlay.getMyLocation();
         if (myPosition == null) {
-            // final String text = getString(R.string.noLocationFound);
-            // Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-            // .show();
+            final String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
 
-            callGPSsettings();
         } else {
             final Intent intent = new Intent(this, MapPreviewActivity.class);
             final Node poi = new Node(-1, myPosition.getLatitude(),
@@ -238,10 +239,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         if (myLocationOverlay.getMyLocation() != null) {
             setCenter(myLocationOverlay.getMyLocation());
         } else {
-            // String text = getString(R.string.noLocationFound);
-            // Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-            // .show();
-            callGPSsettings();
+            String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 
