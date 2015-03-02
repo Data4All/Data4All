@@ -16,7 +16,6 @@
 package io.github.data4all.handler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -195,7 +193,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_TOKEN, user.getOAuthToken());
         values.put(KEY_TOKENSECRET, user.getOauthTokenSecret());
 
-        long rowID = db.insert(TABLE_USER, null, values);
+        final long rowID = db.insert(TABLE_USER, null, values);
         Log.i(TAG, "User " + rowID + " has been added.");
     }
 
@@ -212,7 +210,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Cursor cursor =
                 db.query(TABLE_USER, new String[] {KEY_USERNAME, KEY_TOKEN,
-                        KEY_TOKENSECRET,}, KEY_USERNAME + "=?",
+                        KEY_TOKENSECRET},KEY_USERNAME + "=?",
                         new String[] {username}, null, null, null, null);
 
         String uName = "";
@@ -347,33 +345,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         Log.i(TAG, "Node (createNode) " + rowID + " has been added.");
         return rowID;
     }
-
-    /**
-     * This method creates and stores new nodes in the database. The data is
-     * taken from the {@link List} of node objects that is passed to the method.
-     * 
-     * @param nodes
-     *            the {@link List} of node objects from which the data will be
-     *            taken
-     * @param idIndex
-     *            the index of the last object in the database
-     */
-    public long createNodes(List<Node> nodes, long idIndex) {
-        final SQLiteDatabase db = getWritableDatabase();
-        long id = idIndex;
-        long rowID = id;
-        for (Node n : nodes) {
-            id = id + 1;
-            ContentValues values = new ContentValues();
-            values.put(KEY_OSMID, id);
-            values.put(KEY_LAT, n.getLat());
-            values.put(KEY_LON, n.getLon());
-            rowID = db.insert(TABLE_NODE, null, values);
-            Log.i(TAG, "Node " + rowID + " has been added.");
-        }
-        return rowID;
-    }
-
+    
     /**
      * Inserts a {@link Node} into the database.
      * @param n The node object.
@@ -382,12 +354,39 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     private void createNode(Node n, long id) {
         final SQLiteDatabase db = getWritableDatabase();
         Log.i(TAG, "trying to add node with " + id);
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
         values.put(KEY_OSMID, id);
         values.put(KEY_LAT, n.getLat());
         values.put(KEY_LON, n.getLon());
         long rowID = db.insert(TABLE_NODE, null, values);
         n.setOsmId(rowID);
+    }
+
+    /**
+     * This method creates and stores new nodes in the database. The data is
+     * taken from the {@link List} of node objects that is passed to the method.
+     * 
+     * @param nodes
+     *            the {@link List} of node objects from which the data will be
+     *            taken.
+     * @param idIndex
+     *            the index of the last object in the database.
+     * @return the ID of the node in the database.
+     */
+    public long createNodes(List<Node> nodes, long idIndex) {
+        final SQLiteDatabase db = getWritableDatabase();
+        long id = idIndex;
+        long rowID = id;
+        for (Node n : nodes) {
+            id = id + 1;
+            final ContentValues values = new ContentValues();
+            values.put(KEY_OSMID, id);
+            values.put(KEY_LAT, n.getLat());
+            values.put(KEY_LON, n.getLon());
+            rowID = db.insert(TABLE_NODE, null, values);
+            Log.i(TAG, "Node " + rowID + " has been added.");
+        }
+        return rowID;
     }
 
     /**
@@ -402,7 +401,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor =
                 db.query(TABLE_NODE,
-                        new String[] {KEY_OSMID, KEY_LAT, KEY_LON,}, KEY_OSMID
+                        new String[] {KEY_OSMID, KEY_LAT, KEY_LON},KEY_OSMID
                                 + "=?", new String[] {String.valueOf(id)},
                         null, null, null, null);
         long osmid = 0;
@@ -494,7 +493,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
-
+        //System.out.println("query count: " +cursor.getCount());
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 final Node node =
@@ -520,46 +519,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // POLY ELEMENT CRUD
 
     /**
-     * This method creates and stores a new poly element in the database. The
-     * data is taken from the {@link PolyElement} object that is passed to the
-     * method.
-     * 
-     * @param polyElement
-     *            the {@link PolyElement} object from which the data will be
-     *            taken
-     */
-    public void createPolyElement(PolyElement polyElement) {
-        final List<Long> nodeIDs = new ArrayList<Long>();
-
-        final SQLiteDatabase db = getWritableDatabase();
-
-        final ContentValues values = new ContentValues();
-
-        if (polyElement.getOsmId() != -1) {
-            values.put(KEY_OSMID, polyElement.getOsmId());
-        }
-        values.put(KEY_TYPE, polyElement.getType().toString());
-
-        for (Node node : polyElement.getNodes()) {
-            final long nodeID = this.createNode(node);
-            nodeIDs.add(nodeID);
-        }
-
-        final JSONObject json = new JSONObject();
-        try {
-            json.put("nodeIDarray", new JSONArray(nodeIDs));
-        } catch (JSONException e) {
-            // ignore exception
-        }
-        final String arrayList = json.toString();
-
-        values.put(KEY_NODEIDS, arrayList);
-
-        final long rowID = db.insert(TABLE_POLYELEMENT, null, values);
-        Log.i(TAG, "PolyElement " + rowID + " has been added.");
-    }
-
-    /**
      * Stores the given {@link PolyElement} in the database.
      * 
      * @param elem
@@ -567,7 +526,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param nextId
      *            The next valid database id.
      */
-    private void createPolyElement(PolyElement elem, long nextId) {
+    public void createPolyElement(PolyElement elem, long nextId) {
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 

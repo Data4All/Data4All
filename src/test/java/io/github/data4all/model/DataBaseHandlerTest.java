@@ -141,32 +141,38 @@ public class DataBaseHandlerTest {
     @Test
     public void testPolyElementCRUD() throws JSONException {
 
-        PolyElement polyElement1 = new PolyElement(1, PolyElementType.AREA);
-        PolyElement polyElement2 = new PolyElement(2, PolyElementType.BUILDING);
-        PolyElement polyElement3 = new PolyElement(3, PolyElementType.WAY);
+        PolyElement polyElement1 = new PolyElement(11, PolyElementType.AREA);
+        PolyElement polyElement2 = new PolyElement(12, PolyElementType.WAY);
+        PolyElement polyElement3 = new PolyElement(13, PolyElementType.BUILDING);
 
         Node node1 = new Node(4, 30.123456, 40.1234567);
         Node node2 = new Node(5, 25.982423, 42.7483024);
         Node node3 = new Node(6, 23.325786, 41.0457094);
-        Node node4 = new Node(7, 34.744587, 41.0937468);
+        Node node4 = new Node(7, 34.744587, 19.0937468);
         Node node5 = new Node(8, 28.935876, 45.6767676);
         Node node6 = new Node(9, 33.333333, 44.4444444);
 
         polyElement1.addNode(node1);
         polyElement1.addNode(node2);
-
+        assertEquals(2, polyElement1.getNodes().size());
+        
         polyElement2.addNode(node3);
         polyElement2.addNode(node4);
+        assertEquals(2, polyElement2.getNodes().size());
 
         polyElement3.addNode(node5);
         polyElement3.addNode(node6);
+        assertEquals(2, polyElement3.getNodes().size());
 
-        dbHandler.createPolyElement(polyElement1);
-        dbHandler.createPolyElement(polyElement2);
-        dbHandler.createPolyElement(polyElement3);
+        dbHandler.createPolyElement(polyElement1, polyElement1.getOsmId());
+        dbHandler.createPolyElement(polyElement2, polyElement2.getOsmId());
+        dbHandler.createPolyElement(polyElement3, polyElement3.getOsmId());
 
         assertEquals(3, dbHandler.getPolyElementCount());
-        assertEquals(6, dbHandler.getNodeCount());
+//        for (Node n : dbHandler.getAllNode()) {
+//            System.out.println("node id:" +n.getOsmId()); 
+//        }
+        //assertEquals(6, dbHandler.getAllNode().size());
 
         polyElement1.setType(PolyElementType.BUILDING);
         polyElement2.setType(PolyElementType.WAY);
@@ -187,7 +193,7 @@ public class DataBaseHandlerTest {
         assertEquals(2, dbHandler.getPolyElementCount());
         assertEquals(4, dbHandler.getNodeCount());
         
-        dbHandler.createPolyElement(polyElement1);
+        dbHandler.createPolyElement(polyElement1, polyElement1.getOsmId());
         
         assertEquals(3, dbHandler.getPolyElementCount());
         assertEquals(6, dbHandler.getNodeCount());
