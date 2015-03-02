@@ -15,15 +15,6 @@
  */
 package io.github.data4all.handler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
@@ -34,6 +25,18 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -67,6 +70,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     private static final String TABLE_WAY = "ways";
     private static final String TABLE_GPSTRACK = "gpstracks";
     private static final String TABLE_TRACKPOINT = "trackpoints";
+    private static final String TABLE_LASTCHOICE ="lastChoice";
+    
 
     // General Column Names
     private static final String KEY_OSMID = "osmid";
@@ -82,7 +87,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // TagMap Column Names
     private static final String KEY_TAGID = "tagid";
     private static final String KEY_VALUE = "value";
-
+    
+    
+    //LastChoice Column names
+    private static final String TAG_IDS = "tagIds";
+    private static final String TYPE = "type";
+    
     // PolyElement Column Names
     private static final String KEY_TYPE = "type";
     private static final String KEY_NODEIDS = "nodeids";
@@ -140,6 +150,11 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 + KEY_INCID + " INTEGER PRIMARY KEY,"
                 + KEY_LAT + " REAL," + KEY_LON + " REAL," + KEY_ALT + " REAL,"
                 + KEY_TIME + " REAL" + ")";
+        //create table lastChoice
+        final String CREATE_LASTCHOICE_TABLE = "CREATE TABLE "
+                + TABLE_LASTCHOICE + " (" 
+                + TAG_IDS + " TEXT," 
+                + TYPE + " INTEGER" + ")";
 
         db.execSQL(CREATE_DATAELEMENTS_TABLE);
         db.execSQL(CREATE_NODES_TABLE);
@@ -148,7 +163,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_GPSTRACK_TABLE);
         db.execSQL(CREATE_TRACKPOINT_TABLE);
-
+        //Lastchoice
+        db.execSQL(CREATE_LASTCHOICE_TABLE);
+        
         Log.i(TAG, "Tables have been created.");
     }
 
@@ -164,6 +181,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GPSTRACK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRACKPOINT);
+        
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LASTCHOICE);
 
         Log.i(TAG, "Tables have been dropped and will be recreated.");
 
@@ -1528,5 +1547,99 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             return false;
         }
         return true;
+    }
+    //--------------------------------------------------------------------------------------------------------------
+    //lastChoice
+    /**
+     * get lastchoice from a Type(node,track,area,building)
+     * @param kategorie
+     * @return
+     * @author Steeve
+     */
+    public List<Integer> getLastChoiceId(Integer kategorie) {
+
+        final SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT " + TAG_IDS + " FROM " + TABLE_LASTCHOICE + " WHERE " + TYPE + " = " + kategorie;
+        final Cursor cursor = db.rawQuery(query, null);
+        String tagIds=null;
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                tagIds=cursor.getString(0);
+            }
+        }
+        if(tagIds==null){
+            return null;
+        }
+        List<Integer> result=new LinkedList<Integer>();
+        String[] ids=tagIds.split(",");
+        for (String id : ids) {
+            result.add(Integer.valueOf(id));
+        }
+            
+        return result;
+    }
+    
+    
+    /**
+     * insert a lastchoice for a given Type
+     * @param kategorie
+     * @param tagIds
+     * @return
+     * @author Steeve
+     */
+    public Integer insertOrUpdateLastChoice(Integer kategorie,List<Integer> tagIds) {
+        final SQLiteDatabase db = getReadableDatabase();
+        
+        if(getLastChoiceId(kategorie)==null){
+            final ContentValues values = new ContentValues();
+            values.put(TYPE, kategorie);
+            values.put(TAG_IDS, join(tagIds, ","));
+            return (int) db.insert(TABLE_LASTCHOICE, null,values);
+        }else{
+
+            final ContentValues values = new ContentValues();
+            values.put(TYPE, kategorie);
+            values.put(TAG_IDS, join(tagIds, ","));
+            //update lastchoice set TYPE=kategorie, TAG_IDS=tagIds where TYPE=kategorie
+            return db.update(TABLE_LASTCHOICE, values, TYPE + "=?",
+                    new String[] {String.valueOf(kategorie)});
+            
+        }
+    }
+    
+   /* /**
+     * 
+     * @param kategorie
+     * @return
+     *//*
+    public Map<Tag, String> getTagMapLastChoice(Integer kategorie){
+        List<Integer> tagid=getLastChoiceId(kategorie);
+        if(tagid==null){
+            return null;
+        }
+        return getTagMap(tagid);
+    }
+    */
+    /**
+     * separate elements with a given separator
+     * @param elements
+     * @param separator
+     * @return
+     * @autthor steeve
+     */
+    public String join(List<Integer> elements,String separator){
+        
+        if(elements==null || elements.isEmpty()){
+            return null;
+        }
+        StringBuilder builder=new StringBuilder();
+        for (Iterator<Integer> iterator = elements.iterator(); iterator.hasNext();) {
+            Integer integer = (Integer) iterator.next();
+            builder.append(integer.toString());
+            if(iterator.hasNext()){
+                builder.append(separator);
+            }
+        }
+        return builder.toString();
     }
 }
