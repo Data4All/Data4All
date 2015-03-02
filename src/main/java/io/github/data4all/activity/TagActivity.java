@@ -338,13 +338,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             final Tag tag = arrayList.get(i);
-            ResultViewActivity rs = new ResultViewActivity();
-            if(ResultViewActivity.tmp!=null && tag.getLastValue()!=null && ResultViewActivity.tmp.equals( tag.getLastValue())){
-                text.setText(ResultViewActivity.tmp);
-            }else if (ResultViewActivity.tmp!=null && tag.getLastValue()!=null && !ResultViewActivity.tmp.equals( tag.getLastValue())){
-                text.setText(tag.getLastValue());
-            }
-            else if (tag.getLastValue() != null) {
+            //check if a tag has a lastvalue(e.g street, country, etc...)
+            if (tag.getLastValue() != null) {
                 text.setText(tag.getLastValue());
             } else {
                 text.setHint(tag.getHintRessource());
@@ -398,7 +393,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     }
 
     public void redirectToResultView() {
-        element.setTags(map);
+        //sort map by classified tag and classifiedValue
+        element.setTags(LastChoiceHandler.sortiereMap(map));
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
