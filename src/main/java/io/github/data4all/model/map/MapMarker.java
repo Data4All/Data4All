@@ -23,6 +23,8 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
+import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.views.MapView;
 
@@ -36,8 +38,7 @@ import android.view.MotionEvent;
  * @author Oliver Schwartz
  *
  */
-public class MapMarker extends Marker implements
-        DialogInterface.OnClickListener {
+public class MapMarker extends Marker {
 
     private AbstractActivity activity;
     private D4AMapView mapView;
@@ -62,52 +63,54 @@ public class MapMarker extends Marker implements
         this.activity = ctx;
         this.mapView = mv;
         setIcon(ctx.getResources().getDrawable(R.drawable.ic_setpoint));
+        final int layoutid = R.layout.bonuspack_bubble;
+        mInfoWindow = new CustomInfoWindow(this.mapView, ele, this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.osmdroid.bonuspack.overlays.Marker#onLongPress(android.view.MotionEvent
-     * , org.osmdroid.views.MapView)
-     */
-    @Override
-    public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-        if (activity instanceof MapViewActivity) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    mapView.getContext());
-            builder.setMessage(activity.getString(R.string.deleteDialog))
-                    .setPositiveButton(activity.getString(R.string.yes), this)
-                    .setNegativeButton(activity.getString(R.string.no), this)
-                    .show();
-        }
-        return true;
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * android.content.DialogInterface.OnClickListener#onClick(android.content
-     * .DialogInterface, int)
-     */
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-        case DialogInterface.BUTTON_POSITIVE:
-            // Yes button clicked
-            mapView.removeOverlayFromMap(this);
-            final DataBaseHandler db = new DataBaseHandler(activity);
-            db.deleteDataElement(element);
-            db.close();
-            break;
-        case DialogInterface.BUTTON_NEGATIVE:
-            // No button clicked
-            break;
-        default:
-            break;
-        }
-    }
+//    /*
+//     * (non-Javadoc)
+//     * 
+//     * @see
+//     * org.osmdroid.bonuspack.overlays.Marker#onLongPress(android.view.MotionEvent
+//     * , org.osmdroid.views.MapView)
+//     */
+//    @Override
+//    public boolean onLongPress(final MotionEvent e, final MapView mapView) {
+//        if (activity instanceof MapViewActivity) {
+//            final AlertDialog.Builder builder = new AlertDialog.Builder(
+//                    mapView.getContext());
+//            builder.setMessage(activity.getString(R.string.deleteDialog))
+//                    .setPositiveButton(activity.getString(R.string.yes), this)
+//                    .setNegativeButton(activity.getString(R.string.no), this)
+//                    .show();
+//        }
+//        return true;
+//
+//    }
+//
+//    /*
+//     * (non-Javadoc)
+//     * 
+//     * @see
+//     * android.content.DialogInterface.OnClickListener#onClick(android.content
+//     * .DialogInterface, int)
+//     */
+//    @Override
+//    public void onClick(DialogInterface dialog, int which) {
+//        switch (which) {
+//        case DialogInterface.BUTTON_POSITIVE:
+//            // Yes button clicked
+//            mapView.removeOverlayFromMap(this);
+//            final DataBaseHandler db = new DataBaseHandler(activity);
+//            db.deleteDataElement(element);
+//            db.close();
+//            break;
+//        case DialogInterface.BUTTON_NEGATIVE:
+//            // No button clicked
+//            break;
+//        default:
+//            break;
+//        }
+//    }
 }

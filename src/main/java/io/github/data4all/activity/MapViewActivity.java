@@ -62,7 +62,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
         setUpMapView(savedInstanceState);
-        setUpLoadingScreen();
+        if (savedInstanceState == null) {
+            setUpLoadingScreen();
+        }else{
+            view.setVisibility(View.GONE);
+        }
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
@@ -123,8 +127,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void startCamera() {
         if (Optimizer.currentLocation() == null) {
             final String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
         } else {
             Intent camera = new Intent(this, CameraActivity.class);
             startActivity(camera);
@@ -204,8 +208,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
