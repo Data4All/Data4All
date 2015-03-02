@@ -257,7 +257,9 @@ public class DataBaseHandlerTest {
 
     @Test
     public void testTagMapCRUD() {
-
+        Node node = new Node(1, 30.123456, 40.1234567);
+        dbHandler.createNode(node);
+        
         Map<Tag, String> tagMap = new Hashtable<Tag, String>();
         Tag tag1 = Tags.getTagWithId(1);
         tagMap.put(tag1, "Hollywood Blvd.");
@@ -268,36 +270,36 @@ public class DataBaseHandlerTest {
         tagIDs.add(tag1.getId());
         tagIDs.add(tag2.getId());
 
-        dbHandler.createTagMap(tagMap);
+        dbHandler.createTagMap(node.getOsmId(), tagMap);
 
-        assertEquals(2, dbHandler.getTagMapCount());
+        assertEquals(2, dbHandler.getTagMapCount(node.getOsmId()));
 
         Tag tag3 = Tags.getTagWithId(4);
         tagMap.put(tag3, "Los Angeles");
         tagIDs.add(tag3.getId());
 
-        dbHandler.updateTagMap(tagMap);
+        dbHandler.updateTagMap(node.getOsmId(), tagMap);
 
-        assertEquals(3, dbHandler.getTagMapCount());
+        assertEquals(3, dbHandler.getTagMapCount(node.getOsmId()));
 
-        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag1));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("Hollywood Blvd."));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag2));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("113"));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag3));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("Los Angeles"));
+        assertTrue(dbHandler.getTagMap(node.getOsmId()).containsKey(tag1));
+        assertTrue(dbHandler.getTagMap(node.getOsmId()).containsValue("Hollywood Blvd."));
+        assertTrue(dbHandler.getTagMap(node.getOsmId()).containsKey(tag2));
+        assertTrue(dbHandler.getTagMap(node.getOsmId()).containsValue("113"));
+        assertTrue(dbHandler.getTagMap(node.getOsmId()).containsKey(tag3));
+        assertTrue(dbHandler.getTagMap(node.getOsmId()).containsValue("Los Angeles"));
 
-        dbHandler.deleteTagMap(tagIDs);
+        dbHandler.deleteTagMap(node.getOsmId(), tagIDs);
 
-        assertEquals(0, dbHandler.getTagMapCount());
+        assertEquals(0, dbHandler.getTagMapCount(node.getOsmId()));
         
-        dbHandler.createTagMap(tagMap);
+        dbHandler.createTagMap(node.getOsmId(), tagMap);
         
-        assertEquals(3, dbHandler.getTagMapCount());
+        assertEquals(3, dbHandler.getTagMapCount(node.getOsmId()));
         
         dbHandler.deleteAllTagMap();
         
-        assertEquals(0, dbHandler.getTagMapCount());
+        assertEquals(0, dbHandler.getTagMapCount(node.getOsmId()));
     }
 
     @Test

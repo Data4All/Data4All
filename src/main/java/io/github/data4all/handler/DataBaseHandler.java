@@ -37,6 +37,7 @@ import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -47,6 +48,7 @@ import android.location.Location;
  * saved, such as create, read, update and delete.
  * 
  * @author Kristin Dahnken
+ * @author fkirchge
  * 
  */
 public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
@@ -82,6 +84,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
     // TagMap Column Names
     private static final String KEY_ID = "id";
+    private static final String KEY_DATAELEMENT = "element";
     private static final String KEY_TAGID = "tagid";
     private static final String KEY_VALUE = "value";
 
@@ -124,8 +127,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                         + KEY_LON + " REAL" + ")";
         final String CREATE_TAGMAP_TABLE =
                 "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_ID
-                        + " INTEGER PRIMARY KEY," + KEY_TAGID + " INTEGER,"
-                        + KEY_VALUE + " TEXT" + ")";
+                        + " INTEGER PRIMARY KEY," + KEY_DATAELEMENT
+                        + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
+                        + " TEXT" + ")";
         final String CREATE_POLYELEMENT_TABLE =
                 "CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
                         + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
@@ -327,6 +331,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param node
      *            the {@link Node} object from which the data will be taken
+     * @return the ID of the node.
      */
     public long createNode(Node node) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -338,7 +343,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_LAT, node.getLat());
         values.put(KEY_LON, node.getLon());
 
-        long rowID = db.insert(TABLE_NODE, null, values);
+        final long rowID = db.insert(TABLE_NODE, null, values);
         Log.i(TAG, "Node (createNode) " + rowID + " has been added.");
         return rowID;
     }
@@ -369,6 +374,11 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         return rowID;
     }
 
+    /**
+     * Inserts a {@link Node} into the database.
+     * @param n The node object.
+     * @param id The ID of the node.
+     */
     private void createNode(Node n, long id) {
         final SQLiteDatabase db = getWritableDatabase();
         Log.i(TAG, "trying to add node with " + id);
@@ -390,13 +400,11 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      */
     public Node getNode(long id) {
         final SQLiteDatabase db = getReadableDatabase();
-
         final Cursor cursor =
                 db.query(TABLE_NODE,
                         new String[] {KEY_OSMID, KEY_LAT, KEY_LON,}, KEY_OSMID
                                 + "=?", new String[] {String.valueOf(id)},
                         null, null, null, null);
-
         long osmid = 0;
         double lat = 0;
         double lon = 0;
@@ -533,7 +541,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_TYPE, polyElement.getType().toString());
 
         for (Node node : polyElement.getNodes()) {
-            long nodeID = this.createNode(node);
+            final long nodeID = this.createNode(node);
             nodeIDs.add(nodeID);
         }
 
@@ -541,21 +549,29 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         try {
             json.put("nodeIDarray", new JSONArray(nodeIDs));
         } catch (JSONException e) {
-            // TODO: handle exception
+            // ignore exception
         }
         final String arrayList = json.toString();
 
         values.put(KEY_NODEIDS, arrayList);
 
-        long rowID = db.insert(TABLE_POLYELEMENT, null, values);
+        final long rowID = db.insert(TABLE_POLYELEMENT, null, values);
         Log.i(TAG, "PolyElement " + rowID + " has been added.");
     }
 
+    /**
+     * Stores the given {@link PolyElement} in the database.
+     * 
+     * @param elem
+     *            The {@link PolyElement}.
+     * @param nextId
+     *            The next valid database id.
+     */
     private void createPolyElement(PolyElement elem, long nextId) {
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
-        createPolyElementNodes(elem, nextId);
+        this.createPolyElementNodes(elem, nextId);
 
         final List<Long> nodeIDs = new ArrayList<Long>();
         for (Node node : elem.getNodes()) {
@@ -577,6 +593,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         Log.i(TAG, "PolyElement " + rowID + " has been added.");
     }
 
+    /**
+     * Creates all stored {@link Node} objects for the {@link PolyElement}.
+     * 
+     * @param elem
+     *            The given {@link PolyElement}.
+     * @param nextId
+     *            The next valid database id.
+     */
     private void createPolyElementNodes(PolyElement elem, long nextId) {
         for (Node node : elem.getNodes()) {
             this.createNode(node, nextId);
@@ -825,7 +849,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             tagIDs.add(tag.getKey().getId());
         }
 
-        this.createTagMap(tagMap);
+        this.createTagMap(dataElement.getOsmId(), tagMap);
 
         final JSONObject json = new JSONObject();
         try {
@@ -932,7 +956,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         for (Map.Entry<Tag, String> tag : dataElement.getTags().entrySet()) {
             tagIDs.add(tag.getKey().getId());
         }
-        this.deleteTagMap(tagIDs);
+        this.deleteTagMap(dataElement.getOsmId(), tagIDs);
 
         if (dataElement instanceof PolyElement) {
             this.deletePolyElement((PolyElement) dataElement);
@@ -961,7 +985,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
                 new String[] {String.valueOf(id)});
-        deleteTagMap(tagIDs);
+        this.deleteTagMap(dE.getOsmId(), tagIDs);
 
         if (dE instanceof PolyElement) {
             this.deletePolyElementByID(id);
@@ -1013,7 +1037,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
                         new String[] {String.valueOf(dataElement.getOsmId())});
 
-        count += this.updateTagMap(dataElement.getTags());
+        count += this.updateTagMap(dataElement.getOsmId(), dataElement.getTags());
 
         if (dataElement instanceof PolyElement) {
             count += this.updatePolyElement((PolyElement) dataElement);
@@ -1063,7 +1087,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                     // TODO: handle exception
                 }
 
-                final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
+                final Map<Tag, String> tagMap = this.getTagMap(dataElement.getOsmId());
                 dataElement.addTags(tagMap);
 
                 dataElements.add(dataElement);
@@ -1106,13 +1130,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param tagMap
      *            the {@link Map} object from which the data will be taken
      */
-    public void createTagMap(Map<Tag, String> tagMap) {
+    public void createTagMap(long dataElementId, Map<Tag, String> tagMap) {
 
         final SQLiteDatabase db = getWritableDatabase();
 
         final ContentValues values = new ContentValues();
 
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
+            values.put(KEY_DATAELEMENT, dataElementId);
             values.put(KEY_TAGID, tag.getKey().getId());
             values.put(KEY_VALUE, tag.getValue());
             long rowID = db.insert(TABLE_TAGMAP, null, values);
@@ -1136,17 +1161,37 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         for (int id : tagIDs) {
             final Cursor cursor =
-                    db.query(TABLE_TAGMAP, new String[] {KEY_TAGID, KEY_VALUE},
-                            KEY_TAGID + "=?",
-                            new String[] {String.valueOf(id)}, null, null,
-                            null, null);
+                    db.query(TABLE_TAGMAP, new String[] {KEY_ID,
+                            KEY_DATAELEMENT, KEY_TAGID, KEY_VALUE}, KEY_ID
+                            + "=?", new String[] {String.valueOf(id)}, null,
+                            null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
-                tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
+                tagMap.put(Tags.getTagWithId(Integer.parseInt(cursor
+                        .getString(2))), cursor.getString(3));
                 cursor.close();
             }
-
         }
+        Log.i(TAG, tagMap.size() + " tags were retrieved from the database.");
+        return tagMap;
+    }
+
+    public Map<Tag, String> getTagMap(long dataElementId) {
+
+        final SQLiteDatabase db = getReadableDatabase();
+        final Map<Tag, String> tagMap = new HashMap<Tag, String>();
+
+        final Cursor cursor =
+                db.query(TABLE_TAGMAP, new String[] {KEY_ID, KEY_DATAELEMENT,
+                        KEY_TAGID, KEY_VALUE}, KEY_DATAELEMENT + "=?",
+                        new String[] {String.valueOf(dataElementId)}, null,
+                        null, null, null);
+        while (cursor.moveToNext()) {
+            tagMap.put(
+                    Tags.getTagWithId(Integer.parseInt(cursor.getString(2))),
+                    cursor.getString(3));            
+        }
+        cursor.close();
         Log.i(TAG, tagMap.size() + " tags were retrieved from the database.");
         return tagMap;
     }
@@ -1157,12 +1202,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param tagIDs
      *            the tags whose data should be deleted
      */
-    public void deleteTagMap(List<Integer> tagIDs) {
+    public void deleteTagMap(long dataElement, List<Integer> tagIDs) {
         final SQLiteDatabase db = getWritableDatabase();
 
         for (int id : tagIDs) {
-            db.delete(TABLE_TAGMAP, KEY_TAGID + "=?",
-                    new String[] {String.valueOf(id)});
+            db.delete(TABLE_TAGMAP, KEY_TAGID + "=?" + " AND " +KEY_DATAELEMENT + "=?",
+                    new String[] {String.valueOf(id), String.valueOf(dataElement)});
         }
     }
 
@@ -1171,14 +1216,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @return the number of tags
      */
-    public int getTagMapCount() {
+    public int getTagMapCount(long dataElement) {
         final SQLiteDatabase db = getReadableDatabase();
 
         final Cursor cursor =
-                db.rawQuery("SELECT * FROM " + TABLE_TAGMAP, null);
+                db.rawQuery("SELECT * FROM " + TABLE_TAGMAP +" WHERE " +KEY_DATAELEMENT +"=?", new String[] {String.valueOf(dataElement)});
         final int count = cursor.getCount();
+        Log.d(TAG, "getTagMapCount for dataElement: " +dataElement +" count: " +count);
         cursor.close();
-
         return count;
     }
 
@@ -1190,29 +1235,21 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the {@link Map} object for which the data should be updated
      * @return the number of rows that have been updated
      */
-    public int updateTagMap(Map<Tag, String> tagMap) {
+    public int updateTagMap(long dataElement, Map<Tag, String> tagMap) {
         final SQLiteDatabase db = getWritableDatabase();
-
         final ContentValues values = new ContentValues();
-
         int count = 0;
-
+        List<Integer> tagIDs = new ArrayList<Integer>();
         for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
+            tagIDs.add(tag.getKey().getId());
+            values.put(KEY_DATAELEMENT, dataElement);
             values.put(KEY_TAGID, tag.getKey().getId());
             values.put(KEY_VALUE, tag.getValue());
-
-            if (this.checkIfRecordExists(TABLE_TAGMAP, KEY_TAGID, tag.getKey()
-                    .getId())) {
-                count +=
-                        db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
-                                new String[] {String.valueOf(tag.getKey()
-                                        .getId())});
-            } else {
-                db.insert(TABLE_TAGMAP, null, values);
-            }
-
+            count++;
         }
-        return count;
+      deleteTagMap(dataElement, tagIDs);
+      createTagMap(dataElement, tagMap);
+      return count;
     }
 
     /**
