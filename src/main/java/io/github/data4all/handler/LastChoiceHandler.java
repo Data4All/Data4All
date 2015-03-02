@@ -2,10 +2,10 @@ package io.github.data4all.handler;
 
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
-import io.github.data4all.model.data.Tags;
-import io.github.data4all.util.Tagging;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,31 +13,15 @@ import java.util.Map;
 
 import android.content.Context;
 
-
 /**
  * this class represent the lastchoice from a category
- * this lastchoice appear,when the user taggt a object which belong to the same Category as the last. 
- * to the same Category as the last. 
+ * this lastchoice appear,when the user taggt a object which belong
+ * to the same Category as the last.
  * @author Steeve
  *
  */
 public class LastChoiceHandler {
 
-    private static final int LAST_CHOICE_ID_PREFIX = 5000;
-    
-    // The Key of the Classified Tag
-    private ClassifiedTag key;
-    
-    //the classifiedValue
-    private String realValue;
-    
-    //the map were the last address is saved
-    private Map<Tag, String> adressTags;
-    
-    //the map were the last contact is saved
-    private Map<Tag, String> contactTags;
-    
-    
     private static LastChoiceHandler handler;
     
     // The map were the last selected Tag  are saved with his type 
@@ -59,56 +43,45 @@ public class LastChoiceHandler {
      * @param lastChoice
      */
     public void setLastChoice(int typ, Map<Tag, String> lastChoice) {
-        this.adressTags = new LinkedHashMap<Tag, String>();
-        this.contactTags = new LinkedHashMap<Tag, String>();
-        for (Map.Entry<Tag, String> entry : lastChoice.entrySet()) {
-            if (entry.getKey() == null) {
-                continue;
-            }
-            if (entry.getKey() instanceof ClassifiedTag) {
-                this.setKey((ClassifiedTag) entry.getKey());
-                this.setRealValue(entry.getValue());
+        Map<Tag, String> lastChoiceCopie = sortiereMap(lastChoice);
 
-            } else {
-                if (entry.getKey().getId() < 6) {
-                    adressTags.put(entry.getKey(), entry.getValue());
-                } else {
-                    contactTags.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        typWithLastchoice.put(typ, lastChoice);
+        typWithLastchoice.put(typ, lastChoiceCopie);
     }
 
-    
+    /**
+    * this method sort lastchoice by tag
+    *
+    */
+    public static Map<Tag, String> sortiereMap(Map<Tag, String> lastChoice) {
+        List<Tag> keyset = new ArrayList<Tag>(lastChoice.keySet());
+        Collections.sort(keyset, getagMapComparator());
+        Map<Tag, String> lastChoiceCopie = new LinkedHashMap<Tag, String>();
+        for (Tag tag : keyset) {
+            
+            lastChoiceCopie.put(tag, lastChoice.get(tag));
+            tag.setLastValue(lastChoice.get(tag));
+        }
+        return lastChoiceCopie;
+    }
+
     /**
      * store the last choice(tag) in database
+     * 
      * @param context
      */
     public void save(Context context) {
         final DataBaseHandler db = new DataBaseHandler(context);
         for (Map.Entry<Integer, Map<Tag, String>> entry : typWithLastchoice
                 .entrySet()) {
+            Integer kategorie = entry.getKey();
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                final Map<Tag, String> lastChoice = entry.getValue();
-              //  db.updateTagMap(lastChoice);
-                
-               final Map<Tag, String> lastChoiceCopy = new LinkedHashMap<Tag, String>();
-                for (Map.Entry<Tag, String> entry1 : lastChoice.entrySet()) {
-                  final  Tag key = entry1.getKey();
-                  final  Integer id=key.getId()+LAST_CHOICE_ID_PREFIX;
-                    if(key instanceof ClassifiedTag) {
-                       lastChoiceCopy.put(new ClassifiedTag(id, key.getKey(), key.getType(), 
-                               ((ClassifiedTag)key).getClassifiedValues(), key.getOsmObjects()), 
-                               entry1.getValue());
-                    }else {
-                        lastChoiceCopy.put(new Tag(id,
-                            key.getKey(), key.getType(), key.getOsmObjects()),entry1.getValue());
-                    }
-                    
-                    db.deleteTagMap(Arrays.asList(id));
+                List<Integer> ids = new LinkedList<Integer>();
+                for (Map.Entry<Tag, String> entry1 : entry.getValue()
+                        .entrySet()) {
+                    // only one element in map
+                    ids.add(entry1.getKey().getId());
                 }
-                db.updateTagMap(lastChoiceCopy);
+                db.insertOrUpdateLastChoice(kategorie, ids);
             }
         }
         db.close();
@@ -119,27 +92,15 @@ public class LastChoiceHandler {
      * @param db
      */
     public static void load(DataBaseHandler db) {
-       final LastChoiceHandler handler = getInstance();
+        final LastChoiceHandler handler = getInstance();
         for (int i = 1; i <= 4; i++) {
-            
-            final List<Integer> lastChoiceKey = new LinkedList<Integer>();
-          
-           
-           final List<Tag> tags = Tagging.getKeys(i);
-            for (Tag tag : tags) {
-                lastChoiceKey.add(tag.getId());
+
+            final List<Integer> lastChoiceKey = db.getLastChoiceId(i);
+            if (lastChoiceKey == null) {
+                continue;
             }
-            
-            for (Tag tag : Tags.getAllAddressTags()) { 
-                lastChoiceKey.add(tag.getId());
-            }
-            
-            for (Tag tag : Tags.getAllContactTags()) { 
-                lastChoiceKey.add(tag.getId());
-            }
-          
-            
-           final Map<Tag, String> tagMap = db.getTagMap(lastChoiceKey);
+
+            final Map<Tag, String> tagMap = db.getTagMap(lastChoiceKey);
             if (tagMap != null && !tagMap.isEmpty()) {
                 handler.setLastChoice(i, tagMap);
             }
@@ -196,24 +157,28 @@ public class LastChoiceHandler {
         return array;
     }
 
+    /**
+    *
+    * sort by tag
+    */
+    private static Comparator<Tag> getagMapComparator() {
+        Comparator<Tag> comparator = new Comparator<Tag>() {
 
-    public ClassifiedTag getKey() {
-        return key;
-    }
+            @Override
+            public int compare(Tag lhs, Tag rhs) {
+                if (lhs instanceof ClassifiedTag
+                        && !(rhs instanceof ClassifiedTag)) {
+                    return -1;
+                }
+                if (rhs instanceof ClassifiedTag
+                        && !(lhs instanceof ClassifiedTag)) {
+                    return 1;
+                }
+                return Integer.valueOf(lhs.getId()).compareTo(rhs.getId());
+            }
 
-
-    public void setKey(ClassifiedTag key) {
-        this.key = key;
-    }
-
-
-    public String getRealValue() {
-        return realValue;
-    }
-
-
-    public void setRealValue(String realValue) {
-        this.realValue = realValue;
+        };
+        return comparator;
     }
 
 }
