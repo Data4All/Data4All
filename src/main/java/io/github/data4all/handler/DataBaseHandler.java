@@ -210,8 +210,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Cursor cursor =
                 db.query(TABLE_USER, new String[] {KEY_USERNAME, KEY_TOKEN,
-                        KEY_TOKENSECRET}, KEY_USERNAME + "=?",
-                        new String[] {username}, null, null, null, null);
+                        KEY_TOKENSECRET }, KEY_USERNAME + "=?",
+                        new String[] {username }, null, null, null, null);
 
         String uName = "";
         String token = "";
@@ -238,7 +238,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_USER, KEY_USERNAME + "=?",
-                new String[] {user.getUsername()});
+                new String[] {user.getUsername() });
     }
 
     /**
@@ -251,7 +251,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     public void deleteUserByID(String username) {
         final SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(TABLE_USER, KEY_USERNAME + "=?", new String[] {username});
+        db.delete(TABLE_USER, KEY_USERNAME + "=?", new String[] {username });
     }
 
     /**
@@ -286,7 +286,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_TOKENSECRET, user.getOauthTokenSecret());
 
         return db.update(TABLE_USER, values, KEY_USERNAME + "=?",
-                new String[] {user.getUsername()});
+                new String[] {user.getUsername() });
     }
 
     /**
@@ -355,8 +355,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor =
                 db.query(TABLE_NODE,
-                        new String[] {KEY_OSMID, KEY_LAT, KEY_LON}, KEY_OSMID
-                                + "=?", new String[] {String.valueOf(id)},
+                        new String[] {KEY_OSMID, KEY_LAT, KEY_LON }, KEY_OSMID
+                                + "=?", new String[] {String.valueOf(id) },
                         null, null, null, null);
         long osmid = 0;
         double lat = 0;
@@ -384,7 +384,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_NODE, KEY_OSMID + "=?",
-                new String[] {String.valueOf(node.getOsmId())});
+                new String[] {String.valueOf(node.getOsmId()) });
     }
 
     /**
@@ -398,7 +398,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_NODE, KEY_OSMID + "=?",
-                new String[] {String.valueOf(id)});
+                new String[] {String.valueOf(id) });
     }
 
     /**
@@ -430,7 +430,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_LAT, node.getLat());
         values.put(KEY_LON, node.getLon());
         return db.update(TABLE_NODE, values, KEY_OSMID + "=?",
-                new String[] {String.valueOf(node.getOsmId())});
+                new String[] {String.valueOf(node.getOsmId()) });
     }
 
     /**
@@ -533,8 +533,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Cursor cursor =
                 db.query(TABLE_POLYELEMENT, new String[] {KEY_OSMID, KEY_TYPE,
-                        KEY_NODEIDS,}, KEY_OSMID + "=?",
-                        new String[] {String.valueOf(id)}, null, null, null,
+                        KEY_NODEIDS, }, KEY_OSMID + "=?",
+                        new String[] {String.valueOf(id) }, null, null, null,
                         null);
 
         long osmid = 0;
@@ -579,7 +579,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
-                new String[] {String.valueOf(polyElement.getOsmId())});
+                new String[] {String.valueOf(polyElement.getOsmId()) });
 
         for (Node node : polyElement.getNodes()) {
             this.deleteNode(node);
@@ -603,7 +603,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
 
         db.delete(TABLE_POLYELEMENT, KEY_OSMID + "=?",
-                new String[] {String.valueOf(id)});
+                new String[] {String.valueOf(id) });
     }
 
     /**
@@ -632,43 +632,43 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            updated.
      * @return the number of rows that have been updated.
      */
-    public void updatePolyElement(PolyElement polyElement) {
+    public int updatePolyElement(PolyElement polyElement) {
 
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
-        deleteDataElement(polyElement);
-        createDataElement(polyElement);
+        // deleteDataElement(polyElement);
+        // createDataElement(polyElement);
 
-        // if (polyElement.getOsmId() != -1) {
-        // values.put(KEY_OSMID, polyElement.getOsmId());
-        // }
-        // values.put(KEY_TYPE, polyElement.getType().toString());
-        //
-        // final List<Long> nodeIDs = new ArrayList<Long>();
-        //
-        // for (Node node : polyElement.getNodes()) {
-        // nodeIDs.add(node.getOsmId());
-        // if (this.checkIfRecordExists(TABLE_NODE, KEY_OSMID, node.getOsmId()))
-        // {
-        // this.updateNode(node);
-        // } else {
-        // this.createNode(node);
-        // }
-        // }
-        //
-        // final JSONObject json = new JSONObject();
-        // try {
-        // json.put("nodeIDarray", new JSONArray(nodeIDs));
-        // } catch (JSONException e) {
-        // // TODO: handle exception
-        // }
-        // final String arrayList = json.toString();
-        //
-        // values.put(KEY_NODEIDS, arrayList);
-        //
-        // return db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
-        // new String[] {String.valueOf(polyElement.getOsmId())});
+        if (polyElement.getOsmId() != -1) {
+            values.put(KEY_OSMID, polyElement.getOsmId());
+        }
+        values.put(KEY_TYPE, polyElement.getType().toString());
+
+        final List<Long> nodeIDs = new ArrayList<Long>();
+
+        for (Node node : polyElement.getNodes()) {
+            nodeIDs.add(node.getOsmId());
+            if (this.checkIfRecordExists(TABLE_NODE, KEY_OSMID, node.getOsmId()))
+            {
+                this.updateNode(node);
+            } else {
+                this.createNode(node, getNextId());
+            }
+        }
+
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("nodeIDarray", new JSONArray(nodeIDs));
+        } catch (JSONException e) {
+            // TODO: handle exception
+        }
+        final String arrayList = json.toString();
+
+        values.put(KEY_NODEIDS, arrayList);
+
+        return db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
+                new String[] {String.valueOf(polyElement.getOsmId()) });
     }
 
     /**
@@ -815,8 +815,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Cursor cursor =
                 db.query(TABLE_DATAELEMENT, new String[] {KEY_OSMID,
-                        KEY_TAGIDS,}, KEY_OSMID + "=?",
-                        new String[] {String.valueOf(id)}, null, null, null,
+                        KEY_TAGIDS, }, KEY_OSMID + "=?",
+                        new String[] {String.valueOf(id) }, null, null, null,
                         null);
 
         if (this.checkIfRecordExists(TABLE_POLYELEMENT, KEY_OSMID, id)) {
@@ -861,14 +861,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
-                new String[] {String.valueOf(dataElement.getOsmId())});
+                new String[] {String.valueOf(dataElement.getOsmId()) });
 
         final List<Integer> tagIDs = new ArrayList<Integer>();
 
         for (Map.Entry<Tag, String> tag : dataElement.getTags().entrySet()) {
             tagIDs.add(tag.getKey().getId());
         }
-        this.deleteTagMap(dataElement.getOsmId(), tagIDs);
+        this.deleteTagMap(dataElement.getOsmId());
 
         if (dataElement instanceof PolyElement) {
             this.deletePolyElement((PolyElement) dataElement);
@@ -896,8 +896,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
 
         db.delete(TABLE_DATAELEMENT, KEY_OSMID + "=?",
-                new String[] {String.valueOf(id)});
-        this.deleteTagMap(dE.getOsmId(), tagIDs);
+                new String[] {String.valueOf(id) });
+        this.deleteTagMap(dE.getOsmId());
 
         if (dE instanceof PolyElement) {
             this.deletePolyElementByID(id);
@@ -933,34 +933,34 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            should be updated.
      * @return the number of rows that have been updated.
      */
-    public void updateDataElement(AbstractDataElement dataElement) { // NOSONAR
+    public int updateDataElement(AbstractDataElement dataElement) { // NOSONAR
 
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
-        deleteDataElement(dataElement);
-        createDataElement(dataElement);
+        // deleteDataElementByID(dataElement.getOsmId());
+        // createDataElement(dataElement);
 
-        // if (dataElement.getOsmId() != -1) {
-        // values.put(KEY_OSMID, dataElement.getOsmId());
-        // }
-        //
-        // int count = 0;
-        //
-        // count +=
-        // db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
-        // new String[] {String.valueOf(dataElement.getOsmId())});
-        //
-        // count += this.updateTagMap(dataElement.getOsmId(),
-        // dataElement.getTags());
-        //
-        // if (dataElement instanceof PolyElement) {
-        // count += this.updatePolyElement((PolyElement) dataElement);
-        // } else {
-        // count += this.updateNode((Node) dataElement);
-        // }
-        //
-        // return count;
+        int count = 0;
+
+        if (dataElement.getOsmId() != -1) {
+            values.put(KEY_OSMID, dataElement.getOsmId());
+        }
+
+        count +=
+                db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
+                        new String[] {String.valueOf(dataElement.getOsmId()) });
+
+        count += this.updateTagMap(dataElement.getOsmId(),
+                dataElement.getTags());
+
+        if (dataElement instanceof PolyElement) {
+            count += this.updatePolyElement((PolyElement) dataElement);
+        } else {
+            count += this.updateNode((Node) dataElement);
+        }
+
+        return count;
     }
 
     /**
@@ -1070,8 +1070,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         for (int id : tagIDs) {
             final Cursor cursor =
                     db.query(TABLE_TAGMAP, new String[] {KEY_ID,
-                            KEY_DATAELEMENT, KEY_TAGID, KEY_VALUE}, KEY_ID
-                            + "=?", new String[] {String.valueOf(id)}, null,
+                            KEY_DATAELEMENT, KEY_TAGID, KEY_VALUE }, KEY_ID
+                            + "=?", new String[] {String.valueOf(id) }, null,
                             null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
@@ -1087,7 +1087,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     /**
      * This method returns the data for specific tags stored in the database and
      * creates the corresponding {@link Map} object.
-     * @param dataElementId The ID of the data element.
+     * 
+     * @param dataElementId
+     *            The ID of the data element.
      * @return A {@link Map} of tags.
      */
     private Map<Tag, String> getTagMap(long dataElementId) {
@@ -1097,8 +1099,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Cursor cursor =
                 db.query(TABLE_TAGMAP, new String[] {KEY_ID, KEY_DATAELEMENT,
-                        KEY_TAGID, KEY_VALUE}, KEY_DATAELEMENT + "=?",
-                        new String[] {String.valueOf(dataElementId)}, null,
+                        KEY_TAGID, KEY_VALUE }, KEY_DATAELEMENT + "=?",
+                        new String[] {String.valueOf(dataElementId) }, null,
                         null, null, null);
         while (cursor.moveToNext()) {
             tagMap.put(
@@ -1112,23 +1114,25 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
     /**
      * This method deletes specific tags from the database.
-     * @param dataElementId The ID of the data element.
-     * @param tagIDs The list of tag IDs.
-     *            the tags whose data should be deleted
+     * 
+     * @param dataElementId
+     *            The ID of the data element.
+     * @param tagIDs
+     *            The list of tag IDs. the tags whose data should be deleted
      */
-    private void deleteTagMap(long dataElementId, List<Integer> tagIDs) {
+    private void deleteTagMap(long dataElementId) {
         final SQLiteDatabase db = getWritableDatabase();
 
-        for (int id : tagIDs) {
-            db.delete(TABLE_TAGMAP, KEY_TAGID + "=?" + " AND "
-                    + KEY_DATAELEMENT + "=?", new String[] {String.valueOf(id),
-                    String.valueOf(dataElementId)});
-        }
+        db.delete(TABLE_TAGMAP, KEY_DATAELEMENT + "=?",
+                new String[] {String.valueOf(dataElementId) });
+
     }
 
     /**
      * This method returns the number of tags currently stored in the database.
-     * @param dataElement The ID of the data element.
+     * 
+     * @param dataElement
+     *            The ID of the data element.
      * @return the number of tags.
      */
     public int getTagMapCount(long dataElement) {
@@ -1137,7 +1141,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor =
                 db.rawQuery("SELECT * FROM " + TABLE_TAGMAP + " WHERE "
                         + KEY_DATAELEMENT + "=?",
-                        new String[] {String.valueOf(dataElement)});
+                        new String[] {String.valueOf(dataElement) });
         final int count = cursor.getCount();
         Log.d(TAG, "getTagMapCount for dataElement: " + dataElement
                 + " count: " + count);
@@ -1165,7 +1169,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_VALUE, tag.getValue());
             count++;
         }
-        deleteTagMap(dataElement, tagIDs);
+        deleteTagMap(dataElement);
         createTagMap(dataElement, tagMap);
         return count;
     }
@@ -1231,8 +1235,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Cursor cursor =
                 db.query(TABLE_GPSTRACK, new String[] {KEY_INCID,
-                        KEY_TRACKNAME, KEY_TRACKPOINTS,}, KEY_INCID + "=?",
-                        new String[] {String.valueOf(id)}, null, null, null,
+                        KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_INCID + "=?",
+                        new String[] {String.valueOf(id) }, null, null, null,
                         null);
 
         if (cursor != null && cursor.moveToFirst()) {
@@ -1272,7 +1276,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_GPSTRACK, KEY_INCID + "=?",
-                new String[] {String.valueOf(track.getID())});
+                new String[] {String.valueOf(track.getID()) });
 
         final List<Long> trackPointIDs = new ArrayList<Long>();
 
@@ -1321,7 +1325,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
             count +=
                     db.update(TABLE_GPSTRACK, values, KEY_INCID + "=?",
-                            new String[] {String.valueOf(track.getID())});
+                            new String[] {String.valueOf(track.getID()) });
         } else {
             db.insert(TABLE_GPSTRACK, null, values);
         }
@@ -1436,8 +1440,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         for (long id : trackPointIDs) {
             final Cursor cursor =
                     db.query(TABLE_TRACKPOINT, new String[] {KEY_INCID,
-                            KEY_LAT, KEY_LON, KEY_ALT, KEY_TIME,}, KEY_INCID
-                            + "=?", new String[] {String.valueOf(id)}, null,
+                            KEY_LAT, KEY_LON, KEY_ALT, KEY_TIME, }, KEY_INCID
+                            + "=?", new String[] {String.valueOf(id) }, null,
                             null, null, null);
 
             final Location loc = new Location("provider");
@@ -1468,7 +1472,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         for (long id : trackPointIDs) {
             db.delete(TABLE_TRACKPOINT, KEY_INCID + "=?",
-                    new String[] {String.valueOf(id)});
+                    new String[] {String.valueOf(id) });
         }
     }
 
@@ -1514,7 +1518,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                     point.getID())) {
                 count +=
                         db.update(TABLE_TRACKPOINT, values, KEY_INCID + "=?",
-                                new String[] {String.valueOf(point.getID())});
+                                new String[] {String.valueOf(point.getID()) });
             } else {
                 db.insert(TABLE_TRACKPOINT, null, values);
             }
