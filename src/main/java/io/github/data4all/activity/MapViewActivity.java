@@ -27,7 +27,12 @@ import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,6 +49,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     // Logger Tag
     private static final String TAG = "MapViewActivity";
+    // The alertDialog of the settings
+    private AlertDialog alert;
 
     /**
      * Default constructor.
@@ -121,10 +128,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     }
 
     private void startCamera() {
-        if (Optimizer.currentLocation() == null) {
-            final String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text,
-                    Toast.LENGTH_SHORT).show();
+        final GeoPoint myPosition = myLocationOverlay.getMyLocation();
+        if (myPosition == null) {
+            // final String text = getString(R.string.noLocationFound);
+            // Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+            // .show();
+            callGPSsettings();
         } else {
             Intent camera = new Intent(this, CameraActivity.class);
             startActivity(camera);
@@ -181,9 +190,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void createNewPOI() {
         final GeoPoint myPosition = myLocationOverlay.getMyLocation();
         if (myPosition == null) {
-            final String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-                    .show();
+            // final String text = getString(R.string.noLocationFound);
+            // Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+            // .show();
+
+            callGPSsettings();
         } else {
             final Intent intent = new Intent(this, MapPreviewActivity.class);
             final Node poi = new Node(-1, myPosition.getLatitude(),
@@ -204,8 +215,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
@@ -223,9 +238,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         if (myLocationOverlay.getMyLocation() != null) {
             setCenter(myLocationOverlay.getMyLocation());
         } else {
-            String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-                    .show();
+            // String text = getString(R.string.noLocationFound);
+            // Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+            // .show();
+            callGPSsettings();
         }
     }
 
@@ -240,5 +256,42 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Stop the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
+    }
+
+    private void callGPSsettings() {
+        if (isLocationServiceEnabled()) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                    MapViewActivity.this);
+            builder.setMessage("Location service is not enabled");
+            final Intent callGPSSettingIntent = new Intent(
+                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            builder.setPositiveButton("Standort-einstellungen",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            startActivityForResult(callGPSSettingIntent);
+                        }
+                    });
+
+            builder.setNegativeButton("cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // setResult(RESULT_OK);
+                            // finishWorkflow();
+                        }
+                    });
+            alert = builder.create();
+            alert.show();
+        }
+    }
+
+    public boolean isLocationServiceEnabled() {
+        Log.d(TAG, "isLocationServiceEnabled");
+        LocationManager lm = (LocationManager) this
+                .getSystemService(Context.LOCATION_SERVICE);
+        String provider = lm.getBestProvider(new Criteria(), true);
+        return (!provider.isEmpty() && !LocationManager.PASSIVE_PROVIDER
+                .equals(provider));
     }
 }
