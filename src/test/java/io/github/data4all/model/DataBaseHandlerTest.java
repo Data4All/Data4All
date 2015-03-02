@@ -105,9 +105,9 @@ public class DataBaseHandlerTest {
         Node node2 = new Node(2, 25.982423, 42.7483024);
         Node node3 = new Node(3, 23.325786, 41.0457094);
 
-        dbHandler.createNode(node1);
-        dbHandler.createNode(node2);
-        dbHandler.createNode(node3);
+        dbHandler.createDataElement(node1);
+        dbHandler.createDataElement(node2);
+        dbHandler.createDataElement(node3);
 
         assertEquals(30.123456, dbHandler.getNode(1).getLat(), 0.0);
         assertEquals(25.982423, dbHandler.getNode(2).getLat(), 0.0);
@@ -129,7 +129,7 @@ public class DataBaseHandlerTest {
 
         assertEquals(2, dbHandler.getNodeCount());
         
-        dbHandler.createNode(node1);
+        dbHandler.createDataElement(node1);
         
         assertEquals(3, dbHandler.getNodeCount());
         
@@ -164,15 +164,12 @@ public class DataBaseHandlerTest {
         polyElement3.addNode(node6);
         assertEquals(2, polyElement3.getNodes().size());
 
-        dbHandler.createPolyElement(polyElement1, polyElement1.getOsmId());
-        dbHandler.createPolyElement(polyElement2, polyElement2.getOsmId());
-        dbHandler.createPolyElement(polyElement3, polyElement3.getOsmId());
+        dbHandler.createDataElement(polyElement1);
+        dbHandler.createDataElement(polyElement2);
+        dbHandler.createDataElement(polyElement3);
 
         assertEquals(3, dbHandler.getPolyElementCount());
-//        for (Node n : dbHandler.getAllNode()) {
-//            System.out.println("node id:" +n.getOsmId()); 
-//        }
-        //assertEquals(6, dbHandler.getAllNode().size());
+        assertEquals(6, dbHandler.getAllNode().size());
 
         polyElement1.setType(PolyElementType.BUILDING);
         polyElement2.setType(PolyElementType.WAY);
@@ -182,25 +179,23 @@ public class DataBaseHandlerTest {
         dbHandler.updatePolyElement(polyElement2);
         dbHandler.updatePolyElement(polyElement3);
 
-        assertEquals(PolyElementType.BUILDING, dbHandler.getPolyElement(1)
-                .getType());
-        assertEquals(PolyElementType.WAY, dbHandler.getPolyElement(2).getType());
-        assertEquals(PolyElementType.AREA, dbHandler.getPolyElement(3)
-                .getType());
+        assertEquals(polyElement1.getType(), ((PolyElement) dbHandler.getDataElement(polyElement1.getOsmId())).getType());
+        assertEquals(polyElement2.getType(), ((PolyElement) dbHandler.getDataElement(polyElement2.getOsmId())).getType());
+        assertEquals(polyElement3.getType(), ((PolyElement) dbHandler.getDataElement(polyElement3.getOsmId())).getType());
 
-        dbHandler.deletePolyElement(polyElement1);
+        dbHandler.deleteDataElement(polyElement1);
 
         assertEquals(2, dbHandler.getPolyElementCount());
         assertEquals(4, dbHandler.getNodeCount());
         
-        dbHandler.createPolyElement(polyElement1, polyElement1.getOsmId());
+        dbHandler.createDataElement(polyElement1);
         
         assertEquals(3, dbHandler.getPolyElementCount());
         assertEquals(6, dbHandler.getNodeCount());
         
-        dbHandler.deleteAllPolyElements();
+        dbHandler.deleteAllDataElements();
         
-        assertEquals(0, dbHandler.getPolyElementCount());
+        assertEquals(0, dbHandler.getAllDataElements());
     }
 
     @Test
@@ -238,8 +233,8 @@ public class DataBaseHandlerTest {
         dbHandler.updateDataElement(polyElement1);
         dbHandler.updateDataElement(node1);
 
-        returnedPE = (PolyElement) dbHandler.getDataElement(1);
-        returnedN = (Node) dbHandler.getDataElement(2);
+        returnedPE = (PolyElement) dbHandler.getDataElement(polyElement1.getOsmId());
+        returnedN = (Node) dbHandler.getDataElement(node1.getOsmId());
 
         assertEquals(PolyElementType.AREA, returnedPE.getType());
         assertEquals(42.1234567, returnedN.getLon(), 0.0);
@@ -264,7 +259,7 @@ public class DataBaseHandlerTest {
     @Test
     public void testTagMapCRUD() {
         Node node = new Node(1, 30.123456, 40.1234567);
-        dbHandler.createNode(node);
+        dbHandler.createDataElement(node);
         
         Map<Tag, String> tagMap = new Hashtable<Tag, String>();
         Tag tag1 = Tags.getTagWithId(1);

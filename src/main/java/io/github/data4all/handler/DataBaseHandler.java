@@ -107,7 +107,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * Default constructor for the database handler.
      * 
      * @param context
-     *            the application
+     *            the application.
      */
     public DataBaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -183,7 +183,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * taken from the {@link User} object that is passed to the method.
      * 
      * @param user
-     *            the {@link User} object from which the data will be taken
+     *            the {@link User} object from which the data will be taken.
      */
     public void createUser(User user) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -202,15 +202,15 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * and creates the corresponding {@link User} object.
      * 
      * @param username
-     *            the name of the desired user
-     * @return a {@link User} object for the desired user
+     *            the name of the desired user.
+     * @return a {@link User} object for the desired user.
      */
     public User getUser(String username) {
         final SQLiteDatabase db = getReadableDatabase();
 
         final Cursor cursor =
                 db.query(TABLE_USER, new String[] {KEY_USERNAME, KEY_TOKEN,
-                        KEY_TOKENSECRET},KEY_USERNAME + "=?",
+                        KEY_TOKENSECRET}, KEY_USERNAME + "=?",
                         new String[] {username}, null, null, null, null);
 
         String uName = "";
@@ -232,7 +232,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method deletes a specific user from the database.
      * 
      * @param user
-     *            the {@link User} object whose data should be deleted
+     *            the {@link User} object whose data should be deleted.
      */
     public void deleteUser(User user) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -245,7 +245,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method deletes a specific user from the database via a given ID.
      * 
      * @param username
-     *            the ID of the {@link User} object whose data should be deleted
+     *            the ID of the {@link User} object whose data should be
+     *            deleted.
      */
     public void deleteUserByID(String username) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -256,7 +257,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     /**
      * This method returns the number of users currently stored in the database.
      * 
-     * @return the number of users
+     * @return the number of users.
      */
     public int getUserCount() {
         final SQLiteDatabase db = getReadableDatabase();
@@ -292,7 +293,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method returns a list of all users stored in the database and
      * creates corresponding {@link User} objects.
      * 
-     * @return a list of users
+     * @return a list of users.
      */
     public List<User> getAllUser() {
         final List<User> users = new ArrayList<User>();
@@ -324,32 +325,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // NODE CRUD
 
     /**
-     * This method creates and stores a new node in the database. The data is
-     * taken from the {@link Node} object that is passed to the method.
-     * 
-     * @param node
-     *            the {@link Node} object from which the data will be taken
-     * @return the ID of the node.
-     */
-    public long createNode(Node node) {
-        final SQLiteDatabase db = getWritableDatabase();
-
-        final ContentValues values = new ContentValues();
-        if (node.getOsmId() != -1) {
-            values.put(KEY_OSMID, node.getOsmId());
-        }
-        values.put(KEY_LAT, node.getLat());
-        values.put(KEY_LON, node.getLon());
-
-        final long rowID = db.insert(TABLE_NODE, null, values);
-        Log.i(TAG, "Node (createNode) " + rowID + " has been added.");
-        return rowID;
-    }
-    
-    /**
      * Inserts a {@link Node} into the database.
-     * @param n The node object.
-     * @param id The ID of the node.
+     * 
+     * @param n
+     *            The node object.
+     * @param id
+     *            The ID of the node.
      */
     private void createNode(Node n, long id) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -363,45 +344,18 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     }
 
     /**
-     * This method creates and stores new nodes in the database. The data is
-     * taken from the {@link List} of node objects that is passed to the method.
-     * 
-     * @param nodes
-     *            the {@link List} of node objects from which the data will be
-     *            taken.
-     * @param idIndex
-     *            the index of the last object in the database.
-     * @return the ID of the node in the database.
-     */
-    public long createNodes(List<Node> nodes, long idIndex) {
-        final SQLiteDatabase db = getWritableDatabase();
-        long id = idIndex;
-        long rowID = id;
-        for (Node n : nodes) {
-            id = id + 1;
-            final ContentValues values = new ContentValues();
-            values.put(KEY_OSMID, id);
-            values.put(KEY_LAT, n.getLat());
-            values.put(KEY_LON, n.getLon());
-            rowID = db.insert(TABLE_NODE, null, values);
-            Log.i(TAG, "Node " + rowID + " has been added.");
-        }
-        return rowID;
-    }
-
-    /**
      * This method returns the data for a specific node stored in the database
      * and creates the corresponding {@link Node} object.
      * 
      * @param id
-     *            the id of the desired node
-     * @return a {@link Node} object for the desired node
+     *            the id of the desired node.
+     * @return a {@link Node} object for the desired node.
      */
-    public Node getNode(long id) {
+    private Node getNode(long id) {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor =
                 db.query(TABLE_NODE,
-                        new String[] {KEY_OSMID, KEY_LAT, KEY_LON},KEY_OSMID
+                        new String[] {KEY_OSMID, KEY_LAT, KEY_LON}, KEY_OSMID
                                 + "=?", new String[] {String.valueOf(id)},
                         null, null, null, null);
         long osmid = 0;
@@ -424,7 +378,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method deletes a specific node from the database.
      * 
      * @param node
-     *            the {@link Node} object whose data should be deleted
+     *            the {@link Node} object whose data should be deleted.
      */
     public void deleteNode(Node node) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -437,7 +391,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method deletes a specific node from the database via a given ID.
      * 
      * @param id
-     *            the ID of the {@link Node} object whose data should be deleted
+     *            the ID of the {@link Node} object whose data should be
+     *            deleted.
      */
     public void deleteNodeByID(long id) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -465,17 +420,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method updates the data for a specific node stored in the database.
      * 
      * @param node
-     *            the {@link Node} object for which the data should be updated
-     * @return the number of rows that have been updated
+     *            the {@link Node} object for which the data should be updated.
+     * @return the number of rows that have been updated.
      */
     public int updateNode(Node node) {
         final SQLiteDatabase db = getWritableDatabase();
-
         final ContentValues values = new ContentValues();
 
-        if (node.getOsmId() != -1) {
-            values.put(KEY_OSMID, node.getOsmId());
-        }
         values.put(KEY_LAT, node.getLat());
         values.put(KEY_LON, node.getLon());
         return db.update(TABLE_NODE, values, KEY_OSMID + "=?",
@@ -486,14 +437,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method returns a list of all nodes stored in the database and
      * creates corresponding {@link Node} objects.
      * 
-     * @return a list of nodes
+     * @return a list of nodes.
      */
     public List<Node> getAllNode() {
         final List<Node> nodes = new ArrayList<Node>();
 
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NODE, null);
-        //System.out.println("query count: " +cursor.getCount());
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 final Node node =
@@ -526,7 +476,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param nextId
      *            The next valid database id.
      */
-    public void createPolyElement(PolyElement elem, long nextId) {
+    private void createPolyElement(PolyElement elem, long nextId) {
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
 
@@ -577,7 +527,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the id of the desired poly element
      * @return a {@link PolyElement} object for the desired poly element
      */
-    public PolyElement getPolyElement(long id) {
+    private PolyElement getPolyElement(long id) {
 
         final SQLiteDatabase db = getReadableDatabase();
 
@@ -622,9 +572,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method deletes a specific poly element from the database.
      * 
      * @param polyElement
-     *            the {@link PolyElement} object whose data should be deleted
+     *            the {@link PolyElement} object whose data should be deleted.
      */
-    public void deletePolyElement(PolyElement polyElement) {
+    private void deletePolyElement(PolyElement polyElement) {
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -642,9 +592,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param id
      *            the ID of the {@link PolyElement} object whose data should be
-     *            deleted
+     *            deleted.
      */
-    public void deletePolyElementByID(long id) {
+    private void deletePolyElementByID(long id) {
         final SQLiteDatabase db = getWritableDatabase();
 
         PolyElement pE = getPolyElement(id);
@@ -660,7 +610,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method returns the number of poly elements currently stored in the
      * database.
      * 
-     * @return the number of poly elements
+     * @return the number of poly elements.
      */
     public int getPolyElementCount() {
         final SQLiteDatabase db = getReadableDatabase();
@@ -679,52 +629,55 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param polyElement
      *            the {@link PolyElement} object for which the data should be
-     *            updated
-     * @return the number of rows that have been updated
+     *            updated.
+     * @return the number of rows that have been updated.
      */
-    public int updatePolyElement(PolyElement polyElement) {
+    public void updatePolyElement(PolyElement polyElement) {
 
         final SQLiteDatabase db = getWritableDatabase();
-
         final ContentValues values = new ContentValues();
 
-        if (polyElement.getOsmId() != -1) {
-            values.put(KEY_OSMID, polyElement.getOsmId());
-        }
-        values.put(KEY_TYPE, polyElement.getType().toString());
+        deleteDataElement(polyElement);
+        createDataElement(polyElement);
 
-        final List<Long> nodeIDs = new ArrayList<Long>();
-
-        for (Node node : polyElement.getNodes()) {
-            nodeIDs.add(node.getOsmId());
-            if (this.checkIfRecordExists(TABLE_NODE, KEY_OSMID, node.getOsmId())) {
-                this.updateNode(node);
-            } else {
-                this.createNode(node);
-            }
-        }
-
-        final JSONObject json = new JSONObject();
-        try {
-            json.put("nodeIDarray", new JSONArray(nodeIDs));
-        } catch (JSONException e) {
-            // TODO: handle exception
-        }
-        final String arrayList = json.toString();
-
-        values.put(KEY_NODEIDS, arrayList);
-
-        return db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
-                new String[] {String.valueOf(polyElement.getOsmId())});
+        // if (polyElement.getOsmId() != -1) {
+        // values.put(KEY_OSMID, polyElement.getOsmId());
+        // }
+        // values.put(KEY_TYPE, polyElement.getType().toString());
+        //
+        // final List<Long> nodeIDs = new ArrayList<Long>();
+        //
+        // for (Node node : polyElement.getNodes()) {
+        // nodeIDs.add(node.getOsmId());
+        // if (this.checkIfRecordExists(TABLE_NODE, KEY_OSMID, node.getOsmId()))
+        // {
+        // this.updateNode(node);
+        // } else {
+        // this.createNode(node);
+        // }
+        // }
+        //
+        // final JSONObject json = new JSONObject();
+        // try {
+        // json.put("nodeIDarray", new JSONArray(nodeIDs));
+        // } catch (JSONException e) {
+        // // TODO: handle exception
+        // }
+        // final String arrayList = json.toString();
+        //
+        // values.put(KEY_NODEIDS, arrayList);
+        //
+        // return db.update(TABLE_POLYELEMENT, values, KEY_OSMID + "=?",
+        // new String[] {String.valueOf(polyElement.getOsmId())});
     }
 
     /**
      * This method returns a list of all poly elements stored in the database
      * and creates corresponding {@link PolyElement} objects.
      * 
-     * @return a list of poly elements
+     * @return a list of poly elements.
      */
-    public List<PolyElement> getAllPolyElements() {
+    private List<PolyElement> getAllPolyElements() {
 
         final List<PolyElement> polyElements = new ArrayList<PolyElement>();
 
@@ -788,7 +741,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param dataElement
      *            the {@link AbstractDataElement} object from which the data
-     *            will be taken
+     *            will be taken.
      */
     public void createDataElement(AbstractDataElement dataElement) { // NOSONAR
 
@@ -901,7 +854,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param dataElement
      *            the {@link AbstractDataElement} object whose data should be
-     *            deleted
+     *            deleted.
      */
     public void deleteDataElement(AbstractDataElement dataElement) { // NOSONAR
 
@@ -930,7 +883,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param id
      *            the ID of the {@link AbstractDataElement} object whose data
-     *            should be deleted
+     *            should be deleted.
      */
     public void deleteDataElementByID(long id) {
         final SQLiteDatabase db = getWritableDatabase();
@@ -957,7 +910,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method returns the number of data elements currently stored in the
      * database.
      * 
-     * @return the number of data elements
+     * @return the number of data elements.
      */
     public int getDataElementCount() {
 
@@ -977,41 +930,44 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @param dataElement
      *            the {@link AbstractDataElement} object for which the data
-     *            should be updated
-     * @return the number of rows that have been updated
+     *            should be updated.
+     * @return the number of rows that have been updated.
      */
-    public int updateDataElement(AbstractDataElement dataElement) { // NOSONAR
+    public void updateDataElement(AbstractDataElement dataElement) { // NOSONAR
 
         final SQLiteDatabase db = getWritableDatabase();
-
         final ContentValues values = new ContentValues();
 
-        if (dataElement.getOsmId() != -1) {
-            values.put(KEY_OSMID, dataElement.getOsmId());
-        }
+        deleteDataElement(dataElement);
+        createDataElement(dataElement);
 
-        int count = 0;
-
-        count +=
-                db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
-                        new String[] {String.valueOf(dataElement.getOsmId())});
-
-        count += this.updateTagMap(dataElement.getOsmId(), dataElement.getTags());
-
-        if (dataElement instanceof PolyElement) {
-            count += this.updatePolyElement((PolyElement) dataElement);
-        } else {
-            count += this.updateNode((Node) dataElement);
-        }
-
-        return count;
+        // if (dataElement.getOsmId() != -1) {
+        // values.put(KEY_OSMID, dataElement.getOsmId());
+        // }
+        //
+        // int count = 0;
+        //
+        // count +=
+        // db.update(TABLE_DATAELEMENT, values, KEY_OSMID + "=?",
+        // new String[] {String.valueOf(dataElement.getOsmId())});
+        //
+        // count += this.updateTagMap(dataElement.getOsmId(),
+        // dataElement.getTags());
+        //
+        // if (dataElement instanceof PolyElement) {
+        // count += this.updatePolyElement((PolyElement) dataElement);
+        // } else {
+        // count += this.updateNode((Node) dataElement);
+        // }
+        //
+        // return count;
     }
 
     /**
      * This method returns a list of all data elements stored in the database
      * and creates corresponding {@link AbstractDataElement} objects.
      * 
-     * @return a list of data elements
+     * @return a list of data elements.
      */
     public List<AbstractDataElement> getAllDataElements() {
 
@@ -1046,7 +1002,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                     // TODO: handle exception
                 }
 
-                final Map<Tag, String> tagMap = this.getTagMap(dataElement.getOsmId());
+                final Map<Tag, String> tagMap =
+                        this.getTagMap(dataElement.getOsmId());
                 dataElement.addTags(tagMap);
 
                 dataElements.add(dataElement);
@@ -1063,19 +1020,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      */
     public void deleteAllDataElements() {
         final SQLiteDatabase db = getWritableDatabase();
-
-        List<AbstractDataElement> dEs = getAllDataElements();
-
-        for (AbstractDataElement dE : dEs) {
-            if (dE instanceof PolyElement) {
-                this.deletePolyElementByID(dE.getOsmId());
-            } else {
-                this.deleteNodeByID(dE.getOsmId());
-            }
-        }
-
-        deleteAllTagMap();
-
+        this.deleteAllNode();
+        this.deleteAllPolyElements();
+        this.deleteAllTagMap();
         db.delete(TABLE_DATAELEMENT, null, null);
     }
 
@@ -1086,10 +1033,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method creates and stores a new tag map in the database. The data is
      * taken from the {@link Map} object that is passed to the method.
      * 
+     * @param dataElementId
+     *            The ID of the data element.
      * @param tagMap
      *            the {@link Map} object from which the data will be taken
      */
-    public void createTagMap(long dataElementId, Map<Tag, String> tagMap) {
+    private void createTagMap(long dataElementId, Map<Tag, String> tagMap) {
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -1099,7 +1048,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_DATAELEMENT, dataElementId);
             values.put(KEY_TAGID, tag.getKey().getId());
             values.put(KEY_VALUE, tag.getValue());
-            long rowID = db.insert(TABLE_TAGMAP, null, values);
+            final long rowID = db.insert(TABLE_TAGMAP, null, values);
             Log.i(TAG, "Tag " + rowID + " has been added.");
         }
     }
@@ -1109,10 +1058,10 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * creates the corresponding {@link Map} object.
      * 
      * @param tagIDs
-     *            the IDs of the desired tags
-     * @return a {@link Map} object for the desired tags
+     *            the IDs of the desired tags.
+     * @return a {@link Map} object for the desired tags.
      */
-    public Map<Tag, String> getTagMap(List<Integer> tagIDs) {
+    private Map<Tag, String> getTagMap(List<Integer> tagIDs) {
 
         final SQLiteDatabase db = getReadableDatabase();
 
@@ -1135,7 +1084,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         return tagMap;
     }
 
-    public Map<Tag, String> getTagMap(long dataElementId) {
+    /**
+     * This method returns the data for specific tags stored in the database and
+     * creates the corresponding {@link Map} object.
+     * @param dataElementId The ID of the data element.
+     * @return A {@link Map} of tags.
+     */
+    private Map<Tag, String> getTagMap(long dataElementId) {
 
         final SQLiteDatabase db = getReadableDatabase();
         final Map<Tag, String> tagMap = new HashMap<Tag, String>();
@@ -1148,7 +1103,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         while (cursor.moveToNext()) {
             tagMap.put(
                     Tags.getTagWithId(Integer.parseInt(cursor.getString(2))),
-                    cursor.getString(3));            
+                    cursor.getString(3));
         }
         cursor.close();
         Log.i(TAG, tagMap.size() + " tags were retrieved from the database.");
@@ -1157,31 +1112,35 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
     /**
      * This method deletes specific tags from the database.
-     * 
-     * @param tagIDs
+     * @param dataElementId The ID of the data element.
+     * @param tagIDs The list of tag IDs.
      *            the tags whose data should be deleted
      */
-    public void deleteTagMap(long dataElement, List<Integer> tagIDs) {
+    private void deleteTagMap(long dataElementId, List<Integer> tagIDs) {
         final SQLiteDatabase db = getWritableDatabase();
 
         for (int id : tagIDs) {
-            db.delete(TABLE_TAGMAP, KEY_TAGID + "=?" + " AND " +KEY_DATAELEMENT + "=?",
-                    new String[] {String.valueOf(id), String.valueOf(dataElement)});
+            db.delete(TABLE_TAGMAP, KEY_TAGID + "=?" + " AND "
+                    + KEY_DATAELEMENT + "=?", new String[] {String.valueOf(id),
+                    String.valueOf(dataElementId)});
         }
     }
 
     /**
      * This method returns the number of tags currently stored in the database.
-     * 
-     * @return the number of tags
+     * @param dataElement The ID of the data element.
+     * @return the number of tags.
      */
     public int getTagMapCount(long dataElement) {
         final SQLiteDatabase db = getReadableDatabase();
 
         final Cursor cursor =
-                db.rawQuery("SELECT * FROM " + TABLE_TAGMAP +" WHERE " +KEY_DATAELEMENT +"=?", new String[] {String.valueOf(dataElement)});
+                db.rawQuery("SELECT * FROM " + TABLE_TAGMAP + " WHERE "
+                        + KEY_DATAELEMENT + "=?",
+                        new String[] {String.valueOf(dataElement)});
         final int count = cursor.getCount();
-        Log.d(TAG, "getTagMapCount for dataElement: " +dataElement +" count: " +count);
+        Log.d(TAG, "getTagMapCount for dataElement: " + dataElement
+                + " count: " + count);
         cursor.close();
         return count;
     }
@@ -1191,10 +1150,10 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * database.
      * 
      * @param tagMap
-     *            the {@link Map} object for which the data should be updated
-     * @return the number of rows that have been updated
+     *            the {@link Map} object for which the data should be updated.
+     * @return the number of rows that have been updated.
      */
-    public int updateTagMap(long dataElement, Map<Tag, String> tagMap) {
+    private int updateTagMap(long dataElement, Map<Tag, String> tagMap) {
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
         int count = 0;
@@ -1206,9 +1165,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_VALUE, tag.getValue());
             count++;
         }
-      deleteTagMap(dataElement, tagIDs);
-      createTagMap(dataElement, tagMap);
-      return count;
+        deleteTagMap(dataElement, tagIDs);
+        createTagMap(dataElement, tagMap);
+        return count;
     }
 
     /**
@@ -1227,7 +1186,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * is taken from the {@link Track} object that is passed to the method.
      * 
      * @param track
-     *            the {@link Track} object from which the data will be taken
+     *            the {@link Track} object from which the data will be taken.
      */
     public void createGPSTrack(Track track) {
 
@@ -1261,8 +1220,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * database and creates the corresponding {@link Track} object.
      * 
      * @param name
-     *            the name of the desired GPS track
-     * @return a {@link Track} object for the desired GPS track
+     *            the name of the desired GPS track.
+     * @return a {@link Track} object for the desired GPS track.
      */
     public Track getGPSTrack(long id) { // NOSONAR
 
@@ -1306,7 +1265,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method deletes a specific GPS track from the database.
      * 
      * @param track
-     *            the {@link Track} object whose data should be deleted
+     *            the {@link Track} object whose data should be deleted.
      */
     public void deleteGPSTrack(Track track) { // TODO: delete by ID
 
@@ -1609,14 +1568,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method checks if a given record exists in a table.
      * 
      * @param tableName
-     *            the name of the table
+     *            the name of the table.
      * @param field
-     *            the column that will be searched
+     *            the column that will be searched.
      * @param value
-     *            the given record
-     * @return true if the given record exists, false otherwise
+     *            the given record.
+     * @return true if the given record exists, false otherwise.
      */
-    public boolean checkIfRecordExists(String tableName, String field,
+    private boolean checkIfRecordExists(String tableName, String field,
             long value) {
 
         final SQLiteDatabase db = getReadableDatabase();
