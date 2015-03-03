@@ -20,6 +20,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.drawing.Point;
+import io.github.data4all.util.HorizonCalculationUtil.returnValues;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,10 +42,12 @@ public class HorizonCalculationUtilTest {
 
     HorizonCalculationUtil util;
     DeviceOrientation deviceOrientation;
+    returnValues rV;
 
     @Before
     public void setUp() {
         util = new HorizonCalculationUtil();
+        rV = util.new returnValues();
     }
 
     /*
@@ -53,127 +57,147 @@ public class HorizonCalculationUtilTest {
      */
 
     /**
-     * a few different pitchangles
+     * pitch with roll = 0 and roll with pitch = 0
      */
     @Test
     public void calcHorizontalPoints_PitchTest() {
-
         DeviceOrientation deviceOrientation;
-        float[] coord;
         deviceOrientation = new DeviceOrientation(0.0f,
                 (float) Math.toRadians(60), (float) Math.toRadians(0), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], lessThan((float) (500 / 2)));
-        assertThat(coord[1], is((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
+        assertThat(rV.getPoint1().getY(), is(rV.getPoint2().getY()));
+        assertThat(rV.getPoint1().getX(), is(0.0f));
+        assertThat(rV.getPoint2().getX(), is(500.0f));
+        assertThat(rV.isSkylook(), is(false));
+        assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(-60), (float) Math.toRadians(0), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(0), (float) Math.toRadians(60), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], greaterThan((float) (500 / 2)));
-        assertThat(coord[1], is((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
+        assertThat(rV.getPoint1().getX(), is(rV.getPoint2().getX()));
+        assertThat(rV.getPoint1().getY(), is(0.0f));
+        assertThat(rV.getPoint2().getY(), is(1000.0f));
+        assertThat(rV.isSkylook(), is(false));
+        assertThat(rV.isVisible(), is(true));
     }
 
     /**
-     * a few different rollangles
+     * horizon isn't visible
      */
     @Test
     public void calcHorizontalPoints_RollTest() {
-
         DeviceOrientation deviceOrientation;
-        float[] coord;
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(0), (float) Math.toRadians(55), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(0), (float) Math.toRadians(0), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], is((float) (500 / 2)));
-        assertThat(coord[1], lessThan((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
-        deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(0), (float) Math.toRadians(-55), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
-                (float) Math.toRadians(60), 500, 1000,
-                (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], is((float) (500 / 2)));
-        assertThat(coord[1], greaterThan((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
+        assertThat(rV.getPoint1(), is((Point) null));
+        assertThat(rV.isSkylook(), is(false));
+        assertThat(rV.isVisible(), is(false));
     }
 
     /**
-     * a few different roll- and pitchangles
+     * more then 50% of the display is above the horizon
      */
     @Test
     public void calcHorizontalPoints_PitchRollTest() {
-
         DeviceOrientation deviceOrientation;
-        float[] coord;
-        // roll and pitch is positiv
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(30), (float) Math.toRadians(30), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(71), (float) Math.toRadians(0), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], lessThan((float) (500 / 2)));
-        assertThat(coord[1], lessThan((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
-        // roll and pitch is negativ
+        assertThat(rV.getPoint1().getY(), is(rV.getPoint2().getY()));
+        assertThat(rV.getPoint1().getX(), is(0.0f));
+        assertThat(rV.getPoint2().getX(), is(500.0f));
+        assertThat(rV.isSkylook(), is(true));
+        assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(-30), (float) Math.toRadians(-30), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(0), (float) Math.toRadians(71), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], greaterThan((float) (500 / 2)));
-        assertThat(coord[1], greaterThan((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
-        // roll is positiv and pitch is negativ
+        assertThat(rV.getPoint1().getX(), is(rV.getPoint2().getX()));
+        assertThat(rV.getPoint1().getY(), is(0.0f));
+        assertThat(rV.getPoint2().getY(), is(1000.0f));
+        assertThat(rV.isSkylook(), is(true));
+        assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(-30), (float) Math.toRadians(30), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(71), (float) Math.toRadians(40), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], greaterThan((float) (500 / 2)));
-        assertThat(coord[1], lessThan((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
-        // pitch is positiv and roll is negativ
+        assertThat(rV.isSkylook(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(30), (float) Math.toRadians(-30), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(40), (float) Math.toRadians(71), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], lessThan((float) (500 / 2)));
-        assertThat(coord[1], greaterThan((float) (1000 / 2)));
-        assertThat(coord[2], is(0.0f));
+        assertThat(rV.isSkylook(), is(true));
     }
 
     /**
-     * devicedirecetion is above horizon (skylook)
+     * pitch and roll != 0, visible horizon and less then 50% of the display is
+     * above the horizon
      */
     @Test
     public void calcHorizontalPoints_SkylookTest() {
-
         DeviceOrientation deviceOrientation;
-        float[] coord;
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(90), (float) Math.toRadians(0), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(30), (float) Math.toRadians(30), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], greaterThan((float) (500 / 2)));
-        assertThat(coord[1], is((float) (1000 / 2)));
-        assertThat(coord[2], is(1.0f));
+        assertThat(rV.getPoint1().getX(), is(500.0f));
+        assertThat(rV.getPoint1().getY(), greaterThan(0.0f));
+        assertThat(rV.getPoint1().getY(), lessThan(1000.0f));
+        assertThat(rV.getPoint2().getY(), is(1000.0f));
+        assertThat(rV.getPoint2().getX(), greaterThan(0.0f));
+        assertThat(rV.getPoint2().getX(), lessThan(500.0f));
+        assertThat(rV.isSkylook(), is(false));
+        assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
-                (float) Math.toRadians(-90), (float) Math.toRadians(0), 10L);
-        coord = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(-30), (float) Math.toRadians(30), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(coord[0], lessThan((float) (500 / 2)));
-        assertThat(coord[1], is((float) (1000 / 2)));
-        assertThat(coord[2], is(1.0f));
+        assertThat(rV.getPoint1().getY(), is(0.0f));
+        assertThat(rV.getPoint1().getX(), greaterThan(0.0f));
+        assertThat(rV.getPoint1().getX(), lessThan(500.0f));
+        assertThat(rV.getPoint2().getX(), is(500.0f));
+        assertThat(rV.getPoint2().getY(), greaterThan(0.0f));
+        assertThat(rV.getPoint2().getY(), lessThan(1000.0f));
+        assertThat(rV.isSkylook(), is(false));
+        assertThat(rV.isVisible(), is(true));
+        deviceOrientation = new DeviceOrientation(0.0f,
+                (float) Math.toRadians(-30), (float) Math.toRadians(-30), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(60), 500, 1000,
+                (float) Math.toRadians(70), deviceOrientation);
+        assertThat(rV.getPoint1().getX(), is(0.0f));
+        assertThat(rV.getPoint1().getY(), greaterThan(0.0f));
+        assertThat(rV.getPoint1().getY(), lessThan(1000.0f));
+        assertThat(rV.getPoint2().getY(), is(0.0f));
+        assertThat(rV.getPoint2().getX(), greaterThan(0.0f));
+        assertThat(rV.getPoint2().getX(), lessThan(500.0f));
+        assertThat(rV.isSkylook(), is(false));
+        assertThat(rV.isVisible(), is(true));
+        deviceOrientation = new DeviceOrientation(0.0f,
+                (float) Math.toRadians(30), (float) Math.toRadians(-30), 10L);
+        rV = util.calcHorizontalPoints((float) Math.toRadians(60),
+                (float) Math.toRadians(60), 500, 1000,
+                (float) Math.toRadians(70), deviceOrientation);
+        assertThat(rV.getPoint1().getX(), is(0.0f));
+        assertThat(rV.getPoint1().getY(), greaterThan(0.0f));
+        assertThat(rV.getPoint1().getY(), lessThan(1000.0f));
+        assertThat(rV.getPoint2().getY(), is(1000.0f));
+        assertThat(rV.getPoint2().getX(), greaterThan(0.0f));
+        assertThat(rV.getPoint2().getX(), lessThan(500.0f));
+        assertThat(rV.isSkylook(), is(false));
+        assertThat(rV.isVisible(), is(true));
     }
-
 }
