@@ -42,7 +42,7 @@ public class OrientationListener extends Service implements SensorEventListener 
     private final IBinder mBinder = new LocalBinder();
 
     private HorizonListener horizonListener;
-    
+
     private DeviceOrientation deviceOrientation;
 
     /** sensor accelerometer. */
@@ -142,8 +142,8 @@ public class OrientationListener extends Service implements SensorEventListener 
                                 + Math.toDegrees(orientation[1]) + " ; "
                                 + Math.toDegrees(orientation[2]));
                 deviceOrientation = new DeviceOrientation(orientation[0],
-                        orientation[1], orientation[LAST_INDEX], System
-                        .currentTimeMillis());
+                        orientation[1], orientation[LAST_INDEX],
+                        System.currentTimeMillis());
                 Optimizer.putPos(deviceOrientation);
 
                 if (horizonListener.getClass() != null) {
@@ -223,7 +223,5 @@ public class OrientationListener extends Service implements SensorEventListener 
     public void setDeviceOrientation(DeviceOrientation deviceOrientation) {
         this.deviceOrientation = deviceOrientation;
     }
-    
-    
 
 }
