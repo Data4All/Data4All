@@ -30,7 +30,8 @@ public class TrackUtility {
     public Track startNewTrack() {
         db = new DataBaseHandler(context.getApplicationContext());
         Track track = new Track();
-        db.createGPSTrack(track);
+        long trackID = db.createGPSTrack(track);
+        track.setID(trackID);
         Log.d(TAG, "Starting a new track.");
         db.close();
         return track;

@@ -144,6 +144,7 @@ public class UploadService extends IntentService {
             trackParser.parseTrack(this, t);
             final String fileName = t.getTrackName() + ".gpx";
             final File file = new File(fileName);
+            
             UploadGpsTracks trackUpload = new UploadGpsTracks(this, user, file,
                     "blubb", "blaah", "true");
             Log.d(TAG, "Uploading GPS Track: " + fileName);

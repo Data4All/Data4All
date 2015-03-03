@@ -1232,7 +1232,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param track
      *            the {@link Track} object from which the data will be taken
      */
-    public void createGPSTrack(Track track) {
+    public long createGPSTrack(Track track) {
 
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
@@ -1257,6 +1257,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         long rowID = db.insert(TABLE_GPSTRACK, null, values);
         Log.i(TAG, "GPSTrack " + rowID + " has been added.");
+        return rowID;
     }
 
     /**
@@ -1352,15 +1353,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the {@link Track} object for which the data should be updated
      * @return the number of rows that have been updated
      */
-    public void updateGPSTrack(Track track) {
-
+    public long updateGPSTrack(Track track) {
+        
+        deleteGPSTrack(track);
+        return createGPSTrack(track);
+        
 //        final SQLiteDatabase db = getWritableDatabase();
 //
 //        final ContentValues values = new ContentValues();
-        
-        deleteGPSTrack(track);
-        createGPSTrack(track);
-
 //        ArrayList<Long> trackPointIDs = new ArrayList<Long>();
 //
 //        values.put(KEY_TRACKNAME, track.getTrackName());

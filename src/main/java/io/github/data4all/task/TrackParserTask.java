@@ -168,7 +168,6 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
             writer.println("\t<name> " + filename + " </name>");
             writer.println("\t\t<trkseg>");
 
-            Log.d(TAG, "vor for");
             for (TrackPoint trackPoint : points) {
                 writer.print("\t\t\t<trkpt lat=\"");
                 writer.print(trackPoint.getLat());

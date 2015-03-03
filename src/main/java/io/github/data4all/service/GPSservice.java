@@ -149,6 +149,7 @@ public class GPSservice extends Service implements LocationListener {
                     // After ten trackpoints updateDatabase
                     if ((track.getTrackPoints().size() % 10) == 0) {
                         trackUtil.updateTrack(track);
+                        Log.d(TAG, "TrackID: " + track.getID());
                     }
                 }
             }
