@@ -155,6 +155,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
             mSupportedPictureSizes = mCamera.getParameters()
                     .getSupportedPictureSizes();
+            mSupportedPictureSizes.remove(3);
 
             mSupportedFlashModes = mCamera.getParameters()
                     .getSupportedFlashModes();
@@ -208,7 +209,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
                 // set the picture type for taking photo
                 params.setPictureFormat(ImageFormat.JPEG);
-                params.setJpegQuality(10);
+                params.setJpegQuality(90);
                 params.setZoom(0);
 
                 setFlashModes(params);
@@ -294,7 +295,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
      * @Function: get optimal picture size according to camera view angles
      */
     private static Size getOptimalSize(List<Size> sizes, int w, int h) {
-        final double ASPECT_TOLERANCE = 0.1;
+        final double TOLERANCE = 0.1;
         double targetRatio = (double) h / w;
 
         if (sizes == null)
@@ -304,8 +305,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         // Look for the exact size
         for (Size size : sizes) {
-            if (Math.abs(size.height - h) < ASPECT_TOLERANCE
-                    && Math.abs(size.width - w) < ASPECT_TOLERANCE) {
+            if (Math.abs(size.height - h) < TOLERANCE
+                    && Math.abs(size.width - w) < TOLERANCE) {
                 optimalSize = size;
             }
         }
@@ -315,12 +316,29 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         // Try to find an size match aspect ratio and size
         if (optimalSize == null) {
             for (Size size : sizes) {
-                double ratio = (double) size.width / size.height;
-                if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+                double ratio = (double) size.height / size.width;
+                if (Math.abs(ratio - targetRatio) > TOLERANCE)
                     continue;
                 if (Math.abs(size.height - h) < minDiff) {
                     optimalSize = size;
                     minDiff = Math.abs(size.height - h);
+                }
+            }
+        }
+
+        // Cannot find the one match the aspect ratio, find the smallest size
+        // which is larger than the screen
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Size size : sizes) {
+                double hDiff = size.height - h;
+                double wDiff = size.width - w; 
+                if (hDiff >= 0 && wDiff >= 0) {
+                    double currDiff = (Math.abs(hDiff) + Math.abs(wDiff)) / 2;
+                    if(minDiff - currDiff > 0) {
+                        optimalSize = size;
+                        minDiff = currDiff;
+                    }
                 }
             }
         }

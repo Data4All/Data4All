@@ -84,7 +84,7 @@
                 android:layout_height="40dp"
                 android:layout_below="@+id/upload_progress"
                 android:background="@drawable/login_button_bg"
-                android:onClick="onClickCancel"
+                android:onClick="onClickCancle"
                 android:text="@string/CancelButton"
                 android:visibility="gone" />
         </RelativeLayout>

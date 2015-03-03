@@ -74,8 +74,12 @@
     <string name="upload_caption">Hochladen zu OpenStreetMap</string>
     <string name="upload_upload_text">"Hochzuladende Objekte: "</string>
     <string name="upload_cancle">Abbrechen</string>
-      <string name="CancelButton">Abbrechen</string>
+    <string name="CancelButton">Abbrechen</string>
     <string name="UploadButton">Hochladen</string>
+    <string name="upload_to_openstreetmap">Hochladen zu OpenStreetMap</string>
+    <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
+    <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
+    <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
 
     <!-- other -->
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>

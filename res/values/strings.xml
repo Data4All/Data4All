@@ -76,6 +76,10 @@
     <string name="upload_cancle">Cancle</string>
     <string name="CancelButton">Cancle</string>
     <string name="UploadButton">Upload</string>
+    <string name="upload_to_openstreetmap">Upload to OpenStreetMap</string>
+    <string name="upload_to_openstreetmap_progress">Download for %s in progress</string>
+    <string name="upload_to_openstreetmap_success">Changes successfully uploaded</string>
+    <string name="upload_to_openstreetmap_error">Upload failed</string>
 
     <!-- other -->
     <string name="noCamSupported">Sorry, your device has no supported camera</string>
