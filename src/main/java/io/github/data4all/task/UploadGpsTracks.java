@@ -57,7 +57,7 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
 
     private Context context;
 
-    private HttpPost request;
+    private HttpPost httpPost;
 
     private User user;
 
@@ -86,12 +86,12 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
      * @param description
      *            description what the gpx tracks are
      * @param tags
-    *            tags for the tracks
+     *            tags for the tracks
      * @param visibility
      *            visibility of the tracks
      */
-    public UploadGpsTracks(Context context, User user,
-            File gpxFile, String description, String tags, String visibility) {
+    public UploadGpsTracks(Context context, User user, File gpxFile,
+            String description, String tags, String visibility) {
         this.context = context;
         this.user = user;
         this.gpxFile = gpxFile;
@@ -112,15 +112,15 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
                         params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPost httpPost =
+        this.httpPost =
                 new HttpPost(params.getScopeUrl() + "api/0.6/gpx/create");
 
         try {
             // Sign the request with oAuth
             consumer.sign(httpPost);
             // Prepare entity
-            final MultipartEntity entity = new MultipartEntity(
-                    HttpMultipartMode.BROWSER_COMPATIBLE);
+            final MultipartEntity entity =
+                    new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             // Add different parts to entity
             final FileBody gpxBody = new FileBody(gpxFile);
             entity.addPart("file", gpxBody);
@@ -131,7 +131,7 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
             entity.addPart("tags", new StringBody(tags));
             entity.addPart("visibility", new StringBody(visibility));
             // Hand the entity to the request
-            request.setEntity(entity);
+            httpPost.setEntity(entity);
         } catch (OAuthMessageSignerException e) {
             Log.e(TAG, "OAuthMessageSignerException", e);
         } catch (OAuthExpectationFailedException e) {
@@ -180,7 +180,7 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         try {
             final DefaultHttpClient httpClient = new DefaultHttpClient();
-            final HttpResponse response = httpClient.execute(request);
+            final HttpResponse response = httpClient.execute(httpPost);
             statusCode = response.getStatusLine().getStatusCode();
             Log.d(TAG, "OSM Gpx Upload: " + statusCode);
         } catch (ClientProtocolException e) {
