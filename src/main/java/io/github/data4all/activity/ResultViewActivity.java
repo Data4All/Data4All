@@ -135,7 +135,6 @@ public class ResultViewActivity extends AbstractActivity implements
                 Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
                         res);
         mapTag = Tagging.getUnclassifiedMapKeys(res);
-        this.output();
         if(!Tagging.getAllNonSelectedTags(element.getTags(), getIntent().getExtras().getInt("TYPE_DEF")).isEmpty()){
         	final LayoutInflater inflater = getLayoutInflater();
 	        viewFooter =((LayoutInflater) this
@@ -144,10 +143,13 @@ public class ResultViewActivity extends AbstractActivity implements
 	        listView.addFooterView(viewFooter);
 	        final TextView tVFooter = ((TextView) viewFooter.findViewById(R.id.titleFooter));
 	        tVFooter.setOnClickListener(this);
+	        viewFooter.setOnClickListener(this);
         }
+        this.output();
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     final int position, long id) {
+            	Log.i(TAG, "pos" + position);
                 Log.i(TAG, "Tagkey" + keyList.get(position));
                 final String selectedString = keyList.get(position);
                 if (Tagging.isClassifiedTag(keyList.get(position), res)) {
