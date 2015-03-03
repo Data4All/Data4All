@@ -60,6 +60,14 @@ public class RedoUndo {
      * current position.
      */
     private int currentCount;
+    
+    /**
+     * Standard strings for actions
+     */
+    final static String add = "ADD";
+    final static String delete = "DELETE";
+    final static String moveFrom = "MOVE_FROM";
+    final static String moveTo = "MOVE_TO";
 
     /**
      * Standard constructor with clean start.
@@ -91,7 +99,7 @@ public class RedoUndo {
                 currentCount = points.size();
                 for (int i = 0; i < maxCount; i++) {
                     motions.add(points.get(i));
-                    actions.add("ADD");
+                    actions.add(add);
                     locations.add(i);
                 }
             } else {
@@ -119,14 +127,12 @@ public class RedoUndo {
      *            location where the point was in polygon
      */
     public void add(Point point, String action, int location) {
-        Log.d(TAG, "ADD ACTION: " + action + currentCount + " : " + maxCount
-                + "last action : " + actions.get(currentCount - 1));
         if (maxCount == currentCount) {
-            if (action.equals("DELET")
-                    && actions.get(actions.size() - 1).equals("MOVE_FROM")) {
+            if (action.equals(delete)
+                    && actions.get(actions.size() - 1).equals(moveFrom)) {
                 actions.set(actions.size() - 1, action);
-            } else if (action.equals("MOVE_TO")
-                    && actions.get(actions.size() - 1).equals("MOVE_TO")) {
+            } else if (action.equals(moveTo)
+                    && actions.get(actions.size() - 1).equals(moveTo)) {
                 motions.set(actions.size() - 1, point);
             } else {
                 motions.add(point);
@@ -152,7 +158,7 @@ public class RedoUndo {
     private void setList(List<Point> newPoly) {
         for (Point p : newPoly) {
             Log.d(TAG, "motions size" + motions.size());
-            this.add(p, "ADD", maxCount);
+            this.add(p, add, maxCount);
         }
     }
 

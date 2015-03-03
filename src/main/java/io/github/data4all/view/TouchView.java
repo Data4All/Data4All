@@ -132,6 +132,14 @@ public class TouchView extends View {
 	 * The current used RedoUndo listener.
 	 */
 	private UndoRedoListener undoRedoListener;
+	
+	/**
+     * Standard strings for actions
+     */
+    final static String add = "ADD";
+    final static String delete = "DELETE";
+    final static String moveFrom = "MOVE_FROM";
+    final static String moveTo = "MOVE_TO";
 
 	/**
 	 * Simple constructor to use when creating a view from code.
@@ -248,6 +256,8 @@ public class TouchView extends View {
 			this.handleMotion(event, "move");
 			postInvalidate();
 			break;
+		default :
+			Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
 		}
 		return true;
 	}
@@ -284,7 +294,7 @@ public class TouchView extends View {
 						mover.moveTo(event.getX(), event.getY());
 						isDelete = false;
 						redoUndo.add(new Point(event.getX(), event.getY()),
-								"MOVE_TO", mover.getIdx());
+								moveTo, mover.getIdx());
 					}
 				} else {
 					currentMotion.addPoint(event.getX(), event.getY());
@@ -292,7 +302,7 @@ public class TouchView extends View {
 				}
 			} else if (action.equals("end")) {
 				if (isDelete) {
-					redoUndo.add(startPoint, "DELET", mover.getIdx());
+					redoUndo.add(startPoint, delete, mover.getIdx());
 					this.deletePoint(startPoint);
 					mover = null;
 					isDelete = false;
@@ -378,7 +388,7 @@ public class TouchView extends View {
 	 */
 	public PointMover movePoint(Point point) {
 		final int i = polygon.indexOf(point);
-		redoUndo.add(point, "MOVE_FROM", i);
+		redoUndo.add(point, moveFrom, i);
 		if (i == -1) {
 			Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
 			return null;
@@ -425,13 +435,13 @@ public class TouchView extends View {
 		final int location = redoUndo.getLocation();
 		Point point = redoUndo.redo();
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
-		if (action.equals("ADD")) {
+		if (action.equals(add)) {
 			newPolygon.add(point);
 		}
-		if (action.equals("DELET")) {
+		if (action.equals(delete)) {
 			newPolygon.remove(point);
 		}
-		if (action.equals("MOVE_TO") || action.equals("MOVE_FROM")) {
+		if (action.equals(moveTo) || action.equals(moveFrom)) {
 			mover = new PointMover(location);
 			point = redoUndo.redo();
 			mover.moveTo(point.getX(), point.getY());
@@ -453,13 +463,13 @@ public class TouchView extends View {
 		final String action = redoUndo.getAction();
 		final int location = redoUndo.getLocation();
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
-		if (action.equals("ADD")) {
+		if (action.equals(add)) {
 			newPolygon.remove(point);
 		}
-		if (action.equals("DELET")) {
+		if (action.equals(delete)) {
 			newPolygon.add(location, point);
 		}
-		if (action.equals("MOVE_FROM") || action.equals("MOVE_TO")) {
+		if (action.equals(moveFrom) || action.equals(moveTo)) {
 			mover = new PointMover(location);
 			point = redoUndo.undo();
 			mover.moveTo(point.getX(), point.getY());
@@ -603,6 +613,13 @@ public class TouchView extends View {
 	 */
 	public boolean hasEnoughNodes() {
 		return interpreter.minNodes() <= polygon.size();
+	}
+	
+	/**
+	 * Create empty RedoUndo for tests
+	 */
+	public void emptyRedoUndo(){
+		redoUndo = new RedoUndo();
 	}
 	
 	/**
