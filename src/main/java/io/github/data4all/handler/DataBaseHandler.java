@@ -1054,8 +1054,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         for (int id : tagIDs) {
             final Cursor cursor = db
-                    .query(TABLE_LASTCHOICE, new String[] {TAG_IDS, TYPE},
-                            TAG_IDS + "=?",
+                    .query(TABLE_TAGMAP, new String[] {KEY_TAGID, KEY_VALUE },
+                            KEY_TAGID + "=?",
                             new String[] {String.valueOf(id) }, null, null,
                             null, null);
 
