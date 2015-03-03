@@ -29,6 +29,8 @@ import org.osmdroid.util.GeoPoint;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -84,7 +86,18 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         id = R.id.new_point;
         final ImageButton newPoint = (ImageButton) findViewById(id);
         newPoint.setOnClickListener(this);
-
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        return result;
     }
 
     /*
@@ -109,7 +122,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         // Make Photo
         case R.id.to_camera:
-            startCamera();
+            this.startCamera();
             break;
         // Add new POI to the Map
         case R.id.new_point:
