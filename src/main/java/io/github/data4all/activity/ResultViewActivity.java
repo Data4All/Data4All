@@ -143,7 +143,14 @@ public class ResultViewActivity extends AbstractActivity implements
 	        listView.addFooterView(viewFooter);
 	        final TextView tVFooter = ((TextView) viewFooter.findViewById(R.id.titleFooter));
 	        tVFooter.setOnClickListener(this);
-	        viewFooter.setOnClickListener(this);
+	        viewFooter.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					createDialogAddTags();
+					
+				}
+			});
         }
         this.output();
         listView.setOnItemClickListener(new OnItemClickListener() {
