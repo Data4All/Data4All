@@ -1352,42 +1352,45 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the {@link Track} object for which the data should be updated
      * @return the number of rows that have been updated
      */
-    public int updateGPSTrack(Track track) {
+    public void updateGPSTrack(Track track) {
 
-        final SQLiteDatabase db = getWritableDatabase();
+//        final SQLiteDatabase db = getWritableDatabase();
+//
+//        final ContentValues values = new ContentValues();
+        
+        deleteGPSTrack(track);
+        createGPSTrack(track);
 
-        final ContentValues values = new ContentValues();
-
-        ArrayList<Long> trackPointIDs = new ArrayList<Long>();
-
-        values.put(KEY_TRACKNAME, track.getTrackName());
-
-        int count = 0;
-        count += this.updateTrackPoints(track.getTrackPoints());
-
-        for (TrackPoint tp : track.getTrackPoints()) {
-            trackPointIDs.add(tp.getID());
-        }
-
-        final JSONObject json = new JSONObject();
-        try {
-            json.put("trackpointarray", new JSONArray(trackPointIDs));
-        } catch (JSONException e) {
-            // TODO: handle exception
-        }
-        final String arrayList = json.toString();
-
-        values.put(KEY_TRACKPOINTS, arrayList);
-
-        if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
-            count +=
-                    db.update(TABLE_GPSTRACK, values, KEY_INCID + "=?",
-                            new String[] {String.valueOf(track.getID()) });
-        } else {
-            db.insert(TABLE_GPSTRACK, null, values);
-        }
-
-        return count;
+//        ArrayList<Long> trackPointIDs = new ArrayList<Long>();
+//
+//        values.put(KEY_TRACKNAME, track.getTrackName());
+//
+//        int count = 0;
+//        count += this.updateTrackPoints(track.getTrackPoints());
+//
+//        for (TrackPoint tp : track.getTrackPoints()) {
+//            trackPointIDs.add(tp.getID());
+//        }
+//
+//        final JSONObject json = new JSONObject();
+//        try {
+//            json.put("trackpointarray", new JSONArray(trackPointIDs));
+//        } catch (JSONException e) {
+//            // TODO: handle exception
+//        }
+//        final String arrayList = json.toString();
+//
+//        values.put(KEY_TRACKPOINTS, arrayList);
+//
+//        if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
+//            count +=
+//                    db.update(TABLE_GPSTRACK, values, KEY_INCID + "=?",
+//                            new String[] {String.valueOf(track.getID()) });
+//        } else {
+//            db.insert(TABLE_GPSTRACK, null, values);
+//        }
+//
+//        return count;
     }
 
     /**

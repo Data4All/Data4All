@@ -97,7 +97,7 @@ public class GPSservice extends Service implements LocationListener {
         // new track is initialized and gets timestamp.
         // Does not contain any trackpoints yet
         trackUtil = new TrackUtility(this);
-        track = trackUtil.startNewTrack();
+        track = trackUtil.getLastTrack();
 
         Log.d(TAG, "onStartCommand");
         return START_STICKY;
