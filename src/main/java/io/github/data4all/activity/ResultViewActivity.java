@@ -136,7 +136,7 @@ public class ResultViewActivity extends AbstractActivity implements
                         res);
         mapTag = Tagging.getUnclassifiedMapKeys(res);
         this.output();
-        if(!Tagging.getAllNonSelectedTags(element.getTags()).isEmpty()){
+        if(!Tagging.getAllNonSelectedTags(element.getTags(), getIntent().getExtras().getInt("TYPE_DEF")).isEmpty()){
         	final LayoutInflater inflater = getLayoutInflater();
 	        viewFooter = inflater.inflate(R.drawable.footer_listviewresult, null);
 	        listView.addFooterView(viewFooter);
@@ -292,7 +292,7 @@ public class ResultViewActivity extends AbstractActivity implements
                         .getText().toString());
             		ResultViewActivity.this.output();
             		// checks if you can add more Tags if not it removes footer
-            		if(Tagging.getAllNonSelectedTags(element.getTags()).isEmpty()){
+            		if(Tagging.getAllNonSelectedTags(element.getTags(),  getIntent().getExtras().getInt("TYPE_DEF")).isEmpty()){
             			listView.removeFooterView(viewFooter);
             		}
             		dialog.dismiss();
@@ -348,7 +348,7 @@ public class ResultViewActivity extends AbstractActivity implements
     	 final AlertDialog.Builder alertDialog =
                  new AlertDialog.Builder(ResultViewActivity.this,
                          android.R.style.Theme_Holo_Dialog_MinWidth);
-         final List <Tag> list = Tagging.getAllNonSelectedTags(element.getTags());
+         final List <Tag> list = Tagging.getAllNonSelectedTags(element.getTags(),  getIntent().getExtras().getInt("TYPE_DEF"));
          final String [] listString;
          listString = Tagging.TagsToStringRes(list, res); 
          alertDialog.setItems(listString, new DialogInterface.OnClickListener() {

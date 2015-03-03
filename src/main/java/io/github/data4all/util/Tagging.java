@@ -59,9 +59,9 @@ public class Tagging {
         case 2:
             return Tags.getAllWayTags();
         case 3:
-            return Tags.getAllAreaTags();
-        case 4:
             return Tags.getAllBuildingTags();
+        case 4:
+            return Tags.getAllAreaTags();
         }
         return null;
     }
@@ -192,10 +192,13 @@ public class Tagging {
     }
     
     
-    public static List <Tag> getAllNonSelectedTags(Map <Tag, String> map){
+    public static List <Tag> getAllNonSelectedTags(Map <Tag, String> map, int type){
     	List <Tag> tagList = new ArrayList<Tag>();
     	tagList.addAll(Tags.getAllAddressTags());
-		tagList.addAll(Tags.getAllContactTags());
+		 if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
+	                .getOsmObjects(), type)){
+			 tagList.addAll(Tags.getAllContactTags());
+		 }
 		for (Entry entry : map.entrySet()) {
             Tag tag = (Tag) entry.getKey();
             if(tagList.contains(tag)){
