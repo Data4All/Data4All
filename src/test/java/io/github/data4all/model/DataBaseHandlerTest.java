@@ -383,6 +383,14 @@ public class DataBaseHandlerTest {
         loc3.setTime(30000);
         TrackPoint tp3 = new TrackPoint(loc3);
         tp3.setID(4);
+        
+        Location loc4 = new Location("User");
+        loc4.setAltitude(13.13);
+        loc4.setLatitude(13.13);
+        loc4.setLongitude(13.13);
+        loc4.setTime(13455);
+        TrackPoint tp4 = new TrackPoint(loc4);
+        tp4.setID(5);
 
         List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
         trackPoints.add(tp1);
@@ -403,11 +411,14 @@ public class DataBaseHandlerTest {
         
         track.setTrackName("2015_02_20_15_18_25");
         
+        trackPoints.add(tp4);
+        track.setTrackPoints(trackPoints);
+        
         dbHandler.updateGPSTrack(track);
                 
         reTrack = dbHandler.getGPSTrack(track.getID());
         
-//        assertEquals(track.getTrackName(), reTrack.getTrackName());
+        assertEquals(4, reTrack.getTrackPoints().size());
         
     }
 
