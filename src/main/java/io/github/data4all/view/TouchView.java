@@ -311,6 +311,7 @@ public class TouchView extends View {
 					}
 				}else{
 				currentMotion.addPoint(event.getX(), event.getY());
+				newPolygon = interpreter.interprete(polygon, currentMotion);
 				}
 			} else if(action.equals("end")){
 				if(isDelete){
@@ -320,8 +321,6 @@ public class TouchView extends View {
 					isDelete=false;
 				}else{
 				if(mover!=null){
-					
-					//redoUndo.add(polygon.get(mover.getIdx()), "MOVE_TO", mover.getIdx());
 					mover = null;
 				} else {
 					redoUndo = new RedoUndo(newPolygon);
@@ -329,7 +328,6 @@ public class TouchView extends View {
 			} else {
 				Log.e(this.getClass().getSimpleName(), "ERROR, No action Found for: " + action);
 			}
-			newPolygon = interpreter.interprete(polygon, currentMotion);
 		}}
 	
 
@@ -342,12 +340,14 @@ public class TouchView extends View {
 	 *            The point to delete
 	 */
 	public void deletePoint(Point point) {
+		if(!(interpreter instanceof BuildingMotionInterpreter)){
 		if (polygon.remove(point)) {
 			Log.d(this.getClass().getSimpleName(), "Point deleted");
 		} else {
 			Log.d(this.getClass().getSimpleName(), "Point not found");
 		}
 		postInvalidate();
+		}
 	}
 
 	/**
@@ -456,8 +456,8 @@ public class TouchView extends View {
 			mover = new PointMover(location);
 			Point pointTo = redoUndo.redo();
 			mover.moveTo(pointTo.getX(), pointTo.getY());
+			mover = null;
 		}
-		
 		polygon = newPolygon;
 		redoUseable();
 		undoUseable();
@@ -480,10 +480,10 @@ public class TouchView extends View {
 			newPolygon.add(location,point);
 		}
 		if(action.equals("MOVE_FROM") || action.equals("MOVE_TO")){
-			mover = new PointMover(redoUndo.getLocation());
-			redoUndo.undo();
+			mover = new PointMover(location);
 			Point pointTo = redoUndo.undo();
 			mover.moveTo(pointTo.getX(), pointTo.getY());
+			mover = null;
 		}	
 		polygon = newPolygon;
 		redoUseable();

@@ -100,45 +100,57 @@ public class RedoUndo {
 	}
 
 	/**
-	 * Add a point into the RedoUndo List of points.
+	 * 	 * Add a point,action and location into the RedoUndo Lists.
 	 * 
 	 * @param point
-	 *            Point to add
+	 * 		Point to add
+	 * @param action
+	 * 		action for point (ADD,DELET,MOVE_FROM,MOVE_TO)
+	 * @param location
+	 * 		location where the point was in polygon
 	 */
 	public void add(Point point, String action, int location) {
-		Log.d(this.getClass().getSimpleName(), "ADDACTION:" + action
-				+ currentCount + ":" + maxCount);
-		if (maxCount != currentCount) {
-			for (int i = currentCount; i < motions.size(); i++) {
-				motions.remove(i);
-				actions.remove(i);
-				locations.remove(i);
+		Log.d(this.getClass().getSimpleName(), "ADD ACTION: " + action
+				+ currentCount + " : " + maxCount + "last action : " + actions.get(currentCount-1));
+		if (maxCount == currentCount) {
+			if (action.equals("DELET")
+					&& actions.get(actions.size() - 1).equals("MOVE_FROM")) {
+				actions.set(actions.size() - 1, action);
+			} else if (action.equals("MOVE_TO")
+					&& actions.get(actions.size() - 1).equals("MOVE_TO")) {
+				motions.set(actions.size() - 1, point);
+			} else {
+				motions.add(point);
+				actions.add(action);
+				locations.add(location);
+				currentCount++;
+				maxCount = currentCount;
 			}
-		}
-		if (action.equals("DELET")
-				&& actions.get(actions.size()-1).equals("MOVE_FROM") ||
-				action.equals("DELET")
-				&& actions.get(actions.size()-1).equals("DELET")) {
-			actions.set(actions.size()-1,action);
-		}else{
-		if (action.equals("MOVE_TO")
-				&& actions.get(actions.size()-1).equals("MOVE_TO")) {
-			motions.set(actions.size()-1, point);
 		} else {
-			motions.add(point);
-			actions.add(action);
-			locations.add(location);
-		}}
-		currentCount++;
-		maxCount = currentCount;
+			remove();
+			add(point,action,location);
+		}
+
 	}
 
-	public void setList(List<Point> newPoly) {
+	private void setList(List<Point> newPoly) {
 		for (Point p : newPoly) {
 			Log.d(this.getClass().getSimpleName(),
 					"motions size" + motions.size());
 			this.add(p, "ADD", maxCount);
 		}
+	}
+
+	private void remove() {
+		int schleife = maxCount - currentCount;
+		while(schleife != 0){
+			motions.remove(motions.size()-1);
+			actions.remove(actions.size()-1);
+			locations.remove(locations.size()-1);
+			schleife--;
+		}
+		currentCount = motions.size();
+		maxCount = currentCount;
 	}
 
 	/**
@@ -148,10 +160,11 @@ public class RedoUndo {
 	 */
 	public Point undo() {
 		currentCount--;
-		Log.d(this.getClass().getSimpleName(), "UNDO: " + currentCount + ":"
-				+ maxCount + ":" +" Locationsize:" + locations.size() + "actionsize:"
-				+ actions.size() + "motionsize" + motions.size());
-		for(String s:actions){
+		Log.d(this.getClass().getSimpleName(),
+				"UNDO: " + currentCount + ":" + maxCount + ":"
+						+ " Locationsize:" + locations.size() + "actionsize:"
+						+ actions.size() + "motionsize" + motions.size());
+		for (String s : actions) {
 			Log.d(this.getClass().getSimpleName(), s);
 		}
 		if (currentCount >= 0 && currentCount <= maxCount) {
@@ -169,7 +182,7 @@ public class RedoUndo {
 		Log.d(this.getClass().getSimpleName(), "REDO: " + currentCount + ":"
 				+ maxCount + ":" + locations.get(currentCount) + "actionsize:"
 				+ actions.size() + "motionsize" + motions.size());
-		for(String s:actions){
+		for (String s : actions) {
 			Log.d(this.getClass().getSimpleName(), s);
 		}
 		if (currentCount != maxCount) {
