@@ -929,11 +929,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            should be updated.
      * @return the number of rows that have been updated.
      */
-    public void updateDataElement(AbstractDataElement dataElement) { // NOSONAR
-
-        final SQLiteDatabase db = getWritableDatabase();
-        final ContentValues values = new ContentValues();
-
+    public void updateDataElement(AbstractDataElement dataElement) {
         this.deleteDataElement(dataElement);
         this.createDataElement(dataElement);
     }
