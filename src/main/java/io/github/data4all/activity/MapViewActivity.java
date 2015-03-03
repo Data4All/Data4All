@@ -126,7 +126,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             Toast.makeText(getApplicationContext(), text,
                     Toast.LENGTH_SHORT).show();
         } else {
-            Intent camera = new Intent(this, CameraActivity.class);
+            final Intent camera = new Intent(this, CameraActivity.class);
             startActivity(camera);
         }
     }
@@ -142,8 +142,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // clear all Overlays
         mapView.getOverlays().clear();
         // add osmElements from the database to the map
-        DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
 
         db.close();
@@ -223,7 +223,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         if (myLocationOverlay.getMyLocation() != null) {
             setCenter(myLocationOverlay.getMyLocation());
         } else {
-            String text = getString(R.string.noLocationFound);
+            final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         }

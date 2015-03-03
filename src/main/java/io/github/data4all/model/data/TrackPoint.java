@@ -98,11 +98,11 @@ public class TrackPoint implements Parcelable {
         this.time = original.getTime();
     }
     
-    public void setID(long id){
+    public void setID(long id) {
         this.id = id;
     }
     
-    public long getID(){
+    public long getID() {
         return id;
     }
 

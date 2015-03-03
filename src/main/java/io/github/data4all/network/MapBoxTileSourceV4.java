@@ -64,6 +64,9 @@ public class MapBoxTileSourceV4 extends OnlineTileSourceBase {
     /**
      * Read the Public API key from the manifest.<br>
      * This method should be invoked before class instantiation.<br>
+     * 
+     * @param aContext
+     *                  The Context of the Application
      */
     public static void retrieveMapBoxAuthKey(final Context aContext) {
         // Retrieve the AuthKey from the Manifest
