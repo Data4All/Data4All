@@ -107,7 +107,7 @@ public class TrackUtility {
         db = new DataBaseHandler(context.getApplicationContext());
         List<Track> allGPSTracks = db.getAllGPSTracks();
         if (!allGPSTracks.isEmpty()) {
-            for (int i = allGPSTracks.size(); i > 0; i--) {
+            for (int i = allGPSTracks.size()-1; i > 0; i--) {
                 Log.d("TrackUtility", "Continue on last track.");
                 db.close();
                 
