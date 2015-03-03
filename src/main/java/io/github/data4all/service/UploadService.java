@@ -15,10 +15,6 @@
  */
 package io.github.data4all.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.List;
-
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
@@ -33,11 +29,14 @@ import io.github.data4all.util.upload.CloseableCloseRequest;
 import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
+
+import java.io.File;
+import java.util.List;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.Notification.Builder;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;

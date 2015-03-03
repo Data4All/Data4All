@@ -24,8 +24,6 @@ import io.github.data4all.util.PointToCoordsTransformUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.Color;
-
 /**
  * This BuildingMotionInterpreter is a MotionInterpreter for buildings.<br/>
  * 
