@@ -15,111 +15,180 @@
  */
 package io.github.data4all.handler;
 
+import io.github.data4all.R;
+import io.github.data4all.activity.AbstractActivity;
+import io.github.data4all.activity.CameraActivity;
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.view.CameraPreview;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 /**
- * Create the file to the taken picture with additional data like GPS and save
- * this file.
+ * PreviewClass for camera. This class serves as Previewclass for the camera .
+ * This class creates the preview with all associated views and handles the
+ * control of the camera in cooperation with the {@link CameraActivity}.
  * 
- * @author sbollen
- *
+ * @author Andre Koch
+ * @author tbrose (rearrangement and garbage-collecting)
+ * @CreationDate 09.02.2015
+ * @LastUpdate 21.02.2015
+ * @version 1.2
+ * 
  */
+
 public class CapturePictureHandler implements PictureCallback {
+    // The name of the extra info for the filepath in the intent
+    public static final String FILE_EXTRA = "file_path";
+
+    // The name of the extra info for the preview size in the intent
+    public static final String SIZE_EXTRA = "preview_size";
+
+    // Name of the TransformationParamBean to give to the next activity
+    public static final String TRANSFORM_BEAN = "transform_bean";
+
+    private static final String TAG = CapturePictureHandler.class
+            .getSimpleName();
 
     // Actual Activity for the context
-    private Context context;
+    private final AbstractActivity context;
+
     // The file into which the picture is saved
     private File photoFile;
 
     // The directory where the pictures are saved into
-    private static final String DIRECTORY = "/Data4all";
+    private static final String DIRECTORY = "Data4all";
+
     // The fileformat of the saved picture
     private static final String FILE_FORMAT = ".jpeg";
-    // The name of the extra info for the filepath in the intent for the new
-    // activity
-    private static final String FILEPATH = "file_path";
-    // Name and object of the DeviceOrientation to give to the next activity
-    private static final String DEVICE_ORIENTATION = "current_orientation";
-    private DeviceOrientation currentOrientation = null;
-    // Name and object of the TransformationParamBean to give to the next
-    // activity
-    private static final String TRANSFORM_BEAN = "transform_bean";
+
+    public static final String CURRENT_ORIENTATION = "current_orientation";
+
     private TransformationParamBean transformBean;
 
-    public CapturePictureHandler() {
-    }
+    private CameraPreview preview;
 
-    public CapturePictureHandler(Context context) {
+    /**
+     * Default constructor.
+     * 
+     * @param context
+     *            The Application context
+     */
+    public CapturePictureHandler(AbstractActivity context, CameraPreview preview) {
         this.context = context;
+        this.preview = preview;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * 
+     * (non-Javadoc).
      * 
      * @see android.hardware.Camera.PictureCallback#onPictureTaken(byte[],
-     * android.hardware.Camera)
+     *      android.hardware.Camera)
      */
     @Override
     public void onPictureTaken(byte[] raw, Camera camera) {
-        Log.d(getClass().getSimpleName(), "Save the Picture");
+        Log.d(TAG, "onPictureTaken is called");
 
-        // get the current data which is necessary for creating an osm element
         final Camera.Parameters params = camera.getParameters();
-        final double horizontalViewAngle =
-                Math.toRadians(params.getHorizontalViewAngle());
-        final double verticalViewAngle =
-                Math.toRadians(params.getVerticalViewAngle());
-        final Size pictureSize = params.getSupportedPictureSizes().get(0);
+
+        final double horizontalViewAngle = Math.toRadians(params
+                .getHorizontalViewAngle());
+        final double verticalViewAngle = Math.toRadians(params
+                .getVerticalViewAngle());
+        final Size pictureSize = params.getPictureSize();
         final Location currentLocation = Optimizer.currentBestLoc();
-        transformBean =
-                new TransformationParamBean(1.7, horizontalViewAngle,
-                        verticalViewAngle, pictureSize.width,
-                        pictureSize.height, currentLocation);
-        currentOrientation = Optimizer.currentBestPos();
+        transformBean = new TransformationParamBean(this.getDeviceHeight(),
+                horizontalViewAngle, verticalViewAngle, pictureSize.width,
+                pictureSize.height, currentLocation);
 
         // Start a thread to save the Raw Image in JPEG into SDCard
-        new SavePhotoTask().execute(raw);
+        new SavePhotoTask(Optimizer.currentDeviceOrientation(),
+                preview.getViewSize()).execute(raw);
     }
 
-    /*
-     * @Description: An inner Class for saving a picture in storage in a thread
+    /**
+     * Reads the height of the device in condition of the bodyheight from the
+     * preferences.
+     * 
+     * If the preference is empty or not set the default value is stored.
+     * 
+     * @return The height of the device or {@code 0} if the preference is not
+     *         set or empty
+     * @author tbrose
+     */
+    private double getDeviceHeight() {
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        final Resources res = context.getResources();
+        final String key = res.getString(R.string.pref_bodyheight_key);
+        final String height = prefs.getString(key, null);
+        if (TextUtils.isEmpty(height)) {
+            final int defaultValue = res
+                    .getInteger(R.integer.pref_bodyheight_default);
+            // Save the default value
+            prefs.edit().putString(key, "" + defaultValue).commit();
+            return (defaultValue - 20) / 100.0;
+        } else {
+            final double bodyHeight = Integer.parseInt(height);
+            return (bodyHeight - 20) / 100.0;
+        }
+    }
+
+    /**
+     * An inner Class for saving a picture in storage in a thread.
      */
     class SavePhotoTask extends AsyncTask<byte[], String, String> {
+
+        private DeviceOrientation deviceOrientation;
+        private Point viewSize;
+
+        /**
+         * Default Constructor for saving photo task.
+         * 
+         * @param deviceOrientation
+         *            the curretn device orientation
+         * @param viewSize
+         *            The current preview size
+         */
+        public SavePhotoTask(DeviceOrientation deviceOrientation, Point viewSize) {
+            this.deviceOrientation = deviceOrientation;
+            this.viewSize = viewSize;
+        }
+
         @Override
         protected String doInBackground(byte[]... photoData) {
             try {
-                // Call the method where the file is created
-                photoFile = createFile();
+                photoFile = CapturePictureHandler.this.createFile();
 
-                Log.d(getClass().getSimpleName(), "Picturepath:" + photoFile);
-                // Open file channel
-                final FileOutputStream fos =
-                        new FileOutputStream(photoFile.getPath());
+                Log.d(TAG, "Picturepath:" + photoFile.getPath());
+
+                final FileOutputStream fos = new FileOutputStream(photoFile);
                 fos.write(photoData[0]);
                 fos.flush();
                 fos.close();
 
             } catch (IOException ex) {
-                Log.d(getClass().getSimpleName(), ex.getMessage());
-                return ex.getMessage();
+                Log.e(TAG, "Fail to save picture", ex);
             }
 
             return "successful";
@@ -128,44 +197,36 @@ public class CapturePictureHandler implements PictureCallback {
         @Override
         protected void onPostExecute(String result) {
             if (result.equals("successful")) {
-                Log.d(getClass().getSimpleName(), "Picture successfully saved");
+                Log.d(TAG, "Picture successfully saved");
 
-                // Passes the filepath, location and device orientation to the
-                // ShowPictureActivity
-                final Intent intent =
-                        new Intent(context, ShowPictureActivity.class);
-                intent.putExtra(FILEPATH, photoFile);
-                intent.putExtra(DEVICE_ORIENTATION, currentOrientation);
+                final Intent intent = new Intent(context,
+                        ShowPictureActivity.class);
+                intent.putExtra(FILE_EXTRA, photoFile);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
+                intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
+                intent.putExtra(SIZE_EXTRA, viewSize);
 
-                // start the new ShowPictureActivity
-                context.startActivity(intent);
+                context.startActivityForResult(intent);
 
             } else {
                 Toast.makeText(context, "Failed on taking picture",
                         Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
-    /*
-     * Create a directory Data4all if necessary and create a file for the
-     * picture
-     */
     private File createFile() {
-        // Create a File Reference of Photo File
-        // Image Type is JPEG
-
         // Create a new folder on the internal storage named Data4all
-        final File folder =
-                new File(Environment.getExternalStorageDirectory() + DIRECTORY);
-        if (!folder.exists() && folder.mkdirs()) {
-            Toast.makeText(context, "New Folder Created", Toast.LENGTH_SHORT)
-                    .show();
+        final File folder = new File(Environment.getExternalStorageDirectory(),
+                DIRECTORY);
+        if (!folder.exists()) {
+            folder.mkdirs();
+            Log.i(TAG, "Folder was created");
         }
 
-        // Save the picture to the folder in the internal storage
-        return new File(Environment.getExternalStorageDirectory() + DIRECTORY,
-                System.currentTimeMillis() + FILE_FORMAT);
+        // Save the file to the folder in the internal storage
+        final String name = System.currentTimeMillis() + FILE_FORMAT;
+        return new File(folder, name);
     }
 }

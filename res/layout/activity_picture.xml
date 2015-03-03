@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -17,11 +18,11 @@
         android:layout_below="@+id/imageButton5" />
 
     <LinearLayout
+        android:id="@+id/layout_choose_interpreter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
+        android:layout_centerHorizontal="true" >
 
         <ImageButton
             android:id="@+id/imageButton1"
@@ -49,24 +50,21 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton5"
+        android:id="@+id/okbtn"
         style="@style/imageButtonOkay"
         android:contentDescription="@string/noDescription"
         android:onClick="onClickOkay" />
-    
-    
-    <ImageButton
-            android:id="@+id/redobtn"
-            style="@style/imageButtonRedoPictureActivity"
-            android:contentDescription="@string/redo"
-            android:onClick="onClickRedo" />
-    
-    
-    <ImageButton
-            android:id="@+id/undobtn"
-            style="@style/imageButtonUndoPictureActivity"
-            android:contentDescription="@string/undo"
-            android:onClick="onClickUndo" />
 
+    <ImageButton
+        android:id="@+id/redobtn"
+        style="@style/imageButtonRedoPictureActivity"
+        android:contentDescription="@string/redo"
+        android:onClick="onClickRedo" />
+
+    <ImageButton
+        android:id="@+id/undobtn"
+        style="@style/imageButtonUndoPictureActivity"
+        android:contentDescription="@string/undo"
+        android:onClick="onClickUndo" />
 
 </RelativeLayout>

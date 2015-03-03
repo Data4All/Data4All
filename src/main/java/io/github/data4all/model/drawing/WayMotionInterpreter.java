@@ -51,6 +51,8 @@ public class WayMotionInterpreter implements MotionInterpreter {
      */
     private static final int COMBINE_VARIATION = 25;
 
+    private static final int MIN_NODES = 2;
+
     private PointToCoordsTransformUtil pointTrans;
 
     /**
@@ -208,6 +210,16 @@ public class WayMotionInterpreter implements MotionInterpreter {
     @Override
     public boolean isArea() {
         return false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.drawing.MotionInterpreter#minNodes()
+     */
+    @Override
+    public int minNodes() {
+        return MIN_NODES;
     }
 
 }

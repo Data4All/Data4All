@@ -13,4 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+/**
+ * This classes provide methods for smoothing various Sensor Data.
+ */
 package io.github.data4all.smoothing;
+

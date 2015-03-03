@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <org.osmdroid.views.MapView
+    <io.github.data4all.view.D4AMapView
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
@@ -32,5 +32,6 @@
         android:id="@+id/imageView1"
         style="@style/startUpScreen"
         android:contentDescription="@string/startUpScreen" />
+
 
 </RelativeLayout>

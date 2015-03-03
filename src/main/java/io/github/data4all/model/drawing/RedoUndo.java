@@ -29,7 +29,7 @@ import java.util.List;
  *
  */
 public class RedoUndo {
-
+	
 	/**
 	 * List of all deleted Points.
 	 */
@@ -111,7 +111,7 @@ public class RedoUndo {
 	 */
 	public void add(Point point, String action, int location) {
 		Log.d(this.getClass().getSimpleName(), "ADD ACTION: " + action
-				+ currentCount + " : " + maxCount + "last action : " + actions.get(currentCount-1));
+				+ currentCount + " : " + maxCount + "last action : " + actions.get(currentCount - 1));
 		if (maxCount == currentCount) {
 			if (action.equals("DELET")
 					&& actions.get(actions.size() - 1).equals("MOVE_FROM")) {
@@ -127,8 +127,8 @@ public class RedoUndo {
 				maxCount = currentCount;
 			}
 		} else {
-			remove();
-			add(point,action,location);
+			this.remove();
+			this.add(point,action,location);
 		}
 
 	}
@@ -143,10 +143,10 @@ public class RedoUndo {
 
 	private void remove() {
 		int schleife = maxCount - currentCount;
-		while(schleife != 0){
-			motions.remove(motions.size()-1);
-			actions.remove(actions.size()-1);
-			locations.remove(locations.size()-1);
+		while(schleife != 0) {
+			motions.remove(motions.size() - 1);
+			actions.remove(actions.size() - 1);
+			locations.remove(locations.size() - 1);
 			schleife--;
 		}
 		currentCount = motions.size();
@@ -186,7 +186,8 @@ public class RedoUndo {
 			Log.d(this.getClass().getSimpleName(), s);
 		}
 		if (currentCount != maxCount) {
-			return motions.get(currentCount++);
+			currentCount++;
+			return motions.get(currentCount);
 		}
 		return null;
 	}
@@ -225,26 +226,33 @@ public class RedoUndo {
 		return maxCount;
 	}
 
-	/**
-	 * A listener for events of "undo/redo-is-(un)available".
-	 * 
-	 * @author tbrose
-	 */
-	public interface UndoRedoListener {
-		/**
-		 * Informs about the current undo state.
-		 * 
-		 * @param state
-		 *            The current undo state
-		 */
-		void canUndo(boolean state);
+    /**
+     * A listener for events of "undo/redo-is-(un)available".
+     * 
+     * @author tbrose
+     */
+    public interface UndoRedoListener {
+        /**
+         * Informs about the current undo state.
+         * 
+         * @param state
+         *            The current undo state
+         */
+        void canUndo(boolean state);
 
-		/**
-		 * Informs about the current redo state.
-		 * 
-		 * @param state
-		 *            The current redo state
-		 */
-		void canRedo(boolean state);
+        /**
+         * Informs about the current redo state.
+         * 
+         * @param state
+         *            The current redo state
+         */
+        void canRedo(boolean state);
+        
+        /**
+         * Informas about the enough notes state
+         * @param state the current enough note state
+         */
+		void okUseable(boolean state);
 	}
+
 }

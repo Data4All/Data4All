@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/osm_logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignBottom="@+id/relativeLayout1"
+        android:layout_alignLeft="@+id/osm_desc"
+        android:layout_marginBottom="35dp"
+        android:layout_marginLeft="67dp"
+        android:contentDescription="@string/osmLogo"
+        android:src="@drawable/osm_logo" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="24dp" >
+
+        <EditText
+            android:id="@+id/osm_name"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
+            android:background="@drawable/login_username_bg"
+            android:drawableLeft="@drawable/user"
+            android:ems="10"
+            android:hint="@string/usernameHint"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/osm_pass"
+            android:textColorHint="#cccccc" />
+
+        <EditText
+            android:id="@+id/osm_pass"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/osm_name"
+            android:background="@drawable/login_pass_bg"
+            android:drawableLeft="@drawable/password"
+            android:ems="10"
+            android:hint="@string/passwordHint"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textColorHint="#cccccc" />
+
+        <Button
+            android:id="@+id/osm_login"
+            style="@style/DefaultButtonText"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/osm_pass"
+            android:background="@drawable/login_button_bg"
+            android:onClick="onClickStart"
+            android:padding="10dp"
+            android:text="@string/loginButton" />
+
+        <Button
+            android:id="@+id/osm_register"
+            style="@style/DefaultButtonText"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/osm_login"
+            android:background="@drawable/register_button_bg"
+            android:onClick="onClickStart"
+            android:padding="10dp"
+            android:text="@string/registerButton"
+            android:textColor="#ffffff" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/osm_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/relativeLayout1"
+        android:layout_marginLeft="19dp"
+        android:text="@string/loginDescription"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

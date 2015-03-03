@@ -55,6 +55,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * Constructor to create an DataElement from a parcel.
      * 
      * @param in
+     *            The Parcel to read from
      */
     protected AbstractDataElement(Parcel in) {
         osmId = in.readLong();

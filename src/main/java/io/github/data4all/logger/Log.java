@@ -23,8 +23,7 @@ package io.github.data4all.logger;
  * @version 1.0
  *
  */
-
-public class Log {
+public final class Log {
 
     private static String DEFAULT_TAG = "DATA4ALL";
     private static final boolean LOG = true;
@@ -34,12 +33,12 @@ public class Log {
     private static final boolean INFO = true;
     private static final boolean DEBUG = true;
     private static final boolean WTF = true;
-    
+
     /**
      * Private Constructor, prevents instantization.
      */
     private Log() {
-        
+
     }
 
     /**
@@ -81,6 +80,8 @@ public class Log {
      *            the actual class
      * @param msg
      *            the message for the logger
+     * @param tr
+     *            class which can be thrown by the VM e.g. Exception
      */
     public static void e(String tag, String msg, Throwable tr) {
         if (LOG && ERROR) {
@@ -143,6 +144,8 @@ public class Log {
      *            the actual class
      * @param msg
      *            the message for the logger
+     * @param tr
+     *            class which can be thrown by the VM e.g. Exception
      */
     public static void w(String tag, String msg, Throwable tr) {
         if (LOG && WARNING) {
@@ -159,6 +162,8 @@ public class Log {
      *            the actual class
      * @param msg
      *            the message for the logger
+     * @param tr
+     *            class which can be thrown by the VM e.g. Exception
      */
     public static void wtf(String tag, String msg, Throwable tr) {
         if (LOG && WTF) {

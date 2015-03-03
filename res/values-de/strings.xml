@@ -2,48 +2,88 @@
 <resources>
 
     <string name="app_name">Data4All</string>
-    <string name="hello">Hallo Data4All!</string>
+
+    <!-- setting list -->
     <string name="action_settings">Einstellungen</string>
-    
-    <string name="sensor_button">Sensor</string>
-    
-    <string name="X"> Accelerometer X</string>
-    <string name="Y"> Accelerometer Y</string>
-    <string name="Z"> Accelerometer Z</string>
-    
-    
-    <string name="x"> Gyroskop x</string>
-    <string name="y"> Gyroskop y</string>
-    <string name="z"> Gyroskop z</string>
-    
-    <string name="action_ShowPicture">Bild anzeigen</string>
-    
     <string name="action_camera">Kamera</string>
     <string name="action_map">Karte</string>
     <string name="action_help">Hilfe</string>
-    <string name="title_activity_custom_menu">CustomMenuActivity</string>
-    <string name="hello_world">Hallo Welt!</string>
-    
-    <string name="return_to_position">Meine Position</string>
-    <string name="to_camera">Kamera</string>
-    <string name="switch_to_satellite">Satellitenkarte</string>
-    <string name="switch_to_osm">OpenStreetMap</string>
-    <string name="upload_data">Hochladen</string>
-    <string name="poi">POI</string>
-    
     <string name="action_login">Einloggen</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="stayLoggedIn">Eingeloggt bleiben?</string>
-    <string name="loginButton">Einloggen</string>
-    <string name="loginRedirectMessage">Sie werden zum OpenStreetMap Login weitergeleitet.</string>
-    <string name="deleteButton">Token löschen</string>
-    <string name="alreadyLoggedIn">Sie sind bereits eingeloggt.</string>
-    
-    <string name="speechRecognition">Start </string>
-    <string name="selectTag">Passenden Tag auswählen</string>
-    
-        <!-- Delete Dialog -->
-    <string name="deleteDialog">Wollen sie dieses Objekt wirklich löschen?</string>
+
+    <!-- generell strings -->
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+    <string name="ok">OK</string>
+
+    <!-- Strings Content Description ImageButtons -->
+    <string name="returnToActualPosition">Meine Position</string>
+    <string name="returnToCamera">Kamera</string>
+    <string name="pointOfInterest">Sonderziel</string>
+    <string name="switchMaps">Karten wechseln</string>
+    <string name="upload_data">Upload</string>
+    <string name="startUpScreen">Startbildschirm</string>
+    <string name="noDescription"></string>
+    <string name="drawWay">Zeichne einen Weg </string>
+    <string name="drawPoint">Zeichne einen Punkt </string>
+    <string name="drawArea">Zeichne eine Fläche </string>
+    <string name="drawBuilding">Zeichne ein Gebäude </string>
+    <string name="redo">Wiederherstellen</string>
+    <string name="undo">Rückgängig machen</string>
+
+    <!-- dialogs -->
+    <string name="deleteDialog">Wollen Sie dieses Objekt wirklich löschen?</string>
+    <string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
+
+    <!-- for network -->
+    <string name="no_network_title">Kein Internet verfügbar</string>
+    <string name="no_network_message">Bitte verbinden Sie ihr Gerät mit dem Internet</string>
+
+    <!-- for login -->
+    <string name="usernameHint">Benutzername</string>
+    <string name="passwordHint">Passwort</string>
+    <string name="loginDescription">Login für OpenStreetMap</string>
+    <string name="loginButton">Einloggen</string>
+    <string name="registerButton">Jetzt Registrieren</string>
+    <string name="osmLogo">Open-Street-Map Logo</string>
+    <string name="login_alertdialog_nonetwork_title">Netzwerk nicht verfügbar</string>
+    <string name="login_alertdialog_nonetwork_message">Bitte verbinde das Gerät mit dem Internet.</string>
+    <string name="login_alertdialog_error">Fehler</string>
+    <string name="login_alertdialog_accessdenied_title">Zugriff verweigert</string>
+    <string name="login_alertdialog_accessdenied_message">Benutzername oder Passwort nicht korrekt.</string>
+    <string name="login_alertdialog_nousername">Kein Benutzername angeben</string>
+    <string name="login_alertdialog_nopassword">Kein Passwort angegeben</string>
+    <string name="login_username_empty">Kein Benutzername angeben</string>
+    <string name="login_password_empty">Kein Passwort angegeben</string>
+    <string name="login_access_dialog_title">Zugriff verweigert</string>
+    <string name="login_access_dialog_mes">Benutzername oder Passwort nicht korrekt.</string>
+
+
+    <!-- for tags -->
+    <string name="SelectTag">Passenden Tag auswählen</string>
+    <string name="AddAddress">Adresse hinzufügen</string>
+    <string name="AddContact">Kontakt hinzufügen</string>
+    <string name="next">Weiter</string>
+    <string name="finish">Fertig</string>
+    <string name="phone">Telefon</string>
+    <string name="fax">Fax</string>
+    <string name="website">Website</string>
+    <string name="email">Email</string>
+
+    <!-- for upload -->
+    <string name="upload_success">Erfolgreich hochgeladen</string>
+    <string name="upload_caption">Hochladen zu OpenStreetMap</string>
+    <string name="upload_upload_text">"Hochzuladende Objekte: "</string>
+    <string name="upload_cancle">Abbrechen</string>
+    <string name="CancelButton">Abbrechen</string>
+    <string name="UploadButton">Hochladen</string>
+    <string name="upload_to_openstreetmap">Hochladen zu OpenStreetMap</string>
+    <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
+    <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
+    <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
+
+    <!-- other -->
+    <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
+    <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
+    <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
+
 </resources>
