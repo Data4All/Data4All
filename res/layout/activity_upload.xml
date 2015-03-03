@@ -72,7 +72,7 @@
             android:layout_below="@+id/upload_progress"
             android:layout_centerHorizontal="true"
             android:background="@drawable/login_button_bg"
-            android:onClick="onClickCancle"
+            android:onClick="onClickCancel"
             android:text="@string/CancelButton"
             android:visibility="gone" />
 
