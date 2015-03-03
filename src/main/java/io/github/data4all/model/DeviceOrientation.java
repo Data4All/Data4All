@@ -33,7 +33,7 @@ public class DeviceOrientation implements Parcelable {
     private float roll;
 
     /** constants for comparison. */
-    private final static double EPSILON = 0.00001;
+    private static final double EPSILON = 0.00001;
 
     private long timestamp;
 

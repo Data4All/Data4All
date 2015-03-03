@@ -59,488 +59,633 @@ import android.view.View;
  * @see PointMover
  */
 public class TouchView extends View {
-    /**
-     * The paint to draw the path with.
-     */
-    private final Paint pathPaint = new Paint();
 
-    /**
-     * The paint to draw the area with.
-     */
-    private final Paint areaPaint = new Paint();
+	/**
+	 * All types of interpretation that are provided by this {@link TouchView}.
+	 * 
+	 * @author tbrose
+	 */
+	public static enum InterpretationType {
+		AREA, POINT, BUILDING, WAY;
+	}
 
-    /**
-     * The path to draw.
-     */
-    private final Path path = new Path();
-    /**
-     * The motion interpreted Polygon.
-     */
-    private List<Point> polygon = new ArrayList<Point>();
-    /**
-     * The Polygon with the current pending motion.
-     */
-    private List<Point> newPolygon = new ArrayList<Point>();
-    /**
-     * The current motion the user is typing via the screen.
-     */
-    private DrawingMotion currentMotion;
-    /**
-     * An object for the calculation of the point transformation.
-     */
-    private PointToCoordsTransformUtil pointTrans;
-    /**
-     * The currently used interpreter.
-     */
-    private MotionInterpreter interpreter;
-    /**
-     * The current used RedoUndo object.
-     */
-    private RedoUndo redoUndo;
+	/**
+	 * Mover to move a point
+	 */
+	private PointMover mover;
 
-    /**
-     * The current used RedoUndo listener.
+	/**
+	 * Point to know where the moving point started
+	 */
+	private Point startPoint;
+
+	/**
+	 * Boolean to check if the move motion could be a delete motion
+	 */
+	private boolean isDelete;
+
+	/**
+	 * Point to set if the current start motion found a point
+	 */
+	private Point lookUpPoint;
+
+	/**
+	 * The paint to draw the path with.
+	 */
+	private final Paint pathPaint = new Paint();
+
+	/**
+	 * The paint to draw the area with.
+	 */
+	private final Paint areaPaint = new Paint();
+
+	/**
+	 * The path to draw.
+	 */
+	private final Path path = new Path();
+	/**
+	 * The motion interpreted Polygon.
+	 */
+	private List<Point> polygon = new ArrayList<Point>();
+	/**
+	 * The Polygon with the current pending motion.
+	 */
+	private List<Point> newPolygon = new ArrayList<Point>();
+	/**
+	 * The current motion the user is typing via the screen.
+	 */
+	private DrawingMotion currentMotion;
+	/**
+	 * An object for the calculation of the point transformation.
+	 */
+	private PointToCoordsTransformUtil pointTrans;
+	/**
+	 * The currently used interpreter.
+	 */
+	private MotionInterpreter interpreter;
+	/**
+	 * The current used RedoUndo object.
+	 */
+	private RedoUndo redoUndo;
+
+	/**
+	 * The current used RedoUndo listener.
+	 */
+	private UndoRedoListener undoRedoListener;
+	
+	/**
+     * Standard strings for actions
      */
-    private UndoRedoListener undoRedoListener;
+    final static String add = "ADD";
+    final static String delete = "DELETE";
+    final static String moveFrom = "MOVE_FROM";
+    final static String moveTo = "MOVE_TO";
 
-    /**
-     * All types of interpretation that are provided by this {@link TouchView}.
-     * 
-     * @author tbrose
-     */
-    public static enum InterpretationType {
-        AREA, POINT, BUILDING, WAY;
-    }
+	/**
+	 * Simple constructor to use when creating a view from code.
+	 * 
+	 * @param context
+	 *            The Context the view is running in, through which it can
+	 *            access the current theme, resources, etc.
+	 */
+	public TouchView(Context context) {
+		super(context);
+	}
 
-    /**
-     * Simple constructor to use when creating a view from code.
-     * 
-     * @param context
-     *            The Context the view is running in, through which it can
-     *            access the current theme, resources, etc.
-     */
-    public TouchView(Context context) {
-        super(context);
-    }
+	/**
+	 * Constructor that is called when inflating a view from XML. This is called
+	 * when a view is being constructed from an XML file, supplying attributes
+	 * that were specified in the XML file. This version uses a default style of
+	 * 0, so the only attribute values applied are those in the Context's Theme
+	 * and the given AttributeSet.<br/>
+	 * <br/>
+	 * The method onFinishInflate() will be called after all children have been
+	 * added.
+	 * 
+	 * @param context
+	 *            The Context the view is running in, through which it can
+	 *            access the current theme, resources, etc.
+	 * @param attrs
+	 *            The attributes of the XML tag that is inflating the view.
+	 */
+	public TouchView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+	}
 
-    /**
-     * Constructor that is called when inflating a view from XML. This is called
-     * when a view is being constructed from an XML file, supplying attributes
-     * that were specified in the XML file. This version uses a default style of
-     * 0, so the only attribute values applied are those in the Context's Theme
-     * and the given AttributeSet.<br/>
-     * <br/>
-     * The method onFinishInflate() will be called after all children have been
-     * added.
-     * 
-     * @param context
-     *            The Context the view is running in, through which it can
-     *            access the current theme, resources, etc.
-     * @param attrs
-     *            The attributes of the XML tag that is inflating the view.
-     */
-    public TouchView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+	/**
+	 * Perform inflation from XML and apply a class-specific base style from a
+	 * theme attribute. This constructor of View allows subclasses to use their
+	 * own base style when they are inflating. For example, a Button class's
+	 * constructor would call this version of the super class constructor and
+	 * supply {@code R.attr.buttonStyle} for defStyleAttr; this allows the
+	 * theme's button style to modify all of the base view attributes (in
+	 * particular its background) as well as the Button class's attributes.
+	 * 
+	 * @param context
+	 *            The Context the view is running in, through which it can
+	 *            access the current theme, resources, etc.
+	 * @param attrs
+	 *            The attributes of the XML tag that is inflating the view.
+	 * @param defStyleAttr
+	 *            An attribute in the current theme that contains a reference to
+	 *            a style resource that supplies default values for the view.
+	 *            Can be 0 to not look for defaults.
+	 */
+	public TouchView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+	}
 
-    /**
-     * Perform inflation from XML and apply a class-specific base style from a
-     * theme attribute. This constructor of View allows subclasses to use their
-     * own base style when they are inflating. For example, a Button class's
-     * constructor would call this version of the super class constructor and
-     * supply {@code R.attr.buttonStyle} for defStyleAttr; this allows the
-     * theme's button style to modify all of the base view attributes (in
-     * particular its background) as well as the Button class's attributes.
-     * 
-     * @param context
-     *            The Context the view is running in, through which it can
-     *            access the current theme, resources, etc.
-     * @param attrs
-     *            The attributes of the XML tag that is inflating the view.
-     * @param defStyleAttr
-     *            An attribute in the current theme that contains a reference to
-     *            a style resource that supplies default values for the view.
-     *            Can be 0 to not look for defaults.
-     */
-    public TouchView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.view.View#onDraw(android.graphics.Canvas)
+	 */
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+		canvas.drawARGB(0, 0, 0, 0);
+		path.reset();
+		if (newPolygon != null && newPolygon.size() != 0) {
+			path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
+			// first draw all lines
+			int limit = newPolygon.size();
+			// Don't draw the last line if it is not an area
+			limit -= interpreter.isArea() ? 0 : 1;
+			for (int i = 0; i < limit; i++) {
+				// The next point in the polygon
+				final Point b = newPolygon.get((i + 1) % newPolygon.size());
+				final Point a = newPolygon.get(i);
+				path.lineTo(a.getX(), a.getY());
+				path.lineTo(b.getX(), b.getY());
+				canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
+						pathPaint);
+			}
+			if (interpreter instanceof AreaMotionInterpreter
+					|| interpreter instanceof BuildingMotionInterpreter) {
+				canvas.drawPath(path, areaPaint);
+			}
+			// afterwards draw the points
+			for (Point p : newPolygon) {
+				canvas.drawCircle(p.getX(), p.getY(),
+						MotionInterpreter.POINT_RADIUS, pathPaint);
+			}
+		}
+	}
 
-    /**
-     * Remove all recorded DrawingMotions from this TouchView.
-     */
-    public void clearMotions() {
-        if (polygon != null) {
-            polygon.clear();
-            redoUndo = new RedoUndo();
-            this.undoUseable();
-            this.redoUseable();
-            undoRedoListener.okUseable(hasEnoughNodes());
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.view.View#onTouchEvent(android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		final int action = event.getAction();
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			currentMotion = new DrawingMotion();
+			this.handleMotion(event, "start");
+			break;
+		case MotionEvent.ACTION_UP:
+			this.handleMotion(event, "end");
+			polygon = newPolygon;
+			this.undoUseable();
+			this.redoUseable();
+			this.undoRedoListener.okUseable(hasEnoughNodes());
+			break;
+		case MotionEvent.ACTION_MOVE:
+			this.handleMotion(event, "move");
+			postInvalidate();
+			break;
+		default :
+			Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
+		}
+		return true;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.view.View#onFinishInflate()
-     */
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        interpreter = new WayMotionInterpreter(pointTrans);
-        pathPaint.setColor(MotionInterpreter.POINT_COLOR);
-        pathPaint.setColor(MotionInterpreter.PATH_COLOR);
-        pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
-        areaPaint.setColor(MotionInterpreter.AREA_COLOR);
-        areaPaint.setStyle(Paint.Style.FILL);
-        areaPaint.setAlpha(100);
-        redoUndo = new RedoUndo();
-    }
+	/**
+	 * Handles the given motion:<br/>
+	 * Add the point to the current motion<br/>
+	 * Logs the motion<br/>
+	 * Apple to move and delete points in the motion<br/>
+	 * Causes the view to redraw itself afterwards
+	 * 
+	 * @param event
+	 *            The touch event
+	 * @param action
+	 *            the named action which is in progress
+	 */
+	private void handleMotion(MotionEvent event, String action) {
+		if (currentMotion != null) {
+			if (action.equals("start")) {
+				this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
+				if (lookUpPoint != null) {
+					this.mover = movePoint(lookUpPoint);
+					isDelete = true;
+					startPoint = lookUpPoint;
+					lookUpPoint = null;
+				} else {
+					currentMotion.addPoint(event.getX(), event.getY());
+				}
+			} else if (action.equals("move")) {
+				if (mover != null) {
+					if (Math.abs(startPoint.getX() - event.getX()) > 10
+							&& Math.abs(startPoint.getY() - event.getY()) > 10) {
+						Log.d("", "Long Press cancled");
+						mover.moveTo(event.getX(), event.getY());
+						isDelete = false;
+						redoUndo.add(new Point(event.getX(), event.getY()),
+								moveTo, mover.getIdx());
+					}
+				} else {
+					currentMotion.addPoint(event.getX(), event.getY());
+					newPolygon = interpreter.interprete(polygon, currentMotion);
+				}
+			} else if (action.equals("end")) {
+				if (isDelete) {
+					redoUndo.add(startPoint, delete, mover.getIdx());
+					this.deletePoint(startPoint);
+					mover = null;
+					isDelete = false;
+				} else {
+					if (mover != null) {
+						mover = null;
+					} else {
+						redoUndo = new RedoUndo(newPolygon);
+					}
+				}
+			} else {
+				Log.e(this.getClass().getSimpleName(),
+						"ERROR, No action Found for: " + action);
+			}
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.view.View#onDraw(android.graphics.Canvas)
-     */
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawARGB(0, 0, 0, 0);
-        path.reset();
-        if (newPolygon != null && newPolygon.size() != 0) {
-            path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
-            // first draw all lines
-            int limit = newPolygon.size();
-            // Don't draw the last line if it is not an area
-            limit -= interpreter.isArea() ? 0 : 1;
-            for (int i = 0; i < limit; i++) {
-                // The next point in the polygon
-                final Point b = newPolygon.get((i + 1) % newPolygon.size());
-                final Point a = newPolygon.get(i);
-                path.lineTo(a.getX(), a.getY());
-                path.lineTo(b.getX(), b.getY());
-                canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
-                        pathPaint);
-            }
-            if (interpreter instanceof AreaMotionInterpreter
-                    || interpreter instanceof BuildingMotionInterpreter) {
-                canvas.drawPath(path, areaPaint);
-            }
-            // afterwards draw the points
-            for (Point p : newPolygon) {
-                canvas.drawCircle(p.getX(), p.getY(),
-                        MotionInterpreter.POINT_RADIUS, pathPaint);
-            }
-        }
-    }
+	/**
+	 * Deletes a Point of the polygon.
+	 * 
+	 * @author konerman
+	 * 
+	 * @param point
+	 *            The point to delete
+	 */
+	public void deletePoint(Point point) {
+		if (!(interpreter instanceof BuildingMotionInterpreter)) {
+			if (polygon.remove(point)) {
+				Log.d(this.getClass().getSimpleName(), "Point deleted");
+			} else {
+				Log.d(this.getClass().getSimpleName(), "Point not found");
+			}
+			postInvalidate();
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.view.View#onTouchEvent(android.view.MotionEvent)
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        final int action = event.getAction();
-        switch (action) {
-        case MotionEvent.ACTION_DOWN:
-            currentMotion = new DrawingMotion();
-            handleMotion(event, "end");
-            break;
-        case MotionEvent.ACTION_UP:
-            handleMotion(event, "start");
-            polygon = newPolygon;
-            redoUndo = new RedoUndo(polygon);
-            undoRedoListener.okUseable(hasEnoughNodes());
-            undoUseable();
-            redoUseable();
-            break;
-        case MotionEvent.ACTION_MOVE:
-            handleMotion(event, "move");
-            break;
-        }
-        return true;
-    }
+	/**
+	 * This function determines if there is a Point of the polygon close to the
+	 * given coordinates.
+	 * 
+	 * @author konerman
+	 * 
+	 * @param x
+	 *            the X-value of the point
+	 * @param y
+	 *            the Y-value of the point
+	 * @param maxDistance
+	 *            the max distance between the x/y and the Point
+	 * @return the closest point to the given x/y or {@code null} if the nearest
+	 *         point is more than maxDistance away
+	 *
+	 */
+	public Point lookUp(float x, float y, float maxDistance) {
+		double shortest = maxDistance;
+		Point closePoint = null;
+		if (!polygon.isEmpty()) {
+			// runs through the list of points in the polygon and checks which
+			// point is the closest
+			for (Point p : polygon) {
+				final double distance = Math.hypot(x - p.getX(), y - p.getY());
+				Log.d(this.getClass().getSimpleName(), "distance:" + distance);
+				if (distance <= shortest) {
+					shortest = distance;
+					closePoint = p;
+				}
+			}
+		}
+		Log.d(this.getClass().getSimpleName(), "shortest distance:" + shortest);
+		return closePoint;
+	}
 
-    /**
-     * Handles the given motion:<br/>
-     * Add the point to the current motion<br/>
-     * Logs the motion<br/>
-     * Causes the view to redraw itself afterwards.
-     * 
-     * @param event
-     *            The touch event
-     * @param action
-     *            the named action which is in progress
-     */
-    private void handleMotion(MotionEvent event, String action) {
-        if (currentMotion != null) {
-            currentMotion.addPoint(event.getX(), event.getY());
-            newPolygon = interpreter.interprete(polygon, currentMotion);
-            Log.d(this.getClass().getSimpleName(),
-                    "Motion " + action + ": " + currentMotion.getPathSize()
-                            + ", point: " + currentMotion.isPoint());
-            postInvalidate();
-        }
-    }
+	/**
+	 * Returns a {@link PointMover} for the given {@link Point}.<br/>
+	 * 
+	 * Use moveTo() afterwards to actually move the point.
+	 * 
+	 * @author konerman
+	 * @param point
+	 *            the point you want to move
+	 * 
+	 * @return A {@link PointMover} for moving this point
+	 * 
+	 */
+	public PointMover movePoint(Point point) {
+		final int i = polygon.indexOf(point);
+		redoUndo.add(point, moveFrom, i);
+		if (i == -1) {
+			Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
+			return null;
+		} else {
+			Log.d(this.getClass().getSimpleName(), "PointMover for index " + i);
+			return new PointMover(i);
+		}
+	}
 
-    /**
-     * Deletes a Point of the polygon.
-     * 
-     * @author konerman
-     * 
-     * @param point
-     *            The point to delete
-     */
-    public void deletePoint(Point point) {
-        if (polygon.remove(point)) {
-            Log.d(this.getClass().getSimpleName(), "Point deleted");
-        } else {
-            Log.d(this.getClass().getSimpleName(), "Point not found");
-        }
-        postInvalidate();
-    }
+	/**
+	 * Sets the type of interpretation for this {@link TouchView}.
+	 * 
+	 * @param type
+	 *            The {@link InterpretationType} to set
+	 * @throws IllegalArgumentException
+	 *             if {@code type} is {@code null}
+	 */
+	public void setInterpretationType(InterpretationType type) {
+		switch (type) {
+		case AREA:
+			interpreter = new AreaMotionInterpreter(pointTrans);
+			break;
+		case POINT:
+			interpreter = new PointMotionInterpreter(pointTrans);
+			break;
+		case BUILDING:
+			interpreter = new BuildingMotionInterpreter(pointTrans);
+			break;
+		case WAY:
+			interpreter = new WayMotionInterpreter(pointTrans);
+			break;
+		default:
+			throw new IllegalArgumentException("'type' cannot be null");
+		}
+	}
 
-    /**
-     * This function determines if there is a Point of the polygon close to the
-     * given coordinates.
-     * 
-     * @author konerman
-     * 
-     * @param x
-     *            the X-value of the point
-     * @param y
-     *            the Y-value of the point
-     * @param maxDistance
-     *            the max distance between the x/y and the Point
-     * @return the closest point to the given x/y or {@code null} if the nearest
-     *         point is more than maxDistance away
-     *
-     */
-    public Point lookUp(float x, float y, float maxDistance) {
-        double shortest = maxDistance;
-        Point closePoint = null;
-        if (!polygon.isEmpty()) {
-            // runs through the list of points in the polygon and checks which
-            // point is the closest
-            for (Point p : polygon) {
-                final double distance = Math.hypot(x - p.getX(), y - p.getY());
-                Log.d(this.getClass().getSimpleName(), "distance:" + distance);
-                if (distance <= shortest) {
-                    shortest = distance;
-                    closePoint = p;
-                }
-            }
-        }
-        Log.d(this.getClass().getSimpleName(), "shortest distance:" + shortest);
-        return closePoint;
-    }
+	/**
+	 * Adds the last removed point to the current polygon.
+	 * 
+	 * @author vkochno
+	 */
+	public void redo() {
+		final String action = redoUndo.getAction();
+		final int location = redoUndo.getLocation();
+		Point point = redoUndo.redo();
+		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
+		if (action.equals(add)) {
+			newPolygon.add(point);
+		}
+		if (action.equals(delete)) {
+			newPolygon.remove(point);
+		}
+		if (action.equals(moveTo) || action.equals(moveFrom)) {
+			mover = new PointMover(location);
+			point = redoUndo.redo();
+			mover.moveTo(point.getX(), point.getY());
+			mover = null;
+		}
+		polygon = newPolygon;
+		this.redoUseable();
+		this.undoUseable();
+		undoRedoListener.okUseable(hasEnoughNodes());
+	}
 
-    /**
-     * Returns a {@link PointMover} for the given {@link Point}.<br/>
-     * 
-     * Use moveTo() afterwards to actually move the point.
-     * 
-     * @author konerman
-     * @param point
-     *            the point you want to move
-     * 
-     * @return A {@link PointMover} for moving this point
-     * 
-     */
-    public PointMover movePoint(Point point) {
-        final int i = polygon.indexOf(point);
-        if (i == -1) {
-            Log.d(this.getClass().getSimpleName(), "Point is not in polygon");
-            return null;
-        } else {
-            Log.d(this.getClass().getSimpleName(), "PointMover for index " + i);
-            return new PointMover(i);
-        }
-    }
+	/**
+	 * Removes the last point in the current polygon.
+	 * 
+	 * @author vkochno
+	 */
+	public void undo() {
+		Point point = redoUndo.undo();
+		final String action = redoUndo.getAction();
+		final int location = redoUndo.getLocation();
+		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
+		if (action.equals(add)) {
+			newPolygon.remove(point);
+		}
+		if (action.equals(delete)) {
+			newPolygon.add(location, point);
+		}
+		if (action.equals(moveFrom) || action.equals(moveTo)) {
+			mover = new PointMover(location);
+			point = redoUndo.undo();
+			mover.moveTo(point.getX(), point.getY());
+			mover = null;
+		}
+		polygon = newPolygon;
+		this.redoUseable();
+		this.undoUseable();
+		undoRedoListener.okUseable(hasEnoughNodes());
+	}
 
-    public void setInterpretationType(InterpretationType type) {
-        switch (type) {
-        case AREA:
-            interpreter = new AreaMotionInterpreter(pointTrans);
-            break;
-        case POINT:
-            interpreter = new PointMotionInterpreter(pointTrans);
-            break;
-        case BUILDING:
-            interpreter = new BuildingMotionInterpreter(pointTrans);
-            break;
-        case WAY:
-            interpreter = new WayMotionInterpreter(pointTrans);
-            break;
-        default:
-            throw new IllegalArgumentException("'type' cannot be null");
-        }
-    }
+	/**
+	 * Set the actual PointToCoordsTransformUtil with the actual location and
+	 * camera parameters.
+	 * 
+	 * @author sbollen
+	 * @param pointTrans
+	 *            the actual object
+	 */
+	public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
+		this.pointTrans = pointTrans;
+	}
 
-    /**
-     * Adds the last removed point to the current polygon.
-     * 
-     * @author vkochno
-     */
-    public void redo() {
-        if (interpreter instanceof BuildingMotionInterpreter) {
-            redoUndo.redo();
-        }
-        newPolygon = redoUndo.redo();
-        polygon = newPolygon;
-        undoUseable();
-        redoUseable();
-        undoRedoListener.okUseable(hasEnoughNodes());
-    }
+	/**
+	 * Sets the {@link UndoRedoListener} to use.
+	 * 
+	 * @param undoRedoListener
+	 *            The {@link UndoRedoListener} to set
+	 */
+	public void setUndoRedoListener(UndoRedoListener undoRedoListener) {
+		this.undoRedoListener = undoRedoListener;
+	}
 
-    /**
-     * Removes the last point in the current polygon.
-     * 
-     * @author vkochno
-     */
-    public void undo() {
-        if (interpreter instanceof BuildingMotionInterpreter) {
-            redoUndo.undo();
-        }
-        newPolygon = redoUndo.undo();
-        if (undoRedoListener != null) {
-            undoRedoListener.canRedo(true);
-        }
-        polygon = newPolygon;
-        redoUseable();
-        undoUseable();
-        undoRedoListener.okUseable(hasEnoughNodes());
-    }
+	/**
+	 * Create an AbstractDataElement from the given polygon.
+	 * 
+	 * 
+	 * @author sbollen
+	 * @param rotation
+	 *            create the element with the givin rotation
+	 * @return the created AbstractDataElement (with located nodes)
+	 */
+	public AbstractDataElement create(int rotation) {
+		return interpreter.create(polygon, rotation);
+	}
 
-    /**
-     * @author vkochno
-     * 
-     * @return If redo can be used
-     */
-    public boolean redoUseable() {
-        if (!(interpreter instanceof BuildingMotionInterpreter)
-                && redoUndo.getCurrent() == redoUndo.getMax()
-                || interpreter instanceof BuildingMotionInterpreter
-                && redoUndo.getCurrent() == redoUndo.getMax()) {
-            Log.d(this.getClass().getSimpleName(), "false redo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canRedo(false);
-            }
-            return true;
-        } else {
-            Log.d(this.getClass().getSimpleName(), "true redo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canRedo(true);
-            }
-            return false;
-        }
-    }
+	
 
-    /**
-     * @author vkochno
-     * 
-     * @return If undo can be used
-     */
-    public boolean undoUseable() {
-        if (!(interpreter instanceof BuildingMotionInterpreter)
-                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-                || interpreter instanceof BuildingMotionInterpreter
-                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-                && redoUndo.getMax() == 4) {
-            Log.d(this.getClass().getSimpleName(), "true undo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canUndo(true);
-            }
-            return true;
-        } else {
-            Log.d(this.getClass().getSimpleName(), "false undo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canUndo(false);
-            }
-            return false;
-        }
-    }
+	/**
+	 * Remove all recorded DrawingMotions from this TouchView.
+	 */
+	public void clearMotions() {
+		if (polygon != null) {
+			polygon.clear();
+			redoUndo = new RedoUndo();
+			this.undoUseable();
+			this.redoUseable();
+			this.undoRedoListener.okUseable(hasEnoughNodes());
+		}
+	}
 
-    /**
-     * Returns <code>true</code> if the drawing has the minimum of nodes for its
-     * InterpretationType.
-     * 
-     * @author konerman
-     * 
-     * @return <code>true</code> if the polygon has enough nodes;
-     *         <code>false</code> otherwise
-     */
-    public boolean hasEnoughNodes() {
-        return interpreter.minNodes() <= polygon.size();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.view.View#onFinishInflate()
+	 */
+	@Override
+	protected void onFinishInflate() {
+		super.onFinishInflate();
+		interpreter = new WayMotionInterpreter(pointTrans);
+		pathPaint.setColor(MotionInterpreter.POINT_COLOR);
+		pathPaint.setColor(MotionInterpreter.PATH_COLOR);
+		pathPaint.setStrokeWidth(MotionInterpreter.PATH_STROKE_WIDTH);
+		areaPaint.setColor(MotionInterpreter.AREA_COLOR);
+		areaPaint.setStyle(Paint.Style.FILL);
+		areaPaint.setAlpha(100);
+		redoUndo = new RedoUndo();
+	}
 
-    /**
-     * Set the actual PointToCoordsTransformUtil with the actual location and
-     * camera parameters
-     *
-     * @param pointTrans
-     *            the actual object
-     * 
-     * @author sbollen
-     */
-    public void setTransformUtil(PointToCoordsTransformUtil pointTrans) {
-        this.pointTrans = pointTrans;
-    }
+	/**
+	 * Testing if the redo function is able to use
+	 * 
+	 * @author vkochno
+	 * 
+	 * @return If redo can be used
+	 */
+	public boolean redoUseable() {
+		if (!(interpreter instanceof BuildingMotionInterpreter)
+				&& redoUndo.getCurrent() == redoUndo.getMax()
+				|| interpreter instanceof BuildingMotionInterpreter
+				&& redoUndo.getCurrent() == redoUndo.getMax()) {
+			Log.d(this.getClass().getSimpleName(), "false redo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canRedo(false);
+			}
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(), "true redo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canRedo(true);
+			}
+			return false;
+		}
+	}
 
-    /**
-     * Sets the {@link UndoRedoListener} to use.
-     * 
-     * @param undoRedoListener
-     *            The {@link UndoRedoListener} to set
-     */
-    public void setUndoRedoListener(UndoRedoListener undoRedoListener) {
-        this.undoRedoListener = undoRedoListener;
-    }
+	/**
+	 * Testing if the undo function is able to use
+	 * 
+	 * @author vkochno
+	 * 
+	 * @return If undo can be used
+	 */
+	public boolean undoUseable() {
+		if (!(interpreter instanceof BuildingMotionInterpreter)
+				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+				|| interpreter instanceof BuildingMotionInterpreter
+				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+				&& redoUndo.getMax() == 4) {
+			Log.d(this.getClass().getSimpleName(), "true undo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canUndo(true);
+			}
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(), "false undo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canUndo(false);
+			}
+			return false;
+		}
+	}
 
-    /**
-     * Create an AbstractDataElement from the given polygon.
-     * 
-     * @author sbollen
-     * @return the created AbstractDataElement (with located nodes)
-     */
-    public AbstractDataElement create(int rotation) {
-        return interpreter.create(polygon, rotation);
-    }
+	/**
+	 * Returns <code>true</code> if the drawing has the minimum of nodes for its
+	 * InterpretationType.
+	 * 
+	 * @author konerman
+	 * 
+	 * @return <code>true</code> if the polygon has enough nodes;
+	 *         <code>false</code> otherwise
+	 */
+	public boolean hasEnoughNodes() {
+		return interpreter.minNodes() <= polygon.size();
+	}
+	
+	/**
+	 * Create empty RedoUndo for tests
+	 */
+	public void emptyRedoUndo(){
+		redoUndo = new RedoUndo();
+	}
+	
+	/**
+	 * Pointer of the position of a point in the polygon.
+	 * 
+	 * @author konerman
+	 */
+	public class PointMover {
+		private final int idx;
 
-    /**
-     * Pointer of the position of a point in the polygon.
-     * 
-     * @author konerman
-     */
-    public class PointMover {
-        private final int idx;
+		/**
+		 * Constructs a PointMover for the given index.
+		 * 
+		 * @param idx
+		 *            The index of the point in the polygon
+		 */
+		public PointMover(int idx) {
+			this.idx = idx;
+		}
 
-        /**
-         * Constructs a PointMover for the given index.
-         * 
-         * @param idx
-         *            The index of the point in the polygon
-         */
-        public PointMover(int idx) {
-            this.idx = idx;
-        }
+		/**
+		 * Moves the {@link Point} to the new coordinates and invalidates its
+		 * {@link TouchView} afterwards.
+		 * 
+		 * @author konerman
+		 * 
+		 * @param x
+		 *            the new x-coordinate
+		 * @param y
+		 *            the new y-coordinate
+		 * 
+		 */
+		public void moveTo(float x, float y) {
+			polygon.set(idx, new Point(x, y));
+			postInvalidate();
+		}
 
-        /**
-         * Moves the {@link Point} to the new coordinates and invalidates its
-         * {@link TouchView} afterwards.
-         * 
-         * @author konerman
-         * 
-         * @param x
-         *            the new x-coordinate
-         * @param y
-         *            the new y-coordinate
-         * 
-         */
-        public void moveTo(float x, float y) {
-            polygon.set(idx, new Point(x, y));
-            postInvalidate();
-        }
-    }
+		/**
+		 * Return the current X-Coordinate of the moving Point<br\>
+		 * 
+		 * @return the x-coordinate
+		 * 
+		 * @author vkochno
+		 */
+		public float getX() {
+			return polygon.get(idx).getX();
+		}
+
+		/**
+		 * Return the current Y-Coordinate of the moving Point<br\>
+		 * 
+		 * @return the Y-coordinate
+		 * 
+		 * @author vkochno
+		 */
+		public float getY() {
+			return polygon.get(idx).getY();
+		}
+
+		/**
+		 * return the location in the polygon of the current moved point
+		 * 
+		 * @return location of the point
+		 */
+		public int getIdx() {
+			return this.idx;
+		}
+	}
 }

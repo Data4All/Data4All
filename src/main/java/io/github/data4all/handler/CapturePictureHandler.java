@@ -92,6 +92,8 @@ public class CapturePictureHandler implements PictureCallback {
      * 
      * @param context
      *            The Application context
+     * @param preview
+     *            The Camera Preview           
      */
     public CapturePictureHandler(AbstractActivity context, CameraPreview preview) {
         this.context = context;
@@ -196,7 +198,7 @@ public class CapturePictureHandler implements PictureCallback {
 
         @Override
         protected void onPostExecute(String result) {
-            if (result.equals("successful")) {
+            if ("successful".equals(result)) {
                 Log.d(TAG, "Picture successfully saved");
 
                 final Intent intent = new Intent(context,

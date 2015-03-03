@@ -74,6 +74,7 @@ public class TouchViewTest {
         polygon.add(point2);
         polygon.add(point3);
         polygon.add(point4);
+        touchview.emptyRedoUndo();
     }
 
     @Test
