@@ -51,15 +51,14 @@ public class HorizonCalculationUtil {
         // zero if the general deviceorientation directed to the ground.
         ReturnValues rV = new ReturnValues();
 
-        double pitch = deviceOrientation.getPitch();
-        double roll = deviceOrientation.getRoll();
-
         final double[] vector = new double[3];
         // without any rotation .
         vector[2] = -1;
         vector[1] = 0;
         vector[0] = 0;
         // rotate around X-Achse with pitch.
+        double pitch = deviceOrientation.getPitch();
+        double roll = deviceOrientation.getRoll();
         final double[] vector2 = new double[3];
         vector2[0] = 0;
         vector2[1] = Math.sin(pitch);
@@ -94,8 +93,8 @@ public class HorizonCalculationUtil {
         double rotateVectorLengthMultiplicator = Math
                 .sqrt((vector3[0] * vector3[0]) + (vector3[1] * vector3[1]));
         double[] rotateVector = {
-                (-vector3[1] / rotateVectorLengthMultiplicator),
-                (vector3[0] / rotateVectorLengthMultiplicator) };
+                -vector3[1] / rotateVectorLengthMultiplicator,
+                vector3[0] / rotateVectorLengthMultiplicator, };
         /*
          * rotate the (0|0|-1) vector with the calculated angle and.
          * rotationvector.
@@ -203,23 +202,21 @@ public class HorizonCalculationUtil {
         // counter for the added points.
         int iter = 0;
         // check if horizon is parallel to a side of the display.
-        if (y == 0.0f) {
+        if (Float.floatToRawIntBits(y) == 0) {
             rV.setPoint1(new Point(maxWidth / 2 + x, 0));
             rV.setPoint2(new Point(maxWidth / 2 + x, maxHeight));
-        } else if (x == 0.0f) {
+        } else if (Float.floatToRawIntBits(x) == 0) {
             rV.setPoint1(new Point(0, maxHeight / 2 + y));
             rV.setPoint2(new Point(maxWidth, maxHeight / 2 + y));
         } else {
             // calculade the collision of the horizonline with the displayedges.
-            float xMin = y + x * ((maxWidth / 2 + x) / y) + maxHeight / 2;
-            float xMax = y + x * ((-maxWidth / 2 + x) / y) + maxHeight / 2;
-            float yMin = x - y * ((-maxHeight / 2 - y) / x) + maxWidth / 2;
-            float yMax = x - y * ((maxHeight / 2 - y) / x) + maxWidth / 2;
             // check wich collision is important and add it to the returnvalues.
+            float xMin = y + x * ((maxWidth / 2 + x) / y) + maxHeight / 2;
             if (xMin > 0 && xMin <= maxHeight) {
                 rV.setPoint1(new Point(0, xMin));
                 iter++;
             }
+            float yMin = x - y * ((-maxHeight / 2 - y) / x) + maxWidth / 2;
             if (yMin > 0 && yMin <= maxWidth) {
                 if (iter == 0) {
                     rV.setPoint1(new Point(yMin, 0));
@@ -228,6 +225,7 @@ public class HorizonCalculationUtil {
                 }
                 iter++;
             }
+            float xMax = y + x * ((-maxWidth / 2 + x) / y) + maxHeight / 2;
             if (xMax > 0 && xMax <= maxHeight) {
                 if (iter == 0) {
                     rV.setPoint1(new Point(maxWidth, xMax));
@@ -236,6 +234,7 @@ public class HorizonCalculationUtil {
                 }
                 iter++;
             }
+            float yMax = x - y * ((maxHeight / 2 - y) / x) + maxWidth / 2;
             if (yMax > 0 && yMax <= maxWidth) {
                 if (iter == 0) {
                     rV.setPoint1(new Point(yMax, maxHeight));
