@@ -41,12 +41,12 @@
             style="@style/imageButtonDrawArea"
             android:contentDescription="@string/drawArea"
             android:onClick="onClickArea" />
-
-        <ImageButton
-            android:id="@+id/imageButton4"
-            style="@style/imageButtonDrawBuilding"
-            android:contentDescription="@string/drawBuilding"
-            android:onClick="onClickBuilding" />
+<!--    TODO building is not supported yet -->
+<!--         <ImageButton -->
+<!--             android:id="@+id/imageButton4" -->
+<!--             style="@style/imageButtonDrawBuilding" -->
+<!--             android:contentDescription="@string/drawBuilding" -->
+<!--             android:onClick="onClickBuilding" /> -->
     </LinearLayout>
 
     <ImageButton
