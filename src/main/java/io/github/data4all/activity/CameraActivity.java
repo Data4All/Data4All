@@ -25,7 +25,6 @@ import io.github.data4all.view.CameraPreview;
 
 import java.util.Arrays;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;

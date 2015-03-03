@@ -15,16 +15,17 @@
  */
 package io.github.data4all.activity;
 
+import io.github.data4all.R;
+import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.util.MapUtil;
+
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 
-import io.github.data4all.R;
-import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.util.MapUtil;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
