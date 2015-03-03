@@ -17,6 +17,8 @@ package io.github.data4all.view;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.drawing.Point;
+import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -45,17 +47,15 @@ public class CaptureAssistView extends View {
 	private Paint cameraCrossPaint;
 	private Paint cameraStopPaint;
 	private Paint invalidRegionPaint;
-	private float coordinateLeftX;
-	private float coordinateLeftY;
-	private float coordinateRightX;
-	private float coordinateRightY;
+	private Point coordinateLeft;
+	private Point coordinateRight;
 	private int mMeasuredWidth;
 	private int mMeasuredHeight;
-	private float skylook;
+	private boolean skylook;
 
 	private static final String TAG = CaptureAssistView.class.getSimpleName();
 
-	public CaptureAssistView(Context context) {
+	public CaptureAssistView(Context context) {		
 		super(context);
 		initView();
 	}
@@ -72,7 +72,15 @@ public class CaptureAssistView extends View {
 
 	private void initView() {
 		setFocusable(true);
-
+		
+		Log.d(TAG, "pooint");
+		
+		this.mMeasuredWidth = getMeasuredWidth();
+		this.mMeasuredHeight = getMeasuredHeight();
+		this.coordinateLeft = new Point(0, 0);
+		this.coordinateRight = new Point(0, 0);
+		this.skylook = false;
+		
 		Resources r = this.getResources();
 
 		cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -86,21 +94,21 @@ public class CaptureAssistView extends View {
 
 	}
 
-	public void setInformations(float[] info) {
-		this.mMeasuredWidth = getMeasuredWidth();
-		this.mMeasuredHeight = getMeasuredHeight();
-		this.coordinateLeftX = 0;
-		this.coordinateLeftY = info[0];
-		this.coordinateRightX = mMeasuredWidth;
-		this.coordinateRightY = info[1];
-		this.skylook = info[2];
-
+	public void setInformations(ReturnValues returnValues) {
+		Log.d(TAG, "set informations");		
+		this.coordinateLeft = returnValues.getPoint1();
+		this.coordinateRight = returnValues.getPoint2();
+		this.skylook = returnValues.isSkylook();
+		
+		Log.i(TAG, "DEBUGDEVICE WIDTH  : "+mMeasuredWidth);
+		Log.i(TAG, "DEBUGDEVICE HEIGHT : "+mMeasuredHeight);
+		
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-
-		if (skylook < 1) {
+		Log.d(TAG, "onDrawCalled");
+		if (!skylook) {
 
 			Path path = getPath();
 
@@ -125,9 +133,14 @@ public class CaptureAssistView extends View {
 
 		Path path = new Path();
 		path.moveTo(0, 0);
-		path.lineTo(coordinateLeftX, coordinateLeftY);
-		path.lineTo(coordinateRightX, coordinateRightY);
-		if (coordinateRightX != mMeasuredWidth || coordinateRightY != 0) {
+		Log.i(TAG, "DEBUG LEFT X  : "+coordinateLeft.getX());
+		Log.i(TAG, "DEBUG LEFT Y  : "+coordinateLeft.getY());
+		Log.i(TAG, "DEBUG RIGHT X : "+coordinateRight.getX());
+		Log.i(TAG, "DEBUG RIGHT Y : "+coordinateRight.getY());
+		
+		path.lineTo(coordinateLeft.getX(), coordinateLeft.getY());
+		path.lineTo(coordinateRight.getX(), coordinateRight.getY());
+		if (coordinateRight.getX() != mMeasuredWidth || coordinateRight.getY() != 0) {
 			path.lineTo(mMeasuredWidth, 0);
 		}
 		path.lineTo(0, 0);
