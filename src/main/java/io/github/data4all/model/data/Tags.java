@@ -64,7 +64,7 @@ public final class Tags {
      */
     public static Tag getTagWithId(int id) {
         for (Tag t : TAG_LIST) {
-            if (t.getId() == id || t.getId()+5000 ==id) {
+            if (t.getId() == id ) {
                 return t;
             }
         }
