@@ -138,7 +138,9 @@ public class ResultViewActivity extends AbstractActivity implements
         this.output();
         if(!Tagging.getAllNonSelectedTags(element.getTags(), getIntent().getExtras().getInt("TYPE_DEF")).isEmpty()){
         	final LayoutInflater inflater = getLayoutInflater();
-	        viewFooter = inflater.inflate(R.drawable.footer_listviewresult, null);
+	        viewFooter =((LayoutInflater) this
+	                .getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(
+	                		R.drawable.footer_listviewresult, null, false);
 	        listView.addFooterView(viewFooter);
 	        final TextView tVFooter = ((TextView) viewFooter.findViewById(R.id.titleFooter));
 	        tVFooter.setOnClickListener(this);
