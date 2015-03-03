@@ -55,7 +55,7 @@ public class CaptureAssistView extends View {
 
 	private static final String TAG = CaptureAssistView.class.getSimpleName();
 
-	public CaptureAssistView(Context context) {		
+	public CaptureAssistView(Context context) {
 		super(context);
 		initView();
 	}
@@ -72,14 +72,16 @@ public class CaptureAssistView extends View {
 
 	private void initView() {
 		setFocusable(true);
-		
-		Log.d(TAG, "pooint");
-		
+		Log.d(TAG, "initViewIsCalled");
+
+		// Sorry for this... but have to initialise to some Points.
+		//TODO FIX ME
 		this.mMeasuredWidth = getMeasuredWidth();
 		this.mMeasuredHeight = getMeasuredHeight();
 		this.coordinateLeft = new Point(0, 0);
 		this.coordinateRight = new Point(0, 0);
 		this.skylook = false;
+
 		
 		Resources r = this.getResources();
 
@@ -95,24 +97,34 @@ public class CaptureAssistView extends View {
 	}
 
 	public void setInformations(ReturnValues returnValues) {
-		Log.d(TAG, "set informations");		
+		Log.d(TAG, "set informations");
+		this.mMeasuredWidth = getMeasuredWidth();
+		this.mMeasuredHeight = getMeasuredHeight();
 		this.coordinateLeft = returnValues.getPoint1();
 		this.coordinateRight = returnValues.getPoint2();
 		this.skylook = returnValues.isSkylook();
+
 		
-		Log.i(TAG, "DEBUGDEVICE WIDTH  : "+mMeasuredWidth);
-		Log.i(TAG, "DEBUGDEVICE HEIGHT : "+mMeasuredHeight);
-		
+		//DEBUG
+		Log.i(TAG, "DEBUGDEVICE WIDTH  : " + mMeasuredWidth);
+		Log.i(TAG, "DEBUGDEVICE HEIGHT : " + mMeasuredHeight);
+		Log.i(TAG, "DEBUG LEFT X  : " + coordinateLeft.getX());
+		Log.i(TAG, "DEBUG LEFT Y  : " + coordinateLeft.getY());
+		Log.i(TAG, "DEBUG RIGHT X : " + coordinateRight.getX());
+		Log.i(TAG, "DEBUG RIGHT Y : " + coordinateRight.getY());
+
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		Log.d(TAG, "onDrawCalled");
+
 		if (!skylook) {
 
 			Path path = getPath();
 
 			canvas.drawPath(path, invalidRegionPaint);
+
 		} else {
 			canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
 					mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
@@ -132,17 +144,15 @@ public class CaptureAssistView extends View {
 	private Path getPath() {
 
 		Path path = new Path();
-		path.moveTo(0, 0);
-		Log.i(TAG, "DEBUG LEFT X  : "+coordinateLeft.getX());
-		Log.i(TAG, "DEBUG LEFT Y  : "+coordinateLeft.getY());
-		Log.i(TAG, "DEBUG RIGHT X : "+coordinateRight.getX());
-		Log.i(TAG, "DEBUG RIGHT Y : "+coordinateRight.getY());
-		
-		path.lineTo(coordinateLeft.getX(), coordinateLeft.getY());
-		path.lineTo(coordinateRight.getX(), coordinateRight.getY());
-		if (coordinateRight.getX() != mMeasuredWidth || coordinateRight.getY() != 0) {
-			path.lineTo(mMeasuredWidth, 0);
-		}
+		// Start on left top corner
+		path.moveTo(0, 0);		
+		// draw line to left point
+		path.lineTo(0, coordinateLeft.getY());
+		//draw line to right point
+		path.lineTo(mMeasuredWidth, coordinateRight.getY());
+		//draw line to right top corner
+		path.lineTo(mMeasuredWidth, 0);
+		//close draw to left top corner
 		path.lineTo(0, 0);
 		return path;
 

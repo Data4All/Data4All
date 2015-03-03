@@ -324,8 +324,7 @@ public class CameraActivity extends AbstractActivity {
 					maxPitch, maxRoll, pictureSize.width, pictureSize.height,
 					85, orientationListener.getDeviceOrientation());
 
-		}
-		Log.d(TAG, "found "+returnValues.getPoint1().toString());
+		}	
 		cameraAssistView.setInformations(returnValues);
 		cameraAssistView.invalidate();
 
