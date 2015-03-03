@@ -186,7 +186,7 @@ public class UploadActivity extends AbstractActivity {
      * @param v
      *            The view which was clicked
      */
-    public void onClickCancle(View v) {
+    public void onClickCancel(View v) {
         if (v.getId() == R.id.upload_cancle_button) {
             final Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.ACTION, UploadService.CANCLE);
