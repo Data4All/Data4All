@@ -129,7 +129,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
-        ;
         alertDialog.setCustomTitle(view);
         final ImageButton speechStart = (ImageButton) view
                 .findViewById(R.id.speech);
@@ -182,7 +181,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
-        ;
         alertDialogBuilder.setCustomTitle(view);
         alertDialogBuilder.setItems(array,
                 new DialogInterface.OnClickListener() {

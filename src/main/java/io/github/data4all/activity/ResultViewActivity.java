@@ -44,6 +44,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +56,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * View after Drawing and Tagging
@@ -104,6 +106,8 @@ public class ResultViewActivity extends AbstractActivity implements
     private Map<String, Tag> mapTag;
     // The Map with the String and ClassifiedValue
     private Map<String, ClassifiedValue> classifiedMap;
+    
+    private View viewFooter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,8 +134,15 @@ public class ResultViewActivity extends AbstractActivity implements
         tagMap =
                 Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
                         res);
-        mapTag = Tagging.getUnclassifiedMapKeys(element.getTags(), res);
+        mapTag = Tagging.getUnclassifiedMapKeys(res);
         this.output();
+        if(!Tagging.getAllNonSelectedTags(element.getTags()).isEmpty()){
+        	final LayoutInflater inflater = getLayoutInflater();
+	        viewFooter = inflater.inflate(R.drawable.footer_listviewresult, null);
+	        listView.addFooterView(viewFooter);
+	        final TextView tVFooter = ((TextView) viewFooter.findViewById(R.id.titleFooter));
+	        tVFooter.setOnClickListener(this);
+        }
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     final int position, long id) {
@@ -207,7 +218,7 @@ public class ResultViewActivity extends AbstractActivity implements
             }
 
         }
-
+        	
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
     }
 
@@ -273,10 +284,19 @@ public class ResultViewActivity extends AbstractActivity implements
         okay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                element.addOrUpdateTag(mapTag.get(selectedString), text
+            	if(text.getText().toString().matches("")){
+            		ResultViewActivity.this.output();
+            		dialog.dismiss();
+            	}else {
+            		element.addOrUpdateTag(mapTag.get(selectedString), text
                         .getText().toString());
-                ResultViewActivity.this.output();
-                dialog.dismiss();
+            		ResultViewActivity.this.output();
+            		// checks if you can add more Tags if not it removes footer
+            		if(Tagging.getAllNonSelectedTags(element.getTags()).isEmpty()){
+            			listView.removeFooterView(viewFooter);
+            		}
+            		dialog.dismiss();
+            	}
             }
         });
         dialog.show();
@@ -284,7 +304,8 @@ public class ResultViewActivity extends AbstractActivity implements
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.buttonResult) {
+    	 switch (v.getId()) {
+    	 case R.id.buttonResult:
             this.addOsmElementToDB(element);
             final AlertDialog.Builder builder =
                     new AlertDialog.Builder(ResultViewActivity.this);
@@ -305,10 +326,47 @@ public class ResultViewActivity extends AbstractActivity implements
                     });
             alert = builder.create();
             alert.show();
-        } else if (v.getId() == R.id.buttonResultToCamera) {
+            break;
+    	 case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
             finishWorkflow();
-        }
+            break;
+    	 case R.id.titleFooter:
+    		 createDialogAddTags();
+    		 break;
+    	 default:
+    		 break;
+    	}
+    }
+    
+    /**
+     * creates the Dialog with the List of all unclassified Tags
+     * which are not used.
+     * 
+     */
+    private void createDialogAddTags(){
+    	 final AlertDialog.Builder alertDialog =
+                 new AlertDialog.Builder(ResultViewActivity.this,
+                         android.R.style.Theme_Holo_Dialog_MinWidth);
+         final List <Tag> list = Tagging.getAllNonSelectedTags(element.getTags());
+         final String [] listString;
+         listString = Tagging.TagsToStringRes(list, res); 
+         alertDialog.setItems(listString, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.i(TAG, listString [which]);
+				changeUnclassifiedTag(listString [which]);
+				alert.dismiss();
+			}
+		});
+         list.clear();
+         alert = alertDialog.create();
+         alert.getWindow().setBackgroundDrawable(
+                 new ColorDrawable(android.graphics.Color.TRANSPARENT));
+         alert.show();
+
+         
     }
 
     /**

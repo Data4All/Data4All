@@ -22,6 +22,7 @@ import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,8 +50,6 @@ public class Tagging {
 
     /**
      * 
-     * 
-     * 
      * @return the Keys of Tags
      */
     public static List<Tag> getKeys(int type) {
@@ -62,11 +61,17 @@ public class Tagging {
         case 3:
             return Tags.getAllAreaTags();
         case 4:
-            return Tags.getAllAreaTags();
+            return Tags.getAllBuildingTags();
         }
         return null;
     }
-
+    /**
+     * Gives a list of translated Classified Tags
+     * 
+     * @param type is the Type for Area,Node,Way,Building
+     * @param res The Ressource
+     * @return The String Array with the right ressource name
+     */
     public static String[] getArrayKeys(int type, Resources res) {
         List<Tag> tags = getKeys(type);
 
@@ -76,7 +81,12 @@ public class Tagging {
         }
         return array;
     }
-
+    /**
+     * 
+     * @param type is the Type for Area,Node,Way,Building
+     * @param res The Ressource
+     * @return A Map with the translated Tags and the Tag
+     */
     public static Map<String, ClassifiedTag> getMapKeys(int type, Resources res) {
         final Map<String, ClassifiedTag> map = new HashMap<String, ClassifiedTag>();
         for (int i = 0; i < getKeys(type).size(); i++) {
@@ -85,19 +95,31 @@ public class Tagging {
         }
         return map;
     }
-
+    /**
+     * Get a Map with all UnclassifiedTags with their Strings
+     * 
+     * @param res The Ressource
+     * @return a Map with the unclassifiedMaps and their translated String
+     */
     public static Map<String, Tag> getUnclassifiedMapKeys(
-            Map<Tag, String> tagMap, Resources res) {
-        final Map<String, Tag> map = new HashMap<String, Tag>();
-        for (Entry entry : tagMap.entrySet()) {
-
-            final Tag tagKey = (Tag) entry.getKey();
-            Log.i(TAG, "bla" + tagKey.getKey());
-            map.put(res.getString(tagKey.getNameRessource()), tagKey);
-        }
+             Resources res) {
+        final Map<String, Tag> map = new LinkedHashMap<String, Tag>();
+        final List <Tag> list = new ArrayList<Tag>();
+        list.addAll(Tags.getAllAddressTags());
+        list.addAll(Tags.getAllContactTags());
+        for (Tag tag : list) {
+			map.put(res.getString(tag.getNameRessource()), tag);
+		}
         return map;
     }
 
+    /**
+     * Gives all the Address to the Hashmap for the Element
+     * 
+     * @param addressTags the List of String
+     * @param map
+     * @return
+     */
     public static Map<Tag, String> addressToTag(List<String> addressTags,
             Map<Tag, String> map) {
         ArrayList<Tag> tag;
@@ -167,6 +189,30 @@ public class Tagging {
             listValue[i] = res.getString(list.get(i).getNameRessource());
         }
         return listValue;
+    }
+    
+    
+    public static List <Tag> getAllNonSelectedTags(Map <Tag, String> map){
+    	List <Tag> tagList = new ArrayList<Tag>();
+    	tagList.addAll(Tags.getAllAddressTags());
+		tagList.addAll(Tags.getAllContactTags());
+		for (Entry entry : map.entrySet()) {
+            Tag tag = (Tag) entry.getKey();
+            if(tagList.contains(tag)){
+            	tagList.remove(tag);
+            }
+        }
+		Log.i(TAG, tagList.toString());
+		return tagList;
+    	
+    }
+    public static String [] TagsToStringRes (List<Tag> list, Resources res){
+    	 String[] resList = new String[list.size()];
+    	for (int i = 0; i < list.size(); i++) {
+			resList [i] = res.getString(list.get(i).getNameRessource());
+		}
+		return resList;
+    	
     }
 
 }
