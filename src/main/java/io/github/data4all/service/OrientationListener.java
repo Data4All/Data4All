@@ -26,6 +26,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.IBinder;
 
 /**
@@ -37,6 +38,12 @@ import android.os.IBinder;
  * 
  */
 public class OrientationListener extends Service implements SensorEventListener {
+
+    private final IBinder mBinder = new LocalBinder();
+
+    private HorizonListener horizonListener;
+    
+    private DeviceOrientation deviceOrientation;
 
     /** sensor accelerometer. */
     private Sensor accelerometer;
@@ -123,6 +130,7 @@ public class OrientationListener extends Service implements SensorEventListener 
         // when the 2 Sensors data are available
         if (mGravity != null && mGeomagnetic != null) {
 
+            // Log.d("TEST", "Test ");
             final boolean success = SensorManager.getRotationMatrix(mR, mI,
                     mGravity, mGeomagnetic);
 
@@ -133,9 +141,14 @@ public class OrientationListener extends Service implements SensorEventListener 
                         "Orientation " + Math.toDegrees(orientation[0]) + " ; "
                                 + Math.toDegrees(orientation[1]) + " ; "
                                 + Math.toDegrees(orientation[2]));
-                Optimizer.putPos(new DeviceOrientation(orientation[0],
+                deviceOrientation = new DeviceOrientation(orientation[0],
                         orientation[1], orientation[LAST_INDEX], System
-                                .currentTimeMillis()));
+                        .currentTimeMillis());
+                Optimizer.putPos(deviceOrientation);
+
+                if (horizonListener.getClass() != null) {
+                    horizonListener.makeHorizon(true);
+                }
             }
         }
 
@@ -164,6 +177,12 @@ public class OrientationListener extends Service implements SensorEventListener 
 
     }
 
+    public class LocalBinder extends Binder {
+        public OrientationListener getService() {
+            return OrientationListener.this;
+        }
+    }
+
     /*
      * (non-Javadoc) description
      * 
@@ -171,6 +190,40 @@ public class OrientationListener extends Service implements SensorEventListener 
      */
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
+
+    /**
+     * A
+     * 
+     * @author tbrose
+     */
+    public interface HorizonListener {
+        /**
+         * Draws a new Horizon.
+         * 
+         * @param state
+         *            The current undo state
+         */
+        void makeHorizon(boolean state);
+    }
+
+    public HorizonListener getHorizonListener() {
+        return horizonListener;
+    }
+
+    public void setHorizonListener(HorizonListener horizonListener) {
+        this.horizonListener = horizonListener;
+    }
+
+    public DeviceOrientation getDeviceOrientation() {
+        return deviceOrientation;
+    }
+
+    public void setDeviceOrientation(DeviceOrientation deviceOrientation) {
+        this.deviceOrientation = deviceOrientation;
+    }
+    
+    
+
 }
