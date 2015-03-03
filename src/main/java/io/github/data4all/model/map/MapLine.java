@@ -16,11 +16,16 @@
 package io.github.data4all.model.map;
 
 import io.github.data4all.activity.AbstractActivity;
+import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.Polyline;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 
 /**
  * With LongClick deletable Polyline.
@@ -30,6 +35,7 @@ import org.osmdroid.bonuspack.overlays.Polyline;
  */
 public class MapLine extends Polyline {
 
+    private static final String TAG = "MapLine";
     private AbstractDataElement element;
     private AbstractActivity activity;
     private D4AMapView mapView;
@@ -51,53 +57,38 @@ public class MapLine extends Polyline {
         this.element = ele;
         this.activity = ctx;
         this.mapView = mv;
-        mInfoWindow = new CustomInfoWindow(this.mapView, ele, this);
-
+        if (activity instanceof MapViewActivity) {
+            mInfoWindow = new CustomInfoWindow(this.mapView, ele, this,
+                    activity);
+        } else {
+            mInfoWindow = null;
+        }
+        setInfo();
     }
-//
-//    /*
-//     * (non-Javadoc)
-//     * 
-//     * @see
-//     * org.osmdroid.views.overlay.Overlay#onLongPress(android.view.MotionEvent,
-//     * org.osmdroid.views.MapView)
-//     */
-//    @Override
-//    public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-//        if (activity instanceof MapViewActivity) {
-//            final AlertDialog.Builder builder = new AlertDialog.Builder(
-//                    mapView.getContext());
-//            builder.setMessage(activity.getString(R.string.deleteDialog))
-//                    .setPositiveButton(activity.getString(R.string.yes), this)
-//                    .setNegativeButton(activity.getString(R.string.no), this)
-//                    .show();
-//        }
-//        return true;
-//
-//    }
-//
-//    /*
-//     * (non-Javadoc)
-//     * 
-//     * @see
-//     * android.content.DialogInterface.OnClickListener#onClick(android.content
-//     * .DialogInterface, int)
-//     */
-//    @Override
-//    public void onClick(DialogInterface dialog, int which) {
-//        switch (which) {
-//        case DialogInterface.BUTTON_POSITIVE:
-//            // Yes button clicked
-//            mapView.removeOverlayFromMap(this);
-//            final DataBaseHandler db = new DataBaseHandler(activity);
-//            db.deleteDataElement(element);
-//            db.close();
-//            break;
-//        case DialogInterface.BUTTON_NEGATIVE:
-//            // No button clicked
-//            break;
-//        default:
-//            break;
-//        }
-//    }
+
+    public void setInfo() {
+
+        if (!element.getTags().keySet().isEmpty()
+                && !element.getTags().values().isEmpty()) {
+            Log.i(TAG, element.getTags().toString());
+            Tag tag = (Tag) element.getTags().keySet().toArray()[0];
+            Log.i(TAG, tag.toString());
+            setTitle(activity.getString(tag.getNameRessource()));
+            setSubDescription(getLocalizedName(activity, element.getTags().get(tag)));
+           // Log.i(TAG, getSubDescription());
+        }
+    }
+
+    public String getLocalizedName(Context context, String key) {
+        Resources resources = context.getResources();
+        int id = resources.getIdentifier("name_" + key.replace(":", "_"),
+                "string", context.getPackageName());
+
+        if (id == 0) {
+            return null;
+        } else {
+            return resources.getString(id);
+        }
+    }
+
 }

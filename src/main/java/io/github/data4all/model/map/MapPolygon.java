@@ -15,11 +15,18 @@
  */
 package io.github.data4all.model.map;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Tag;
+import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
@@ -39,6 +46,7 @@ import android.view.MotionEvent;
  */
 public class MapPolygon extends Polygon {
 
+    private static final String TAG = "MapPolygon";
     private AbstractActivity activity;
     private D4AMapView mapView;
     private AbstractDataElement element;
@@ -61,8 +69,52 @@ public class MapPolygon extends Polygon {
         this.element = ele;
         this.activity = ctx;
         this.mapView = mv;
-        final int layoutid = R.layout.bonuspack_bubble;
-        mInfoWindow = new CustomInfoWindow(this.mapView, ele, this);
+        if(activity instanceof MapViewActivity){
+            mInfoWindow = new CustomInfoWindow(this.mapView, ele, this, activity);
+        }else {
+            mInfoWindow = null;
+        }
+        setInfo();
+    }
+    
+    public void setInfo() {
+        ArrayList<String> endList = new ArrayList<String>();
+        ArrayList<String> keyList = new ArrayList<String>();
+        final List<Tag> tagList = new ArrayList<Tag>();
+        for (Entry entry : element.getTags().entrySet()) {
+            final Tag tagKey = (Tag) entry.getKey();
+            tagList.add(tagKey);
+            Log.i(TAG, tagKey.getKey());
+            keyList.add(activity.getResources().getString(
+                    tagKey.getNameRessource()));
+            if (Tagging.isClassifiedTag(
+                    activity.getString(tagKey.getNameRessource()),
+                    activity.getResources())) {
+                try {
+                    endList.add(activity.getString((Integer) R.string.class
+                            .getDeclaredField(
+                                    "name_"
+                                            + tagKey.getKey()
+                                            + "_"
+                                            + element.getTags().get(tagKey)
+                                                    .replaceAll(":", "_")).get(
+                                    null)));
+                } catch (IllegalArgumentException e) {
+                    Log.e(TAG, "", e);
+                } catch (IllegalAccessException e) {
+                    Log.e(TAG, "", e);
+                } catch (NoSuchFieldException e) {
+                    Log.e(TAG, "", e);
+                }
+            } else {
+                endList.add(element.getTags().get(tagKey));
+            }
+        }
+        
+        if(!endList.isEmpty() && !keyList.isEmpty()){
+            setTitle(keyList.get(0));
+            setSubDescription(endList.get(0));
+        }
     }
 
     // /*

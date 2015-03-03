@@ -29,6 +29,10 @@
     <string name="drawBuilding">Zeichne ein Gebäude </string>
     <string name="redo">Wiederherstellen</string>
     <string name="undo">Rückgängig machen</string>
+    
+    <!-- infoBubble -->
+    <string name="delete">Löschen</string>
+    <string name="edit">Bearbeiten</string>   
 
     <!-- dialogs -->
     <string name="deleteDialog">Wollen Sie dieses Objekt wirklich löschen?</string>
