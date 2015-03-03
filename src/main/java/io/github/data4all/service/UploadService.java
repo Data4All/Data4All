@@ -15,10 +15,17 @@
  */
 package io.github.data4all.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.User;
+import io.github.data4all.task.TrackParserTask;
+import io.github.data4all.task.UploadGpsTracks;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
 import io.github.data4all.util.upload.ChangesetUtil;
@@ -30,6 +37,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.Notification.Builder;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
@@ -127,7 +135,23 @@ public class UploadService extends IntentService {
             db.close();
 
             this.uploadElems(receiver, user);
+            this.uploadGpsTracks(user);
             stopNext = false;
+        }
+    }
+
+    private void uploadGpsTracks(User user) {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<Track> gpsTracks = db.getAllGPSTracks();
+        db.close();
+        for (Track t : gpsTracks) {
+            TrackParserTask trackParser = new TrackParserTask(this, t);
+            trackParser.parseTrack(this, t);
+            final String fileName = t.getTrackName() +".gpx";
+            final File file = new File(fileName); 
+            UploadGpsTracks trackUpload = new UploadGpsTracks(this, user, file, "blubb", "blaah", "true");
+            Log.d(TAG, "Uploading GPS Track: " +fileName);
+            trackUpload.execute();
         }
     }
 
@@ -155,7 +179,7 @@ public class UploadService extends IntentService {
             String changesetXml = null;
             if (!stopNext) {
                 changesetXml = ChangesetUtil.getChangesetXml(this, requestId);
-                Log.d(TAG, changesetXml.replaceAll("\n", ""));   
+                Log.d(TAG, changesetXml.replaceAll("\n", ""));
             }
             if (!stopNext) {
                 // Upload the changeset
@@ -166,6 +190,7 @@ public class UploadService extends IntentService {
                                 new MyCallback(receiver));
                 this.currentConnection = upload;
                 upload.upload();
+
             }
             if (!stopNext) {
                 // Close the changeset

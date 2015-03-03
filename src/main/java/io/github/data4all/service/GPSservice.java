@@ -63,14 +63,14 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate()");
-        dbHandler = new DataBaseHandler(this.getApplicationContext());
+        this.dbHandler = new DataBaseHandler(this.getApplicationContext());
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
         final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
-        // dbHandler.createTrack(track);
+        dbHandler.createGPSTrack(new Track());
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -143,6 +143,7 @@ public class GPSservice extends Service implements LocationListener {
                 // After ten trackpoints updateDatabase
                 if ((track.getTrackPoints().size() % 10) == 0) {
                     // dbHandler.updateTrack(track);
+                    dbHandler.updateGPSTrack(track);
                 }
             }
         }
