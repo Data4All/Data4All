@@ -108,10 +108,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        final int width = resolveSize(getSuggestedMinimumWidth(),
-                widthMeasureSpec);
-        final int height = resolveSize(getSuggestedMinimumHeight(),
-                heightMeasureSpec);
+        final int width =
+                resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+        final int height =
+                resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
 
         setMeasuredDimension(width, height);
 
@@ -121,8 +121,9 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         }
 
         if (mSupportedPreviewSizes != null) {
-            mPreviewSize = this.getOptimalPreviewSize(mSupportedPreviewSizes,
-                    containerWidth, containerHeight);
+            mPreviewSize =
+                    this.getOptimalPreviewSize(mSupportedPreviewSizes,
+                            containerWidth, containerHeight);
         }
 
     }
@@ -150,15 +151,15 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         if (mCamera != null) {
 
             // get a group of supported preview size
-            mSupportedPreviewSizes = mCamera.getParameters()
-                    .getSupportedPreviewSizes();
+            mSupportedPreviewSizes =
+                    mCamera.getParameters().getSupportedPreviewSizes();
 
-            mSupportedPictureSizes = mCamera.getParameters()
-                    .getSupportedPictureSizes();
+            mSupportedPictureSizes =
+                    mCamera.getParameters().getSupportedPictureSizes();
             mSupportedPictureSizes.remove(3);
 
-            mSupportedFlashModes = mCamera.getParameters()
-                    .getSupportedFlashModes();
+            mSupportedFlashModes =
+                    mCamera.getParameters().getSupportedFlashModes();
 
             requestLayout();
         }
@@ -189,16 +190,18 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                             + size.width);
                 }
 
-                mPreviewSize = getOptimalSize(mSupportedPreviewSizes,
-                        mPreviewWidth, mPreviewHeight);
+                mPreviewSize =
+                        getOptimalSize(mSupportedPreviewSizes, mPreviewWidth,
+                                mPreviewHeight);
 
                 Log.v("PREF_PREVIEW_SIZE", "h: " + mPreviewSize.height + " w: "
                         + mPreviewSize.width);
 
                 params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 
-                mPhotoSize = getOptimalSize(mSupportedPictureSizes,
-                        mPreviewWidth, mPreviewHeight);
+                mPhotoSize =
+                        getOptimalSize(mSupportedPictureSizes, mPreviewWidth,
+                                mPreviewHeight);
 
                 Log.v("PREF_PICTURE_SIZE", "h: " + mPhotoSize.height + " w: "
                         + mPhotoSize.width);
@@ -246,16 +249,14 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         Log.d(TAG, "surfaceChanged is called");
 
-        mCamera.stopPreview();
-
         if (mCamera == null) {
             Log.e(TAG, " mCamera is null");
             return;
+        } else {
+            mCamera.stopPreview();
+            this.setCameraDisplayOrientation();
+            mCamera.startPreview();
         }
-
-        this.setCameraDisplayOrientation();
-
-        mCamera.startPreview();
 
     }
 
@@ -332,10 +333,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
             minDiff = Double.MAX_VALUE;
             for (Size size : sizes) {
                 double hDiff = size.height - h;
-                double wDiff = size.width - w; 
+                double wDiff = size.width - w;
                 if (hDiff >= 0 && wDiff >= 0) {
                     double currDiff = (Math.abs(hDiff) + Math.abs(wDiff)) / 2;
-                    if(minDiff - currDiff > 0) {
+                    if (minDiff - currDiff > 0) {
                         optimalSize = size;
                         minDiff = currDiff;
                     }
