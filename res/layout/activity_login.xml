@@ -2,15 +2,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone" />
-
     <TextView
         android:id="@+id/osm_desc"
         android:layout_width="wrap_content"
@@ -37,6 +28,8 @@
             android:ems="10"
             android:hint="@string/usernameHint"
             android:padding="10dp"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/osm_pass"
             android:textColorHint="#cccccc" />
 
         <EditText
@@ -84,5 +77,14 @@
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/osmLogo"
         android:src="@drawable/osm_logo" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

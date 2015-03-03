@@ -16,6 +16,7 @@
 package io.github.data4all.util;
 
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.drawing.Point;
 
 /**
  * This class calculates the horizon for the display of the device.
@@ -42,17 +43,15 @@ public class HorizonCalculationUtil {
      *            the degree of the horizon in radian
      * @param deviceOrientationobject
      *            of DeviceOrientation
-     * @return floatarray return[0] pixel for the xAxis return[1] pixel for the
-     *         yAxis return[2] 0 if the general direction of the device is under
-     *         the horizon 1 if the direction is above the horizon
+     * @return object of the inner class returnValues
      */
-    public float[] calcHorizontalPoints(float maxPitch, float maxRoll,
+    public returnValues calcHorizontalPoints(float maxPitch, float maxRoll,
             float maxWidth, float maxHeight, float maxhorizon,
             DeviceOrientation deviceOrientation) {
         // zero if the general deviceorientation directed to the ground.
-        float skylook = 0;
+        returnValues rV = new returnValues();
 
-        double pitch = -deviceOrientation.getPitch();
+        double pitch = deviceOrientation.getPitch();
         double roll = deviceOrientation.getRoll();
 
         final double[] vector = new double[3];
@@ -86,7 +85,7 @@ public class HorizonCalculationUtil {
         final double angle = maxhorizon - Math.acos(-vector3[2]);
         // check if the device is looking above the horizon
         if (angle <= 0) {
-            skylook = 1;
+            rV.setSkylook(true);
         }
         /*
          * calculate a roatationvector vertical to vector3with the length of 1
@@ -97,23 +96,23 @@ public class HorizonCalculationUtil {
         double[] rotateVector = {
                 (-vector3[1] / rotateVectorLengthMultiplicator),
                 (vector3[0] / rotateVectorLengthMultiplicator) };
-        // rotate the (0|0|-1) vector with the calculated angle and
-        // rotationvector.
+        /*
+         * rotate the (0|0|-1) vector with the calculated angle and.
+         * rotationvector.
+         */
         final double[] vector4 = new double[3];
         vector4[0] = (rotateVector[1] * Math.sin(angle));
-        vector4[1] = -(rotateVector[0] * Math.sin(angle));
+        vector4[1] = (rotateVector[0] * Math.sin(angle));
         vector4[2] = Math.cos(angle);
 
-        // calculate the pitch- and roll-angles
-        double horizonPitch = Math.atan(vector4[1] / (-vector[2]));
-        double horizonRoll = Math.atan(vector4[0] / (-vector[2]));
-
-        float[] point = {
-                this.calculatePixelFromAngle(horizonPitch, maxWidth, maxPitch),
-                this.calculatePixelFromAngle(horizonRoll, maxHeight, maxRoll),
-                skylook };
-
-        return point;
+        // calculate the pitch- and roll-angles.
+        double horizonPitch = Math.atan(vector4[1] / (vector[2]));
+        double horizonRoll = Math.atan(vector4[0] / (vector[2]));
+        // calculate a point on the horizont vertical to the mid of the display.
+        float x = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
+        float y = calculatePixelFromAngle(horizonPitch, maxHeight, maxPitch);
+        // calculate and return the returnValues.
+        return calculatePoints(maxWidth, maxHeight, x, y, rV);
     }
 
     /**
@@ -127,11 +126,130 @@ public class HorizonCalculationUtil {
      */
     private float calculatePixelFromAngle(double angle, double width,
             double maxAngle) {
-        double mid = width / 2;
-        double angle2 = maxAngle / 2;
-        final double a = Math.tan(angle2);
-        double b = Math.tan(angle);
-        return (float) ((b / a) * mid + mid);
+        final double adjacent = (width / 2) / Math.tan(maxAngle / 2);
+        return (float) (Math.tan(angle) * adjacent);
+    }
+
+    /**
+     * An inner Class for saving points, the visibility of the horizon and if
+     * more then 50% of the display is above the horizon
+     */
+    public class returnValues {
+        /**
+         * first point on the edge of the display representing the horizon
+         */
+        Point point1 = null;
+        /**
+         * second point on the edge of the display representing the horizon
+         */
+        Point point2 = null;
+        /**
+         * true if more than 50% of the display is above the horizon
+         */
+        boolean skylook = false;
+        /**
+         * false if the horzion is not visible on the display
+         */
+        boolean visible = true;
+
+        public Point getPoint1() {
+            return point1;
+        }
+
+        public void setPoint1(Point point1) {
+            this.point1 = point1;
+        }
+
+        public Point getPoint2() {
+            return point2;
+        }
+
+        public void setPoint2(Point point2) {
+            this.point2 = point2;
+        }
+
+        public boolean isSkylook() {
+            return skylook;
+        }
+
+        public void setSkylook(boolean skylook) {
+            this.skylook = skylook;
+        }
+
+        public boolean isVisible() {
+            return visible;
+        }
+
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+        }
+    }
+
+    /**
+     * @param maxWidth
+     *            maxWidth in pixel of the devicedisplay
+     * @param maxHeight
+     *            maxHeight in pixel of the devicedisplay
+     * @param x
+     *            x-value of Point on horizon
+     * @param y
+     *            y-value of Point on horizon
+     * @param rV
+     *            object of returnValues to return the calculations
+     * @return object of returnValues
+     */
+    private returnValues calculatePoints(float maxWidth, float maxHeight,
+            float x, float y, returnValues rV) {
+        // counter for the added points.
+        int iter = 0;
+        // check if horizon is parallel to a side of the display.
+        if (y == 0) {
+            rV.setPoint1(new Point((maxWidth / 2 + x), 0));
+            rV.setPoint2(new Point((maxWidth / 2 + x), maxHeight));
+        } else if (x == 0) {
+            rV.setPoint1(new Point(0, (maxHeight / 2 + y)));
+            rV.setPoint2(new Point(maxWidth, (maxHeight / 2 + y)));
+        } else {
+            // calculade the collision of the horizonline with the displayedges.
+            float xMin = y + x * (((maxWidth / 2) + x) / y) + (maxHeight / 2);
+            float xMax = y + x * (((-maxWidth / 2) + x) / y) + (maxHeight / 2);
+            float yMin = x - y * (((-maxHeight / 2) - y) / x) + (maxWidth / 2);
+            float yMax = x - y * (((maxHeight / 2) - y) / x) + (maxWidth / 2);
+            // check wich collision is important and add it to the returnvalues.
+            if (xMin > 0 && xMin <= maxHeight) {
+                rV.setPoint1(new Point(0, xMin));
+                iter++;
+            }
+            if (yMin > 0 && yMin <= maxWidth) {
+                if (iter == 0) {
+                    rV.setPoint1(new Point(yMin, 0));
+                } else {
+                    rV.setPoint2(new Point(yMin, 0));
+                }
+                iter++;
+            }
+            if (xMax > 0 && xMax <= maxHeight) {
+                if (iter == 0) {
+                    rV.setPoint1(new Point(maxWidth, xMax));
+                } else {
+                    rV.setPoint2(new Point(maxWidth, xMax));
+                }
+                iter++;
+            }
+            if (yMax > 0 && yMax <= maxWidth) {
+                if (iter == 0) {
+                    rV.setPoint1(new Point(yMax, maxHeight));
+                } else {
+                    rV.setPoint2(new Point(yMax, maxHeight));
+                }
+                iter++;
+            }
+            // check if more or less then 2 points have been added.
+            if (iter != 2) {
+                rV.setVisible(false);
+            }
+        }
+        return rV;
     }
 
 }

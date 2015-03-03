@@ -45,7 +45,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Activity to set a ImageView and use the TouchView to draw.<br\>
@@ -152,14 +151,16 @@ public class ShowPictureActivity extends AbstractActivity {
         }
 
         if (getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
-            transformBean = getIntent().getExtras().getParcelable(
-                    CapturePictureHandler.TRANSFORM_BEAN);
+            transformBean =
+                    getIntent().getExtras().getParcelable(
+                            CapturePictureHandler.TRANSFORM_BEAN);
             intent.putExtra(LOCATION, transformBean.getLocation());
         }
 
         if (getIntent().hasExtra(CapturePictureHandler.CURRENT_ORIENTATION)) {
-            currentOrientation = getIntent().getExtras().getParcelable(
-                    CapturePictureHandler.CURRENT_ORIENTATION);
+            currentOrientation =
+                    getIntent().getExtras().getParcelable(
+                            CapturePictureHandler.CURRENT_ORIENTATION);
         }
 
         // Set the display size as photo size to get a coordinate system for the
@@ -177,7 +178,7 @@ public class ShowPictureActivity extends AbstractActivity {
         this.onClickArea(null);
 
         // Setup the rotation listener
-        List<View> buttons = new ArrayList<View>();
+        final List<View> buttons = new ArrayList<View>();
         buttons.add(redo);
         buttons.add(undo);
         buttons.add(findViewById(R.id.imageButton1));
@@ -211,26 +212,19 @@ public class ShowPictureActivity extends AbstractActivity {
      *            current view used this method
      */
     public void onClickOkay(View view) {
-            //check if we have a location first
-        if (transformBean.getLocation() == null) {
-            final String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            // 0 or Rotation0 if portrait
-            // 90 or Rotation1 if home-button to the right
-            // 270 or Rotation3 if home-button to the left
-            final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                    .getDefaultDisplay().getRotation();
+        // 0 or Rotation0 if portrait
+        // 90 or Rotation1 if home-button to the right
+        // 270 or Rotation3 if home-button to the left
+        final int rotation =
+                ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                        .getDefaultDisplay().getRotation();
 
-            // create an abstract data element from the given data and pass it
-            // to
-            // the next
-            // activity
-            final AbstractDataElement osmElement = touchView.create(rotation);
-            intent.putExtra(OSM_ELEMENT, osmElement);
-            startActivity(intent);
-        }
+        // create an abstract data element from the given data and pass it to
+        // the next
+        // activity
+        final AbstractDataElement osmElement = touchView.create(rotation);
+        intent.putExtra(OSM_ELEMENT, osmElement);
+        startActivityForResult(intent);
     }
 
     /**
@@ -257,6 +251,18 @@ public class ShowPictureActivity extends AbstractActivity {
         touchView.setInterpretationType(TouchView.InterpretationType.WAY);
         touchView.invalidate();
         intent.putExtra(TYPE, WAY);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow();
     }
 
     /**
@@ -315,29 +321,30 @@ public class ShowPictureActivity extends AbstractActivity {
      */
     private void setBackground(File file) {
         try {
-            Uri uri = Uri.fromFile(file);
-            imageView.setImageBitmap(loadFromCamera(uri));
+            final Uri uri = Uri.fromFile(file);
+            imageView.setImageBitmap(this.loadFromCamera(uri));
         } catch (IOException e) {
             Log.e(TAG, "Error while setBackground(File)", e);
         }
     }
 
     private Bitmap loadFromCamera(Uri photoUri) throws IOException {
-        AssetFileDescriptor fileDescriptor = getContentResolver()
-                .openAssetFileDescriptor(photoUri, "r");
+        final AssetFileDescriptor fileDescriptor =
+                getContentResolver().openAssetFileDescriptor(photoUri, "r");
 
-        Bitmap photo = BitmapFactory.decodeFileDescriptor(
-                fileDescriptor.getFileDescriptor(), null, null);
+        final Bitmap photo =
+                BitmapFactory.decodeFileDescriptor(
+                        fileDescriptor.getFileDescriptor(), null, null);
         if (photo != null) {
-            return scaleAndRotate(photo);
+            return this.scaleAndRotate(photo);
         } else {
             return null;
         }
     }
 
     private Bitmap scaleAndRotate(Bitmap bitmap) {
-        Matrix matrix = new Matrix();
-        double scrAR = getScreenRation();
+        final Matrix matrix = new Matrix();
+        final double scrAR = this.getScreenRation();
 
         // Setup the default 'createBitmap' parameters
         int height = bitmap.getHeight();
@@ -350,30 +357,30 @@ public class ShowPictureActivity extends AbstractActivity {
 
         if (height < width) {
             matrix.postRotate(90);
-            double picAR = width / height;
+            final double picAR = width / height;
 
             if (scrAR - picAR > 0.1) {
                 // Reduce the height of the image
-                int newHeight = (int) (width / scrAR);
+                final int newHeight = (int) (width / scrAR);
                 y = (height - newHeight) / 2;
                 height = newHeight;
             } else if (picAR - scrAR > 0.1) {
                 // Reduce the width of the image
-                int newWidth = (int) (height / scrAR);
+                final int newWidth = (int) (height / scrAR);
                 x = (width - newWidth) / 2;
                 width = newWidth;
             }
         } else {
-            double picAR = height / width;
+            final double picAR = height / width;
 
             if (scrAR - picAR > 0.1) {
                 // Reduce the width of the image
-                int newWidth = (int) (height / scrAR);
+                final int newWidth = (int) (height / scrAR);
                 x = (width - newWidth) / 2;
                 width = newWidth;
             } else if (picAR - scrAR > 0.1) {
                 // Reduce the height of the image
-                int newHeight = (int) (width / scrAR);
+                final int newHeight = (int) (width / scrAR);
                 y = (height - newHeight) / 2;
                 height = newHeight;
             }
@@ -386,9 +393,10 @@ public class ShowPictureActivity extends AbstractActivity {
     }
 
     private double getScreenRation() {
-        Point size = getIntent().getParcelableExtra(
-                CapturePictureHandler.SIZE_EXTRA);
+        final Point size =
+                getIntent()
+                        .getParcelableExtra(CapturePictureHandler.SIZE_EXTRA);
         Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
-        return (double) size.x / (double) size.y;
+        return (1.0 * size.x) / size.y;
     }
 }

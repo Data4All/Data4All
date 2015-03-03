@@ -47,7 +47,6 @@ public class GPSservice extends Service implements LocationListener {
      */
     private LocationManager lmgr;
     private WakeLock wakeLock;
-    private PowerManager powerManager;
 
     private DataBaseHandler dbHandler;
     /*
@@ -71,10 +70,6 @@ public class GPSservice extends Service implements LocationListener {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
-
-        // new track is initialized and gets timestamp.
-        // Does not contain any trackpoints yet
-        track = new Track();
         // dbHandler.createTrack(track);
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -100,6 +95,10 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // new track is initialized and gets timestamp.
+        // Does not contain any trackpoints yet
+        track = new Track();
+
         Log.d(TAG, "onStartCommand");
         return START_STICKY;
     }
@@ -129,14 +128,17 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location loc) {
-        Optimizer.putLoc(loc);
+        if (loc != null) {
+            Optimizer.putLoc(loc);
+        }
 
-        final Location tp = Optimizer.currentBestLoc();
-        final TrackPoint last = track.getLastTrackPoint();
+        if (track != null) {
+            final Location tp = Optimizer.currentBestLoc();
+            Log.d(TAG, "Track: " + track);
+            final TrackPoint last = track.getLastTrackPoint();
 
-        if (last != null && tp != null) {
             // check if new Location is already stored
-            if (this.sameTrackPoints(last, tp)) {
+            if (last != null && tp != null && this.sameTrackPoints(last, tp)) {
                 track.addTrackPoint(tp);
                 // After ten trackpoints updateDatabase
                 if ((track.getTrackPoints().size() % 10) == 0) {
@@ -216,13 +218,13 @@ public class GPSservice extends Service implements LocationListener {
             } else {
                 // Track with trackpoints exist, so save it to database
                 // dbHandler.updateTrack(track);
-                track = null; // override current track with null
+                // override current track with null
+                track = null;
             }
         }
         // TODO localization
-        Toast.makeText(getBaseContext(),
-                R.string.noLocationFound, Toast.LENGTH_LONG)
-                .show();
+        Toast.makeText(getBaseContext(), R.string.noLocationFound,
+                Toast.LENGTH_LONG).show();
     }
 
     /*

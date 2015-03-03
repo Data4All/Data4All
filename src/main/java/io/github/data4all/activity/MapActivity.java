@@ -44,7 +44,7 @@ import android.widget.Toast;
  * @author Oliver Schwartz
  *
  */
-public class MapActivity extends AbstractActivity {
+public abstract class MapActivity extends AbstractActivity {
 
     // Node Type Definition Number
     protected static final int NODE_TYPE_DEF = 1;

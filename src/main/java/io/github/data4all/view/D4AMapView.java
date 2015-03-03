@@ -16,7 +16,6 @@
 package io.github.data4all.view;
 
 import io.github.data4all.activity.AbstractActivity;
-import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
@@ -146,10 +145,6 @@ public class D4AMapView extends MapView {
     public void addOsmElementToMap(AbstractActivity ctx,
             AbstractDataElement elem) {
         if (elem != null) {
-            final DataBaseHandler db = new DataBaseHandler(ctx);
-            int count = db.getDataElementCount();
-            elem.setOsmId(count + 1);
-            db.close();
             // if the Element is a Node
             if (elem instanceof Node) {
                 final Node node = (Node) elem;

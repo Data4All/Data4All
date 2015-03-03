@@ -16,6 +16,7 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.R;
+import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.CameraActivity;
 import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
@@ -28,7 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -70,7 +70,7 @@ public class CapturePictureHandler implements PictureCallback {
             .getSimpleName();
 
     // Actual Activity for the context
-    private final Context context;
+    private final AbstractActivity context;
 
     // The file into which the picture is saved
     private File photoFile;
@@ -93,7 +93,7 @@ public class CapturePictureHandler implements PictureCallback {
      * @param context
      *            The Application context
      */
-    public CapturePictureHandler(Context context, CameraPreview preview) {
+    public CapturePictureHandler(AbstractActivity context, CameraPreview preview) {
         this.context = context;
         this.preview = preview;
     }
@@ -199,15 +199,14 @@ public class CapturePictureHandler implements PictureCallback {
             if (result.equals("successful")) {
                 Log.d(TAG, "Picture successfully saved");
 
-                final Intent intent = new Intent();
-                intent.setClass(context, ShowPictureActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                final Intent intent = new Intent(context,
+                        ShowPictureActivity.class);
                 intent.putExtra(FILE_EXTRA, photoFile);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
                 intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
                 intent.putExtra(SIZE_EXTRA, viewSize);
 
-                context.startActivity(intent);
+                context.startActivityForResult(intent);
 
             } else {
                 Toast.makeText(context, "Failed on taking picture",

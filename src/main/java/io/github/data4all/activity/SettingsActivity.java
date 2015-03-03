@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
@@ -35,6 +36,18 @@ public class SettingsActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new Settings()).commit();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        // Ignore - Settings are not part of the workflow
     }
 
     /**

@@ -62,7 +62,7 @@ import android.widget.Toast;
  * @version 1.2
  * 
  */
-public class CameraActivity extends Activity {
+public class CameraActivity extends AbstractActivity {
 
 	// Logger Tag
 	private static final String TAG = CameraActivity.class.getSimpleName();
@@ -108,7 +108,7 @@ public class CameraActivity extends Activity {
 
 		// Set the capturing button
 		btnCapture = (ImageButton) findViewById(R.id.btnCapture);
-		setListener(btnCapture);
+        this.setListener(btnCapture);
 
 		listener = new ButtonRotationListener(this,
 				Arrays.asList((View) btnCapture));
@@ -180,10 +180,12 @@ public class CameraActivity extends Activity {
 	/**
 	 * Set the camera-action listener to the given image-button.
 	 * 
+
+     * 
 	 * @param button
 	 *            The image-button to use.
-	 * 
-	 * @author tbrose
+     * 
+     * @author tbrose
 	 */
 	private void setListener(ImageButton button) {
 		button.setOnClickListener(new OnClickListener() {
@@ -275,6 +277,14 @@ public class CameraActivity extends Activity {
 		camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
 
 		return camera;
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow();
 	}
 
 	public void updateCameraAssistView(float[] points) {
