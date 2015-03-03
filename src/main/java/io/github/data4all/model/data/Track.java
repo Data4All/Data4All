@@ -147,7 +147,7 @@ public class Track implements Parcelable {
     }
 
     /**
-     * Returns the latest TrakPoint from this track.
+     * Returns the latest TrackPoint from this track.
      * 
      * @return trackpoint The latest TrackPoint in the list
      */

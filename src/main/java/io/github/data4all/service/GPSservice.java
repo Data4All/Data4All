@@ -111,6 +111,7 @@ public class GPSservice extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy()");
 
         // Remove registration for location updates
         lmgr.removeUpdates(this);
@@ -137,10 +138,13 @@ public class GPSservice extends Service implements LocationListener {
         if (track != null) {
             final Location tp = Optimizer.currentBestLoc();
             final TrackPoint last = track.getLastTrackPoint();
-
+            if(last==null) {
+                Log.d(TAG, "Adding first Point to Track");
+                trackUtil.addPointToTrack(track, loc);
+            }
             if (last != null && tp != null) {
                 // check if new Location is already stored
-                if (trackUtil.sameTrackPoints(last, tp)) {
+                if (!trackUtil.sameTrackPoints(last, tp)) {
                     trackUtil.addPointToTrack(track, tp);
                     // After ten trackpoints updateDatabase
                     if ((track.getTrackPoints().size() % 10) == 0) {
@@ -170,6 +174,7 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onProviderEnabled(String provider) {
+        Log.d(TAG, "onProviderEnabled");
         track = trackUtil.getLastTrack();
         if (track == null) {
             // start new track
@@ -185,6 +190,7 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onProviderDisabled(String provider) {
+        Log.d(TAG, "onProviderDisabled");
         // Remove registration for location updates
         lmgr.removeUpdates(this);
         trackUtil.updateTrack(track);

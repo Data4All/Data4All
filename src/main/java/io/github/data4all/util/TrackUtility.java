@@ -4,9 +4,6 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
-
-import java.util.List;
-
 import android.content.Context;
 import android.location.Location;
 
@@ -87,14 +84,14 @@ public class TrackUtility {
      * Deletes all Tracks in the database which does not contain any trackpoints
      */
     public void deleteEmptyTracks() {
-        db = new DataBaseHandler(context.getApplicationContext());
-        for (Track track : db.getAllGPSTracks()) {
-            if (track.getTrackPoints().isEmpty()) {
-                Log.d(TAG, "Deleting empty tracks.");
-                db.deleteGPSTrack(track);
-            }
-        }
-        db.close();
+        // db = new DataBaseHandler(context.getApplicationContext());
+        // for (Track track : db.getAllGPSTracks()) {
+        // if (track.getTrackPoints().isEmpty()) {
+        // Log.d(TAG, "Deleting empty tracks.");
+        // db.deleteGPSTrack(track);
+        // }
+        // }
+        // db.close();
     }
 
     /**
@@ -104,19 +101,19 @@ public class TrackUtility {
      * @return last opened track or a new track
      */
     public Track getLastTrack() {
-        db = new DataBaseHandler(context.getApplicationContext());
-        List<Track> allGPSTracks = db.getAllGPSTracks();
-        if (!allGPSTracks.isEmpty()) {
-            for (int i = allGPSTracks.size(); i > 0; i--) {
-                Log.d("TrackUtility", "Continue on last track.");
-                db.close();
-                
-                return allGPSTracks.get(i);
-            }
-        }
-        Log.d("TrackUtility",
-                "There is no last opened track, so start a new one");
-        db.close();
+        // db = new DataBaseHandler(context.getApplicationContext());
+        // List<Track> allGPSTracks = db.getAllGPSTracks();
+        // if (!allGPSTracks.isEmpty()) {
+        // for (int i = allGPSTracks.size(); i > 0; i--) {
+        // Log.d("TrackUtility", "Continue on last track.");
+        // db.close();
+        //
+        // return allGPSTracks.get(i);
+        // }
+        // }
+        // Log.d("TrackUtility",
+        // "There is no last opened track, so start a new one");
+        // db.close();
         return startNewTrack();
     }
 
@@ -131,10 +128,13 @@ public class TrackUtility {
      */
     public boolean sameTrackPoints(TrackPoint point1, Location loc) {
         final TrackPoint point2 = new TrackPoint(loc);
-        if (point1.getLat() == point2.getLat()
-                && point1.getLon() == point2.getLon()) {
+        int i = Double.compare(point1.getLat(), point2.getLat());
+        int j = Double.compare(point1.getLon(), point2.getLon());
+
+        if (i == 0 && j == 0) {
             return true;
         }
+
         return false;
     }
 }

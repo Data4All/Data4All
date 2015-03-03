@@ -141,9 +141,10 @@ public class UploadService extends IntentService {
 
     private void uploadGpsTracks(User user) {
         final DataBaseHandler db = new DataBaseHandler(this);
-        final List<Track> gpsTracks = db.getAllGPSTracks();
-        db.close();
-        for (Track t : gpsTracks) {
+        //final List<Track> gpsTracks = db.getAllGPSTracks();
+        int count = db.getGPSTrackCount();
+        for(int i=0; i<=count; i++) {
+            Track t = db.getGPSTrack(i);
             TrackParserTask trackParser = new TrackParserTask(this, t);
             trackParser.parseTrack(this, t);
             final String fileName = t.getTrackName() +".gpx";
@@ -152,6 +153,16 @@ public class UploadService extends IntentService {
             Log.d(TAG, "Uploading GPS Track: " +fileName);
             trackUpload.execute();
         }
+        db.close();
+//        for (Track t : gpsTracks) {
+//            TrackParserTask trackParser = new TrackParserTask(this, t);
+//            trackParser.parseTrack(this, t);
+//            final String fileName = t.getTrackName() +".gpx";
+//            final File file = new File(fileName); 
+//            UploadGpsTracks trackUpload = new UploadGpsTracks(this, user, file, "blubb", "blaah", "true");
+//            Log.d(TAG, "Uploading GPS Track: " +fileName);
+//            trackUpload.execute();
+//        }
     }
 
     /**
