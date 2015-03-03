@@ -45,11 +45,11 @@ public class HorizonCalculationUtil {
      *            of DeviceOrientation
      * @return object of the inner class returnValues
      */
-    public returnValues calcHorizontalPoints(float maxPitch, float maxRoll,
+    public ReturnValues calcHorizontalPoints(float maxPitch, float maxRoll,
             float maxWidth, float maxHeight, float maxhorizon,
             DeviceOrientation deviceOrientation) {
         // zero if the general deviceorientation directed to the ground.
-        returnValues rV = new returnValues();
+        ReturnValues rV = new ReturnValues();
 
         double pitch = deviceOrientation.getPitch();
         double roll = deviceOrientation.getRoll();
@@ -134,23 +134,23 @@ public class HorizonCalculationUtil {
      * An inner Class for saving points, the visibility of the horizon and if
      * more then 50% of the display is above the horizon
      */
-    public class returnValues {
+    public class ReturnValues {
         /**
          * first point on the edge of the display representing the horizon
          */
-        Point point1 = null;
+        private Point point1;
         /**
          * second point on the edge of the display representing the horizon
          */
-        Point point2 = null;
+        private Point point2;
         /**
          * true if more than 50% of the display is above the horizon
          */
-        boolean skylook = false;
+        private boolean skylook;
         /**
          * false if the horzion is not visible on the display
          */
-        boolean visible = true;
+        private boolean visible = true;
 
         public Point getPoint1() {
             return point1;
@@ -198,23 +198,23 @@ public class HorizonCalculationUtil {
      *            object of returnValues to return the calculations
      * @return object of returnValues
      */
-    private returnValues calculatePoints(float maxWidth, float maxHeight,
-            float x, float y, returnValues rV) {
+    private ReturnValues calculatePoints(float maxWidth, float maxHeight,
+            float x, float y, ReturnValues rV) {
         // counter for the added points.
         int iter = 0;
         // check if horizon is parallel to a side of the display.
-        if (y == 0) {
-            rV.setPoint1(new Point((maxWidth / 2 + x), 0));
-            rV.setPoint2(new Point((maxWidth / 2 + x), maxHeight));
-        } else if (x == 0) {
-            rV.setPoint1(new Point(0, (maxHeight / 2 + y)));
-            rV.setPoint2(new Point(maxWidth, (maxHeight / 2 + y)));
+        if (y == 0.0f) {
+            rV.setPoint1(new Point(maxWidth / 2 + x, 0));
+            rV.setPoint2(new Point(maxWidth / 2 + x, maxHeight));
+        } else if (x == 0.0f) {
+            rV.setPoint1(new Point(0, maxHeight / 2 + y));
+            rV.setPoint2(new Point(maxWidth, maxHeight / 2 + y));
         } else {
             // calculade the collision of the horizonline with the displayedges.
-            float xMin = y + x * (((maxWidth / 2) + x) / y) + (maxHeight / 2);
-            float xMax = y + x * (((-maxWidth / 2) + x) / y) + (maxHeight / 2);
-            float yMin = x - y * (((-maxHeight / 2) - y) / x) + (maxWidth / 2);
-            float yMax = x - y * (((maxHeight / 2) - y) / x) + (maxWidth / 2);
+            float xMin = y + x * ((maxWidth / 2 + x) / y) + maxHeight / 2;
+            float xMax = y + x * ((-maxWidth / 2 + x) / y) + maxHeight / 2;
+            float yMin = x - y * ((-maxHeight / 2 - y) / x) + maxWidth / 2;
+            float yMax = x - y * ((maxHeight / 2 - y) / x) + maxWidth / 2;
             // check wich collision is important and add it to the returnvalues.
             if (xMin > 0 && xMin <= maxHeight) {
                 rV.setPoint1(new Point(0, xMin));

@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.drawing.Point;
-import io.github.data4all.util.HorizonCalculationUtil.returnValues;
+import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,12 +42,12 @@ public class HorizonCalculationUtilTest {
 
     HorizonCalculationUtil util;
     DeviceOrientation deviceOrientation;
-    returnValues rV;
+    ReturnValues rV;
 
     @Before
     public void setUp() {
         util = new HorizonCalculationUtil();
-        rV = util.new returnValues();
+        rV = util.new ReturnValues();
     }
 
     /*
