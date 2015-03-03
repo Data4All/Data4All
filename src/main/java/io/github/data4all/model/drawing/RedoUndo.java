@@ -29,7 +29,7 @@ import java.util.List;
  *
  */
 public class RedoUndo {
-	
+
 	/**
 	 * List of all deleted Points.
 	 */
@@ -74,7 +74,11 @@ public class RedoUndo {
 	 */
 	public RedoUndo(List<Point> points) {
 		if (motions == null) {
+			Log.d(this.getClass().getSimpleName(), "motion is null");
 			if (points != null) {
+				Log.d(this.getClass().getSimpleName(),
+						"motions is null but points is there size: "
+								+ points.size());
 				motions = new ArrayList<Point>();
 				actions = new ArrayList<String>();
 				locations = new ArrayList<Integer>();
@@ -86,6 +90,8 @@ public class RedoUndo {
 					locations.add(i);
 				}
 			} else {
+				Log.d(this.getClass().getSimpleName(),
+						"motions is null and point too");
 				motions = new ArrayList<Point>();
 				actions = new ArrayList<String>();
 				locations = new ArrayList<Integer>();
@@ -94,24 +100,27 @@ public class RedoUndo {
 			}
 		} else {
 			if (points != null) {
+				Log.d(this.getClass().getSimpleName(),
+						"motion and point isnt null");
 				this.setList(points);
 			}
 		}
 	}
 
 	/**
-	 * 	 * Add a point,action and location into the RedoUndo Lists.
+	 * * Add a point,action and location into the RedoUndo Lists.
 	 * 
 	 * @param point
-	 * 		Point to add
+	 *            Point to add
 	 * @param action
-	 * 		action for point (ADD,DELET,MOVE_FROM,MOVE_TO)
+	 *            action for point (ADD,DELET,MOVE_FROM,MOVE_TO)
 	 * @param location
-	 * 		location where the point was in polygon
+	 *            location where the point was in polygon
 	 */
 	public void add(Point point, String action, int location) {
-		Log.d(this.getClass().getSimpleName(), "ADD ACTION: " + action
-				+ currentCount + " : " + maxCount + "last action : " + actions.get(currentCount - 1));
+		Log.d(this.getClass().getSimpleName(),
+				"ADD ACTION: " + action + currentCount + " : " + maxCount
+						+ "last action : " + actions.get(currentCount - 1));
 		if (maxCount == currentCount) {
 			if (action.equals("DELET")
 					&& actions.get(actions.size() - 1).equals("MOVE_FROM")) {
@@ -127,8 +136,9 @@ public class RedoUndo {
 				maxCount = currentCount;
 			}
 		} else {
+			Log.d(this.getClass().getSimpleName(), "use remove");
 			this.remove();
-			this.add(point,action,location);
+			this.add(point, action, location);
 		}
 
 	}
@@ -143,7 +153,9 @@ public class RedoUndo {
 
 	private void remove() {
 		int schleife = maxCount - currentCount;
-		while(schleife != 0) {
+		Log.d(this.getClass().getSimpleName(), "remove some elements: "
+				+ schleife);
+		while (schleife >= 0) {
 			motions.remove(motions.size() - 1);
 			actions.remove(actions.size() - 1);
 			locations.remove(locations.size() - 1);
@@ -186,8 +198,7 @@ public class RedoUndo {
 			Log.d(this.getClass().getSimpleName(), s);
 		}
 		if (currentCount != maxCount) {
-			currentCount++;
-			return motions.get(currentCount);
+			return motions.get(currentCount++);
 		}
 		return null;
 	}
@@ -226,32 +237,34 @@ public class RedoUndo {
 		return maxCount;
 	}
 
-    /**
-     * A listener for events of "undo/redo-is-(un)available".
-     * 
-     * @author tbrose
-     */
-    public interface UndoRedoListener {
-        /**
-         * Informs about the current undo state.
-         * 
-         * @param state
-         *            The current undo state
-         */
-        void canUndo(boolean state);
+	/**
+	 * A listener for events of "undo/redo-is-(un)available".
+	 * 
+	 * @author tbrose
+	 */
+	public interface UndoRedoListener {
+		/**
+		 * Informs about the current undo state.
+		 * 
+		 * @param state
+		 *            The current undo state
+		 */
+		void canUndo(boolean state);
 
-        /**
-         * Informs about the current redo state.
-         * 
-         * @param state
-         *            The current redo state
-         */
-        void canRedo(boolean state);
-        
-        /**
-         * Informas about the enough notes state
-         * @param state the current enough note state
-         */
+		/**
+		 * Informs about the current redo state.
+		 * 
+		 * @param state
+		 *            The current redo state
+		 */
+		void canRedo(boolean state);
+
+		/**
+		 * Informas about the enough notes state
+		 * 
+		 * @param state
+		 *            the current enough note state
+		 */
 		void okUseable(boolean state);
 	}
 
