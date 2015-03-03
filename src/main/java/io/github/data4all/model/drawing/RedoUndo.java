@@ -18,6 +18,7 @@ package io.github.data4all.model.drawing;
 import io.github.data4all.logger.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,9 +31,25 @@ import java.util.List;
 public class RedoUndo {
 
     /**
-     * List of all added Points.
+     * The log-tag for this class.
+     */
+    private static final String TAG = AreaMotionInterpreter.class
+            .getSimpleName();
+
+    /**
+     * List of all deleted Points.
      */
     private List<Point> motions;
+
+    /**
+     * List of the actions.
+     */
+    private List<String> actions;
+
+    /**
+     * List of the locations in polygon.
+     */
+    private List<Integer> locations;
 
     /**
      * length of the list.
@@ -43,12 +60,22 @@ public class RedoUndo {
      * current position.
      */
     private int currentCount;
+    
+    /**
+     * Standard strings for actions
+     */
+    final static String add = "ADD";
+    final static String delete = "DELETE";
+    final static String moveFrom = "MOVE_FROM";
+    final static String moveTo = "MOVE_TO";
 
     /**
      * Standard constructor with clean start.
      */
     public RedoUndo() {
         motions = new ArrayList<Point>();
+        actions = new ArrayList<String>();
+        locations = new ArrayList<Integer>();
         maxCount = 0;
         currentCount = 0;
     }
@@ -61,89 +88,150 @@ public class RedoUndo {
      */
     public RedoUndo(List<Point> points) {
         if (motions == null) {
+            Log.d(TAG, "motion is null");
             if (points != null) {
-                motions = points;
+                Log.d(TAG, "motions is null but points are there, count: "
+                        + points.size());
+                motions = new ArrayList<Point>();
+                actions = new ArrayList<String>();
+                locations = new ArrayList<Integer>();
                 maxCount = points.size();
                 currentCount = points.size();
+                for (int i = 0; i < maxCount; i++) {
+                    motions.add(points.get(i));
+                    actions.add(add);
+                    locations.add(i);
+                }
             } else {
+                Log.d(TAG, "motions is null and point too");
                 motions = new ArrayList<Point>();
+                actions = new ArrayList<String>();
+                locations = new ArrayList<Integer>();
                 maxCount = 0;
                 currentCount = 0;
             }
-        } else {
-            if (points != null) {
-                this.setList(points);
-            }
+        } else if (points != null) {
+            Log.d(TAG, "motion and point are not null");
+            this.setList(points);
         }
     }
 
     /**
-     * Add a point into the RedoUndo List of points.
+     * * Add a point,action and location into the RedoUndo Lists.
      * 
      * @param point
      *            Point to add
+     * @param action
+     *            action for point (ADD,DELET,MOVE_FROM,MOVE_TO)
+     * @param location
+     *            location where the point was in polygon
      */
-    public void add(Point point) {
-        Log.d(this.getClass().getSimpleName(), "ADD: " + currentCount + ":"
-                + maxCount);
+    public void add(Point point, String action, int location) {
         if (maxCount == currentCount) {
-            maxCount++;
-            currentCount++;
-        } else {
-            for (int i = currentCount; i <= maxCount; i++) {
-                motions.remove(i);
+            if (action.equals(delete)
+                    && actions.get(actions.size() - 1).equals(moveFrom)) {
+                actions.set(actions.size() - 1, action);
+            } else if (action.equals(moveTo)
+                    && actions.get(actions.size() - 1).equals(moveTo)) {
+                motions.set(actions.size() - 1, point);
+            } else {
+                motions.add(point);
+                actions.add(action);
+                locations.add(location);
+                currentCount++;
+                maxCount = currentCount;
             }
-            currentCount++;
-            maxCount = currentCount;
+        } else {
+            Log.d(TAG, "use remove");
+            this.remove();
+            this.add(point, action, location);
         }
-        motions.add(point);
+
     }
 
+    /**
+     * Set the list of points of the new drawn polygon.
+     * 
+     * @param newPoly
+     *            list of points of the new polygon
+     */
     private void setList(List<Point> newPoly) {
         for (Point p : newPoly) {
-            motions.clear();
-            Log.d(this.getClass().getSimpleName(),
-                    "motions size" + motions.size());
-            this.add(p);
+            Log.d(TAG, "motions size" + motions.size());
+            this.add(p, add, maxCount);
         }
     }
 
     /**
-     * Go a step back and return a new list.
-     * 
-     * @return new list with one step less
+     * Delete all points from the list, which are from the last drawn polygon,
+     * when a new polygon is drawn.
      */
-    public List<Point> undo() {
-        Log.d(this.getClass().getSimpleName(), "UNDO: " + currentCount + ":"
-                + maxCount);
-        if (currentCount != 0 && currentCount <= maxCount) {
-            currentCount--;
-            final List<Point> relist = new ArrayList<Point>();
-            for (int i = 0; i < currentCount; i++) {
-                relist.add(motions.get(i));
-            }
-            return relist;
+    private void remove() {
+        int loop = maxCount - currentCount;
+        Log.d(TAG, "remove some elements: " + loop);
+        while (loop >= 0) {
+            motions.remove(motions.size() - 1);
+            actions.remove(actions.size() - 1);
+            locations.remove(locations.size() - 1);
+            loop--;
         }
-        return motions;
+        currentCount = motions.size();
+        maxCount = currentCount;
     }
 
     /**
-     * Go a step forward,if there is a point, and return a new list.
+     * Go a step back.
      * 
-     * @return new list with one step more
+     * @return the undone point
      */
-    public List<Point> redo() {
-        Log.d(this.getClass().getSimpleName(), "REDO: " + currentCount + ":"
-                + maxCount);
-        if (currentCount < maxCount) {
-            currentCount++;
-            final List<Point> relist = new ArrayList<Point>();
-            for (int i = 0; i < currentCount; i++) {
-                relist.add(motions.get(i));
-            }
-            return relist;
+    public Point undo() {
+        currentCount--;
+        Log.d(TAG,
+                "UNDO: " + currentCount + ":" + maxCount + ":"
+                        + " Locationsize:" + locations.size() + "actionsize:"
+                        + actions.size() + "motionsize" + motions.size());
+        for (String s : actions) {
+            Log.d(TAG, s);
         }
-        return motions;
+        if (currentCount >= 0 && currentCount <= maxCount) {
+            return motions.get(currentCount);
+        }
+        return null;
+    }
+
+    /**
+     * Go a step forward,if there is a point.
+     * 
+     * @return the redone point
+     */
+    public Point redo() {
+        Log.d(TAG,
+                "REDO: " + currentCount + ":" + maxCount + ":"
+                        + locations.get(currentCount) + "actionsize:"
+                        + actions.size() + "motionsize" + motions.size());
+        for (String s : actions) {
+            Log.d(TAG, s);
+        }
+        if (currentCount != maxCount) {
+            return motions.get(currentCount++);
+        }
+        return null;
+    }
+
+    /**
+     * Return a string which contains the current action.
+     * 
+     * @return a action-string
+     */
+    public String getAction() {
+        return actions.get(currentCount);
+    }
+
+    /**
+     * Get the location of a point.
+     */
+    public int getLocation() {
+        return locations.get(currentCount);
     }
 
     /**
@@ -185,12 +273,14 @@ public class RedoUndo {
          *            The current redo state
          */
         void canRedo(boolean state);
-        
+
         /**
          * Informas about the enough notes state
-         * @param state the current enough note state
+         * 
+         * @param state
+         *            the current enough note state
          */
-		void okUseable(boolean state);
-	}
+        void okUseable(boolean state);
+    }
 
 }

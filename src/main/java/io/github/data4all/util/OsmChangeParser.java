@@ -74,10 +74,9 @@ public final class OsmChangeParser {
     public static void parseElements(Context context,
             List<AbstractDataElement> elems, long changesetID) {
         try {
-            final PrintWriter writer =
-                    new PrintWriter(new BufferedWriter(new FileWriter(new File(
-                            context.getFilesDir().getAbsolutePath()
-                                    + "/OsmChangeUpload.osc"))));
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(
+                    new FileWriter(new File(context.getFilesDir()
+                            .getAbsolutePath() + "/OsmChangeUpload.osc"))));
             parseElements(elems, changesetID, writer);
             writer.close();
             Log.i(TAG, "Writer is closed");
@@ -103,7 +102,7 @@ public final class OsmChangeParser {
         final List<PolyElement> ways = new ArrayList<PolyElement>();
         final List<PolyElement> relations = new ArrayList<PolyElement>();
 
-        for (AbstractDataElement osm : elems) {
+        for (AbstractDataElement osm : elems) { // NOSONAR
             if (osm instanceof Node) {
                 nodes.add((Node) osm);
             }
@@ -117,12 +116,19 @@ public final class OsmChangeParser {
     }
 
     /**
+     * Method of how to handle a PolyElement.
+     * 
      * @param osm
+     *            the AbstractDataElement
      * @param nodes
+     *            the list of nodes which should be uploaded
      * @param ways
+     *            the list of ways which should be uploaded
      * @param relations
+     *            the list of relations which should be uploaded
      */
-    private static void handlePolyElement(AbstractDataElement osm,
+    private static void handlePolyElement(
+            AbstractDataElement osm, // NOSONAR
             List<Node> nodes, List<PolyElement> ways,
             List<PolyElement> relations) {
         final PolyElement poly = (PolyElement) osm;
@@ -147,7 +153,7 @@ public final class OsmChangeParser {
     }
 
     /**
-     * 
+     * Method to parse the general Data.
      */
     private static void parseData(List<Node> nodes, List<PolyElement> ways,
             List<PolyElement> relations, long changesetID, PrintWriter writer) {
@@ -156,9 +162,11 @@ public final class OsmChangeParser {
         writer.println("<create>");
 
         for (Node n : nodes) {
-            Log.i(TAG, "Node parsed ID:" + n.getOsmId() +" LAT: " +n.getLat() +" LONG: " +n.getLon());
+            Log.i(TAG, "Node parsed ID:" + n.getOsmId() + " LAT: " + n.getLat()
+                    + " LONG: " + n.getLon());
             parseNode(writer, n, changesetID);
-            Log.i(TAG, "Node parsed ID:" + n.getOsmId() +" LAT: " +n.getLat() +" LONG: " +n.getLon());
+            Log.i(TAG, "Node parsed ID:" + n.getOsmId() + " LAT: " + n.getLat()
+                    + " LONG: " + n.getLon());
         }
         for (PolyElement w : ways) {
             parseWay(writer, w, changesetID);
@@ -191,14 +199,14 @@ public final class OsmChangeParser {
                 + dateformat.format(new Date()) + "\" lat=\"" + node.getLat()
                 + "\" lon=\"" + node.getLon() + CHANGESET + changesetID
                 + "\" version=\"1\"");
-        
+
         writer.print("<node id=\"" + getId(node.getOsmId()) + TIMESTAMP
                 + dateformat.format(new Date()) + "\" lat=\"" + node.getLat()
                 + "\" lon=\"" + node.getLon() + CHANGESET + changesetID
                 + "\" version=\"1\"");
 
-        final Map<Tag, String> tags =
-                (LinkedHashMap<Tag, String>) node.getTags();
+        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) node
+                .getTags();
         if (tags.isEmpty()) {
             writer.print("/>");
             writer.println();
@@ -229,13 +237,14 @@ public final class OsmChangeParser {
         writer.println("<way id=\"" + getId(way.getOsmId()) + TIMESTAMP
                 + dateformat.format(new Date()) + CHANGESET + changesetID
                 + "\" version=\"1\">");
-        final Map<Tag, String> tags =
-                (LinkedHashMap<Tag, String>) way.getTags();
+        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) way
+                .getTags();
         for (Node nd : way.getNodes()) {
             writer.println("<nd ref=\"" + getId(nd.getOsmId()) + "\"/>");
         }
         if (way.getType() != PolyElementType.WAY) {
-            writer.println("<nd ref=\"" + getId(way.getFirstNode().getOsmId()) + "\"/>");
+            writer.println("<nd ref=\"" + getId(way.getFirstNode().getOsmId())
+                    + "\"/>");
         }
         for (Tag key : tags.keySet()) {
             writer.println(TAGKEY + key.getKey() + TAGVALUE + tags.get(key)
@@ -260,8 +269,8 @@ public final class OsmChangeParser {
         writer.println("<relation id=\"" + getId(relation.getOsmId())
                 + TIMESTAMP + dateformat.format(new Date()) + CHANGESET
                 + changesetID + "\" version=\"1\">");
-        final Map<Tag, String> tags =
-                (LinkedHashMap<Tag, String>) relation.getTags();
+        final Map<Tag, String> tags = (LinkedHashMap<Tag, String>) relation
+                .getTags();
         for (Node member : relation.getNodes()) {
             writer.println("<member type=\"node\" ref=\""
                     + getId(member.getOsmId()) + "\" role=\"\"/>");

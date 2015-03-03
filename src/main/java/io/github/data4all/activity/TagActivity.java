@@ -69,7 +69,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     // OSMElement Key
     protected static final String OSM = "OSM_ELEMENT";
     private static final int REQUEST_CODE = 1234;
-    final Context context = this;
+    private static final String TYPE_DEF = "TYPE_DEF";
+    protected final Context context = this;
     // The Key of the Classified Tag
     private String key;
     // The map in where the selected Tags are saved
@@ -130,14 +131,13 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
-        ;
         alertDialog.setCustomTitle(view);
         final ImageButton speechStart = (ImageButton) view
                 .findViewById(R.id.speech);
         speechStart.setOnClickListener(this);
-        array = Tagging.getArrayKeys(
-                getIntent().getExtras().getInt("TYPE_DEF"), res);
-        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
+        array = Tagging.getArrayKeys(getIntent().getExtras().getInt(TYPE_DEF),
+                res);
+        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt(TYPE_DEF),
                 res);
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -193,7 +193,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final String value = (String) array[which];
-                        String realValue = classifiedMap.get(value).getValue();
+                        final String realValue = classifiedMap.get(value)
+                                .getValue();
 
                         map = new LinkedHashMap<Tag, String>();
                         map.put(tagMap.get(key), realValue);
@@ -349,7 +350,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         next.setOnClickListener(this);
 
         if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
-                .getOsmObjects(), getIntent().getExtras().getInt("TYPE_DEF"))
+                .getOsmObjects(), getIntent().getExtras().getInt(TYPE_DEF))
                 && first) {
             layout.addView(next);
         }
@@ -384,11 +385,14 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         dialog1.show();
     }
 
+    /**
+     * Redirects to the ResultView.
+     */
     public void redirectToResultView() {
         element.setTags(map);
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
-        intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
+        intent.putExtra(TYPE_DEF, getIntent().getExtras().getInt(TYPE_DEF));
         startActivityForResult(intent);
     }
 }
