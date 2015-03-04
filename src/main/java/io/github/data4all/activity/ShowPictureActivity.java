@@ -224,6 +224,10 @@ public class ShowPictureActivity extends AbstractActivity {
             final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
+        } else if (currentOrientation == null) {
+            final String text = getString(R.string.noSensorData);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
         } else {
         // 0 or Rotation0 if portrait
         // 90 or Rotation1 if home-button to the right
