@@ -130,18 +130,8 @@ public class HorizonCalculationUtil {
         final float x = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
         final float y = calculatePixelFromAngle(horizonPitch, maxHeight,
                 maxPitch);
-        if (y <= 0 && x < 0) {
-            direction = 1;
-        }
-        if (y < 0 && x >= 0) {
-            direction = 2;
-        }
-        if (y >= 0 && x >= 0) {
-            direction = 3;
-        }
-        if (y > 0 && x <= 0) {
-            direction = 4;
-        }
+
+
 
         // Log.d("TEST", "X: " + x + "Y: " +y);
         // calculate and return the returnValues.
@@ -309,6 +299,19 @@ public class HorizonCalculationUtil {
                 points.add(corners[3]);
             }
         }else{
+            int direction = 0;
+            if (y <= 0 && x < 0) {
+                direction = 0;
+            }
+            if (y < 0 && x >= 0) {
+                direction = 1;
+            }
+            if (y >= 0 && x >= 0) {
+                direction = 2;
+            }
+            if (y > 0 && x <= 0) {
+                direction = 3;
+            }
             points.add(corners[direction]);
         }
 
