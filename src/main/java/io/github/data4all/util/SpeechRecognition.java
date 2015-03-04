@@ -18,11 +18,9 @@ package io.github.data4all.util;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
-import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +49,13 @@ public final class SpeechRecognition {
      * @param matchesText
      *            is a Array List from the results of the SpeechRecognition
      * @param k 
+     *          The key
+     * @param res 
+     *          The resource
      * @return The HashMap of the matching Tags
      */
     public static Map<Tag, String> speechToTag(List<String> matchesText, int k, Resources res) {
-    	Map<Tag, String> map = new LinkedHashMap<Tag, String>();
+    	final Map<Tag, String> map = new LinkedHashMap<Tag, String>();
     	List<Tag> list = new ArrayList<Tag>();
     	list = Tagging.getKeys(k);
     	Log.i(TAG, list.toString());
@@ -62,13 +63,13 @@ public final class SpeechRecognition {
     		List<ClassifiedValue> tags = new ArrayList<ClassifiedValue>();
     		tags = ((ClassifiedTag) classifiedTag).getClassifiedValues();
     		Log.i(TAG, tags.toString());
-    		if(compareStringTag(tags, matchesText, res) != null){
+            if (compareStringTag(tags, matchesText, res) != null) {
     			map.put(classifiedTag, compareStringTag(tags, matchesText, res));
     		}
 		}
 		return map;
     	
-    }; 
+    }
      
     /**
      * splitString splits all the Strings and adds them to the ArrayList.

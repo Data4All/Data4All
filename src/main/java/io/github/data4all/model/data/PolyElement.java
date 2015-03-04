@@ -31,7 +31,6 @@ import android.os.Parcelable;
  * one whose last node on the PolyElement is also the first on that PolyElement.
  * 
  * @author fkirchge
- *
  */
 public class PolyElement extends AbstractDataElement {
 
@@ -173,7 +172,7 @@ public class PolyElement extends AbstractDataElement {
     public void addNodes(List<Node> newNodes, boolean atBeginning) {
         if (newNodes.size() < MAX_POLYELEMENT_NODES) {
             if (atBeginning) {
-                if ((nodes.size() > 0)
+                if ((!nodes.isEmpty())
                         && nodes.get(0).equals(
                                 newNodes.get(newNodes.size() - 1))) {
                     Log.i(getClass().getSimpleName(),
@@ -187,8 +186,8 @@ public class PolyElement extends AbstractDataElement {
                 }
                 nodes.addAll(0, newNodes);
             } else {
-                if ((nodes.size() > 0)
-                        && newNodes.get(0) == nodes.get(nodes.size() - 1)) { // user
+                if ((!nodes.isEmpty())
+                        && newNodes.get(0).equals(nodes.get(nodes.size() - 1))) { // user
                     // error
                     Log.i(getClass().getSimpleName(),
                             "addNodes attempt to add same node");
@@ -244,7 +243,9 @@ public class PolyElement extends AbstractDataElement {
     }
 
     /**
+     * Describing Contents.
      * 
+     * @return 0
      */
     @Override
     public int describeContents() {

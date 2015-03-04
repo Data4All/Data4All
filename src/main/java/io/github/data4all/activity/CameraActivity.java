@@ -70,243 +70,195 @@ import android.widget.Toast;
  */
 public class CameraActivity extends AbstractActivity {
 
-	// Logger Tag
-	private static final String TAG = CameraActivity.class.getSimpleName();
+    // Logger Tag
+    private static final String TAG = CameraActivity.class.getSimpleName();
 
 	OrientationListener orientationListener;
 	boolean listenerBound;
 
 	private HorizonCalculationUtil horizonCalculationUtil;
 
-	private Camera mCamera;
+    private Camera mCamera;
 
-	private CameraPreview cameraPreview;
-	private ImageButton btnCapture;
-	private AutoFocusCrossHair mAutoFocusCrossHair;
+    private CameraPreview cameraPreview;
+    private ImageButton btnCapture;
+    private AutoFocusCrossHair mAutoFocusCrossHair;
 
-	private OrientationEventListener listener;
-	private ShutterCallback shutterCallback;
+    private OrientationEventListener listener;
+    private ShutterCallback shutterCallback;
 
 	private CaptureAssistView cameraAssistView;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "onCreate is called");
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate is called");
+        super.onCreate(savedInstanceState);
 
-		// Checking camera availability
-		if (!this.isDeviceSupportCamera()) {
-			Toast.makeText(getApplicationContext(),
-					getString(R.string.noCamSupported), Toast.LENGTH_LONG)
-					.show();
-			finish();
-			Log.d(TAG, "device supports no camera");
-			return;
-		}
+        // remove title and status bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		// remove title and status bar
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
-		getWindow().getDecorView().setSystemUiVisibility(
-				View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-						| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        shutterCallback = new ShutterCallback() {
+            public void onShutter() {
+                final Vibrator vibrator =
+                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(200);
+            }
+        };
+    }
 
-		setContentView(R.layout.activity_camera);
+    /**
+     * Setup the layout and find the views.
+     */
+    private void setLayout() {
+        setContentView(R.layout.activity_camera);
 
-		// Set the capturing button
-		btnCapture = (ImageButton) findViewById(R.id.btnCapture);
-		this.setListener(btnCapture);
+        // Set the capturing button
+        btnCapture = (ImageButton) findViewById(R.id.btnCapture);
+        this.setListener(btnCapture);
 
-		listener = new ButtonRotationListener(this,
-				Arrays.asList((View) btnCapture));
+        listener =
+                new ButtonRotationListener(this,
+                        Arrays.asList((View) btnCapture));
 
-		cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
-
-		// Set the Focus animation
-		mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
-
-		shutterCallback = new ShutterCallback() {
-			public void onShutter() {
-				final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-				vibrator.vibrate(200);
-			}
-		};
-		AbstractActivity.addNavBarMargin(getResources(), btnCapture);
+        // Set the Focus animation
+        mAutoFocusCrossHair =
+                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        AbstractActivity.addNavBarMargin(getResources(), btnCapture);
 
 		horizonCalculationUtil = new HorizonCalculationUtil();
 
-	}
+    }
 
-	@Override
-	protected void onResume() {
-		Log.i(TAG, "onResume is called");
-		super.onResume();
-		Intent intent = new Intent(this, OrientationListener.class);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setLayout();
+        if (isDeviceSupportCamera()) {
+            try {
+                cameraPreview =
+                        (CameraPreview) findViewById(R.id.cameraPreview);
+
+                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+                cameraPreview.setCamera(mCamera);
+                mCamera.startPreview();
+            } catch (RuntimeException ex) {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.noCamSupported), Toast.LENGTH_LONG)
+                        .show();
+                Log.e(TAG, "device supports no camera", ex);
+            }
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.noCamSupported), Toast.LENGTH_LONG)
+                    .show();
+            finish();
+            Log.d(TAG, "device supports no camera");
+            return;
+        }
+        listener.enable();
+        		Intent intent = new Intent(this, OrientationListener.class);
 		bindService(intent, orientationListenerConnection,
 				Context.BIND_AUTO_CREATE);
 		this.startService(intent);
+    }
 
-		if (mCamera == null) {
-			Log.d(TAG, "camera is null, so we have to recreate");
-			this.createCamera();
-			cameraPreview.setCamera(mCamera);
-			mCamera.startPreview();
-		}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            cameraPreview.setCamera(null);
+            mCamera.release();
+            mCamera = null;
+        }
+        listener.disable();
+        stopService(new Intent(this, OrientationListener.class));
+    }
 
-		btnCapture.setEnabled(true);
-		listener.enable();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow();
+    }
 
-	@Override
-	protected void onPause() {
-		Log.i(TAG, "onPause is called");
-		super.onPause();
-		// Unbind from the service
-		if (listenerBound) {
-			unbindService(orientationListenerConnection);
-			listenerBound = false;
-		}
+    /* ********************************************************** *
+     * ********************************************************** *
+     * **********************************************************
+     */
 
-		this.stopService(new Intent(this, OrientationListener.class));
+    /**
+     * Set the camera-action listener to the given image-button.
+     * 
+     * @author tbrose
+     * 
+     * @param button
+     *            The image-button to use.
+     */
+    private void setListener(ImageButton button) {
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // After photo is taken, disable button for clicking twice
+                btnCapture.setEnabled(false);
+                mCamera.takePicture(shutterCallback, null,
+                        new CapturePictureHandler(CameraActivity.this,
+                                cameraPreview));
+            }
+        });
 
-		super.onPause();
+        button.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // After photo is taken, disable button for clicking twice
+                btnCapture.setEnabled(false);
 
-		if (mCamera != null) {
-			Log.d(TAG, "camera is not null on pause, so release it");
-			cameraPreview.setCamera(null);
-			this.releaseCamera();
-		}
+                mAutoFocusCrossHair.showStart();
+                mAutoFocusCrossHair.doAnimation();
+                mCamera.autoFocus(new AutoFocusCallback() {
+                    @Override
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        if (success) {
+                            mAutoFocusCrossHair.success();
+                            mCamera.takePicture(shutterCallback, null,
+                                    new CapturePictureHandler(
+                                            CameraActivity.this, cameraPreview));
+                        } else {
+                            mAutoFocusCrossHair.fail();
+                            btnCapture.setEnabled(true);
+                        }
+                    }
+                });
+                return true;
+            }
+        });
+    }
 
-		btnCapture.setEnabled(false);
-		listener.disable();
-	}
+    /**
+     * This method looks whether the device has a camera and then returns a
+     * boolean.
+     * 
+     * @return boolean true if device has a camera, false otherwise
+     */
+    private boolean isDeviceSupportCamera() {
+        Log.d(TAG, "look if device has camera");
+        return getApplicationContext().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA);
+    }
+}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		this.releaseCamera();
-	}
 
-	/* ********************************************************** *
-	 * ********************************************************** *
-	 * **********************************************************
-	 */
-
-	/**
-	 * Set the camera-action listener to the given image-button.
-	 * 
-	 * 
-	 * 
-	 * @param button
-	 *            The image-button to use.
-	 * 
-	 * @author tbrose
-	 */
-	private void setListener(ImageButton button) {
-		button.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// After photo is taken, disable button for clicking twice
-				btnCapture.setEnabled(false);
-				mCamera.takePicture(shutterCallback, null,
-						new CapturePictureHandler(CameraActivity.this,
-								cameraPreview));
-			}
-		});
-
-		button.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				// After photo is taken, disable button for clicking twice
-				btnCapture.setEnabled(false);
-
-				mAutoFocusCrossHair.showStart();
-				mAutoFocusCrossHair.doAnimation();
-				mCamera.autoFocus(new AutoFocusCallback() {
-					@Override
-					public void onAutoFocus(boolean success, Camera camera) {
-						if (success) {
-							mAutoFocusCrossHair.success();
-							mCamera.takePicture(shutterCallback, null,
-									new CapturePictureHandler(
-											CameraActivity.this, cameraPreview));
-						} else {
-							mAutoFocusCrossHair.fail();
-							btnCapture.setEnabled(true);
-						}
-					}
-				});
-				return true;
-			}
-		});
-	}
-
-	/**
-	 * This method setup the camera.It calls a method from @CameraPreview and
-	 * sets all camera parameters.
-	 */
-	private void createCamera() {
-		Log.i(TAG, "createCamera is called");
-
-		if (this.isDeviceSupportCamera()) {
-			mCamera = this.getCameraInstance();
-			cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
-			cameraPreview.setCamera(mCamera);
-		} else {
-			Log.e(TAG, "Device not support camera");
-		}
-	}
-
-	/**
-	 * This method looks whether the device has a camera and then returns a
-	 * boolean.
-	 * 
-	 * @return boolean true if device has a camera, false otherwise
-	 */
-	private boolean isDeviceSupportCamera() {
-		Log.d(TAG, "look if device has camera");
-		return getApplicationContext().getPackageManager().hasSystemFeature(
-				PackageManager.FEATURE_CAMERA);
-	}
-
-	/**
-	 * This method release the camera for other applications and set camera to
-	 * null.
-	 */
-	private void releaseCamera() {
-		Log.d(TAG, "release Camera is called");
-		if (mCamera != null) {
-			mCamera.release();
-			mCamera = null;
-		}
-	}
-
-	/**
-	 * A safe way to get an instance of the Camera object.
-	 */
-	public Camera getCameraInstance() {
-		Log.d(TAG, "try to get an instance of camera");
-		Camera camera = null;
-
-		this.releaseCamera();
-		camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-
-		return camera;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
-	 * .content.Intent)
-	 */
-	@Override
-	protected void onWorkflowFinished(Intent data) {
-		finishWorkflow();
-	}
 
 	public void updateCameraAssistView() {
 

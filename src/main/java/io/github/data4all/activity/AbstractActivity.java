@@ -63,6 +63,7 @@ public abstract class AbstractActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actionbar, menu);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -86,6 +87,11 @@ public abstract class AbstractActivity extends Activity {
             break;
         case R.id.action_help:
             // TODO set help activity here
+            status = true;
+            break;
+        // finish workflow, return to mapview
+        case android.R.id.home:
+            onWorkflowFinished(null);
             status = true;
             break;
         default:
@@ -215,4 +221,5 @@ public abstract class AbstractActivity extends Activity {
         }
         return 0;
     }
+
 }

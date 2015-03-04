@@ -59,7 +59,9 @@ public class AutoFocusCrossHair extends View {
         this.setDrawable(R.drawable.crosshair);
         this.setVisibility(View.VISIBLE);
     }
-
+    /**
+     * Doing the Animation.
+     */
     public void doAnimation() {
         scaleView(this, 1.0f, 1.5f);
     }

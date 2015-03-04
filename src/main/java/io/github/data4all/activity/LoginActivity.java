@@ -32,6 +32,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
@@ -77,6 +79,18 @@ public class LoginActivity extends AbstractActivity {
             this.osmPass = (EditText) findViewById(R.id.osm_pass);
             this.progress = findViewById(R.id.progress);
         }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onPrepareOptionsMenu(android.os.Bundle)
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.upload_data);
+        item.setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     /**

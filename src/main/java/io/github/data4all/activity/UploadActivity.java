@@ -30,10 +30,13 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 
+import android.R.menu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -84,6 +87,18 @@ public class UploadActivity extends AbstractActivity {
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         this.showAllElementsOnMap();
+    }
+    
+    /*
+    * (non-Javadoc)
+    * 
+    * @see android.app.Activity#onPrepareOptionsMenu(android.os.Bundle)
+    */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.upload_data);
+        item.setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     /**
@@ -171,7 +186,7 @@ public class UploadActivity extends AbstractActivity {
      * @param v
      *            The view which was clicked
      */
-    public void onClickCancle(View v) {
+    public void onClickCancel(View v) {
         if (v.getId() == R.id.upload_cancle_button) {
             final Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.ACTION, UploadService.CANCLE);
@@ -220,7 +235,8 @@ public class UploadActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        // Ignore - The upload is the last step in the workflow
+        // finishWorkflow to get back to main activity
+        finishWorkflow();
     }
 
     /*
