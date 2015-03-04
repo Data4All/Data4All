@@ -73,10 +73,8 @@ public class CameraActivity extends AbstractActivity {
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();
 
-	OrientationListener orientationListener;
-	boolean listenerBound;
-
-	private HorizonCalculationUtil horizonCalculationUtil;
+    OrientationListener orientationListener;
+    boolean orientationBound;
 
     private Camera mCamera;
 
@@ -87,7 +85,7 @@ public class CameraActivity extends AbstractActivity {
     private OrientationEventListener listener;
     private ShutterCallback shutterCallback;
 
-	private CaptureAssistView cameraAssistView;
+    private CaptureAssistView cameraAssistView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,8 +103,7 @@ public class CameraActivity extends AbstractActivity {
 
         shutterCallback = new ShutterCallback() {
             public void onShutter() {
-                final Vibrator vibrator =
-                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
             }
         };
@@ -122,16 +119,14 @@ public class CameraActivity extends AbstractActivity {
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
         this.setListener(btnCapture);
 
-        listener =
-                new ButtonRotationListener(this,
-                        Arrays.asList((View) btnCapture));
+        listener = new ButtonRotationListener(this,
+                Arrays.asList((View) btnCapture));
+
+        cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
 
         // Set the Focus animation
-        mAutoFocusCrossHair =
-                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
-
-		horizonCalculationUtil = new HorizonCalculationUtil();
 
     }
 
@@ -141,8 +136,7 @@ public class CameraActivity extends AbstractActivity {
         setLayout();
         if (isDeviceSupportCamera()) {
             try {
-                cameraPreview =
-                        (CameraPreview) findViewById(R.id.cameraPreview);
+                cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
 
                 mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 cameraPreview.setCamera(mCamera);
@@ -162,15 +156,20 @@ public class CameraActivity extends AbstractActivity {
             return;
         }
         listener.enable();
-        		Intent intent = new Intent(this, OrientationListener.class);
-		bindService(intent, orientationListenerConnection,
-				Context.BIND_AUTO_CREATE);
-		this.startService(intent);
+        Intent intent = new Intent(this, OrientationListener.class);
+        bindService(intent, orientationListenerConnection,
+                Context.BIND_AUTO_CREATE);
+        this.startService(intent);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        orientationListener.setHorizonListener(null);
+        if (orientationBound) {
+            unbindService(orientationListenerConnection);
+            orientationBound = false;
+        }
         if (mCamera != null) {
             mCamera.stopPreview();
             cameraPreview.setCamera(null);
@@ -178,6 +177,7 @@ public class CameraActivity extends AbstractActivity {
             mCamera = null;
         }
         listener.disable();
+
         stopService(new Intent(this, OrientationListener.class));
     }
 
@@ -256,51 +256,47 @@ public class CameraActivity extends AbstractActivity {
         return getApplicationContext().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA);
     }
-}
 
+    public void updateCameraAssistView() {
 
+        if (orientationListener != null) {
+            final Camera.Parameters params = mCamera.getParameters();
+            final float maxPitch = (float) Math.toRadians(params
+                    .getHorizontalViewAngle());
+            final float maxRoll = (float) Math.toRadians(params
+                    .getVerticalViewAngle());
+            cameraAssistView.setInformations(maxPitch, maxRoll,
+                    orientationListener.getDeviceOrientation());
+            cameraAssistView.invalidate();
+        }
 
-	public void updateCameraAssistView() {
+    }
 
-		ReturnValues returnValues = null;
-		
-		if (orientationListener != null) {
-			final Camera.Parameters params = mCamera.getParameters();
-			final float maxPitch = (float) Math.toRadians(params
-					.getHorizontalViewAngle());
-			final float maxRoll = (float) Math.toRadians(params
-					.getVerticalViewAngle());
-	        cameraAssistView.setInformations(maxPitch, maxRoll, orientationListener.getDeviceOrientation());
-	        cameraAssistView.invalidate();			
-		}	
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection orientationListenerConnection = new ServiceConnection() {
 
-	}
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
 
-	/** Defines callbacks for service binding, passed to bindService() */
-	private ServiceConnection orientationListenerConnection = new ServiceConnection() {
+            // LocalService instance
+            LocalBinder binder = (LocalBinder) service;
+            orientationListener = binder.getService();
+            orientationBound = true;
+            HorizonListener horizonListener = new OrientationListener.HorizonListener() {
 
-		@Override
-		public void onServiceConnected(ComponentName className, IBinder service) {
+                @Override
+                public void makeHorizon(boolean state) {
+                    updateCameraAssistView();
+                }
 
-			// LocalService instance
-			LocalBinder binder = (LocalBinder) service;
-			orientationListener = binder.getService();
-			listenerBound = true;
-			HorizonListener horizonListener = new OrientationListener.HorizonListener() {
+            };
+            orientationListener.setHorizonListener(horizonListener);
+        }
 
-				@Override
-				public void makeHorizon(boolean state) {
-					updateCameraAssistView();
-				}
-
-			};
-			orientationListener.setHorizonListener(horizonListener);
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
-			listenerBound = false;
-		}
-	};
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            orientationBound = false;
+        }
+    };
 
 }
