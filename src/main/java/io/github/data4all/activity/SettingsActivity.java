@@ -61,7 +61,8 @@ public class SettingsActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        // Ignore - Settings are not part of the workflow
+        // finishWorkflow to get back to main activity
+        finishWorkflow();
     }
 
     /**

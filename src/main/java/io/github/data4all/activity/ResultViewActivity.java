@@ -157,6 +157,7 @@ public class ResultViewActivity extends AbstractActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.result_view, menu);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         return true;
     }
 
@@ -165,11 +166,25 @@ public class ResultViewActivity extends AbstractActivity implements
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        final int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        boolean status;
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+            startActivity(new Intent(this, SettingsActivity.class));
+            status = true;
+            break;
+        case R.id.action_help:
+            // TODO set help activity here
+            status = true;
+            break;
+        // finish workflow, return to mapview
+        case android.R.id.home:
+            onWorkflowFinished(null);
+            status = true;
+            break;
+        default:
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+        return status;
     }
 
     /**

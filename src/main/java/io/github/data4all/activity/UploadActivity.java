@@ -235,7 +235,8 @@ public class UploadActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        // Ignore - The upload is the last step in the workflow
+        // finishWorkflow to get back to main activity
+        finishWorkflow();
     }
 
     /*
