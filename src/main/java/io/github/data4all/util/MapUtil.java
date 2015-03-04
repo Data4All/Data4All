@@ -49,15 +49,16 @@ public final class MapUtil {
     public static GeoPoint getCenterFromOsmElement(AbstractDataElement element) {
         return getBoundingBoxForOsmElement(element).getCenter();
     }
-    
+
     /**
      * Returns the Center of the given OsmElement.
      * 
-     * @param element
-     *            the OsmElement whose center should be calculated
+     * @param list
+     *            list of OsmElements whose center should be calculated
      * @return the Center of the OsmElement
      */
-    public static GeoPoint getCenterFromOsmElements(List<AbstractDataElement> list) {
+    public static GeoPoint getCenterFromOsmElements(
+            List<AbstractDataElement> list) {
         return getBoundingBoxForOsmElements(list).getCenter();
     }
 
@@ -70,9 +71,9 @@ public final class MapUtil {
      */
     public static BoundingBoxE6 getBoundingBoxForOsmElement(
             AbstractDataElement element) {
-        ArrayList<GeoPoint> list = new ArrayList<GeoPoint>();
+        final ArrayList<GeoPoint> list = new ArrayList<GeoPoint>();
         list.addAll(getPointsForElement(element));
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             return null;
         }
         return BoundingBoxE6.fromGeoPoints(list);
@@ -81,17 +82,17 @@ public final class MapUtil {
     /**
      * Returns the BoundingBox of the given OsmElement.
      * 
-     * @param element
-     *            the OsmElement whose BoundingBox should be calculated
+     * @param list
+     *            list of OsmElements whose BoundingBox should be calculated
      * @return the BoundingBox for the given OsmElement
      */
     public static BoundingBoxE6 getBoundingBoxForOsmElements(
             List<AbstractDataElement> list) {
         final ArrayList<GeoPoint> array = new ArrayList<GeoPoint>();
-        for(AbstractDataElement elem : list){
+        for (AbstractDataElement elem : list) {
             array.addAll(getPointsForElement(elem));
         }
-        if(array.isEmpty()){
+        if (array.isEmpty()) {
             return null;
         }
         return BoundingBoxE6.fromGeoPoints(array);
@@ -104,7 +105,7 @@ public final class MapUtil {
      *            the OsmElement whose GeoPoints should be returned
      * @return List of GeoPoints from the OsmElement
      */
-    private static List<GeoPoint> getPointsForElement(AbstractDataElement elem){
+    private static List<GeoPoint> getPointsForElement(AbstractDataElement elem) {
         List<GeoPoint> points = new ArrayList<GeoPoint>();
         if (elem instanceof Node) {
             final Node node = (Node) elem;
@@ -116,5 +117,4 @@ public final class MapUtil {
         return points;
     }
 
-    
 }

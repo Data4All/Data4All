@@ -25,7 +25,6 @@ import io.github.data4all.view.CameraPreview;
 
 import java.util.Arrays;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -76,16 +75,6 @@ public class CameraActivity extends AbstractActivity {
         Log.i(TAG, "onCreate is called");
         super.onCreate(savedInstanceState);
 
-        // Checking camera availability
-        if (!this.isDeviceSupportCamera()) {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.noCamSupported), Toast.LENGTH_LONG)
-                    .show();
-            finish();
-            Log.d(TAG, "device supports no camera");
-            return;
-        }
-
         // remove title and status bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -95,68 +84,88 @@ public class CameraActivity extends AbstractActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
+        shutterCallback = new ShutterCallback() {
+            public void onShutter() {
+                final Vibrator vibrator =
+                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(200);
+            }
+        };
+    }
+
+    /**
+     * Setup the layout and find the views.
+     */
+    private void setLayout() {
         setContentView(R.layout.activity_camera);
 
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
         this.setListener(btnCapture);
 
-        listener = new ButtonRotationListener(this,
-                Arrays.asList((View) btnCapture));
+        listener =
+                new ButtonRotationListener(this,
+                        Arrays.asList((View) btnCapture));
 
         // Set the Focus animation
-        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
-
-        shutterCallback = new ShutterCallback() {
-            public void onShutter() {
-                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                vibrator.vibrate(200);
-            }
-        };
+        mAutoFocusCrossHair =
+                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
     }
 
     @Override
     protected void onResume() {
-        Log.i(TAG, "onResume is called");
         super.onResume();
+        setLayout();
+        if (isDeviceSupportCamera()) {
+            try {
+                cameraPreview =
+                        (CameraPreview) findViewById(R.id.cameraPreview);
 
-        this.startService(new Intent(this, OrientationListener.class));
-
-        if (mCamera == null) {
-            Log.d(TAG, "camera is null, so we have to recreate");
-            this.createCamera();
-            cameraPreview.setCamera(mCamera);
-            mCamera.startPreview();
+                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+                cameraPreview.setCamera(mCamera);
+                mCamera.startPreview();
+            } catch (RuntimeException ex) {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.noCamSupported), Toast.LENGTH_LONG)
+                        .show();
+                Log.e(TAG, "device supports no camera", ex);
+            }
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.noCamSupported), Toast.LENGTH_LONG)
+                    .show();
+            finish();
+            Log.d(TAG, "device supports no camera");
+            return;
         }
-
-        btnCapture.setEnabled(true);
         listener.enable();
+        startService(new Intent(this, OrientationListener.class));
     }
 
     @Override
     protected void onPause() {
-        Log.i(TAG, "onPause is called");
         super.onPause();
-
-        this.stopService(new Intent(this, OrientationListener.class));
-
-        super.onPause();
-
         if (mCamera != null) {
-            Log.d(TAG, "camera is not null on pause, so release it");
+            mCamera.stopPreview();
             cameraPreview.setCamera(null);
-            this.releaseCamera();
+            mCamera.release();
+            mCamera = null;
         }
-
-        btnCapture.setEnabled(false);
         listener.disable();
+        stopService(new Intent(this, OrientationListener.class));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.releaseCamera();
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow();
     }
 
     /* ********************************************************** *
@@ -212,22 +221,6 @@ public class CameraActivity extends AbstractActivity {
     }
 
     /**
-     * This method setup the camera.It calls a method from @CameraPreview and
-     * sets all camera parameters.
-     */
-    private void createCamera() {
-        Log.i(TAG, "createCamera is called");
-
-        if (this.isDeviceSupportCamera()) {
-            mCamera = this.getCameraInstance();
-            cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
-            cameraPreview.setCamera(mCamera);
-        } else {
-            Log.e(TAG, "Device not support camera");
-        }
-    }
-
-    /**
      * This method looks whether the device has a camera and then returns a
      * boolean.
      * 
@@ -237,38 +230,5 @@ public class CameraActivity extends AbstractActivity {
         Log.d(TAG, "look if device has camera");
         return getApplicationContext().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA);
-    }
-
-    /**
-     * This method release the camera for other applications and set camera to
-     * null.
-     */
-    private void releaseCamera() {
-        Log.d(TAG, "release Camera is called");
-        if (mCamera != null) {
-            mCamera.release();
-            mCamera = null;
-        }
-    }
-
-    /**
-     * A safe way to get an instance of the Camera object.
-     */
-    public Camera getCameraInstance() {
-        Log.d(TAG, "try to get an instance of camera");
-        Camera camera = null;
-
-        this.releaseCamera();
-        camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-
-        return camera;
-    }
-
-    /* (non-Javadoc)
-     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
-     */
-    @Override
-    protected void onWorkflowFinished(Intent data) {
-        finishWorkflow();
     }
 }

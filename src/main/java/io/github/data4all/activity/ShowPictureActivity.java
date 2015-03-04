@@ -19,6 +19,10 @@ import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.drawing.AreaMotionInterpreter;
+import io.github.data4all.model.drawing.BuildingMotionInterpreter;
+import io.github.data4all.model.drawing.PointMotionInterpreter;
+import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
@@ -45,6 +49,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * Activity to set a ImageView and use the TouchView to draw.<br\>
@@ -184,7 +189,9 @@ public class ShowPictureActivity extends AbstractActivity {
         buttons.add(findViewById(R.id.imageButton1));
         buttons.add(findViewById(R.id.imageButton2));
         buttons.add(findViewById(R.id.imageButton3));
-        buttons.add(findViewById(R.id.imageButton4));
+        //TODO building is not supported yet, so it is commented out here and
+        //in activity_picture.xml
+        //buttons.add(findViewById(R.id.imageButton4));
         buttons.add(ok);
 
         listener = new ButtonRotationListener(this, buttons);
@@ -212,6 +219,16 @@ public class ShowPictureActivity extends AbstractActivity {
      *            current view used this method
      */
     public void onClickOkay(View view) {
+        //first get sure that there is a valid location
+        if (transformBean.getLocation() == null) {
+            final String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
+        } else if (currentOrientation == null) {
+            final String text = getString(R.string.noSensorData);
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
+        } else {
         // 0 or Rotation0 if portrait
         // 90 or Rotation1 if home-button to the right
         // 270 or Rotation3 if home-button to the left
@@ -225,6 +242,7 @@ public class ShowPictureActivity extends AbstractActivity {
         final AbstractDataElement osmElement = touchView.create(rotation);
         intent.putExtra(OSM_ELEMENT, osmElement);
         startActivityForResult(intent);
+        }
     }
 
     /**

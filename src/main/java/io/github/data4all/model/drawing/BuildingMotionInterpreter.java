@@ -24,8 +24,6 @@ import io.github.data4all.util.PointToCoordsTransformUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.Color;
-
 /**
  * This BuildingMotionInterpreter is a MotionInterpreter for buildings.<br/>
  * 
@@ -40,8 +38,8 @@ import android.graphics.Color;
 public class BuildingMotionInterpreter implements MotionInterpreter {
 
     private PointToCoordsTransformUtil pointTrans;
-    private final static int MIN_NODES = 4;
-    
+    private static final int MIN_NODES = 4;
+
     /**
      * Creates an BuildingMotionInterpreter with the specified transformation
      * utility.
@@ -134,7 +132,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
     public boolean isArea() {
         return true;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

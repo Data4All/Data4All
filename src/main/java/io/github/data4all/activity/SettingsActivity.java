@@ -19,6 +19,8 @@ import io.github.data4all.R;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.view.Menu;
+import android.view.MenuItem;
 
 /**
  * Offers a settings view for the application.
@@ -37,6 +39,18 @@ public class SettingsActivity extends AbstractActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new Settings()).commit();
     }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onPrepareOptionsMenu(android.os.Bundle)
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.action_settings);
+        item.setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     /*
      * (non-Javadoc)
@@ -47,7 +61,8 @@ public class SettingsActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        // Ignore - Settings are not part of the workflow
+        // finishWorkflow to get back to main activity
+        finishWorkflow();
     }
 
     /**
