@@ -319,8 +319,7 @@ public class CameraActivity extends AbstractActivity {
 			final float maxRoll = (float) Math.toRadians(params
 					.getVerticalViewAngle());
 	        cameraAssistView.setInformations(maxPitch, maxRoll, orientationListener.getDeviceOrientation());
-	        cameraAssistView.invalidate();
-			
+	        cameraAssistView.invalidate();			
 		}	
 
 	}

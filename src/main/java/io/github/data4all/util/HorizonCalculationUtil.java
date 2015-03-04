@@ -15,6 +15,9 @@
  *******************************************************************************/
 package io.github.data4all.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.drawing.Point;
@@ -28,6 +31,18 @@ import io.github.data4all.model.drawing.Point;
  */
 
 public class HorizonCalculationUtil {
+    private Point point1 , point2;
+    private Point[] corners;      
+    /**
+     * 3 for first two edges 5 for first and 3. corner 9 for first and 4.
+     * corner 6 for second and 3. corner 10 for second and 4. corner 12 for
+     * 3. and 4. corner
+     */
+    private int edges = 0;
+    /**
+     * 1 for y < 0 and x < 0 +1 clockwise
+     */
+    private int direction;
 
     /**
      * calculates the horizon for the display of the device.
@@ -51,6 +66,9 @@ public class HorizonCalculationUtil {
             DeviceOrientation deviceOrientation) {
         // zero if the general deviceorientation directed to the ground.
         final ReturnValues rV = new ReturnValues();
+        Point[] c = { new Point(0.0f, 0.0f), new Point(maxWidth, 0.0f),
+                new Point(maxWidth, maxHeight), new Point(0.0f, maxHeight), };
+        corners = c;
 
         final double[] vector = new double[3];
         // without any rotation .
@@ -83,7 +101,6 @@ public class HorizonCalculationUtil {
         // calculate angle between vector and z-axis and subtract from
         // maxhorizon.
         final double angle = maxhorizon - Math.acos(-vector3[2]);
-        Log.d("TEST", "A1: " + Math.acos(-vector3[2]) + "A2: " + angle);
         // check if the device is looking above the horizon
         if (angle <= 0) {
             rV.setSkylook(true);
@@ -113,6 +130,18 @@ public class HorizonCalculationUtil {
         final float x = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
         final float y = calculatePixelFromAngle(horizonPitch, maxHeight,
                 maxPitch);
+        if (y <= 0 && x < 0) {
+            direction = 1;
+        }
+        if (y < 0 && x >= 0) {
+            direction = 2;
+        }
+        if (y >= 0 && x >= 0) {
+            direction = 3;
+        }
+        if (y > 0 && x <= 0) {
+            direction = 4;
+        }
 
         // Log.d("TEST", "X: " + x + "Y: " +y);
         // calculate and return the returnValues.
@@ -140,13 +169,9 @@ public class HorizonCalculationUtil {
      */
     public class ReturnValues {
         /**
-         * first point on the edge of the display representing the horizon
-         */
-        private Point point1;
-        /**
          * second point on the edge of the display representing the horizon
          */
-        private Point point2;
+        private List<Point> points = new ArrayList<Point>();
         /**
          * true if more than 50% of the display is above the horizon
          */
@@ -155,35 +180,15 @@ public class HorizonCalculationUtil {
          * false if the horzion is not visible on the display
          */
         private boolean visible = true;
-        /**
-         * 3 for first to corners 5 for first and 3. corner 9 for first and 4.
-         * corner 6 for second and 3. corner 10 for second and 4. corner 12 for
-         * 3. and 4. corner
-         */
-        private int corners = 0;
 
-        public int getCorners() {
-            return corners;
-        }
 
-        public void setCorners(int corners) {
-            this.corners = corners;
-        }
+        public List<Point> getPoints() {
+            return points;
+        }   
+        
 
-        public Point getPoint1() {
-            return point1;
-        }
-
-        public void setPoint1(Point point1) {
-            this.point1 = point1;
-        }
-
-        public Point getPoint2() {
-            return point2;
-        }
-
-        public void setPoint2(Point point2) {
-            this.point2 = point2;
+        public void setPoints(List<Point> points) {
+            this.points = points;
         }
 
         public boolean isSkylook() {
@@ -220,62 +225,107 @@ public class HorizonCalculationUtil {
             float x, float y, ReturnValues rV) {
         // counter for the added points.
         int iter = 0;
-        int corners = 0;
+        edges = 0;
         // check if horizon is parallel to a side of the display.
         if (Float.floatToRawIntBits(y) == 0) {
-            rV.setPoint1(new Point(maxWidth / 2 + x, 0));
-            rV.setPoint2(new Point(maxWidth / 2 + x, maxHeight));
+            point1 =new Point(maxWidth / 2 + x, 0);
+            point2 = new Point(maxWidth / 2 + x, maxHeight);
+            edges = 10;
         } else if (Float.floatToRawIntBits(x) == 0) {
-            rV.setPoint1(new Point(0, maxHeight / 2 + y));
-            rV.setPoint2(new Point(maxWidth, maxHeight / 2 + y));
+            point1 = new Point(0, maxHeight / 2 + y);
+            point2 = new Point(maxWidth, maxHeight / 2 + y);
+            edges = 5;
         } else {
             // calculade the collision of the horizonline with the displayedges.
             // check wich collision is important and add it to the returnvalues.
             final float xMin = y + x * ((maxWidth / 2 + x) / y) + maxHeight / 2;
             if (xMin > 0 && xMin <= maxHeight) {
-                rV.setPoint1(new Point(0, xMin));
+                point1 = new Point(0, xMin);
                 iter++;
-                corners += 1;
+                edges += 1;
             }
             final float yMin = x - y * ((-maxHeight / 2 - y) / x) + maxWidth
                     / 2;
             if (yMin > 0 && yMin <= maxWidth) {
                 if (iter == 0) {
-                    rV.setPoint1(new Point(yMin, 0));
+                    point1 = new Point(yMin, 0);
                 } else {
-                    rV.setPoint2(new Point(yMin, 0));
+                    point2 = new Point(yMin, 0);
                 }
                 iter++;
-                corners += 2;
+                edges += 2;
             }
             final float xMax = y + x * ((-maxWidth / 2 + x) / y) + maxHeight
                     / 2;
             if (xMax > 0 && xMax <= maxHeight) {
                 if (iter == 0) {
-                    rV.setPoint1(new Point(maxWidth, xMax));
+                    point1 = new Point(maxWidth, xMax);
                 } else {
-                    rV.setPoint2(new Point(maxWidth, xMax));
+                    point2 = new Point(maxWidth, xMax);
                 }
                 iter++;
-                corners += 4;
+                edges += 4;
             }
             final float yMax = x - y * ((maxHeight / 2 - y) / x) + maxWidth / 2;
             if (yMax > 0 && yMax <= maxWidth) {
                 if (iter == 0) {
-                    rV.setPoint1(new Point(yMax, maxHeight));
+                    point1 = new Point(yMax, maxHeight);
                 } else {
-                    rV.setPoint2(new Point(yMax, maxHeight));
+                    point2 = new Point(yMax, maxHeight);
                 }
                 iter++;
-                corners += 8;
-            }
-            rV.setCorners(corners);
+                edges += 8;
+            }            
             // check if more or less then 2 points have been added.
             if (iter != 2) {
                 rV.setVisible(false);
+                return rV;
             }
         }
+        return addCorners(rV, x, y);
+    }
+
+    private ReturnValues addCorners(ReturnValues rV, float x, float y) {
+        List<Point> points = new ArrayList<Point>();
+
+        points.add(point1);
+
+        if (edges == 5) {
+
+            if (y > 0) {
+                points.add(corners[3]);
+                points.add(corners[2]);
+            } else {
+                points.add(corners[0]);
+                points.add(corners[1]);
+            }
+        }else if (edges == 10) {
+
+            if (x > 0) {
+                points.add(corners[1]);
+                points.add(corners[2]);
+            } else {
+                points.add(corners[0]);
+                points.add(corners[3]);
+            }
+        }else{
+            points.add(corners[direction]);
+        }
+
+        points.add(point2);
+
+        rV.setPoints(points);
         return rV;
     }
+
+    public Point getPoint1() {
+        return point1;
+    }
+
+    public Point getPoint2() {
+        return point2;
+    }
+    
+    
 
 }

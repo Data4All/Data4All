@@ -15,6 +15,9 @@
  */
 package io.github.data4all.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
@@ -49,12 +52,11 @@ public class CaptureAssistView extends View {
     private Paint cameraCrossPaint;
     private Paint cameraStopPaint;
     private Paint invalidRegionPaint;
-    private Point coordinateLeft;
-    private Point coordinateRight;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
     private boolean skylook;
     private boolean visible;
+    private List<Point> points = new ArrayList<Point>();
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
@@ -83,8 +85,6 @@ public class CaptureAssistView extends View {
         // TODO FIX ME
         this.mMeasuredWidth = getMeasuredWidth();
         this.mMeasuredHeight = getMeasuredHeight();
-        this.coordinateLeft = new Point(0, 0);
-        this.coordinateRight = new Point(0, 0);
         this.skylook = false;
         this.visible = true;
 
@@ -101,77 +101,60 @@ public class CaptureAssistView extends View {
 
     }
 
-    public void setInformations(float maxPitch, float maxRoll, DeviceOrientation deviceOrientation) {
+    public void setInformations(float maxPitch, float maxRoll,
+            DeviceOrientation deviceOrientation) {
         Log.d(TAG, "set informations");
         this.mMeasuredWidth = getMeasuredWidth();
         this.mMeasuredHeight = getMeasuredHeight();
-        ReturnValues returnValues = horizonCalculationUtil .calcHorizontalPoints(
-                maxPitch, maxRoll, mMeasuredWidth, mMeasuredHeight,
-                (float) Math.toRadians(85), deviceOrientation);
-        this.coordinateLeft = returnValues.getPoint1();
-        this.coordinateRight = returnValues.getPoint2();
+        ReturnValues returnValues = horizonCalculationUtil
+                .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
+                        mMeasuredHeight, (float) Math.toRadians(70),
+                        deviceOrientation);
         this.skylook = returnValues.isSkylook();
         this.visible = returnValues.isVisible();
-      //  Log.i("TEST", "Width: " + getMeasuredHeight() );
-        // DEBUG
-        /*
-         * Log.i(TAG, "DEBUGDEVICE WIDTH  : " + mMeasuredWidth); Log.i(TAG,
-         * "DEBUGDEVICE HEIGHT : " + mMeasuredHeight); Log.i(TAG,
-         * "DEBUG LEFT X  : " + coordinateLeft.getX()); Log.i(TAG,
-         * "DEBUG LEFT Y  : " + coordinateLeft.getY()); Log.i(TAG,
-         * "DEBUG RIGHT X : " + coordinateRight.getX()); Log.i(TAG,
-         * "DEBUG RIGHT Y : " + coordinateRight.getY());
-         */
+        this.points = returnValues.getPoints();
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         Log.d(TAG, "onDrawCalled");
+        if (visible && !points.isEmpty()) {
+            if (!skylook) {
+                Path path = getPath();
+                canvas.drawPath(path, invalidRegionPaint);
+            } else {
+                canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
+                        mMeasuredWidth / 2 + mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
+                        cameraStopPaint);
 
-        if (!skylook) {
-
-            Path path = getPath();
-
-            canvas.drawPath(path, invalidRegionPaint);
-
-        } else {
-            canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
-                    mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
-                            / 2 + mMeasuredWidth / 12, mMeasuredHeight / 2
-                            + mMeasuredHeight / 8, cameraStopPaint);
-
-            canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
-                    mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
-                            / 2 - mMeasuredWidth / 12, mMeasuredHeight / 2
-                            + mMeasuredHeight / 8, cameraStopPaint);
+                canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
+                        mMeasuredWidth / 2 - mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
+                        cameraStopPaint);
+            }
         }
-
         canvas.restore();
 
     }
 
     private Path getPath() {
-
         Path path = new Path();
-        // Start on left top corner
-        path.moveTo(0, 0);
-        if (coordinateLeft != null && coordinateRight != null) {
-
-            // draw line to left point
-            path.lineTo(0, coordinateLeft.getY());
-            // draw line to right point
-            path.lineTo(mMeasuredWidth, coordinateRight.getY());
-        } else {
-
-            // draw line to left point
-            path.lineTo(0, 0);
-            // draw line to right point
-            path.lineTo(mMeasuredWidth, 0);
+        boolean firstIter = true;
+        if (!points.isEmpty()) {
+            for (Point iter : points) {
+                if (firstIter) {
+                    path.moveTo(iter.getX(), iter.getY());
+                    firstIter = false;
+                } else {
+                    path.lineTo(iter.getX(), iter.getY());
+                }
+            }
+            path.lineTo(points.get(0).getX(), points.get(0).getY());
         }
-        // draw line to right top corner
-        path.lineTo(mMeasuredWidth, 0);
-        // close draw to left top corner
-        path.lineTo(0, 0);
         return path;
 
     }
