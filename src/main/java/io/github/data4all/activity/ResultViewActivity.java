@@ -108,9 +108,8 @@ public class ResultViewActivity extends AbstractActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        osmMap =
-                new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                        MAXIMAL_ZOOM_LEVEL);
+        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                MAXIMAL_ZOOM_LEVEL);
 
         // Here is the OsmDroidMap created
         setContentView(R.layout.activity_result_view);
@@ -119,17 +118,16 @@ public class ResultViewActivity extends AbstractActivity implements
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-        final BoundingBoxE6 boundingBox =
-                MapUtil.getBoundingBoxForOsmElement(element);
+        final BoundingBoxE6 boundingBox = MapUtil
+                .getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
         mapView.addOsmElementToMap(this, element);
         // Here the List of tags is created
         listView = (ListView) this.findViewById(R.id.listViewResultView);
         res = getResources();
-        tagMap =
-                Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
-                        res);
+        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
+                res);
         mapTag = Tagging.getUnclassifiedMapKeys(element.getTags(), res);
         this.output();
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -145,11 +143,11 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             }
         });
-        final ImageButton resultButton =
-                (ImageButton) this.findViewById(R.id.buttonResult);
+        final ImageButton resultButton = (ImageButton) this
+                .findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
-        final ImageButton resultButtonToCamera =
-                (ImageButton) this.findViewById(R.id.buttonResultToCamera);
+        final ImageButton resultButtonToCamera = (ImageButton) this
+                .findViewById(R.id.buttonResultToCamera);
         resultButtonToCamera.setOnClickListener(this);
     }
 
@@ -220,17 +218,15 @@ public class ResultViewActivity extends AbstractActivity implements
      */
     private void changeClassifiedTag(final String selectedString) {
         Log.i(TAG, "Classified Tag");
-        final AlertDialog.Builder alertDialog =
-                new AlertDialog.Builder(ResultViewActivity.this,
-                        android.R.style.Theme_Holo_Dialog_MinWidth);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
         alertDialog.setTitle("Select Tag");
         final CharSequence[] showArray;
-        showArray =
-                Tagging.ClassifiedValueList(tagMap.get(selectedString)
-                        .getClassifiedValues(), res);
-        classifiedMap =
-                Tagging.classifiedValueMap(tagMap.get(selectedString)
-                        .getClassifiedValues(), res, false);
+        showArray = Tagging.ClassifiedValueList(tagMap.get(selectedString)
+                .getClassifiedValues(), res);
+        classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString)
+                .getClassifiedValues(), res, false);
         alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -255,9 +251,8 @@ public class ResultViewActivity extends AbstractActivity implements
      *            is the String which is selected
      */
     private void changeUnclassifiedTag(final String selectedString) {
-        dialog =
-                new Dialog(ResultViewActivity.this,
-                        android.R.style.Theme_Holo_Dialog_MinWidth);
+        dialog = new Dialog(ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
         dialog.setContentView(R.layout.dialog_dynamic);
         dialog.setTitle(selectedString);
         final Button okay = new Button(ResultViewActivity.this);
@@ -266,8 +261,8 @@ public class ResultViewActivity extends AbstractActivity implements
         text.setInputType(mapTag.get(selectedString).getType());
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
-        final LinearLayout layout =
-                (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+        final LinearLayout layout = (LinearLayout) dialog
+                .findViewById(R.id.dialogDynamic);
         layout.addView(text);
         layout.addView(okay);
         okay.setOnClickListener(new OnClickListener() {
@@ -286,8 +281,8 @@ public class ResultViewActivity extends AbstractActivity implements
     public void onClick(View v) {
         if (v.getId() == R.id.buttonResult) {
             this.addOsmElementToDB(element);
-            final AlertDialog.Builder builder =
-                    new AlertDialog.Builder(ResultViewActivity.this);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                    ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
             final Intent intent = new Intent(this, LoginActivity.class);
             builder.setPositiveButton(R.string.yes,
@@ -319,7 +314,11 @@ public class ResultViewActivity extends AbstractActivity implements
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         final DataBaseHandler db = new DataBaseHandler(this);
-        db.createDataElement(dataElement);
+        if (dataElement.getOsmId() == -1) {
+            db.createDataElement(dataElement);
+        } else {
+            db.updateDataElement(dataElement);
+        }
         db.close();
     }
 
