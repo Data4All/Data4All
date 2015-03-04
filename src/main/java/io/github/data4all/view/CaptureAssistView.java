@@ -17,7 +17,9 @@ package io.github.data4all.view;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.drawing.Point;
+import io.github.data4all.util.HorizonCalculationUtil;
 import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import android.content.Context;
 import android.content.res.Resources;
@@ -44,118 +46,134 @@ import android.view.View;
 
 public class CaptureAssistView extends View {
 
-	private Paint cameraCrossPaint;
-	private Paint cameraStopPaint;
-	private Paint invalidRegionPaint;
-	private Point coordinateLeft;
-	private Point coordinateRight;
-	private int mMeasuredWidth;
-	private int mMeasuredHeight;
-	private boolean skylook;
+    private Paint cameraCrossPaint;
+    private Paint cameraStopPaint;
+    private Paint invalidRegionPaint;
+    private Point coordinateLeft;
+    private Point coordinateRight;
+    private int mMeasuredWidth;
+    private int mMeasuredHeight;
+    private boolean skylook;
+    private boolean visible;
 
-	private static final String TAG = CaptureAssistView.class.getSimpleName();
+    HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
-	public CaptureAssistView(Context context) {
-		super(context);
-		initView();
-	}
+    private static final String TAG = CaptureAssistView.class.getSimpleName();
 
-	public CaptureAssistView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		initView();
-	}
+    public CaptureAssistView(Context context) {
+        super(context);
+        initView();
+    }
 
-	public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		initView();
-	}
+    public CaptureAssistView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView();
+    }
 
-	private void initView() {
-		setFocusable(true);
-		Log.d(TAG, "initViewIsCalled");
+    public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initView();
+    }
 
-		// Sorry for this... but have to initialise to some Points.
-		//TODO FIX ME
-		this.mMeasuredWidth = getMeasuredWidth();
-		this.mMeasuredHeight = getMeasuredHeight();
-		this.coordinateLeft = new Point(0, 0);
-		this.coordinateRight = new Point(0, 0);
-		this.skylook = false;
+    private void initView() {
+        setFocusable(true);
+        Log.d(TAG, "initViewIsCalled");
 
-		
-		Resources r = this.getResources();
+        // Sorry for this... but have to initialise to some Points.
+        // TODO FIX ME
+        this.mMeasuredWidth = getMeasuredWidth();
+        this.mMeasuredHeight = getMeasuredHeight();
+        this.coordinateLeft = new Point(0, 0);
+        this.coordinateRight = new Point(0, 0);
+        this.skylook = false;
+        this.visible = true;
 
-		cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
-		cameraStopPaint.setStyle(Paint.Style.STROKE);
-		cameraStopPaint.setStrokeWidth(6);
+        Resources r = this.getResources();
 
-		invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
-		invalidRegionPaint.setStyle(Paint.Style.FILL);
+        cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
+        cameraStopPaint.setStyle(Paint.Style.STROKE);
+        cameraStopPaint.setStrokeWidth(6);
 
-	}
+        invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
+        invalidRegionPaint.setStyle(Paint.Style.FILL);
 
-	public void setInformations(ReturnValues returnValues) {
-		Log.d(TAG, "set informations");
-		this.mMeasuredWidth = getMeasuredWidth();
-		this.mMeasuredHeight = getMeasuredHeight();
-		this.coordinateLeft = returnValues.getPoint1();
-		this.coordinateRight = returnValues.getPoint2();
-		this.skylook = returnValues.isSkylook();
+    }
 
-		
-		//DEBUG
-		Log.i(TAG, "DEBUGDEVICE WIDTH  : " + mMeasuredWidth);
-		Log.i(TAG, "DEBUGDEVICE HEIGHT : " + mMeasuredHeight);
-		Log.i(TAG, "DEBUG LEFT X  : " + coordinateLeft.getX());
-		Log.i(TAG, "DEBUG LEFT Y  : " + coordinateLeft.getY());
-		Log.i(TAG, "DEBUG RIGHT X : " + coordinateRight.getX());
-		Log.i(TAG, "DEBUG RIGHT Y : " + coordinateRight.getY());
+    public void setInformations(float maxPitch, float maxRoll, DeviceOrientation deviceOrientation) {
+        Log.d(TAG, "set informations");
+        this.mMeasuredWidth = getMeasuredWidth();
+        this.mMeasuredHeight = getMeasuredHeight();
+        ReturnValues returnValues = horizonCalculationUtil .calcHorizontalPoints(
+                maxPitch, maxRoll, mMeasuredWidth, mMeasuredHeight,
+                (float) Math.toRadians(85), deviceOrientation);
+        this.coordinateLeft = returnValues.getPoint1();
+        this.coordinateRight = returnValues.getPoint2();
+        this.skylook = returnValues.isSkylook();
+        this.visible = returnValues.isVisible();
+      //  Log.i("TEST", "Width: " + getMeasuredHeight() );
+        // DEBUG
+        /*
+         * Log.i(TAG, "DEBUGDEVICE WIDTH  : " + mMeasuredWidth); Log.i(TAG,
+         * "DEBUGDEVICE HEIGHT : " + mMeasuredHeight); Log.i(TAG,
+         * "DEBUG LEFT X  : " + coordinateLeft.getX()); Log.i(TAG,
+         * "DEBUG LEFT Y  : " + coordinateLeft.getY()); Log.i(TAG,
+         * "DEBUG RIGHT X : " + coordinateRight.getX()); Log.i(TAG,
+         * "DEBUG RIGHT Y : " + coordinateRight.getY());
+         */
+    }
 
-	}
+    @Override
+    protected void onDraw(Canvas canvas) {
+        Log.d(TAG, "onDrawCalled");
 
-	@Override
-	protected void onDraw(Canvas canvas) {
-		Log.d(TAG, "onDrawCalled");
+        if (!skylook) {
 
-		if (!skylook) {
+            Path path = getPath();
 
-			Path path = getPath();
+            canvas.drawPath(path, invalidRegionPaint);
 
-			canvas.drawPath(path, invalidRegionPaint);
+        } else {
+            canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
+                    mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
+                            / 2 + mMeasuredWidth / 12, mMeasuredHeight / 2
+                            + mMeasuredHeight / 8, cameraStopPaint);
 
-		} else {
-			canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
-					mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
-							/ 2 + mMeasuredWidth / 12, mMeasuredHeight / 2
-							+ mMeasuredHeight / 8, cameraStopPaint);
+            canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
+                    mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
+                            / 2 - mMeasuredWidth / 12, mMeasuredHeight / 2
+                            + mMeasuredHeight / 8, cameraStopPaint);
+        }
 
-			canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
-					mMeasuredHeight / 2 - mMeasuredHeight / 8, mMeasuredWidth
-							/ 2 - mMeasuredWidth / 12, mMeasuredHeight / 2
-							+ mMeasuredHeight / 8, cameraStopPaint);
-		}
+        canvas.restore();
 
-		canvas.restore();
+    }
 
-	}
+    private Path getPath() {
 
-	private Path getPath() {
+        Path path = new Path();
+        // Start on left top corner
+        path.moveTo(0, 0);
+        if (coordinateLeft != null && coordinateRight != null) {
 
-		Path path = new Path();
-		// Start on left top corner
-		path.moveTo(0, 0);		
-		// draw line to left point
-		path.lineTo(0, coordinateLeft.getY());
-		//draw line to right point
-		path.lineTo(mMeasuredWidth, coordinateRight.getY());
-		//draw line to right top corner
-		path.lineTo(mMeasuredWidth, 0);
-		//close draw to left top corner
-		path.lineTo(0, 0);
-		return path;
+            // draw line to left point
+            path.lineTo(0, coordinateLeft.getY());
+            // draw line to right point
+            path.lineTo(mMeasuredWidth, coordinateRight.getY());
+        } else {
 
-	}
+            // draw line to left point
+            path.lineTo(0, 0);
+            // draw line to right point
+            path.lineTo(mMeasuredWidth, 0);
+        }
+        // draw line to right top corner
+        path.lineTo(mMeasuredWidth, 0);
+        // close draw to left top corner
+        path.lineTo(0, 0);
+        return path;
+
+    }
 
 }

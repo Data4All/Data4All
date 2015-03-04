@@ -314,19 +314,14 @@ public class CameraActivity extends AbstractActivity {
 		
 		if (orientationListener != null) {
 			final Camera.Parameters params = mCamera.getParameters();
-			final float maxRoll = (float) Math.toRadians(params
-					.getHorizontalViewAngle());
 			final float maxPitch = (float) Math.toRadians(params
+					.getHorizontalViewAngle());
+			final float maxRoll = (float) Math.toRadians(params
 					.getVerticalViewAngle());
-			final Size pictureSize = params.getPictureSize();
-
-			returnValues = horizonCalculationUtil.calcHorizontalPoints(
-					maxPitch, maxRoll, pictureSize.width, pictureSize.height,
-					85, orientationListener.getDeviceOrientation());
-
+	        cameraAssistView.setInformations(maxPitch, maxRoll, orientationListener.getDeviceOrientation());
+	        cameraAssistView.invalidate();
+			
 		}	
-		cameraAssistView.setInformations(returnValues);
-		cameraAssistView.invalidate();
 
 	}
 
