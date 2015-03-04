@@ -72,21 +72,23 @@ public class MapPolygon extends Polygon {
                 && !element.getTags().values().isEmpty()) {
             Log.i(TAG, element.getTags().toString());
             Tag tag = (Tag) element.getTags().keySet().toArray()[0];
+            String key = tag.getKey();
+            String value = element.getTags().get(tag);
             Log.i(TAG, tag.toString());
             setTitle(activity.getString(tag.getNameRessource()));
-            if(tag instanceof ClassifiedTag){
-                setSubDescription(getLocalizedName(activity, element.getTags().get(tag)));
-            }else{
+            if (tag instanceof ClassifiedTag) {
+                setSubDescription(getLocalizedName(activity, key, value));
+            } else {
                 setSubDescription(element.getTags().get(tag));
             }
         }
     }
-    
-    public String getLocalizedName(Context context, String key) {
-        Resources resources = context.getResources();
-        int id = resources.getIdentifier("name_" + key.replace(":", "_"),
-                "string", context.getPackageName());
 
+    public String getLocalizedName(Context context, String key, String value) {
+        Resources resources = context.getResources();
+        String s = "name_" + key + "_" + value;
+        int id = resources.getIdentifier(s.replace(":", "_"),
+                "string", context.getPackageName());
         if (id == 0) {
             return null;
         } else {
