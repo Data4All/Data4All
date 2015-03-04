@@ -19,6 +19,7 @@ import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
+import io.github.data4all.service.OrientationListener;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
 
@@ -139,6 +140,7 @@ public class CameraActivity extends AbstractActivity {
             return;
         }
         listener.enable();
+        startService(new Intent(this, OrientationListener.class));
     }
 
     @Override
@@ -151,6 +153,7 @@ public class CameraActivity extends AbstractActivity {
             mCamera = null;
         }
         listener.disable();
+        stopService(new Intent(this, OrientationListener.class));
     }
 
     /*
