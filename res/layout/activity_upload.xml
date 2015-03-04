@@ -15,17 +15,33 @@
             android:layout_centerHorizontal="true" >
 
             <TextView
+                android:id="@+id/upload_gpstracks_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/upload_gpstracks_text" />
+
+            <TextView
+                android:id="@+id/upload_gpstracks_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/upload_gpstracks_text"
+                android:text="" />
+
+            <TextView
                 android:id="@+id/upload_upload_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/upload_gpstracks_text"
                 android:text="@string/upload_upload_text" />
 
             <TextView
                 android:id="@+id/upload_count_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/upload_gpstracks_text"
                 android:layout_toRightOf="@id/upload_upload_text"
                 android:text="" />
+            
         </RelativeLayout>
 
         <ProgressBar
@@ -96,4 +112,5 @@
             android:text="@string/upload_caption"
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </RelativeLayout>
+
 </ScrollView>

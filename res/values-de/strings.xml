@@ -80,10 +80,11 @@
     <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
     <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
+    <string name="upload_gpstracks_text">"Aufgenommene GPS Tracks: "</string>
 
     <!-- other -->
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
-    <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
-    <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
+    <string name="noLocationFound">Kein Standort gefunden. Schalten Sie den Ortungsdienst ein.</string>
+    <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal.</string>
 
 </resources>

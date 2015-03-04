@@ -49,7 +49,8 @@ public class UploadActivity extends AbstractActivity {
     public static final String TAG = UploadActivity.class.getSimpleName();
     private ProgressBar progress;
     private View indetermineProgress;
-    private TextView countText;
+    private TextView countDataElementsText;
+    private TextView countGPSTracksText;
     private View uploadButton;
     private View cancleButton;
     private D4AMapView mapView;
@@ -67,7 +68,8 @@ public class UploadActivity extends AbstractActivity {
         setContentView(R.layout.activity_upload);
         progress = (ProgressBar) findViewById(R.id.upload_progress);
         indetermineProgress = findViewById(R.id.upload_indetermine_progress);
-        countText = (TextView) findViewById(R.id.upload_count_text);
+        countDataElementsText = (TextView) findViewById(R.id.upload_count_text);
+        countGPSTracksText = (TextView) findViewById(R.id.upload_gpstracks_count);
         uploadButton = findViewById(R.id.upload_upload_button);
         cancleButton = findViewById(R.id.upload_cancle_button);
         this.readObjectCount();
@@ -91,11 +93,13 @@ public class UploadActivity extends AbstractActivity {
      */
     private void readObjectCount() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        final int count = db.getDataElementCount();
+        final int countDataElements = db.getDataElementCount();
+        final int countGPSTracks = db.getGPSTrackCount();
         db.close();
 
-        countText.setText(Integer.toString(count));
-        if (count > 0) {
+        countDataElementsText.setText(Integer.toString(countDataElements));
+        countGPSTracksText.setText(Integer.toString(countGPSTracks));
+        if (countDataElements > 0 || countGPSTracks > 0) {
             uploadButton.setEnabled(true);
         } else {
             uploadButton.setEnabled(false);
@@ -188,6 +192,7 @@ public class UploadActivity extends AbstractActivity {
     private void deleteAllElements() {
         final DataBaseHandler db = new DataBaseHandler(this);
         db.deleteAllDataElements();
+        db.deleteAllGPSTracks();
         db.close();
         this.readObjectCount();
     }
