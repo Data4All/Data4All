@@ -17,6 +17,7 @@ package io.github.data4all.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1036,7 +1037,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final SQLiteDatabase db = getReadableDatabase();
 
-        final Map<Tag, String> tagMap = new HashMap<Tag, String>();
+        final Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
 
         for (int id : tagIDs) {
             final Cursor cursor =
@@ -1066,7 +1067,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     private Map<Tag, String> getTagMap(long dataElementId) {
 
         final SQLiteDatabase db = getReadableDatabase();
-        final Map<Tag, String> tagMap = new HashMap<Tag, String>();
+        final Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
 
         final Cursor cursor =
                 db.query(TABLE_TAGMAP, new String[] {KEY_ID, KEY_DATAELEMENT,
