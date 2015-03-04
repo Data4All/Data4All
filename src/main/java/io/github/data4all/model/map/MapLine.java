@@ -18,6 +18,7 @@ package io.github.data4all.model.map;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.view.D4AMapView;
 
@@ -67,14 +68,17 @@ public class MapLine extends Polyline {
     }
 
     public void setInfo() {
-
         if (!element.getTags().keySet().isEmpty()
                 && !element.getTags().values().isEmpty()) {
             Log.i(TAG, element.getTags().toString());
             Tag tag = (Tag) element.getTags().keySet().toArray()[0];
             Log.i(TAG, tag.toString());
             setTitle(activity.getString(tag.getNameRessource()));
-            setSubDescription(getLocalizedName(activity, element.getTags().get(tag)));
+            if(tag instanceof ClassifiedTag){
+                setSubDescription(getLocalizedName(activity, element.getTags().get(tag)));
+            }else{
+                setSubDescription(element.getTags().get(tag));
+            }
            // Log.i(TAG, getSubDescription());
         }
     }

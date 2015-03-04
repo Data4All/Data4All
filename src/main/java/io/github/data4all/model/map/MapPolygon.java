@@ -19,6 +19,7 @@ import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.view.D4AMapView;
 
@@ -73,8 +74,11 @@ public class MapPolygon extends Polygon {
             Tag tag = (Tag) element.getTags().keySet().toArray()[0];
             Log.i(TAG, tag.toString());
             setTitle(activity.getString(tag.getNameRessource()));
-            setSubDescription(getLocalizedName(activity, element.getTags().get(tag)));
-           // Log.i(TAG, getSubDescription());
+            if(tag instanceof ClassifiedTag){
+                setSubDescription(getLocalizedName(activity, element.getTags().get(tag)));
+            }else{
+                setSubDescription(element.getTags().get(tag));
+            }
         }
     }
     

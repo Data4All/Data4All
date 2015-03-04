@@ -317,6 +317,7 @@ public class ResultViewActivity extends AbstractActivity implements
         if (dataElement.getOsmId() == -1) {
             db.createDataElement(dataElement);
         } else {
+            //if the Element allready exists
             db.updateDataElement(dataElement);
         }
         db.close();
