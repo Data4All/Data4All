@@ -23,16 +23,20 @@ import org.acra.sender.HttpSender;
 import android.app.Application;
 
 /**
+ * This class represents the application itself. It initializes the acra report
+ * system.
+ * 
  * @author tbrose
  *
  */
 @ReportsCrashes(
-        formUri = "http://www.koronamc.de:5984/acra-data4all/_design/acra-storage/_update/report",
+        formUri = "http://134.102.219.161:5984/acra-data4all/_design/acra-storage/_update/report",
         reportType = HttpSender.Type.JSON,
         httpMethod = HttpSender.Method.PUT,
         formUriBasicAuthLogin = "d4a-reporter",
         formUriBasicAuthPassword = "ja!doppelkeks",
-        formKey = "", // This is required for backward compatibility but not used
+        // This is required for backward compatibility but not used
+        formKey = "",
         customReportContent = {
                 ReportField.APP_VERSION_CODE,
                 ReportField.APP_VERSION_NAME,
