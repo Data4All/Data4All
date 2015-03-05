@@ -209,10 +209,12 @@ public class UploadService extends IntentService {
         for (Track t : gpsTracks) {
             TrackParserTask trackParser = new TrackParserTask(t);
             String trackXml = trackParser.parseTrack(t);
+            Log.d(TAG, "trying to upload track with ID: " +t.getID() +" name: " +t.getTrackName());
+            Log.d(TAG, "xml: " +trackXml.replaceAll("\n", ""));
             UploadTracksTask trackUpload =
                     new UploadTracksTask(this, user, trackXml, t.getTrackName(), "blubb", "blaah",
                             "true");
-            Log.d(TAG, "Uploading with ID: " +t.getID() +" Name: " +t.getTrackName());
+            
             trackUpload.execute();
         }
     }

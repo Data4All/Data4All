@@ -117,28 +117,28 @@ public class TrackParserTask extends AsyncTask<Void, Void, String> {
 
         sb.append(XML_HEADER);
         sb.append(OPENING_TAG);
-        sb.append("\t<trk>");
-        sb.append("\t<name> " + track.getTrackName() + " </name>");
-        sb.append("\t\t<trkseg>");
+        sb.append("<trk>");
+        sb.append("<name> " + track.getTrackName() + " </name>");
+        sb.append("<trkseg>");
 
         for (TrackPoint trackPoint : points) {
-            sb.append("\t\t\t<trkpt lat=\"");
+            sb.append("<trkpt lat=\"");
             sb.append(trackPoint.getLat());
             sb.append("\" lon=\"");
             sb.append(trackPoint.getLon());
-            sb.append("\">\n");
+            sb.append("\">");
             if (trackPoint.hasAltitude()) {
-                sb.append("\t\t\t\t<elem>");
+                sb.append("<elem>");
                 sb.append(trackPoint.getAlt());
-                sb.append("</elem>\n");
+                sb.append("</elem>");
             }
-            sb.append("\t\t\t\t<time>");
+            sb.append("<time>");
             sb.append(ISO8601FORMAT.format(new Date(trackPoint.getTime())));
-            sb.append("</time>\n");
-            sb.append("\t\t\t</trkpt>\n");
+            sb.append("</time>");
+            sb.append("</trkpt>");
         }
-        sb.append("\t\t</trkseg>");
-        sb.append("\t</trk>");
+        sb.append("</trkseg>");
+        sb.append("</trk>");
         sb.append("</gpx>");
 
         Log.i(TAG, "GPS Track contains " + points.size() + " Trackpoints.");

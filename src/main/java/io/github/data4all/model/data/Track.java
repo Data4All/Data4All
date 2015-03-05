@@ -106,11 +106,11 @@ public class Track implements Parcelable {
         this.trackName = timestamp;
     }
     
-    public long getID(){
+    public long getID() {
         return id;
     }
     
-    public void setID(long id){
+    public void setID(long id) {
         this.id = id;
     }
 

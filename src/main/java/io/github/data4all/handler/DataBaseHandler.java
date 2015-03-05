@@ -1356,8 +1356,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         Log.d(TAG, "Updating GPS Track ID: " + track.getID() + " Name: "
                 + track.getTrackName() + " Size: "
                 + track.getTrackPoints().size());
-        deleteGPSTrack(track);
-        return createGPSTrack(track);
+        this.deleteGPSTrack(track);
+        return this.createGPSTrack(track);
 
         // final SQLiteDatabase db = getWritableDatabase();
         //
@@ -1412,11 +1412,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 final Track track = new Track();
+                track.setID(cursor.getLong(0));
                 final List<Long> trackPointIDs = new ArrayList<Long>();
                 try {
-                    Log.d(TAG, "getAllGPSTracks: cursor.getString(1): "
-                            + cursor.getString(1) + " cursor.getString(1): "
-                            + cursor.getString(2) + " cursor.getString(3): ");
+                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
+                            + cursor.getString(0) + " cursor.getString(1): "
+                            + cursor.getString(1) + " cursor.getString(2): " +cursor.getString(2));
                     final JSONObject json = new JSONObject(cursor.getString(2));
                     final JSONArray jArray =
                             json.optJSONArray("trackpointarray");
@@ -1470,9 +1471,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         List<Long> trackPointIDs = new ArrayList<Long>();
 
         for (TrackPoint point : trackPoints) {
-            if (point.getID() != -1) {
-                values.put(KEY_INCID, point.getID());
-            }
+//            if (point.getID() != -1) {
+//                values.put(KEY_INCID, point.getID());
+//            }
             values.put(KEY_LAT, point.getLat());
             values.put(KEY_LON, point.getLon());
             values.put(KEY_ALT, point.getAlt());
