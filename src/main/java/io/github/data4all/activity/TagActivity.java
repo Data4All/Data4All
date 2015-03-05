@@ -57,6 +57,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -181,6 +182,9 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
+        final ImageButton speechStart = (ImageButton) view
+                .findViewById(R.id.speech);
+        speechStart.setOnClickListener(this);
         alertDialogBuilder.setCustomTitle(view);
         alertDialogBuilder.setItems(array,
                 new DialogInterface.OnClickListener() {
@@ -267,21 +271,23 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            Log.i(TAG, "Speech Start");
             new Dialog(TagActivity.this);
-            final ListView textList = (ListView) findViewById(R.id.listView1);
             final List<String> matchesText = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            SpeechRecognition.splitStrings(matchesText);
-            // final Map<String, String> map =
-            // SpeechRecognition.speechToTag(matchesText);
+            map = SpeechRecognition.speechToTag(matchesText, getIntent()
+                    .getExtras().getInt("TYPE_DEF"), res);
+            Log.i(TAG, map.toString());
             matchesText.clear();
-            for (Entry entry : map.entrySet()) {
-                key = (String) entry.getKey();
-                matchesText.add(key + "=" + map.get(key));
+            if (!map.isEmpty()) {
+                Log.i(TAG, "Speech recognition successfull");
+                createDialog(Tags.getAllAddressTags(),
+                        getString(R.string.AddAddress), true);
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.retry,
+                        Toast.LENGTH_SHORT).show();
+                createAlertDialogKey();
             }
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, matchesText);
-            textList.setAdapter(adapter);
         } else if (resultCode == 0) {
             this.finish();
         }
@@ -325,7 +331,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             text.setHint(arrayList.get(i).getHintRessource());
-            text.setHintTextColor(Color.DKGRAY);
+            text.setHintTextColor(Color.GRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
             Log.i(TAG, "TYpoe " + arrayList.get(i).getType());
