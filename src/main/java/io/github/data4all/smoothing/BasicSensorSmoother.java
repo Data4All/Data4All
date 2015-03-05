@@ -31,7 +31,7 @@ public class BasicSensorSmoother implements SensorSmoother {
      *       http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
      */
     // if ALPHA = 1 OR 0, no filter applies.
-    static final float ALPHA = 0.25f;
+    private static final float ALPHA = 0.25f;
 
     /*
      * (non-Javadoc)
@@ -41,8 +41,9 @@ public class BasicSensorSmoother implements SensorSmoother {
     @Override
     public float[] filter(float[] input, float[] output) {
         final float[] filteredValues = new float[3];
-        if (output == null)
+        if (output == null) {
             return input;
+        }
         if (input != null) {
             for (int i = 0; i < input.length; i++) {
                 filteredValues[i] = output[i] + ALPHA * (input[i] - output[i]);

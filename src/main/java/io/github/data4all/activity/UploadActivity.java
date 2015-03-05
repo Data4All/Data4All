@@ -15,13 +15,6 @@
  */
 package io.github.data4all.activity;
 
-import java.util.List;
-
-import org.json.JSONException;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.BoundingBoxE6;
-import org.osmdroid.views.MapController;
-
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
@@ -30,10 +23,20 @@ import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.service.UploadService;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.view.D4AMapView;
+
+import java.util.List;
+
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.views.MapController;
+
+import android.R.menu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -84,6 +87,18 @@ public class UploadActivity extends AbstractActivity {
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         this.showAllElementsOnMap();
+    }
+    
+    /*
+    * (non-Javadoc)
+    * 
+    * @see android.app.Activity#onPrepareOptionsMenu(android.os.Bundle)
+    */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.upload_data);
+        item.setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     /**
@@ -171,7 +186,7 @@ public class UploadActivity extends AbstractActivity {
      * @param v
      *            The view which was clicked
      */
-    public void onClickCancle(View v) {
+    public void onClickCancel(View v) {
         if (v.getId() == R.id.upload_cancle_button) {
             final Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.ACTION, UploadService.CANCLE);
@@ -183,7 +198,7 @@ public class UploadActivity extends AbstractActivity {
     }
 
     /**
-     * Deletes all DataElements
+     * Deletes all DataElements.
      */
     private void deleteAllElements() {
         final DataBaseHandler db = new DataBaseHandler(this);
@@ -197,7 +212,7 @@ public class UploadActivity extends AbstractActivity {
      */
     private void showAllElementsOnMap() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
+        final List<AbstractDataElement> list = db.getAllDataElements();
 
         if (list != null && !list.isEmpty()) {
             mapController.setCenter(MapUtil.getCenterFromOsmElements(list));
@@ -209,6 +224,29 @@ public class UploadActivity extends AbstractActivity {
             mapView.addOsmElementsToMap(this, list);
             mapView.postInvalidate();
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        // finishWorkflow to get back to main activity
+        finishWorkflow(data);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#finish()
+     */
+    @Override
+    public void finish() {
+        finishWorkflow(null);
     }
 
     /**

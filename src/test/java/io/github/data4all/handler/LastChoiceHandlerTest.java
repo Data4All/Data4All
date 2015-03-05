@@ -30,7 +30,7 @@ import org.robolectric.annotation.Config;
 @Config(emulateSdk = 18)
 public class LastChoiceHandlerTest {
 
-    private LastChoiceHandler lcHandler;
+  /*  private LastChoiceHandler lcHandler;
     private DataBaseHandler dbhandler;
     
     @Before
@@ -41,9 +41,9 @@ public class LastChoiceHandlerTest {
     
     
     
-    /**
+    *//**
      * add a lastChoice in Database and check if database contain this lastChoice
-     */
+     *//*
     @Test
     public void test_LastChoice(){
         
@@ -85,9 +85,9 @@ public class LastChoiceHandlerTest {
         assertTrue(dbhandler.getTagMap(tagIDs).containsKey(street));
     }
     
-    /**
+    *//**
      * add a lastChoice for a specific type and check if a another type contains this lastChoice
-     */
+     *//*
     @Test
     public void test_LastChoiceForSpecificType(){
         Map<Tag, String> lastChoice = new Hashtable<Tag, String>();
@@ -120,9 +120,9 @@ public class LastChoiceHandlerTest {
         assertEquals(null,tagIDs1);
     }
     
-    /**
+    *//**
      * check if a type(node,track,area, and building) has a lastChoice
-     */
+     *//*
     @Test
     public void check_If_SpecificType_Has_LastChoice(){
         LastChoiceHandler.load(dbhandler);
@@ -130,5 +130,5 @@ public class LastChoiceHandlerTest {
         assertTrue(LastChoiceHandler.hasLastChoice(2));
         assertFalse(LastChoiceHandler.hasLastChoice(3));
         assertTrue(LastChoiceHandler.hasLastChoice(4));
-    }
+    }*/
 }

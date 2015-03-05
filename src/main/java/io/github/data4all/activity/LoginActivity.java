@@ -32,6 +32,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
@@ -78,6 +80,18 @@ public class LoginActivity extends AbstractActivity {
             this.progress = findViewById(R.id.progress);
         }
     }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onPrepareOptionsMenu(android.os.Bundle)
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.upload_data);
+        item.setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     /**
      * @return If the user is currently logged in.
@@ -106,8 +120,7 @@ public class LoginActivity extends AbstractActivity {
      * Starts the UploadActivity. Used when the user is logged in.
      */
     private void nextActivity() {
-        this.startActivity(new Intent(this, UploadActivity.class));
-        this.finish();
+        this.startActivityForResult(new Intent(this, UploadActivity.class));
     }
 
     /**
@@ -160,6 +173,14 @@ public class LoginActivity extends AbstractActivity {
                             Uri.parse(OSM_REGISTRATION_URL));
             startActivity(intent);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow(data);
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package io.github.data4all.service;
 
+import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.User;
@@ -26,6 +27,9 @@ import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.Notification.Builder;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
@@ -42,6 +46,11 @@ public class UploadService extends IntentService {
      */
     private static final String CHANGESET_COMMENT =
             "User-triggered upload via App";
+
+    /**
+     * The id of the foreground notification.
+     */
+    private static final int NOTIFICATION_ID = 201;
 
     /**
      * Logger.
@@ -71,6 +80,9 @@ public class UploadService extends IntentService {
 
     private volatile boolean stopNext;
     private volatile HttpCloseable currentConnection;
+    private volatile Builder currentNotification;
+
+    private int currentMaxProgress;
 
     /**
      * Constructs a new UploadService with an new Handler.
@@ -130,6 +142,7 @@ public class UploadService extends IntentService {
      */
     private void uploadElems(final ResultReceiver receiver, final User user) {
         try {
+            this.startForeground(user);
             int requestId = 0;
             if (!stopNext) {
                 // Request the changesetId
@@ -146,7 +159,8 @@ public class UploadService extends IntentService {
             }
             if (!stopNext) {
                 // Upload the changeset
-                send(receiver, MAX_PROGRESS, changesetXml.length());
+                currentMaxProgress = changesetXml.length();
+                send(receiver, MAX_PROGRESS, currentMaxProgress);
                 final CloseableUpload upload =
                         ChangesetUtil.upload(user, requestId, changesetXml,
                                 new MyCallback(receiver));
@@ -161,11 +175,83 @@ public class UploadService extends IntentService {
                 closeId.request();
             }
             if (!stopNext) {
+                this.stopForeground(SUCCESS);
                 send(receiver, SUCCESS, (Bundle) null);
             }
         } catch (OsmException e) {
             Log.e(TAG, "", e);
+            this.stopForeground(ERROR);
             send(receiver, ERROR, e.getLocalizedMessage());
+        }
+        if (stopNext) {
+            this.stopForeground(CANCLE);
+        }
+    }
+
+    /**
+     * Moves the service to foreground and posts a notification for the user.
+     * 
+     * @param user
+     *            The user to upload for
+     */
+    private void startForeground(User user) {
+        currentNotification = new Notification.Builder(this);
+        currentNotification
+                .setContentTitle(getString(R.string.upload_to_openstreetmap))
+                .setContentText(
+                        getString(R.string.upload_to_openstreetmap_progress,
+                                user.getUsername()))
+                .setSmallIcon(android.R.drawable.ic_menu_upload);
+        currentNotification.setProgress(0, 0, true);
+
+        this.startForeground(NOTIFICATION_ID, currentNotification.build());
+    }
+
+    /**
+     * Updates the current foreground notification with the current progress.
+     * 
+     * @param current
+     *            The current progress
+     */
+    private void updateForeground(int current) {
+        if (currentNotification != null) {
+            currentNotification.setProgress(currentMaxProgress, current, false);
+
+            this.startForeground(NOTIFICATION_ID, currentNotification.build());
+        }
+    }
+
+    /**
+     * Stops the foreground service and leaves a notification on success and
+     * failure.
+     * 
+     * @param reason
+     *            The reason to stop
+     */
+    private void stopForeground(int reason) {
+        this.stopForeground(true);
+        if (reason == SUCCESS) {
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .notify(NOTIFICATION_ID,
+                            new Notification.Builder(this)
+                                    .setContentTitle(
+                                            getString(R.string.upload_to_openstreetmap))
+                                    .setContentText(
+                                            getString(R.string.upload_to_openstreetmap_success))
+                                    .setSmallIcon(
+                                            android.R.drawable.ic_menu_upload)
+                                    .build());
+        } else if (reason == ERROR) {
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .notify(NOTIFICATION_ID,
+                            new Notification.Builder(this)
+                                    .setContentTitle(
+                                            getString(R.string.upload_to_openstreetmap))
+                                    .setContentText(
+                                            getString(R.string.upload_to_openstreetmap_error))
+                                    .setSmallIcon(
+                                            android.R.drawable.ic_menu_upload)
+                                    .build());
         }
     }
 
@@ -230,6 +316,14 @@ public class UploadService extends IntentService {
      * @author tbrose
      */
     private class MyCallback implements Callback<Integer> {
+        /**
+         * The interval for the callback method.
+         */
+        private static final int CALLBACK_INTERVAL = 100;
+
+        /**
+         * The receiver for the activity callback.
+         */
         private ResultReceiver receiver;
 
         /**
@@ -250,6 +344,17 @@ public class UploadService extends IntentService {
         @Override
         public void callback(Integer t) {
             send(receiver, CURRENT_PROGRESS, t);
+            UploadService.this.updateForeground(t);
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see io.github.data4all.util.upload.Callback#interval()
+         */
+        @Override
+        public int interval() {
+            return CALLBACK_INTERVAL;
         }
     }
 }

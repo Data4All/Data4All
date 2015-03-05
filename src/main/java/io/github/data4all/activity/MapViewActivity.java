@@ -26,11 +26,12 @@ import io.github.data4all.util.Optimizer;
 
 import java.util.List;
 
-import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -46,8 +47,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     // Logger Tag
     private static final String TAG = "MapViewActivity";
-
-    private static final int REQUEST_CODE = 1;
 
     /**
      * Default constructor.
@@ -66,11 +65,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
         setUpMapView(savedInstanceState);
-        setUpLoadingScreen();
-
-        // Set Overlay for the actual Position
-        Log.i(TAG, "Added User Location Overlay to the map");
-        mapView.getOverlays().add(myLocationOverlay);
+        if (savedInstanceState == null) {
+            setUpLoadingScreen();
+        }else{
+            view.setVisibility(View.GONE);
+        }
 
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
@@ -88,7 +87,18 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         id = R.id.new_point;
         final ImageButton newPoint = (ImageButton) findViewById(id);
         newPoint.setOnClickListener(this);
-
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        return result;
     }
 
     /*
@@ -113,14 +123,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         // Make Photo
         case R.id.to_camera:
-            if (Optimizer.currentLocation() == null) {
-                final String text = getString(R.string.noLocationFound);
-                Toast.makeText(getApplicationContext(), text,
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Intent camera = new Intent(this, CameraActivity.class);
-                startActivity(camera);
-            }
+            this.startCamera();
             break;
         // Add new POI to the Map
         case R.id.new_point:
@@ -128,6 +131,17 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             break;
         default:
             break;
+        }
+    }
+
+    private void startCamera() {
+        if (Optimizer.currentLocation() == null) {
+            final String text = getString(R.string.noLocationFound);
+            Toast.makeText(getApplicationContext(), text,
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            final Intent camera = new Intent(this, CameraActivity.class);
+            startActivity(camera);
         }
     }
 
@@ -141,9 +155,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         super.onResume();
         // clear all Overlays
         mapView.getOverlays().clear();
-        //add osmElements from the database to the map
-        DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
+        // add osmElements from the database to the map
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
         //load lastChoice from database
         LastChoiceHandler.load(db);
@@ -152,7 +166,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
-
 
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
@@ -175,9 +188,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Disable Actual Location Overlay
         Log.i(TAG, "Disable Actual Location Overlay");
         myLocationOverlay.disableMyLocation();
-        // Pause the GPS tracking
-        Log.i(TAG, "Stop GPSService");
-        stopService(new Intent(this, GPSservice.class));
     }
 
     /**
@@ -209,17 +219,16 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
     }
 
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i(TAG, "REQUESTCODE: " + requestCode + " RESULTCODE: " + resultCode);
-        if (requestCode == 0) {
-            final DataBaseHandler db = new DataBaseHandler(this);
-            final List<AbstractDataElement> list = db.getAllDataElements();
-            mapView.addOsmElementsToMap(this, list);
-            db.close();
-            mapView.postInvalidate();
-        }
+    protected void onWorkflowFinished(Intent data) {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<AbstractDataElement> list = db.getAllDataElements();
+        mapView.addOsmElementsToMap(this, list);
+        db.close();
+        mapView.postInvalidate();
     }
 
     /**
@@ -229,9 +238,22 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         if (myLocationOverlay.getMyLocation() != null) {
             setCenter(myLocationOverlay.getMyLocation());
         } else {
-            String text = getString(R.string.noLocationFound);
+            final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.activity.MapActivity#onDestroy()
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Stop the GPS tracking
+        Log.i(TAG, "Stop GPSService");
+        stopService(new Intent(this, GPSservice.class));
     }
 }

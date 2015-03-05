@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2014, 2015 Data4All
- *
+ * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
  * copy of the License at
- *
+ * 
  * <p>http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ import io.github.data4all.model.data.PolyElement.PolyElementType;
  * This class tests all methods of the DataBaseHandler.
  * 
  * @author Kristin Dahnken
+ * @author fkirchge 
  * 
  */
 @RunWith(RobolectricTestRunner.class)
@@ -71,8 +73,6 @@ public class DataBaseHandlerTest {
 
         assertEquals("abcde12345", dbHandler.getUser("Liadan").getOAuthToken());
         assertEquals("abc", dbHandler.getUser("Manus").getOauthTokenSecret());
-        
-        List<User> users = dbHandler.getAllUser();
 
         user1.setOAuthToken("xyz97");
         user2.setOauthTokenSecret("ads8790");
@@ -87,15 +87,15 @@ public class DataBaseHandlerTest {
         dbHandler.deleteUser(user1);
 
         assertEquals(1, dbHandler.getUserCount());
-        
+
         dbHandler.createUser(user1);
-        
+
         assertEquals(2, dbHandler.getUserCount());
-        
+
         dbHandler.deleteAllUser();
-        
+
         assertEquals(0, dbHandler.getUserCount());
-        
+
     }
 
     @Test
@@ -105,13 +105,17 @@ public class DataBaseHandlerTest {
         Node node2 = new Node(2, 25.982423, 42.7483024);
         Node node3 = new Node(3, 23.325786, 41.0457094);
 
-        dbHandler.createNode(node1);
-        dbHandler.createNode(node2);
-        dbHandler.createNode(node3);
+        dbHandler.createDataElement(node1);
+        dbHandler.createDataElement(node2);
+        dbHandler.createDataElement(node3);
 
-        assertEquals(30.123456, dbHandler.getNode(1).getLat(), 0.0);
-        assertEquals(25.982423, dbHandler.getNode(2).getLat(), 0.0);
-        assertEquals(41.0457094, dbHandler.getNode(3).getLon(), 0.0);
+        Node rNode1 = (Node) dbHandler.getDataElement(1);
+        Node rNode2 = (Node) dbHandler.getDataElement(2);
+        Node rNode3 = (Node) dbHandler.getDataElement(3);
+
+        assertEquals(30.123456, rNode1.getLat(), 0.0);
+        assertEquals(25.982423, rNode2.getLat(), 0.0);
+        assertEquals(41.0457094, rNode3.getLon(), 0.0);
 
         node1.setLat(31.123456);
         node2.setLat(26.986764);
@@ -121,52 +125,60 @@ public class DataBaseHandlerTest {
         dbHandler.updateNode(node2);
         dbHandler.updateNode(node3);
 
-        assertEquals(31.123456, dbHandler.getNode(1).getLat(), 0.0);
-        assertEquals(26.986764, dbHandler.getNode(2).getLat(), 0.0);
-        assertEquals(42.869686, dbHandler.getNode(3).getLon(), 0.0);
+        rNode1 = (Node) dbHandler.getDataElement(1);
+        rNode2 = (Node) dbHandler.getDataElement(2);
+        rNode3 = (Node) dbHandler.getDataElement(3);
+
+        assertEquals(31.123456, rNode1.getLat(), 0.0);
+        assertEquals(26.986764, rNode2.getLat(), 0.0);
+        assertEquals(42.869686, rNode3.getLon(), 0.0);
 
         dbHandler.deleteNode(node1);
 
         assertEquals(2, dbHandler.getNodeCount());
-        
-        dbHandler.createNode(node1);
-        
+
+        dbHandler.createDataElement(node1);
+
         assertEquals(3, dbHandler.getNodeCount());
-        
+
         dbHandler.deleteAllNode();
-        
+
         assertEquals(0, dbHandler.getNodeCount());
     }
 
-    @Test
+    /*@Test
     public void testPolyElementCRUD() throws JSONException {
 
-        PolyElement polyElement1 = new PolyElement(1, PolyElementType.AREA);
-        PolyElement polyElement2 = new PolyElement(2, PolyElementType.BUILDING);
-        PolyElement polyElement3 = new PolyElement(3, PolyElementType.WAY);
+        PolyElement polyElement1 = new PolyElement(11, PolyElementType.AREA);
+        PolyElement polyElement2 = new PolyElement(12, PolyElementType.WAY);
+        PolyElement polyElement3 =
+                new PolyElement(13, PolyElementType.BUILDING);
 
         Node node1 = new Node(4, 30.123456, 40.1234567);
         Node node2 = new Node(5, 25.982423, 42.7483024);
         Node node3 = new Node(6, 23.325786, 41.0457094);
-        Node node4 = new Node(7, 34.744587, 41.0937468);
+        Node node4 = new Node(7, 34.744587, 19.0937468);
         Node node5 = new Node(8, 28.935876, 45.6767676);
         Node node6 = new Node(9, 33.333333, 44.4444444);
 
         polyElement1.addNode(node1);
         polyElement1.addNode(node2);
+        assertEquals(2, polyElement1.getNodes().size());
 
         polyElement2.addNode(node3);
         polyElement2.addNode(node4);
+        assertEquals(2, polyElement2.getNodes().size());
 
         polyElement3.addNode(node5);
         polyElement3.addNode(node6);
+        assertEquals(2, polyElement3.getNodes().size());
 
-        dbHandler.createPolyElement(polyElement1);
-        dbHandler.createPolyElement(polyElement2);
-        dbHandler.createPolyElement(polyElement3);
+        dbHandler.createDataElement(polyElement1);
+        dbHandler.createDataElement(polyElement2);
+        dbHandler.createDataElement(polyElement3);
 
         assertEquals(3, dbHandler.getPolyElementCount());
-        assertEquals(6, dbHandler.getNodeCount());
+        assertEquals(6, dbHandler.getAllNode().size());
 
         polyElement1.setType(PolyElementType.BUILDING);
         polyElement2.setType(PolyElementType.WAY);
@@ -176,28 +188,35 @@ public class DataBaseHandlerTest {
         dbHandler.updatePolyElement(polyElement2);
         dbHandler.updatePolyElement(polyElement3);
 
-        assertEquals(PolyElementType.BUILDING, dbHandler.getPolyElement(1)
-                .getType());
-        assertEquals(PolyElementType.WAY, dbHandler.getPolyElement(2).getType());
-        assertEquals(PolyElementType.AREA, dbHandler.getPolyElement(3)
-                .getType());
+        assertEquals(
+                polyElement1.getType(),
+                ((PolyElement) dbHandler.getDataElement(polyElement1.getOsmId()))
+                        .getType());
+        assertEquals(
+                polyElement2.getType(),
+                ((PolyElement) dbHandler.getDataElement(polyElement2.getOsmId()))
+                        .getType());
+        assertEquals(
+                polyElement3.getType(),
+                ((PolyElement) dbHandler.getDataElement(polyElement3.getOsmId()))
+                        .getType());
 
-        dbHandler.deletePolyElement(polyElement1);
+        dbHandler.deleteDataElement(polyElement1);
 
         assertEquals(2, dbHandler.getPolyElementCount());
         assertEquals(4, dbHandler.getNodeCount());
-        
-        dbHandler.createPolyElement(polyElement1);
-        
+
+        dbHandler.createDataElement(polyElement1);
+
         assertEquals(3, dbHandler.getPolyElementCount());
         assertEquals(6, dbHandler.getNodeCount());
-        
-        dbHandler.deleteAllPolyElements();
-        
-        assertEquals(0, dbHandler.getPolyElementCount());
-    }
 
-    @Test
+        dbHandler.deleteAllDataElements();
+
+        assertEquals(0, dbHandler.getAllDataElements().size());
+    }
+*/
+    /*@Test
     public void testDataElementCRUD() throws JSONException {
         PolyElement polyElement1 = new PolyElement(1, PolyElementType.BUILDING);
         Node node1 = new Node(2, 30.123456, 40.1234567);
@@ -232,8 +251,9 @@ public class DataBaseHandlerTest {
         dbHandler.updateDataElement(polyElement1);
         dbHandler.updateDataElement(node1);
 
-        returnedPE = (PolyElement) dbHandler.getDataElement(1);
-        returnedN = (Node) dbHandler.getDataElement(2);
+        returnedPE =
+                (PolyElement) dbHandler.getDataElement(polyElement1.getOsmId());
+        returnedN = (Node) dbHandler.getDataElement(node1.getOsmId());
 
         assertEquals(PolyElementType.AREA, returnedPE.getType());
         assertEquals(42.1234567, returnedN.getLon(), 0.0);
@@ -243,63 +263,74 @@ public class DataBaseHandlerTest {
         assertEquals(1, dbHandler.getDataElementCount());
         assertEquals(1, dbHandler.getPolyElementCount());
         assertEquals(0, dbHandler.getNodeCount());
-        
+
         dbHandler.createDataElement(node1);
-        
+
         assertEquals(2, dbHandler.getDataElementCount());
         assertEquals(1, dbHandler.getPolyElementCount());
         assertEquals(1, dbHandler.getNodeCount());
-        
+
         dbHandler.deleteAllDataElements();
-        
+
         assertEquals(0, dbHandler.getDataElementCount());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testTagMapCRUD() {
+        Node node = new Node(1, 30.123456, 40.1234567);
 
-        Map<Tag, String> tagMap = new Hashtable<Tag, String>();
+        Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
         Tag tag1 = Tags.getTagWithId(1);
-        tagMap.put(tag1, "Hollywood Blvd.");
+        tagMap.put(tag1, "Hollywood");
         Tag tag2 = Tags.getTagWithId(2);
         tagMap.put(tag2, "113");
+        Tag tag3 = Tags.getTagWithId(3);
+        tagMap.put(tag3, "04229");
 
         ArrayList<Integer> tagIDs = new ArrayList<Integer>();
         tagIDs.add(tag1.getId());
         tagIDs.add(tag2.getId());
-
-        dbHandler.createTagMap(tagMap);
-
-        assertEquals(2, dbHandler.getTagMapCount());
-
-        Tag tag3 = Tags.getTagWithId(4);
-        tagMap.put(tag3, "Los Angeles");
         tagIDs.add(tag3.getId());
 
-        dbHandler.updateTagMap(tagMap);
+        node.addTags(tagMap);
+        dbHandler.createDataElement(node);
 
-        assertEquals(3, dbHandler.getTagMapCount());
+        Node rNode = (Node) dbHandler.getDataElement(node.getOsmId());
+        assertEquals(3, dbHandler.getTagMapCount(node.getOsmId()));
 
-        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag1));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("Hollywood Blvd."));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag2));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("113"));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsKey(tag3));
-        assertTrue(dbHandler.getTagMap(tagIDs).containsValue("Los Angeles"));
+        Tag tag4 = Tags.getTagWithId(4);
+        tagMap.put(tag4, "Los Angeles");
+        tagIDs.add(tag4.getId());
 
-        dbHandler.deleteTagMap(tagIDs);
+        node.setTags(tagMap);
+        dbHandler.updateDataElement(node);
+        assertEquals(4, dbHandler.getTagMapCount(node.getOsmId()));
+        rNode = (Node) dbHandler.getDataElement(node.getOsmId());
 
-        assertEquals(0, dbHandler.getTagMapCount());
-        
-        dbHandler.createTagMap(tagMap);
-        
-        assertEquals(3, dbHandler.getTagMapCount());
-        
-        dbHandler.deleteAllTagMap();
-        
-        assertEquals(0, dbHandler.getTagMapCount());
+        assertTrue(rNode.getTags().containsKey(tag1));
+        assertTrue(rNode.getTags().containsValue("Hollywood"));
+        assertTrue(rNode.getTags().containsKey(tag2));
+        assertTrue(rNode.getTags().containsValue("113"));
+        assertTrue(rNode.getTags().containsKey(tag3));
+        assertTrue(rNode.getTags().containsValue("Los Angeles"));
+
+        node.getTags().clear();
+
+        dbHandler.updateDataElement(node);
+
+        assertEquals(0, dbHandler.getTagMapCount(node.getOsmId()));
+
+        node.setTags(tagMap);
+
+        dbHandler.updateDataElement(node);
+
+        assertEquals(4, dbHandler.getTagMapCount(node.getOsmId()));
+
+        dbHandler.deleteAllDataElements();
+
+        assertEquals(0, dbHandler.getTagMapCount(node.getOsmId()));
     }
-
+*/
     @Test
     public void testTrackPointCRUD() {
         Location loc1 = new Location("provider");
@@ -351,9 +382,9 @@ public class DataBaseHandlerTest {
         dbHandler.deleteTrackPoints(trackPointIDs);
 
         assertEquals(2, dbHandler.getTrackPointCount());
-        
+
         dbHandler.deleteAllTrackPoints();
-        
+
         assertEquals(0, dbHandler.getTrackPointCount());
     }
 
@@ -393,21 +424,21 @@ public class DataBaseHandlerTest {
         track.setTrackPoints(trackPoints);
 
         dbHandler.createGPSTrack(track);
-        
+
         assertEquals(1, dbHandler.getGPSTrackCount());
-        
+
         Track reTrack = dbHandler.getGPSTrack(track.getID());
-        
+
         assertEquals(track.getTrackName(), reTrack.getTrackName());
-        
+
         track.setTrackName("2015_02_20_15_18_25");
-        
+
         dbHandler.updateGPSTrack(track);
-                
+
         reTrack = dbHandler.getGPSTrack(track.getID());
         
-//        assertEquals(track.getTrackName(), reTrack.getTrackName());
-        
+        assertEquals(track.getTrackName(), reTrack.getTrackName());
+
     }
 
     @After

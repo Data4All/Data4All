@@ -46,7 +46,7 @@ public class Track implements Parcelable {
      * Logger Tag.
      */
     private static final String TAG = "Track";
-    
+
     /**
      * ID of the TrackPoint, set to default.
      */
@@ -105,12 +105,12 @@ public class Track implements Parcelable {
     public void setTrackName(String timestamp) {
         this.trackName = timestamp;
     }
-    
-    public long getID(){
+
+    public long getID() {
         return id;
     }
-    
-    public void setID(long id){
+
+    public void setID(long id) {
         this.id = id;
     }
 
@@ -139,7 +139,8 @@ public class Track implements Parcelable {
      * Clears the list of TrackPoints belonging to this track and appends
      * another list of TrackPoints to it.
      * 
-     * @param trackPoints the given list of TrackPoints
+     * @param trackPoints
+     *            the given list of TrackPoints
      */
     public void setTrackPoints(List<TrackPoint> trackPoints) {
         tracklist.clear();

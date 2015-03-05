@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.json.JSONException;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 
@@ -47,6 +46,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +58,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * View after Drawing and Tagging
@@ -74,17 +75,13 @@ public class ResultViewActivity extends AbstractActivity implements
     protected MapBoxTileSourceV4 osmMap;
 
     protected static final String OSM_MAP_NAME = "mapbox.streets";
-    
+
     // Minimal Zoom Level
     protected static final int MINIMAL_ZOOM_LEVEL = 10;
 
     // Maximal Zoom Level
     protected static final int MAXIMAL_ZOOM_LEVEL = 22;
-    
-    private static final int REQUEST_CODE = 6;
-    
-    protected static final int CAMERA_RESULT_CODE = 2;
-    
+
     private MapController mapController;
 
     // Listview for the Dialog
@@ -115,12 +112,14 @@ public class ResultViewActivity extends AbstractActivity implements
     public static String tmp;
 
 
+    private View viewFooter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
                 MAXIMAL_ZOOM_LEVEL);
-        
+
         // Here is the OsmDroidMap created
         setContentView(R.layout.activity_result_view);
         mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
@@ -128,7 +127,7 @@ public class ResultViewActivity extends AbstractActivity implements
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-        BoundingBoxE6 boundingBox = MapUtil
+        final BoundingBoxE6 boundingBox = MapUtil
                 .getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
@@ -138,17 +137,38 @@ public class ResultViewActivity extends AbstractActivity implements
         res = getResources();
         tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
                 res);
-        mapTag = Tagging.getUnclassifiedMapKeys(element.getTags(), res);
+        mapTag = Tagging.getUnclassifiedMapKeys(res);
+        if (!Tagging.getAllNonSelectedTags(element.getTags(),
+                getIntent().getExtras().getInt("TYPE_DEF")).isEmpty()) {
+            final LayoutInflater inflater = getLayoutInflater();
+            viewFooter = ((LayoutInflater) this
+                    .getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(
+                    R.drawable.footer_listviewresult, null, false);
+            listView.addFooterView(viewFooter);
+            final TextView tVFooter = ((TextView) viewFooter
+                    .findViewById(R.id.titleFooter));
+            tVFooter.setOnClickListener(this);
+            viewFooter.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    createDialogAddTags();
+
+                }
+            });
+        }
         this.output();
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     final int position, long id) {
+                Log.i(TAG, "pos" + position);
                 Log.i(TAG, "Tagkey" + keyList.get(position));
-                String selectedString = keyList.get(position);
+                final String selectedString = keyList.get(position);
                 if (Tagging.isClassifiedTag(keyList.get(position), res)) {
-                    changeClassifiedTag(selectedString);
+                    ResultViewActivity.this.changeClassifiedTag(selectedString);
                 } else {
-                    changeUnclassifiedTag(selectedString);
+                    ResultViewActivity.this
+                            .changeUnclassifiedTag(selectedString);
                 }
             }
         });
@@ -164,6 +184,7 @@ public class ResultViewActivity extends AbstractActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.result_view, menu);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         return true;
     }
 
@@ -172,11 +193,25 @@ public class ResultViewActivity extends AbstractActivity implements
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        final int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        boolean status;
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+            startActivity(new Intent(this, SettingsActivity.class));
+            status = true;
+            break;
+        case R.id.action_help:
+            // TODO set help activity here
+            status = true;
+            break;
+        // finish workflow, return to mapview
+        case android.R.id.home:
+            onWorkflowFinished(null);
+            status = true;
+            break;
+        default:
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+        return status;
     }
 
     /**
@@ -242,12 +277,12 @@ public class ResultViewActivity extends AbstractActivity implements
         alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String value = (String) showArray[which];
-                String realValue = classifiedMap.get(value).getValue();
+                final String value = (String) showArray[which];
+                final String realValue = classifiedMap.get(value).getValue();
                 Log.i(TAG, "Value " + realValue);
                 Log.i(TAG, tagMap.get(selectedString).toString());
                 element.addOrUpdateTag(tagMap.get(selectedString), realValue);
-                output();
+                ResultViewActivity.this.output();
             }
         });
         alert = alertDialog.create();
@@ -288,12 +323,21 @@ public class ResultViewActivity extends AbstractActivity implements
         okay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                element.addOrUpdateTag(mapTag.get(selectedString), text.getText().toString());
-                mapTag.get(selectedString).setLastValue(text.getText().toString());
-                tmp = mapTag.get(selectedString).getLastValue();
-               
-                output();
-                dialog.dismiss();
+                if (text.getText().toString().matches("")) {
+                    ResultViewActivity.this.output();
+                    dialog.dismiss();
+                } else {
+                    element.addOrUpdateTag(mapTag.get(selectedString), text
+                            .getText().toString());
+                    ResultViewActivity.this.output();
+                    // checks if you can add more Tags if not it removes footer
+                    if (Tagging.getAllNonSelectedTags(element.getTags(),
+                            getIntent().getExtras().getInt("TYPE_DEF"))
+                            .isEmpty()) {
+                        listView.removeFooterView(viewFooter);
+                    }
+                    dialog.dismiss();
+                }
             }
         });
         dialog.show();
@@ -301,8 +345,9 @@ public class ResultViewActivity extends AbstractActivity implements
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.buttonResult) {
-            addOsmElementToDB(element);
+        switch (v.getId()) {
+        case R.id.buttonResult:
+            this.addOsmElementToDB(element);
             final AlertDialog.Builder builder = new AlertDialog.Builder(
                     ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
@@ -310,23 +355,61 @@ public class ResultViewActivity extends AbstractActivity implements
             builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivityForResult(intent, REQUEST_CODE);
+                            startActivityForResult(intent);
                         }
                     });
             builder.setNegativeButton(R.string.no,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             setResult(RESULT_OK);
-                            finish();
+                            finishWorkflow(null);
                         }
                     });
             alert = builder.create();
             alert.show();
-        } else if (v.getId() == R.id.buttonResultToCamera) {
-            addOsmElementToDB(element);
-            setResult(CAMERA_RESULT_CODE);
-            finish(); 
+            break;
+        case R.id.buttonResultToCamera:
+            this.addOsmElementToDB(element);
+            final Intent i = new Intent();
+            i.putExtra(CameraActivity.FINISH_TO_CAMERA, true);
+            finishWorkflow(i);
+            break;
+        case R.id.titleFooter:
+            createDialogAddTags();
+            break;
+        default:
+            break;
         }
+    }
+
+    /**
+     * creates the Dialog with the List of all unclassified Tags which are not
+     * used.
+     * 
+     */
+    private void createDialogAddTags() {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
+        final List<Tag> list = Tagging.getAllNonSelectedTags(element.getTags(),
+                getIntent().getExtras().getInt("TYPE_DEF"));
+        final String[] listString;
+        listString = Tagging.TagsToStringRes(list, res);
+        alertDialog.setItems(listString, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.i(TAG, listString[which]);
+                changeUnclassifiedTag(listString[which]);
+                alert.dismiss();
+            }
+        });
+        list.clear();
+        alert = alertDialog.create();
+        alert.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alert.show();
+
     }
 
     /**
@@ -336,9 +419,20 @@ public class ResultViewActivity extends AbstractActivity implements
      *            Data Element to add
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
-        DataBaseHandler db = new DataBaseHandler(this);
+        final DataBaseHandler db = new DataBaseHandler(this);
         db.createDataElement(dataElement);
         db.close();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
+     */
+    @Override
+    protected void onWorkflowFinished(Intent data) {
+        finishWorkflow(data);
+    }
 }
