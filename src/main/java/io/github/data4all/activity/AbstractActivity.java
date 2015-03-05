@@ -122,11 +122,14 @@ public abstract class AbstractActivity extends Activity {
      * 
      * @author tbrose
      * 
+     * @param data
+     *            The data to propagate back to the originating activity
+     * 
      * @see AbstractActivity#startActivityForResult(Intent)
      * @see AbstractActivity#WORKFLOW_CODE
      */
-    public void finishWorkflow() {
-        super.setResult(RESULT_FINISH);
+    public void finishWorkflow(Intent data) {
+        super.setResult(RESULT_FINISH, data);
         super.finish();
     }
 

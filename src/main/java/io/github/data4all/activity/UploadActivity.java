@@ -236,7 +236,7 @@ public class UploadActivity extends AbstractActivity {
     @Override
     protected void onWorkflowFinished(Intent data) {
         // finishWorkflow to get back to main activity
-        finishWorkflow();
+        finishWorkflow(data);
     }
 
     /*
@@ -246,7 +246,7 @@ public class UploadActivity extends AbstractActivity {
      */
     @Override
     public void finish() {
-        finishWorkflow();
+        finishWorkflow(null);
     }
 
     /**
