@@ -64,11 +64,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
         setUpMapView(savedInstanceState);
-        setUpLoadingScreen();
-
-        // Set Overlay for the actual Position
-        Log.i(TAG, "Added User Location Overlay to the map");
-        mapView.getOverlays().add(myLocationOverlay);
+        if (savedInstanceState == null) {
+            setUpLoadingScreen();
+        }else{
+            view.setVisibility(View.GONE);
+        }
 
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
