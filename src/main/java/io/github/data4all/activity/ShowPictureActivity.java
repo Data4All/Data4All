@@ -280,7 +280,7 @@ public class ShowPictureActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        finishWorkflow();
+        finishWorkflow(data);
     }
 
     /**

@@ -299,7 +299,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        finishWorkflow();
+        finishWorkflow(data);
     }
 
     /**

@@ -180,7 +180,7 @@ public class LoginActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        finishWorkflow();
+        finishWorkflow(data);
     }
 
     /**
