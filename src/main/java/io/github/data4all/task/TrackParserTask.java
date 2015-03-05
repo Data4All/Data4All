@@ -29,26 +29,35 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.james.mime4j.field.ParsedField;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources.Theme;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 /**
- * AsyncTask to save a Track to the internal memory. Opens file and a
- * FileInputStream and writes as xml to this file.
+ * AsyncTask to parse a {@link Track} into xml structure. 
+ * Returns the {@link Track} as a string.
  * 
  * @author sbrede
+ * @author fkirchge
  *
  */
 @SuppressLint("SimpleDateFormat")
-public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
+public class TrackParserTask extends AsyncTask<Void, Void, String> {
 
+    /**
+     * Log Tag.
+     */
     private static final String TAG = "TrackParserTask";
 
-    private Context context;
+    /**
+     * The {@link Track} which should be parsed.
+     */
     private Track track;
-
+    
     /**
      * For conversion from UNIX epoch time and back.
      */
@@ -81,157 +90,78 @@ public class TrackParserTask extends AsyncTask<Void, Void, Integer> {
     /**
      * Constructor for this Task.
      * 
-     * @param context
-     *            The context the task is started from
      * @param track
      *            The track which should be parsed
      */
-    public TrackParserTask(Context context, Track track) {
-        this.context = context;
+    public TrackParserTask(Track track) {
         this.track = track;
     }
 
     /**
-     * Method for reading a track from memory. Return a string representation of
-     * a saved track.
-     * 
-     * @param context
-     *            The context of the application
-     * 
+     * This method parses the {@link Track} into a xml string.
+     *
      * @param track
-     *            A track
-     * 
-     * @return str A track as string
+     *            The {@link Track} to parse.
+     * @return The xml parsed {@link Track} as string.
      */
-    private String readData(Context context, Track track) {
-        FileInputStream input = null;
-        int content;
-        final StringBuilder sb = new StringBuilder();
-        try {
-            // Returns a FileInputStream of file
-            input = context.openFileInput(track.getTrackName() + ".gpx");
-
-            while ((content = input.read()) != -1) {
-                // convert to char and display it
-                sb.append(content);
-            }
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "File not found!", e);
-        } catch (IOException e) {
-            Log.e(TAG, "Error while reading data from file!", e);
-        } finally {
-            try {
-                if (input != null) {
-                    input.close();
-                }
-            } catch (IOException ex) {
-                Log.e(TAG, "Error while closing FileInputStream!", ex);
-            }
+    public String parseTrack(Track track) {
+        if (track.getTrackPoints().isEmpty()) {
+            Log.i(TAG, "No need to save anything. Empty Track.");
+            return null;
         }
+
+        final StringBuilder sb = new StringBuilder();
+
+        // List of points contained by this track
+        final List<TrackPoint> points = track.getTrackPoints();
+
+        sb.append(XML_HEADER);
+        sb.append(OPENING_TAG);
+        sb.append("\t<trk>");
+        sb.append("\t<name> " + track.getTrackName() + " </name>");
+        sb.append("\t\t<trkseg>");
+
+        for (TrackPoint trackPoint : points) {
+            sb.append("\t\t\t<trkpt lat=\"");
+            sb.append(trackPoint.getLat());
+            sb.append("\" lon=\"");
+            sb.append(trackPoint.getLon());
+            sb.append("\">\n");
+            if (trackPoint.hasAltitude()) {
+                sb.append("\t\t\t\t<elem>");
+                sb.append(trackPoint.getAlt());
+                sb.append("</elem>\n");
+            }
+            sb.append("\t\t\t\t<time>");
+            sb.append(ISO8601FORMAT.format(new Date(trackPoint.getTime())));
+            sb.append("</time>\n");
+            sb.append("\t\t\t</trkpt>\n");
+        }
+        sb.append("\t\t</trkseg>");
+        sb.append("\t</trk>");
+        sb.append("</gpx>");
+
+        Log.i(TAG, "GPS Track contains " + points.size() + " Trackpoints.");
+        Log.d(TAG, "Parsed GPS Track with ID " +track.getID() +" : " +sb.toString());
         return sb.toString();
     }
 
-    /**
-     * Method to parse a Track to xml and save it as .gpx.
-     * 
-     * @param context
-     *            context
-     * 
-     * @param track
-     *            the track to parse
-     * 
-     * @return -1 if something bad happens, 0 if track contains no
-     *         {@link TrackPoint}, 1 else
+    /*
+     * (non-Javadoc)
+     * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
      */
-    public int parseTrack(Context context, Track track) {
-        if (track.getTrackPoints().isEmpty()) {
-            Log.i(TAG, "No need to save anything. Empty Track.");
-            return 0;
-        }
-        try {
-            // yyyy_mm_dd_hh_mm_ss.gpx
-            final String filename = track.getTrackName() + ".gpx";
-
-            // List of points contained by this track
-            final List<TrackPoint> points = track.getTrackPoints();
-
-            // Save file in application package
-            final FileOutputStream file = context.openFileOutput(filename,
-                    Context.MODE_PRIVATE);
-
-            // Use PrintWriter is easier, so you can directly pass strings
-            final PrintWriter writer = new PrintWriter(file);
-
-            writer.println(XML_HEADER);
-            writer.println(OPENING_TAG);
-            writer.println("\t<trk>");
-            writer.println("\t<name> " + filename + " </name>");
-            writer.println("\t\t<trkseg>");
-
-            for (TrackPoint trackPoint : points) {
-                writer.print("\t\t\t<trkpt lat=\"");
-                writer.print(trackPoint.getLat());
-                writer.print("\" lon=\"");
-                writer.print(trackPoint.getLon());
-                writer.print("\">\n");
-                if (trackPoint.hasAltitude()) {
-                    writer.print("\t\t\t\t<elem>");
-                    writer.print(trackPoint.getAlt());
-                    writer.print("</elem>\n");
-                }
-                writer.print("\t\t\t\t<time>");
-                writer.print(ISO8601FORMAT.format(new Date(trackPoint.getTime())));
-                writer.print("</time>\n");
-                writer.print("\t\t\t</trkpt>\n");
-            }
-            writer.println("\t\t</trkseg>");
-            writer.println("\t</trk>");
-            writer.println("</gpx>");
-
-            writer.flush();
-            Log.i(TAG, "Data is flushed to :" + filename);
-            Log.i(TAG, "File contains " + points.size() + " elements");
-            writer.close();
-            Log.i(TAG, "Writer is closed");
-            return 1;
-
-        } catch (IOException e) {
-            Log.e(TAG, "Problem while writing the track", e);
-            return -1;
-        }
+    @Override
+    protected String doInBackground(Void... params) {
+        return this.parseTrack(track);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+     */
     @Override
-    protected Integer doInBackground(Void... params) {
-        return this.parseTrack(context, track);
-    }
-
-    @Override
-    protected void onPostExecute(Integer result) {
+    protected void onPostExecute(String result) {
         Log.d(TAG, "onPostExecute()");
         super.onPostExecute(result);
-        switch (result) {
-        case -1:
-            // TODO localization
-            Toast.makeText(context.getApplicationContext(),
-                    "Could not save the track", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Could not save the track");
-            break;
-        case 0:
-            // TODO localization
-            Toast.makeText(context.getApplicationContext(),
-                    "Did not save track. Empty Track.", Toast.LENGTH_SHORT)
-                    .show();
-            Log.d(TAG, "Did not save track. Empty Track.");
-            break;
-        case 1:
-            // TODO localization
-            Toast.makeText(context.getApplicationContext(), "Saved a track",
-                    Toast.LENGTH_SHORT).show();
-            Log.d(TAG, this.readData(context, track));
-            break;
-        default:
-            break;
-        }
     }
 }

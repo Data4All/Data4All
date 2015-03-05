@@ -19,8 +19,12 @@ package io.github.data4all.task;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import oauth.signpost.OAuthConsumer;
@@ -41,6 +45,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.provider.MediaStore.Files;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -49,24 +54,20 @@ import android.widget.Toast;
  * code 500 if using dev api!
  * 
  * @author sb
+ * @author fkirchge
  *
  */
-public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
+public class UploadTracksTask extends AsyncTask<Void, Void, Void> {
 
     private final String TAG = getClass().getSimpleName();
 
-    private Context context;
-
     private HttpPost httpPost;
-
+    private Context context;
     private User user;
-
-    private File gpxFile;
-
+    private String trackXml;
+    private String fileName;
     private String description;
-
     private String tags;
-
     private String visibility;
 
     /**
@@ -78,11 +79,11 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
      * Uploads the GPX Files to OSM.
      * 
      * @param context
-     *            the Context of the Application
-     * @param consumer
+     *            the {@link Context} of the upload
+     * @param user
      *            the OAuth Consumer for Authentication
-     * @param gpxFile
-     *            the gpx File which should be uploaded
+     * @param trackXml
+     *            the parsed track that should be uploaded
      * @param description
      *            description what the gpx tracks are
      * @param tags
@@ -90,15 +91,15 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
      * @param visibility
      *            visibility of the tracks
      */
-    public UploadGpsTracks(Context context, User user, File gpxFile,
+    public UploadTracksTask(Context context, User user, String trackXml, String fileName,
             String description, String tags, String visibility) {
         this.context = context;
         this.user = user;
-        this.gpxFile = gpxFile;
+        this.trackXml = trackXml;
+        this.fileName = fileName; 
         this.description = description;
         this.tags = tags;
         this.visibility = visibility;
-
     }
 
     /**
@@ -122,6 +123,7 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
             final MultipartEntity entity =
                     new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             // Add different parts to entity
+            File gpxFile = createGpxFile(trackXml, fileName);
             final FileBody gpxBody = new FileBody(gpxFile);
             entity.addPart("file", gpxBody);
             if (description == null || description.length() <= 0) {
@@ -189,6 +191,34 @@ public class UploadGpsTracks extends AsyncTask<Void, Void, Void> {
             Log.e(TAG, "doInBackground failed", e);
         }
         return null;
+    }
+
+    /**
+     * Method for reading a track from memory. Return a string representation of
+     * a saved track.
+     * 
+     * @param context
+     *            The context of the application
+     * 
+     * @param track
+     *            A track
+     * 
+     * @return str A track as string
+     */
+    private File createGpxFile(String trackXml, String fileName) {
+        File file = new File(context.getFilesDir(), fileName);
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write(trackXml);
+            writer.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return file;
+
     }
 
 }

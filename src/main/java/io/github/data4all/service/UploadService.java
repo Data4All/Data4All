@@ -21,7 +21,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.User;
 import io.github.data4all.task.TrackParserTask;
-import io.github.data4all.task.UploadGpsTracks;
+import io.github.data4all.task.UploadTracksTask;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
 import io.github.data4all.util.upload.ChangesetUtil;
@@ -51,7 +51,8 @@ public class UploadService extends IntentService {
     /**
      * The comment for the changeset to open.
      */
-    private static final String CHANGESET_COMMENT = "User-triggered upload via App";
+    private static final String CHANGESET_COMMENT =
+            "User-triggered upload via App";
 
     /**
      * The id of the foreground notification.
@@ -66,9 +67,12 @@ public class UploadService extends IntentService {
     /**
      * Key/Message for handling intent extras.
      */
-    public static final String ACTION = "io.github.data4all.service.UploadService:ACTION";
-    public static final String HANDLER = "io.github.data4all.service.UploadService:HANDLER";
-    public static final String MESSAGE = "io.github.data4all.service.UploadService:MESSAGE";
+    public static final String ACTION =
+            "io.github.data4all.service.UploadService:ACTION";
+    public static final String HANDLER =
+            "io.github.data4all.service.UploadService:HANDLER";
+    public static final String MESSAGE =
+            "io.github.data4all.service.UploadService:MESSAGE";
 
     /**
      * Codes to identify different events.
@@ -135,23 +139,6 @@ public class UploadService extends IntentService {
         }
     }
 
-    private void uploadGpsTracks(User user) {
-        final DataBaseHandler db = new DataBaseHandler(this);
-        final List<Track> gpsTracks = db.getAllGPSTracks();
-        db.close();
-        for (Track t : gpsTracks) {
-            TrackParserTask trackParser = new TrackParserTask(this, t);
-            trackParser.parseTrack(this, t);
-            final String fileName = t.getTrackName() + ".gpx";
-            final File file = new File(fileName);
-            
-            UploadGpsTracks trackUpload = new UploadGpsTracks(this, user, file,
-                    "blubb", "blaah", "true");
-            Log.d(TAG, "Uploading GPS Track: " + fileName);
-            trackUpload.execute();
-        }
-    }
-
     /**
      * Requests a new Changeset ID from the OSM API, parses the OSM elements
      * from the Database and starts the upload.
@@ -167,8 +154,8 @@ public class UploadService extends IntentService {
             int requestId = 0;
             if (!stopNext) {
                 // Request the changesetId
-                final CloseableRequest request = ChangesetUtil.requestId(user,
-                        CHANGESET_COMMENT);
+                final CloseableRequest request =
+                        ChangesetUtil.requestId(user, CHANGESET_COMMENT);
                 this.currentConnection = request;
                 requestId = request.request();
             }
@@ -182,16 +169,17 @@ public class UploadService extends IntentService {
                 // Upload the changeset
                 currentMaxProgress = changesetXml.length();
                 send(receiver, MAX_PROGRESS, currentMaxProgress);
-                final CloseableUpload upload = ChangesetUtil.upload(user,
-                        requestId, changesetXml, new MyCallback(receiver));
+                final CloseableUpload upload =
+                        ChangesetUtil.upload(user, requestId, changesetXml,
+                                new MyCallback(receiver));
                 this.currentConnection = upload;
                 upload.upload();
 
             }
             if (!stopNext) {
                 // Close the changeset
-                final CloseableCloseRequest closeId = ChangesetUtil.closeId(
-                        user, requestId);
+                final CloseableCloseRequest closeId =
+                        ChangesetUtil.closeId(user, requestId);
                 this.currentConnection = closeId;
                 closeId.request();
             }
@@ -206,6 +194,26 @@ public class UploadService extends IntentService {
         }
         if (stopNext) {
             this.stopForeground(CANCLE);
+        }
+    }
+
+    /**
+     * Uploads all in the database stored {@link Track} objects to the OSM API.
+     * 
+     * @param user
+     */
+    private void uploadGpsTracks(User user) {
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<Track> gpsTracks = db.getAllGPSTracks();
+        db.close();
+        for (Track t : gpsTracks) {
+            TrackParserTask trackParser = new TrackParserTask(t);
+            String trackXml = trackParser.parseTrack(t);
+            UploadTracksTask trackUpload =
+                    new UploadTracksTask(this, user, trackXml, t.getTrackName(), "blubb", "blaah",
+                            "true");
+            Log.d(TAG, "Uploading with ID: " +t.getID() +" Name: " +t.getTrackName());
+            trackUpload.execute();
         }
     }
 
