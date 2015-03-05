@@ -29,8 +29,6 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -42,14 +40,13 @@ import android.view.View;
  * 
  * @author Andre Koch
  * @CreationDate 12.02.2015
- * @LastUpdate 12.02.2015
- * @version 1.0
+ * @LastUpdate 05.03.2015
+ * @version 1.3
  * 
  */
 
 public class CaptureAssistView extends View {
 
-    private Paint cameraCrossPaint;
     private Paint cameraStopPaint;
     private Paint invalidRegionPaint;
     private int mMeasuredWidth;
@@ -62,100 +59,146 @@ public class CaptureAssistView extends View {
 
     private static final String TAG = CaptureAssistView.class.getSimpleName();
 
+    /**
+     * Default Constructor
+     * 
+     * @param context
+     *            Contextclass for global information about an application
+     *            environment
+     */
     public CaptureAssistView(Context context) {
-        super(context);
-        initView();
+	super(context);
+	initView();
     }
 
+    /**
+     * Default Constructor
+     * 
+     * @param context
+     *            Contextclass for global information about an application
+     *            environment
+     * @param attrs
+     * 
+     */
     public CaptureAssistView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView();
+	super(context, attrs);
+	initView();
     }
 
+    /**
+     * Default Constructor
+     * 
+     * @param context
+     *            Contextclass for global information about an application
+     *            environment
+     * @param attrs
+     * @param defStyle
+     * 
+     */
     public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        initView();
+	super(context, attrs, defStyle);
+	initView();
     }
 
+    /**
+     * This method initializes the variables on the first call and generates the
+     * drawing layer for drawing the horizon line and the stop image when the
+     * camera is too far up in the sky.
+     */
     private void initView() {
-        setFocusable(true);
-        Log.d(TAG, "initViewIsCalled");
+	setFocusable(true);
+	Log.d(TAG, "initViewIsCalled");
 
-        // Sorry for this... but have to initialise to some Points.
-        // TODO FIX ME
-        this.mMeasuredWidth = getMeasuredWidth();
-        this.mMeasuredHeight = getMeasuredHeight();
-        this.skylook = false;
-        this.visible = true;
+	// initialise variables for the first time.
+	this.mMeasuredWidth = getMeasuredWidth();
+	this.mMeasuredHeight = getMeasuredHeight();
+	this.skylook = false;
+	this.visible = true;
 
-        Resources r = this.getResources();
+	Resources r = this.getResources();
 
-        cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
-        cameraStopPaint.setStyle(Paint.Style.STROKE);
-        cameraStopPaint.setStrokeWidth(6);
+	cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
+	cameraStopPaint.setStyle(Paint.Style.STROKE);
+	cameraStopPaint.setStrokeWidth(6);
 
-        invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
-        invalidRegionPaint.setStyle(Paint.Style.FILL);
+	invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
+	invalidRegionPaint.setStyle(Paint.Style.FILL);
 
     }
 
+    /**
+     * This method is called to get the information for calculating the
+     * drawings.
+     * 
+     * @param maxPitch
+     * @param maxRoll
+     * @param deviceOrientation
+     */
     public void setInformations(float maxPitch, float maxRoll,
-            DeviceOrientation deviceOrientation) {
-        Log.d(TAG, "set informations");
-        this.mMeasuredWidth = getMeasuredWidth();
-        this.mMeasuredHeight = getMeasuredHeight();
-        ReturnValues returnValues = horizonCalculationUtil
-                .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
-                        mMeasuredHeight, (float) Math.toRadians(70),
-                        deviceOrientation);
-        this.skylook = returnValues.isSkylook();
-        this.visible = returnValues.isVisible();
-        this.points = returnValues.getPoints();
+	    DeviceOrientation deviceOrientation) {
+	Log.d(TAG, "setInformationsIsCalled");
+
+	this.mMeasuredWidth = getMeasuredWidth();
+	this.mMeasuredHeight = getMeasuredHeight();
+	ReturnValues returnValues = horizonCalculationUtil
+		.calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
+			mMeasuredHeight, (float) Math.toRadians(70),
+			deviceOrientation);
+	this.skylook = returnValues.isSkylook();
+	this.visible = returnValues.isVisible();
+	this.points = returnValues.getPoints();
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d(TAG, "onDrawCalled");
-        if (visible && !points.isEmpty()) {
-            if (!skylook) {
-                Path path = getPath();
-                canvas.drawPath(path, invalidRegionPaint);
-            } else {
-                canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
-                        mMeasuredWidth / 2 + mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
-                        cameraStopPaint);
+	Log.d(TAG, "onDrawCalled");
+	if (visible && !points.isEmpty()) {
+	    if (!skylook) {
+		Path path = getPath();
+		canvas.drawPath(path, invalidRegionPaint);
+	    } else {
+		canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
+			mMeasuredHeight / 2 - mMeasuredHeight / 8,
+			mMeasuredWidth / 2 + mMeasuredWidth / 12,
+			mMeasuredHeight / 2 + mMeasuredHeight / 8,
+			cameraStopPaint);
 
-                canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
-                        mMeasuredWidth / 2 - mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
-                        cameraStopPaint);
-            }
-        }
-        canvas.restore();
+		canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
+			mMeasuredHeight / 2 - mMeasuredHeight / 8,
+			mMeasuredWidth / 2 - mMeasuredWidth / 12,
+			mMeasuredHeight / 2 + mMeasuredHeight / 8,
+			cameraStopPaint);
+	    }
+	}
+	canvas.restore();
 
     }
 
+    /**
+     * This method draws the lines for the horizon line. everything is
+     * filled from the top left corner and the upper right corner to the horizon line
+     * with a defined color.
+     * 
+     * @return Path calculated horizon line.
+     */
     private Path getPath() {
-        Path path = new Path();
-        boolean firstIter = true;
-        if (!points.isEmpty()) {
-            for (Point iter : points) {
-                if (firstIter) {
-                    path.moveTo(iter.getX(), iter.getY());
-                    firstIter = false;
-                } else {
-                    path.lineTo(iter.getX(), iter.getY());
-                }
-            }
-            path.lineTo(points.get(0).getX(), points.get(0).getY());
-        }
-        return path;
+	Path path = new Path();
+	boolean firstIter = true;
+	if (!points.isEmpty()) {
+	    for (Point iter : points) {
+		if (firstIter) {
+		    path.moveTo(iter.getX(), iter.getY());
+		    firstIter = false;
+		} else {
+		    path.lineTo(iter.getX(), iter.getY());
+		}
+	    }
+	    path.lineTo(points.get(0).getX(), points.get(0).getY());
+	}
+	return path;
 
     }
 
