@@ -257,6 +257,12 @@ public class CameraActivity extends AbstractActivity {
                 PackageManager.FEATURE_CAMERA);
     }
 
+    
+    
+    
+    /**
+     * This method update the Camera View Assist for drawing the horizontal line on sensor change.
+     */
     public void updateCameraAssistView() {
 
         if (orientationListener != null) {
