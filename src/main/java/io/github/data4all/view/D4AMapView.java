@@ -183,8 +183,6 @@ public class D4AMapView extends MapView {
     private void addNodeToMap(AbstractActivity ctx, Node node) {
         final Marker poi = new MapMarker(ctx, this, node);
         Log.i(TAG, "Set Node Points to " + node.toString());
-        // disable InfoWindow
-        poi.setInfoWindow(null);
         poi.setPosition(node.toGeoPoint());
         poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         this.getOverlays().add(poi);

@@ -17,6 +17,8 @@ package io.github.data4all.model.data;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import android.content.Context;
+import android.content.res.Resources;
 
 /**
  * This class represents a classified value. A classified tag can contain one or
@@ -108,6 +110,18 @@ public class ClassifiedValue {
 
     public void setNameRessource(int nameRessource) {
         this.nameRessource = nameRessource;
+    }
+
+    public String getLocalizedName(Context context) {
+        Resources resources = context.getResources();
+        int id = resources.getIdentifier("name_" + getKey().replace(":", "_"),
+                "string", context.getPackageName());
+
+        if (id == 0) {
+            return null;
+        } else {
+            return resources.getString(id);
+        }
     }
 
 }

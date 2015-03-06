@@ -404,7 +404,12 @@ public class ResultViewActivity extends AbstractActivity implements
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         final DataBaseHandler db = new DataBaseHandler(this);
-        db.createDataElement(dataElement);
+        if (dataElement.getOsmId() == -1) {
+            db.createDataElement(dataElement);
+        } else {
+            //if the Element allready exists
+            db.updateDataElement(dataElement);
+        }
         db.close();
     }
 
