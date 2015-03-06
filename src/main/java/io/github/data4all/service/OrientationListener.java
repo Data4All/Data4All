@@ -133,7 +133,7 @@ public class OrientationListener extends Service implements SensorEventListener 
 						"Orientation " + Math.toDegrees(orientation[0]) + " ; "
 								+ Math.toDegrees(orientation[1]) + " ; "
 								+ Math.toDegrees(orientation[2]));
-				Optimizer.putPos(new DeviceOrientation(orientation[0],
+				Optimizer.putDevOrient(new DeviceOrientation(orientation[0],
 						orientation[1], orientation[LAST_INDEX], System
 								.currentTimeMillis()));
 			}
