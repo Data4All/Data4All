@@ -138,34 +138,37 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // Table creation
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String CREATE_DATAELEMENTS_TABLE = "CREATE TABLE "
-                + TABLE_DATAELEMENT + " (" + KEY_OSMID
-                + " INTEGER PRIMARY KEY," + KEY_TAGIDS + " TEXT" + ")";
-        final String CREATE_NODES_TABLE = "CREATE TABLE " + TABLE_NODE + " ("
-                + KEY_OSMID + " INTEGER PRIMARY KEY," + KEY_LAT
-                + " REAL,"
-                + KEY_LON + " REAL" + ")";
-        final String CREATE_TAGMAP_TABLE = "CREATE TABLE " + TABLE_TAGMAP
-                + " (" + KEY_TAGID + " INTEGER PRIMARY KEY," + KEY_VALUE
-                + " TEXT" + ")";
-        final String CREATE_POLYELEMENT_TABLE = "CREATE TABLE "
-                + TABLE_POLYELEMENT + " (" + KEY_OSMID
-                + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT," + KEY_NODEIDS
-                + " TEXT" + ")";
-        final String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USER + " ("
-                + KEY_USERNAME + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
-                + KEY_TOKENSECRET + " TEXT" + ")";
-        final String CREATE_GPSTRACK_TABLE = "CREATE TABLE " + TABLE_GPSTRACK
-                + " ("
-                + KEY_INCID + " INTEGER PRIMARY KEY," + KEY_TRACKNAME
-                + " TEXT," + KEY_TRACKPOINTS
-                + " TEXT" + ")";
-        final String CREATE_TRACKPOINT_TABLE = "CREATE TABLE "
-                + TABLE_TRACKPOINT + " ("
-                + KEY_INCID + " INTEGER PRIMARY KEY,"
-                + KEY_LAT + " REAL," + KEY_LON + " REAL," + KEY_ALT + " REAL,"
-                + KEY_TIME + " REAL" + ")";
-        //create table lastChoice
+        final String CREATE_DATAELEMENTS_TABLE =
+                "CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_TAGIDS + " TEXT" + ")";
+        final String CREATE_NODES_TABLE =
+                "CREATE TABLE " + TABLE_NODE + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
+                        + KEY_LON + " REAL" + ")";
+        final String CREATE_TAGMAP_TABLE =
+                "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_ID
+                        + " INTEGER PRIMARY KEY," + KEY_DATAELEMENT
+                        + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
+                        + " TEXT" + ")";
+        final String CREATE_POLYELEMENT_TABLE =
+                "CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
+                        + KEY_NODEIDS + " TEXT" + ")";
+        final String CREATE_USERS_TABLE =
+                "CREATE TABLE " + TABLE_USER + " (" + KEY_USERNAME
+                        + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
+                        + KEY_TOKENSECRET + " TEXT" + ")";
+        final String CREATE_GPSTRACK_TABLE =
+                "CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_INCID
+                        + " INTEGER PRIMARY KEY," + KEY_TRACKNAME + " TEXT,"
+                        + KEY_TRACKPOINTS + " TEXT" + ")";
+        final String CREATE_TRACKPOINT_TABLE =
+                "CREATE TABLE " + TABLE_TRACKPOINT + " (" + KEY_INCID
+                        + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
+                        + KEY_LON + " REAL," + KEY_ALT + " REAL," + KEY_TIME
+                        + " REAL" + ")";
+
+         //create table lastChoice
         final String CREATE_LASTCHOICE_TABLE = "CREATE TABLE "
                 + TABLE_LASTCHOICE + " (" 
                 + TAG_IDS + " TEXT," 
@@ -1062,7 +1065,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            the IDs of the desired tags.
      * @return a {@link Map} object for the desired tags.
      */
-    
     public Map<Tag, String> getTagMap(List<Integer> tagIDs) {
 
         final SQLiteDatabase db = getReadableDatabase();
@@ -1130,15 +1132,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 new String[] {String.valueOf(dataElementId)});
 
     }
-    
-    public void deleteTagMap1(List<Integer> tagIDs) {
-        final SQLiteDatabase db = getWritableDatabase();
-
-        for (int id : tagIDs) {
-            db.delete(TABLE_TAGMAP, KEY_TAGID + "=?",
-                    new String[] {String.valueOf(id) });
-        }
-    }
 
     /**
      * This method returns the number of tags currently stored in the database.
@@ -1158,18 +1151,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         Log.d(TAG, "getTagMapCount for dataElement: " + dataElement
                 + " count: " + count);
         cursor.close();
-        return count;
-    }
-    
-    
-    public int getTagMapCount1() {
-        final SQLiteDatabase db = getReadableDatabase();
-
-        final Cursor cursor = db
-                .rawQuery("SELECT * FROM " + TABLE_TAGMAP, null);
-        final int count = cursor.getCount();
-        cursor.close();
-
         return count;
     }
 
@@ -1622,6 +1603,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             
         return result;
     }
+    
+    
+    
     
     
     /**

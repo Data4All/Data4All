@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config;
 
 
 /**
- * This class tests all methods of the LastChoiceHandler.
+ * This class tests methods of the LastChoiceHandler.
  * 
  * @author Steeve
  * 
@@ -77,48 +77,10 @@ public class LastChoiceHandlerTest {
         tagIDs.add(country.getId());
         
         assertEquals(tagIDs, dbhandler.getLastChoiceId(3)); 
-      /* dbhandler.createLastChoice(0, lastChoice);*/
-        //dbhandler.insertOrUpdateLastChoice(3, tagIDs);
-       // dbhandler.createTagMap((long) 1.0, dbhandler.getTagMap(dbhandler.getLastChoiceId(3)));
-       /* assertTrue(dbhandler.getTagMap(tagIDs).containsKey(tag));
-        assertTrue(dbhandler.getTagMap(tagIDs).containsValue("bremen"));
-        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(country));
-        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(street));*/
+        assertEquals(lastChoice,lcHandler.getLastChoice(3));
+        
     }
     
-    /**
-     * add a lastChoice for a specific type and check if a another type contains this lastChoice
-     */
-    @Test
-    public void test_LastChoiceForSpecificType(){
-        Map<Tag, String> lastChoice = new Hashtable<Tag, String>();
-        
-        Tag tag1 = Tags.getTagWithId(10);
-        lastChoice.put(tag1, "highway");
-           
-        Tag street1 = Tags.getTagWithId(9);
-        lastChoice.put(street1, "street");
-        
-        lcHandler.setLastChoice(2, lastChoice);
-        assertTrue(LastChoiceHandler.hasLastChoice(2));
-        lcHandler.save(Robolectric.application);
-        
-        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
-        
-        tagIDs.add(tag1.getId());
-        tagIDs.add(street1.getId());
-        
-        assertEquals(tagIDs, dbhandler.getLastChoiceId(2)); 
-
-        //type 2 = "way" has a lastChoice
-        /*assertTrue(dbhandler.getTagMap(tagIDs).containsKey(tag1));
-        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(street1));*/     
-       
-        //type 1 = "node" don't have a lastChoice
-        List<Integer> tagIDs1 = dbhandler.getLastChoiceId(1); 
-        assertFalse(LastChoiceHandler.hasLastChoice(1));
-        assertEquals(null,tagIDs1);
-    }
     
     /**
      * check if a type(node,track,area, and building) has a lastChoice
@@ -127,7 +89,7 @@ public class LastChoiceHandlerTest {
     public void check_If_SpecificType_Has_LastChoice(){
         LastChoiceHandler.load(dbhandler);
         assertFalse(LastChoiceHandler.hasLastChoice(1));
-        assertTrue(LastChoiceHandler.hasLastChoice(2));
+        assertFalse(LastChoiceHandler.hasLastChoice(2));
         assertTrue(LastChoiceHandler.hasLastChoice(3));
     }
 }
