@@ -40,7 +40,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MapPreviewActivity" />
-        <activity android:name=".activity.SensorActivity" />
         <activity
             android:name=".activity.ShowPictureActivity"
             android:configChanges="keyboardHidden|screenSize"

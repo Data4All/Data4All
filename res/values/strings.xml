@@ -44,7 +44,6 @@
 
     <!-- Login Activity Strings -->
     <string name="usernameHint">username</string>
-    <string name="or">Or</string>
     <string name="passwordHint">password</string>
     <string name="loginDescription">Login to OpenStreetMap</string>
     <string name="loginButton">Sign in</string>

@@ -18,7 +18,6 @@ package io.github.data4all.model.drawing;
 import io.github.data4all.logger.Log;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
