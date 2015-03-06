@@ -30,7 +30,7 @@ import android.app.Application;
  *
  */
 @ReportsCrashes(
-        formUri = "http://134.102.219.161:5984/acra-data4all_master/_design/acra-storage/_update/report",
+        formUri = "http://134.102.219.161:5984/acra-data4all/_design/acra-storage/_update/report",
         reportType = HttpSender.Type.JSON,
         httpMethod = HttpSender.Method.PUT,
         formUriBasicAuthLogin = "d4a-reporter",
