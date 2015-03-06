@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <io.github.data4all.view.CameraPreview
+        android:id="@+id/cameraPreview"
+        style="@style/cameraPreview" />
+
+    <io.github.data4all.view.AutoFocusCrossHair
+        android:id="@+id/af_crosshair"
+        style="@style/autoFocusCrossHair" />
+
+    <ImageButton
+        android:id="@+id/btnCapture"
+        style="@style/imageButtonCamAction"
+        android:contentDescription="@string/noDescription" />
+
+</RelativeLayout>

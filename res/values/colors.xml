@@ -1,0 +1,10 @@
+<resources>
+	<!-- XML resource that carries a color value (a hexadecimal color). 
+    For example: <color name="actionbar_background">#80e220</color> -->
+
+	 <!-- Camera View -->
+    <color name="camera_cross">#7DCAF0</color>
+    <color name="camera_stop_cross">#EEFF0000</color>
+    <color name="invalid_region">#44FF0000</color>
+    
+</resources>

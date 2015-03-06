@@ -33,9 +33,9 @@ tmp/
 *.bak
 *.swp
 *~.nib
-local.properties
 .settings/
 .loadpath
+.classpath
 /target/
 
 # External tool builders
@@ -49,3 +49,4 @@ local.properties
 
 # PDT-specific
 .buildpath
+/.classpath

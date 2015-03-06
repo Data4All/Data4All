@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayoutResultView"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <io.github.data4all.view.D4AMapView
+        android:id="@+id/mapviewResult"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+    
+    <ImageButton
+        android:id="@+id/buttonResult"
+        style="@style/imageButtonOkay"
+        android:contentDescription="@string/returnToActualPosition" />
+
+    <ImageButton
+        android:id="@+id/buttonResultToCamera"
+        style="@style/imageButtonReturnToCamera"
+        android:contentDescription="@string/returnToCamera" />
+
+    <ListView
+        android:id="@+id/listViewResultView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/mapviewResult"
+        android:layout_marginTop="10dp"  >
+
+    </ListView>
+
+</RelativeLayout>

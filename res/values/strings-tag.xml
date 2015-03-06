@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- address tags -->
+    <string name="name_addr_street">Street</string>
+    <string name="name_addr_housenumber">Housenumber</string>
+    <string name="name_addr_postcode">Postcode</string>
+    <string name="name_addr_city">City</string>
+    <string name="name_addr_country">Country</string>
+
+    <!-- contact tags -->
+    <string name="name_contact_phone">Phone</string>
+    <string name="name_contact_fax">Fax</string>
+    <string name="name_contact_website">Website</string>
+    <string name="name_contact_email">Email</string>
+
+    <!-- classified tags_ highway -->
+    <string name="name_highway">Highway</string>
+    <string name="name_highway_motorway">Motorway</string>
+    <string name="name_highway_residential">Residential</string>
+    <string name="name_highway_service">Service</string>
+    <string name="name_highway_track">Track</string>
+    <string name="name_highway_footway">Footway</string>
+    <string name="name_highway_road">Road</string>
+    <string name="name_highway_path">Path</string>
+
+    <!-- classified tags_ barrier -->
+    <string name="name_barrier">Barrier</string>
+    <string name="name_barrier_citywall">Citywall</string>
+    <string name="name_barrier_fence">Fence</string>
+    <string name="name_barrier_wall">Wall</string>
+    <string name="name_barrier_bollard">Bollard</string>
+    <string name="name_barrier_gate">Gate</string>
+
+    <!-- classified tags_ amenity -->
+    <string name="name_amenity">Amenity</string>
+    <string name="name_amenity_bar">Bar</string>
+    <string name="name_amenity_cafe">Cafe</string>
+    <string name="name_amenity_restaurant">Restaurant</string>
+    <string name="name_amenity_fast_food">Fast Food</string>
+    <string name="name_amenity_pub">Pub</string>
+    <string name="name_amenity_college">College</string>
+    <string name="name_amenity_library">Library</string>
+    <string name="name_amenity_school">School</string>
+    <string name="name_amenity_university">University</string>
+    <string name="name_amenity_parking">Parking</string>
+    <string name="name_amenity_taxi">Taxi</string>
+    <string name="name_amenity_fuel">Fuel</string>
+    <string name="name_amenity_bank">Bank</string>
+    <string name="name_amenity_hospital">Hospital</string>
+    <string name="name_amenity_pharmacy">Pharmacy</string>
+    <string name="name_amenity_cinema">Cinema</string>
+    <string name="name_amenity_bench">Bench</string>
+    <string name="name_amenity_embassy">Embassy</string>
+    <string name="name_amenity_marketplace">Marketplace</string>
+    <string name="name_amenity_police">Police</string>
+    <string name="name_amenity_post_office">Post Office</string>
+    <string name="name_amenity_toilets">Toilets</string>
+    <string name="name_amenity_water_point">Water Point</string>
+    <string name="name_amenity_fire_station">Fire Station</string>
+    <string name="name_amenity_public_building">Public Building</string>
+
+    <!-- classified tags_ building -->
+    <string name="name_building">Building</string>
+    <string name="name_building_residential">Residential</string>
+    <string name="name_building_garage">Garage</string>
+    <string name="name_building_house">House</string>
+    <string name="name_building_apartments">Apartments</string>
+    <string name="name_building_retail">Retail</string>
+    <string name="name_building_industrial">Industrial</string>
+    <string name="name_building_commercial">Commercial</string>
+
+    <!-- classified tags_ landuse -->
+    <string name="name_landuse">Landuse</string>
+    <string name="name_landuse_forest">Forest</string>
+    <string name="name_landuse_residential">Residential</string>
+    <string name="name_landuse_grass">Grass</string>
+    <string name="name_landuse_farmland">Farmland</string>
+    <string name="name_landuse_industrial">Industrial</string>
+    <string name="name_landuse_commercial">Commercial</string>
+    <string name="name_landuse_construction">Construction</string>
+    <string name="name_landuse_military">Military</string>   
+
+    <!-- address tags -->
+    <string name="hint_addr_street">Main Street</string>
+    <string name="hint_addr_housenumber">1234</string>
+    <string name="hint_addr_postcode">123456</string>
+    <string name="hint_addr_city">Anytown</string>
+    <string name="hint_addr_country">USA</string>
+
+    <!-- contact tags -->
+    <string name="hint_contact_phone">+01 234567890</string>
+    <string name="hint_contact_fax">+01 234567890</string>
+    <string name="hint_contact_website">http_//www.website.com</string>
+    <string name="hint_contact_email">foo@bar.com</string>
+
+</resources>

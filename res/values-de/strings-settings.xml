@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_bodyheight_title">Körpergröße</string>
+    <string name="pref_bodyheight_summary">Setzen sie Ihre Körpergröße</string>
+    <string name="pref_bodyheight_dialog_title">Setzen sie Ihre Körpergröße</string>
+    <string name="pref_bodyheight_dialog_message">Bitte geben Sie ihre Körpergröße in cm an:</string>
+    
+    <string name="pref_currentuser_title">Aktueller Benutzer</string>
+    <string name="pref_currentuser_dialog_title">Ausloggen</string>
+    <string name="pref_currentuser_dialog_message">Möchten Sie sich wirklich ausloggen?</string>
+    <string name="pref_currentuser_null">Nicht eingeloggt</string>
+
+</resources>

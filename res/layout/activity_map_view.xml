@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <io.github.data4all.view.D4AMapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <ImageButton
+        android:id="@+id/return_to_actual_Position"
+        style="@style/imageButtonReturnToActualPosition"
+        android:contentDescription="@string/returnToActualPosition" />
+
+    <ImageButton
+        android:id="@+id/switch_maps"
+        style="@style/imageButtonSwitchMaps"
+        android:contentDescription="@string/switchMaps" />
+
+    <ImageButton
+        android:id="@+id/new_point"
+        style="@style/imageButtonNewPointOfInterest"
+        android:contentDescription="@string/pointOfInterest" />
+
+    <ImageButton
+        android:id="@+id/to_camera"
+        style="@style/imageButtonToCamera"
+        android:contentDescription="@string/returnToCamera" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        style="@style/startUpScreen"
+        android:contentDescription="@string/startUpScreen" />
+
+
+</RelativeLayout>
