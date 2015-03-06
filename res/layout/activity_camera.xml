@@ -12,7 +12,7 @@
         android:id="@+id/af_crosshair"
         style="@style/autoFocusCrossHair" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/btnCapture"
         style="@style/imageButtonCamAction"
         android:contentDescription="@string/noDescription" />

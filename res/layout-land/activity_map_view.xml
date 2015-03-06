@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/return_to_actual_Position"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:padding="0dp"
         android:src="@drawable/ic_sat" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/new_point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         android:background="@null"
         android:src="@drawable/ic_poi" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/to_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
