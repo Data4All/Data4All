@@ -14,8 +14,7 @@
         android:id="@+id/touchView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/imageButton5" />
+        android:layout_alignParentRight="true" />
 
     <LinearLayout
         android:id="@+id/layout_choose_interpreter"
@@ -41,12 +40,12 @@
             style="@style/imageButtonDrawArea"
             android:contentDescription="@string/drawArea"
             android:onClick="onClickArea" />
-<!--    TODO building is not supported yet -->
-<!--         <io.github.data4all.widged.CustomImageButton -->
-<!--             android:id="@+id/imageButton4" -->
-<!--             style="@style/imageButtonDrawBuilding" -->
-<!--             android:contentDescription="@string/drawBuilding" -->
-<!--             android:onClick="onClickBuilding" /> -->
+        <!-- TODO building is not supported yet -->
+        <!-- <io.github.data4all.widged.CustomImageButton -->
+        <!-- android:id="@+id/imageButton4" -->
+        <!-- style="@style/imageButtonDrawBuilding" -->
+        <!-- android:contentDescription="@string/drawBuilding" -->
+        <!-- android:onClick="onClickBuilding" /> -->
     </LinearLayout>
 
     <io.github.data4all.widged.CustomImageButton

@@ -6,7 +6,8 @@
     <io.github.data4all.view.D4AMapView
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:contentDescription="@string/noDescription" />
 
     <io.github.data4all.widged.CustomImageButton
         android:id="@+id/return_to_actual_Position"
@@ -16,7 +17,8 @@
         android:layout_marginTop="20dp"
         android:background="@null"
         android:padding="0dp"
-        android:src="@drawable/ic_point" />
+        android:src="@drawable/ic_point"
+        android:contentDescription="@string/noDescription" />
 
     <io.github.data4all.widged.CustomImageButton
         android:id="@+id/switch_maps"
@@ -27,7 +29,8 @@
         android:layout_marginTop="20dp"
         android:background="@null"
         android:padding="0dp"
-        android:src="@drawable/ic_sat" />
+        android:src="@drawable/ic_sat"
+        android:contentDescription="@string/noDescription" />
 
     <io.github.data4all.widged.CustomImageButton
         android:id="@+id/okay"
@@ -39,7 +42,8 @@
         android:layout_marginRight="10dp"
         android:background="@null"
         android:onClick="onClickOkay"
-        android:src="@drawable/ic_ok" />
+        android:src="@drawable/ic_ok"
+        android:contentDescription="@string/noDescription" />
    
   
     <ImageView
@@ -51,6 +55,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/data4allport" />
+        android:src="@drawable/data4allport"
+        android:contentDescription="@string/noDescription" />
     
 </RelativeLayout>
