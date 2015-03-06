@@ -113,29 +113,71 @@ public class HorizonCalculationUtil {
                 .sqrt((vector3[0] * vector3[0]) + (vector3[1] * vector3[1]));
         final double[] rotateVector = {
                 -vector3[1] / rotateVectorLengthMultiplicator,
-                vector3[0] / rotateVectorLengthMultiplicator, };
+                vector3[0] / rotateVectorLengthMultiplicator, 0,};
         /*
          * rotate the (0|0|-1) vector with the calculated angle and.
          * rotationvector.
          */
+        
         final double[] vector4 = new double[3];
         vector4[0] = (rotateVector[1] * Math.sin(angle));
         vector4[1] = (rotateVector[0] * Math.sin(angle));
         vector4[2] = -Math.cos(angle);
 
         // calculate the pitch- and roll-angles.
-        final double horizonPitch = Math.atan(vector4[1] / (vector[2]));
-        final double horizonRoll = Math.atan(vector4[0] / (vector[2]));
+        double horizonPitch = Math.atan(vector4[1] / (vector4[2]));
+        double horizonRoll = Math.atan(vector4[0] / (vector4[2]));
         // calculate a point on the horizont vertical to the mid of the display.
-        final float x = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
-        final float y = calculatePixelFromAngle(horizonPitch, maxHeight,
+        float x3 = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
+        float y3 = calculatePixelFromAngle(horizonPitch, maxHeight,
                 maxPitch);
 
 
 
-        // Log.d("TEST", "X: " + x + "Y: " +y);
+        //#################################################################
+        
+        double[] horivec = rotate(vector3, rotateVector, -angle);
+        double[] horivec2 = new double[3];
+        double azimuth = Math.toRadians(10);
+        horivec2[0] = ((horivec[0] * Math.cos(azimuth)) - (horivec[1] * Math.sin(azimuth)));
+        horivec2[1] = ((horivec[0] * Math.sin(azimuth)) + (horivec[1] * Math.cos(azimuth)));
+        horivec2[2] = horivec[2];
+        double[] xaxe = {1,0,0};
+        double[] yaxe = {0,1,0};
+        double[] ohnepitch = rotate(horivec2, xaxe, pitch);
+        double[] ohneroll = rotate(ohnepitch, yaxe, -roll);
+        // calculate the pitch- and roll-angles.
+        horizonPitch = Math.atan(ohneroll[1] / (ohneroll[2]));
+        horizonRoll = Math.atan(ohneroll[0] / (ohneroll[2]));
+        // calculate a point on the horizont vertical to the mid of the display.
+        float x2 = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
+        float y2 = calculatePixelFromAngle(horizonPitch, maxHeight,
+                maxPitch);
+        
+        horivec2 = new double[3];
+        azimuth = Math.toRadians(-10);
+        horivec2[0] = ((horivec[0] * Math.cos(azimuth)) - (horivec[1] * Math.sin(azimuth)));
+        horivec2[1] = ((horivec[0] * Math.sin(azimuth)) + (horivec[1] * Math.cos(azimuth)));
+        horivec2[2] = horivec[2];
+        ohnepitch = rotate(horivec2, xaxe, pitch);
+        ohneroll = rotate(ohnepitch, yaxe, -roll);
+        // calculate the pitch- and roll-angles.
+        horizonPitch = Math.atan(ohneroll[1] / (ohneroll[2]));
+        horizonRoll = Math.atan(ohneroll[0] / (ohneroll[2]));
+        // calculate a point on the horizont vertical to the mid of the display.
+        float x = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
+        float y = calculatePixelFromAngle(horizonPitch, maxHeight,
+                maxPitch);
+
+        
+        //###############################################################
+        rV.addPoint(new Point(x+ maxWidth/2, y+maxHeight/2));
+        rV.addPoint(new Point(x2 + maxWidth/2, y2+maxHeight/2));
+        
+        
+
         // calculate and return the returnValues.
-        return calculatePoints(maxWidth, maxHeight, x, y, rV);
+        return calculatePoints(maxWidth, maxHeight, x, y, x2,y2,x3,y3,rV);
     }
 
     /**
@@ -163,6 +205,10 @@ public class HorizonCalculationUtil {
          */
         private List<Point> points = new ArrayList<Point>();
         /**
+         * second point on the edge of the display representing the horizon
+         */
+        private List<Point> point = new ArrayList<Point>();
+        /**
          * true if more than 50% of the display is above the horizon
          */
         private boolean skylook;
@@ -170,6 +216,16 @@ public class HorizonCalculationUtil {
          * false if the horzion is not visible on the display
          */
         private boolean visible = true;
+
+
+        public List<Point> getPoint() {
+            return point;
+        }
+
+
+        public void addPoint(Point point) {
+            this.point.add(point);
+        }
 
 
         public List<Point> getPoints() {
@@ -212,7 +268,7 @@ public class HorizonCalculationUtil {
      * @return object of returnValues
      */
     private ReturnValues calculatePoints(float maxWidth, float maxHeight,
-            float x, float y, ReturnValues rV) {
+            float x, float y, float x2 ,float y2, float x3, float y3, ReturnValues rV) {
         // counter for the added points.
         int iter = 0;
         edges = 0;
@@ -228,13 +284,13 @@ public class HorizonCalculationUtil {
         } else {
             // calculade the collision of the horizonline with the displayedges.
             // check wich collision is important and add it to the returnvalues.
-            final float xMin = y + x * ((maxWidth / 2 + x) / y) + maxHeight / 2;
+            final float xMin = y + (y2-y) * ((-maxWidth / 2 - x) / (x2-x)) + maxHeight / 2;
             if (xMin > 0 && xMin <= maxHeight) {
                 point1 = new Point(0, xMin);
                 iter++;
                 edges += 1;
             }
-            final float yMin = x - y * ((-maxHeight / 2 - y) / x) + maxWidth
+            final float yMin = x + (x2-x) * ((-maxHeight / 2 - y) / (y2-y)) + maxWidth
                     / 2;
             if (yMin > 0 && yMin <= maxWidth) {
                 if (iter == 0) {
@@ -245,7 +301,7 @@ public class HorizonCalculationUtil {
                 iter++;
                 edges += 2;
             }
-            final float xMax = y + x * ((-maxWidth / 2 + x) / y) + maxHeight
+            final float xMax = y + (y2-y) * ((maxWidth / 2 - x) / (x2-x)) + maxHeight
                     / 2;
             if (xMax > 0 && xMax <= maxHeight) {
                 if (iter == 0) {
@@ -256,7 +312,7 @@ public class HorizonCalculationUtil {
                 iter++;
                 edges += 4;
             }
-            final float yMax = x - y * ((maxHeight / 2 - y) / x) + maxWidth / 2;
+            final float yMax = x + (x2-x) * ((maxHeight / 2 - y) / (y2-y)) + maxWidth / 2;
             if (yMax > 0 && yMax <= maxWidth) {
                 if (iter == 0) {
                     point1 = new Point(yMax, maxHeight);
@@ -272,7 +328,7 @@ public class HorizonCalculationUtil {
                 return rV;
             }
         }
-        return addCorners(rV, x, y);
+        return addCorners(rV, x3, y3);
     }
 
     private ReturnValues addCorners(ReturnValues rV, float x, float y) {
@@ -329,6 +385,28 @@ public class HorizonCalculationUtil {
         return point2;
     }
     
+    private double[] rotate(double[] vector,double[] axis, double angle){
+            double[][] matrix = new double[3][3];
+            matrix[0][0] = axis[0]*axis[0]*(1-Math.cos(angle))+Math.cos(angle);
+            matrix[0][1] = axis[0]*axis[1]*(1-Math.cos(angle))-axis[2]*Math.sin(angle);
+            matrix[0][2] = axis[0]*axis[2]*(1-Math.cos(angle))+axis[1]*Math.sin(angle);
+            matrix[1][0] = axis[1]*axis[0]*(1-Math.cos(angle))+axis[2]*Math.sin(angle);
+            matrix[1][1] = axis[1]*axis[1]*(1-Math.cos(angle))+Math.cos(angle);
+            matrix[1][2] = axis[1]*axis[2]*(1-Math.cos(angle))-axis[0]*Math.sin(angle);
+            matrix[2][0] = axis[2]*axis[0]*(1-Math.cos(angle))-axis[1]*Math.sin(angle);
+            matrix[2][1] = axis[2]*axis[1]*(1-Math.cos(angle))+axis[0]*Math.sin(angle);
+            matrix[2][2] = axis[2]*axis[2]*(1-Math.cos(angle))+Math.cos(angle);
+            
+            double[] returnVec = new double[3];
+            for(int i = 0;i<3;i++){
+                double value = 0;
+                for(int b = 0;b<3;b++){
+                    value += vector[b]*matrix[i][b];
+                }
+                returnVec[i] = value;
+            }            
+        return returnVec;
+    }
     
 
 }

@@ -27,6 +27,7 @@ import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -49,11 +50,13 @@ public class CaptureAssistView extends View {
 
     private Paint cameraStopPaint;
     private Paint invalidRegionPaint;
+    private Paint paint;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
     private boolean skylook;
     private boolean visible;
     private List<Point> points = new ArrayList<Point>();
+    private List<Point> point = new ArrayList<Point>();
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
@@ -125,6 +128,11 @@ public class CaptureAssistView extends View {
 	invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
 	invalidRegionPaint.setStyle(Paint.Style.FILL);
+	
+	paint = new Paint();
+paint.setHinting(paint.HINTING_OFF);
+paint.setColor(Color.BLUE);
+paint.setStyle(Paint.Style.FILL);
 
     }
 
@@ -144,11 +152,12 @@ public class CaptureAssistView extends View {
 	this.mMeasuredHeight = getMeasuredHeight();
 	ReturnValues returnValues = horizonCalculationUtil
 		.calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
-			mMeasuredHeight, (float) Math.toRadians(70),
+			mMeasuredHeight, (float) Math.toRadians(90),
 			deviceOrientation);
 	this.skylook = returnValues.isSkylook();
 	this.visible = returnValues.isVisible();
-	this.points = returnValues.getPoints();
+    this.points = returnValues.getPoints();
+    this.point = returnValues.getPoint();
 
     }
 
@@ -159,6 +168,13 @@ public class CaptureAssistView extends View {
 	    if (!skylook) {
 		Path path = getPath();
 		canvas.drawPath(path, invalidRegionPaint);
+		for(Point iter : point){
+		    
+	         Log.d("TEST", "X: " + iter.getX()+ "Y: " +iter.getY());
+		    canvas.drawCircle(iter.getX() , iter.getY(),20, paint);
+		    paint.setColor(Color.BLACK);
+		}
+		
 	    } else {
 		canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
 			mMeasuredHeight / 2 - mMeasuredHeight / 8,
