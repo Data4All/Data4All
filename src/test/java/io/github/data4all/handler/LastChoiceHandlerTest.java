@@ -30,7 +30,7 @@ import org.robolectric.annotation.Config;
 @Config(emulateSdk = 18)
 public class LastChoiceHandlerTest {
 
-  /*  private LastChoiceHandler lcHandler;
+    private LastChoiceHandler lcHandler;
     private DataBaseHandler dbhandler;
     
     @Before
@@ -41,9 +41,9 @@ public class LastChoiceHandlerTest {
     
     
     
-    *//**
+    /**
      * add a lastChoice in Database and check if database contain this lastChoice
-     *//*
+     */
     @Test
     public void test_LastChoice(){
         
@@ -58,14 +58,14 @@ public class LastChoiceHandlerTest {
         Tag housenummer = Tags.getTagWithId(2);
         lastChoice.put(housenummer, "40");
         
-        Tag city = Tags.getTagWithId(3);
+        Tag city = Tags.getTagWithId(4);
         lastChoice.put(city, "bremen");
         
         Tag country = Tags.getTagWithId(6);
         lastChoice.put(country, "Germany");
        
-        lcHandler.setLastChoice(4, lastChoice);    
-        assertTrue(LastChoiceHandler.hasLastChoice(4)); 
+        lcHandler.setLastChoice(3, lastChoice);    
+        assertTrue(LastChoiceHandler.hasLastChoice(3)); 
         lcHandler.save(Robolectric.application);        
         
         ArrayList<Integer> tagIDs = new ArrayList<Integer>();
@@ -76,18 +76,19 @@ public class LastChoiceHandlerTest {
         tagIDs.add(tag.getId());
         tagIDs.add(country.getId());
         
-        assertEquals(tagIDs, dbhandler.getLastChoiceId(4)); 
-        
-        dbhandler.createTagMap(lastChoice);
-        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(tag));
+        assertEquals(tagIDs, dbhandler.getLastChoiceId(3)); 
+      /* dbhandler.createLastChoice(0, lastChoice);*/
+        //dbhandler.insertOrUpdateLastChoice(3, tagIDs);
+       // dbhandler.createTagMap((long) 1.0, dbhandler.getTagMap(dbhandler.getLastChoiceId(3)));
+       /* assertTrue(dbhandler.getTagMap(tagIDs).containsKey(tag));
         assertTrue(dbhandler.getTagMap(tagIDs).containsValue("bremen"));
         assertTrue(dbhandler.getTagMap(tagIDs).containsKey(country));
-        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(street));
+        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(street));*/
     }
     
-    *//**
+    /**
      * add a lastChoice for a specific type and check if a another type contains this lastChoice
-     *//*
+     */
     @Test
     public void test_LastChoiceForSpecificType(){
         Map<Tag, String> lastChoice = new Hashtable<Tag, String>();
@@ -108,27 +109,25 @@ public class LastChoiceHandlerTest {
         tagIDs.add(street1.getId());
         
         assertEquals(tagIDs, dbhandler.getLastChoiceId(2)); 
-        
-        dbhandler.createTagMap(lastChoice);
+
         //type 2 = "way" has a lastChoice
-        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(tag1));
-        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(street1));     
+        /*assertTrue(dbhandler.getTagMap(tagIDs).containsKey(tag1));
+        assertTrue(dbhandler.getTagMap(tagIDs).containsKey(street1));*/     
        
-        //type 3 = "area" don't have a lastChoice
-        List<Integer> tagIDs1 = dbhandler.getLastChoiceId(3); 
-        assertFalse(LastChoiceHandler.hasLastChoice(3));
+        //type 1 = "node" don't have a lastChoice
+        List<Integer> tagIDs1 = dbhandler.getLastChoiceId(1); 
+        assertFalse(LastChoiceHandler.hasLastChoice(1));
         assertEquals(null,tagIDs1);
     }
     
-    *//**
+    /**
      * check if a type(node,track,area, and building) has a lastChoice
-     *//*
+     */
     @Test
     public void check_If_SpecificType_Has_LastChoice(){
         LastChoiceHandler.load(dbhandler);
         assertFalse(LastChoiceHandler.hasLastChoice(1));
         assertTrue(LastChoiceHandler.hasLastChoice(2));
-        assertFalse(LastChoiceHandler.hasLastChoice(3));
-        assertTrue(LastChoiceHandler.hasLastChoice(4));
-    }*/
+        assertTrue(LastChoiceHandler.hasLastChoice(3));
+    }
 }

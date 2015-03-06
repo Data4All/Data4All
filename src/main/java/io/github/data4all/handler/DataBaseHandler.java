@@ -123,6 +123,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     private static final String KEY_ALT = "altitude";
     private static final String KEY_TIME = "timestamp";
 
+    private long rowID;
+
     /**
      * Default constructor for the database handler.
      * 
@@ -1037,7 +1039,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param tagMap
      *            the {@link Map} object from which the data will be taken
      */
-    private void createTagMap(long dataElementId, Map<Tag, String> tagMap) {
+    public void createTagMap(long dataElementId, Map<Tag, String> tagMap) {
 
         final SQLiteDatabase db = getWritableDatabase();
 
@@ -1051,8 +1053,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             Log.i(TAG, "Tag " + rowID + " has been added.");
         }
     }
- 
-
+    
     /**
      * This method returns the data for specific tags stored in the database and
      * creates the corresponding {@link Map} object.
@@ -1630,21 +1631,18 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @return
      * @author Steeve
      */
-    public Integer insertOrUpdateLastChoice(Integer kategorie,List<Integer> tagIds) {
+    public void insertOrUpdateLastChoice(Integer kategorie,List<Integer> tagIds) {
         final SQLiteDatabase db = getReadableDatabase();
-        
+        final ContentValues values = new ContentValues();
         if(getLastChoiceId(kategorie)==null){
-            final ContentValues values = new ContentValues();
             values.put(TYPE, kategorie);
             values.put(TAG_IDS, join(tagIds, ","));
-            return (int) db.insert(TABLE_LASTCHOICE, null,values);
+            rowID = db.insert(TABLE_LASTCHOICE, null,values);
         }else{
-
-            final ContentValues values = new ContentValues();
             values.put(TYPE, kategorie);
             values.put(TAG_IDS, join(tagIds, ","));
             //update lastchoice set TYPE=kategorie, TAG_IDS=tagIds where TYPE=kategorie
-            return db.update(TABLE_LASTCHOICE, values, TYPE + "=?",
+            rowID = db.update(TABLE_LASTCHOICE, values, TYPE + "=?",
                     new String[] {String.valueOf(kategorie)});
             
         }
