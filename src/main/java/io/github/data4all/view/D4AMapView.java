@@ -141,8 +141,9 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param elem
      *            the OsmElement which should be added to the map
-     * @param edit is OsmElement editable                 
-     *            
+     * @param edit
+     *            is OsmElement editable
+     * 
      **/
     public void addOsmElementToMap(AbstractActivity ctx,
             AbstractDataElement elem, boolean edit) {
@@ -168,7 +169,7 @@ public class D4AMapView extends MapView {
                     Log.i(TAG,
                             "Add Area with Coordinates "
                                     + polyElement.toString());
-                    this.addAreaToMap(ctx, polyElement);
+                    this.addAreaToMap(ctx, polyElement, edit);
                 }
             }
         }
@@ -181,14 +182,15 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param node
      *            the node which should be added to the map
-     * @param edit is the node editable           
+     * @param edit
+     *            is the node editable
      **/
     private void addNodeToMap(AbstractActivity ctx, Node node, boolean edit) {
         final Marker poi = new MapMarker(ctx, this, node);
         Log.i(TAG, "Set Node Points to " + node.toString());
         poi.setPosition(node.toGeoPoint());
         poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        if(edit){
+        if (edit) {
             poi.setDraggable(true);
         }
         this.getOverlays().add(poi);
@@ -203,7 +205,8 @@ public class D4AMapView extends MapView {
      * @param polyElement
      *            the area which should be added to the map
      **/
-    private void addAreaToMap(AbstractActivity ctx, PolyElement polyElement) {
+    private void addAreaToMap(AbstractActivity ctx, PolyElement polyElement,
+            boolean edit) {
         final Polygon area = new MapPolygon(ctx, this, polyElement);
 
         Log.i(TAG, "Set Area Points to " + polyElement.toString());
@@ -217,6 +220,11 @@ public class D4AMapView extends MapView {
 
         Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
         area.setStrokeColor(DEFAULT_STROKE_COLOR);
+
+//        TODO comment in, so that it is only in MapPrevie
+//        if (edit) {
+            ((MapPolygon)area).setEditable(true);
+//        }
 
         this.getOverlays().add(area);
         this.postInvalidate();

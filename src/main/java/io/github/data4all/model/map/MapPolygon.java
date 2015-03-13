@@ -15,6 +15,9 @@
  */
 package io.github.data4all.model.map;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
@@ -24,9 +27,13 @@ import io.github.data4all.model.data.Tag;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.Polygon;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.Projection;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.view.MotionEvent;
 
 /**
  * With LongClick deletable Polygon.
@@ -40,6 +47,7 @@ public class MapPolygon extends Polygon {
     private AbstractActivity activity;
     private D4AMapView mapView;
     private AbstractDataElement element;
+    private boolean editable;
 
     /**
      * Default constructor.
@@ -59,14 +67,16 @@ public class MapPolygon extends Polygon {
         this.element = ele;
         this.activity = ctx;
         this.mapView = mv;
-        if(activity instanceof MapViewActivity){
-            mInfoWindow = new CustomInfoWindow(this.mapView, ele, this, activity);
-        }else {
+        this.editable = false;
+        if (activity instanceof MapViewActivity) {
+            mInfoWindow = new CustomInfoWindow(this.mapView, ele, this,
+                    activity);
+        } else {
             mInfoWindow = null;
         }
         setInfo();
     }
-    
+
     public void setInfo() {
         if (!element.getTags().keySet().isEmpty()
                 && !element.getTags().values().isEmpty()) {
@@ -87,8 +97,8 @@ public class MapPolygon extends Polygon {
     public String getLocalizedName(Context context, String key, String value) {
         Resources resources = context.getResources();
         String s = "name_" + key + "_" + value;
-        int id = resources.getIdentifier(s.replace(":", "_"),
-                "string", context.getPackageName());
+        int id = resources.getIdentifier(s.replace(":", "_"), "string",
+                context.getPackageName());
         if (id == 0) {
             return null;
         } else {
@@ -96,4 +106,58 @@ public class MapPolygon extends Polygon {
         }
     }
 
+    @Override
+    public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
+        boolean tapped = contains(event);
+        if (editable && tapped) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                // mIsDragged = false;
+                // if (mOnMarkerDragListener != null)
+                // mOnMarkerDragListener.onMarkerDragEnd(this);
+                return true;
+            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                moveToEventPosition(event, mapView);
+                return true;
+            } else
+                return false;
+        } else
+            return false;
+    }
+
+    public void moveToEventPosition(final MotionEvent event,
+            final MapView mapView) {
+        Log.i(TAG, "moveMapPolygon");
+        final Projection pj = mapView.getProjection();
+        // actual Polygon point list
+        List<GeoPoint> gpointListOld = this.getPoints();
+        Log.d(TAG, gpointListOld.get(0).getLatitude() + " "
+                + gpointListOld.get(0).getLongitude());
+        // new Polygon point list
+        List<GeoPoint> gpointList = new ArrayList<GeoPoint>(
+                gpointListOld.size());
+        GeoPoint gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
+                (int) event.getY());
+        Log.i(TAG, "size before" + gpointListOld.size());
+        
+        gpointListOld.add(gpoint);
+        this.setPoints(gpointListOld);
+        Log.i(TAG, "size after, should be one more..." + this.getPoints().size());
+        
+        // for (GeoPoint gpoint : gpointListOld) {
+        // pj.toProjectedPixels(gpoint, null)
+        // gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
+        // (int) event.getY());
+        // gpointList.add(gpoint);
+        // }
+        //this.setPoints(gpointList);
+//        Log.d(TAG, gpointList.get(0).getLatitude() + " "
+//                + gpointList.get(0).getLongitude());
+
+        mapView.invalidate();
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
 }
