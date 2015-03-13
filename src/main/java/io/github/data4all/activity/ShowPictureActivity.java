@@ -112,6 +112,15 @@ public class ShowPictureActivity extends AbstractActivity {
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
         cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
+        cameraAssistView.setOnFinishInflateListener(new Runnable() {
+            @Override
+            public void run() {
+                cameraAssistView.setInformations((float) transformBean.getCameraMaxRotationAngle(),
+                        (float) transformBean.getCameraMaxPitchAngle(),
+                         currentOrientation);
+                cameraAssistView.invalidate();
+            }
+        });
         intent = new Intent(this, MapPreviewActivity.class);
         undo = (ImageButton) findViewById(R.id.undobtn);
         undo.setVisibility(View.GONE);
@@ -208,11 +217,6 @@ public class ShowPictureActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        cameraAssistView.setInformations((float) transformBean.getCameraMaxRotationAngle(),
-                (float) transformBean.getCameraMaxPitchAngle(),
-                 currentOrientation);
-        cameraAssistView.invalidate();
         listener.enable();
     }
 
