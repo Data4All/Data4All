@@ -251,10 +251,10 @@ public class D4AMapView extends MapView {
         path.setPoints(polyElement.getGeoPoints());
         if (edit) {
             Log.i(TAG, "Set Path Color to " + Color.YELLOW);
-            path.setColor(Color.YELLOW);
+            path.setColor(Color.RED);
         } else {
             Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
-            path.setColor(Color.YELLOW);
+            path.setColor(DEFAULT_STROKE_COLOR);
         }
         Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
         path.setWidth(DEFAULT_STROKE_WIDTH);
