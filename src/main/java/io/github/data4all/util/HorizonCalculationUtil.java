@@ -139,9 +139,9 @@ public class HorizonCalculationUtil {
         double[] horivec = rotate(vector3, rotateVector, -angle);
         double[] horivec2 = new double[3];
         double azimuth = Math.toRadians(10);
-        horivec2[0] = ((horivec[0] * Math.cos(azimuth)) - (horivec[1] * Math.sin(azimuth)));
-        horivec2[1] = ((horivec[0] * Math.sin(azimuth)) + (horivec[1] * Math.cos(azimuth)));
-        horivec2[2] = horivec[2];
+        horivec2[0] = 1;//((horivec[0] * Math.cos(azimuth)) - (horivec[1] * Math.sin(azimuth)));
+        horivec2[1] = 0;//((horivec[0] * Math.sin(azimuth)) + (horivec[1] * Math.cos(azimuth)));
+        horivec2[2] = 0;//horivec[2];
         double[] xaxe = {1,0,0};
         double[] yaxe = {0,1,0};
         double[] ohnepitch = rotate(horivec2, xaxe, pitch);
@@ -156,9 +156,9 @@ public class HorizonCalculationUtil {
         
         horivec2 = new double[3];
         azimuth = Math.toRadians(-10);
-        horivec2[0] = ((horivec[0] * Math.cos(azimuth)) - (horivec[1] * Math.sin(azimuth)));
-        horivec2[1] = ((horivec[0] * Math.sin(azimuth)) + (horivec[1] * Math.cos(azimuth)));
-        horivec2[2] = horivec[2];
+        horivec2[0] =0;// ((horivec[0] * Math.cos(azimuth)) - (horivec[1] * Math.sin(azimuth)));
+        horivec2[1] =1;// ((horivec[0] * Math.sin(azimuth)) + (horivec[1] * Math.cos(azimuth)));
+        horivec2[2] =0;// horivec[2];
         ohnepitch = rotate(horivec2, xaxe, pitch);
         ohneroll = rotate(ohnepitch, yaxe, -roll);
         // calculate the pitch- and roll-angles.
@@ -171,8 +171,9 @@ public class HorizonCalculationUtil {
 
         
         //###############################################################
-        rV.addPoint(new Point(x+ maxWidth/2, y+maxHeight/2));
-        rV.addPoint(new Point(x2 + maxWidth/2, y2+maxHeight/2));
+        //rV.addPoint(new Point(x+ maxWidth/2, y+maxHeight/2));
+        rV.addPoint(new Point(x3+ maxWidth/2, y3+maxHeight/2));
+      //  rV.addPoint(new Point(x2 + maxWidth/2, y2+maxHeight/2));
         
         
 
@@ -284,13 +285,13 @@ public class HorizonCalculationUtil {
         } else {
             // calculade the collision of the horizonline with the displayedges.
             // check wich collision is important and add it to the returnvalues.
-            final float xMin = y + (y2-y) * ((-maxWidth / 2 - x) / (x2-x)) + maxHeight / 2;
+            final float xMin = y3 + (y2-y) * ((-maxWidth / 2 - x3) / (x2-x)) + maxHeight / 2;
             if (xMin > 0 && xMin <= maxHeight) {
                 point1 = new Point(0, xMin);
                 iter++;
                 edges += 1;
             }
-            final float yMin = x + (x2-x) * ((-maxHeight / 2 - y) / (y2-y)) + maxWidth
+            final float yMin = x3 + (x2-x) * ((-maxHeight / 2 - y3) / (y2-y)) + maxWidth
                     / 2;
             if (yMin > 0 && yMin <= maxWidth) {
                 if (iter == 0) {
@@ -301,7 +302,7 @@ public class HorizonCalculationUtil {
                 iter++;
                 edges += 2;
             }
-            final float xMax = y + (y2-y) * ((maxWidth / 2 - x) / (x2-x)) + maxHeight
+            final float xMax = y3 + (y2-y) * ((maxWidth / 2 - x3) / (x2-x)) + maxHeight
                     / 2;
             if (xMax > 0 && xMax <= maxHeight) {
                 if (iter == 0) {
@@ -312,7 +313,7 @@ public class HorizonCalculationUtil {
                 iter++;
                 edges += 4;
             }
-            final float yMax = x + (x2-x) * ((maxHeight / 2 - y) / (y2-y)) + maxWidth / 2;
+            final float yMax = x3 + (x2-x) * ((maxHeight / 2 - y3) / (y2-y)) + maxWidth / 2;
             if (yMax > 0 && yMax <= maxWidth) {
                 if (iter == 0) {
                     point1 = new Point(yMax, maxHeight);
