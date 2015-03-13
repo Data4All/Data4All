@@ -15,6 +15,8 @@
  */
 package io.github.data4all.activity;
 
+import java.util.List;
+
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -22,6 +24,7 @@ import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.util.MapUtil;
@@ -137,6 +140,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             m.setInfoWindow(null);
             mapView.getOverlays().add(m);
         }
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<AbstractDataElement> list = db.getAllDataElements();
+        mapView.addOsmElementsToMap(this, list);
+        db.close();
         mapView.addOsmElementToMap(this, element, true);
     }
 
