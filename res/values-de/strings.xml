@@ -91,4 +91,5 @@
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
     <string name="or">oder</string>
+      <string name="show_pwd">Passwort anzeigen</string>
 </resources>
