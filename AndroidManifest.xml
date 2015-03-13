@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.data4all"
-    android:versionCode="1"
-    android:versionName="0.1" >
+    android:versionCode="2"
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -32,7 +32,7 @@
             android:name="MAPBOX_AUTHKEY"
             android:value="pk.eyJ1IjoiZGF0YTRhbGwiLCJhIjoiYlNHWlFSayJ9.vN6iDHPsVupbT9yXdlT9Xg" />
 
-        <activity android:name=".activity.MapViewActivity" >
+        <activity android:name=".activity.MapViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,7 +40,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MapPreviewActivity" />
-        <activity android:name=".activity.SensorActivity" />
         <activity
             android:name=".activity.ShowPictureActivity"
             android:configChanges="keyboardHidden|screenSize"

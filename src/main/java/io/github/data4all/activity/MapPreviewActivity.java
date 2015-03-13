@@ -69,16 +69,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         if (getIntent().hasExtra("OSM_ELEMENT")) {
             element = getIntent().getParcelableExtra("OSM_ELEMENT");
         }
-        mapView.addOsmElementToMap(this, element);
-        if (getIntent().hasExtra("LOCATION")) {
-            Location l = (Location) getIntent().getParcelableExtra("LOCATION");
-            Marker m = new Marker(mapView);
-            m.setPosition(new GeoPoint(l));
-            m.setIcon(new DefaultResourceProxyImpl(this)
-                    .getDrawable(ResourceProxy.bitmap.person));
-            m.setInfoWindow(null);
-            mapView.getOverlays().add(m);
-        }
+        setUpOverlays();
 
         boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
@@ -125,6 +116,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             break;
         case R.id.switch_maps:
             switchMaps();
+            mapView.getOverlays().clear();
+            setUpOverlays();
             break;
         case R.id.okay:
             this.accept();
@@ -132,6 +125,19 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         default:
             break;
         }
+    }
+
+    private void setUpOverlays() {
+        if (getIntent().hasExtra("LOCATION")) {
+            Location l = (Location) getIntent().getParcelableExtra("LOCATION");
+            Marker m = new Marker(mapView);
+            m.setPosition(new GeoPoint(l));
+            m.setIcon(new DefaultResourceProxyImpl(this)
+                    .getDrawable(ResourceProxy.bitmap.person));
+            m.setInfoWindow(null);
+            mapView.getOverlays().add(m);
+        }
+        mapView.addOsmElementToMap(this, element);
     }
 
     /*
@@ -154,8 +160,12 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         startActivityForResult(intent);
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
      */
     @Override
     protected void onWorkflowFinished(Intent data) {

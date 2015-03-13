@@ -30,6 +30,10 @@
     <string name="redo">Redo Function</string>
     <string name="undo">Undo Function</string>
 
+    <!-- infoBubble -->
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>   
+    
     <!-- dialogs -->
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="resultViewAlertDialogMessage">Upload now?</string>
@@ -40,7 +44,6 @@
 
     <!-- Login Activity Strings -->
     <string name="usernameHint">username</string>
-    <string name="or">Or</string>
     <string name="passwordHint">password</string>
     <string name="loginDescription">Login to OpenStreetMap</string>
     <string name="loginButton">Sign in</string>

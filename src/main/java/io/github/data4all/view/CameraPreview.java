@@ -67,6 +67,11 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
     private int mPreviewHeight;
 
+    /**
+     * Constructor for instantiate CameraPreview
+     * 
+     * @param context
+     */
     public CameraPreview(Context context) {
         super(context);
         this.init(context);
@@ -108,10 +113,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        final int width =
-                resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-        final int height =
-                resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+        final int width = resolveSize(getSuggestedMinimumWidth(),
+                widthMeasureSpec);
+        final int height = resolveSize(getSuggestedMinimumHeight(),
+                heightMeasureSpec);
 
         setMeasuredDimension(width, height);
 
@@ -121,9 +126,8 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         }
 
         if (mSupportedPreviewSizes != null) {
-            mPreviewSize =
-                    this.getOptimalPreviewSize(mSupportedPreviewSizes,
-                            containerWidth, containerHeight);
+            mPreviewSize = this.getOptimalPreviewSize(mSupportedPreviewSizes,
+                    containerWidth, containerHeight);
         }
 
     }
@@ -151,15 +155,15 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         if (mCamera != null) {
 
             // get a group of supported preview size
-            mSupportedPreviewSizes =
-                    mCamera.getParameters().getSupportedPreviewSizes();
+            mSupportedPreviewSizes = mCamera.getParameters()
+                    .getSupportedPreviewSizes();
 
-            mSupportedPictureSizes =
-                    mCamera.getParameters().getSupportedPictureSizes();
+            mSupportedPictureSizes = mCamera.getParameters()
+                    .getSupportedPictureSizes();
             mSupportedPictureSizes.remove(3);
 
-            mSupportedFlashModes =
-                    mCamera.getParameters().getSupportedFlashModes();
+            mSupportedFlashModes = mCamera.getParameters()
+                    .getSupportedFlashModes();
 
             requestLayout();
         }
@@ -190,32 +194,28 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
                             + size.width);
                 }
 
-                mPreviewSize =
-                        getOptimalSize(mSupportedPreviewSizes, mPreviewWidth,
-                                mPreviewHeight);
+                mPreviewSize = getOptimalSize(mSupportedPreviewSizes,
+                        mPreviewWidth, mPreviewHeight);
 
                 Log.v("PREF_PREVIEW_SIZE", "h: " + mPreviewSize.height + " w: "
                         + mPreviewSize.width);
 
                 params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 
-                mPhotoSize =
-                        getOptimalSize(mSupportedPictureSizes, mPreviewWidth,
-                                mPreviewHeight);
+                mPhotoSize = getOptimalSize(mSupportedPictureSizes,
+                        mPreviewWidth, mPreviewHeight);
 
                 Log.v("PREF_PICTURE_SIZE", "h: " + mPhotoSize.height + " w: "
                         + mPhotoSize.width);
 
                 params.setPictureSize(mPhotoSize.width, mPhotoSize.height);
 
-                // params.setRotation(90);
-
                 // set the picture type for taking photo
                 params.setPictureFormat(ImageFormat.JPEG);
                 params.setJpegQuality(90);
                 params.setZoom(0);
 
-                setFlashModes(params);
+                this.setFlashModes(params);
 
                 mCamera.setParameters(params);
 
@@ -264,13 +264,15 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
      * Set the Camera Display Orientation when the view changed
      */
     private void setCameraDisplayOrientation() {
-        Camera.CameraInfo info = new Camera.CameraInfo();
+        final Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
 
         int rotation;
         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            rotation = 360 - info.orientation; // compensate the mirror
-        } else { // back-facing
+            // compensate the mirror
+            rotation = 360 - info.orientation;
+        } else {
+            // back-facing
             rotation = info.orientation;
         }
 
@@ -299,9 +301,10 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback {
         final double TOLERANCE = 0.1;
         double targetRatio = (double) h / w;
 
-        if (sizes == null)
+        if (sizes == null) {
             return null;
-
+        }
+        
         Size optimalSize = null;
 
         // Look for the exact size

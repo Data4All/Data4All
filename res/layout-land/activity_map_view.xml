@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/return_to_actual_Position"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,9 +27,10 @@
         android:layout_marginTop="20dp"
         android:background="@null"
         android:padding="0dp"
-        android:src="@drawable/ic_sat" />
+        android:src="@drawable/ic_sat"
+        android:contentDescription="@string/noDescription" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/new_point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +41,7 @@
         android:background="@null"
         android:src="@drawable/ic_poi" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/to_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,6 +61,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:scaleType="fitXY"
-        android:src="@drawable/data4allg" />
+        android:src="@drawable/data4allg"
+        android:contentDescription="@string/noDescription" />
 
 </RelativeLayout>

@@ -29,6 +29,10 @@
     <string name="drawBuilding">Zeichne ein Gebäude </string>
     <string name="redo">Wiederherstellen</string>
     <string name="undo">Rückgängig machen</string>
+    
+    <!-- infoBubble -->
+    <string name="delete">Löschen</string>
+    <string name="edit">Bearbeiten</string>   
 
     <!-- dialogs -->
     <string name="deleteDialog">Wollen Sie dieses Objekt wirklich löschen?</string>
@@ -86,5 +90,5 @@
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
-    
+    <string name="or">oder</string>
 </resources>
