@@ -137,7 +137,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             m.setInfoWindow(null);
             mapView.getOverlays().add(m);
         }
-        mapView.addOsmElementToMap(this, element);
+        mapView.addOsmElementToMap(this, element, true);
     }
 
     /*

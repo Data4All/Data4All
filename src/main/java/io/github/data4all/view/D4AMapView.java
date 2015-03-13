@@ -129,7 +129,7 @@ public class D4AMapView extends MapView {
             List<AbstractDataElement> list) {
         if (list != null && !list.isEmpty()) {
             for (AbstractDataElement elem : list) {
-                this.addOsmElementToMap(ctx, elem);
+                this.addOsmElementToMap(ctx, elem, false);
             }
         }
     }
@@ -141,16 +141,18 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param elem
      *            the OsmElement which should be added to the map
+     * @param edit is OsmElement editable                 
+     *            
      **/
     public void addOsmElementToMap(AbstractActivity ctx,
-            AbstractDataElement elem) {
+            AbstractDataElement elem, boolean edit) {
         if (elem != null) {
             // if the Element is a Node
             if (elem instanceof Node) {
                 final Node node = (Node) elem;
                 Log.i(TAG, "Add Node with Coordinates "
                         + node.toGeoPoint().toString());
-                this.addNodeToMap(ctx, node);
+                this.addNodeToMap(ctx, node, edit);
                 // if the Element is Way
             } else if (elem instanceof PolyElement) {
                 final PolyElement polyElement = (PolyElement) elem;
@@ -179,12 +181,16 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param node
      *            the node which should be added to the map
+     * @param edit is the node editable           
      **/
-    private void addNodeToMap(AbstractActivity ctx, Node node) {
+    private void addNodeToMap(AbstractActivity ctx, Node node, boolean edit) {
         final Marker poi = new MapMarker(ctx, this, node);
         Log.i(TAG, "Set Node Points to " + node.toString());
         poi.setPosition(node.toGeoPoint());
         poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        if(edit){
+            poi.setDraggable(true);
+        }
         this.getOverlays().add(poi);
         this.postInvalidate();
     }
