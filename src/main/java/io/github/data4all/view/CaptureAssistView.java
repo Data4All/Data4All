@@ -59,6 +59,7 @@ public class CaptureAssistView extends View {
     private List<Point> point = new ArrayList<Point>();
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
+    private Runnable finishInflateListener;
 
     private static final String TAG = CaptureAssistView.class.getSimpleName();
 
@@ -222,5 +223,16 @@ public class CaptureAssistView extends View {
 
     }
 
+    public void setOnFinishInflateListener(Runnable listener) {
+        this.finishInflateListener = listener;
+    }
+    
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        if (finishInflateListener != null) {
+            finishInflateListener.run();
+        }
+    }
 
 }
