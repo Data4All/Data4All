@@ -126,7 +126,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 .getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
-        mapView.addOsmElementToMap(this, element);
+        mapView.addOsmElementToMap(this, element, false);
         // Here the List of tags is created
         listView = (ListView) this.findViewById(R.id.listViewResultView);
         res = getResources();
