@@ -148,9 +148,7 @@ public class CaptureAssistView extends View {
     public void setInformations(float maxPitch, float maxRoll,
             DeviceOrientation deviceOrientation) {
         Log.d(TAG, "setInformationsIsCalled");
-
-        this.mMeasuredWidth = getMeasuredWidth();
-        this.mMeasuredHeight = getMeasuredHeight();
+        
         ReturnValues returnValues = horizonCalculationUtil
                 .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
                         mMeasuredHeight, (float) Math.toRadians(85),
@@ -159,14 +157,17 @@ public class CaptureAssistView extends View {
         this.visible = returnValues.isVisible();
         this.points = returnValues.getPoints();
         this.point = returnValues.getPoint();
-        Log.d("TEST", "MP" + maxPitch + " MR " + maxRoll
+       /* Log.d("TEST", "MP" + maxPitch + " MR " + maxRoll
                 + " OR " + deviceOrientation.getPitch() + "  " + deviceOrientation.getRoll()
-                + " MW+H " + mMeasuredWidth + " " + mMeasuredHeight);
+                + " MW+H " + mMeasuredWidth + " " + mMeasuredHeight);*/
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+        this.mMeasuredWidth = getMeasuredWidth();
+        this.mMeasuredHeight = getMeasuredHeight();
         Log.d(TAG, "onDrawCalled");
         Log.d("TEST",  " MW+H " + mMeasuredWidth + " " + mMeasuredHeight);
         if (visible && !points.isEmpty()) {

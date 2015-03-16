@@ -66,9 +66,9 @@ public class ShowPictureActivity extends AbstractActivity {
 
     private static final String TAG = ShowPictureActivity.class.getSimpleName();
 
+    private CaptureAssistView cameraAssistView;
     private TouchView touchView;
     private ImageView imageView;
-    private CaptureAssistView cameraAssistView;
     private Intent intent;
     private static final String TYPE = "TYPE_DEF";
     private static final String LOCATION = "LOCATION";
@@ -109,18 +109,10 @@ public class ShowPictureActivity extends AbstractActivity {
 
         setContentView(R.layout.activity_picture);
 
+        cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
         imageView = (ImageView) findViewById(R.id.imageView1);
         touchView = (TouchView) findViewById(R.id.touchView1);
-        cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
-        cameraAssistView.setOnFinishInflateListener(new Runnable() {
-            @Override
-            public void run() {
-                cameraAssistView.setInformations((float) transformBean.getCameraMaxRotationAngle(),
-                        (float) transformBean.getCameraMaxPitchAngle(),
-                         currentOrientation);
-                cameraAssistView.invalidate();
-            }
-        });
+
         intent = new Intent(this, MapPreviewActivity.class);
         undo = (ImageButton) findViewById(R.id.undobtn);
         undo.setVisibility(View.GONE);
@@ -191,8 +183,15 @@ public class ShowPictureActivity extends AbstractActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
+        
+        cameraAssistView.setInformations((float) transformBean.getCameraMaxRotationAngle(),
+                (float) transformBean.getCameraMaxPitchAngle(),
+                 currentOrientation);
+        cameraAssistView.bringToFront();
+        cameraAssistView.invalidate();
 
-        Log.d("TEST", "Test1");
+        Log.d("TEST", "Test2");
+
         this.onClickArea(null);
 
         // Setup the rotation listener
