@@ -15,6 +15,7 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
@@ -83,6 +84,9 @@ public class TouchView extends View {
 	 * Boolean to check if the move motion could be a delete motion
 	 */
 	private boolean isDelete;
+	private boolean isLeft;
+	private boolean isRight;
+	private MotionEvent startEvent;
 
 	/**
 	 * Point to set if the current start motion found a point
@@ -132,6 +136,8 @@ public class TouchView extends View {
 	 * The current used RedoUndo listener.
 	 */
 	private UndoRedoListener undoRedoListener;
+	
+	private ButtonAnimationListener btnAnimator;
 	
 	/**
      * Standard strings for actions
@@ -194,6 +200,10 @@ public class TouchView extends View {
 	public TouchView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
+	
+	public void setBtnAnimator(List<View> views){
+		btnAnimator = new ButtonAnimationListener(views);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -240,20 +250,23 @@ public class TouchView extends View {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		final int action = event.getAction();
+		Log.e(this.getClass().getSimpleName(), "event :" + action + "eventX: " + event.getX() + "eventY: " + event.getY());
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 			currentMotion = new DrawingMotion();
-			this.handleMotion(event, "start");
+			isLeft = false;
+			isRight = false;
+			this.startEvent(event);
 			break;
 		case MotionEvent.ACTION_UP:
-			this.handleMotion(event, "end");
+			this.endEvent(event);
 			polygon = newPolygon;
 			this.undoUseable();
 			this.redoUseable();
 			this.undoRedoListener.okUseable(hasEnoughNodes());
 			break;
 		case MotionEvent.ACTION_MOVE:
-			this.handleMotion(event, "move");
+			this.moveEvent(event);
 			postInvalidate();
 			break;
 		default :
@@ -261,61 +274,80 @@ public class TouchView extends View {
 		}
 		return true;
 	}
+	
+	private boolean isScreenLeft(float eventX) {
+		if(eventX < 50){
+		return true;
+		}
+		return false;
+	}
+	
+	private boolean isScreenRight(float eventX) {
+		if(eventX > this.getWidth()-50){
+		return true;
+		}
+		return false;
+	}
+	
+	private void startEvent(MotionEvent event){
+		this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
+		if(isScreenLeft(event.getX()))
+		 {
+			Log.e(this.getClass().getSimpleName(), "IS LEFT SIDE");
+			isLeft = true;
+			this.startEvent = event;
+		}else if(isScreenRight(event.getX()))
+		 {
+			Log.e(this.getClass().getSimpleName(), "IS RIGHT SIDE");
+			isRight = true;
 
-	/**
-	 * Handles the given motion:<br/>
-	 * Add the point to the current motion<br/>
-	 * Logs the motion<br/>
-	 * Apple to move and delete points in the motion<br/>
-	 * Causes the view to redraw itself afterwards
-	 * 
-	 * @param event
-	 *            The touch event
-	 * @param action
-	 *            the named action which is in progress
-	 */
-	private void handleMotion(MotionEvent event, String action) {
-		if (currentMotion != null) {
-			if (action.equals("start")) {
-				this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
-				if (lookUpPoint != null) {
-					this.mover = movePoint(lookUpPoint);
-					isDelete = true;
-					startPoint = lookUpPoint;
-					lookUpPoint = null;
-				} else {
-					currentMotion.addPoint(event.getX(), event.getY());
-				}
-			} else if (action.equals("move")) {
-				if (mover != null) {
-					if (Math.abs(startPoint.getX() - event.getX()) > 10
-							&& Math.abs(startPoint.getY() - event.getY()) > 10) {
-						Log.d("", "Long Press cancled");
-						mover.moveTo(event.getX(), event.getY());
-						isDelete = false;
-						redoUndo.add(new Point(event.getX(), event.getY()),
-								moveTo, mover.getIdx());
-					}
-				} else {
-					currentMotion.addPoint(event.getX(), event.getY());
-					newPolygon = interpreter.interprete(polygon, currentMotion);
-				}
-			} else if (action.equals("end")) {
-				if (isDelete) {
-					redoUndo.add(startPoint, delete, mover.getIdx());
-					this.deletePoint(startPoint);
-					mover = null;
-					isDelete = false;
-				} else {
-					if (mover != null) {
-						mover = null;
-					} else {
-						redoUndo = new RedoUndo(newPolygon);
-					}
-				}
-			} else {
-				Log.e(this.getClass().getSimpleName(),
-						"ERROR, No action Found for: " + action);
+			this.startEvent = event;
+		} else if (lookUpPoint != null){
+			Log.e(this.getClass().getSimpleName(), "POINT FOUND");
+			this.mover = movePoint(lookUpPoint);
+			isDelete = true;
+			startPoint = lookUpPoint;
+			lookUpPoint = null;
+		} else {
+			Log.e(this.getClass().getSimpleName(), "ADD POINT");
+			currentMotion.addPoint(event.getX(), event.getY());
+		}
+	}
+	
+	private void moveEvent(MotionEvent event){
+		if (mover != null) {
+			if (Math.abs(startPoint.getX() - event.getX()) > 10
+					&& Math.abs(startPoint.getY() - event.getY()) > 10) {
+				Log.d("", "Long Press cancled");
+				mover.moveTo(event.getX(), event.getY());
+				isDelete = false;
+				redoUndo.add(new Point(event.getX(), event.getY()),
+						moveTo, mover.getIdx());
+			}
+		} else if(isLeft){
+			if(!(btnAnimator.getAway())){
+			btnAnimator.onRotate();
+			}
+		}else if(isRight){
+			if(btnAnimator.getAway()){
+			btnAnimator.onRotate();
+			}}else{
+			currentMotion.addPoint(event.getX(), event.getY());
+			newPolygon = interpreter.interprete(polygon, currentMotion);
+		}
+	}
+	
+	private void endEvent(MotionEvent event){
+		if (isDelete) {
+			redoUndo.add(startPoint, delete, mover.getIdx());
+			this.deletePoint(startPoint);
+			mover = null;
+			isDelete = false;
+		} else {
+			if (mover != null) {
+				mover = null;
+			} else if(!isLeft && !isRight){
+				redoUndo = new RedoUndo(newPolygon);
 			}
 		}
 	}
