@@ -235,6 +235,28 @@ public class CaptureAssistView extends View {
         return path;
 
     }
+    
+    /**
+     * Testing if a point is over the horizont (red marked area)
+     * @param p point to be testet
+     * @return result true if the point is in the red marked area
+     * 
+     * @author vkochno
+     */
+    public boolean overHorizont(Point p){
+    	int i;
+        int j;
+        boolean result = false;
+        for (i = 0, j = points.size() - 1; i < points.size(); j = i++) {
+          if ((points.get(i).getY() > p.getY()) != (points.get(j).getY() > p.getY()) &&
+              (p.getX() < (points.get(j).getX() - points.get(i).getX()) * 
+              (p.getX() - points.get(i).getY()) / (points.get(j).getY()-points.get(i).getY()) + points.get(i).getX())) {
+            result = !result;
+           }
+        }
+        return result;
+    }
+    
 
     public void setOnFinishInflateListener(Runnable listener) {
         this.finishInflateListener = listener;

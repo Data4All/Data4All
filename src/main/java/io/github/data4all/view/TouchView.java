@@ -241,6 +241,7 @@ public class TouchView extends View {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		final int action = event.getAction();
+		if(!(cameraAssistView.overHorizont(new Point(event.getX(),event.getY())))){
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 			currentMotion = new DrawingMotion();
@@ -259,6 +260,7 @@ public class TouchView extends View {
 			break;
 		default :
 			Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
+		}
 		}
 		return true;
 	}
