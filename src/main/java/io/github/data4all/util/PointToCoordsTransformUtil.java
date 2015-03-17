@@ -136,6 +136,61 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
+     * transforms a list of points in a list of Nodes.
+     * 
+     * @param tps
+     *            object of TransformParamBean
+     * @param deviceOrientation
+     *            object of DeviceOrientation
+     * @param points
+     *            list of points which have to be calculated
+     * @param rotation
+     *            rotation of the device
+     * @return list of Node
+     */
+    public Point fourthBuildingPoint(TransformationParamBean tps,
+            DeviceOrientation deviceOrientation, List<Point> points,
+            int rotation) {
+        this.tps = tps;
+        final List<double[]> coords = new ArrayList<double[]>();
+        Log.d(TAG,
+                "Orientation: "
+                        + Math.toDegrees(deviceOrientation.getAzimuth())
+                        + " ; " + Math.toDegrees(deviceOrientation.getPitch())
+                        + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
+        Log.d(TAG,
+                "TPS-DATA Max-Camera-Pitch-Angle: "
+                        + tps.getCameraMaxPitchAngle()
+                        + " Max-camera-Rotation-Angle: "
+                        + tps.getCameraMaxRotationAngle());
+
+        // get the set height
+        this.height = tps.getHeight();
+        Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
+                + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
+        if (points.size() != 3) {
+            return null;
+        } else {
+            for (Point point : points) {
+                // change point coordinates to match the set coordinate system.
+                point = this.changePixelCoordSystem(point, rotation);
+                Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
+                // calculates local coordinates in meter first
+                final double[] coord = this.calculateCoordFromPoint(tps,
+                        deviceOrientation, point);
+                Log.d(TAG, "Calculated local Coords:" + coord[0] + "  "
+                        + coord[1]);
+                coords.add(coord);
+            }
+        }
+        return null;
+    }
+    
+    private Point coordToPoint(double[] coord){
+        return null;
+    }
+
+    /**
      * calculates local coordinates for a point with the orientation of the
      * device, the pixel and information of the camera.
      * 
