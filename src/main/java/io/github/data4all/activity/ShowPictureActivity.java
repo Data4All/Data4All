@@ -192,7 +192,6 @@ public class ShowPictureActivity extends AbstractActivity {
         
         touchView.setCameraAssistView(cameraAssistView);
 
-        Log.d("TEST", "Test2");
 
         this.onClickArea(null);
 

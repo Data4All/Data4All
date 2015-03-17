@@ -26,6 +26,7 @@ import io.github.data4all.util.HorizonCalculationUtil;
 import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -156,7 +157,7 @@ public class CaptureAssistView extends View {
         this.deviceOrientation = deviceOrientation;
         this.informationSet = true;
 
-        Log.d("TEST",
+        Log.d(TAG,
                 "MP" + maxPitch + " MR " + maxRoll + " OR "
                         + deviceOrientation.getPitch() + "  "
                         + deviceOrientation.getRoll() + " MW+H "
@@ -181,7 +182,6 @@ public class CaptureAssistView extends View {
             this.point = returnValues.getPoint();
         }
         
-        Log.d("TEST", " MW+H " + mMeasuredWidth + " " + mMeasuredHeight);
         if (visible && !points.isEmpty()) {
             if (!skylook) {
                 Path path = getPath();
@@ -243,18 +243,15 @@ public class CaptureAssistView extends View {
      * 
      * @author vkochno
      */
-    public boolean overHorizont(Point p){
-    	int i;
-        int j;
-        boolean result = false;
-        for (i = 0, j = points.size() - 1; i < points.size(); j = i++) {
-          if ((points.get(i).getY() > p.getY()) != (points.get(j).getY() > p.getY()) &&
-              (p.getX() < (points.get(j).getX() - points.get(i).getX()) * 
-              (p.getX() - points.get(i).getY()) / (points.get(j).getY()-points.get(i).getY()) + points.get(i).getX())) {
-            result = !result;
-           }
+    public boolean overHorizont(Point point){
+        Bitmap bitmap = null;
+        this.setDrawingCacheEnabled(true);
+        bitmap = Bitmap.createBitmap(this.getDrawingCache());
+        this.setDrawingCacheEnabled(false);
+        if(bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT){
+            return false;
         }
-        return result;
+        return true; 
     }
     
 
