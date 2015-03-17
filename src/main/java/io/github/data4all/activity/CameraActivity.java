@@ -231,9 +231,17 @@ public class CameraActivity extends AbstractActivity {
                     public void onAutoFocus(boolean success, Camera camera) {
                         if (success) {
                             mAutoFocusCrossHair.success();
-                            mCamera.takePicture(shutterCallback, null,
-                                    new CapturePictureHandler(
-                                            CameraActivity.this, cameraPreview));
+                            if (cameraAssistView != null
+                                    && !cameraAssistView.isSkylook()) {
+                                mCamera.takePicture(shutterCallback, null,
+                                        new CapturePictureHandler(
+                                                CameraActivity.this,
+                                                cameraPreview));
+
+                            } else {
+                                mAutoFocusCrossHair.fail();
+                                btnCapture.setEnabled(true);
+                            }
                         } else {
                             mAutoFocusCrossHair.fail();
                             btnCapture.setEnabled(true);
@@ -257,11 +265,9 @@ public class CameraActivity extends AbstractActivity {
                 PackageManager.FEATURE_CAMERA);
     }
 
-    
-    
-    
     /**
-     * This method update the Camera View Assist for drawing the horizontal line on sensor change.
+     * This method update the Camera View Assist for drawing the horizontal line
+     * on sensor change.
      */
     public void updateCameraAssistView() {
 
