@@ -61,6 +61,7 @@ public class CaptureAssistView extends View {
     private boolean informationSet;
     private List<Point> points = new ArrayList<Point>();
     private List<Point> point = new ArrayList<Point>();
+    private Bitmap bitmap;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
     private Runnable finishInflateListener;
@@ -244,10 +245,11 @@ public class CaptureAssistView extends View {
      * @author vkochno
      */
     public boolean overHorizont(Point point){
-        Bitmap bitmap = null;
+       if(bitmap==null){
         this.setDrawingCacheEnabled(true);
         bitmap = Bitmap.createBitmap(this.getDrawingCache());
         this.setDrawingCacheEnabled(false);
+       }
         if(bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT){
             return false;
         }
