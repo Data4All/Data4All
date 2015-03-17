@@ -274,6 +274,12 @@ public class CameraActivity extends AbstractActivity {
             cameraAssistView.setInformations(maxPitch, maxRoll,
                     orientationListener.getDeviceOrientation());
             cameraAssistView.invalidate();
+
+            if (!cameraAssistView.isSkylook()) {
+                btnCapture.setVisibility(View.VISIBLE);
+            } else {
+                btnCapture.setVisibility(View.GONE);
+            }
         }
 
     }

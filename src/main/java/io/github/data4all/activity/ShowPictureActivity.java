@@ -109,8 +109,8 @@ public class ShowPictureActivity extends AbstractActivity {
 
         setContentView(R.layout.activity_picture);
 
-        cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
         imageView = (ImageView) findViewById(R.id.imageView1);
+        cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
         touchView = (TouchView) findViewById(R.id.touchView1);
 
         intent = new Intent(this, MapPreviewActivity.class);
@@ -183,12 +183,14 @@ public class ShowPictureActivity extends AbstractActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
-        
+                
+        // set the HorizontView
         cameraAssistView.setInformations((float) transformBean.getCameraMaxRotationAngle(),
                 (float) transformBean.getCameraMaxPitchAngle(),
                  currentOrientation);
-        cameraAssistView.bringToFront();
         cameraAssistView.invalidate();
+        
+        touchView.setCameraAssistView(cameraAssistView);
 
         Log.d("TEST", "Test2");
 

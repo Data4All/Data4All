@@ -133,6 +133,7 @@ public class TouchView extends View {
 	 */
 	private UndoRedoListener undoRedoListener;
 	
+	private CaptureAssistView cameraAssistView;
 	/**
      * Standard strings for actions
      */
@@ -688,4 +689,14 @@ public class TouchView extends View {
 			return this.idx;
 		}
 	}
+
+    public CaptureAssistView getCameraAssistView() {
+        return cameraAssistView;
+    }
+
+    public void setCameraAssistView(CaptureAssistView cameraAssistView) {
+        this.cameraAssistView = cameraAssistView;
+    }
+	
+	
 }

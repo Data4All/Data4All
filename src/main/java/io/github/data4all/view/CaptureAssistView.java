@@ -53,8 +53,11 @@ public class CaptureAssistView extends View {
     private Paint paint;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
+    private float maxPitch, maxRoll;
+    private DeviceOrientation deviceOrientation;
     private boolean skylook;
     private boolean visible;
+    private boolean informationSet;
     private List<Point> points = new ArrayList<Point>();
     private List<Point> point = new ArrayList<Point>();
 
@@ -148,35 +151,44 @@ public class CaptureAssistView extends View {
     public void setInformations(float maxPitch, float maxRoll,
             DeviceOrientation deviceOrientation) {
         Log.d(TAG, "setInformationsIsCalled");
-        
-        ReturnValues returnValues = horizonCalculationUtil
-                .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
-                        mMeasuredHeight, (float) Math.toRadians(85),
-                        deviceOrientation);
-        this.skylook = returnValues.isSkylook();
-        this.visible = returnValues.isVisible();
-        this.points = returnValues.getPoints();
-        this.point = returnValues.getPoint();
-       /* Log.d("TEST", "MP" + maxPitch + " MR " + maxRoll
-                + " OR " + deviceOrientation.getPitch() + "  " + deviceOrientation.getRoll()
-                + " MW+H " + mMeasuredWidth + " " + mMeasuredHeight);*/
+        this.maxPitch = maxPitch;
+        this.maxRoll = maxRoll;
+        this.deviceOrientation = deviceOrientation;
+        this.informationSet = true;
+
+        Log.d("TEST",
+                "MP" + maxPitch + " MR " + maxRoll + " OR "
+                        + deviceOrientation.getPitch() + "  "
+                        + deviceOrientation.getRoll() + " MW+H "
+                        + mMeasuredWidth + " " + mMeasuredHeight);
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.d(TAG, "onDrawCalled");        
 
         this.mMeasuredWidth = getMeasuredWidth();
         this.mMeasuredHeight = getMeasuredHeight();
-        Log.d(TAG, "onDrawCalled");
-        Log.d("TEST",  " MW+H " + mMeasuredWidth + " " + mMeasuredHeight);
+        if (informationSet) {
+            ReturnValues returnValues = horizonCalculationUtil
+                    .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
+                            mMeasuredHeight, (float) Math.toRadians(85),
+                            deviceOrientation);
+            this.skylook = returnValues.isSkylook();
+            this.visible = returnValues.isVisible();
+            this.points = returnValues.getPoints();
+            this.point = returnValues.getPoint();
+        }
+        
+        Log.d("TEST", " MW+H " + mMeasuredWidth + " " + mMeasuredHeight);
         if (visible && !points.isEmpty()) {
             if (!skylook) {
                 Path path = getPath();
                 canvas.drawPath(path, invalidRegionPaint);
                 for (Point iter : point) {
 
-                   // Log.d("TEST", "X: " + iter.getX() + "Y: " + iter.getY());
+                    // Log.d("TEST", "X: " + iter.getX() + "Y: " + iter.getY());
                     canvas.drawCircle(iter.getX(), iter.getY(), 20, paint);
                     paint.setColor(Color.BLACK);
                 }
@@ -227,7 +239,7 @@ public class CaptureAssistView extends View {
     public void setOnFinishInflateListener(Runnable listener) {
         this.finishInflateListener = listener;
     }
-    
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -235,5 +247,12 @@ public class CaptureAssistView extends View {
             finishInflateListener.run();
         }
     }
+
+    public boolean isSkylook() {
+        return skylook;
+    }
+
+    
+    
 
 }
