@@ -38,6 +38,7 @@ import org.osmdroid.views.MapController;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -49,6 +50,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -335,13 +338,17 @@ public class ResultViewActivity extends AbstractActivity implements
         final Button okay = new Button(ResultViewActivity.this);
         final EditText text = new EditText(ResultViewActivity.this);
         text.setTextColor(Color.WHITE);
-        text.setInputType(mapTag.get(selectedString).getType());
+        Tag tag = mapTag.get(selectedString);
+        text.setInputType(tag.getType());        
+        text.setText(element.getTags().get(tag));
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
         final LinearLayout layout = (LinearLayout) dialog
                 .findViewById(R.id.dialogDynamic);
         layout.addView(text);
         layout.addView(okay);
+        //Displays the Keyboard
+        dialog.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         okay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
