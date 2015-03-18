@@ -17,6 +17,8 @@ package io.github.data4all.model.data;
 
 import static org.junit.Assert.assertEquals;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -53,6 +55,42 @@ public class TransformationParamBeanTest {
         newParcel.setDataPosition(0);
         TransformationParamBean deParcelBean = TransformationParamBean.CREATOR
                 .createFromParcel(newParcel);
+
+        assertEquals(testBean.getHeight(), deParcelBean.getHeight(), 0);
+        assertEquals(testBean.getCameraMaxRotationAngle(),
+                deParcelBean.getCameraMaxRotationAngle(), 0);
+        assertEquals(testBean.getCameraMaxPitchAngle(),
+                deParcelBean.getCameraMaxPitchAngle(), 0);
+        assertEquals(testBean.getPhotoWidth(), deParcelBean.getPhotoWidth(), 0);
+        assertEquals(testBean.getPhotoHeight(), deParcelBean.getPhotoHeight(),
+                0);
+
+        assertEquals(location.getProvider(), deParcelBean.getLocation()
+                .getProvider());
+        assertEquals(location.getLatitude(), deParcelBean.getLocation()
+                .getLatitude(), 0);
+        assertEquals(location.getLongitude(), deParcelBean.getLocation()
+                .getLongitude(), 0);
+    }
+
+    /**
+     * Instantiates a example TransformationParamBean and write it to a
+     * JSONArray. Afterwards the object is read from the JSONArray and checked
+     * if it contains the same values.
+     * 
+     * @author tbrose
+     */
+    @Test
+    public void test_json_transformationbean() throws JSONException {
+        Location location = new Location("test");
+        location.setLatitude(10);
+        location.setLongitude(20);
+        TransformationParamBean testBean = new TransformationParamBean(10, 20,
+                30, 40, 50, location);
+
+        JSONArray json = testBean.toJSON();
+        TransformationParamBean deParcelBean = TransformationParamBean
+                .fromJSON(json);
 
         assertEquals(testBean.getHeight(), deParcelBean.getHeight(), 0);
         assertEquals(testBean.getCameraMaxRotationAngle(),
