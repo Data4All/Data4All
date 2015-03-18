@@ -280,7 +280,7 @@ public class CameraActivity extends AbstractActivity {
             cameraAssistView.setInformations(maxPitch, maxRoll,
                     orientationListener.getDeviceOrientation());
             cameraAssistView.invalidate();
-
+            //disable the camerabutton when the camera looks to the sky
             if (!cameraAssistView.isSkylook()) {
                 btnCapture.setVisibility(View.VISIBLE);
             } else {
@@ -290,7 +290,7 @@ public class CameraActivity extends AbstractActivity {
 
     }
 
-    /** Defines callbacks for service binding, passed to bindService() */
+    /** Defines callbacks for the orientation service, passed to bindService() */
     private ServiceConnection orientationListenerConnection = new ServiceConnection() {
 
         @Override

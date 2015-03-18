@@ -40,10 +40,10 @@ import android.view.View;
  * This class is drawing red lines into the {@link CameraPreview} and shows
  * unsuitable angles for taking a photo.
  * 
- * @author Andre Koch
+ * @author Andre Koch & burghardt
  * @CreationDate 12.02.2015
- * @LastUpdate 05.03.2015
- * @version 1.3
+ * @LastUpdate 18.03.2015
+ * @version 1.4
  * 
  */
 
@@ -60,7 +60,6 @@ public class CaptureAssistView extends View {
     private boolean visible;
     private boolean informationSet;
     private List<Point> points = new ArrayList<Point>();
-    private List<Point> point = new ArrayList<Point>();
     private Bitmap bitmap;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
@@ -163,15 +162,15 @@ public class CaptureAssistView extends View {
                         + deviceOrientation.getPitch() + "  "
                         + deviceOrientation.getRoll() + " MW+H "
                         + mMeasuredWidth + " " + mMeasuredHeight);
-
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d(TAG, "onDrawCalled");        
-
+        Log.d(TAG, "onDrawCalled");
+        // save the Size of the View
         this.mMeasuredWidth = getMeasuredWidth();
         this.mMeasuredHeight = getMeasuredHeight();
+        // when the needed information have been set: calculate the horizon
         if (informationSet) {
             ReturnValues returnValues = horizonCalculationUtil
                     .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
@@ -180,21 +179,15 @@ public class CaptureAssistView extends View {
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
-            this.point = returnValues.getPoint();
         }
-        
+        // if the horizon is visible and there are points do draw the horizon
         if (visible && !points.isEmpty()) {
+            // if less then 50% of the display is over the horizon: draw horizon
             if (!skylook) {
                 Path path = getPath();
                 canvas.drawPath(path, invalidRegionPaint);
-                for (Point iter : point) {
-
-                    // Log.d("TEST", "X: " + iter.getX() + "Y: " + iter.getY());
-                    canvas.drawCircle(iter.getX(), iter.getY(), 20, paint);
-                    paint.setColor(Color.BLACK);
-                }
-
             } else {
+                // draw a big X
                 canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
                         mMeasuredHeight / 2 - mMeasuredHeight / 8,
                         mMeasuredWidth / 2 + mMeasuredWidth / 12,
@@ -236,26 +229,27 @@ public class CaptureAssistView extends View {
         return path;
 
     }
-    
+
     /**
      * Testing if a point is over the horizont (red marked area)
-     * @param p point to be testet
+     * 
+     * @param point
+     *            point to be testet
      * @return result true if the point is in the red marked area
      * 
-     * @author vkochno
+     * @author vkochno & burghardt
      */
-    public boolean overHorizont(Point point){
-       if(bitmap==null){
-        this.setDrawingCacheEnabled(true);
-        bitmap = Bitmap.createBitmap(this.getDrawingCache());
-        this.setDrawingCacheEnabled(false);
-       }
-        if(bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT){
+    public boolean overHorizont(Point point) {
+        if (bitmap == null) {
+            this.setDrawingCacheEnabled(true);
+            bitmap = Bitmap.createBitmap(this.getDrawingCache());
+            this.setDrawingCacheEnabled(false);
+        }
+        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT) {
             return false;
         }
-        return true; 
+        return true;
     }
-    
 
     public void setOnFinishInflateListener(Runnable listener) {
         this.finishInflateListener = listener;
@@ -272,8 +266,5 @@ public class CaptureAssistView extends View {
     public boolean isSkylook() {
         return skylook;
     }
-
-    
-    
 
 }
