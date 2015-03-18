@@ -146,7 +146,7 @@ public class DataBaseHandlerTest {
         assertEquals(0, dbHandler.getNodeCount());
     }
 
-    /*@Test
+    @Test
     public void testPolyElementCRUD() throws JSONException {
 
         PolyElement polyElement1 = new PolyElement(11, PolyElementType.AREA);
@@ -215,8 +215,8 @@ public class DataBaseHandlerTest {
 
         assertEquals(0, dbHandler.getAllDataElements().size());
     }
-*/
-    /*@Test
+
+    @Test
     public void testDataElementCRUD() throws JSONException {
         PolyElement polyElement1 = new PolyElement(1, PolyElementType.BUILDING);
         Node node1 = new Node(2, 30.123456, 40.1234567);
@@ -273,9 +273,9 @@ public class DataBaseHandlerTest {
         dbHandler.deleteAllDataElements();
 
         assertEquals(0, dbHandler.getDataElementCount());
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void testTagMapCRUD() {
         Node node = new Node(1, 30.123456, 40.1234567);
 
@@ -330,7 +330,7 @@ public class DataBaseHandlerTest {
 
         assertEquals(0, dbHandler.getTagMapCount(node.getOsmId()));
     }
-*/
+
     @Test
     public void testTrackPointCRUD() {
         Location loc1 = new Location("provider");
