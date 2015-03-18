@@ -67,9 +67,9 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getY(), is(rV.getPoint2().getY()));
-        assertThat(rV.getPoint1().getX(), is(0.0f));
-        assertThat(rV.getPoint2().getX(), is(500.0f));
+        assertThat(util.getPoint1().getY(), is(util.getPoint2().getY()));
+        assertThat(util.getPoint1().getX(), is(0.0f));
+        assertThat(util.getPoint2().getX(), is(500.0f));
         assertThat(rV.isSkylook(), is(false));
         assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
@@ -77,9 +77,9 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getX(), is(rV.getPoint2().getX()));
-        assertThat(rV.getPoint1().getY(), is(0.0f));
-        assertThat(rV.getPoint2().getY(), is(1000.0f));
+        assertThat(util.getPoint1().getX(), is(util.getPoint2().getX()));
+        assertThat(util.getPoint1().getY(), is(0.0f));
+        assertThat(util.getPoint2().getY(), is(1000.0f));
         assertThat(rV.isSkylook(), is(false));
         assertThat(rV.isVisible(), is(true));
     }
@@ -95,7 +95,7 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1(), is((Point) null));
+        assertThat(util.getPoint1(), is((Point) null));
         assertThat(rV.isSkylook(), is(false));
         assertThat(rV.isVisible(), is(false));
     }
@@ -111,9 +111,9 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getY(), is(rV.getPoint2().getY()));
-        assertThat(rV.getPoint1().getX(), is(0.0f));
-        assertThat(rV.getPoint2().getX(), is(500.0f));
+        assertThat(util.getPoint1().getY(), is(util.getPoint2().getY()));
+        assertThat(util.getPoint1().getX(), is(0.0f));
+        assertThat(util.getPoint2().getX(), is(500.0f));
         assertThat(rV.isSkylook(), is(true));
         assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
@@ -121,9 +121,9 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getX(), is(rV.getPoint2().getX()));
-        assertThat(rV.getPoint1().getY(), is(0.0f));
-        assertThat(rV.getPoint2().getY(), is(1000.0f));
+        assertThat(util.getPoint1().getX(), is(util.getPoint2().getX()));
+        assertThat(util.getPoint1().getY(), is(0.0f));
+        assertThat(util.getPoint2().getY(), is(1000.0f));
         assertThat(rV.isSkylook(), is(true));
         assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
@@ -152,12 +152,12 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getX(), is(500.0f));
-        assertThat(rV.getPoint1().getY(), greaterThan(0.0f));
-        assertThat(rV.getPoint1().getY(), lessThan(1000.0f));
-        assertThat(rV.getPoint2().getY(), is(1000.0f));
-        assertThat(rV.getPoint2().getX(), greaterThan(0.0f));
-        assertThat(rV.getPoint2().getX(), lessThan(500.0f));
+        assertThat(util.getPoint1().getX(), is(0.0f));
+        assertThat(util.getPoint1().getY(), greaterThan(0.0f));
+        assertThat(util.getPoint1().getY(), lessThan(1000.0f));
+        assertThat(util.getPoint2().getY(), is(1000.0f));
+        assertThat(util.getPoint2().getX(), greaterThan(0.0f));
+        assertThat(util.getPoint2().getX(), lessThan(500.0f));
         assertThat(rV.isSkylook(), is(false));
         assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
@@ -165,12 +165,12 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getY(), is(0.0f));
-        assertThat(rV.getPoint1().getX(), greaterThan(0.0f));
-        assertThat(rV.getPoint1().getX(), lessThan(500.0f));
-        assertThat(rV.getPoint2().getX(), is(500.0f));
-        assertThat(rV.getPoint2().getY(), greaterThan(0.0f));
-        assertThat(rV.getPoint2().getY(), lessThan(1000.0f));
+        assertThat(util.getPoint1().getY(), greaterThan(0.0f));
+        assertThat(util.getPoint1().getX(), is(0.0f));
+        assertThat(util.getPoint1().getY(), lessThan(1000.0f));
+        assertThat(util.getPoint2().getY(), is(0.0f));
+        assertThat(util.getPoint2().getX(), greaterThan(0.0f));
+        assertThat(util.getPoint2().getX(), lessThan(500.0f));
         assertThat(rV.isSkylook(), is(false));
         assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
@@ -178,12 +178,12 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getX(), is(0.0f));
-        assertThat(rV.getPoint1().getY(), greaterThan(0.0f));
-        assertThat(rV.getPoint1().getY(), lessThan(1000.0f));
-        assertThat(rV.getPoint2().getY(), is(0.0f));
-        assertThat(rV.getPoint2().getX(), greaterThan(0.0f));
-        assertThat(rV.getPoint2().getX(), lessThan(500.0f));
+        assertThat(util.getPoint1().getY(), is(0.0f));
+        assertThat(util.getPoint1().getX(), greaterThan(0.0f));
+        assertThat(util.getPoint1().getX(), lessThan(500.0f));
+        assertThat(util.getPoint2().getX(), is(500.0f));
+        assertThat(util.getPoint2().getY(), greaterThan(0.0f));
+        assertThat(util.getPoint2().getY(), lessThan(1000.0f));
         assertThat(rV.isSkylook(), is(false));
         assertThat(rV.isVisible(), is(true));
         deviceOrientation = new DeviceOrientation(0.0f,
@@ -191,12 +191,12 @@ public class HorizonCalculationUtilTest {
         rV = util.calcHorizontalPoints((float) Math.toRadians(60),
                 (float) Math.toRadians(60), 500, 1000,
                 (float) Math.toRadians(70), deviceOrientation);
-        assertThat(rV.getPoint1().getX(), is(0.0f));
-        assertThat(rV.getPoint1().getY(), greaterThan(0.0f));
-        assertThat(rV.getPoint1().getY(), lessThan(1000.0f));
-        assertThat(rV.getPoint2().getY(), is(1000.0f));
-        assertThat(rV.getPoint2().getX(), greaterThan(0.0f));
-        assertThat(rV.getPoint2().getX(), lessThan(500.0f));
+        assertThat(util.getPoint1().getX(), is(500.0f));
+        assertThat(util.getPoint1().getY(), greaterThan(0.0f));
+        assertThat(util.getPoint1().getY(), lessThan(1000.0f));
+        assertThat(util.getPoint2().getY(), is(1000.0f));
+        assertThat(util.getPoint2().getX(), greaterThan(0.0f));
+        assertThat(util.getPoint2().getX(), lessThan(500.0f));
         assertThat(rV.isSkylook(), is(false));
         assertThat(rV.isVisible(), is(true));
     }
