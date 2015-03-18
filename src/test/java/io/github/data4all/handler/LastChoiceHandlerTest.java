@@ -2,14 +2,12 @@ package io.github.data4all.handler;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
