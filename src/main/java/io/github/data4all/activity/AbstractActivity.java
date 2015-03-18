@@ -19,8 +19,12 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,6 +59,51 @@ public abstract class AbstractActivity extends Activity {
 
     public static final int RESULT_FINISH = 9998;
 
+    
+    private static final int NOTIFICATION_EX = 1;
+    
+    private NotificationManager notificationManager;
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        notificationManager = (NotificationManager) 
+            getSystemService(Context.NOTIFICATION_SERVICE);
+
+        int icon = R.drawable.ic_upload;
+        CharSequence tickerText = "Hello";
+        long when = System.currentTimeMillis();
+
+        Notification.Builder mBuilder =
+                new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_upload)
+                .setContentTitle("Data4All is running")
+                .setContentText("Hello World!");
+        
+
+
+        notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
+    }
+    
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        notificationManager.cancel(NOTIFICATION_EX);
+    }
+    
+    
     /*
      * (non-Javadoc)
      * 
