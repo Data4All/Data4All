@@ -17,7 +17,9 @@ package io.github.data4all.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,18 +37,6 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -1007,7 +997,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 }
 
                 final Map<Tag, String> tagMap =
-                        this.getTagMap(tagIDs);
+                        this.getTagMap(dataElement.getOsmId());
                 dataElement.addTags(tagMap);
 
                 dataElements.add(dataElement);
@@ -1069,20 +1059,20 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final SQLiteDatabase db = getReadableDatabase();
 
-        final Map<Tag, String> tagMap = new HashMap<Tag, String>();
+        final Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
 
         for (int id : tagIDs) {
-            final Cursor cursor = db
-                    .query(TABLE_LASTCHOICE, new String[] {TAG_IDS, TYPE },
-                            TAG_IDS + "=?",
-                            new String[] {String.valueOf(id) }, null, null,
-                            null, null);
+            final Cursor cursor =
+                    db.query(TABLE_TAGMAP, new String[] {KEY_ID,
+                            KEY_DATAELEMENT, KEY_TAGID, KEY_VALUE}, KEY_ID
+                            + "=?", new String[] {String.valueOf(id)}, null,
+                            null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
-                tagMap.put(Tags.getTagWithId(id), cursor.getString(1));
+                tagMap.put(Tags.getTagWithId(Integer.parseInt(cursor
+                        .getString(2))), cursor.getString(3));
                 cursor.close();
             }
-
         }
         Log.i(TAG, tagMap.size() + " tags were retrieved from the database.");
         return tagMap;
@@ -1619,14 +1609,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final SQLiteDatabase db = getReadableDatabase();
         final ContentValues values = new ContentValues();
         if(getLastChoiceId(kategorie)==null){
-            values.put(TYPE, kategorie);
-            values.put(TAG_IDS, join(tagIds, ","));
-            rowID = db.insert(TABLE_LASTCHOICE, null,values);
+            values.put(KEY_TAGID, kategorie);
+            values.put(KEY_VALUE, join(tagIds, ","));
+            rowID = db.insert(TABLE_TAGMAP, null,values);
         }else{
-            values.put(TYPE, kategorie);
-            values.put(TAG_IDS, join(tagIds, ","));
+            values.put(KEY_TAGID, kategorie);
+            values.put(KEY_VALUE, join(tagIds, ","));
             //update lastchoice set TYPE=kategorie, TAG_IDS=tagIds where TYPE=kategorie
-            rowID = db.update(TABLE_LASTCHOICE, values, TYPE + "=?",
+            rowID = db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
                     new String[] {String.valueOf(kategorie)});
             
         }
