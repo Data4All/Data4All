@@ -181,4 +181,40 @@ public class LastChoiceHandler {
         return comparator;
     }
 
+
+    
+    /**
+     * this method update a tag and a value for a given typ
+     * @param typ e.g node, track, area
+     * @param tag e.g addrr, street
+     * @param value e.g usa
+     */
+    public void updateTag(Integer typ,Tag tag, String value) {
+        if(typWithLastchoice.get(typ)!=null){
+            typWithLastchoice.get(typ).put(tag,value);
+        }else{
+            
+            Map<Tag, String> actualLastChoice=new LinkedHashMap<Tag, String>();
+            actualLastChoice.put(tag, value);
+            typWithLastchoice.put(typ, actualLastChoice);
+        }
+    }
+
+    /**
+     * this method update a map for a given typ
+     * @param typ e.g node, track, area
+     * @param map 
+     */
+    public void updateTag(int typ, Map<Tag, String> map) {
+        Map<Tag, String> actualLastChoice=typWithLastchoice.get(typ);
+        if(actualLastChoice==null|| actualLastChoice.isEmpty()){
+            typWithLastchoice.put(typ, map);
+        }else{
+            for(Map.Entry<Tag, String> mapEntry:map.entrySet()){
+                actualLastChoice.put(mapEntry.getKey(), mapEntry.getValue());
+            }
+        }
+        
+    }
+
 }
