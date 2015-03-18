@@ -39,6 +39,7 @@ import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -170,6 +171,20 @@ public class CameraActivity extends AbstractActivity {
     protected void onWorkflowFinished(Intent data) {
         if(data == null || !data.getBooleanExtra(FINISH_TO_CAMERA, false)) {
             finishWorkflow(data);
+        }
+    }
+    
+    public void switchMode(View view) {
+        if (view.getId() == R.id.btn123) {
+            View list = findViewById(R.id.list123);
+            list.setVisibility(View.VISIBLE);
+            list.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    v.setVisibility(View.GONE);
+                }
+            });
         }
     }
 

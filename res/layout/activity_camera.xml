@@ -17,4 +17,22 @@
         style="@style/imageButtonCamAction"
         android:contentDescription="@string/noDescription" />
 
+    <ImageButton
+        android:id="@+id/btn123"
+        style="@style/imageButtonStyle"
+        android:onClick="switchMode"
+        android:contentDescription="@string/noDescription"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_house" />
+    <View
+        android:id="@+id/list123" 
+        android:layout_above="@id/btn123"
+        android:stackFromBottom="true"
+        android:layout_height="100dp"
+        android:layout_width="200dp"
+        android:background="#ffff"
+        android:layout_margin="10dp"
+        android:visibility="gone"/>
+
 </RelativeLayout>
