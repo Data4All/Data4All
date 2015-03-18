@@ -25,6 +25,7 @@ import io.github.data4all.view.CameraPreview;
 
 import java.util.Arrays;
 
+import android.R.string;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -38,6 +39,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -62,8 +66,17 @@ public class CameraActivity extends AbstractActivity {
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();
 
-    public static final String FINISH_TO_CAMERA =
-            "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+    public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+
+    /**
+     * Indicates the single picture mode
+     */
+    private static final int MODE_SINGLE = 0;
+    
+    /**
+     * Indicates the gallery mode
+     */
+    private static final int MODE_GALLERY = 1;
 
     private Camera mCamera;
 
@@ -73,6 +86,15 @@ public class CameraActivity extends AbstractActivity {
 
     private OrientationEventListener listener;
     private ShutterCallback shutterCallback;
+
+    private int currentMappingMode;
+
+    private CapturePictureHandler pictureHandler;
+    
+    /**
+     * The list where the camera mode can be changed
+     */
+    private ListView modeList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,8 +112,7 @@ public class CameraActivity extends AbstractActivity {
 
         shutterCallback = new ShutterCallback() {
             public void onShutter() {
-                final Vibrator vibrator =
-                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
             }
         };
@@ -106,14 +127,24 @@ public class CameraActivity extends AbstractActivity {
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
 
-        listener =
-                new ButtonRotationListener(this,
-                        Arrays.asList((View) btnCapture));
+        listener = new ButtonRotationListener(this,
+                Arrays.asList((View) btnCapture));
 
         // Set the Focus animation
-        mAutoFocusCrossHair =
-                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
+
+        modeList = (ListView) findViewById(R.id.list123);
+        modeList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.view_listitem, new String[] { "Map afterwards",
+                        "Map later" }));
+        modeList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                switchMode((int) id);
+            }
+        });
     }
 
     @Override
@@ -122,8 +153,7 @@ public class CameraActivity extends AbstractActivity {
         setLayout();
         if (isDeviceSupportCamera()) {
             try {
-                cameraPreview =
-                        (CameraPreview) findViewById(R.id.cameraPreview);
+                cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
 
                 mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 cameraPreview.setCamera(mCamera);
@@ -169,23 +199,39 @@ public class CameraActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        if(data == null || !data.getBooleanExtra(FINISH_TO_CAMERA, false)) {
+        if (data == null || !data.getBooleanExtra(FINISH_TO_CAMERA, false)) {
             finishWorkflow(data);
         }
     }
-    
-    public void switchMode(View view) {
+
+    /**
+     * @author tbrose
+     */
+    public void toggleModeList(View view) {
         if (view.getId() == R.id.btn123) {
-            View list = findViewById(R.id.list123);
-            list.setVisibility(View.VISIBLE);
-            list.setOnClickListener(new OnClickListener() {
-                
-                @Override
-                public void onClick(View v) {
-                    v.setVisibility(View.GONE);
-                }
-            });
+            if (modeList.getVisibility() == View.VISIBLE) {
+                modeList.setVisibility(View.GONE);
+            } else {
+                modeList.setVisibility(View.VISIBLE);
+            }
         }
+    }
+
+    /**
+     * @author tbrose
+     */
+    private void switchMode(int id) {
+        modeList.setVisibility(View.GONE);
+        ImageButton ib = (ImageButton) findViewById(R.id.btn123);
+        if (id == MODE_SINGLE) {
+            ib.setImageResource(R.drawable.ic_poi);
+        } else if (id == MODE_GALLERY) {
+            ib.setImageResource(R.drawable.ic_house);
+        } else {
+            // If the mode is not single and not galery, break here.
+            return;
+        }
+        currentMappingMode = id;
     }
 
     /* ********************************************************** *
@@ -202,14 +248,14 @@ public class CameraActivity extends AbstractActivity {
      *            The image-button to use.
      */
     private void setListener(ImageButton button) {
+        pictureHandler = new CapturePictureHandler(
+                CameraActivity.this, cameraPreview);
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // After photo is taken, disable button for clicking twice
                 btnCapture.setEnabled(false);
-                mCamera.takePicture(shutterCallback, null,
-                        new CapturePictureHandler(CameraActivity.this,
-                                cameraPreview));
+                mCamera.takePicture(shutterCallback, null, pictureHandler);
             }
         });
 
@@ -227,8 +273,7 @@ public class CameraActivity extends AbstractActivity {
                         if (success) {
                             mAutoFocusCrossHair.success();
                             mCamera.takePicture(shutterCallback, null,
-                                    new CapturePictureHandler(
-                                            CameraActivity.this, cameraPreview));
+                                    pictureHandler);
                         } else {
                             mAutoFocusCrossHair.fail();
                             btnCapture.setEnabled(true);

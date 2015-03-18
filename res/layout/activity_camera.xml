@@ -20,16 +20,16 @@
     <ImageButton
         android:id="@+id/btn123"
         style="@style/imageButtonStyle"
-        android:onClick="switchMode"
+        android:onClick="toggleModeList"
         android:contentDescription="@string/noDescription"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:src="@drawable/ic_house" />
-    <View
+        android:src="@drawable/ic_poi" />
+    <ListView
         android:id="@+id/list123" 
         android:layout_above="@id/btn123"
         android:stackFromBottom="true"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_width="200dp"
         android:background="#ffff"
         android:layout_margin="10dp"
