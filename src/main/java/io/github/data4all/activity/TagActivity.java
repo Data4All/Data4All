@@ -274,7 +274,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         } else {
             map = Tagging.contactToTag(tags, map);
         }
-        LastChoiceHandler.getInstance().setLastChoice(getIntent().getExtras().getInt("TYPE_DEF"),map);
+        LastChoiceHandler.getInstance().updateTag(getIntent().getExtras().getInt("TYPE_DEF"),map);
         LastChoiceHandler.getInstance().save(this);
         dialog1.dismiss();
     }
