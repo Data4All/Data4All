@@ -76,6 +76,9 @@ public class CameraActivity extends AbstractActivity {
     OrientationListener orientationListener;
     boolean orientationBound;
 
+    public static final String FINISH_TO_CAMERA =
+            "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+
     private Camera mCamera;
 
     private CameraPreview cameraPreview;
@@ -117,7 +120,6 @@ public class CameraActivity extends AbstractActivity {
 
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
-        this.setListener(btnCapture);
 
         listener = new ButtonRotationListener(this,
                 Arrays.asList((View) btnCapture));
@@ -141,6 +143,7 @@ public class CameraActivity extends AbstractActivity {
                 mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 cameraPreview.setCamera(mCamera);
                 mCamera.startPreview();
+                this.setListener(btnCapture);
             } catch (RuntimeException ex) {
                 Toast.makeText(getApplicationContext(),
                         getString(R.string.noCamSupported), Toast.LENGTH_LONG)
@@ -190,7 +193,9 @@ public class CameraActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        finishWorkflow();
+        if(data == null || !data.getBooleanExtra(FINISH_TO_CAMERA, false)) {
+            finishWorkflow(data);
+        }
     }
 
     /* ********************************************************** *

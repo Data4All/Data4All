@@ -57,7 +57,7 @@ public final class StableOAuthParameters extends OAuthParameters {
      */
     @Override
     public String getScopeUrl() {
-        return "http://www.openstreetmap.org";
+        return "http://www.openstreetmap.org/";
     }
 
     /*

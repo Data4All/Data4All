@@ -36,11 +36,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.osmdroid</groupId>
-			<artifactId>osmdroid-android</artifactId>
-			<version>4.3</version>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.5.8</version>
@@ -92,6 +87,17 @@
 			<artifactId>json</artifactId>
 			<version>20140107</version>
 		</dependency>
+		<dependency>
+			<groupId>ch.acra</groupId>
+			<artifactId>acra</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+        <dependency>
+            <groupId>org.osmdroid</groupId>
+            <artifactId>osmdroid-android</artifactId>
+            <version>4.3</version>
+        </dependency>
+
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -100,7 +106,7 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>${android.plugin.version}</version>					
+					<version>${android.plugin.version}</version>
 					<extensions>true</extensions>
 				</plugin>
 				<plugin>

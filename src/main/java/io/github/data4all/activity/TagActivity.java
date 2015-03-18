@@ -57,6 +57,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -83,8 +84,6 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     private CharSequence[] array;
     // The alertDialog of the Classified keys
     private AlertDialog alert;
-    // the alerDialog of the Classified Values
-    private AlertDialog alert1;
     // The map were the String are saved wiht the real Tag
     private Map<String, ClassifiedTag> tagMap;
     // The logger
@@ -130,6 +129,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
         alertDialog.setCustomTitle(view);
+        
+        alertDialog.setCancelable(false);
         final ImageButton speechStart = (ImageButton) view
                 .findViewById(R.id.speech);
         speechStart.setOnClickListener(this);
@@ -177,10 +178,14 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                         false);
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 TagActivity.this);
+        alertDialogBuilder.setCancelable(false);
         final LayoutInflater inflater = getLayoutInflater();
         final View view = inflater.inflate(R.drawable.header_listview, null);
         ((TextView) view.findViewById(R.id.titleDialog))
                 .setText(R.string.SelectTag);
+        final ImageButton speechStart = (ImageButton) view
+                .findViewById(R.id.speech);
+        speechStart.setOnClickListener(this);
         alertDialogBuilder.setCustomTitle(view);
         alertDialogBuilder.setItems(array,
                 new DialogInterface.OnClickListener() {
@@ -200,22 +205,22 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                     }
                 });
 
-        alert1 = alertDialogBuilder.create();
-        alert1.getWindow().setBackgroundDrawable(
+        alert = alertDialogBuilder.create();
+        alert.getWindow().setBackgroundDrawable(
                 new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        alert1.setOnKeyListener(new OnKeyListener() {
+        alert.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode,
                     KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    alert1.dismiss();
+                    alert.dismiss();
                     createAlertDialogKey();
                     return true;
                 }
                 return true;
             }
         });
-        alert1.show();
+        alert.show();
     }
 
     @Override
@@ -267,21 +272,23 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            Log.i(TAG, "Speech Start");
             new Dialog(TagActivity.this);
-            final ListView textList = (ListView) findViewById(R.id.listView1);
             final List<String> matchesText = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            SpeechRecognition.splitStrings(matchesText);
-            // final Map<String, String> map =
-            // SpeechRecognition.speechToTag(matchesText);
+            map = SpeechRecognition.speechToTag(matchesText, getIntent()
+                    .getExtras().getInt("TYPE_DEF"), res);
+            Log.i(TAG, map.toString());
             matchesText.clear();
-            for (Entry entry : map.entrySet()) {
-                key = (String) entry.getKey();
-                matchesText.add(key + "=" + map.get(key));
+            if (!map.isEmpty()) {
+                Log.i(TAG, "Speech recognition successfull");
+                createDialog(Tags.getAllAddressTags(),
+                        getString(R.string.AddAddress), true);
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.retry,
+                        Toast.LENGTH_SHORT).show();
+                createAlertDialogKey();
             }
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, matchesText);
-            textList.setAdapter(adapter);
         } else if (resultCode == 0) {
             this.finish();
         }
@@ -292,7 +299,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        finishWorkflow();
+        finishWorkflow(data);
     }
 
     /**
@@ -310,6 +317,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             final Boolean first1) {
 
         dialog1 = new Dialog(this);
+        dialog1.setCancelable(false);
         dialog1.setContentView(R.layout.dialog_dynamic);
         dialog1.setTitle(title);
         final LinearLayout layout = (LinearLayout) dialog1
@@ -325,7 +333,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             text.setHint(arrayList.get(i).getHintRessource());
-            text.setHintTextColor(Color.DKGRAY);
+            text.setHintTextColor(Color.GRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
             Log.i(TAG, "TYpoe " + arrayList.get(i).getType());
@@ -356,7 +364,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                         // Log.i(TAG, "first " + first);
                         if (first) {
                             dialog1.dismiss();
-                            createAlertDialogValue();
+                            createAlertDialogKey();
                             return true;
                         } else {
                             dialog1.dismiss();

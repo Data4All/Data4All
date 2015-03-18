@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Class RingBuffer.
  * 
- * generic RingBuffer for temporary storage of Locations and Devicepositions.
+ * generic RingBuffer for temporary storage of Locations and DeviceOrientation.
  * 
  * @author konerman
  *

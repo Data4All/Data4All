@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -63,7 +64,10 @@ public abstract class AbstractActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actionbar, menu);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        final ActionBar bar = getActionBar();
+        if(bar != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -122,11 +126,14 @@ public abstract class AbstractActivity extends Activity {
      * 
      * @author tbrose
      * 
+     * @param data
+     *            The data to propagate back to the originating activity
+     * 
      * @see AbstractActivity#startActivityForResult(Intent)
      * @see AbstractActivity#WORKFLOW_CODE
      */
-    public void finishWorkflow() {
-        super.setResult(RESULT_FINISH);
+    public void finishWorkflow(Intent data) {
+        super.setResult(RESULT_FINISH, data);
         super.finish();
     }
 

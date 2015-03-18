@@ -346,7 +346,7 @@ public class ResultViewActivity extends AbstractActivity implements
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             setResult(RESULT_OK);
-                            finishWorkflow();
+                            finishWorkflow(null);
                         }
                     });
             alert = builder.create();
@@ -354,7 +354,9 @@ public class ResultViewActivity extends AbstractActivity implements
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
-            finishWorkflow();
+            final Intent i = new Intent();
+            i.putExtra(CameraActivity.FINISH_TO_CAMERA, true);
+            finishWorkflow(i);
             break;
         case R.id.titleFooter:
             createDialogAddTags();
@@ -402,7 +404,12 @@ public class ResultViewActivity extends AbstractActivity implements
      **/
     private void addOsmElementToDB(AbstractDataElement dataElement) {
         final DataBaseHandler db = new DataBaseHandler(this);
-        db.createDataElement(dataElement);
+        if (dataElement.getOsmId() == -1) {
+            db.createDataElement(dataElement);
+        } else {
+            //if the Element allready exists
+            db.updateDataElement(dataElement);
+        }
         db.close();
     }
 
@@ -415,6 +422,6 @@ public class ResultViewActivity extends AbstractActivity implements
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        finishWorkflow();
+        finishWorkflow(data);
     }
 }

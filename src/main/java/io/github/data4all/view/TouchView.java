@@ -48,6 +48,7 @@ import android.view.View;
  * {@link AbstractDataElement}.
  * 
  * 
+ * @author tbrose
  *
  * @see MotionEvent
  * @see DrawingMotion
@@ -141,6 +142,7 @@ public class TouchView extends View {
     final static String moveFrom = "MOVE_FROM";
     final static String moveTo = "MOVE_TO";
 
+
     /**
      * Simple constructor to use when creating a view from code.
      * 
@@ -204,6 +206,7 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
+		int pointRadius = (int) (MotionInterpreter.POINT_RADIUS * getResources().getDisplayMetrics().density);
         path.reset();
         if (newPolygon != null && newPolygon.size() != 0) {
             path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
@@ -519,6 +522,8 @@ public class TouchView extends View {
         return interpreter.create(polygon, rotation);
     }
 
+	
+
     /**
      * Remove all recorded DrawingMotions from this TouchView.
      */
@@ -576,32 +581,32 @@ public class TouchView extends View {
         }
     }
 
-    /**
-     * Testing if the undo function is able to use
-     * 
-     * @author vkochno
-     * 
-     * @return If undo can be used
-     */
-    public boolean undoUseable() {
-        if (!(interpreter instanceof BuildingMotionInterpreter)
-                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-                || interpreter instanceof BuildingMotionInterpreter
-                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-                && redoUndo.getMax() == 4) {
-            Log.d(this.getClass().getSimpleName(), "true undo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canUndo(true);
-            }
-            return true;
-        } else {
-            Log.d(this.getClass().getSimpleName(), "false undo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canUndo(false);
-            }
-            return false;
-        }
-    }
+	/**
+	 * Testing if the undo function is able to use
+	 * 
+	 * @author vkochno
+	 * 
+	 * @return If undo can be used
+	 */
+	public boolean undoUseable() {
+		if (!(interpreter instanceof BuildingMotionInterpreter)
+				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+				|| interpreter instanceof BuildingMotionInterpreter
+				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+				&& redoUndo.getMax() == 4) {
+			Log.d(this.getClass().getSimpleName(), "true undo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canUndo(true);
+			}
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(), "false undo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canUndo(false);
+			}
+			return false;
+		}
+	}
 
     /**
      * Returns <code>true</code> if the drawing has the minimum of nodes for its
@@ -690,12 +695,11 @@ public class TouchView extends View {
         }
     }
 
-    public CaptureAssistView getCameraAssistView() {
+        public CaptureAssistView getCameraAssistView() {
         return cameraAssistView;
     }
 
     public void setCameraAssistView(CaptureAssistView cameraAssistView) {
         this.cameraAssistView = cameraAssistView;
     }
-
 }

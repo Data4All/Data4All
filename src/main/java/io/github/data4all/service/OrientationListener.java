@@ -224,4 +224,4 @@ public class OrientationListener extends Service implements SensorEventListener 
         this.deviceOrientation = deviceOrientation;
     }
 
-}
+	}
