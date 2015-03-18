@@ -144,7 +144,7 @@ public class OrientationListener extends Service implements SensorEventListener 
                 deviceOrientation = new DeviceOrientation(orientation[0],
                         orientation[1], orientation[LAST_INDEX],
                         System.currentTimeMillis());
-                Optimizer.putPos(deviceOrientation);
+                Optimizer.putDevOrient(deviceOrientation);
 
                 if (horizonListener != null) {
                     horizonListener.makeHorizon(true);
