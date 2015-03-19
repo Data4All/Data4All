@@ -15,6 +15,7 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
@@ -32,9 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -127,6 +132,11 @@ public class TouchView extends View {
      * The current used RedoUndo object.
      */
     private RedoUndo redoUndo;
+    
+    /**
+     * The drawing size of a point (calculating with the density for same result on each device)
+     */
+    private int pointRadius = (int) (getPointsize() * getResources().getDisplayMetrics().density);
 
     /**
      * The current used RedoUndo listener.
@@ -206,7 +216,7 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-		int pointRadius = (int) (MotionInterpreter.POINT_RADIUS * getResources().getDisplayMetrics().density);
+		
         path.reset();
         if (newPolygon != null && newPolygon.size() != 0) {
             path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
@@ -230,7 +240,7 @@ public class TouchView extends View {
             // afterwards draw the points
             for (Point p : newPolygon) {
                 canvas.drawCircle(p.getX(), p.getY(),
-                        MotionInterpreter.POINT_RADIUS, pathPaint);
+                		pointRadius, pathPaint);
             }
         }
     }
@@ -626,6 +636,29 @@ public class TouchView extends View {
      */
     public void emptyRedoUndo() {
         redoUndo = new RedoUndo();
+    }
+
+    /**
+     * Return the current size setted in the settings or the default value
+     * @return size of a point
+     */
+    private int getPointsize(){
+    	final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getContext());
+        final Resources res = getContext().getResources();
+        final String key = res.getString(R.string.pref_pointsize_key);
+        final String size = prefs.getString(key, null);
+        if (TextUtils.isEmpty(size)) {
+            final int defaultValue = res
+                    .getInteger(R.integer.pref_pointsize_default);
+            // Save the default value
+            prefs.edit().putString(key, "" + defaultValue).commit();
+            return defaultValue;
+        } else {
+            final int pointsize = Integer.parseInt(size);
+            return pointsize;
+        }
+    	
     }
 
     /**
