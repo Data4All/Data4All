@@ -1086,7 +1086,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            The ID of the data element.
      * @return A {@link Map} of tags.
      */
-    private Map<Tag, String> getTagMap(long dataElementId) {
+    public Map<Tag, String> getTagMap(long dataElementId) {
 
         final SQLiteDatabase db = getReadableDatabase();
         final Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
