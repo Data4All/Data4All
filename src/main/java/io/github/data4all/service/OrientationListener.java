@@ -15,6 +15,7 @@
  */
 package io.github.data4all.service;
 
+import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.smoothing.BasicSensorSmoother;
@@ -27,6 +28,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
+import android.widget.Toast;
 
 /**
  * A service for listening for orientation changes. Whenever the sensor changes
@@ -34,6 +36,7 @@ import android.os.IBinder;
  * 
  * @author Steeve
  * @author sbollen
+ * @author Richard (primary onAccuracyChanged)
  * 
  */
 public class OrientationListener extends Service implements SensorEventListener {
@@ -132,9 +135,8 @@ public class OrientationListener extends Service implements SensorEventListener 
                 Log.d(TAG,
                         "Orientation " + Math.toDegrees(orientation[0]) + " ; "
                                 + Math.toDegrees(orientation[1]) + " ; "
-                                + Math.toDegrees(orientation[2]) +
-                                "EventAccuracy:" + event.accuracy
-                );
+                                + Math.toDegrees(orientation[2])
+                                + "EventAccuracy:" + event.accuracy);
                 Optimizer.putPos(new DeviceOrientation(orientation[0],
                         orientation[1], orientation[LAST_INDEX], System
                                 .currentTimeMillis()));
@@ -169,11 +171,18 @@ public class OrientationListener extends Service implements SensorEventListener 
                 Log.d(TAG, "The sensor: " + sensor.getName()
                         + " has now the accuracy of " + accuracy
                         + " it needs recalibration!");
+
+                Toast.makeText(getBaseContext(), R.string.badSensorCalibration,
+                        Toast.LENGTH_LONG).show();
             } else {
 
                 Log.d(TAG, "The sensor: " + sensor.getName()
                         + " has now the accuracy of " + accuracy
                         + " App ready to use!");
+
+                Toast.makeText(getBaseContext(),
+                        R.string.goodSensorCalibration, Toast.LENGTH_LONG)
+                        .show();
             }
         }
     }
