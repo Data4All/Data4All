@@ -106,23 +106,32 @@ public class MapPolygon extends Polygon {
         }
     }
 
+    boolean polygonMovable = false;
+
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
-        boolean tapped = contains(event);
-        if (editable && tapped) {
+        // if the touch event is inside the polygon, set polygonMovable to true
+        if (!polygonMovable) {
+            polygonMovable = contains(event);
+        }
+        Log.d(TAG, "polygonMovable: " + polygonMovable);
+        if (editable && polygonMovable) {
+            // TODO change to cases
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.d(TAG, "action_down");
+            }
             if (event.getAction() == MotionEvent.ACTION_UP) {
-
-                // mIsDragged = false;
-                // if (mOnMarkerDragListener != null)
-                // mOnMarkerDragListener.onMarkerDragEnd(this);
-                return true;
+                Log.d(TAG, "action_up");
+                // if polygon is movable and the touch event is an action up,
+                // set polygonMovable to false again
+                polygonMovable = false;
             } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                // mapView.getOverlays().remove(this);
+                Log.d(TAG, "action_move");
                 moveToEventPosition(event, mapView);
-                return true;
-            } else
-                return false;
-        } else
-            return false;
+            }
+        }
+        return polygonMovable;
     }
 
     public void moveToEventPosition(final MotionEvent event,
@@ -139,20 +148,21 @@ public class MapPolygon extends Polygon {
         GeoPoint gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
                 (int) event.getY());
         Log.i(TAG, "size before" + gpointListOld.size());
-        
+
         gpointListOld.add(gpoint);
         this.setPoints(gpointListOld);
-        Log.i(TAG, "size after, should be one more..." + this.getPoints().size());
-        
+        Log.i(TAG, "size after, should be one more..."
+                + this.getPoints().size());
+
         // for (GeoPoint gpoint : gpointListOld) {
         // pj.toProjectedPixels(gpoint, null)
         // gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
         // (int) event.getY());
         // gpointList.add(gpoint);
         // }
-        //this.setPoints(gpointList);
-//        Log.d(TAG, gpointList.get(0).getLatitude() + " "
-//                + gpointList.get(0).getLongitude());
+        // this.setPoints(gpointList);
+        // Log.d(TAG, gpointList.get(0).getLatitude() + " "
+        // + gpointList.get(0).getLongitude());
 
         mapView.invalidate();
     }
