@@ -60,6 +60,8 @@
         <activity android:name=".activity.UploadActivity" />
         <activity android:name=".activity.BasicActivity" />
         <activity android:name=".activity.SensorReactionActivity" />
+        <activity android:name=".activity.GpsTrackListActivity" />
+        <activity android:name=".activity.TrackDetailsActivity" />
 
         <service android:name=".service.UploadService" />
         <service
