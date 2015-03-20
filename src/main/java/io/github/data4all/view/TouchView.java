@@ -132,11 +132,13 @@ public class TouchView extends View {
      * The current used RedoUndo object.
      */
     private RedoUndo redoUndo;
-    
+
     /**
-     * The drawing size of a point (calculating with the density for same result on each device)
+     * The drawing size of a point (calculating with the density for same result
+     * on each device)
      */
-    private int pointRadius = (int) (getPointsize() * getResources().getDisplayMetrics().density);
+    private int pointRadius = (int) (getPointsize() * getResources()
+            .getDisplayMetrics().density);
 
     /**
      * The current used RedoUndo listener.
@@ -151,7 +153,6 @@ public class TouchView extends View {
     final static String delete = "DELETE";
     final static String moveFrom = "MOVE_FROM";
     final static String moveTo = "MOVE_TO";
-
 
     /**
      * Simple constructor to use when creating a view from code.
@@ -216,7 +217,7 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-		
+
         path.reset();
         if (newPolygon != null && newPolygon.size() != 0) {
             path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
@@ -239,8 +240,7 @@ public class TouchView extends View {
             }
             // afterwards draw the points
             for (Point p : newPolygon) {
-                canvas.drawCircle(p.getX(), p.getY(),
-                		pointRadius, pathPaint);
+                canvas.drawCircle(p.getX(), p.getY(), pointRadius, pathPaint);
             }
         }
     }
@@ -293,6 +293,10 @@ public class TouchView extends View {
     private void handleMotion(MotionEvent event, String action) {
         if (currentMotion != null) {
             if (action.equals("start")) {
+                
+                Point bla = new Point(event.getX(),event.getY());
+               contains(bla);
+                
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
                     this.mover = movePoint(lookUpPoint);
@@ -353,6 +357,27 @@ public class TouchView extends View {
             }
             postInvalidate();
         }
+    }
+
+    /**
+     * Return true if the given point is contained inside the polygon.
+     * See: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+     * 
+     * @param test The point to check
+     * @return true if the point is inside the polygon, false otherwise
+     *
+     */
+    public boolean insidePolygon(Point test) {
+        int i;
+        int j;
+        boolean result = false;
+        for (i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
+            if ((polygon.get(i).getY() > test.getY()) != (polygon.get(j).getY() > test.getY()) &&
+                    (test.getX() < (polygon.get(j).getX() - polygon.get(i).getX()) * (test.getY() - polygon.get(i).getY()) / (polygon.get(j).getY()-polygon.get(i).getY()) + polygon.get(i).getX())) {
+                  result = !result;
+        }
+      }
+        return result;
     }
 
     /**
@@ -532,8 +557,6 @@ public class TouchView extends View {
         return interpreter.create(polygon, rotation);
     }
 
-	
-
     /**
      * Remove all recorded DrawingMotions from this TouchView.
      */
@@ -591,32 +614,32 @@ public class TouchView extends View {
         }
     }
 
-	/**
-	 * Testing if the undo function is able to use
-	 * 
-	 * @author vkochno
-	 * 
-	 * @return If undo can be used
-	 */
-	public boolean undoUseable() {
-		if (!(interpreter instanceof BuildingMotionInterpreter)
-				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-				|| interpreter instanceof BuildingMotionInterpreter
-				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-				&& redoUndo.getMax() == 4) {
-			Log.d(this.getClass().getSimpleName(), "true undo");
-			if (undoRedoListener != null) {
-				undoRedoListener.canUndo(true);
-			}
-			return true;
-		} else {
-			Log.d(this.getClass().getSimpleName(), "false undo");
-			if (undoRedoListener != null) {
-				undoRedoListener.canUndo(false);
-			}
-			return false;
-		}
-	}
+    /**
+     * Testing if the undo function is able to use
+     * 
+     * @author vkochno
+     * 
+     * @return If undo can be used
+     */
+    public boolean undoUseable() {
+        if (!(interpreter instanceof BuildingMotionInterpreter)
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                || interpreter instanceof BuildingMotionInterpreter
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                && redoUndo.getMax() == 4) {
+            Log.d(this.getClass().getSimpleName(), "true undo");
+            if (undoRedoListener != null) {
+                undoRedoListener.canUndo(true);
+            }
+            return true;
+        } else {
+            Log.d(this.getClass().getSimpleName(), "false undo");
+            if (undoRedoListener != null) {
+                undoRedoListener.canUndo(false);
+            }
+            return false;
+        }
+    }
 
     /**
      * Returns <code>true</code> if the drawing has the minimum of nodes for its
@@ -640,10 +663,11 @@ public class TouchView extends View {
 
     /**
      * Return the current size setted in the settings or the default value
+     * 
      * @return size of a point
      */
-    private int getPointsize(){
-    	final SharedPreferences prefs = PreferenceManager
+    private int getPointsize() {
+        final SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(getContext());
         final Resources res = getContext().getResources();
         final String key = res.getString(R.string.pref_pointsize_key);
@@ -658,7 +682,7 @@ public class TouchView extends View {
             final int pointsize = Integer.parseInt(size);
             return pointsize;
         }
-    	
+
     }
 
     /**
@@ -728,7 +752,7 @@ public class TouchView extends View {
         }
     }
 
-        public CaptureAssistView getCameraAssistView() {
+    public CaptureAssistView getCameraAssistView() {
         return cameraAssistView;
     }
 
