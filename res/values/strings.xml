@@ -9,6 +9,7 @@
     <string name="action_map">Map</string>
     <string name="action_help">Help</string>
     <string name="action_login">Login</string>
+    <string name="action_about">About</string>
 
     <!-- generell strings -->
     <string name="yes">Yes</string>
@@ -32,8 +33,8 @@
 
     <!-- infoBubble -->
     <string name="delete">Delete</string>
-    <string name="edit">Edit</string>   
-    
+    <string name="edit">Edit</string>
+
     <!-- dialogs -->
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="resultViewAlertDialogMessage">Upload now?</string>
@@ -90,5 +91,11 @@
     <string name="retry">Cannot find the right Tag. Try Again.</string>
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
     <string name="show_pwd">Show Password</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="hello_world">Hello world!</string>
+    
+    <!-- URLs -->
+    <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
+    <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Official Facebook</a></string>
 
 </resources>

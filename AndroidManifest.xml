@@ -32,7 +32,7 @@
             android:name="MAPBOX_AUTHKEY"
             android:value="pk.eyJ1IjoiZGF0YTRhbGwiLCJhIjoiYlNHWlFSayJ9.vN6iDHPsVupbT9yXdlT9Xg" />
 
-        <activity android:name=".activity.MapViewActivity">
+        <activity android:name=".activity.MapViewActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -69,6 +69,11 @@
         <service
             android:name=".service.OrientationListener"
             android:enabled="true" />
+
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/title_activity_about" >
+        </activity>
     </application>
 
 </manifest>
