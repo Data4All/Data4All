@@ -73,13 +73,18 @@ public class Tagging {
      * @return The String Array with the right ressource name
      */
     public static String[] getArrayKeys(int type, Resources res) {
+    	if(getKeys(type) == null){
+    		final String [] list = new String [0];
+    		return list;
+    	}else{
         List<Tag> tags = getKeys(type);
-
+        
         final String[] array = new String[tags.size()];
         for (int i = 0; i < tags.size(); i++) {
             array[i] = res.getString(tags.get(i).getNameRessource());
         }
         return array;
+    	}
     }
     /**
      * 
