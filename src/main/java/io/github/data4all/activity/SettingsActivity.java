@@ -15,10 +15,17 @@
  */
 package io.github.data4all.activity;
 
+import java.util.Locale;
+
 import io.github.data4all.R;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -28,6 +35,9 @@ import android.view.MenuItem;
  * @author tbrose
  */
 public class SettingsActivity extends AbstractActivity {
+
+    Locale myLocale;
+
     /*
      * (non-Javadoc)
      * 
@@ -39,7 +49,7 @@ public class SettingsActivity extends AbstractActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new Settings()).commit();
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -47,7 +57,7 @@ public class SettingsActivity extends AbstractActivity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item= menu.findItem(R.id.action_settings);
+        MenuItem item = menu.findItem(R.id.action_settings);
         item.setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }

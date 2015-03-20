@@ -1,7 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <io.github.data4all.preference.CurrentUserPreference 
-        android:title="@string/pref_currentuser_title" />
+    <io.github.data4all.preference.CurrentUserPreference android:title="@string/pref_currentuser_title" />
 
     <EditTextPreference
         android:defaultValue="@integer/pref_bodyheight_default"
@@ -12,5 +11,13 @@
         android:maxLength="3"
         android:summary="@string/pref_bodyheight_summary"
         android:title="@string/pref_bodyheight_title" />
+
+    <ListPreference
+        android:defaultValue="en"
+        android:entries="@array/languageListArray"
+        android:entryValues="@array/languageListValues"
+        android:key="language"
+        android:summary="Select your language."
+        android:title="Language" />
 
 </PreferenceScreen>
