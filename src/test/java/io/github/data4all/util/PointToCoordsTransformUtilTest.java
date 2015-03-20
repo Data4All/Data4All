@@ -87,24 +87,24 @@ public class PointToCoordsTransformUtilTest {
         test = util.transform(tps, deviceOrientation, points);
         assertThat(test.get(0).getLat(), is(0.0));
         assertThat(test.get(0).getLon(), is(0.0));
-        assertThat(test.get(1).getLat(), greaterThan(0.0));
-        assertThat(test.get(1).getLon(), is(0.0));
-        assertThat(test.get(2).getLat(), is(0.0));
-        assertThat(test.get(2).getLon(), lessThan(0.0));
-        assertThat(test.get(3).getLat(), lessThan(0.0));
-        assertThat(test.get(3).getLon(), is(0.0));
-        assertThat(test.get(4).getLat(), is(0.0));
-        assertThat(test.get(4).getLon(), greaterThan(0.0));
+        assertThat(test.get(1).getLat(), is(0.0));
+        assertThat(test.get(1).getLon(), greaterThan(0.0));
+        assertThat(test.get(2).getLat(), lessThan(0.0));
+        assertThat(test.get(2).getLon(), is(0.0));
+        assertThat(test.get(3).getLat(), is(0.0));
+        assertThat(test.get(3).getLon(), lessThan(0.0));
+        assertThat(test.get(4).getLat(), greaterThan(0.0));
+        assertThat(test.get(4).getLon(), is(0.0));
 
         deviceOrientation = new DeviceOrientation((float) (Math.PI / 2), 0.0f,
                 0.0f, 10L);
         test = util.transform(tps, deviceOrientation, points);
         assertThat(test.get(0).getLat(), is(0.0));
         assertThat(test.get(0).getLon(), is(0.0));
-        assertThat(test.get(1).getLat(), closeTo(0.0, 0.00000000001));
-        assertThat(test.get(1).getLon(), greaterThan(0.0));
-        assertThat(test.get(2).getLat(), greaterThan(0.0));
-        assertThat(test.get(2).getLon(), closeTo(0.0, 0.00000000001));
+        assertThat(test.get(1).getLat(), lessThan(0.0));
+        assertThat(test.get(1).getLon(), closeTo(0.0, 0.00000000001));
+        assertThat(test.get(2).getLat(), closeTo(0.0, 0.00000000001));
+        assertThat(test.get(2).getLon(), lessThan(0.0));
 
         deviceOrientation = new DeviceOrientation((float) Math.toRadians(-45),
                 (float) Math.toRadians(45), (float) Math.toRadians(45), 10L);
@@ -127,32 +127,30 @@ public class PointToCoordsTransformUtilTest {
                 Math.toRadians(90), Math.toRadians(90), 1000, 1000, location);
         DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.0f,
                 0.0f, 10L);
-        util.setxAxis(1000);
-        util.setyAxis(1000);
         double[] coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(500, 500));
         assertThat(coord[0], is(0.0));
         assertThat(coord[1], is(0.0));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(1000, 500));
-        assertThat(coord[0], is(0.0));
-        assertThat(coord[1], greaterThan(0.0));
+        assertThat(coord[0], closeTo(2.0, 0.00000001));
+        assertThat(coord[1], is(0.0));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(500, 1000));
-        assertThat(coord[0], lessThan(0.0));
+        assertThat(coord[0], is(0.0));
+        assertThat(coord[1], closeTo(-2.0, 0.00000001));
+        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
+                new Point(0, 500));
+        assertThat(coord[0], closeTo(-2.0, 0.00001));
         assertThat(coord[1], is(0.0));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
-                new Point(1, 500));
-        assertThat(coord[0], closeTo(0.0, 0.00001));
-        assertThat(coord[1], lessThan(0.0));
-        coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
-                new Point(500, 1));
-        assertThat(coord[0], greaterThan(0.0));
-        assertThat(coord[1], is(0.0));
+                new Point(500, 0));
+        assertThat(coord[0], is(0.0));
+        assertThat(coord[1], closeTo(2.0, 0.00001));
         coord = util.calculateCoordFromPoint(tps1, deviceOrientation,
                 new Point(1000, 1000));
-        assertThat(coord[0], lessThan(0.0));
-        assertThat(coord[1], greaterThan(0.0));
+        assertThat(coord[0], closeTo(2.0, 0.00001));
+        assertThat(coord[1], closeTo(-2.0, 0.00001));
     }
 
     /**
@@ -162,8 +160,6 @@ public class PointToCoordsTransformUtilTest {
     public void calculateCoordFromPointTest_difOrientation() {
         TransformationParamBean tps1 = new TransformationParamBean(2.0,
                 Math.toRadians(90), Math.toRadians(90), 1000, 1000, location);
-        util.setxAxis(1000);
-        util.setyAxis(1000);
         DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, 0.0f,
                 0.0f, 10L);
         double[] coord = util.calculateCoordFromPoint(tps1, deviceOrientation,

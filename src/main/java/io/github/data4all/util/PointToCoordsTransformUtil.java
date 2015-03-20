@@ -45,6 +45,11 @@ public class PointToCoordsTransformUtil {
     private TransformationParamBean tps;
     /** object of the deviceOrientation. */
     private DeviceOrientation deviceOrientation;
+    /**
+     * 2 Vectors for the x- and the y-axe
+     */
+    final private double[] xaxe = { 1, 0, 0 };
+    final private double[] yaxe = { 0, 1, 0 };
 
     public PointToCoordsTransformUtil() {
     }
@@ -199,10 +204,10 @@ public class PointToCoordsTransformUtil {
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
         final double pixelpitch = -this.calculateAngleFromPixel(point.getY(),
-                tps.getPhotoWidth(), tps.getCameraMaxHorizontalViewAngle());
+                tps.getPhotoHeight(), tps.getCameraMaxHorizontalViewAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll = this.calculateAngleFromPixel(point.getX(),
-                tps.getPhotoHeight(), tps.getCameraMaxVerticalViewAngle() );
+                tps.getPhotoWidth(), tps.getCameraMaxVerticalViewAngle() );
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
 
