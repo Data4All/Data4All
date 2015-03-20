@@ -51,7 +51,7 @@ public class MapPolygon extends Polygon {
     private boolean editable;
 
     boolean polygonMovable = false;
-       
+
     int xStart = 0;
     int yStart = 0;
 
@@ -111,7 +111,6 @@ public class MapPolygon extends Polygon {
             return resources.getString(id);
         }
     }
-   
 
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
@@ -125,7 +124,7 @@ public class MapPolygon extends Polygon {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 xStart = (int) event.getX();
                 yStart = (int) event.getY();
-                Log.d(TAG, "action_down at point: "+ xStart + " " + yStart);
+                Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
             }
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 Log.d(TAG, "action_up");
@@ -144,35 +143,32 @@ public class MapPolygon extends Polygon {
     public void moveToEventPosition(final MotionEvent event,
             final MapView mapView) {
 
+        int hisSize = event.getHistorySize();
         int xEnd = (int) event.getX();
-        int yEnd = (int) event.getX();
-        Log.i(TAG, "moveMapPolygon to: " + xEnd + " "+ yEnd);
-        
+        int yEnd = (int) event.getY();
+        if (hisSize > 0) {
+            xStart = (int) event.getHistoricalX(0);
+            yStart = (int) event.getHistoricalY(0);            
+        }
+
+        Log.e(TAG, "" + hisSize);
+        Log.i(TAG, "moveMapPolygon from: " + xStart + " " + yStart);
+        Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
+
         final Projection pj = mapView.getProjection();
         // actual Polygon point list
-        List<GeoPoint> gpointListOld = this.getPoints();
-        List<GeoPoint> gpointList = new ArrayList<GeoPoint>(
-                gpointListOld.size());
-        Log.e(TAG, gpointListOld.size() + "");
-        Log.e(TAG, gpointList.size() + "");
-        
-        for(int i = 0; i < gpointListOld.size(); i++) {
-            Point point = pj.toPixels(gpointListOld.get(i), null);
+        List<GeoPoint> geoPointList = this.getPoints();
+
+        for (int i = 0; i < geoPointList.size(); i++) {
+            Point point = pj.toPixels(geoPointList.get(i), null);
             Log.i(TAG, "old" + point.x + " " + point.y);
             Point newPoint = new Point();
             newPoint.set(point.x + (xEnd - xStart), point.y + (yEnd - yStart));
             Log.i(TAG, "new" + newPoint.x + " " + newPoint.y);
-            gpointListOld.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
-                (int) newPoint.y));
+            geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
+                    (int) newPoint.y));
         }
-        
-//        GeoPoint gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
-//                (int) event.getY());
-        Log.i(TAG, "size before" + gpointListOld.size());
-
-        this.setPoints(gpointListOld);
-        Log.i(TAG, "size after, should be one more..."
-                + this.getPoints().size());
+        this.setPoints(geoPointList);
 
         mapView.invalidate();
     }
