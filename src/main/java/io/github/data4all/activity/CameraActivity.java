@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.SwipeListManager;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
@@ -25,7 +26,6 @@ import io.github.data4all.view.CameraPreview;
 
 import java.util.Arrays;
 
-import android.R.string;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -33,17 +33,15 @@ import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -63,16 +61,22 @@ import android.widget.Toast;
  */
 public class CameraActivity extends AbstractActivity {
 
+    /**
+     * 
+     */
+    private static final int MIN_SWIPE_VELOCITY = 3500;
+
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();
 
-    public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+    public static final String FINISH_TO_CAMERA =
+            "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
 
     /**
      * Indicates the single picture mode
      */
     private static final int MODE_SINGLE = 0;
-    
+
     /**
      * Indicates the gallery mode
      */
@@ -90,11 +94,10 @@ public class CameraActivity extends AbstractActivity {
     private int currentMappingMode;
 
     private CapturePictureHandler pictureHandler;
-    
-    /**
-     * The list where the camera mode can be changed
-     */
-    private ListView modeList;
+
+    private GestureDetector mDetector;
+
+    private SwipeListManager mSwipeListManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,10 +115,37 @@ public class CameraActivity extends AbstractActivity {
 
         shutterCallback = new ShutterCallback() {
             public void onShutter() {
-                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                final Vibrator vibrator =
+                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
             }
         };
+        mDetector =
+                new GestureDetector(this,
+                        new GestureDetector.SimpleOnGestureListener() {
+                            @Override
+                            public boolean onFling(MotionEvent e1,
+                                    MotionEvent e2, float x, float y) {
+                                if (x > MIN_SWIPE_VELOCITY) {
+                                    switchMode(currentMappingMode - 1);
+                                    return true;
+                                } else if (x < -MIN_SWIPE_VELOCITY) {
+                                    switchMode(currentMappingMode + 1);
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onTouchEvent(android.view.MotionEvent)
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mDetector.onTouchEvent(event);
     }
 
     /**
@@ -127,24 +157,18 @@ public class CameraActivity extends AbstractActivity {
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
 
-        listener = new ButtonRotationListener(this,
-                Arrays.asList((View) btnCapture));
+        listener =
+                new ButtonRotationListener(this,
+                        Arrays.asList((View) btnCapture));
 
         // Set the Focus animation
-        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        mAutoFocusCrossHair =
+                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
 
-        modeList = (ListView) findViewById(R.id.list123);
-        modeList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.view_listitem, new String[] { "Map afterwards",
-                        "Map later" }));
-        modeList.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                switchMode((int) id);
-            }
-        });
+        mSwipeListManager =
+                new SwipeListManager(this, Arrays.asList("Single", "Gallery"));
+        mSwipeListManager.setContent(currentMappingMode);
     }
 
     @Override
@@ -153,7 +177,8 @@ public class CameraActivity extends AbstractActivity {
         setLayout();
         if (isDeviceSupportCamera()) {
             try {
-                cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
+                cameraPreview =
+                        (CameraPreview) findViewById(R.id.cameraPreview);
 
                 mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 cameraPreview.setCamera(mCamera);
@@ -207,26 +232,11 @@ public class CameraActivity extends AbstractActivity {
     /**
      * @author tbrose
      */
-    public void toggleModeList(View view) {
-        if (view.getId() == R.id.btn123) {
-            if (modeList.getVisibility() == View.VISIBLE) {
-                modeList.setVisibility(View.GONE);
-            } else {
-                modeList.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    /**
-     * @author tbrose
-     */
     private void switchMode(int id) {
-        modeList.setVisibility(View.GONE);
-        ImageButton ib = (ImageButton) findViewById(R.id.btn123);
         if (id == MODE_SINGLE) {
-            ib.setImageResource(R.drawable.ic_poi);
+            mSwipeListManager.swipeFromLeft();
         } else if (id == MODE_GALLERY) {
-            ib.setImageResource(R.drawable.ic_house);
+            mSwipeListManager.swipeFromRight();
         } else {
             // If the mode is not single and not galery, break here.
             return;
@@ -248,8 +258,8 @@ public class CameraActivity extends AbstractActivity {
      *            The image-button to use.
      */
     private void setListener(ImageButton button) {
-        pictureHandler = new CapturePictureHandler(
-                CameraActivity.this, cameraPreview);
+        pictureHandler =
+                new CapturePictureHandler(CameraActivity.this, cameraPreview);
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
