@@ -288,8 +288,8 @@ public class TouchView extends View {
                     Log.e(this.getClass().getSimpleName(), "lookUP = null");
 
                     addPointOnLine(new Point(event.getX(), event.getY()));
-//                    postinvalidate();
-//                 this.handleMotion(event, "start");
+                    // postinvalidate();
+                    // this.handleMotion(event, "start");
                 }
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
@@ -415,7 +415,9 @@ public class TouchView extends View {
     }
 
     /**
-     * checks if a Point is on or near a line between to Points.
+     * Adds a Point on a line.</br>
+     * 
+     * uses isOnALine() to validate that the Point is on a existing line
      * 
      * @author konerman
      * 
@@ -424,10 +426,12 @@ public class TouchView extends View {
      * @return true if the Point was added
      */
     private boolean addPointOnLine(Point p) {
+        int tolerance = (int) (5 * getResources().getDisplayMetrics().density);
         for (int i = 0; i < polygon.size() - 1; i++) {
-            if (isOnALine(polygon.get(i), polygon.get(i + 1), p, 10.0)) {
+            if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
                 Log.d("", "Point is on a Line");
                 polygon.add(i + 1, p);
+                redoUndo.add(p,add,i+1);
                 postInvalidate();
                 return true;
             }
@@ -512,7 +516,7 @@ public class TouchView extends View {
         Point point = redoUndo.redo();
         Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
         if (action.equals(add)) {
-            newPolygon.add(point);
+            newPolygon.add(location,point);
         }
         if (action.equals(delete)) {
             newPolygon.remove(point);
