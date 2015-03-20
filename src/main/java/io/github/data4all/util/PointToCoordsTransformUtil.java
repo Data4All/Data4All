@@ -41,10 +41,6 @@ public class PointToCoordsTransformUtil {
     private static final String TAG = "PointToWorldCoords";
     /** height of the device from the ground. */
     private double height;
-    /** */
-    private int xAxis;
-    /** */
-    private int yAxis;
     /** object of the TransFormationParamBean. */
     private TransformationParamBean tps;
     /** object of the deviceOrientation. */
@@ -109,10 +105,7 @@ public class PointToCoordsTransformUtil {
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
                 + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
         for (Point point : points) {
-            // change point coordinates to match the set coordinate system.
-            xAxis = tps.getPhotoHeight();
-            yAxis = tps.getPhotoWidth();
-            point = new Point(xAxis - point.getY(), yAxis - point.getX());
+            //point = new Point(xAxis - point.getY(), yAxis - point.getX());
             Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
 
             // calculates local coordinates in meter first
@@ -205,11 +198,11 @@ public class PointToCoordsTransformUtil {
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
-        final double pixelpitch = this.calculateAngleFromPixel(point.getX(),
-                xAxis, tps.getCameraMaxHorizontalViewAngle());
+        final double pixelpitch = -this.calculateAngleFromPixel(point.getY(),
+                tps.getPhotoWidth(), tps.getCameraMaxHorizontalViewAngle());
         // gets an angle for the point on the roll axis
-        final double pixelroll = -this.calculateAngleFromPixel(point.getY(),
-                yAxis, tps.getCameraMaxVerticalViewAngle() );
+        final double pixelroll = this.calculateAngleFromPixel(point.getX(),
+                tps.getPhotoHeight(), tps.getCameraMaxVerticalViewAngle() );
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
 
@@ -320,41 +313,5 @@ public class PointToCoordsTransformUtil {
         return new Node(-1, lat2, lon2);
     }
 
-    /**
-     * Getter method for the xAxis.
-     * 
-     * @return Size of xAxis
-     */
-    public int getxAxis() {
-        return xAxis;
-    }
 
-    /**
-     * Setter method for the xAxis.
-     * 
-     * @param xAxis
-     *            Size of xAxis
-     */
-    public void setxAxis(int xAxis) {
-        this.xAxis = xAxis;
-    }
-
-    /**
-     * Getter method for the yAxis.
-     * 
-     * @return Size of yAxis
-     */
-    public int getyAxis() {
-        return yAxis;
-    }
-
-    /**
-     * Setter method for the yAxis.
-     * 
-     * @param yAxis
-     *            Size of yAxis
-     */
-    public void setyAxis(int yAxis) {
-        this.yAxis = yAxis;
-    }
 }

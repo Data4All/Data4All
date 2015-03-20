@@ -278,11 +278,11 @@ public class CameraActivity extends AbstractActivity {
 
         if (orientationListener != null) {
             final Camera.Parameters params = mCamera.getParameters();
-            final float maxRoll = (float) Math.toRadians(params
-                    .getHorizontalViewAngle());
-            final float maxPitch = (float) Math.toRadians(params
+            final float horizontalViewAngle = (float) Math.toRadians(params
                     .getVerticalViewAngle());
-            cameraAssistView.setInformations(maxPitch, maxRoll,
+            final float verticalViewAngle = (float) Math.toRadians(params
+                    .getHorizontalViewAngle());
+            cameraAssistView.setInformations( horizontalViewAngle, verticalViewAngle,
                     orientationListener.getDeviceOrientation());
             cameraAssistView.invalidate();
             //disable the camerabutton when the camera looks to the sky

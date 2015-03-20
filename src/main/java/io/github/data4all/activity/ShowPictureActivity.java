@@ -183,15 +183,15 @@ public class ShowPictureActivity extends AbstractActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
-                
-        // set the HorizontView
-        cameraAssistView.setInformations((float) transformBean.getCameraMaxVerticalViewAngle(),
-                (float) transformBean.getCameraMaxHorizontalViewAngle(),
-                 currentOrientation);
-        cameraAssistView.invalidate();
-        
-        touchView.setCameraAssistView(cameraAssistView);
 
+        // set the HorizontView
+        cameraAssistView.setInformations(
+                (float) transformBean.getCameraMaxVerticalViewAngle(),
+                (float) transformBean.getCameraMaxHorizontalViewAngle(),
+                currentOrientation);
+        cameraAssistView.invalidate();
+
+        touchView.setCameraAssistView(cameraAssistView);
 
         this.onClickArea(null);
 
@@ -242,7 +242,7 @@ public class ShowPictureActivity extends AbstractActivity {
             final String text = getString(R.string.noSensorData);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
-        } else {            
+        } else {
             // create an abstract data element from the given data and pass it
             // to the next activity
             final AbstractDataElement osmElement = touchView.create();
