@@ -285,15 +285,10 @@ public class TouchView extends View {
             if (action.equals("start")) {
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint == null) {
-                    Log.e(this.getClass().getSimpleName(), "lookUP = null");
-
                     addPointOnLine(new Point(event.getX(), event.getY()));
-                    // postinvalidate();
-                    // this.handleMotion(event, "start");
                 }
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
-                    Log.e(this.getClass().getSimpleName(), "lookUP = NOTnull");
                     this.mover = movePoint(lookUpPoint);
                     isDelete = true;
                     startPoint = lookUpPoint;
@@ -427,13 +422,20 @@ public class TouchView extends View {
      */
     private boolean addPointOnLine(Point p) {
         int tolerance = (int) (5 * getResources().getDisplayMetrics().density);
-        for (int i = 0; i < polygon.size() - 1; i++) {
-            if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
-                Log.d("", "Point is on a Line");
-                polygon.add(i + 1, p);
-                redoUndo.add(p,add,i+1);
-                postInvalidate();
-                return true;
+        if (polygon.size() >= 3) {
+            for (int i = 0; i < polygon.size() - 1; i++) {
+                if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
+                    Log.d("", "Point is on a Line");
+                    polygon.add(i + 1, p);
+                    redoUndo.add(p, add, i + 1);
+                    return true;
+                }
+            }
+            // check line between first and last point.
+            if (isOnALine(polygon.get(0), polygon.get(polygon.size() - 1), p,
+                    tolerance)) {
+                polygon.add(p);
+                redoUndo.add(p, add, polygon.size() - 1);
             }
         }
         return false;
@@ -516,7 +518,7 @@ public class TouchView extends View {
         Point point = redoUndo.redo();
         Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
         if (action.equals(add)) {
-            newPolygon.add(location,point);
+            newPolygon.add(location, point);
         }
         if (action.equals(delete)) {
             newPolygon.remove(point);
