@@ -72,12 +72,10 @@ public class PointToCoordsTransformUtil {
      * 
      * @param points
      *            List of Point
-     * @param rotation
-     *            rotation of the device
      * @return rotation List of Node
      */
-    public List<Node> transform(List<Point> points, int rotation) {
-        return this.transform(tps, deviceOrientation, points, rotation);
+    public List<Node> transform(List<Point> points) {
+        return this.transform(tps, deviceOrientation, points);
     }
 
     /**
@@ -89,13 +87,10 @@ public class PointToCoordsTransformUtil {
      *            object of DeviceOrientation
      * @param points
      *            list of points which have to be calculated
-     * @param rotation
-     *            rotation of the device
      * @return list of Node
      */
     public List<Node> transform(TransformationParamBean tps,
-            DeviceOrientation deviceOrientation, List<Point> points,
-            int rotation) {
+            DeviceOrientation deviceOrientation, List<Point> points) {
         this.tps = tps;
         final List<Node> nodes = new ArrayList<Node>();
         Log.d(TAG,
@@ -115,8 +110,11 @@ public class PointToCoordsTransformUtil {
                 + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
         for (Point point : points) {
             // change point coordinates to match the set coordinate system.
-            point = this.changePixelCoordSystem(point, rotation);
+            xAxis = tps.getPhotoHeight();
+            yAxis = tps.getPhotoWidth();
+            point = new Point(xAxis - point.getY(), yAxis - point.getX());
             Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
+
             // calculates local coordinates in meter first
             final double[] coord = this.calculateCoordFromPoint(tps,
                     deviceOrientation, point);
@@ -173,7 +171,6 @@ public class PointToCoordsTransformUtil {
         } else {
             for (Point point : points) {
                 // change point coordinates to match the set coordinate system.
-                point = this.changePixelCoordSystem(point, rotation);
                 Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
                 // calculates local coordinates in meter first
                 final double[] coord = this.calculateCoordFromPoint(tps,
@@ -185,8 +182,8 @@ public class PointToCoordsTransformUtil {
         }
         return null;
     }
-    
-    private Point coordToPoint(double[] coord){
+
+    private Point coordToPoint(double[] coord) {
         return null;
     }
 
@@ -324,52 +321,8 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
-     * Changes the point coordinates on the device coordinate system depending
-     * on the device rotation.
+     * Getter method for the xAxis.
      * 
-     * @author sbollen
-     * @param point
-     *            the drawn point
-     * @param rotation
-     *            the rotation of the device at the state of drawing
-     * @return the new calculated point
-     */
-    public Point changePixelCoordSystem(Point point, int rotation) {
-        Point returnpoint;
-        if (point != null) {
-            if (rotation == 0) {
-                Log.d(TAG, "Device orientation was portrait");
-                // device was in portrait mode
-                xAxis = tps.getPhotoHeight();
-                yAxis = tps.getPhotoWidth();
-                returnpoint = new Point(xAxis - point.getY() + 1, yAxis
-                        - point.getX() + 1);
-            } else if (rotation == 1) {
-                Log.d(TAG, "Device orientation was landscape counter-clockwise");
-                // device was in landscape mode and the home-button to the right
-                xAxis = tps.getPhotoWidth();
-                yAxis = tps.getPhotoHeight();
-                returnpoint = new Point(xAxis - point.getX() + 1, point.getY());
-            } else if (rotation == 3) {
-                Log.d(TAG, "Device orientation was landscape clockwise");
-                // device was in landscape mode and the home-button to the left
-                xAxis = tps.getPhotoWidth();
-                yAxis = tps.getPhotoHeight();
-                returnpoint = new Point(point.getX(), yAxis - point.getY() + 1);
-            } else {
-                Log.wtf(TAG, "No device orientation identifiable!!", null);
-                xAxis = tps.getPhotoHeight();
-                yAxis = tps.getPhotoWidth();
-                returnpoint = point;
-            }
-            return returnpoint;
-        } else {
-            Log.d(TAG, "No point to change");
-            return null;
-        }
-    }
-
-    /**
      * @return Size of xAxis
      */
     public int getxAxis() {
@@ -377,6 +330,8 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
+     * Setter method for the xAxis.
+     * 
      * @param xAxis
      *            Size of xAxis
      */
@@ -385,6 +340,8 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
+     * Getter method for the yAxis.
+     * 
      * @return Size of yAxis
      */
     public int getyAxis() {
@@ -392,6 +349,8 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
+     * Setter method for the yAxis.
+     * 
      * @param yAxis
      *            Size of yAxis
      */

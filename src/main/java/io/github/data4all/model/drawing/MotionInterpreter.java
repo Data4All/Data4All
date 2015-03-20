@@ -46,11 +46,9 @@ public interface MotionInterpreter {
      * 
      * @param polygon
      *            the interpreted polygon
-     * @param rotation
-     *            the device rotation at the state of drawing
      * @return the created AbstractDataModel
      */
-    AbstractDataElement create(List<Point> polygon, int rotation);
+    AbstractDataElement create(List<Point> polygon);
 
     /**
      * Interprets the given motion and apply it to the polygon<br/>

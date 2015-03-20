@@ -242,18 +242,10 @@ public class ShowPictureActivity extends AbstractActivity {
             final String text = getString(R.string.noSensorData);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
-        } else {
-            // 0 or Rotation0 if portrait
-            // 90 or Rotation1 if home-button to the right
-            // 270 or Rotation3 if home-button to the left
-            final int rotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                    .getDefaultDisplay().getRotation();
-
+        } else {            
             // create an abstract data element from the given data and pass it
-            // to
-            // the next
-            // activity
-            final AbstractDataElement osmElement = touchView.create(rotation);
+            // to the next activity
+            final AbstractDataElement osmElement = touchView.create();
             intent.putExtra(OSM_ELEMENT, osmElement);
             startActivityForResult(intent);
         }
