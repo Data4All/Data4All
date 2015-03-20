@@ -14,8 +14,8 @@ import java.util.Map;
 import android.content.Context;
 
 /**
- * this class represent the lastchoice from a category
- * this lastchoice appear,when the user taggt a object which belong
+ * this class represent the lastchoice from a category.</br>
+ * this lastchoice appears, when the user tagged a object which belongs
  * to the same Category as the last.
  * @author Steeve
  *
@@ -24,7 +24,7 @@ public class LastChoiceHandler {
 
     private static LastChoiceHandler handler;
     
-    // The map were the last selected Tag  are saved with his type 
+    // The map were the last selected Tag are saved with its type 
     private Map<Integer, Map<Tag, String>> typWithLastchoice;
 
     /**
@@ -37,8 +37,8 @@ public class LastChoiceHandler {
 
     
     /**
-     * this method take all informations from last tag
-     * this informations will be suggest for the next tag
+     * this method takes all information from last tag
+     * this information will be suggest for the next tag
      * @param typ
      * @param lastChoice
      */
@@ -142,7 +142,7 @@ public class LastChoiceHandler {
      * add a last choice for a specific type
      * @param type
      * @param array
-     * @return
+     * @return 
      */
     public static String[] addLastChoiceForType(int type, String[] array) {
         if (LastChoiceHandler.hasLastChoice(type)) {
