@@ -1,8 +1,6 @@
 package io.github.data4all.handler;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
@@ -83,8 +81,7 @@ public class LastChoiceHandlerTest {
         assertTrue(dbhandler.getTagMap((long)1.0).containsValue("bremen"));
         assertTrue(dbhandler.getTagMap((long)1.0).containsValue("Germany"));
         assertTrue(dbhandler.getTagMap((long)1.0).containsKey(housenummer));
-       // assertEquals(tagIDs, dbhandler.getLastChoiceId(3)); 
-        //assertEquals(lastChoice,lcHandler.getLastChoice(3));
+       
         
     }
     

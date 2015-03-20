@@ -400,7 +400,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
     public void redirectToResultView() {
         //sort map by classified tag and classifiedValue
-        element.setTags(LastChoiceHandler.sortiereMap(map));
+        element.setTags(LastChoiceHandler.sortMap(map));
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));

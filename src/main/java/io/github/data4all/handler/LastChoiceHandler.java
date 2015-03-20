@@ -14,8 +14,8 @@ import java.util.Map;
 import android.content.Context;
 
 /**
- * this class represent the lastchoice from a category.</br>
- * this lastchoice appears, when the user tagged a object which belongs
+ * this class represent the lastChoice from a category.</br>
+ * this lastChoice appears, when the user tagged a object which belongs
  * to the same Category as the last.
  * @author Steeve
  *
@@ -24,7 +24,7 @@ public class LastChoiceHandler {
 
     private static LastChoiceHandler handler;
     
-    // The map were the last selected Tag are saved with its type 
+    // The map were the last selected Tag are saved with his type 
     private Map<Integer, Map<Tag, String>> typWithLastchoice;
 
     /**
@@ -39,20 +39,20 @@ public class LastChoiceHandler {
     /**
      * this method takes all information from last tag
      * this information will be suggest for the next tag
-     * @param typ
+     * @param typ e.g node,area, track
      * @param lastChoice
      */
     public void setLastChoice(int typ, Map<Tag, String> lastChoice) {
-        Map<Tag, String> lastChoiceCopie = sortiereMap(lastChoice);
+        Map<Tag, String> lastChoiceCopie = sortMap(lastChoice);
 
         typWithLastchoice.put(typ, lastChoiceCopie);
     }
 
     /**
-    * this method sort lastchoice by tag
-    *
+    * this method sort lastChoice by tag
+    *  @return lastChoice as map
     */
-    public static Map<Tag, String> sortiereMap(Map<Tag, String> lastChoice) {
+    public static Map<Tag, String> sortMap(Map<Tag, String> lastChoice) {
         List<Tag> keyset = new ArrayList<Tag>(lastChoice.keySet());
         Collections.sort(keyset, getagMapComparator());
         Map<Tag, String> lastChoiceCopie = new LinkedHashMap<Tag, String>();
@@ -66,7 +66,6 @@ public class LastChoiceHandler {
 
     /**
      * store the last choice(tag) in database
-     * 
      * @param context
      */
     public void save(Context context) {
@@ -110,9 +109,9 @@ public class LastChoiceHandler {
 
 
     /**
-     * get last choice
-     * @param typ
-     * @return
+     * get last choice for a given type
+     * @param typ e.g node, track, area 
+     * @return a map for the given type
      */
     public Map<Tag, String> getLastChoice(Integer typ) {
         return getInstance().typWithLastchoice.get(typ);
@@ -131,8 +130,8 @@ public class LastChoiceHandler {
 
     /**
      * check if a type has a last choice
-     * @param typ
-     * @return
+     * @param typ e.g node, track, area
+     * @return true when a type has a lastChoice otherwise false
      */
     public static boolean hasLastChoice(Integer typ) {
         return getInstance().typWithLastchoice.containsKey(typ);
@@ -140,9 +139,9 @@ public class LastChoiceHandler {
 
     /**
      * add a last choice for a specific type
-     * @param type
-     * @param array
-     * @return 
+     * @param type e.g node,track, area
+     * @param array e.g list of classifiedtTag
+     * @return either a list of classifiedTag with lastChoice or a list of classifiedTag without lastChoice
      */
     public static String[] addLastChoiceForType(int type, String[] array) {
         if (LastChoiceHandler.hasLastChoice(type)) {
@@ -158,22 +157,27 @@ public class LastChoiceHandler {
     }
 
     /**
-    *
-    * sort by tag
+    * this method compare id of two tag
+    * 
     */
     private static Comparator<Tag> getagMapComparator() {
         Comparator<Tag> comparator = new Comparator<Tag>() {
 
             @Override
             public int compare(Tag lhs, Tag rhs) {
+                //compare lhs and rhs. when lhs is a classifiedTag and rhs is not a classifiedTag,
+                // then is lhs the the smallest 
                 if (lhs instanceof ClassifiedTag
                         && !(rhs instanceof ClassifiedTag)) {
                     return -1;
                 }
+              //compare lhs and rhs. when rhs is a classifiedTag and lhs is not a classifiedTag,
+                // then is rhs the the smallest
                 if (rhs instanceof ClassifiedTag
                         && !(lhs instanceof ClassifiedTag)) {
                     return 1;
                 }
+                // compare id of lhs and rhs
                 return Integer.valueOf(lhs.getId()).compareTo(rhs.getId());
             }
 
@@ -184,7 +188,7 @@ public class LastChoiceHandler {
 
     
     /**
-     * this method update a tag and a value for a given typ
+     * this method update a tag and a value for a given type
      * @param typ e.g node, track, area
      * @param tag e.g addrr, street
      * @param value e.g usa
@@ -201,7 +205,7 @@ public class LastChoiceHandler {
     }
 
     /**
-     * this method update a map for a given typ
+     * this method update a map for a given type
      * @param typ e.g node, track, area
      * @param map 
      */
