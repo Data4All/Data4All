@@ -33,6 +33,7 @@ import org.osmdroid.views.Projection;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.view.MotionEvent;
 
 /**
@@ -48,6 +49,11 @@ public class MapPolygon extends Polygon {
     private D4AMapView mapView;
     private AbstractDataElement element;
     private boolean editable;
+
+    boolean polygonMovable = false;
+       
+    int xStart = 0;
+    int yStart = 0;
 
     /**
      * Default constructor.
@@ -105,8 +111,7 @@ public class MapPolygon extends Polygon {
             return resources.getString(id);
         }
     }
-
-    boolean polygonMovable = false;
+   
 
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
@@ -118,7 +123,9 @@ public class MapPolygon extends Polygon {
         if (editable && polygonMovable) {
             // TODO change to cases
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                Log.d(TAG, "action_down");
+                xStart = (int) event.getX();
+                yStart = (int) event.getY();
+                Log.d(TAG, "action_down at point: "+ xStart + " " + yStart);
             }
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 Log.d(TAG, "action_up");
@@ -136,33 +143,36 @@ public class MapPolygon extends Polygon {
 
     public void moveToEventPosition(final MotionEvent event,
             final MapView mapView) {
-        Log.i(TAG, "moveMapPolygon");
+
+        int xEnd = (int) event.getX();
+        int yEnd = (int) event.getX();
+        Log.i(TAG, "moveMapPolygon to: " + xEnd + " "+ yEnd);
+        
         final Projection pj = mapView.getProjection();
         // actual Polygon point list
         List<GeoPoint> gpointListOld = this.getPoints();
-        Log.d(TAG, gpointListOld.get(0).getLatitude() + " "
-                + gpointListOld.get(0).getLongitude());
-        // new Polygon point list
         List<GeoPoint> gpointList = new ArrayList<GeoPoint>(
                 gpointListOld.size());
-        GeoPoint gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
-                (int) event.getY());
+        Log.e(TAG, gpointListOld.size() + "");
+        Log.e(TAG, gpointList.size() + "");
+        
+        for(int i = 0; i < gpointListOld.size(); i++) {
+            Point point = pj.toPixels(gpointListOld.get(i), null);
+            Log.i(TAG, "old" + point.x + " " + point.y);
+            Point newPoint = new Point();
+            newPoint.set(point.x + (xEnd - xStart), point.y + (yEnd - yStart));
+            Log.i(TAG, "new" + newPoint.x + " " + newPoint.y);
+            gpointListOld.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
+                (int) newPoint.y));
+        }
+        
+//        GeoPoint gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
+//                (int) event.getY());
         Log.i(TAG, "size before" + gpointListOld.size());
 
-        gpointListOld.add(gpoint);
         this.setPoints(gpointListOld);
         Log.i(TAG, "size after, should be one more..."
                 + this.getPoints().size());
-
-        // for (GeoPoint gpoint : gpointListOld) {
-        // pj.toProjectedPixels(gpoint, null)
-        // gpoint = (GeoPoint) pj.fromPixels((int) event.getX(),
-        // (int) event.getY());
-        // gpointList.add(gpoint);
-        // }
-        // this.setPoints(gpointList);
-        // Log.d(TAG, gpointList.get(0).getLatitude() + " "
-        // + gpointList.get(0).getLongitude());
 
         mapView.invalidate();
     }
