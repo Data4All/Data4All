@@ -87,13 +87,15 @@ public class CapturePictureHandler implements PictureCallback {
 
     private CameraPreview preview;
 
+    private boolean gallery;
+
     /**
      * Default constructor.
      * 
      * @param context
      *            The Application context
      * @param preview
-     *            The Camera Preview           
+     *            The Camera Preview
      */
     public CapturePictureHandler(AbstractActivity context, CameraPreview preview) {
         this.context = context;
@@ -124,8 +126,12 @@ public class CapturePictureHandler implements PictureCallback {
                 pictureSize.height, currentLocation);
 
         // Start a thread to save the Raw Image in JPEG into SDCard
-        new SavePhotoTask(Optimizer.currentDeviceOrientation(),
-                preview.getViewSize()).execute(raw);
+        if (gallery) {
+            // TODO
+        } else {
+            new SavePhotoTask(Optimizer.currentDeviceOrientation(),
+                    preview.getViewSize()).execute(raw);
+        }
     }
 
     /**
@@ -154,6 +160,10 @@ public class CapturePictureHandler implements PictureCallback {
             final double bodyHeight = Integer.parseInt(height);
             return (bodyHeight - 20) / 100.0;
         }
+    }
+
+    public void setGallery(boolean gallery) {
+        this.gallery = gallery;
     }
 
     /**
