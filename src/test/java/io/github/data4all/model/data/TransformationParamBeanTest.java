@@ -55,10 +55,10 @@ public class TransformationParamBeanTest {
                 .createFromParcel(newParcel);
 
         assertEquals(testBean.getHeight(), deParcelBean.getHeight(), 0);
-        assertEquals(testBean.getCameraMaxRotationAngle(),
-                deParcelBean.getCameraMaxRotationAngle(), 0);
-        assertEquals(testBean.getCameraMaxPitchAngle(),
-                deParcelBean.getCameraMaxPitchAngle(), 0);
+        assertEquals(testBean.getCameraMaxHorizontalViewAngle(),
+                deParcelBean.getCameraMaxHorizontalViewAngle(), 0);
+        assertEquals(testBean.getCameraMaxVerticalViewAngle(),
+                deParcelBean.getCameraMaxVerticalViewAngle(), 0);
         assertEquals(testBean.getPhotoWidth(), deParcelBean.getPhotoWidth(), 0);
         assertEquals(testBean.getPhotoHeight(), deParcelBean.getPhotoHeight(),
                 0);

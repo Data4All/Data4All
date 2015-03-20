@@ -100,9 +100,9 @@ public class PointToCoordsTransformUtil {
                         + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
         Log.d(TAG,
                 "TPS-DATA Max-Camera-Pitch-Angle: "
-                        + tps.getCameraMaxPitchAngle()
+                        + tps.getCameraMaxHorizontalViewAngle()
                         + " Max-camera-Rotation-Angle: "
-                        + tps.getCameraMaxRotationAngle());
+                        + tps.getCameraMaxVerticalViewAngle());
 
         // get the set height
         this.height = tps.getHeight();
@@ -158,9 +158,9 @@ public class PointToCoordsTransformUtil {
                         + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
         Log.d(TAG,
                 "TPS-DATA Max-Camera-Pitch-Angle: "
-                        + tps.getCameraMaxPitchAngle()
+                        + tps.getCameraMaxHorizontalViewAngle()
                         + " Max-camera-Rotation-Angle: "
-                        + tps.getCameraMaxRotationAngle());
+                        + tps.getCameraMaxVerticalViewAngle());
 
         // get the set height
         this.height = tps.getHeight();
@@ -206,10 +206,10 @@ public class PointToCoordsTransformUtil {
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
         final double pixelpitch = this.calculateAngleFromPixel(point.getX(),
-                xAxis, tps.getCameraMaxRotationAngle());
+                xAxis, tps.getCameraMaxHorizontalViewAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll = -this.calculateAngleFromPixel(point.getY(),
-                yAxis, tps.getCameraMaxPitchAngle());
+                yAxis, tps.getCameraMaxVerticalViewAngle() );
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
 

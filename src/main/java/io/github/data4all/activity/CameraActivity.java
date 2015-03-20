@@ -278,9 +278,9 @@ public class CameraActivity extends AbstractActivity {
 
         if (orientationListener != null) {
             final Camera.Parameters params = mCamera.getParameters();
-            final float maxPitch = (float) Math.toRadians(params
-                    .getHorizontalViewAngle());
             final float maxRoll = (float) Math.toRadians(params
+                    .getHorizontalViewAngle());
+            final float maxPitch = (float) Math.toRadians(params
                     .getVerticalViewAngle());
             cameraAssistView.setInformations(maxPitch, maxRoll,
                     orientationListener.getDeviceOrientation());

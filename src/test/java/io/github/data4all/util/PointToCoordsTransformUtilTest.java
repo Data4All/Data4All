@@ -84,7 +84,7 @@ public class PointToCoordsTransformUtilTest {
         points.add(new Point(500, 1000));
         points.add(new Point(1, 500));
         points.add(new Point(500, 1));
-        test = util.transform(tps, deviceOrientation, points, 4);
+        test = util.transform(tps, deviceOrientation, points);
         assertThat(test.get(0).getLat(), is(0.0));
         assertThat(test.get(0).getLon(), is(0.0));
         assertThat(test.get(1).getLat(), greaterThan(0.0));
@@ -98,7 +98,7 @@ public class PointToCoordsTransformUtilTest {
 
         deviceOrientation = new DeviceOrientation((float) (Math.PI / 2), 0.0f,
                 0.0f, 10L);
-        test = util.transform(tps, deviceOrientation, points, 4);
+        test = util.transform(tps, deviceOrientation, points);
         assertThat(test.get(0).getLat(), is(0.0));
         assertThat(test.get(0).getLon(), is(0.0));
         assertThat(test.get(1).getLat(), closeTo(0.0, 0.00000000001));
@@ -110,11 +110,10 @@ public class PointToCoordsTransformUtilTest {
                 (float) Math.toRadians(45), (float) Math.toRadians(45), 10L);
         ArrayList<Point> points2 = new ArrayList<Point>();
         points2.add(new Point(500, 500));
-        test = util.transform(tps, deviceOrientation, points2, 4);
+        test = util.transform(tps, deviceOrientation, points2);
         assertThat(test.get(0).getLon(), lessThan(0.0));
         assertThat(test.get(0).getLat(), lessThan(0.0));
     }
-
 
     // Tests for method calculateCoordFromPoint(TransformationParamBean tps,
     // DeviceOrientation deviceOrientation, Point point)
@@ -251,155 +250,4 @@ public class PointToCoordsTransformUtilTest {
         assertThat(node2.getLon(), greaterThan(100.0));
     }
 
-    // Tests for the method changePixelCoordSystem(point, rotation)
-
-    /**
-     * Rotation is 0 and point in the middle of the coordinate system is given.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot0Normal() {
-        Point point = new Point(100, 100);
-        Point newPoint = util.changePixelCoordSystem(point, 0);
-        assertThat((double) newPoint.getX(), closeTo(901, 1));
-        assertThat((double) newPoint.getY(), closeTo(401, 1));
-
-        Point point1 = new Point(100, 500);
-        Point newPoint1 = util.changePixelCoordSystem(point1, 0);
-        assertThat((double) newPoint1.getX(), closeTo(501, 1));
-        assertThat((double) newPoint1.getY(), closeTo(401, 1));
-    }
-
-    /**
-     * Rotation is 0 and point at the edge of the coordinate system is given.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot0Edge() {
-        Point point = new Point(500, 100);
-        Point newPoint = util.changePixelCoordSystem(point, 0);
-        assertThat((double) newPoint.getX(), closeTo(901, 1));
-        assertThat((double) newPoint.getY(), closeTo(1, 1));
-
-        Point point1 = new Point(0, 0);
-        Point newPoint1 = util.changePixelCoordSystem(point1, 0);
-        assertThat((double) newPoint1.getX(), closeTo(1001, 1));
-        assertThat((double) newPoint1.getY(), closeTo(501, 1));
-    }
-
-    /**
-     * Rotation is 0 and point is not in the given coordinate system.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot0overTheEdge() {
-        Point point = new Point(1000, 100);
-        Point newPoint = util.changePixelCoordSystem(point, 0);
-        assertThat((double) newPoint.getX(), closeTo(901, 1));
-        assertThat((double) newPoint.getY(), closeTo(-499, 1));
-    }
-
-    /**
-     * Rotation is 1 and point in the middle of the coordinate system is given.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot1Normal() {
-        Point point = new Point(100, 100);
-        Point newPoint = util.changePixelCoordSystem(point, 1);
-        assertThat((double) newPoint.getX(), closeTo(401, 1));
-        assertThat(newPoint.getY(), is(point.getY()));
-
-        Point point1 = new Point(300, 500);
-        Point newPoint1 = util.changePixelCoordSystem(point1, 1);
-        assertThat((double) newPoint1.getX(), closeTo(201, 1));
-        assertThat(newPoint1.getY(), is(point1.getY()));
-    }
-
-    /**
-     * Rotation is 1 and point at the edge of the coordinate system is given.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot1Edge() {
-        Point point = new Point(500, 1000);
-        Point newPoint = util.changePixelCoordSystem(point, 1);
-        assertThat((double) newPoint.getX(), closeTo(1, 1));
-        assertThat(newPoint.getY(), is(point.getY()));
-
-        Point point1 = new Point(0, 0);
-        Point newPoint1 = util.changePixelCoordSystem(point1, 1);
-        assertThat((double) newPoint1.getX(), closeTo(501, 1));
-        assertThat(newPoint1.getY(), is(point1.getY()));
-    }
-
-    /**
-     * Rotation is 1 and point is not in the given coordinate system.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot1overTheEdge() {
-        Point point = new Point(600, 1200);
-        Point newPoint = util.changePixelCoordSystem(point, 1);
-        assertThat((double) newPoint.getX(), closeTo(-99, 1));
-        assertThat(newPoint.getY(), is(point.getY()));
-    }
-
-    /**
-     * Rotation is 3 and point in the middle of the coordinate system is given.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot3Normal() {
-        Point point = new Point(100, 100);
-        Point newPoint = util.changePixelCoordSystem(point, 3);
-        assertThat(newPoint.getX(), is(point.getX()));
-        assertThat((double) newPoint.getY(), closeTo(901, 1));
-
-        Point point1 = new Point(300, 500);
-        Point newPoint1 = util.changePixelCoordSystem(point1, 3);
-        assertThat(newPoint1.getX(), is(point1.getX()));
-        assertThat((double) newPoint1.getY(), closeTo(501, 1));
-    }
-
-    /**
-     * Rotation is 3 and point at the edge of the coordinate system is given.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot3Edge() {
-        Point point = new Point(500, 1000);
-        Point newPoint = util.changePixelCoordSystem(point, 3);
-        assertThat(newPoint.getX(), is(point.getX()));
-        assertThat((double) newPoint.getY(), closeTo(1, 1));
-
-        Point point1 = new Point(0, 0);
-        Point newPoint1 = util.changePixelCoordSystem(point1, 3);
-        assertThat(newPoint1.getX(), is(point1.getX()));
-        assertThat((double) newPoint1.getY(), closeTo(1001, 1));
-    }
-
-    /**
-     * Rotation is 3 and point is not in the given coordinate system.
-     */
-    @Test
-    public void changePixelCoordSystemTest_Rot3overTheEdge() {
-        Point point = new Point(600, 1200);
-        Point newPoint = util.changePixelCoordSystem(point, 3);
-        assertThat(newPoint.getX(), is(point.getX()));
-        assertThat((double) newPoint.getY(), closeTo(-199, 1));
-    }
-
-    /**
-     * Rotation is none of the three possibilities 0, 1 and 3.
-     */
-    @Test
-    public void changePixelCoordSystemTest_OtherRotation() {
-        Point point = new Point(1500, 100);
-        Point newPoint = util.changePixelCoordSystem(point, 4);
-        assertThat(newPoint.getX(), is(point.getX()));
-        assertThat(newPoint.getY(), is(point.getY()));
-    }
-
-    /**
-     * Point is null.
-     */
-    @Test
-    public void changePixelCoordSystemTest_PointIsNull() {
-        Point point = null;
-        Point newPoint = util.changePixelCoordSystem(point, 1);
-        assertThat(newPoint, is(nullValue()));
-    }
 }

@@ -185,8 +185,8 @@ public class ShowPictureActivity extends AbstractActivity {
                 transformBean, currentOrientation));
                 
         // set the HorizontView
-        cameraAssistView.setInformations((float) transformBean.getCameraMaxRotationAngle(),
-                (float) transformBean.getCameraMaxPitchAngle(),
+        cameraAssistView.setInformations((float) transformBean.getCameraMaxVerticalViewAngle(),
+                (float) transformBean.getCameraMaxHorizontalViewAngle(),
                  currentOrientation);
         cameraAssistView.invalidate();
         
