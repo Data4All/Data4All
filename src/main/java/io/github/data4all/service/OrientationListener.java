@@ -73,6 +73,9 @@ public class OrientationListener extends Service implements SensorEventListener 
     // orientation values
     private float[] orientation = new float[ARRAYLENGTH];
 
+    // Calibration needed
+    public static boolean CALIBRATION_OK = true;
+
     @Override
     public void onCreate() {
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -172,17 +175,18 @@ public class OrientationListener extends Service implements SensorEventListener 
                         + " has now the accuracy of " + accuracy
                         + " it needs recalibration!");
 
-                Toast.makeText(getBaseContext(), R.string.badSensorCalibration,
-                        Toast.LENGTH_LONG).show();
+                CALIBRATION_OK = false;
+//                Toast.makeText(getBaseContext(), R.string.badSensorCalibration,
+//                        Toast.LENGTH_LONG).show();
             } else {
 
                 Log.d(TAG, "The sensor: " + sensor.getName()
                         + " has now the accuracy of " + accuracy
                         + " App ready to use!");
-
-                Toast.makeText(getBaseContext(),
-                        R.string.goodSensorCalibration, Toast.LENGTH_LONG)
-                        .show();
+                CALIBRATION_OK = true;
+                // Toast.makeText(getBaseContext(),
+                // R.string.goodSensorCalibration, Toast.LENGTH_LONG)
+                // .show();
             }
         }
     }

@@ -61,8 +61,7 @@ public class CameraActivity extends AbstractActivity {
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();
 
-    public static final String FINISH_TO_CAMERA =
-            "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+    public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
 
     private Camera mCamera;
 
@@ -89,8 +88,7 @@ public class CameraActivity extends AbstractActivity {
 
         shutterCallback = new ShutterCallback() {
             public void onShutter() {
-                final Vibrator vibrator =
-                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
             }
         };
@@ -105,13 +103,11 @@ public class CameraActivity extends AbstractActivity {
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
 
-        listener =
-                new ButtonRotationListener(this,
-                        Arrays.asList((View) btnCapture));
+        listener = new ButtonRotationListener(this,
+                Arrays.asList((View) btnCapture));
 
         // Set the Focus animation
-        mAutoFocusCrossHair =
-                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
     }
 
@@ -121,8 +117,7 @@ public class CameraActivity extends AbstractActivity {
         setLayout();
         if (isDeviceSupportCamera()) {
             try {
-                cameraPreview =
-                        (CameraPreview) findViewById(R.id.cameraPreview);
+                cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
 
                 mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 cameraPreview.setCamera(mCamera);
@@ -168,7 +163,7 @@ public class CameraActivity extends AbstractActivity {
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        if(data == null || !data.getBooleanExtra(FINISH_TO_CAMERA, false)) {
+        if (data == null || !data.getBooleanExtra(FINISH_TO_CAMERA, false)) {
             finishWorkflow(data);
         }
     }
@@ -190,37 +185,50 @@ public class CameraActivity extends AbstractActivity {
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // After photo is taken, disable button for clicking twice
-                btnCapture.setEnabled(false);
-                mCamera.takePicture(shutterCallback, null,
-                        new CapturePictureHandler(CameraActivity.this,
-                                cameraPreview));
+                if (OrientationListener.CALIBRATION_OK) {
+                    // After photo is taken, disable button for clicking twice
+                    btnCapture.setEnabled(false);
+                    mCamera.takePicture(shutterCallback, null,
+                            new CapturePictureHandler(CameraActivity.this,
+                                    cameraPreview));
+                } else {
+                    Toast.makeText(getBaseContext(),
+                            R.string.badSensorCalibration, Toast.LENGTH_LONG)
+                            .show();
+                }
             }
         });
 
         button.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                // After photo is taken, disable button for clicking twice
-                btnCapture.setEnabled(false);
-
-                mAutoFocusCrossHair.showStart();
-                mAutoFocusCrossHair.doAnimation();
-                mCamera.autoFocus(new AutoFocusCallback() {
-                    @Override
-                    public void onAutoFocus(boolean success, Camera camera) {
-                        if (success) {
-                            mAutoFocusCrossHair.success();
-                            mCamera.takePicture(shutterCallback, null,
-                                    new CapturePictureHandler(
-                                            CameraActivity.this, cameraPreview));
-                        } else {
-                            mAutoFocusCrossHair.fail();
-                            btnCapture.setEnabled(true);
+                if (OrientationListener.CALIBRATION_OK) {
+                    // After photo is taken, disable button for clicking twice
+                    btnCapture.setEnabled(false);
+                    mAutoFocusCrossHair.showStart();
+                    mAutoFocusCrossHair.doAnimation();
+                    mCamera.autoFocus(new AutoFocusCallback() {
+                        @Override
+                        public void onAutoFocus(boolean success, Camera camera) {
+                            if (success) {
+                                mAutoFocusCrossHair.success();
+                                mCamera.takePicture(shutterCallback, null,
+                                        new CapturePictureHandler(
+                                                CameraActivity.this,
+                                                cameraPreview));
+                            } else {
+                                mAutoFocusCrossHair.fail();
+                                btnCapture.setEnabled(true);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    Toast.makeText(getBaseContext(),
+                            R.string.badSensorCalibration, Toast.LENGTH_LONG)
+                            .show();
+                }
                 return true;
+
             }
         });
     }
