@@ -62,7 +62,7 @@
     <string name="login_access_dialog_mes">Benutzername oder Passwort nicht korrekt.</string>
 
 
-    <!-- for tags -->
+    <!-- for tags --> 
     <string name="SelectTag">Passenden Tag auswählen</string>
     <string name="AddAddress">Adresse hinzufügen</string>
     <string name="AddContact">Kontakt hinzufügen</string>
@@ -91,4 +91,5 @@
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
     <string name="or">oder</string>
+      <string name="show_pwd">Passwort anzeigen</string>
 </resources>

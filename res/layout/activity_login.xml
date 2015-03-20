@@ -13,6 +13,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/osm_logo"
@@ -27,9 +28,9 @@
             android:drawableLeft="@drawable/user"
             android:ems="10"
             android:hint="@string/usernameHint"
+            android:nextFocusDown="@+id/osm_pass"
             android:padding="10dp"
             android:singleLine="true"
-            android:nextFocusDown="@+id/osm_pass"
             android:textColorHint="#cccccc" />
 
         <EditText
@@ -45,28 +46,13 @@
             android:padding="10dp"
             android:textColorHint="#cccccc" />
 
-        <Button
-            android:id="@+id/osm_login"
-            style="@style/DefaultButtonText"
-            android:layout_width="220dp"
-            android:layout_height="50dp"
+        <CheckBox
+            android:id="@+id/cbShowPwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/osm_pass"
             android:layout_below="@+id/osm_pass"
-            android:onClick="onClickStart"
-            android:background="@drawable/login_button_bg"
-            android:padding="10dp"
-            android:text="@string/loginButton" />
-
-        <Button
-            android:id="@+id/osm_register"
-            style="@style/DefaultButtonText"
-            android:layout_width="220dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/osm_login"
-            android:background="@drawable/register_button_bg"
-            android:onClick="onClickStart"
-            android:padding="10dp"
-            android:text="@string/registerButton"
-            android:textColor="#ffffff" />
+            android:text="@string/show_pwd" />
     </RelativeLayout>
 
     <ImageView
@@ -86,5 +72,31 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/osm_login"
+        style="@style/DefaultButtonText"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/relativeLayout1"
+        android:layout_below="@+id/relativeLayout1"
+        android:layout_marginTop="14dp"
+        android:padding="10dp"
+        android:background="@drawable/login_button_bg"
+        android:onClick="onClickStart"
+        android:text="@string/loginButton" />
+
+    <Button
+        android:id="@+id/osm_register"
+        style="@style/DefaultButtonText"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/relativeLayout1"
+        android:layout_below="@+id/osm_login"
+        android:background="@drawable/register_button_bg"
+        android:onClick="onClickStart"
+        android:padding="10dp"
+        android:text="@string/registerButton"
+        android:textColor="#ffffff" />
 
 </RelativeLayout>
