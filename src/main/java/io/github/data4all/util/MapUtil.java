@@ -47,6 +47,10 @@ public final class MapUtil {
      * @return the Center of the OsmElement
      */
     public static GeoPoint getCenterFromOsmElement(AbstractDataElement element) {
+        BoundingBoxE6 bb = getBoundingBoxForOsmElement(element);
+        if(bb == null){
+            return null;
+        }
         return getBoundingBoxForOsmElement(element).getCenter();
     }
 
@@ -59,6 +63,10 @@ public final class MapUtil {
      */
     public static GeoPoint getCenterFromOsmElements(
             List<AbstractDataElement> list) {
+        BoundingBoxE6 bb = getBoundingBoxForOsmElements(list);
+        if(bb == null){
+            return null;
+        }
         return getBoundingBoxForOsmElements(list).getCenter();
     }
 
