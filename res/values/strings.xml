@@ -97,5 +97,7 @@
     <!-- URLs -->
     <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Official Facebook</a></string>
+    <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Official Twitter</a></string>
+    <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Official GitHub</a></string>
 
 </resources>

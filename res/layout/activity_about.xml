@@ -23,5 +23,21 @@
         android:layout_below="@+id/linkToHomepage"
         android:layout_centerInParent="true"
         android:text="@string/linkToFacebook" />
+    
+    <TextView
+        android:id="@+id/linkToTwitter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linkToFacebook"
+        android:layout_centerInParent="true"
+        android:text="@string/linkToTwitter" />
+    
+    <TextView
+        android:id="@+id/linkToGithub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linkToTwitter"
+        android:layout_centerInParent="true"
+        android:text="@string/linkToGithub" />
 
 </RelativeLayout>

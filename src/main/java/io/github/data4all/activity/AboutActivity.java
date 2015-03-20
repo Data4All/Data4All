@@ -20,6 +20,12 @@ public class AboutActivity extends AbstractActivity {
         
         TextView facebook = (TextView) findViewById(R.id.linkToFacebook);
         facebook.setMovementMethod(LinkMovementMethod.getInstance());
+        
+        TextView twitter = (TextView) findViewById(R.id.linkToTwitter);
+        twitter.setMovementMethod(LinkMovementMethod.getInstance());
+        
+        TextView github = (TextView) findViewById(R.id.linkToGithub);
+        github.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
