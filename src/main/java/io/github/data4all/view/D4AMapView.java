@@ -221,10 +221,13 @@ public class D4AMapView extends MapView {
         Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
         area.setStrokeColor(DEFAULT_STROKE_COLOR);
 
-//        TODO comment in, so that it is only in MapPrevie
-//        if (edit) {
+        //TODO comment in, so that it is only in MapPreviev
+        if (edit) {
+            //set the polygon to editable
             ((MapPolygon)area).setEditable(true);
-//        }
+            //set the original points to calculate the offset of all points
+            ((MapPolygon)area).setOriginalPoints();
+        }
 
         this.getOverlays().add(area);
         this.postInvalidate();

@@ -37,9 +37,11 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 /**
- * With LongClick deletable Polygon.
+ * Polygon which is editable. It is deletable with a LongClick and movable with
+ * a TouchEvent.
  * 
  * @author Oliver Schwartz
+ * @author sbollen
  *
  */
 public class MapPolygon extends Polygon {
@@ -48,12 +50,12 @@ public class MapPolygon extends Polygon {
     private AbstractActivity activity;
     private D4AMapView mapView;
     private AbstractDataElement element;
+    // TODO
     private boolean editable;
-
     boolean polygonMovable = false;
-
     int xStart = 0;
     int yStart = 0;
+    List<GeoPoint> originalPoints;
 
     /**
      * Default constructor.
@@ -114,41 +116,59 @@ public class MapPolygon extends Polygon {
 
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
-        // if the touch event is inside the polygon, set polygonMovable to true
-        if (!polygonMovable) {
-            polygonMovable = contains(event);
-        }
-        Log.d(TAG, "polygonMovable: " + polygonMovable);
-        if (editable && polygonMovable) {
-            // TODO change to cases
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                xStart = (int) event.getX();
-                yStart = (int) event.getY();
-                Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
+        super.onTouchEvent(event, mapView);
+
+        if (editable) {
+            // if the touch event is inside the polygon, set polygonMovable to
+            // true
+            if (!polygonMovable) {
+                polygonMovable = contains(event);
             }
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                Log.d(TAG, "action_up");
-                // if polygon is movable and the touch event is an action up,
-                // set polygonMovable to false again
-                polygonMovable = false;
-            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                // mapView.getOverlays().remove(this);
-                Log.d(TAG, "action_move");
-                moveToEventPosition(event, mapView);
+            Log.d(TAG, "polygonMovable: " + polygonMovable);
+            if (polygonMovable) {
+                switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    xStart = (int) event.getX();
+                    yStart = (int) event.getY();
+                    Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    Log.d(TAG, "action_up");
+                    // if polygon is movable and the touch event is an action
+                    // up, set polygonMovable to false again
+                    polygonMovable = false;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.d(TAG, "action_move");
+                    moveToNewPosition(event, mapView);
+                    break;
+                default:
+                    Log.d(TAG, "detected another touch event");
+                }
             }
+            return polygonMovable;
+        } else {
+            return super.onTouchEvent(event, mapView);
         }
-        return polygonMovable;
     }
 
-    public void moveToEventPosition(final MotionEvent event,
-            final MapView mapView) {
+    /**
+     * Move this polygon to the new position handling the touch events.
+     * 
+     * @param event
+     *            the current MotionEvent from onTouchEvent
+     * @param mapView
+     *            the current mapView
+     */
+    public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
 
+        // using the historical events for the move event
         int hisSize = event.getHistorySize();
         int xEnd = (int) event.getX();
         int yEnd = (int) event.getY();
         if (hisSize > 0) {
             xStart = (int) event.getHistoricalX(0);
-            yStart = (int) event.getHistoricalY(0);            
+            yStart = (int) event.getHistoricalY(0);
         }
 
         Log.e(TAG, "" + hisSize);
@@ -156,23 +176,86 @@ public class MapPolygon extends Polygon {
         Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
 
         final Projection pj = mapView.getProjection();
-        // actual Polygon point list
+        // actual polygon point list
         List<GeoPoint> geoPointList = this.getPoints();
 
+        // TODO remove if the other way is performed
+        // //moving all points of the polygon to the new position
+        // for (int i = 0; i < geoPointList.size(); i++) {
+        // Point point = pj.toPixels(geoPointList.get(i), null);
+        // Log.i(TAG, "old" + point.x + " " + point.y);
+        // Point newPoint = new Point();
+        // newPoint.set(point.x + (xEnd - xStart), point.y + (yEnd - yStart));
+        // Log.i(TAG, "new" + newPoint.x + " " + newPoint.y);
+        // geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
+        // (int) newPoint.y));
+        // }
+        // this.setPoints(geoPointList);
+        // mapView.invalidate();
+
+        // get the position of the first point as the basis for moving
+        Point firstPoint = pj.toPixels(geoPointList.get(0), null);
+        List<Point> pointsOffset = getOffset();
+
+        // moving all points compared to the first one
         for (int i = 0; i < geoPointList.size(); i++) {
             Point point = pj.toPixels(geoPointList.get(i), null);
-            Log.i(TAG, "old" + point.x + " " + point.y);
+            Log.i("x" + TAG, "old" + point.x + " " + point.y);
+            Log.i("x" + TAG, "first" + firstPoint.x + " " + firstPoint.y);
             Point newPoint = new Point();
-            newPoint.set(point.x + (xEnd - xStart), point.y + (yEnd - yStart));
-            Log.i(TAG, "new" + newPoint.x + " " + newPoint.y);
+            // move from the first point position and then add the actual point
+            // offset to get the new position of the point
+            newPoint.set(
+                    (firstPoint.x + (xEnd - xStart) + pointsOffset.get(i).x),
+                    (firstPoint.y + (yEnd - yStart) + pointsOffset.get(i).y));
+            Log.i("x" + TAG, "new" + newPoint.x + " " + newPoint.y);
             geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
                     (int) newPoint.y));
         }
-        this.setPoints(geoPointList);
 
+        // set the list with the changed points
+        this.setPoints(geoPointList);
         mapView.invalidate();
     }
 
+    /**
+     * Get the vectors to all points of the polygon starting from the first
+     * point. Necessary for moving the polygon.
+     * 
+     * @return List with all vectors
+     */
+    public List<Point> getOffset() {
+        final Projection pj = mapView.getProjection();
+        // actual Polygon point list
+        List<GeoPoint> geoPointList = originalPoints;
+        Log.i("a" + TAG, "" + geoPointList.size());
+        List<Point> pointOffset = new ArrayList<Point>();
+        if (geoPointList.size() > 0) {
+            Point firstPoint = pj.toPixels(geoPointList.get(0), null);
+            for (int i = 0; i < geoPointList.size(); i++) {
+                Point point = pj.toPixels(geoPointList.get(i), null);
+                int xOffset = (point.x - firstPoint.x);
+                int yOffset = (point.y - firstPoint.y);
+                pointOffset.add(new Point(xOffset, yOffset));
+            }
+        }
+        return pointOffset;
+    }
+
+    /**
+     * Set the points of the polygon. Called when the polygon is added to the
+     * map.
+     */
+    public void setOriginalPoints() {
+        this.originalPoints = this.getPoints();
+    }
+
+    /**
+     * Setter for editable. Set whether the polygon is editable.
+     * 
+     * @param editable
+     *            true if polygon is editable
+     */
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
