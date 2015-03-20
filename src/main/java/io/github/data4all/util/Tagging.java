@@ -15,6 +15,7 @@
  */
 package io.github.data4all.util;
 
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
@@ -83,7 +84,7 @@ public class Tagging {
         for (int i = 0; i < tags.size(); i++) {
             array[i] = res.getString(tags.get(i).getNameRessource());
         }
-        return array;
+        return LastChoiceHandler.addLastChoiceForType(type,array);
     	}
     }
     /**
@@ -130,9 +131,15 @@ public class Tagging {
         ArrayList<Tag> tag;
         tag = (ArrayList<Tag>) Tags.getAllAddressTags();
         for (int i = 0; i < tag.size(); i++) {
-            if (!addressTags.get(i).equals("")) {
-                map.put(tag.get(i), addressTags.get(i));
+
+            final String value = addressTags.get(i);
+            //make sure that the new Tag contains all informations for last tag
+            if (!value.equals("")) {
+                final Tag tagActual = tag.get(i);
+                map.put(tagActual, value);
+                tagActual.setLastValue(value);
             }
+            
         }
         return map;
     }
@@ -148,8 +155,13 @@ public class Tagging {
         ArrayList<Tag> tag;
         tag = (ArrayList<Tag>) Tags.getAllContactTags();
         for (int i = 0; i < tag.size(); i++) {
-            if (!contactTags.get(i).equals("")) {
-                map.put(tag.get(i), contactTags.get(i));
+
+            final String value = contactTags.get(i);
+            //make sure that the new Tag contains all informations for last tag
+            if (!value.equals("")) {
+                final Tag tagActual = tag.get(i);
+                map.put(tagActual, value);
+                tagActual.setLastValue(value);
             }
         }
         return map;
