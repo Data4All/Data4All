@@ -15,14 +15,23 @@
  */
 package io.github.data4all.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.data4all.R;
+import io.github.data4all.logger.Log;
+import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.drawing.Point;
+import io.github.data4all.util.HorizonCalculationUtil;
+import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -31,65 +40,231 @@ import android.view.View;
  * This class is drawing red lines into the {@link CameraPreview} and shows
  * unsuitable angles for taking a photo.
  * 
- * @author Andre Koch
+ * @author Andre Koch & burghardt
  * @CreationDate 12.02.2015
- * @LastUpdate 12.02.2015
- * @version 1.0
+ * @LastUpdate 18.03.2015
+ * @version 1.4
  * 
  */
 
 public class CaptureAssistView extends View {
 
-    private double percentage;
+    private Paint cameraStopPaint;
+    private Paint invalidRegionPaint;
+    private Paint paint;
+    private int mMeasuredWidth;
+    private int mMeasuredHeight;
+    private float maxPitch, maxRoll;
+    private DeviceOrientation deviceOrientation;
+    private boolean skylook;
+    private boolean visible;
+    private boolean informationSet;
+    private List<Point> points = new ArrayList<Point>();
+    private Bitmap bitmap;
+
+    HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
+    private Runnable finishInflateListener;
 
     private static final String TAG = CaptureAssistView.class.getSimpleName();
 
     /**
+     * Default Constructor
      * 
      * @param context
+     *            Contextclass for global information about an application
+     *            environment
      */
     public CaptureAssistView(Context context) {
         super(context);
-        this.initView();
+        initView();
     }
 
     /**
+     * Default Constructor
      * 
      * @param context
+     *            Contextclass for global information about an application
+     *            environment
      * @param attrs
+     * 
      */
     public CaptureAssistView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.initView();
+        initView();
     }
 
     /**
+     * Default Constructor
      * 
      * @param context
+     *            Contextclass for global information about an application
+     *            environment
      * @param attrs
      * @param defStyle
+     * 
      */
     public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        this.initView();
+        initView();
     }
 
+    /**
+     * This method initializes the variables on the first call and generates the
+     * drawing layer for drawing the horizon line and the stop image when the
+     * camera is too far up in the sky.
+     */
     private void initView() {
-        Log.i(TAG, "init View is called");
+        setFocusable(true);
+        Log.d(TAG, "initViewIsCalled");
+
+        // initialise variables for the first time.
+        this.mMeasuredWidth = getMeasuredWidth();
+        this.mMeasuredHeight = getMeasuredHeight();
+        this.skylook = false;
+        this.visible = true;
+
+        Resources r = this.getResources();
+
+        cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
+        cameraStopPaint.setStyle(Paint.Style.STROKE);
+        cameraStopPaint.setStrokeWidth(6);
+
+        invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
+        invalidRegionPaint.setStyle(Paint.Style.FILL);
+
+        paint = new Paint();
+        paint.setHinting(paint.HINTING_OFF);
+        paint.setColor(Color.BLUE);
+        paint.setStyle(Paint.Style.FILL);
 
     }
 
-    public void setInvalidRegion(double _precentage) {
-        Log.i(TAG, "setInvalidRegion is called");
-        this.percentage = _precentage;
-        Log.i(TAG, "percentage:" + this.percentage);
+    /**
+     * This method is called to get the information for calculating the
+     * drawings.
+     * 
+     * @param maxPitch
+     * @param maxRoll
+     * @param deviceOrientation
+     */
+    public void setInformations(float maxPitch, float maxRoll,
+            DeviceOrientation deviceOrientation) {
+        Log.d(TAG, "setInformationsIsCalled");
+        this.maxPitch = maxPitch;
+        this.maxRoll = maxRoll;
+        this.deviceOrientation = deviceOrientation;
+        this.informationSet = true;
+
+        Log.d(TAG,
+                "MP" + maxPitch + " MR " + maxRoll + " OR "
+                        + deviceOrientation.getPitch() + "  "
+                        + deviceOrientation.getRoll() + " MW+H "
+                        + mMeasuredWidth + " " + mMeasuredHeight);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.i(TAG, "onDraw is called");
+        Log.d(TAG, "onDrawCalled");
+        // save the Size of the View
+        this.mMeasuredWidth = getMeasuredWidth();
+        this.mMeasuredHeight = getMeasuredHeight();
+        // when the needed information have been set: calculate the horizon
+        if (informationSet) {
+            ReturnValues returnValues = horizonCalculationUtil
+                    .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
+                            mMeasuredHeight, (float) Math.toRadians(85),
+                            deviceOrientation);
+            this.skylook = returnValues.isSkylook();
+            this.visible = returnValues.isVisible();
+            this.points = returnValues.getPoints();
+        }
+        // if the horizon is visible and there are points do draw the horizon
+        if (visible && !points.isEmpty()) {
+            // if less then 50% of the display is over the horizon: draw horizon
+            if (!skylook) {
+                Path path = getPath();
+                canvas.drawPath(path, invalidRegionPaint);
+            } else {
+                // draw a big X
+                canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
+                        mMeasuredWidth / 2 + mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
+                        cameraStopPaint);
 
-        // canvas.restore();
+                canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
+                        mMeasuredWidth / 2 - mMeasuredWidth / 12,
+                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
+                        cameraStopPaint);
+            }
+        }
+        canvas.restore();
 
     }
+
+    /**
+     * This method draws the lines for the horizon line. everything is filled
+     * from the top left corner and the upper right corner to the horizon line
+     * with a defined color.
+     * 
+     * @return Path calculated horizon line.
+     */
+    private Path getPath() {
+        Path path = new Path();
+        boolean firstIter = true;
+        if (!points.isEmpty()) {
+            for (Point iter : points) {
+                if (firstIter) {
+                    path.moveTo(iter.getX(), iter.getY());
+                    firstIter = false;
+                } else {
+                    path.lineTo(iter.getX(), iter.getY());
+                }
+            }
+            path.lineTo(points.get(0).getX(), points.get(0).getY());
+        }
+        return path;
+
+    }
+
+    /**
+     * Testing if a point is over the horizont (red marked area)
+     * 
+     * @param point
+     *            point to be testet
+     * @return result true if the point is in the red marked area
+     * 
+     * @author vkochno & burghardt
+     */
+    public boolean overHorizont(Point point) {
+        if (bitmap == null) {
+            this.setDrawingCacheEnabled(true);
+            bitmap = Bitmap.createBitmap(this.getDrawingCache());
+            this.setDrawingCacheEnabled(false);
+        }
+        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT) {
+            return false;
+        }
+        return true;
+    }
+
+    public void setOnFinishInflateListener(Runnable listener) {
+        this.finishInflateListener = listener;
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        if (finishInflateListener != null) {
+            finishInflateListener.run();
+        }
+    }
+
+    public boolean isSkylook() {
+        return skylook;
+    }
+
 }

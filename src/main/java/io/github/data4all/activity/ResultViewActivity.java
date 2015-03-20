@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -29,6 +30,7 @@ import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,6 +108,9 @@ public class ResultViewActivity extends AbstractActivity implements
     private Map<String, Tag> mapTag;
     // The Map with the String and ClassifiedValue
     private Map<String, ClassifiedValue> classifiedMap;
+ 
+    public static String tmp;
+
 
     private View viewFooter;
 
@@ -213,11 +218,11 @@ public class ResultViewActivity extends AbstractActivity implements
      * Shows the Tags in a List
      */
     private void output() {
-        endList = new ArrayList<String>();
-        keyList = new ArrayList<String>();
-        final List<Tag> tagList = new ArrayList<Tag>();
-        for (Entry entry : element.getTags().entrySet()) {
-            final Tag tagKey = (Tag) entry.getKey();
+        endList = new LinkedList<String>();
+        keyList = new LinkedList<String>();
+        List<Tag> tagList = new LinkedList<Tag>();
+        for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+            final Tag tagKey = entry.getKey();
             tagList.add(tagKey);
             Log.i(TAG, tagKey.getKey());
             keyList.add(res.getString(tagKey.getNameRessource()));
@@ -246,6 +251,9 @@ public class ResultViewActivity extends AbstractActivity implements
         }
 
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
+        LastChoiceHandler.getInstance().setLastChoice(
+                getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
+        LastChoiceHandler.getInstance().save(this);
     }
 
     /**
@@ -298,6 +306,14 @@ public class ResultViewActivity extends AbstractActivity implements
         final EditText text = new EditText(ResultViewActivity.this);
         text.setTextColor(Color.WHITE);
         text.setInputType(mapTag.get(selectedString).getType());
+        
+        Tag tag = mapTag.get(selectedString);
+        //check if tag has a last value(e.g street,country, etc...)
+         if(tag.getLastValue()!=null){
+            text.setText(tag.getLastValue());
+        }else {
+            text.setHint(tag.getHintRessource());
+        }
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
         final LinearLayout layout = (LinearLayout) dialog

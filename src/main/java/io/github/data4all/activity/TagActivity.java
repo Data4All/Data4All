@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
@@ -141,7 +142,15 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 key = (String) array[which];
+                //jump in ResultviewActivity, when lastChoice is selected
+                if("Last Choice".equalsIgnoreCase(key)) {
+                    map=LastChoiceHandler.getInstance()
+                            .getLastChoice(getIntent()
+                            .getExtras().getInt("TYPE_DEF"));
+                    redirectToResultView();
+                }else {
                 createAlertDialogValue();
+                }
             }
 
         });
@@ -265,6 +274,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         } else {
             map = Tagging.contactToTag(tags, map);
         }
+        LastChoiceHandler.getInstance().updateTag(getIntent().getExtras().getInt("TYPE_DEF"),map);
+        LastChoiceHandler.getInstance().save(this);
         dialog1.dismiss();
     }
 
@@ -332,7 +343,13 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         edit = new ArrayList<EditText>();
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
-            text.setHint(arrayList.get(i).getHintRessource());
+            final Tag tag = arrayList.get(i);
+            //check if a tag has a lastvalue(e.g street, country, etc...)
+            if (tag.getLastValue() != null) {
+                text.setText(tag.getLastValue());
+            } else {
+                text.setHint(tag.getHintRessource());
+            }
             text.setHintTextColor(Color.GRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
@@ -382,7 +399,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     }
 
     public void redirectToResultView() {
-        element.setTags(map);
+        //sort map by classified tag and classifiedValue
+        element.setTags(LastChoiceHandler.sortMap(map));
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
