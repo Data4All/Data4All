@@ -157,7 +157,7 @@ public class LastChoiceHandler {
     }
 
     /**
-    * this method compare id of two tag
+    * this method compares the id of two tags
     * 
     */
     private static Comparator<Tag> getagMapComparator() {
