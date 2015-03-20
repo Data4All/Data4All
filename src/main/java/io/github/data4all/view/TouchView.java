@@ -410,7 +410,7 @@ public class TouchView extends View {
     }
 
     /**
-     * Adds a Point on a line.</br>
+     * Adds a Point on a line, if there is a line.</br>
      * 
      * uses isOnALine() to validate that the Point is on a existing line
      * 
@@ -421,6 +421,7 @@ public class TouchView extends View {
      * @return true if the Point was added
      */
     private boolean addPointOnLine(Point p) {
+        //tolerance used for detecting lines. adapts to the specific Display
         int tolerance = (int) (5 * getResources().getDisplayMetrics().density);
         if (polygon.size() >= 3) {
             for (int i = 0; i < polygon.size() - 1; i++) {
@@ -436,6 +437,7 @@ public class TouchView extends View {
                     tolerance)) {
                 polygon.add(p);
                 redoUndo.add(p, add, polygon.size() - 1);
+                return true;
             }
         }
         return false;
@@ -475,7 +477,7 @@ public class TouchView extends View {
      * @param p2
      *            second point
      */
-    public double distance(Point p1, Point p2) {
+    private double distance(Point p1, Point p2) {
         return Math.sqrt((p1.getX() - p2.getX()) * (p1.getX() - p2.getX())
                 + (p1.getY() - p2.getY()) * (p1.getY() - p2.getY()));
     }
