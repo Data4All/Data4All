@@ -1,5 +1,6 @@
 package io.github.data4all.util;
 
+import io.github.data4all.Exceptions;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
 
@@ -30,11 +31,6 @@ public class Gallery {
      * The name of the gallery folder.
      */
     private static final String DIRECTORY_NAME = "gallery";
-
-    /**
-     * The exception message for null arguments.
-     */
-    private static final String NULL_ARGUMENT = "Parameter '%s' cannot be null";
 
     /**
      * The ending of the image file itself.
@@ -120,17 +116,13 @@ public class Gallery {
             TransformationParamBean parameters, DeviceOrientation orientation,
             Point dimension) throws IOException {
         if (imageData == null) {
-            throw new IllegalArgumentException(String.format(NULL_ARGUMENT,
-                    "imageData"));
+            throw Exceptions.nullArgument("imageData");
         } else if (parameters == null) {
-            throw new IllegalArgumentException(String.format(NULL_ARGUMENT,
-                    "parameters"));
+            throw Exceptions.nullArgument("parameters");
         } else if (orientation == null) {
-            throw new IllegalArgumentException(String.format(NULL_ARGUMENT,
-                    "oriantation"));
+            throw Exceptions.nullArgument("oriantation");
         } else if (dimension == null) {
-            throw new IllegalArgumentException(String.format(NULL_ARGUMENT,
-                    "dimension"));
+            throw Exceptions.nullArgument("dimension");
         } else {
             final long time = System.currentTimeMillis();
             final JSONObject json;
@@ -193,8 +185,8 @@ public class Gallery {
             byte[] content = IOUtils.toByteArray(stream);
             IOUtils.closeQuietly(stream);
             try {
-                final JSONObject jsonObject = new JSONObject(new String(
-                        content, "UTF-8"));
+                final JSONObject jsonObject =
+                        new JSONObject(new String(content, "UTF-8"));
                 return decodeInformations(jsonObject);
             } catch (JSONException e) {
                 throw new IOException("Content cannot be parsed");
@@ -338,10 +330,12 @@ public class Gallery {
      */
     private Informations decodeInformations(JSONObject json)
             throws JSONException {
-        TransformationParamBean parameters = TransformationParamBean
-                .fromJSON(json.getJSONArray("parameters"));
-        DeviceOrientation oriantation = DeviceOrientation
-                .fromJSON((JSONArray) json.getJSONArray("orientation"));
+        TransformationParamBean parameters =
+                TransformationParamBean.fromJSON(json
+                        .getJSONArray("parameters"));
+        DeviceOrientation oriantation =
+                DeviceOrientation.fromJSON((JSONArray) json
+                        .getJSONArray("orientation"));
         JSONArray dimension = json.getJSONArray("dimension");
 
         return new Informations(parameters, oriantation, new Point(
