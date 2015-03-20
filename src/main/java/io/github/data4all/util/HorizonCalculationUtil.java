@@ -26,7 +26,7 @@ import io.github.data4all.model.drawing.Point;
  * This class calculates the horizon for the display of the device.
  * 
  * @author burghardt
- * @version 0.1
+ * @version 1.1
  *
  */
 
@@ -79,10 +79,10 @@ public class HorizonCalculationUtil {
         final double[] vector = { 0, 0, -1, };
         // rotate around y-axe with roll
         final double roll = -deviceOrientation.getRoll();
-        double[] vector2 = rotate(vector, yaxe, roll);
+        double[] vector2 = MathUtil.rotate(vector, yaxe, roll);
         // rotate around x-axe with pitch
         final double pitch = deviceOrientation.getPitch();
-        double[] vector3 = rotate(vector2, xaxe, pitch);
+        double[] vector3 = MathUtil.rotate(vector2, xaxe, pitch);
         // calculate angle between vector and z-axis and subtract from
         // maxhorizon.
         final double angle = maxhorizon - Math.acos(-vector3[2]);
@@ -114,8 +114,8 @@ public class HorizonCalculationUtil {
         double horizonPitch = Math.atan(vector4[1] / (vector4[2]));
         double horizonRoll = Math.atan(vector4[0] / (vector4[2]));
         // calculate a point on the horizont vertical to the mid of the display.
-        float x = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
-        float y = calculatePixelFromAngle(horizonPitch, maxHeight, maxPitch);
+        float x = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
+        float y = MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight, maxPitch);
 
         // set general direction / side of te horizon
         if (y <= 0 && x < 0) {
@@ -132,46 +132,33 @@ public class HorizonCalculationUtil {
         }
 
         // calculation of the gradiants
-        vector2 = rotate(xaxe, xaxe, pitch);
-        vector3 = rotate(vector2, yaxe, -roll);
+        vector2 = MathUtil.rotate(xaxe, xaxe, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
         // calculate the pitch- and roll-angles.
         horizonPitch = Math.atan(vector3[1] / (vector3[2]));
         horizonRoll = Math.atan(vector3[0] / (vector3[2]));
-        float xgradiant = calculatePixelFromAngle(horizonRoll, maxWidth,
+        float xgradiant = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth,
                 maxRoll);
-        float ygradiant = calculatePixelFromAngle(horizonPitch, maxHeight,
+        float ygradiant = MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight,
                 maxPitch);
 
-        vector2 = rotate(yaxe, xaxe, pitch);
-        vector3 = rotate(vector2, yaxe, -roll);
+        vector2 = MathUtil.rotate(yaxe, xaxe, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
         // calculate the pitch- and roll-angles.
         horizonPitch = Math.atan(vector3[1] / (vector3[2]));
         horizonRoll = Math.atan(vector3[0] / (vector3[2]));
         // calculate a point on the horizont vertical to the mid of the display.
         xgradiant = xgradiant
-                - calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
+                - MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
         ygradiant = ygradiant
-                - calculatePixelFromAngle(horizonPitch, maxHeight, maxPitch);
+                - MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight, maxPitch);
 
         // calculate and return the returnValues.
         return calculatePoints(maxWidth, maxHeight, x, y, xgradiant, ygradiant,
                 rV);
     }
 
-    /**
-     * @param angle
-     *            difference to the deviceorientation
-     * @param width
-     *            width or height of the devicedisplay
-     * @param maxAngle
-     *            maximum angle of the camera
-     * @return the pixel
-     */
-    private float calculatePixelFromAngle(double angle, double width,
-            double maxAngle) {
-        final double adjacent = (width / 2) / Math.tan(maxAngle / 2);
-        return (float) (Math.tan(angle) * adjacent);
-    }
+
 
     /**
      * An inner Class for saving points, the visibility of the horizon and if
@@ -346,46 +333,6 @@ public class HorizonCalculationUtil {
         return point2;
     }
 
-    /**
-     * 
-     * @param vector
-     *            which is going to be rotated
-     * @param axis
-     *            around which the vector is rotated
-     * @param the
-     *            rotation angle
-     * @return the rotated vector
-     */
-    private double[] rotate(double[] vector, double[] axis, double angle) {
-        double[][] matrix = new double[3][3];
-        matrix[0][0] = axis[0] * axis[0] * (1 - Math.cos(angle))
-                + Math.cos(angle);
-        matrix[0][1] = axis[0] * axis[1] * (1 - Math.cos(angle)) - axis[2]
-                * Math.sin(angle);
-        matrix[0][2] = axis[0] * axis[2] * (1 - Math.cos(angle)) + axis[1]
-                * Math.sin(angle);
-        matrix[1][0] = axis[1] * axis[0] * (1 - Math.cos(angle)) + axis[2]
-                * Math.sin(angle);
-        matrix[1][1] = axis[1] * axis[1] * (1 - Math.cos(angle))
-                + Math.cos(angle);
-        matrix[1][2] = axis[1] * axis[2] * (1 - Math.cos(angle)) - axis[0]
-                * Math.sin(angle);
-        matrix[2][0] = axis[2] * axis[0] * (1 - Math.cos(angle)) - axis[1]
-                * Math.sin(angle);
-        matrix[2][1] = axis[2] * axis[1] * (1 - Math.cos(angle)) + axis[0]
-                * Math.sin(angle);
-        matrix[2][2] = axis[2] * axis[2] * (1 - Math.cos(angle))
-                + Math.cos(angle);
 
-        double[] returnVec = new double[3];
-        for (int i = 0; i < 3; i++) {
-            double value = 0;
-            for (int b = 0; b < 3; b++) {
-                value += vector[b] * matrix[i][b];
-            }
-            returnVec[i] = value;
-        }
-        return returnVec;
-    }
 
 }

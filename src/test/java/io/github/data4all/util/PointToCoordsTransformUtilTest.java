@@ -115,34 +115,6 @@ public class PointToCoordsTransformUtilTest {
         assertThat(test.get(0).getLat(), lessThan(0.0));
     }
 
-    // Tests for method calculateAngleFromPixel(double pixel, double axis,
-    // double maxAngle)
-
-    /**
-     * a few different Pixel
-     */
-    @Test
-    public void calculateAngleFromPixelTest() {
-
-        ArrayList<Double> blub = new ArrayList<Double>();
-        double check = 0;
-        for(int i = 500; i >= 0 ; i = i - 10){
-            double x = Math.toDegrees(util.calculateAngleFromPixel(i, 1000, Math.toRadians(60)));
-            blub.add(x-check);
-            check = x;
-            
-        }
-        double test =  Math.toDegrees(util.calculateAngleFromPixel(1000, 1000, Math.toRadians(60)));
-        
-        double angle = util.calculateAngleFromPixel(500, 1000, 40);
-        assertThat(angle, is(0.0));
-
-        angle = util.calculateAngleFromPixel(1, 1000, 40);
-        assertThat(angle, lessThan(0.0));
-
-        angle = util.calculateAngleFromPixel(1000, 1000, 40);
-        assertThat(angle, greaterThan(0.0));
-    }
 
     // Tests for method calculateCoordFromPoint(TransformationParamBean tps,
     // DeviceOrientation deviceOrientation, Point point)
