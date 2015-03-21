@@ -1,6 +1,7 @@
 package io.github.data4all.util;
 
 import io.github.data4all.Exceptions;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
 
@@ -41,6 +42,8 @@ public class Gallery {
      * The ending if the information file of an image.
      */
     private static final String ENDING_INFO = ".info";
+
+    private static final String LOG_TAG = Gallery.class.getSimpleName();
 
     /**
      * The working directory of this gallery.
@@ -115,6 +118,7 @@ public class Gallery {
     public void addImage(final byte[] imageData,
             TransformationParamBean parameters, DeviceOrientation orientation,
             Point dimension) throws IOException {
+        Log.d(LOG_TAG, "adding image");
         if (imageData == null) {
             throw Exceptions.nullArgument("imageData");
         } else if (parameters == null) {
@@ -145,6 +149,8 @@ public class Gallery {
                 deleteData(time, ENDING_JPEG, ENDING_INFO);
                 throw e;
             }
+            Log.d(LOG_TAG, "image added");
+            // ONLY for debug purpose: Log.v(LOG_TAG, "images: " + Arrays.toString(getImages()));
         }
     }
 
@@ -253,6 +259,7 @@ public class Gallery {
      */
     private void saveData(long timestamp, String ending, byte[] content)
             throws IOException {
+        Log.d(LOG_TAG, "saving data " + timestamp + ending);
         if (checkOrCreateWorkingDirectory()) {
             FileOutputStream stream = null;
             try {
