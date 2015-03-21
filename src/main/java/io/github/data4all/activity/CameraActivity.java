@@ -21,6 +21,7 @@ import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.service.OrientationListener;
+import io.github.data4all.util.upload.Callback;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
 
@@ -69,8 +70,7 @@ public class CameraActivity extends AbstractActivity {
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();
 
-    public static final String FINISH_TO_CAMERA =
-            "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+    public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
 
     /**
      * Indicates the single picture mode
@@ -115,27 +115,25 @@ public class CameraActivity extends AbstractActivity {
 
         shutterCallback = new ShutterCallback() {
             public void onShutter() {
-                final Vibrator vibrator =
-                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
             }
         };
-        mDetector =
-                new GestureDetector(this,
-                        new GestureDetector.SimpleOnGestureListener() {
-                            @Override
-                            public boolean onFling(MotionEvent e1,
-                                    MotionEvent e2, float x, float y) {
-                                if (x > MIN_SWIPE_VELOCITY) {
-                                    switchMode(currentMappingMode - 1);
-                                    return true;
-                                } else if (x < -MIN_SWIPE_VELOCITY) {
-                                    switchMode(currentMappingMode + 1);
-                                    return true;
-                                }
-                                return false;
-                            }
-                        });
+        mDetector = new GestureDetector(this,
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onFling(MotionEvent e1, MotionEvent e2,
+                            float x, float y) {
+                        if (x > MIN_SWIPE_VELOCITY) {
+                            switchMode(currentMappingMode - 1);
+                            return true;
+                        } else if (x < -MIN_SWIPE_VELOCITY) {
+                            switchMode(currentMappingMode + 1);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
     }
 
     /*
@@ -157,17 +155,15 @@ public class CameraActivity extends AbstractActivity {
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
 
-        listener =
-                new ButtonRotationListener(this,
-                        Arrays.asList((View) btnCapture));
+        listener = new ButtonRotationListener(this,
+                Arrays.asList((View) btnCapture));
 
         // Set the Focus animation
-        mAutoFocusCrossHair =
-                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
 
-        mSwipeListManager =
-                new SwipeListManager(this, Arrays.asList("Single", "Gallery"));
+        mSwipeListManager = new SwipeListManager(this, Arrays.asList("Single",
+                "Gallery"));
         mSwipeListManager.setContent(currentMappingMode);
     }
 
@@ -177,8 +173,7 @@ public class CameraActivity extends AbstractActivity {
         setLayout();
         if (isDeviceSupportCamera()) {
             try {
-                cameraPreview =
-                        (CameraPreview) findViewById(R.id.cameraPreview);
+                cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
 
                 mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 cameraPreview.setCamera(mCamera);
@@ -238,9 +233,10 @@ public class CameraActivity extends AbstractActivity {
         } else if (id == MODE_GALLERY) {
             mSwipeListManager.swipeFromRight();
         } else {
-            // If the mode is not single and not galery, break here.
+            // If the mode is not single and not gallery, break here.
             return;
         }
+        pictureHandler.setGallery(id == MODE_GALLERY);
         currentMappingMode = id;
     }
 
@@ -258,8 +254,33 @@ public class CameraActivity extends AbstractActivity {
      *            The image-button to use.
      */
     private void setListener(ImageButton button) {
-        pictureHandler =
-                new CapturePictureHandler(CameraActivity.this, cameraPreview);
+        pictureHandler = new CapturePictureHandler(CameraActivity.this,
+                cameraPreview);
+        pictureHandler.setGallery(currentMappingMode == MODE_GALLERY);
+        pictureHandler.setGalleryCallback(new Callback<Exception>() {
+            @Override
+            public void callback(final Exception e) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (e == null) {
+                            Toast.makeText(CameraActivity.this,
+                                    "Saved to gallery", Toast.LENGTH_SHORT)
+                                    .show();
+                        } else {
+                            Toast.makeText(CameraActivity.this,
+                                    e.getLocalizedMessage(), Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                        btnCapture.setEnabled(true);
+                    };
+                });
+            }
+
+            @Override
+            public int interval() {
+                return 1;
+            }
+        });
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

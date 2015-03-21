@@ -22,7 +22,9 @@ import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.upload.Callback;
 import io.github.data4all.view.CameraPreview;
 
 import java.io.File;
@@ -89,6 +91,10 @@ public class CapturePictureHandler implements PictureCallback {
 
     private boolean gallery;
 
+    private Gallery mGallery;
+
+    private Callback<Exception> mGalleryCallback;
+
     /**
      * Default constructor.
      * 
@@ -100,6 +106,7 @@ public class CapturePictureHandler implements PictureCallback {
     public CapturePictureHandler(AbstractActivity context, CameraPreview preview) {
         this.context = context;
         this.preview = preview;
+        mGallery = new Gallery(context);
     }
 
     /**
@@ -110,7 +117,7 @@ public class CapturePictureHandler implements PictureCallback {
      *      android.hardware.Camera)
      */
     @Override
-    public void onPictureTaken(byte[] raw, Camera camera) {
+    public void onPictureTaken(final byte[] raw, Camera camera) {
         Log.d(TAG, "onPictureTaken is called");
 
         final Camera.Parameters params = camera.getParameters();
@@ -127,7 +134,19 @@ public class CapturePictureHandler implements PictureCallback {
 
         // Start a thread to save the Raw Image in JPEG into SDCard
         if (gallery) {
-            // TODO
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mGallery.addImage(raw, transformBean,
+                                Optimizer.currentDeviceOrientation(),
+                                preview.getViewSize());
+                    } catch (IOException e) {
+                        mGalleryCallback.callback(e);
+                    }
+                    mGalleryCallback.callback(null);
+                }
+            }).start();
         } else {
             new SavePhotoTask(Optimizer.currentDeviceOrientation(),
                     preview.getViewSize()).execute(raw);
@@ -240,5 +259,9 @@ public class CapturePictureHandler implements PictureCallback {
         // Save the file to the folder in the internal storage
         final String name = System.currentTimeMillis() + FILE_FORMAT;
         return new File(folder, name);
+    }
+
+    public void setGalleryCallback(Callback<Exception> callback) {
+        this.mGalleryCallback = callback;
     }
 }
