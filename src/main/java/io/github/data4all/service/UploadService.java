@@ -211,8 +211,10 @@ public class UploadService extends IntentService {
             String trackXml = trackParser.parseTrack(t);
             Log.d(TAG, "trying to upload track with ID: " +t.getID() +" name: " +t.getTrackName());
             Log.d(TAG, "xml: " +trackXml.replaceAll("\n", ""));
+            
+            // TODO: set description and tags 
             UploadTracksTask trackUpload =
-                    new UploadTracksTask(this, user, trackXml, t.getTrackName(), "blubb", "blaah",
+                    new UploadTracksTask(this, user, trackXml, t.getTrackName(), "description", "tags",
                             "true");
             
             trackUpload.execute();
