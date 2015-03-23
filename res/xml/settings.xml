@@ -13,11 +13,11 @@
         android:title="@string/pref_bodyheight_title" />
 
     <ListPreference
-        android:defaultValue="en"
+        android:defaultValue="@string/pref_language_default"
         android:entries="@array/languageListArray"
         android:entryValues="@array/languageListValues"
-        android:key="language"
-        android:summary="Select your language."
+        android:key="@string/pref_language_key"
+        android:summary="@string/pref_language_summary"
         android:title="Language" />
 
 </PreferenceScreen>
