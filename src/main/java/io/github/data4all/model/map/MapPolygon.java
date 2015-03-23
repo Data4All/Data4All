@@ -56,6 +56,10 @@ public class MapPolygon extends Polygon {
     int xStart = 0;
     int yStart = 0;
     List<GeoPoint> originalPoints;
+    List<Point> pointsOffset;
+    List<GeoPoint> geoPointList;
+    Point firstPoint;
+    Projection pj;
 
     /**
      * Default constructor.
@@ -128,6 +132,15 @@ public class MapPolygon extends Polygon {
             if (polygonMovable) {
                 switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    pj = mapView.getProjection();
+                    // actual polygon point list
+                    geoPointList = this.getPoints();
+                    // get the position of the first point as the basis for
+                    // moving
+                    firstPoint = pj.toPixels(geoPointList.get(0), null);
+                    // get the offset of all points in the list to the first one
+                    pointsOffset = getOffset();
+
                     xStart = (int) event.getX();
                     yStart = (int) event.getY();
                     Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
@@ -162,60 +175,42 @@ public class MapPolygon extends Polygon {
      */
     public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
 
-        // using the historical events for the move event
-        int hisSize = event.getHistorySize();
+        //set the end coordinates of the movement
         int xEnd = (int) event.getX();
         int yEnd = (int) event.getY();
-        if (hisSize > 0) {
-            xStart = (int) event.getHistoricalX(0);
-            yStart = (int) event.getHistoricalY(0);
+
+        if (pointsOffset == null) {
+            pointsOffset = getOffset();
         }
 
-        Log.e(TAG, "" + hisSize);
-        Log.i(TAG, "moveMapPolygon from: " + xStart + " " + yStart);
-        Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
+        // only move the polygon if there is a movement
+        if (Math.abs(xEnd - xStart) > 0 && Math.abs(yEnd - yStart) > 0) {
 
-        final Projection pj = mapView.getProjection();
-        // actual polygon point list
-        List<GeoPoint> geoPointList = this.getPoints();
+            Log.i(TAG, "moveMapPolygon from: " + xStart + " " + yStart);
+            Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
 
-        // TODO remove if the other way is performed
-        // //moving all points of the polygon to the new position
-        // for (int i = 0; i < geoPointList.size(); i++) {
-        // Point point = pj.toPixels(geoPointList.get(i), null);
-        // Log.i(TAG, "old" + point.x + " " + point.y);
-        // Point newPoint = new Point();
-        // newPoint.set(point.x + (xEnd - xStart), point.y + (yEnd - yStart));
-        // Log.i(TAG, "new" + newPoint.x + " " + newPoint.y);
-        // geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
-        // (int) newPoint.y));
-        // }
-        // this.setPoints(geoPointList);
-        // mapView.invalidate();
+            // move the first point
+            firstPoint.set((firstPoint.x + (xEnd - xStart)),
+                    (firstPoint.y + (yEnd - yStart)));
+            geoPointList.set(0, (GeoPoint) pj.fromPixels((int) firstPoint.x,
+                    (int) firstPoint.y));
 
-        // get the position of the first point as the basis for moving
-        Point firstPoint = pj.toPixels(geoPointList.get(0), null);
-        List<Point> pointsOffset = getOffset();
+            // set all other points depending on the first point
+            for (int i = 1; i < geoPointList.size(); i++) {
+                Point newPoint = new Point();
+                newPoint.set((firstPoint.x + pointsOffset.get(i).x),
+                        (firstPoint.y + pointsOffset.get(i).y));
+                geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
+                        (int) newPoint.y));
+            }
+            // set new start values for the next move action
+            xStart = (int) event.getX();
+            yStart = (int) event.getY();
 
-        // moving all points compared to the first one
-        for (int i = 0; i < geoPointList.size(); i++) {
-            Point point = pj.toPixels(geoPointList.get(i), null);
-            Log.i("x" + TAG, "old" + point.x + " " + point.y);
-            Log.i("x" + TAG, "first" + firstPoint.x + " " + firstPoint.y);
-            Point newPoint = new Point();
-            // move from the first point position and then add the actual point
-            // offset to get the new position of the point
-            newPoint.set(
-                    (firstPoint.x + (xEnd - xStart) + pointsOffset.get(i).x),
-                    (firstPoint.y + (yEnd - yStart) + pointsOffset.get(i).y));
-            Log.i("x" + TAG, "new" + newPoint.x + " " + newPoint.y);
-            geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
-                    (int) newPoint.y));
+            // set the list with the changed points
+            this.setPoints(geoPointList);
+            mapView.invalidate();
         }
-
-        // set the list with the changed points
-        this.setPoints(geoPointList);
-        mapView.invalidate();
     }
 
     /**
@@ -225,21 +220,18 @@ public class MapPolygon extends Polygon {
      * @return List with all vectors
      */
     public List<Point> getOffset() {
-        final Projection pj = mapView.getProjection();
-        // actual Polygon point list
-        List<GeoPoint> geoPointList = originalPoints;
-        Log.i("a" + TAG, "" + geoPointList.size());
-        List<Point> pointOffset = new ArrayList<Point>();
-        if (geoPointList.size() > 0) {
-            Point firstPoint = pj.toPixels(geoPointList.get(0), null);
-            for (int i = 0; i < geoPointList.size(); i++) {
-                Point point = pj.toPixels(geoPointList.get(i), null);
+        Log.i(TAG, "" + originalPoints.size());
+        List<Point> pointsOffset = new ArrayList<Point>();
+        if (originalPoints.size() > 0) {
+            Point firstPoint = pj.toPixels(originalPoints.get(0), null);
+            for (int i = 0; i < originalPoints.size(); i++) {
+                Point point = pj.toPixels(originalPoints.get(i), null);
                 int xOffset = (point.x - firstPoint.x);
                 int yOffset = (point.y - firstPoint.y);
-                pointOffset.add(new Point(xOffset, yOffset));
+                pointsOffset.add(new Point(xOffset, yOffset));
             }
         }
-        return pointOffset;
+        return pointsOffset;
     }
 
     /**

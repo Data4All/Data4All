@@ -221,7 +221,6 @@ public class D4AMapView extends MapView {
         Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
         area.setStrokeColor(DEFAULT_STROKE_COLOR);
 
-        //TODO comment in, so that it is only in MapPreviev
         if (edit) {
             //set the polygon to editable
             ((MapPolygon)area).setEditable(true);
