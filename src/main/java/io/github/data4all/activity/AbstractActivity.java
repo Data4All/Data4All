@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.Toast;
 
 /**
  * Global activity for all children activities.
@@ -65,7 +66,7 @@ public abstract class AbstractActivity extends Activity {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actionbar, menu);
         final ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
         return super.onCreateOptionsMenu(menu);
@@ -96,6 +97,12 @@ public abstract class AbstractActivity extends Activity {
         // finish workflow, return to mapview
         case android.R.id.home:
             onWorkflowFinished(null);
+            status = true;
+            break;
+        case R.id.record_track:
+            // TODO start tracking
+            Toast.makeText(getApplicationContext(), "start tracking",
+                    Toast.LENGTH_LONG).show();
             status = true;
             break;
         default:
@@ -199,9 +206,8 @@ public abstract class AbstractActivity extends Activity {
      * @return if the device uses the navigationbar
      */
     public static boolean hasNavBar(Resources resources) {
-        final int id =
-                resources.getIdentifier("config_showNavigationBar", "bool",
-                        "android");
+        final int id = resources.getIdentifier("config_showNavigationBar",
+                "bool", "android");
         if (id > 0) {
             return resources.getBoolean(id);
         } else {
@@ -220,9 +226,8 @@ public abstract class AbstractActivity extends Activity {
      * @return The height of the navigationbar
      */
     public static int getNavBarHeight(Resources resources) {
-        final int id =
-                resources.getIdentifier("navigation_bar_height", "dimen",
-                        "android");
+        final int id = resources.getIdentifier("navigation_bar_height",
+                "dimen", "android");
         if (id > 0) {
             return resources.getDimensionPixelSize(id);
         }

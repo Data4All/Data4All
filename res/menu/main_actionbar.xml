@@ -6,6 +6,11 @@
         android:icon="@drawable/ic_action_upload"
         android:showAsAction="ifRoom"
         android:title="@string/upload_data"/>
+    
+    <item
+        android:id="@+id/record_track"
+        android:icon="@drawable/record_icon"
+        android:title="@string/recordTrack" android:showAsAction="ifRoom"/>
 
     <!-- Settings, should always be in the overflow -->
     <item

@@ -61,6 +61,12 @@ public class Track implements Parcelable {
      * saves a list of TrackPoints.
      */
     private final List<TrackPoint> tracklist;
+    
+    
+    /**
+     * flag, to indicate if this track is open or closed.
+     */
+    private boolean open;
 
     /**
      * Methods to write and restore a Parcel.

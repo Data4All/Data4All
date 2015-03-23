@@ -29,6 +29,7 @@
     <string name="drawBuilding">Drawing a Building </string>
     <string name="redo">Redo Function</string>
     <string name="undo">Undo Function</string>
+    <string name="recordTrack">Record Track</string>
 
     <!-- infoBubble -->
     <string name="delete">Delete</string>
