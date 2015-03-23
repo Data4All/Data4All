@@ -23,6 +23,7 @@ import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.view.D4AMapView;
 
@@ -49,17 +50,40 @@ public class MapPolygon extends Polygon {
     private static final String TAG = "MapPolygon";
     private AbstractActivity activity;
     private D4AMapView mapView;
-    private AbstractDataElement element;
-    // TODO
+    private AbstractDataElement element;   
     private boolean editable;
     boolean polygonMovable = false;
-    int xStart = 0;
-    int yStart = 0;
-    List<GeoPoint> originalPoints;
-    List<Point> pointsOffset;
-    List<GeoPoint> geoPointList;
-    Point firstPoint;
-    Projection pj;
+    
+    /**
+     * Start values for moving.
+     */
+    private int xStart = 0;
+    private int yStart = 0;
+    
+    /**
+     * List of GeoPoints of the MapPolygon before it was edited.
+     */
+    private List<GeoPoint> originalPoints;
+    
+    /**
+     * List of vectors from the first point in the MapPolygon to every point.
+     */
+    private List<Point> pointsOffset;
+    
+    /**
+     * List of GeoPoints for editing the MapPolygon.
+     */
+    private List<GeoPoint> geoPointList;
+    
+    /**
+     * First point of the MapPolygon in pixel coordinates.
+     */
+    private Point firstPoint;
+    
+    /**
+     * Projection of the mapView.
+     */
+    private Projection pj;
 
     /**
      * Default constructor.
@@ -89,6 +113,9 @@ public class MapPolygon extends Polygon {
         setInfo();
     }
 
+    /**
+     * Set the info of the MapPolygon for the InfoWindow.
+     */
     public void setInfo() {
         if (!element.getTags().keySet().isEmpty()
                 && !element.getTags().values().isEmpty()) {
@@ -106,6 +133,13 @@ public class MapPolygon extends Polygon {
         }
     }
 
+    /**
+     * Get the localized name of the element to show in the InfoWindow.
+     * @param context
+     * @param key
+     * @param value
+     * @return
+     */
     public String getLocalizedName(Context context, String key, String value) {
         Resources resources = context.getResources();
         String s = "name_" + key + "_" + value;
@@ -147,6 +181,8 @@ public class MapPolygon extends Polygon {
                     break;
                 case MotionEvent.ACTION_UP:
                     Log.d(TAG, "action_up");
+                    // set the new information to the element
+                    ((PolyElement) element).setNodesFromGeoPoints(geoPointList);
                     // if polygon is movable and the touch event is an action
                     // up, set polygonMovable to false again
                     polygonMovable = false;
@@ -175,7 +211,7 @@ public class MapPolygon extends Polygon {
      */
     public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
 
-        //set the end coordinates of the movement
+        // set the end coordinates of the movement
         int xEnd = (int) event.getX();
         int yEnd = (int) event.getY();
 
