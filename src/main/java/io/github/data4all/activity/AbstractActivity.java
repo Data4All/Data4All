@@ -27,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
-import android.widget.Toast;
 
 /**
  * Global activity for all children activities.
@@ -100,9 +99,7 @@ public abstract class AbstractActivity extends Activity {
             status = true;
             break;
         case R.id.record_track:
-            // TODO start tracking
-            Toast.makeText(getApplicationContext(), "start tracking",
-                    Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, TrackControlActivity.class));
             status = true;
             break;
         default:

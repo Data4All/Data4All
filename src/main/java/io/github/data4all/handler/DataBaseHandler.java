@@ -108,6 +108,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // GPS Track Column Names
     private static final String KEY_TRACKNAME = "trackname";
     private static final String KEY_TRACKPOINTS = "trackpointids";
+    private static final String FLAG_FINISHED = "finished";
 
     // GPS Trackpoint Column Names
     private static final String KEY_ALT = "altitude";
@@ -151,7 +152,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final String CREATE_GPSTRACK_TABLE =
                 "CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_INCID
                         + " INTEGER PRIMARY KEY," + KEY_TRACKNAME + " TEXT,"
-                        + KEY_TRACKPOINTS + " TEXT" + ")";
+                        + KEY_TRACKPOINTS + " TEXT," + FLAG_FINISHED + " INTEGER" + ")";
         final String CREATE_TRACKPOINT_TABLE =
                 "CREATE TABLE " + TABLE_TRACKPOINT + " (" + KEY_INCID
                         + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
@@ -1171,6 +1172,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_INCID, track.getID());
         }
         values.put(KEY_TRACKNAME, track.getTrackName());
+        
+        values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
 
         final List<Long> trackPointIDs =
                 this.createTrackPoints(track.getTrackPoints());
@@ -1205,7 +1208,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final Cursor cursor =
                 db.query(TABLE_GPSTRACK, new String[] {KEY_INCID,
-                        KEY_TRACKNAME, KEY_TRACKPOINTS,}, KEY_INCID + "=?",
+                        KEY_TRACKNAME, KEY_TRACKPOINTS, FLAG_FINISHED,}, KEY_INCID + "=?",
                         new String[] {String.valueOf(id)}, null, null, null,
                         null);
 
@@ -1229,6 +1232,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             final List<TrackPoint> trackPoints =
                     this.getTrackPoints(trackPointIDs);
             track.setTrackPoints(trackPoints);
+            
+            boolean finishflag = cursor.getInt(3)>0;
+            track.setStatus(finishflag);
 
             cursor.close();
         }
@@ -1289,6 +1295,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final ContentValues values = new ContentValues();
 
         values.put(KEY_TRACKNAME, track.getTrackName());
+        
+        values.put(FLAG_FINISHED, track.isFinished());
 
         int count = 0;
 
@@ -1341,6 +1349,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 final List<TrackPoint> trackPoints =
                         this.getTrackPoints(trackPointIDs);
                 track.setTrackPoints(trackPoints);
+                
+                boolean finishflag = cursor.getInt(3)>0;
+                track.setStatus(finishflag);
 
                 gpsTracks.add(track);
             }

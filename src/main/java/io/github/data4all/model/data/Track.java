@@ -125,7 +125,7 @@ public class Track implements Parcelable {
         return new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
     }
 
-    private void setStatus(boolean status) {
+    public void setStatus(boolean status) {
         this.finished = status;
     }
 

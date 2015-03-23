@@ -30,6 +30,7 @@
     <string name="redo">Redo Function</string>
     <string name="undo">Undo Function</string>
     <string name="recordTrack">Record Track</string>
+    <string name="stopTrack">Stop Track</string>
 
     <!-- infoBubble -->
     <string name="delete">Delete</string>
@@ -91,5 +92,11 @@
     <string name="retry">Cannot find the right Tag. Try Again.</string>
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
     <string name="show_pwd">Show Password</string>
-
+    
+    <!-- Track Control Activity -->
+     <string name="no_track_opened">No current track was found. Please start a new one.</string>
+     <string name="currentTrack">Current track: </string>
+      <string name="trackId">Track Id:  </string>
+    
+	
 </resources>
