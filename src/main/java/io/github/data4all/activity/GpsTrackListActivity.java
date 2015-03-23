@@ -57,10 +57,6 @@ public class GpsTrackListActivity extends AbstractActivity {
 
         // Get saved tracks
         getTracks();
-        Track track = new Track();
-        track.addTrackPoint(new Location("test"));
-        track.setID(5);
-        trackList.add(track);
 
         // Get the ListAdapter
         trackItemArrayAdapter = new ListAdapter(getApplicationContext(),
