@@ -91,7 +91,7 @@
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
     
     <!-- track list and details -->
-    <string name="list_tracks">Gps Tracks</string>
+    <string name="list_tracks">Tracks</string>
     <string name="track_id">Track ID:</string>
     <string name="trackpoints">Trackpoints:</string>
     <string name="trackname">Name:</string>
