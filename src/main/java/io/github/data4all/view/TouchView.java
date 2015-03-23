@@ -36,8 +36,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -102,7 +104,7 @@ public class TouchView extends View {
     /**
      * The paint to draw the area with.
      */
-    private final Paint areaPaint = new Paint();
+    private Paint areaPaint = new Paint();
 
     /**
      * The path to draw.
@@ -132,6 +134,11 @@ public class TouchView extends View {
      * The current used RedoUndo object.
      */
     private RedoUndo redoUndo;
+
+    private Boolean polygonclicked = false;
+
+    private float downX = 0;
+    private float downY = 0;
 
     /**
      * The drawing size of a point (calculating with the density for same result
@@ -292,36 +299,69 @@ public class TouchView extends View {
      */
     private void handleMotion(MotionEvent event, String action) {
         if (currentMotion != null) {
+
+            downX = event.getX();
+            downY = event.getY();
             if (action.equals("start")) {
-                
-                Point bla = new Point(event.getX(),event.getY());
-               contains(bla);
-                
+
+                longClickHandler.postDelayed(mLongPressed, 1000);
+
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
+                    longClickHandler.removeCallbacks(mLongPressed);
+                    Log.d("", "Long Press cancled because there is a point");
+
                     this.mover = movePoint(lookUpPoint);
                     isDelete = true;
                     startPoint = lookUpPoint;
                     lookUpPoint = null;
+
                 } else {
-                    currentMotion.addPoint(event.getX(), event.getY());
+                    startPoint = new Point(downX, downY);
+                    if (insidePolygon(startPoint)==false) {
+                        currentMotion.addPoint(event.getX(), event.getY());
+                    }
                 }
             } else if (action.equals("move")) {
-                if (mover != null) {
-                    if (Math.abs(startPoint.getX() - event.getX()) > 10
-                            && Math.abs(startPoint.getY() - event.getY()) > 10) {
-                        Log.d("", "Long Press cancled");
+
+                float offsetX = startPoint.getX() - event.getX();
+                float offsetY = startPoint.getY() - event.getY();
+
+                Log.d("", "polygonclicked: " + polygonclicked);
+                if (polygonclicked) {
+
+                    if (Math.abs(offsetX) > 15 || Math.abs(offsetY) > 15) {
+                        movePolygon(offsetX, offsetY);
+                        startPoint = new Point(downX, downY);
+                    }
+
+                } else if (mover != null) {
+                    if (Math.abs(offsetX) > 10 && Math.abs(offsetY) > 10
+                            && polygonclicked == false) {
+                        // handler.removeCallbacks(mLongPressed);
+                        // Log.d("", "Long Press cancled MOVE");
                         mover.moveTo(event.getX(), event.getY());
                         isDelete = false;
                         redoUndo.add(new Point(event.getX(), event.getY()),
                                 moveTo, mover.getIdx());
                     }
                 } else {
-                    currentMotion.addPoint(event.getX(), event.getY());
-                    newPolygon = interpreter.interprete(polygon, currentMotion);
+                    if (Math.abs(offsetX) > 5 && Math.abs(offsetY) > 5) {
+                        currentMotion.addPoint(event.getX(), event.getY());
+                        newPolygon = interpreter.interprete(polygon,
+                                currentMotion);
+                    }
                 }
             } else if (action.equals("end")) {
-                if (isDelete) {
+                longClickHandler.removeCallbacks(mLongPressed);
+                if (polygonclicked) {
+                    longClickHandler.removeCallbacks(mLongPressed);
+                    polygonclicked = false;
+
+                    areaPaint.setColor(MotionInterpreter.AREA_COLOR);
+                    areaPaint.setAlpha(100);
+                    Log.d("", "Long Press canceld END");
+                } else if (isDelete) {
                     redoUndo.add(startPoint, delete, mover.getIdx());
                     this.deletePoint(startPoint);
                     mover = null;
@@ -333,12 +373,35 @@ public class TouchView extends View {
                         redoUndo = new RedoUndo(newPolygon);
                     }
                 }
+                invalidate();
             } else {
                 Log.e(this.getClass().getSimpleName(),
                         "ERROR, No action Found for: " + action);
             }
         }
     }
+
+    /**
+     * handles long clicks.
+     * 
+     * @author konerman
+     * 
+     */
+    final Handler longClickHandler = new Handler();
+    Runnable mLongPressed = new Runnable() {
+        public void run() {
+            Log.i("", "Long press!");
+            if (insidePolygon(new Point(downX, downY))) {
+                polygonclicked = true;
+                Paint paint = new Paint();
+                paint.setColor(Color.RED);
+                paint.setAlpha(100);
+                areaPaint = paint;
+
+                postInvalidate();
+            }
+        }
+    };
 
     /**
      * Deletes a Point of the polygon.
@@ -360,26 +423,58 @@ public class TouchView extends View {
     }
 
     /**
-     * Return true if the given point is contained inside the polygon.
-     * See: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+     * Return true if the given point is contained inside the polygon. See:
+     * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
      * 
-     * @param test The point to check
+     * @param test
+     *            The point to check
      * @return true if the point is inside the polygon, false otherwise
      *
      */
-    public boolean insidePolygon(Point test) {
-        int i;
-        int j;
+    private boolean insidePolygon(Point test) {
+        int i, j;
         boolean result = false;
         for (i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
-            if ((polygon.get(i).getY() > test.getY()) != (polygon.get(j).getY() > test.getY()) &&
-                    (test.getX() < (polygon.get(j).getX() - polygon.get(i).getX()) * (test.getY() - polygon.get(i).getY()) / (polygon.get(j).getY()-polygon.get(i).getY()) + polygon.get(i).getX())) {
-                  result = !result;
+            if ((polygon.get(i).getY() > test.getY()) != (polygon.get(j).getY() > test
+                    .getY())
+                    && (test.getX() < (polygon.get(j).getX() - polygon.get(i)
+                            .getX())
+                            * (test.getY() - polygon.get(i).getY())
+                            / (polygon.get(j).getY() - polygon.get(i).getY())
+                            + polygon.get(i).getX())) {
+                result = !result;
+            }
         }
-      }
+        Log.d(this.getClass().getSimpleName(), "-------inside polygon:" + result);
         return result;
     }
 
+    /**
+     * moves the entire polygon
+     * 
+     * @konerman
+     * 
+     * @param x
+     *            the offset of the x-coordinate
+     * @param y
+     *            the offset of the y-coordinate
+     * @return the new Polygon
+     *
+     */
+    public void movePolygon(float x, float y) {
+        Log.e(this.getClass().getSimpleName(), "----MOVEpolygon");
+        x = -x;
+        y = -y;
+        for (int i = 0; i < polygon.size(); i++) {
+            float xcoord = polygon.get(i).getX() + x;
+            float ycoord = polygon.get(i).getY() + y;
+            polygon.set(i, new Point(xcoord, ycoord));
+        }
+        invalidate();
+
+    }
+
+ 
     /**
      * This function determines if there is a Point of the polygon close to the
      * given coordinates.
