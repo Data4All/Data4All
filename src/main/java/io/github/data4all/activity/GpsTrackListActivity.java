@@ -1,16 +1,28 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.Track;
-import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.util.ListAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,10 +56,6 @@ public class GpsTrackListActivity extends AbstractActivity {
 
         // Get saved tracks
         getTracks();
-
-        for (int i = 0; i < 10; i++) {
-            trackList.add(testMethod(i, i * 5));
-        }
 
         // Get the ListAdapter
         trackItemArrayAdapter = new ListAdapter(getApplicationContext(),
@@ -99,21 +107,12 @@ public class GpsTrackListActivity extends AbstractActivity {
         db.close();
     }
 
-    private Track testMethod(long id, int trackpoints) {
-        Track track1 = new Track();
-        track1.setID(id);
-        List<TrackPoint> trackPoints1 = new ArrayList<TrackPoint>();
-        for (int i = 0; i < trackpoints; i++) {
-            trackPoints1.add(new TrackPoint(new Location("test")));
-        }
-        track1.setTrackPoints(trackPoints1);
-        return track1;
-    }
-
+    /* (non-Javadoc)
+     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+     */
     @Override
     protected void onWorkflowFinished(Intent data) {
-        // TODO Auto-generated method stub
-
+        finishWorkflow(data);
     };
 
 }

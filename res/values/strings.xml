@@ -92,6 +92,8 @@
     
     <!-- track list and details -->
     <string name="list_tracks">Gps Tracks</string>
-    <string name="track_id">Track ID: "</string>
+    <string name="track_id">Track ID:</string>
+    <string name="trackpoints">Trackpoints:</string>
+    <string name="trackname">Name:</string>
 
 </resources>
