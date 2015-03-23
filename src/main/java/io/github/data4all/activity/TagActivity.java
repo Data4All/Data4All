@@ -17,11 +17,13 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.service.GPSservice;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
@@ -326,6 +328,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
     public void createDialog(List<Tag> arrayList, String title,
             final Boolean first1) {
+        
+        TagSuggestionHandler handler=GPSservice.tagSuggestionHandler;
 
         dialog1 = new Dialog(this);
         dialog1.setCancelable(false);
@@ -345,7 +349,20 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             final EditText text = new EditText(this);
             final Tag tag = arrayList.get(i);
             //check if a tag has a lastvalue(e.g street, country, etc...)
-            if (tag.getLastValue() != null) {
+            if(tag!=null && tag.getId()==1 && handler.getAddress1()!=null && !handler.getAddress1().isEmpty()){
+                text.setText(handler.getAddress1());
+            }
+            else if(tag!=null && tag.getId()==2 && handler.getAddresseNr()!=null && !handler.getAddresseNr().isEmpty()){
+                text.setText(handler.getAddresseNr());
+            }else if(tag!=null && tag.getId()==3 && handler.getPIN()!=null && !handler.getPIN().isEmpty()){
+                text.setText(handler.getPIN());
+            }else if(tag!=null && tag.getId()==4 && handler.getCity()!=null && !handler.getCity().isEmpty()){
+                text.setText(handler.getCity());
+            }
+            else if(tag!=null && tag.getId()==5 && handler.getCountry()!=null && !handler.getCountry().isEmpty()){
+                text.setText(handler.getCountry());
+            }
+            else if (tag.getLastValue() != null) {
                 text.setText(tag.getLastValue());
             } else {
                 text.setHint(tag.getHintRessource());
