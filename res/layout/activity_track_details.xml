@@ -62,9 +62,19 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonUploadTrack"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/delete" />
+
+    <Button
+        android:id="@+id/buttonUploadTrack"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/textViewTrackPointCount"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:text="@string/delete" />
+        android:layout_marginTop="30dp"
+        android:text="@string/UploadButton" />
 
 </RelativeLayout>

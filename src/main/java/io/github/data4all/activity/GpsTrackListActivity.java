@@ -23,6 +23,7 @@ import io.github.data4all.util.ListAdapter;
 import java.util.List;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,6 +57,10 @@ public class GpsTrackListActivity extends AbstractActivity {
 
         // Get saved tracks
         getTracks();
+        Track track = new Track();
+        track.addTrackPoint(new Location("test"));
+        track.setID(5);
+        trackList.add(track);
 
         // Get the ListAdapter
         trackItemArrayAdapter = new ListAdapter(getApplicationContext(),

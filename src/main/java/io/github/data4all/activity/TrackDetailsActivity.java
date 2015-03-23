@@ -31,12 +31,14 @@ import android.widget.TextView;
  * @author sbrede
  *
  */
-public class TrackDetailsActivity extends AbstractActivity {
+public class TrackDetailsActivity extends AbstractActivity implements
+        OnClickListener {
 
     private TextView trackDetails;
     private TextView trackId;
     private TextView trackPointCount;
     private Button deleteButton;
+    private Button uploadButton;
 
     /*
      * (non-Javadoc)
@@ -84,25 +86,16 @@ public class TrackDetailsActivity extends AbstractActivity {
     }
 
     /**
-     * Adds a button listener for this activity. A click on this button deletes
-     * a track and starts a new {@link GpsTrackListActivity}.
+     * Adds a button listener for this activity. A click on delete button
+     * deletes a track and starts a new {@link GpsTrackListActivity}. The upload
+     * button starts the {@link LoginActivity}.
      */
     private void addButtonListener() {
 
         deleteButton = (Button) findViewById(R.id.buttonDeleteTrack);
-        deleteButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-
-                deleteTrack(getIntent().getLongExtra("id", -1));
-                Intent listActivity = new Intent(getApplicationContext(),
-                        GpsTrackListActivity.class);
-                startActivity(listActivity);
-
-            }
-
-        });
+        uploadButton = (Button) findViewById(R.id.buttonUploadTrack);
+        deleteButton.setOnClickListener(this);
+        uploadButton.setOnClickListener(this);
     }
 
     /**
@@ -116,6 +109,29 @@ public class TrackDetailsActivity extends AbstractActivity {
         Track track = db.getGPSTrack(id);
         db.deleteGPSTrack(track);
         db.close();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.buttonDeleteTrack:
+            deleteTrack(getIntent().getLongExtra("id", -1));
+            Intent listActivity = new Intent(getApplicationContext(),
+                    GpsTrackListActivity.class);
+            startActivity(listActivity);
+            break;
+        case R.id.buttonUploadTrack:
+            startActivity(new Intent(this, LoginActivity.class));
+            break;
+        default:
+            break;
+        }
+
     }
 
 }
