@@ -17,6 +17,7 @@ package io.github.data4all.service;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
@@ -41,6 +42,8 @@ import android.widget.Toast;
  */
 public class GPSservice extends Service implements LocationListener {
     private static final String TAG = "GPSservice";
+    public static TagSuggestionHandler tagSuggestionHandler;
+    
 
     /**
      * LocationManager.
@@ -85,6 +88,8 @@ public class GPSservice extends Service implements LocationListener {
             lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                     MIN_TIME, MIN_DISTANCE, this);
         }
+        
+        
 
     }
 
@@ -145,6 +150,9 @@ public class GPSservice extends Service implements LocationListener {
                     // dbHandler.updateTrack(track);
                 }
             }
+            tagSuggestionHandler=new TagSuggestionHandler();
+            tagSuggestionHandler.execute();
+            
         }
     }
 
