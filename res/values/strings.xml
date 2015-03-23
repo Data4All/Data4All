@@ -95,9 +95,15 @@
     <string name="hello_world">Hello world!</string>
     
     <!-- URLs -->
+    <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Follow us on Facebook</a></string>
+    <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Follow us on Twitter</a></string>
     <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
-    <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Official Facebook</a></string>
-    <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Official Twitter</a></string>
-    <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Official GitHub</a></string>
+    <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Join us on GitHub!</a></string>
+    
+    <!-- credits / about -->
+    <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
+        You can find out more about us and this project on the following pages: </string>
+    <string name="githubFollow">Since Data4All is an Open Source project, you can join us and participate 
+        on GitHub: </string>    
 
 </resources>
