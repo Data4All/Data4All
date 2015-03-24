@@ -1,36 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <io.github.data4all.view.D4AMapView
-        android:id="@+id/mapview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+    <!-- The main content view -->
 
-    <io.github.data4all.widged.CustomImageButton
-        android:id="@+id/return_to_actual_Position"
-        style="@style/imageButtonReturnToActualPosition"
-        android:contentDescription="@string/returnToActualPosition" />
+    <RelativeLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        
 
-    <io.github.data4all.widged.CustomImageButton
-        android:id="@+id/switch_maps"
-        style="@style/imageButtonSwitchMaps"
-        android:contentDescription="@string/switchMaps" />
+        <io.github.data4all.view.D4AMapView
+            android:id="@+id/mapview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
 
-    <io.github.data4all.widged.CustomImageButton
-        android:id="@+id/new_point"
-        style="@style/imageButtonNewPointOfInterest"
-        android:contentDescription="@string/pointOfInterest" />
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/return_to_actual_Position"
+            style="@style/imageButtonReturnToActualPosition"
+            android:contentDescription="@string/returnToActualPosition" />
 
-    <io.github.data4all.widged.CustomImageButton
-        android:id="@+id/to_camera"
-        style="@style/imageButtonToCamera"
-        android:contentDescription="@string/returnToCamera" />
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/switch_maps"
+            style="@style/imageButtonSwitchMaps"
+            android:contentDescription="@string/switchMaps" />
 
-    <ImageView
-        android:id="@+id/imageView1"
-        style="@style/startUpScreen"
-        android:contentDescription="@string/startUpScreen" />
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/new_point"
+            style="@style/imageButtonNewPointOfInterest"
+            android:contentDescription="@string/pointOfInterest" />
 
-</RelativeLayout>
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/to_camera"
+            style="@style/imageButtonToCamera"
+            android:contentDescription="@string/returnToCamera" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            style="@style/startUpScreen"
+            android:contentDescription="@string/startUpScreen" />
+    </RelativeLayout>
+    <!-- The navigation drawer -->
+
+    <ListView
+        android:id="@+id/left_drawer"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#eee"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp" />
+
+</android.support.v4.widget.DrawerLayout>

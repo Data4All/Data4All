@@ -18,6 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.GalleryListAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
@@ -29,11 +30,12 @@ import org.osmdroid.util.GeoPoint;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -46,6 +48,10 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     // Logger Tag
     private static final String TAG = "MapViewActivity";
+
+    private DrawerLayout drawerLayout;
+
+    private ListView drawer;
 
     /**
      * Default constructor.
@@ -63,10 +69,13 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (ListView) findViewById(R.id.left_drawer);
+        drawer.setAdapter(new GalleryListAdapter(this));
         setUpMapView(savedInstanceState);
         if (savedInstanceState == null) {
             setUpLoadingScreen();
-        }else{
+        } else {
             view.setVisibility(View.GONE);
         }
 
@@ -87,7 +96,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final ImageButton newPoint = (ImageButton) findViewById(id);
         newPoint.setOnClickListener(this);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -98,6 +107,20 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
         return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.activity.AbstractActivity#onHomePressed()
+     */
+    @Override
+    protected void onHomePressed() {
+        if (drawerLayout.isDrawerOpen(drawer)) {
+            drawerLayout.closeDrawer(drawer);
+        } else {
+            drawerLayout.openDrawer(drawer);
+        }
     }
 
     /*
@@ -162,7 +185,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
+
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
@@ -200,8 +223,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
                     .show();
         } else {
             final Intent intent = new Intent(this, MapPreviewActivity.class);
-            final Node poi = new Node(-1, myPosition.getLatitude(),
-                    myPosition.getLongitude());
+            final Node poi =
+                    new Node(-1, myPosition.getLatitude(),
+                            myPosition.getLongitude());
 
             // Set Type Definition for Intent to Node
             Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
