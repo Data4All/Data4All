@@ -74,7 +74,9 @@ public class OrientationListener extends Service implements SensorEventListener 
     private float[] orientation = new float[ARRAYLENGTH];
 
     // Calibration needed
-    public static boolean CALIBRATION_OK = true;
+    public static boolean CALIBRATION_OK = false;
+    private boolean accOk = false;
+    private boolean magOk = false;
 
     @Override
     public void onCreate() {
@@ -168,26 +170,44 @@ public class OrientationListener extends Service implements SensorEventListener 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER
-                || sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             if (accuracy < SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
                 Log.d(TAG, "The sensor: " + sensor.getName()
                         + " has now the accuracy of " + accuracy
                         + " it needs recalibration!");
 
-                CALIBRATION_OK = false;
-//                Toast.makeText(getBaseContext(), R.string.badSensorCalibration,
-//                        Toast.LENGTH_LONG).show();
+                accOk = false;
             } else {
 
                 Log.d(TAG, "The sensor: " + sensor.getName()
                         + " has now the accuracy of " + accuracy
                         + " App ready to use!");
-                CALIBRATION_OK = true;
-                // Toast.makeText(getBaseContext(),
-                // R.string.goodSensorCalibration, Toast.LENGTH_LONG)
-                // .show();
+                accOk = true;
             }
+        }
+        if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            if (accuracy < SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " it needs recalibration!");
+
+                magOk = false;
+            } else {
+
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " App ready to use!");
+                magOk = true;
+            }
+        }
+        checkAccuracy();
+    }
+
+    private void checkAccuracy() {
+        if (accOk && magOk) {
+            CALIBRATION_OK = true;
+        } else {
+            CALIBRATION_OK = false;
         }
     }
 
