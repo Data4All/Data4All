@@ -103,6 +103,11 @@
         	<artifactId>commons-io</artifactId>
         	<version>2.4</version>
         </dependency>
+        <dependency>
+        	<groupId>android</groupId>
+        	<artifactId>support_v4</artifactId>
+        	<version>22.0</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
