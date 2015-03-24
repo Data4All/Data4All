@@ -38,6 +38,7 @@ import org.osmdroid.views.MapController;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -49,8 +50,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -153,6 +157,17 @@ public class ResultViewActivity extends AbstractActivity implements
             });
         }
         this.output();
+        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (!Tagging.isClassifiedTag(keyList.get(position), res)){
+					removeTag(keyList.get(position));
+				}
+				return true;
+			}
+		});
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     final int position, long id) {
@@ -167,6 +182,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             }
         });
+       
         final ImageButton resultButton = (ImageButton) this
                 .findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
@@ -208,7 +224,32 @@ public class ResultViewActivity extends AbstractActivity implements
         }
         return status;
     }
-
+    /**
+     * The Method to remove a Tag and display an AlertDailog
+     * 
+     * @param selectedString The String of the Tag
+     */
+    private void removeTag(final String selectedString){
+    	final AlertDialog.Builder builder = new AlertDialog.Builder(
+                ResultViewActivity.this);
+        builder.setMessage(R.string.deleteTagsResultview);
+        builder.setPositiveButton(R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    	element.removeTag(mapTag.get(selectedString));
+                    	output();
+                    }
+                });
+        builder.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                    }
+                });
+        alert = builder.create();
+        alert.show();
+    	
+    }
     /**
      * Shows the Tags in a List
      */
@@ -297,13 +338,17 @@ public class ResultViewActivity extends AbstractActivity implements
         final Button okay = new Button(ResultViewActivity.this);
         final EditText text = new EditText(ResultViewActivity.this);
         text.setTextColor(Color.WHITE);
-        text.setInputType(mapTag.get(selectedString).getType());
+        Tag tag = mapTag.get(selectedString);
+        text.setInputType(tag.getType());        
+        text.setText(element.getTags().get(tag));
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
         final LinearLayout layout = (LinearLayout) dialog
                 .findViewById(R.id.dialogDynamic);
         layout.addView(text);
         layout.addView(okay);
+        //Displays the Keyboard
+        dialog.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         okay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -331,7 +376,6 @@ public class ResultViewActivity extends AbstractActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.buttonResult:
-            this.addOsmElementToDB(element);
             final AlertDialog.Builder builder = new AlertDialog.Builder(
                     ResultViewActivity.this);
             builder.setMessage(R.string.resultViewAlertDialogMessage);
@@ -339,16 +383,28 @@ public class ResultViewActivity extends AbstractActivity implements
             builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            addOsmElementToDB(element);
                             startActivityForResult(intent);
                         }
                     });
             builder.setNegativeButton(R.string.no,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                        	 addOsmElementToDB(element);
                             setResult(RESULT_OK);
                             finishWorkflow(null);
                         }
                     });
+            builder.setNeutralButton(R.string.maybe, 
+            		new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+                    setResult(RESULT_OK);
+                    finishWorkflow(null);
+                    
+				}
+			});
             alert = builder.create();
             alert.show();
             break;

@@ -92,4 +92,6 @@
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
     <string name="or">oder</string>
       <string name="show_pwd">Passwort anzeigen</string>
+    <string name="deleteTagsResultview">Möchten sie diesen Tag löschen ?</string>
+    <string name="maybe">Verwerfen</string>
 </resources>

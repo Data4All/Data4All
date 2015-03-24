@@ -77,6 +77,16 @@ public abstract class AbstractDataElement implements Parcelable {
     public void addOrUpdateTag(final Tag tag, final String value) {
         this.tags.put(tag, value);
     }
+    
+    /**
+     * Removes an existing tag of the DataElement
+     * 
+     * @param tag the Tag to remove
+     * 	
+     */
+    public void removeTag(final Tag tag) {
+    	this.tags.remove(tag);
+    }
 
     /**
      * Add the tags of the DataElement.
