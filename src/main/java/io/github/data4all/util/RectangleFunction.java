@@ -42,6 +42,20 @@ public class RectangleFunction {
             double dax = ax - dx;
             double day = ay - dy;
 
+            double abLength = Math.sqrt((abx * abx) + (aby * aby));
+            double bcLength = Math.sqrt((bcx * bcx) + (bcy * bcy));
+            double cdLength = Math.sqrt((cdx * cdx) + (cdy * cdy));
+            double daLength = Math.sqrt((dax * dax) + (day * day));
+
+            double alpha = Math.acos(((-1 * abx * bcx) + (-1 * aby * bcy))
+                    / (abLength * bcLength));
+            double beta = Math.acos(((-1 * bcx * cdx) + (-1 * bcy * cdy))
+                    / (bcLength * cdLength));
+            double gamma = Math.acos(((-1 * cdx * dax) + (-1 * cdy * day)
+                    / (cdLength * daLength)));
+            double delta = Math.acos(((-1 * dax * abx) + (-1 * day * aby)
+                    / (daLength * abLength)));
+
         }
         return nodes;
     }
