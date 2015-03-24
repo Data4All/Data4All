@@ -1,0 +1,5 @@
+501,landuse
+502,amenity
+503,highway
+504,barrier
+505,building
