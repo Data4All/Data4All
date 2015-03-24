@@ -107,7 +107,7 @@
 107,entrance,504,true,false,false,false,true,false,true,true,true,false,false,false,false
 108,block,504,true,false,false,false,true,false,true,true,true,false,false,false,false
 109,kerb,504,true,true,false,false,true,false,true,true,true,false,false,false,false
-110,toll_both,504,true,false,false,false,true,false,true,true,true,false,false,false,false
+110,toll_booth,504,true,false,false,false,true,false,true,true,true,false,false,false,false
 111,cattle_grid,504,true,false,false,false,true,false,true,true,true,false,false,false,false
 112,kissing_gate,504,true,false,false,false,true,false,true,true,true,false,false,false,false
 113,city_wall,504,true,true,false,false,true,false,true,true,true,false,false,false,false
@@ -135,4 +135,4 @@
 135,farm,505,true,false,false,true,true,true,true,true,true,false,false,false,false
 136,manufacture,505,true,false,false,true,true,true,true,true,true,false,false,false,false
 137,cabin,505,true,false,false,true,true,true,true,true,true,false,false,false,false
-138,yes
+137,swimming_pool,506,true,false,false,true,true,true,true,true,true,false,false,false,false

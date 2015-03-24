@@ -3,3 +3,4 @@
 503,highway
 504,barrier
 505,building
+506,leisure
