@@ -225,9 +225,12 @@ public class Gallery {
      */
     public File[] getImageFiles() {
         final List<File> images = new ArrayList<File>();
-        for (final File f : workingDirectory.listFiles()) {
-            if (f.getName().endsWith(ENDING_JPEG)) {
-                images.add(f);
+        File[] files = workingDirectory.listFiles();
+        if (files != null) {
+            for (final File f : files) {
+                if (f.getName().endsWith(ENDING_JPEG)) {
+                    images.add(f);
+                }
             }
         }
         return images.toArray(new File[images.size()]);
