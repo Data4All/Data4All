@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- address tags -->
@@ -16,72 +15,162 @@
 
     <!-- classified tags_ highway -->
     <string name="name_highway">Verkehrsweg</string>
-    <string name="name_highway_motorway">Autobahn</string>
     <string name="name_highway_residential">Wohngebiets-Straße</string>
     <string name="name_highway_service">Zugangsweg</string>
     <string name="name_highway_track">Feldweg</string>
+    <string name="name_highway_unclassified">Unbekannt</string>
     <string name="name_highway_footway">Fußweg</string>
-    <string name="name_highway_road">Straße</string>
+    <string name="name_highway_tertiary">Nebenstraße</string>
     <string name="name_highway_path">Weg</string>
+    <string name="name_highway_secondary">Landesstraße</string>
+    <string name="name_highway_primary">Bundesstraße</string>
+    <string name="name_highway_bus_stop">Bushaltestelle</string>
+    <string name="name_highway_crossing">Fußgängerüberweg</string>
+    <string name="name_highway_turning_circle">Wendestraße</string>
+    <string name="name_highway_cycleway">Fahrradweg</string>
+    <string name="name_highway_traffic_signals">Ampel</string>
+    <string name="name_highway_trunk">Kraftstraße</string>
+    <string name="name_highway_living_street">Wohnstraße</string>
+    <string name="name_highway_motorway">Autobahn</string>
+    <string name="name_highway_steps">Treppen</string>
+    <string name="name_highway_motorway_link">Autobahnzubringer</string>
+    <string name="name_highway_street_lamp">Straßenlaterne</string>
+    <string name="name_highway_pedestrian">Weg, Platz, Straße für Fußgänger</string>
+    <string name="name_highway_road">Straße</string>
 
     <!-- classified tags_ barrier -->
     <string name="name_barrier">Absperrung</string>
-    <string name="name_barrier_citywall">Wallanlage</string>
     <string name="name_barrier_fence">Zaun</string>
     <string name="name_barrier_wall">Mauer</string>
-    <string name="name_barrier_bollard">Pfeiler</string>
     <string name="name_barrier_gate">Tor</string>
+    <string name="name_barrier_hedge">Hecke</string>
+    <string name="name_barrier_bollard">Pfeiler</string>
+    <string name="name_barrier_lift_gate">Schlagbaum</string>
+    <string name="name_barrier_retaining_wall">Stützmauer</string>
+    <string name="name_barrier_stile">Tritt über Zaun</string>
+    <string name="name_barrier_cycle_barrier">Beschränkung Fahrraddurchfahrt</string>
+    <string name="name_barrier_entrance">Lücke</string>
+    <string name="name_barrier_block">stabiler Block</string>
+    <string name="name_barrier_kerb">Bordstein</string>
+    <string name="name_barrier_toll_booth">Maustelle</string>
+    <string name="name_barrier_cattle_grid">Weiderost</string>
+    <string name="name_barrier_kissing_gate">halbrunde Stahlkonstruktion</string>
+    <string name="name_barrier_city_wall">Wallanlage</string>
+    <string name="name_barrier_ditch">Graben</string>
 
     <!-- classified tags_ amenity -->
     <string name="name_amenity">Einrichtung</string>
-    <string name="name_amenity_bar">Bar</string>
-    <string name="name_amenity_cafe">Cafe</string>
-    <string name="name_amenity_restaurant">Restaurant</string>
-    <string name="name_amenity_fast_food">Fast Food</string>
-    <string name="name_amenity_pub">Kneipe</string>
-    <string name="name_amenity_college">Hochschule</string>
-    <string name="name_amenity_library">Bücherrei</string>
-    <string name="name_amenity_school">Schule</string>
-    <string name="name_amenity_university">Universität</string>
     <string name="name_amenity_parking">Parkplatz</string>
-    <string name="name_amenity_taxi">Taxi</string>
+    <string name="name_amenity_place_of_worship">Anbetungsort</string>
+    <string name="name_amenity_school">Schule</string>
+    <string name="name_amenity_restaurant">Restaurant</string>
+    <string name="name_amenity_bench">Sitzbank</string>
     <string name="name_amenity_fuel">Tankstelle</string>
     <string name="name_amenity_bank">Bank</string>
-    <string name="name_amenity_hospital">Klinikum</string>
+    <string name="name_amenity_post_box">Briefkasten</string>
+    <string name="name_amenity_fast_food">Fast Food</string>
+    <string name="name_amenity_cafe">Cafe</string>
+    <string name="name_amenity_grave_yard">Friedhof</string>
+    <string name="name_amenity_recycling">Recycling-Einrichtung</string>
+    <string name="name_amenity_kindergarten">Kindergarten</string>
     <string name="name_amenity_pharmacy">Apotheke</string>
-    <string name="name_amenity_cinema">Kino</string>
-    <string name="name_amenity_bench">Sitzbank</string>
-    <string name="name_amenity_embassy">Botschaft</string>
-    <string name="name_amenity_marketplace">Marktplatz</string>
-    <string name="name_amenity_police">Polizei</string>
+    <string name="name_amenity_hospital">Krankenhaus</string>
+    <string name="name_amenity_bicycle_parking">Fahrradparkplatz</string>
     <string name="name_amenity_post_office">Postamt</string>
+    <string name="name_amenity_waste_basket">Mülleimer</string>
+    <string name="name_amenity_pub">Kneipe</string>
     <string name="name_amenity_toilets">Toilette</string>
-    <string name="name_amenity_water_point">Wasserstelle</string>
+    <string name="name_amenity_public_building">Öffentliches Gebäude</string>
+    <string name="name_amenity_shelter">Unterstand</string>
+    <string name="name_amenity_telephone">Telefon</string>
+    <string name="name_amenity_drinking_water">Trinkwasserstelle</string>
+    <string name="name_amenity_atm">Geldautomat</string>
+    <string name="name_amenity_bar">Bar</string>
     <string name="name_amenity_fire_station">Feuerwehr</string>
-    <string name="name_amenity_public_building">Öffentliche Einrichtung</string>
+    <string name="name_amenity_police">Polizei</string>
+    <string name="name_amenity_townhall">Rathaus</string>
+    <string name="name_amenity_parking_space">Parkplatzstellfläche</string>
+    <string name="name_amenity_hunting_stand">Hochsitz</string>
+    <string name="name_amenity_vending_machine">Verkaufsautomat</string>
+    <string name="name_amenity_fountain">Springbrunnen</string>
+    <string name="name_amenity_library">Bücherrei</string>
+    <string name="name_amenity_swimming_pool">Schwimmbecken</string>
+    <string name="name_amenity_doctors">Bücherrei</string>
+    <string name="name_amenity_university">Universität</string>
+    <string name="name_amenity_social_facility">Soziale Einrichtung</string>
+    <string name="name_amenity_car_wash">Autowaschanlage</string>
+    <string name="name_amenity_college">Hochschule</string>
+    <string name="name_amenity_bus_station">Haltestelle</string>
+    <string name="name_amenity_marketplace">Marktplatz</string>
+    <string name="name_amenity_dentist">Zahnarzt</string>
+    <string name="name_amenity_waste_disposal">Müllentsorgungsort</string>
+    <string name="name_amenity_community_centre">Gemeinschaftszentrum</string>
+    <string name="name_amenity_theatre">Theater, Oper, Schauspielhaus</string>
+    <string name="name_amenity_taxi">Taxi</string>
+    <string name="name_amenity_cinema">Kino</string>
+    <string name="name_amenity_parking_entrance">Parkplatzeinfahrt</string>
+    <string name="name_amenity_clinic">Klinik</string>
+    <string name="name_amenity_bicycle_rental">Fahrradverleihstation</string>
+    <string name="name_amenity_veterinary">Tierarztpraxis</string>
+    <string name="name_amenity_fire_hydrant">Hydrant</string>
+    <string name="name_amenity_courthouse">Gericht</string>
+    <string name="name_amenity_embassy">Botschaft</string>
+    <string name="name_amenity_water_point">Wasserstelle</string>
     
-    <!-- classified tags_ building -->
+   <!-- classified tags_ building -->
     <string name="name_building">Gebäude</string>
+    <string name="name_building_house">Wohnhaus</string>
     <string name="name_building_residential">Wohngebäude</string>
     <string name="name_building_garage">Garage</string>
-    <string name="name_building_house">Wohnhaus</string>
     <string name="name_building_apartments">Wohnungen</string>
-    <string name="name_building_retail">Einzelhandel</string>
+    <string name="name_building_hut">Hütte</string>
     <string name="name_building_industrial">Industrie</string>
+    <string name="name_building_roof">Dach</string>
+    <string name="name_building_garages">Garagenkomplex</string>
+    <string name="name_building_detached">Einfamilienhaus</string>
     <string name="name_building_commercial">Geschäft</string>
-    
+    <string name="name_building_terrace">Häuserreihe</string>
+    <string name="name_building_school">Schule</string>
+    <string name="name_building_shed">Lager</string>
+    <string name="name_building_retail">Einzelhandel</string>
+    <string name="name_building_farm_auxiliary">Stall</string>
+    <string name="name_building_church">Kirche</string>
+    <string name="name_building_service">Service</string>
+    <string name="name_building_greenhouse">Gewächshaus</string>
+    <string name="name_building_barn">Speicher</string>
+    <string name="name_building_construction">Konstruktion</string>
+    <string name="name_building_farm">Bauernhof</string>
+    <string name="name_building_manufacture">Manufaktur</string>
+    <string name="name_building_cabin">Kabine</string>
+
     <!-- classified tags_ landuse -->
     <string name="name_landuse">Landnutzung</string>
+    <string name="name_landuse_forest">Wald</string>
+    <string name="name_landuse_residential">Wohngebiet</string>
+    <string name="name_landuse_grass">Rasenfläche</string>
+    <string name="name_landuse_farmland">Ackerland</string>
+    <string name="name_landuse_meadow">Wiese</string>
+    <string name="name_landuse_farm">Weideland</string>
+    <string name="name_landuse_farmyard">Ackerland</string>
+    <string name="name_landuse_industrial">Industriegebiet</string>
+    <string name="name_landuse_reservoir">Speicherbecken</string>
+    <string name="name_landuse_orchard">Obstplantage</string>
+    <string name="name_landuse_cemetery">Friedhof</string>
+    <string name="name_landuse_vineyard">Weinberg</string>
+    <string name="name_landuse_allotments">Kleingarten</string>
     <string name="name_landuse_commercial">Gewerbepark</string>
     <string name="name_landuse_construction">Baustelle</string>
-    <string name="name_landuse_farmland">Ackerland</string>
-    <string name="name_landuse_forest">Wald</string>
-    <string name="name_landuse_grass">Grasfläche</string>
-    <string name="name_landuse_industrial">Industriegebiet</string>
+    <string name="name_landuse_basin">Regenwasserrückhaltebecken</string>
+    <string name="name_landuse_quarry">Steinbruch</string>
+    <string name="name_landuse_retail">Einkaufszentrum</string>
+    <string name="name_landuse_village_green">Dorfwiese</string>
     <string name="name_landuse_military">Militär</string>
-    <string name="name_landuse_residential">Wohngebiet</string>
-    
-     <!-- address tags -->
+
+    <!-- classified tags leisure -->
+    <string name="name_leisure">Freizeit</string>
+    <string name="name_leisure_swimming_pool">Schwimmbecken</string>
+
+    <!-- address tags -->
     <string name="hint_addr_street">Main Street</string>
     <string name="hint_addr_housenumber">1234</string>
     <string name="hint_addr_postcode">123456</string>
