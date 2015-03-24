@@ -95,13 +95,17 @@ public abstract class AbstractActivity extends Activity {
             break;
         // finish workflow, return to mapview
         case android.R.id.home:
-            onWorkflowFinished(null);
+            onHomePressed();
             status = true;
             break;
         default:
             return super.onOptionsItemSelected(item);
         }
         return status;
+    }
+    
+    protected void onHomePressed() {
+        onWorkflowFinished(null);
     }
 
     /**
