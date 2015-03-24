@@ -112,7 +112,7 @@ public class TrackUtility {
     }
 
     /**
-     * Returns the last opened and not finished track or a new Track if there
+     * Returns the last opened and not finished track or null if there
      * are no opened tracks
      * 
      * @return last opened track or a new track
@@ -121,7 +121,7 @@ public class TrackUtility {
         db = new DataBaseHandler(context.getApplicationContext());
         List<Track> allGPSTracks = db.getAllGPSTracks();
         if (allGPSTracks != null) {
-            for (int i = db.getGPSTrackCount(); i > 0; i--) {
+            for (int i = db.getGPSTrackCount()-1; i > 0; i--) {
                 if (!allGPSTracks.get(i).isFinished()) {
                     Log.d("TrackUtility", "Continue on last track.");
                     db.close();

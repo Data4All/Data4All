@@ -102,7 +102,6 @@ public class Track implements Parcelable {
         this.tracklist = new ArrayList<TrackPoint>();
         this.trackName = this.getTimeStamp();
         this.finished = false;
-        Log.d(TAG, "New Track with name: " + trackName + " created.");
     }
 
     public String getTrackName() {

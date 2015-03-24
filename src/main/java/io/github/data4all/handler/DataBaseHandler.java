@@ -1189,6 +1189,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         values.put(KEY_TRACKPOINTS, arrayList);
 
         final long rowID = db.insert(TABLE_GPSTRACK, null, values);
+        Log.d(TAG, "New Track with name: " + track.getTrackName() + " created.");
         Log.i(TAG, "GPSTrack " + rowID + " has been added.");
     }
 

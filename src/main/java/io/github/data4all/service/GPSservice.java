@@ -94,8 +94,8 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        trackUtil = new TrackUtility(this);
-        track = trackUtil.getLastTrack();
+        // trackUtil = new TrackUtility(this);
+        // track = trackUtil.getLastTrack();
         // TODO uncomment
         // if (track == null) {
         // trackUtil.startNewTrack();
@@ -118,7 +118,7 @@ public class GPSservice extends Service implements LocationListener {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
 
-        trackUtil.updateTrack(track);
+        // trackUtil.updateTrack(track);
 
         wakeLock.release();
 
@@ -137,22 +137,22 @@ public class GPSservice extends Service implements LocationListener {
             Optimizer.putLoc(loc);
         }
 
-        if (track != null) {
-            final Location tp = Optimizer.currentBestLoc();
-            Log.d(TAG, "Track: " + track);
-            final TrackPoint last = track.getLastTrackPoint();
-
-            if (last != null && tp != null) {
-                // check if new Location is already stored
-                if (trackUtil.sameTrackPoints(last, tp)) {
-                    trackUtil.addPointToTrack(track, tp);
-                    // After ten trackpoints updateDatabase
-                    if ((track.getTrackPoints().size() % 10) == 0) {
-                        trackUtil.updateTrack(track);
-                    }
-                }
-            }
-        }
+//        if (track != null) {
+//            final Location tp = Optimizer.currentBestLoc();
+//            Log.d(TAG, "Track: " + track);
+//            final TrackPoint last = track.getLastTrackPoint();
+//
+//            if (last != null && tp != null) {
+//                // check if new Location is already stored
+//                if (trackUtil.sameTrackPoints(last, tp)) {
+//                    trackUtil.addPointToTrack(track, tp);
+//                    // After ten trackpoints updateDatabase
+//                    if ((track.getTrackPoints().size() % 10) == 0) {
+//                        trackUtil.updateTrack(track);
+//                    }
+//                }
+//            }
+//        }
     }
 
     /*
@@ -174,11 +174,11 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onProviderEnabled(String provider) {
-        track = trackUtil.getLastTrack();
-        if (track == null) {
-            // start new track
-            track = trackUtil.startNewTrack();
-        }
+//        track = trackUtil.getLastTrack();
+//        if (track == null) {
+//            // start new track
+//            track = trackUtil.startNewTrack();
+//        }
     }
 
     /*
@@ -191,9 +191,9 @@ public class GPSservice extends Service implements LocationListener {
     public void onProviderDisabled(String provider) {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
-        trackUtil.updateTrack(track);
-        trackUtil.deleteEmptyTracks();
-        // TODO localization
+//        trackUtil.updateTrack(track);
+//        trackUtil.deleteEmptyTracks();
+        
         Toast.makeText(getBaseContext(), R.string.noLocationFound,
                 Toast.LENGTH_LONG).show();
     }
