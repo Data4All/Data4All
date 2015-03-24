@@ -55,6 +55,23 @@ public class ClassifiedValue {
     private int nameRessource;
 
     /**
+     * Attributes from the propertie file /res/raw/tag_values.txt.
+     */
+    private boolean canBeNode;
+    private boolean canBeWay;
+    private boolean canBeArea;
+    private boolean canBeBuilding;
+    private boolean hasAddrStreet;
+    private boolean hasAddrHousnumber;
+    private boolean hasAddrPostcode;
+    private boolean hasAddrCity;
+    private boolean hasAddrCountry;
+    private boolean hasContactPhone;
+    private boolean hasContactFax;
+    private boolean hasContactWebsite;
+    private boolean hasContactEmail;
+
+    /**
      * Constructor to create nameRessource and hintRessource from the key.
      * 
      * @param id
@@ -66,7 +83,7 @@ public class ClassifiedValue {
      */
     public ClassifiedValue(int id, String key, String value) {
         this.id = id;
-        this.setKey(key);
+        this.key = key;
         this.value = value;
         try {
             this.setNameRessource((Integer) R.string.class.getDeclaredField(
@@ -114,14 +131,119 @@ public class ClassifiedValue {
 
     public String getLocalizedName(Context context) {
         Resources resources = context.getResources();
-        int id = resources.getIdentifier("name_" + getKey().replace(":", "_"),
-                "string", context.getPackageName());
+        int id =
+                resources.getIdentifier("name_" + getKey().replace(":", "_"),
+                        "string", context.getPackageName());
 
         if (id == 0) {
             return null;
         } else {
             return resources.getString(id);
         }
+    }
+
+    public boolean canBeNode() {
+        return canBeNode;
+    }
+
+    public void setCanBeNode(boolean canBeNode) {
+        this.canBeNode = canBeNode;
+    }
+
+    public boolean canBeWay() {
+        return canBeWay;
+    }
+
+    public void setCanBeWay(boolean canBeWay) {
+        this.canBeWay = canBeWay;
+    }
+
+    public boolean canBeArea() {
+        return canBeArea;
+    }
+
+    public void setCanBeArea(boolean canBeArea) {
+        this.canBeArea = canBeArea;
+    }
+
+    public boolean canBeBuilding() {
+        return canBeBuilding;
+    }
+
+    public void setCanBeBuilding(boolean canBeBuilding) {
+        this.canBeBuilding = canBeBuilding;
+    }
+
+    public boolean hasAddrStreet() {
+        return hasAddrStreet;
+    }
+
+    public void setHasAddrStreet(boolean hasAddrStreet) {
+        this.hasAddrStreet = hasAddrStreet;
+    }
+
+    public boolean hasAddrHousnumber() {
+        return hasAddrHousnumber;
+    }
+
+    public void setHasAddrHousnumber(boolean hasAddrHousnumber) {
+        this.hasAddrHousnumber = hasAddrHousnumber;
+    }
+
+    public boolean hasAddrPostcode() {
+        return hasAddrPostcode;
+    }
+
+    public void setHasAddrPostcode(boolean hasAddrPostcode) {
+        this.hasAddrPostcode = hasAddrPostcode;
+    }
+
+    public boolean hasAddrCity() {
+        return hasAddrCity;
+    }
+
+    public void setHasAddrCity(boolean hasAddrCity) {
+        this.hasAddrCity = hasAddrCity;
+    }
+
+    public boolean hasAddrCountry() {
+        return hasAddrCountry;
+    }
+
+    public void setHasAddrCountry(boolean hasAddrCountry) {
+        this.hasAddrCountry = hasAddrCountry;
+    }
+
+    public boolean hasContactPhone() {
+        return hasContactPhone;
+    }
+
+    public void setHasContactPhone(boolean hasContactPhone) {
+        this.hasContactPhone = hasContactPhone;
+    }
+
+    public boolean hasContactFax() {
+        return hasContactFax;
+    }
+
+    public void setHasContactFax(boolean hasContactFax) {
+        this.hasContactFax = hasContactFax;
+    }
+
+    public boolean hasContactWebsite() {
+        return hasContactWebsite;
+    }
+
+    public void setHasContactWebsite(boolean hasContactWebsite) {
+        this.hasContactWebsite = hasContactWebsite;
+    }
+
+    public boolean hasContactEmail() {
+        return hasContactEmail;
+    }
+
+    public void setHasContactEmail(boolean hasContactEmail) {
+        this.hasContactEmail = hasContactEmail;
     }
 
 }
