@@ -34,6 +34,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -71,7 +73,16 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setContentView(R.layout.activity_map_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (ListView) findViewById(R.id.left_drawer);
-        drawer.setAdapter(new GalleryListAdapter(this));
+        final GalleryListAdapter adapter = new GalleryListAdapter(this);
+        drawer.setAdapter(adapter);
+        drawer.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                adapter.removeImage(id);
+                return true;
+            }
+        });
         setUpMapView(savedInstanceState);
         if (savedInstanceState == null) {
             setUpLoadingScreen();
