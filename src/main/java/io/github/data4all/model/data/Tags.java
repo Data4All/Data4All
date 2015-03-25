@@ -41,14 +41,14 @@ import android.text.InputType;
 public final class Tags {
 
     /**
-     * Path to the key properties.
+     * Resource to the key properties.
      */
-    public static int RESSOURCE_TAG_KEYS = R.raw.tag_keys;
+    public static int RESOURCE_TAG_KEYS = R.raw.tag_keys;
 
     /***
-     * Path to the value properties.
+     * Resource to the value properties.
      */
-    public static int RESSOURCE_TAG_VALUES = R.raw.tag_values;
+    public static int RESOURCE_TAG_VALUES = R.raw.tag_values;
 
     /**
      * list of all classified and unclassified tags.
@@ -69,26 +69,24 @@ public final class Tags {
      * Private constructor.
      */
     private Tags() {
-
+        
     }
 
     /**
-     * 
+     * Reads all Tags from the properties. 
      * @throws IOException
      */
-    public static void readTags() throws IOException {
+    private static void readTags() throws IOException {
         for (int id : readKeys().keySet()) {
             String key = readKeys().get(id);
             TAG_LIST.add(createClassifiedTag(id, key));
         }
-        Log.i(Tags.class.getSimpleName(),
-                "number of tags loaded: " + TAG_LIST.size());
     }
 
     /**
      * Creates a new {@link ClassifiedTag} object loades all
      * {@link ClassifiedValue} refering to the {@link ClassifiedTag} from the
-     * propertie file.
+     * properties.
      * 
      * @param id
      *            id of the {@link ClassifiedTag}.
@@ -99,7 +97,6 @@ public final class Tags {
      */
     private static Tag createClassifiedTag(int id, String key)
             throws IOException {
-
         final List<ClassifiedValue> classifiedValues =
                 new LinkedList<ClassifiedValue>();
         for (String[] s : readValues()) {
@@ -108,9 +105,6 @@ public final class Tags {
                     ClassifiedValue cv =
                             new ClassifiedValue(Integer.parseInt(s[0]), key,
                                     s[1]);
-                    // canBeNode,canBeWay,canBeArea,canBeBuilding,hasAddrStreet,hasAddrHousnumber,hasAddrPostcode,hasAddrCity,hasAddrCountry
-                    // ,hasContactPhone,hasContactFax,hasContactWebsite,hasContactEmail
-
                     cv.setCanBeNode(Boolean.parseBoolean(s[3]));
                     cv.setCanBeWay(Boolean.parseBoolean(s[4]));
                     cv.setCanBeArea(Boolean.parseBoolean(s[5]));
@@ -142,9 +136,8 @@ public final class Tags {
         BufferedReader reader =
                 new BufferedReader(new InputStreamReader(
                         Data4AllApplication.context.getResources()
-                                .openRawResource(RESSOURCE_TAG_KEYS)));
+                                .openRawResource(RESOURCE_TAG_KEYS)));
         Map<Integer, String> keys = new HashMap<Integer, String>();
-
         String line;
         while ((line = reader.readLine()) != null) {
             String[] key;
@@ -166,8 +159,7 @@ public final class Tags {
         BufferedReader reader =
                 new BufferedReader(new InputStreamReader(
                         Data4AllApplication.context.getResources()
-                                .openRawResource(RESSOURCE_TAG_VALUES)));
-
+                                .openRawResource(RESOURCE_TAG_VALUES)));
         String line;
         while ((line = reader.readLine()) != null) {
             String[] value;
@@ -192,20 +184,6 @@ public final class Tags {
             }
         }
         return null;
-    }
-
-    /**
-     * returns an ArrayList containing all address tags.
-     */
-    public static List<Tag> getAllAddressTags() {
-        return ADDRESS_TAG_LIST;
-    }
-
-    /**
-     * returns an ArrayList containing all contact tags.
-     */
-    public static List<Tag> getAllContactTags() {
-        return CONTACT_TAG_LIST;
     }
 
     /**
@@ -317,11 +295,27 @@ public final class Tags {
     public static List<Tag> getAllTags() {
         return TAG_LIST;
     }
+    
+    /**
+     * Returns all classified tags.
+     * 
+     * @return list of all classified tags
+     */
+    public static List<ClassifiedTag> getAllClassifiedTags() {
+        List<ClassifiedTag> ct = new ArrayList<ClassifiedTag>();
+        for (Tag t : TAG_LIST) {
+            if (t instanceof ClassifiedTag) {
+                ct.add((ClassifiedTag) t);
+            }
+        }
+        return ct;
+    }
 
     /**
      * method to print list of tags in the log for debug purpose.
      * 
-     * @param tags list of {@link Tag} objects.
+     * @param tags
+     *            list of {@link Tag} objects.
      */
     public static void printTags(List<Tag> tags) {
         for (Tag t : tags) {
@@ -334,17 +328,7 @@ public final class Tags {
             } else {
                 Log.d("TAG", "else");
             }
-
         }
-    }
-
-    /**
-     * Returns all classified tags.
-     * 
-     * @return list of all classified tags
-     */
-    public static List<ClassifiedTag> getAllClassifiedTags() {
-        return null;
     }
 
     /**
@@ -378,12 +362,28 @@ public final class Tags {
     }
 
     /**
-     * fills the tagList ArrayList with the unclassified tags. Tags: contact and
-     * address tags.
+     * returns an ArrayList containing all address tags.
      */
-    static {
-        TAG_LIST.addAll(ADDRESS_TAG_LIST);
-        TAG_LIST.addAll(CONTACT_TAG_LIST);
+    public static List<Tag> getAllAddressTags() {
+        return ADDRESS_TAG_LIST;
     }
 
+    /**
+     * returns an ArrayList containing all contact tags.
+     */
+    public static List<Tag> getAllContactTags() {
+        return CONTACT_TAG_LIST;
+    }
+    
+    /**
+     * Reads the tags from the properties.
+     */
+    static {
+        try {
+            readTags();
+        } catch (IOException e) {
+            Log.e("Tags", "IOException:", e);
+        }
+    }
+    
 }
