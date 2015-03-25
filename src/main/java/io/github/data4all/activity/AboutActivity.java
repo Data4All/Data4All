@@ -15,6 +15,8 @@ public class AboutActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         
+        getActionBar().hide();
+        
         TextView homepage = (TextView) findViewById(R.id.linkToHomepage);
         homepage.setMovementMethod(LinkMovementMethod.getInstance());
         
