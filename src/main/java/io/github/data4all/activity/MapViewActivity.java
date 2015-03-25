@@ -28,6 +28,8 @@ import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -35,6 +37,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -55,6 +58,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     private ListView drawer;
 
+    private GalleryListAdapter drawerAdapter;
+
     /**
      * Default constructor.
      */
@@ -73,14 +78,31 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setContentView(R.layout.activity_map_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (ListView) findViewById(R.id.left_drawer);
-        final GalleryListAdapter adapter = new GalleryListAdapter(this);
-        drawer.setAdapter(adapter);
+        drawerAdapter = new GalleryListAdapter(this);
+        drawer.setAdapter(drawerAdapter);
         drawer.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                adapter.removeImage(id);
+                    int position, final long id) {
+                new AlertDialog.Builder(MapViewActivity.this)
+                        .setTitle(R.string.delete)
+                        .setMessage(R.string.deleteDialog)
+                        .setPositiveButton(R.string.yes,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        drawerAdapter.removeImage(id);
+                                    }
+                                }).setNegativeButton(R.string.no, null).show();
                 return true;
+            }
+        });
+        drawer.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                drawerAdapter.tagImage(id);
             }
         });
         setUpMapView(savedInstanceState);
@@ -207,6 +229,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
+
+        drawerAdapter.invalidate();
     }
 
     /*
