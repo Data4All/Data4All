@@ -59,15 +59,6 @@ import android.widget.Toast;
  */
 
 public class CapturePictureHandler implements PictureCallback {
-    // The name of the extra info for the filepath in the intent
-    public static final String FILE_EXTRA = "file_path";
-
-    // The name of the extra info for the preview size in the intent
-    public static final String SIZE_EXTRA = "preview_size";
-
-    // Name of the TransformationParamBean to give to the next activity
-    public static final String TRANSFORM_BEAN = "transform_bean";
-
     private static final String TAG = CapturePictureHandler.class
             .getSimpleName();
 
@@ -82,8 +73,6 @@ public class CapturePictureHandler implements PictureCallback {
 
     // The fileformat of the saved picture
     private static final String FILE_FORMAT = ".jpeg";
-
-    public static final String CURRENT_ORIENTATION = "current_orientation";
 
     private TransformationParamBean transformBean;
 
@@ -122,15 +111,16 @@ public class CapturePictureHandler implements PictureCallback {
 
         final Camera.Parameters params = camera.getParameters();
 
-        final double horizontalViewAngle = Math.toRadians(params
-                .getHorizontalViewAngle());
-        final double verticalViewAngle = Math.toRadians(params
-                .getVerticalViewAngle());
+        final double horizontalViewAngle =
+                Math.toRadians(params.getHorizontalViewAngle());
+        final double verticalViewAngle =
+                Math.toRadians(params.getVerticalViewAngle());
         final Size pictureSize = params.getPictureSize();
         final Location currentLocation = Optimizer.currentBestLoc();
-        transformBean = new TransformationParamBean(this.getDeviceHeight(),
-                horizontalViewAngle, verticalViewAngle, pictureSize.width,
-                pictureSize.height, currentLocation);
+        transformBean =
+                new TransformationParamBean(this.getDeviceHeight(),
+                        horizontalViewAngle, verticalViewAngle,
+                        pictureSize.width, pictureSize.height, currentLocation);
 
         // Start a thread to save the Raw Image in JPEG into SDCard
         if (gallery) {
@@ -164,14 +154,14 @@ public class CapturePictureHandler implements PictureCallback {
      * @author tbrose
      */
     private double getDeviceHeight() {
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(context);
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
         final Resources res = context.getResources();
         final String key = res.getString(R.string.pref_bodyheight_key);
         final String height = prefs.getString(key, null);
         if (TextUtils.isEmpty(height)) {
-            final int defaultValue = res
-                    .getInteger(R.integer.pref_bodyheight_default);
+            final int defaultValue =
+                    res.getInteger(R.integer.pref_bodyheight_default);
             // Save the default value
             prefs.edit().putString(key, "" + defaultValue).commit();
             return (defaultValue - 20) / 100.0;
@@ -230,14 +220,17 @@ public class CapturePictureHandler implements PictureCallback {
             if ("successful".equals(result)) {
                 Log.d(TAG, "Picture successfully saved");
 
-                final Intent intent = new Intent(context,
-                        ShowPictureActivity.class);
-                intent.putExtra(FILE_EXTRA, photoFile);
-                intent.putExtra(TRANSFORM_BEAN, transformBean);
-                intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
-                intent.putExtra(SIZE_EXTRA, viewSize);
+                ShowPictureActivity.startActivity(context, photoFile,
+                        transformBean, deviceOrientation, viewSize);
 
-                context.startActivityForResult(intent);
+                // final Intent intent =
+                // new Intent(context, ShowPictureActivity.class);
+                // intent.putExtra(FILE_EXTRA, photoFile);
+                // intent.putExtra(TRANSFORM_BEAN, transformBean);
+                // intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
+                // intent.putExtra(SIZE_EXTRA, viewSize);
+                //
+                // context.startActivityForResult(intent);
 
             } else {
                 Toast.makeText(context, "Failed on taking picture",
@@ -249,8 +242,8 @@ public class CapturePictureHandler implements PictureCallback {
 
     private File createFile() {
         // Create a new folder on the internal storage named Data4all
-        final File folder = new File(Environment.getExternalStorageDirectory(),
-                DIRECTORY);
+        final File folder =
+                new File(Environment.getExternalStorageDirectory(), DIRECTORY);
         if (!folder.exists()) {
             folder.mkdirs();
             Log.i(TAG, "Folder was created");

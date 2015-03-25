@@ -16,13 +16,8 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
@@ -35,11 +30,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
@@ -63,6 +60,18 @@ import android.widget.Toast;
 public class ShowPictureActivity extends AbstractActivity {
 
     private static final String TAG = ShowPictureActivity.class.getSimpleName();
+
+    /** Name of the DeviceOrientation to give to the next activity */
+    public static final String CURRENT_ORIENTATION_EXTRA = "current_orientation";
+
+    /** Name of the TransformationParamBean to give to the next activity */
+    public static final String TRANSFORM_BEAN_EXTRA = "transform_bean";
+
+    /** The name of the extra info for the preview size in the intent */
+    public static final String SIZE_EXTRA = "preview_size";
+
+    /** The name of the extra info for the filepath in the intent */
+    public static final String FILE_EXTRA = "file_path";
 
     private TouchView touchView;
     private ImageView imageView;
@@ -146,26 +155,26 @@ public class ShowPictureActivity extends AbstractActivity {
             }
         });
 
-        if (getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {
+        if (getIntent().hasExtra(FILE_EXTRA)) {
             this.setBackground((File) getIntent().getSerializableExtra(
-                    CapturePictureHandler.FILE_EXTRA));
+                    FILE_EXTRA));
 
         } else {
             Log.e(TAG, "ERROR, no file found in intent");
             this.finish();
         }
 
-        if (getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
+        if (getIntent().hasExtra(TRANSFORM_BEAN_EXTRA)) {
             transformBean =
                     getIntent().getExtras().getParcelable(
-                            CapturePictureHandler.TRANSFORM_BEAN);
+                            TRANSFORM_BEAN_EXTRA);
             intent.putExtra(LOCATION, transformBean.getLocation());
         }
 
-        if (getIntent().hasExtra(CapturePictureHandler.CURRENT_ORIENTATION)) {
+        if (getIntent().hasExtra(CURRENT_ORIENTATION_EXTRA)) {
             currentOrientation =
                     getIntent().getExtras().getParcelable(
-                            CapturePictureHandler.CURRENT_ORIENTATION);
+                            CURRENT_ORIENTATION_EXTRA);
         }
 
         // Set the display size as photo size to get a coordinate system for the
@@ -189,9 +198,9 @@ public class ShowPictureActivity extends AbstractActivity {
         buttons.add(findViewById(R.id.imageButton1));
         buttons.add(findViewById(R.id.imageButton2));
         buttons.add(findViewById(R.id.imageButton3));
-        //TODO building is not supported yet, so it is commented out here and
-        //in activity_picture.xml
-        //buttons.add(findViewById(R.id.imageButton4));
+        // TODO building is not supported yet, so it is commented out here and
+        // in activity_picture.xml
+        // buttons.add(findViewById(R.id.imageButton4));
         buttons.add(ok);
 
         listener = new ButtonRotationListener(this, buttons);
@@ -219,7 +228,7 @@ public class ShowPictureActivity extends AbstractActivity {
      *            current view used this method
      */
     public void onClickOkay(View view) {
-        //first get sure that there is a valid location
+        // first get sure that there is a valid location
         if (transformBean.getLocation() == null) {
             final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
@@ -229,19 +238,20 @@ public class ShowPictureActivity extends AbstractActivity {
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
-        // 0 or Rotation0 if portrait
-        // 90 or Rotation1 if home-button to the right
-        // 270 or Rotation3 if home-button to the left
-        final int rotation =
-                ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                        .getDefaultDisplay().getRotation();
+            // 0 or Rotation0 if portrait
+            // 90 or Rotation1 if home-button to the right
+            // 270 or Rotation3 if home-button to the left
+            final int rotation =
+                    ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                            .getDefaultDisplay().getRotation();
 
-        // create an abstract data element from the given data and pass it to
-        // the next
-        // activity
-        final AbstractDataElement osmElement = touchView.create(rotation);
-        intent.putExtra(OSM_ELEMENT, osmElement);
-        startActivityForResult(intent);
+            // create an abstract data element from the given data and pass it
+            // to
+            // the next
+            // activity
+            final AbstractDataElement osmElement = touchView.create(rotation);
+            intent.putExtra(OSM_ELEMENT, osmElement);
+            startActivityForResult(intent);
         }
     }
 
@@ -349,10 +359,13 @@ public class ShowPictureActivity extends AbstractActivity {
     private Bitmap loadFromCamera(Uri photoUri) throws IOException {
         final AssetFileDescriptor fileDescriptor =
                 getContentResolver().openAssetFileDescriptor(photoUri, "r");
+        
+        final Options options = new Options();
+        options.inSampleSize = 2;
 
         final Bitmap photo =
                 BitmapFactory.decodeFileDescriptor(
-                        fileDescriptor.getFileDescriptor(), null, null);
+                        fileDescriptor.getFileDescriptor(), null, options);
         if (photo != null) {
             return this.scaleAndRotate(photo);
         } else {
@@ -413,8 +426,21 @@ public class ShowPictureActivity extends AbstractActivity {
     private double getScreenRation() {
         final Point size =
                 getIntent()
-                        .getParcelableExtra(CapturePictureHandler.SIZE_EXTRA);
+                        .getParcelableExtra(SIZE_EXTRA);
         Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
         return (1.0 * size.x) / size.y;
+    }
+
+    public static final void startActivity(AbstractActivity context,
+            File photoFile, TransformationParamBean transformBean,
+            DeviceOrientation deviceOrientation, Point viewSize) {
+        final Intent intent = new Intent(context, ShowPictureActivity.class);
+        intent.putExtra(FILE_EXTRA, photoFile);
+        intent.putExtra(TRANSFORM_BEAN_EXTRA, transformBean);
+        intent.putExtra(CURRENT_ORIENTATION_EXTRA,
+                deviceOrientation);
+        intent.putExtra(SIZE_EXTRA, viewSize);
+
+        context.startActivityForResult(intent);
     }
 }

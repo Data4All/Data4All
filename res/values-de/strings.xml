@@ -84,6 +84,13 @@
     <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
     <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
+    
+    <!-- for gallery -->
+    <string name="gallery_sec">"%s 1 Minute"</string>
+    <string name="gallery_mins">"%s Minuten"</string>
+    <string name="gallery_hour">"%s 1 Stunde"</string>
+    <string name="gallery_hours">"%s Stunden"</string>
+    <string name="gallery_yesterday">"%1$s gestern %2$s"</string>
 
     <!-- other -->
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>

@@ -83,6 +83,14 @@
     <string name="upload_to_openstreetmap_progress">Download for %s in progress</string>
     <string name="upload_to_openstreetmap_success">Changes successfully uploaded</string>
     <string name="upload_to_openstreetmap_error">Upload failed</string>
+    
+    <!-- for gallery -->
+    <string name="gallery_sec">"%s &lt; 1 minute"</string>
+    <string name="gallery_min">"%s 1 minute"</string>
+    <string name="gallery_mins">"%s minutes"</string>
+    <string name="gallery_hour">"%s 1 hour"</string>
+    <string name="gallery_hours">"%s hours"</string>
+    <string name="gallery_yesterday">"%1$s yesterday %2$s"</string>
 
     <!-- other -->
     <string name="noCamSupported">Sorry, your device has no supported camera</string>
