@@ -163,7 +163,7 @@ public class D4AMapView extends MapView {
                     Log.i(TAG,
                             "Add Path with Coordinates "
                                     + polyElement.toString());
-                    this.addPathToMap(ctx, polyElement);
+                    this.addPathToMap(ctx, polyElement, edit);
                     // if the Element is an Area
                 } else {
                     Log.i(TAG,
@@ -240,7 +240,7 @@ public class D4AMapView extends MapView {
      * @param polyElement
      *            the path which should be added to the map
      **/
-    private void addPathToMap(AbstractActivity ctx, PolyElement polyElement) {
+    private void addPathToMap(AbstractActivity ctx, PolyElement polyElement, boolean edit) {
         final Polyline path = new MapLine(ctx, this, polyElement);
 
         Log.i(TAG, "Set Path Points to " + polyElement.toString());
@@ -251,6 +251,14 @@ public class D4AMapView extends MapView {
 
         Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
         path.setWidth(DEFAULT_STROKE_WIDTH);
+        
+        if (edit) {
+            //set the polygon to editable
+            ((MapLine)path).setEditable(true);
+            //set the original points to calculate the offset of all points
+            ((MapLine)path).setOriginalPoints();
+        }
+        
         this.getOverlays().add(path);
         this.postInvalidate();
     }
