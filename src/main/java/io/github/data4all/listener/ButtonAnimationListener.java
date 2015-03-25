@@ -86,7 +86,7 @@ public class ButtonAnimationListener{
     	}
     }
     
-    public boolean getAway(){
+    public boolean isAway(){
     	return isAway;
     }
 }
