@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.util;
 
 import io.github.data4all.Exceptions;
@@ -29,6 +44,21 @@ import android.graphics.Point;
  */
 public class Gallery {
     /**
+     * 
+     */
+    private static final String JSON_DIMENSION = "dimension";
+
+    /**
+     * 
+     */
+    private static final String JSON_ORIENTATION = "orientation";
+
+    /**
+     * 
+     */
+    private static final String JSON_PARAMETER = "parameters";
+
+    /**
      * The name of the gallery folder.
      */
     private static final String DIRECTORY_NAME = "gallery";
@@ -49,46 +79,6 @@ public class Gallery {
      * The working directory of this gallery.
      */
     private final File workingDirectory;
-
-    /**
-     * This class holds the informations in the information file for return
-     * purpose.
-     * 
-     * @author tbrose
-     */
-    public static class Informations {
-        private final TransformationParamBean parameters;
-        private final DeviceOrientation orientation;
-        private final Point dimension;
-
-        private Informations(TransformationParamBean parameters,
-                DeviceOrientation orientation, Point dimension) {
-            this.parameters = parameters;
-            this.orientation = orientation;
-            this.dimension = dimension;
-        }
-
-        /**
-         * @return The camera and device parameters.
-         */
-        public TransformationParamBean getParameters() {
-            return parameters;
-        }
-
-        /**
-         * @return The device orientation.
-         */
-        public DeviceOrientation getOrientation() {
-            return orientation;
-        }
-
-        /**
-         * @return The display dimension.
-         */
-        public Point getDimension() {
-            return dimension;
-        }
-    }
 
     /**
      * Constructs a gallery to read from and write to.
@@ -122,35 +112,35 @@ public class Gallery {
         if (imageData == null) {
             throw Exceptions.nullArgument("imageData");
         } else if (parameters == null) {
-            throw Exceptions.nullArgument("parameters");
+            throw Exceptions.nullArgument(JSON_PARAMETER);
         } else if (orientation == null) {
             throw Exceptions.nullArgument("oriantation");
         } else if (dimension == null) {
-            throw Exceptions.nullArgument("dimension");
+            throw Exceptions.nullArgument(JSON_DIMENSION);
         } else {
             final long time = System.currentTimeMillis();
-            final JSONObject json;
-            try {
-                json = encodeInformations(parameters, orientation, dimension);
-            } catch (JSONException e) {
-                throw new IOException(e);
-            }
+            final JSONObject json =
+                    encodeInformations(parameters, orientation, dimension);
 
-            try {
-                saveData(time, ENDING_JPEG, imageData);
-            } catch (IOException e) {
-                deleteData(time, ENDING_JPEG);
-                throw e;
-            }
-
-            try {
-                saveData(time, ENDING_INFO, json.toString().getBytes("UTF-8"));
-            } catch (IOException e) {
-                deleteData(time, ENDING_JPEG, ENDING_INFO);
-                throw e;
-            }
+            this.save(imageData, time, json);
             Log.d(LOG_TAG, "image added");
-            // ONLY for debug purpose: Log.v(LOG_TAG, "images: " + Arrays.toString(getImages()));
+        }
+    }
+
+    private void save(final byte[] imageData, final long time,
+            final JSONObject json) throws IOException {
+        try {
+            this.saveData(time, ENDING_JPEG, imageData);
+        } catch (IOException e) {
+            this.deleteData(time, ENDING_JPEG);
+            throw e;
+        }
+
+        try {
+            this.saveData(time, ENDING_INFO, json.toString().getBytes("UTF-8"));
+        } catch (IOException e) {
+            this.deleteData(time, ENDING_JPEG, ENDING_INFO);
+            throw e;
         }
     }
 
@@ -164,7 +154,7 @@ public class Gallery {
      *             If the image is not stored in this gallery
      */
     public File getImageFile(long timestamp) throws FileNotFoundException {
-        final File result = buildPath(timestamp, ENDING_JPEG);
+        final File result = this.buildPath(timestamp, ENDING_JPEG);
         if (result.exists()) {
             return result;
         } else {
@@ -185,17 +175,17 @@ public class Gallery {
      *             If the image is not stored in this gallery
      */
     public Informations getImageInformations(long timestamp) throws IOException {
-        final File result = buildPath(timestamp, ENDING_INFO);
+        final File result = this.buildPath(timestamp, ENDING_INFO);
         if (result.exists()) {
-            FileInputStream stream = new FileInputStream(result);
-            byte[] content = IOUtils.toByteArray(stream);
+            final FileInputStream stream = new FileInputStream(result);
+            final byte[] content = IOUtils.toByteArray(stream);
             IOUtils.closeQuietly(stream);
             try {
                 final JSONObject jsonObject =
                         new JSONObject(new String(content, "UTF-8"));
                 return decodeInformations(jsonObject);
             } catch (JSONException e) {
-                throw new IOException("Content cannot be parsed");
+                throw new IOException("Content cannot be parsed", e);
             }
         } else {
             throw new FileNotFoundException("No image found for timestamp "
@@ -209,12 +199,13 @@ public class Gallery {
      * @return An array with timestamps
      */
     public long[] getImages() {
-        final File[] files = getImageFiles();
+        final File[] files = this.getImageFiles();
         final long[] result = new long[files.length];
         for (int i = 0; i < files.length; i++) {
             final File f = files[i];
             result[i] = Long.parseLong(f.getName().replace(ENDING_JPEG, ""));
         }
+        Arrays.sort(result);
         return result;
     }
 
@@ -225,7 +216,7 @@ public class Gallery {
      */
     public File[] getImageFiles() {
         final List<File> images = new ArrayList<File>();
-        File[] files = workingDirectory.listFiles();
+        final File[] files = workingDirectory.listFiles();
         if (files != null) {
             for (final File f : files) {
                 if (f.getName().endsWith(ENDING_JPEG)) {
@@ -245,7 +236,7 @@ public class Gallery {
      *            The timestamp of the image
      */
     public void deleteImage(long timestamp) {
-        deleteData(timestamp, ENDING_JPEG, ENDING_INFO);
+        this.deleteData(timestamp, ENDING_JPEG, ENDING_INFO);
     }
 
     /**
@@ -263,10 +254,10 @@ public class Gallery {
     private void saveData(long timestamp, String ending, byte[] content)
             throws IOException {
         Log.d(LOG_TAG, "saving data " + timestamp + ending);
-        if (checkOrCreateWorkingDirectory()) {
+        if (this.checkOrCreateWorkingDirectory()) {
             FileOutputStream stream = null;
             try {
-                final File file = buildPath(timestamp, ending);
+                final File file = this.buildPath(timestamp, ending);
                 stream = new FileOutputStream(file);
                 stream.write(content);
             } finally {
@@ -287,7 +278,7 @@ public class Gallery {
      */
     private void deleteData(long timestamp, String... endings) {
         for (String ending : endings) {
-            final File file = buildPath(timestamp, ending);
+            final File file = this.buildPath(timestamp, ending);
             if (file.exists()) {
                 file.delete();
             }
@@ -317,18 +308,23 @@ public class Gallery {
      * @param dimension
      *            The screen dimension of the device
      * @return A JSONObject holding the infornations
-     * @throws JSONException
+     * @throws IOException
      *             If an JSON error occurs
      */
-    private JSONObject encodeInformations(TransformationParamBean parameters,
-            DeviceOrientation orientation, Point dimension)
-            throws JSONException {
+    private static JSONObject encodeInformations(
+            TransformationParamBean parameters, DeviceOrientation orientation,
+            Point dimension) throws IOException {
         final JSONObject json = new JSONObject();
-        return json
-                .put("parameters", parameters.toJSON())
-                .put("orentation", orientation.toJSON())
-                .put("dimension",
-                        new JSONArray(Arrays.asList(dimension.x, dimension.y)));
+        try {
+            return json
+                    .put(JSON_PARAMETER, parameters.toJSON())
+                    .put(JSON_ORIENTATION, orientation.toJSON())
+                    .put(JSON_DIMENSION,
+                            new JSONArray(Arrays.asList(dimension.x,
+                                    dimension.y)));
+        } catch (JSONException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -338,15 +334,15 @@ public class Gallery {
      * @return
      * @throws JSONException
      */
-    private Informations decodeInformations(JSONObject json)
+    private static Informations decodeInformations(JSONObject json)
             throws JSONException {
-        TransformationParamBean parameters =
+        final TransformationParamBean parameters =
                 TransformationParamBean.fromJSON(json
-                        .getJSONArray("parameters"));
-        DeviceOrientation oriantation =
+                        .getJSONArray(JSON_PARAMETER));
+        final DeviceOrientation oriantation =
                 DeviceOrientation.fromJSON((JSONArray) json
-                        .getJSONArray("orientation"));
-        JSONArray dimension = json.getJSONArray("dimension");
+                        .getJSONArray(JSON_ORIENTATION));
+        final JSONArray dimension = json.getJSONArray(JSON_DIMENSION);
 
         return new Informations(parameters, oriantation, new Point(
                 dimension.getInt(0), dimension.getInt(1)));
@@ -357,7 +353,38 @@ public class Gallery {
      * 
      * @return If the working directory exists after the call of this method
      */
-    private final boolean checkOrCreateWorkingDirectory() {
+    private boolean checkOrCreateWorkingDirectory() {
         return workingDirectory.exists() || workingDirectory.mkdirs();
+    }
+
+    /**
+     * This class holds the informations of the information file for return
+     * purpose.
+     * 
+     * @author tbrose
+     */
+    public static final class Informations {
+        private final TransformationParamBean parameters;
+        private final DeviceOrientation orientation;
+        private final Point dimension;
+
+        private Informations(TransformationParamBean parameters,
+                DeviceOrientation orientation, Point dimension) {
+            this.parameters = parameters;
+            this.orientation = orientation;
+            this.dimension = dimension;
+        }
+
+        public TransformationParamBean getParameters() {
+            return parameters;
+        }
+
+        public DeviceOrientation getOrientation() {
+            return orientation;
+        }
+
+        public Point getDimension() {
+            return dimension;
+        }
     }
 }
