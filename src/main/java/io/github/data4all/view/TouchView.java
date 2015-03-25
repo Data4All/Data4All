@@ -319,7 +319,10 @@ public class TouchView extends View {
                 } else {
                     startPoint = new Point(downX, downY);
                     if (insidePolygon(startPoint)==false) {
+
                         currentMotion.addPoint(event.getX(), event.getY());
+                        newPolygon = interpreter.interprete(polygon,
+                                currentMotion);
                     }
                 }
             } else if (action.equals("move")) {
