@@ -26,11 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import android.content.Context;
-import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -311,7 +308,12 @@ public class GalleryListAdapter implements ListAdapter {
         }
     }
 
-    private static class Layout {
+    /**
+     * 
+     * 
+     * @author tbrose
+     */
+    private static final class Layout {
         private final TextView text;
         private final ImageView image;
 
