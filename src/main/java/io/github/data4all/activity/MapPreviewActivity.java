@@ -24,7 +24,9 @@ import org.osmdroid.util.GeoPoint;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.RectangleFunction;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -89,6 +91,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         id = R.id.switch_maps;
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
+        
+        id = R.id.rect;
+        final ImageButton rect = (ImageButton) findViewById(id);
+        rect.setOnClickListener(this);
     }
 
     /*
@@ -121,6 +127,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             break;
         case R.id.okay:
             this.accept();
+            break;
+        case R.id.rect:
+            this.startRectangularPreview();
             break;
         default:
             break;
@@ -158,6 +167,23 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         intent.putExtra(OSM, element);
 
         startActivityForResult(intent);
+    }
+
+    /*
+     * Starts new MapPreview with now rectangular Object
+     */
+    private void startRectangularPreview() {
+        if (element instanceof PolyElement) {
+            PolyElement rect = (PolyElement) element;
+            Intent rectangle = getIntent();
+            if (getIntent().hasExtra("OSM_ELEMENT")
+                    && rect.replaceNodes(RectangleFunction
+                            .transformIntoRectangle(rect.getNodes()))) {
+                rectangle.removeExtra("OSM_ELEMENT");
+                rectangle.putExtra("OSM_ELEMENT", rect);
+                startActivityForResult(rectangle);
+            }
+        }
     }
 
     /*
