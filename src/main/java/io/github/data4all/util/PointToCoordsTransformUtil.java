@@ -110,7 +110,7 @@ public class PointToCoordsTransformUtil {
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
                 + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
         for (Point point : points) {
-            //point = new Point(xAxis - point.getY(), yAxis - point.getX());
+            // point = new Point(xAxis - point.getY(), yAxis - point.getX());
             Log.i(TAG, "Point X:" + point.getX() + " Y: " + point.getY());
 
             // calculates local coordinates in meter first
@@ -132,7 +132,7 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
-     * transforms a list of points in a list of Nodes.
+     * 
      * 
      * @param tps
      *            object of TransformParamBean
@@ -140,31 +140,32 @@ public class PointToCoordsTransformUtil {
      *            object of DeviceOrientation
      * @param points
      *            list of points which have to be calculated
-     * @param rotation
-     *            rotation of the device
-     * @return list of Node
+     * @return a point
      */
     public Point fourthBuildingPoint(TransformationParamBean tps,
-            DeviceOrientation deviceOrientation, List<Point> points,
-            int rotation) {
+            DeviceOrientation deviceOrientation, List<Point> points) {
+        this.deviceOrientation = deviceOrientation;
         this.tps = tps;
-        final List<double[]> coords = new ArrayList<double[]>();
-        Log.d(TAG,
-                "Orientation: "
-                        + Math.toDegrees(deviceOrientation.getAzimuth())
-                        + " ; " + Math.toDegrees(deviceOrientation.getPitch())
-                        + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
-        Log.d(TAG,
-                "TPS-DATA Max-Camera-Pitch-Angle: "
-                        + tps.getCameraMaxHorizontalViewAngle()
-                        + " Max-camera-Rotation-Angle: "
-                        + tps.getCameraMaxVerticalViewAngle());
+        return fourthBuildingPoint(points);
+    }
 
-        // get the set height
-        this.height = tps.getHeight();
+    /**
+     * calculates with 3 Points and the given deviceorientation and tps
+     * informations the 4th point of a building
+     * 
+     * @param points
+     *            list of exact 3 points to calculate the 4th
+     * @return list of Node
+     */
+    public Point fourthBuildingPoint(List<Point> points) {
+        final List<double[]> coords = new ArrayList<double[]>();
+        float saveAzimuth = deviceOrientation.getAzimuth();
+        deviceOrientation.setAzimuth(0);
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
                 + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
         if (points.size() != 3) {
+            Log.w(TAG,
+                    "The given amount of Points was not 3, can not calculate 4th building point");
             return null;
         } else {
             for (Point point : points) {
@@ -178,11 +179,32 @@ public class PointToCoordsTransformUtil {
                 coords.add(coord);
             }
         }
-        return null;
-    }
-
-    private Point coordToPoint(double[] coord) {
-        return null;
+        double[] coord = MathUtil.calcFourthCoord(coords);
+        double[] vector = new double[3];
+        vector[0] = coord[0];
+        vector[1] = coord[1];
+        vector[2] = -tps.getHeight();
+        // Rotate to the device coordinat-system
+        double pitch = deviceOrientation.getPitch();
+        double[] vector2 = MathUtil.rotate(vector, xaxe, pitch);
+        double roll = deviceOrientation.getRoll();
+        double[] vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+        // calculate the pitch- and roll-angles.
+        double horizonPitch = Math.atan(vector3[1] / vector3[2]);
+        double horizonRoll = -Math.atan(vector3[0] / vector3[2]);
+        // calculate a point on the horizont vertical to the mid of the display.
+        float x = tps.getPhotoWidth()
+                / 2
+                + MathUtil.calculatePixelFromAngle(horizonRoll,
+                        tps.getPhotoWidth(),
+                        tps.getCameraMaxVerticalViewAngle());
+        float y = tps.getPhotoHeight()
+                / 2
+                + MathUtil.calculatePixelFromAngle(horizonPitch,
+                        tps.getPhotoHeight(),
+                        tps.getCameraMaxHorizontalViewAngle());
+        deviceOrientation.setAzimuth(saveAzimuth);
+        return new Point(x, y);
     }
 
     /**
@@ -207,7 +229,7 @@ public class PointToCoordsTransformUtil {
                 tps.getPhotoHeight(), tps.getCameraMaxHorizontalViewAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll = this.calculateAngleFromPixel(point.getX(),
-                tps.getPhotoWidth(), tps.getCameraMaxVerticalViewAngle() );
+                tps.getPhotoWidth(), tps.getCameraMaxVerticalViewAngle());
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
 
@@ -317,6 +339,5 @@ public class PointToCoordsTransformUtil {
         // create a new Node with the latitude and longitude values
         return new Node(-1, lat2, lon2);
     }
-
 
 }

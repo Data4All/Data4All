@@ -16,6 +16,10 @@
 
 package io.github.data4all.util;
 
+import io.github.data4all.model.drawing.Point;
+
+import java.util.List;
+
 /**
  * This class provides some calculation methods
  * 
@@ -102,6 +106,25 @@ public class MathUtil {
         final double adjacent = (axis / 2) / Math.tan(maxAngle / 2);
         final double opposite = pixel - (axis / 2);
         return Math.atan(opposite / adjacent);
+    }
+    
+    /**
+     * Calculates the fourth point in dependence of the first three points of
+     * the given list.
+     * 
+     * @param areaPoints
+     *            A list with exact three points
+     */
+    public static double[] calcFourthCoord(List<double[]> coords) {
+        final double[] a = coords.get(0);
+        final double[] b = coords.get(1);
+        final double[] c = coords.get(2);
+
+        final double x = a[0] + (c[0] - b[0]);
+        final double y = a[1] + (c[1] - b[1]);
+
+        final double[] coord = {x,y,};
+        return coord;
     }
 
 }

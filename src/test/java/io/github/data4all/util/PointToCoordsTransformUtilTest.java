@@ -245,5 +245,25 @@ public class PointToCoordsTransformUtilTest {
         Node node2 = util.calculateGPSPoint(location, coord2);
         assertThat(node2.getLon(), greaterThan(100.0));
     }
+    
+    
+    // Tests for method fourthBuildingPoint
+    /**
+     * a few different Orientations
+     */
+    @Test
+    public void fourthBuildingPointTest() {
+        TransformationParamBean tps1 = new TransformationParamBean(2.0,
+                Math.toRadians(90), Math.toRadians(90), 1000, 1000, location);
+        DeviceOrientation deviceOrientation = new DeviceOrientation(0.0f, (float) Math.toRadians(0),
+                0.0f, 10L);
+        ArrayList<Point> points = new ArrayList<Point>();
+        points.add(new Point(0, 0));
+        points.add(new Point(1000,0));
+        points.add(new Point(1000, 1000));
+        Point point = util.fourthBuildingPoint(tps1, deviceOrientation, points);
+        assertThat((double) point.getX(), closeTo(0.0f, 2.0f));
+        assertThat((double) point.getY(), closeTo(1000.0f, 2.0f));
+    }
 
 }

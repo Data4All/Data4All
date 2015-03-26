@@ -51,24 +51,6 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         this.pointTrans = pointTrans;
     }
 
-    /**
-     * Calculates the fourth point in dependence of the first three points of
-     * the given list.
-     * 
-     * @param areaPoints
-     *            A list with exact three points
-     */
-    private static void addFourthPoint(List<Point> areaPoints) {
-        final Point a = areaPoints.get(0);
-        final Point b = areaPoints.get(1);
-        final Point c = areaPoints.get(2);
-
-        final float x = a.getX() + (c.getX() - b.getX());
-        final float y = a.getY() + (c.getY() - b.getY());
-
-        final Point d = new Point(x, y);
-        areaPoints.add(d);
-    }
 
     /*
      * (non-Javadoc)
@@ -101,7 +83,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
         }
 
         if (result.size() == 3) {
-            addFourthPoint(result);
+            result.add(pointTrans.fourthBuildingPoint(result));
         }
 
         return result;

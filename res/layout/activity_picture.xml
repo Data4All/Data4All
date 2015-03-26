@@ -48,11 +48,12 @@
             android:onClick="onClickArea" />
         <!-- TODO building is not supported yet -->
         <!-- <ImageButton -->
-        <!-- <io.github.data4all.widged.CustomImageButton -->
-        <!-- android:id="@+id/imageButton4" -->
-        <!-- style="@style/imageButtonDrawBuilding" -->
-        <!-- android:contentDescription="@string/drawBuilding" -->
-        <!-- android:onClick="onClickBuilding" /> -->
+
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/imageButton4"
+            style="@style/imageButtonDrawBuilding"
+            android:contentDescription="@string/drawBuilding"
+            android:onClick="onClickBuilding" />
     </LinearLayout>
 
     <io.github.data4all.widged.CustomImageButton
