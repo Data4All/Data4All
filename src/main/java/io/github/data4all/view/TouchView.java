@@ -300,6 +300,7 @@ public class TouchView extends View {
                 if (lookUpPoint == null) {
                     addPointOnLine(new Point(event.getX(), event.getY()));
                 }
+                this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
                     this.mover = movePoint(lookUpPoint);
                     isDelete = true;
