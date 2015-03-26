@@ -225,10 +225,10 @@ public class PointToCoordsTransformUtil {
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
-        final double pixelpitch = -this.calculateAngleFromPixel(point.getY(),
+        final double pixelpitch = - MathUtil.calculateAngleFromPixel(point.getY(),
                 tps.getPhotoHeight(), tps.getCameraMaxHorizontalViewAngle());
         // gets an angle for the point on the roll axis
-        final double pixelroll = this.calculateAngleFromPixel(point.getX(),
+        final double pixelroll = MathUtil.calculateAngleFromPixel(point.getX(),
                 tps.getPhotoWidth(), tps.getCameraMaxVerticalViewAngle());
         final double pitch = -deviceOrientation.getPitch();
         final double roll = deviceOrientation.getRoll();
@@ -285,23 +285,6 @@ public class PointToCoordsTransformUtil {
         return coord;
     }
 
-    /**
-     * Calculates the angle altered by the given pixel.
-     * 
-     * @param pixel
-     *            one coordinate of the pixel
-     * @param axis
-     *            the axis on which the angle is altered
-     * @param maxAngle
-     *            maximum camera angle
-     * @return altered Angle
-     */
-    public double calculateAngleFromPixel(double pixel, double axis,
-            double maxAngle) {
-        final double adjacent = (axis / 2) / Math.tan(maxAngle / 2);
-        final double opposite = pixel - (axis / 2);
-        return Math.atan(opposite / adjacent);
-    }
 
     /**
      * calculates Node (with latitude and longitude) from coordinates in a local
