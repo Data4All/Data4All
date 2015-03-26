@@ -10,6 +10,7 @@
     <string name="action_help">Help</string>
     <string name="action_login">Login</string>
     <string name="action_about">About</string>
+    <string name="action_licenses">Legal information</string>
 
     <!-- generell strings -->
     <string name="yes">Yes</string>
@@ -93,17 +94,21 @@
     <string name="show_pwd">Show Password</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="hello_world">Hello world!</string>
-    
+    <string name="title_activity_licenses">LicensesActivity</string>
+
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Follow us on Facebook</a></string>
     <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Follow us on Twitter</a></string>
     <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
     <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Join us on GitHub!</a></string>
-    
-    <!-- credits / about -->
+
+    <!-- credits / about / licences -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
         You can find out more about us and this project on the following pages: </string>
     <string name="githubFollow">Since Data4All is an Open Source project, you can join us and participate 
-        on GitHub: </string>    
+        on GitHub: </string>
+    <string name="underlyingLicenses">The following links will redirect you to the licences underlying this 
+        application.</string>
+        
 
 </resources>

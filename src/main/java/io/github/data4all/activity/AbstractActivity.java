@@ -93,6 +93,10 @@ public abstract class AbstractActivity extends Activity {
             startActivity(new Intent(this, AboutActivity.class));
             status = true;
             break;
+        case R.id.action_licenses:
+            startActivity(new Intent(this, LicensesActivity.class));
+            status = true;
+            break;
         case R.id.action_help:
             // TODO set help activity here
             status = true;

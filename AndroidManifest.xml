@@ -74,6 +74,10 @@
             android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
+        <activity
+            android:name=".activity.LicensesActivity"
+            android:label="@string/title_activity_licenses" >
+        </activity>
     </application>
 
 </manifest>
