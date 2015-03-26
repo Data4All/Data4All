@@ -4,8 +4,10 @@ import io.github.data4all.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class LicensesActivity extends AbstractActivity {
 
@@ -15,6 +17,9 @@ public class LicensesActivity extends AbstractActivity {
         setContentView(R.layout.activity_licenses);
         
         getActionBar().hide();
+        
+        TextView osmCopyright = (TextView) findViewById(R.id.linkToOSMCopyright);
+        osmCopyright.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override

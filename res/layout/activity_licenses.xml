@@ -12,7 +12,16 @@
         android:id="@+id/underlyingLicenses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:text="@string/underlyingLicenses" />
+    
+    <TextView
+        android:id="@+id/linkToOSMCopyright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/underlyingLicenses"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/linkToOSMCopyright" />
 
 </RelativeLayout>

@@ -101,6 +101,7 @@
     <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Follow us on Twitter</a></string>
     <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
     <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Join us on GitHub!</a></string>
+    <string name="linkToOSMCopyright"><a href="http://www.openstreetmap.org/copyright">&#169; OpenStreetMap contributors</a></string>
 
     <!-- credits / about / licences -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
