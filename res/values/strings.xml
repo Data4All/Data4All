@@ -102,13 +102,14 @@
     <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
     <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Join us on GitHub!</a></string>
     <string name="linkToOSMCopyright"><a href="http://www.openstreetmap.org/copyright">&#169; OpenStreetMap contributors</a></string>
+    <string name="linkToMapboxTOS"><a href="https://www.mapbox.com/tos/">Mapbox Terms of Service</a></string>
 
     <!-- credits / about / licences -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
         You can find out more about us and this project on the following pages: </string>
     <string name="githubFollow">Since Data4All is an Open Source project, you can join us and participate 
         on GitHub: </string>
-    <string name="underlyingLicenses">The following links will redirect you to the licences underlying this 
+    <string name="underlyingLicenses">The following links will redirect you to the licenses underlying this 
         application.</string>
         
 

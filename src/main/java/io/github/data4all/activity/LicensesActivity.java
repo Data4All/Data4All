@@ -20,6 +20,9 @@ public class LicensesActivity extends AbstractActivity {
         
         TextView osmCopyright = (TextView) findViewById(R.id.linkToOSMCopyright);
         osmCopyright.setMovementMethod(LinkMovementMethod.getInstance());
+        
+        TextView mapboxTOS = (TextView) findViewById(R.id.linkToMapboxTOS);
+        mapboxTOS.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
