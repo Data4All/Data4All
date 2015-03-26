@@ -174,7 +174,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 Log.i(TAG, "pos" + position);
                 Log.i(TAG, "Tagkey" + keyList.get(position));
                 final String selectedString = keyList.get(position);
-                if (Tagging.isClassifiedTag(keyList.get(position), res) | keyList.size() == 1) {
+                if (Tagging.isClassifiedTag(keyList.get(position), res)) {
                     ResultViewActivity.this.changeClassifiedTag(selectedString);
                 } else {
                     ResultViewActivity.this
@@ -286,7 +286,8 @@ public class ResultViewActivity extends AbstractActivity implements
 
         }
         if(keyList.isEmpty() && endList.isEmpty()){
-        	keyList.add("Select Tag");
+        	String selectTag = res.getString(R.string.SelectTag);
+        	keyList.add(selectTag);
         	endList.add("");
         }
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
