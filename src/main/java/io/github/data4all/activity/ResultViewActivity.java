@@ -112,6 +112,8 @@ public class ResultViewActivity extends AbstractActivity implements
     private Map<String, ClassifiedValue> classifiedMap;
 
     private View viewFooter;
+    
+    private String type = "TYPE_DEF";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,11 +136,11 @@ public class ResultViewActivity extends AbstractActivity implements
         // Here the List of tags is created
         listView = (ListView) this.findViewById(R.id.listViewResultView);
         res = getResources();
-        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
+        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt(type),
                 res);
         mapTag = Tagging.getUnclassifiedMapKeys(res);
         if (!Tagging.getAllNonSelectedTags(element.getTags(),
-                getIntent().getExtras().getInt("TYPE_DEF")).isEmpty()) {
+                getIntent().getExtras().getInt(type)).isEmpty()) {
             final LayoutInflater inflater = getLayoutInflater();
             viewFooter = ((LayoutInflater) this
                     .getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(
@@ -176,7 +178,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 final String selectedString = keyList.get(position);
                 if (Tagging.isClassifiedTag(keyList.get(position), res)) {
                     ResultViewActivity.this.changeClassifiedTag(selectedString);
-                } else {
+                } else{
                     ResultViewActivity.this
                             .changeUnclassifiedTag(selectedString);
                 }
@@ -216,7 +218,7 @@ public class ResultViewActivity extends AbstractActivity implements
             break;
         // finish workflow, return to mapview
         case android.R.id.home:
-            onWorkflowFinished(null);
+            this.onWorkflowFinished(null);
             status = true;
             break;
         default:
@@ -376,37 +378,7 @@ public class ResultViewActivity extends AbstractActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.buttonResult:
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    ResultViewActivity.this);
-            builder.setMessage(R.string.resultViewAlertDialogMessage);
-            final Intent intent = new Intent(this, LoginActivity.class);
-            builder.setPositiveButton(R.string.yes,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            addOsmElementToDB(element);
-                            startActivityForResult(intent);
-                        }
-                    });
-            builder.setNegativeButton(R.string.no,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                        	 addOsmElementToDB(element);
-                            setResult(RESULT_OK);
-                            finishWorkflow(null);
-                        }
-                    });
-            builder.setNeutralButton(R.string.maybe, 
-            		new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-                    setResult(RESULT_OK);
-                    finishWorkflow(null);
-                    
-				}
-			});
-            alert = builder.create();
-            alert.show();
+        	createAlertDialogResult();
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
@@ -422,6 +394,45 @@ public class ResultViewActivity extends AbstractActivity implements
         }
     }
 
+    
+    /**
+     * create the AlertDialog at the end with a pos, negative and maybe Button
+     */
+    
+    private void createAlertDialogResult(){
+    	final AlertDialog.Builder builder = new AlertDialog.Builder(
+                ResultViewActivity.this);
+        builder.setMessage(R.string.resultViewAlertDialogMessage);
+        final Intent intent = new Intent(this, LoginActivity.class);
+        builder.setPositiveButton(R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        addOsmElementToDB(element);
+                        startActivityForResult(intent);
+                    }
+                });
+        builder.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    	 addOsmElementToDB(element);
+                        setResult(RESULT_OK);
+                        finishWorkflow(null);
+                    }
+                });
+        builder.setNeutralButton(R.string.maybe, 
+        		new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+                setResult(RESULT_OK);
+                finishWorkflow(null);
+                
+			}
+		});
+        alert = builder.create();
+        alert.show();
+
+    }
     /**
      * creates the Dialog with the List of all unclassified Tags which are not
      * used.
