@@ -92,6 +92,6 @@
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
     <string name="or">oder</string>
     
-    <string name="badSensorCalibration">Sensor braucht Rekalibrierung. Bitte rotieren Sie ihr Smartphone langsam 3 mal um jede Achse. Und/Oder zeichnen Sie eine Acht mit ihren Smartphone. </string>
-    <string name="goodSensorCalibration">Sensor Kalibrierung ist nun gut.</string>
+    <string name="badSensorCalibration">Bitte rotieren Sie ihr Smartphone langsam 3 mal um jede Achse. Und/Oder zeichnen Sie eine Acht mit ihren Smartphone. </string>
+    <string name="badSensorCalibrationTitle">Sensor braucht Rekalibrierung.</string>
 </resources>

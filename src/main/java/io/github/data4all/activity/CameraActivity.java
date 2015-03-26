@@ -25,6 +25,8 @@ import io.github.data4all.view.CameraPreview;
 
 import java.util.Arrays;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -192,9 +194,7 @@ public class CameraActivity extends AbstractActivity {
                             new CapturePictureHandler(CameraActivity.this,
                                     cameraPreview));
                 } else {
-                    Toast.makeText(getBaseContext(),
-                            R.string.badSensorCalibration, Toast.LENGTH_LONG)
-                            .show();
+                    showCalibrationDialog();
                 }
             }
         });
@@ -223,9 +223,7 @@ public class CameraActivity extends AbstractActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(getBaseContext(),
-                            R.string.badSensorCalibration, Toast.LENGTH_LONG)
-                            .show();
+                    showCalibrationDialog();
                 }
                 return true;
 
@@ -244,4 +242,32 @@ public class CameraActivity extends AbstractActivity {
         return getApplicationContext().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA);
     }
+
+    /**
+     * This method shows an AlertDialog if the phone need recalibration.
+     */
+    private void showCalibrationDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // set title
+        alertDialogBuilder.setTitle(R.string.badSensorCalibrationTitle);
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage(R.string.badSensorCalibration)
+                .setCancelable(false)
+                .setNegativeButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
 }
