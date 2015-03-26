@@ -19,14 +19,20 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.CheckBox;
+import android.widget.Toast;
 
 /**
  * Global activity for all children activities.
@@ -54,6 +60,13 @@ public abstract class AbstractActivity extends Activity {
     public static final int WORKFLOW_CODE = 9999;
 
     public static final int RESULT_FINISH = 9998;
+
+    public static final String SHARED_PREFS = "shared_prefs";
+
+    boolean recordActive = false;
+    boolean changeIcon = false;
+
+    CheckBox dontShowAgain;
 
     /*
      * (non-Javadoc)
@@ -99,13 +112,142 @@ public abstract class AbstractActivity extends Activity {
             status = true;
             break;
         case R.id.record_track:
-            startActivity(new Intent(this, TrackControlActivity.class));
+            //recordActive = !recordActive;
+            if (recordActive) {
+                recordDialog();
+                if (changeIcon) {
+                    item.setIcon(R.drawable.stop_icon);
+                    recordActive = true;
+                }
+
+            } else {
+                stopDialog();
+                if (changeIcon) {
+                    item.setIcon(R.drawable.record_icon);
+                }
+
+            }
             status = true;
             break;
         default:
             return super.onOptionsItemSelected(item);
         }
         return status;
+    }
+
+    /**
+     * Set up a dialog for recording a track. Contains a checkbox linked with
+     * the shared preferences, so you can suppress this dialog.
+     * 
+     * On positive click it starts recording a track. On negative click it
+     * closes the dialog and nothing happens.
+     * 
+     * @author sbrede
+     */
+    private void recordDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        LayoutInflater adbInflater = LayoutInflater.from(this);
+        View eulaLayout = adbInflater.inflate(R.layout.checkbox, null);
+        dontShowAgain = (CheckBox) eulaLayout.findViewById(R.id.skip);
+        adb.setView(eulaLayout);
+        adb.setTitle(R.string.recordTrack);
+        adb.setMessage(R.string.startRecordTrack);
+        adb.setPositiveButton(R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences settings = getSharedPreferences(
+                                SHARED_PREFS, 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("skipRecordDialog",
+                                dontShowAgain.isChecked());
+                        // Commit the edits!
+                        editor.commit();
+                        changeIcon = true;
+                        recordActive = true;
+                        // TODO start track routine
+                        Toast.makeText(getBaseContext(), "START WITH CHECKBOX",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                });
+
+        adb.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences settings = getSharedPreferences(
+                                SHARED_PREFS, 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("skipRecordDialog",
+                                dontShowAgain.isChecked());
+                        // Commit the edits!
+                        editor.commit();
+                        changeIcon = false;
+                        recordActive = false;
+                        return;
+                    }
+                });
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
+        boolean skipDialog = settings.getBoolean("skipRecordDialog", false);
+        if (!skipDialog)
+            adb.show();
+    }
+
+    /**
+     * Set up a dialog to stop and save a track. Contains a checkbox linked with
+     * the shared preferences, so you can suppress this dialog.
+     * 
+     * On positive click it stops and saves a track. On negative click it closes
+     * the dialog and nothing happens (A running track will not be saved and
+     * closed).
+     * 
+     * @author sbrede
+     */
+    private void stopDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        LayoutInflater adbInflater = LayoutInflater.from(this);
+        View eulaLayout = adbInflater.inflate(R.layout.checkbox, null);
+        dontShowAgain = (CheckBox) eulaLayout.findViewById(R.id.skip);
+        adb.setView(eulaLayout);
+        adb.setTitle(R.string.stopTrack);
+        adb.setMessage(R.string.stopRecordTrack);
+        adb.setPositiveButton(R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences settings = getSharedPreferences(
+                                SHARED_PREFS, 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("skipStopDialog",
+                                dontShowAgain.isChecked());
+                        // Commit the edits!
+                        editor.commit();
+                        changeIcon = true;
+                        recordActive = false;
+                        // TODO stop track routine
+                        Toast.makeText(getBaseContext(), "STOP WITH CHECKBOX",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                });
+
+        adb.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences settings = getSharedPreferences(
+                                SHARED_PREFS, 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("skipStopDialog",
+                                dontShowAgain.isChecked());
+                        // Commit the edits!
+                        editor.commit();
+                        changeIcon = false;
+                        recordActive = true;
+                        return;
+                    }
+                });
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
+        boolean skipDialog = settings.getBoolean("skipStopDialog", false);
+        if (!skipDialog)
+            adb.show();
     }
 
     /**
