@@ -15,6 +15,7 @@
  */
 package io.github.data4all.model.data;
 
+
 import java.util.List;
 
 /**
@@ -30,7 +31,9 @@ public class ClassifiedTag extends Tag {
     /**
      * stores all classified values for the specific tag.
      */
+
     private List<ClassifiedValue> classifiedValues;
+
 
     /**
      * Default constructor.
@@ -50,6 +53,8 @@ public class ClassifiedTag extends Tag {
             List<ClassifiedValue> classifiedValues, int... osmObjects) {
         super(id, key, type, osmObjects);
         this.classifiedValues = classifiedValues;
+       
+       
     }
 
     public List<ClassifiedValue> getClassifiedValues() {
@@ -59,5 +64,9 @@ public class ClassifiedTag extends Tag {
     public void setClassifiedValues(List<ClassifiedValue> classifiedValues) {
         this.classifiedValues = classifiedValues;
     }
+
+  
+
+   
 
 }
