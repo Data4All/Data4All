@@ -95,7 +95,7 @@ public abstract class AbstractActivity extends Activity {
             break;
         // finish workflow, return to mapview
         case android.R.id.home:
-            onHomePressed();
+            this.onHomePressed();
             status = true;
             break;
         default:
