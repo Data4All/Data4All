@@ -32,7 +32,7 @@
             android:name="MAPBOX_AUTHKEY"
             android:value="pk.eyJ1IjoiZGF0YTRhbGwiLCJhIjoiYlNHWlFSayJ9.vN6iDHPsVupbT9yXdlT9Xg" />
 
-        <activity android:name=".activity.MapViewActivity">
+        <activity android:name=".activity.MapViewActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,6 +57,12 @@
             android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.UploadActivity" />
+        <activity android:name=".activity.BasicActivity" />
+        <activity android:name=".activity.SensorReactionActivity" />
+        <activity
+            android:name=".activity.GpsTrackListActivity"
+            android:label="Track List" />
+        <activity android:name=".activity.TrackDetailsActivity" />
 
         <service android:name=".service.UploadService" />
         <service

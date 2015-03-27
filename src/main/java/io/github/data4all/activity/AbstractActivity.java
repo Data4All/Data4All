@@ -93,6 +93,10 @@ public abstract class AbstractActivity extends Activity {
             // TODO set help activity here
             status = true;
             break;
+        case R.id.list_tracks:
+            startActivity(new Intent(this, GpsTrackListActivity.class));
+            status = true;
+            break;
         // finish workflow, return to mapview
         case android.R.id.home:
             onWorkflowFinished(null);

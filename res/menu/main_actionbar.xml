@@ -17,5 +17,6 @@
         android:id="@+id/action_help"
         android:enabled="false"
         android:title="@string/action_help"/>
+    <item android:id="@+id/list_tracks" android:title="@string/list_tracks"></item>
 
 </menu>
