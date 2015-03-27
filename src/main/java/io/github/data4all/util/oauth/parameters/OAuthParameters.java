@@ -30,7 +30,7 @@ public abstract class OAuthParameters {
     /**
      * The OAuth parameters which are currently in use.
      */
-    public static final OAuthParameters CURRENT = StableOAuthParameters.INSTANCE;
+    public static final OAuthParameters CURRENT = DevelopOAuthParameters.INSTANCE;
 
     /**
      * Gets the consumer key.
