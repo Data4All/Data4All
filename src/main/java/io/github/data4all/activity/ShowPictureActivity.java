@@ -195,8 +195,8 @@ public class ShowPictureActivity extends AbstractActivity {
 
         // set the HorizontView
         cameraAssistView.setInformations(
-                (float) transformBean.getCameraMaxRotationAngle(),
-                (float) transformBean.getCameraMaxPitchAngle(),
+                (float) transformBean.getCameraMaxVerticalViewAngle(),
+                (float) transformBean.getCameraMaxHorizontalViewAngle(),
                 currentOrientation);
         cameraAssistView.invalidate();
 
@@ -213,7 +213,7 @@ public class ShowPictureActivity extends AbstractActivity {
         buttons.add(findViewById(R.id.imageButton3));
         // TODO building is not supported yet, so it is commented out here and
         // in activity_picture.xml
-        // buttons.add(findViewById(R.id.imageButton4));
+        buttons.add(findViewById(R.id.imageButton4));
         buttons.add(ok);
 
         listener = new ButtonRotationListener(this, buttons);
@@ -252,18 +252,9 @@ public class ShowPictureActivity extends AbstractActivity {
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
-            // 0 or Rotation0 if portrait
-            // 90 or Rotation1 if home-button to the right
-            // 270 or Rotation3 if home-button to the left
-            final int rotation =
-                    ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                            .getDefaultDisplay().getRotation();
-
             // create an abstract data element from the given data and pass it
-            // to
-            // the next
-            // activity
-            final AbstractDataElement osmElement = touchView.create(rotation);
+            // to the next activity
+            final AbstractDataElement osmElement = touchView.create();
             intent.putExtra(OSM_ELEMENT, osmElement);
             startActivityForResult(intent);
         }

@@ -54,7 +54,7 @@ public class CaptureAssistView extends View {
     private Paint paint;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
-    private float maxPitch, maxRoll;
+    private float horizontalViewAngle, verticalViewAngle;
     private DeviceOrientation deviceOrientation;
     private boolean skylook;
     private boolean visible;
@@ -145,20 +145,20 @@ public class CaptureAssistView extends View {
      * This method is called to get the information for calculating the
      * drawings.
      * 
-     * @param maxPitch
+     * @param horizontalViewAngle
      * @param maxRoll
      * @param deviceOrientation
      */
-    public void setInformations(float maxPitch, float maxRoll,
+    public void setInformations(float horizontalViewAngle, float verticalViewAngle,
             DeviceOrientation deviceOrientation) {
         Log.d(TAG, "setInformationsIsCalled");
-        this.maxPitch = maxPitch;
-        this.maxRoll = maxRoll;
+        this.horizontalViewAngle = horizontalViewAngle;
+        this.verticalViewAngle = verticalViewAngle;
         this.deviceOrientation = deviceOrientation;
         this.informationSet = true;
 
         Log.d(TAG,
-                "MP" + maxPitch + " MR " + maxRoll + " OR "
+                "MP" + horizontalViewAngle + " MR " + verticalViewAngle + " OR "
                         + deviceOrientation.getPitch() + "  "
                         + deviceOrientation.getRoll() + " MW+H "
                         + mMeasuredWidth + " " + mMeasuredHeight);
@@ -173,7 +173,7 @@ public class CaptureAssistView extends View {
         // when the needed information have been set: calculate the horizon
         if (informationSet) {
             ReturnValues returnValues = horizonCalculationUtil
-                    .calcHorizontalPoints(maxPitch, maxRoll, mMeasuredWidth,
+                    .calcHorizontalPoints(horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
                             mMeasuredHeight, (float) Math.toRadians(85),
                             deviceOrientation);
             this.skylook = returnValues.isSkylook();

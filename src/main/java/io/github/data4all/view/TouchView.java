@@ -602,12 +602,10 @@ public class TouchView extends View {
      * 
      * 
      * @author sbollen
-     * @param rotation
-     *            create the element with the givin rotation
      * @return the created AbstractDataElement (with located nodes)
      */
-    public AbstractDataElement create(int rotation) {
-        return interpreter.create(polygon, rotation);
+    public AbstractDataElement create() {
+        return interpreter.create(polygon);
     }
 
     /**
