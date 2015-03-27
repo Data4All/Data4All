@@ -35,6 +35,7 @@ import android.graphics.Color;
  * 
  */
 public interface MotionInterpreter {
+    public static final int POINT_RADIUS = 10;    
     public static final int POINT_COLOR = Color.BLUE;
     public static final int PATH_COLOR = Color.BLUE;
     public static final int AREA_COLOR = Color.BLUE;

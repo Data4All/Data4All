@@ -110,7 +110,8 @@ public class ShowPictureActivity extends AbstractActivity {
         setContentView(R.layout.activity_picture);
 
         imageView = (ImageView) findViewById(R.id.imageView1);
-        cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
+        cameraAssistView =
+                (CaptureAssistView) findViewById(R.id.cameraAssistView);
         touchView = (TouchView) findViewById(R.id.touchView1);
 
         intent = new Intent(this, MapPreviewActivity.class);
@@ -151,7 +152,10 @@ public class ShowPictureActivity extends AbstractActivity {
             }
         });
 
-        if (getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null
+                && getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {
             this.setBackground((File) getIntent().getSerializableExtra(
                     CapturePictureHandler.FILE_EXTRA));
 
@@ -160,15 +164,20 @@ public class ShowPictureActivity extends AbstractActivity {
             this.finish();
         }
 
-        if (getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
-            transformBean = getIntent().getExtras().getParcelable(
-                    CapturePictureHandler.TRANSFORM_BEAN);
+        if (extras != null
+                && getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
+            transformBean =
+                    getIntent().getExtras().getParcelable(
+                            CapturePictureHandler.TRANSFORM_BEAN);
             intent.putExtra(LOCATION, transformBean.getLocation());
         }
 
-        if (getIntent().hasExtra(CapturePictureHandler.CURRENT_ORIENTATION)) {
-            currentOrientation = getIntent().getExtras().getParcelable(
-                    CapturePictureHandler.CURRENT_ORIENTATION);
+        if (extras != null
+                && getIntent().hasExtra(
+                        CapturePictureHandler.CURRENT_ORIENTATION)) {
+            currentOrientation =
+                    getIntent().getExtras().getParcelable(
+                            CapturePictureHandler.CURRENT_ORIENTATION);
         }
 
         // Set the display size as photo size to get a coordinate system for the
@@ -353,11 +362,12 @@ public class ShowPictureActivity extends AbstractActivity {
     }
 
     private Bitmap loadFromCamera(Uri photoUri) throws IOException {
-        final AssetFileDescriptor fileDescriptor = getContentResolver()
-                .openAssetFileDescriptor(photoUri, "r");
+        final AssetFileDescriptor fileDescriptor =
+                getContentResolver().openAssetFileDescriptor(photoUri, "r");
 
-        final Bitmap photo = BitmapFactory.decodeFileDescriptor(
-                fileDescriptor.getFileDescriptor(), null, null);
+        final Bitmap photo =
+                BitmapFactory.decodeFileDescriptor(
+                        fileDescriptor.getFileDescriptor(), null, null);
         if (photo != null) {
             return this.scaleAndRotate(photo);
         } else {
@@ -412,12 +422,20 @@ public class ShowPictureActivity extends AbstractActivity {
         Log.v("NEW_PARAMETER", "x: " + x + " y: " + y + " h: " + height
                 + " w: " + width);
 
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+
         return Bitmap.createBitmap(bitmap, x, y, width, height, matrix, true);
     }
 
     private double getScreenRation() {
-        final Point size = getIntent().getParcelableExtra(
-                CapturePictureHandler.SIZE_EXTRA);
+        final Point size =
+                getIntent()
+                        .getParcelableExtra(CapturePictureHandler.SIZE_EXTRA);
         Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
         return (1.0 * size.x) / size.y;
     }
