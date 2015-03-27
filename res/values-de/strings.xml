@@ -105,4 +105,8 @@
         Ihr könnt mehr über uns und dieses Projekt auf den folgenden Seiten herausfinden: </string>
     <string name="githubFollow">Data4All ist ein Open Source Projekt und somit kann jeder mitmachen und dieses 
         Projekt gemeinsam mit uns weiterentwickeln: </string> 
+
+    <string name="deleteTagsResultview">Möchten sie diesen Tag löschen ?</string>
+    <string name="maybe">Verwerfen</string>
+
 </resources>
