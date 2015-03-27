@@ -57,12 +57,14 @@
             android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.UploadActivity" />
-        <activity android:name=".activity.BasicActivity" />
-        <activity android:name=".activity.SensorReactionActivity" />
         <activity
             android:name=".activity.GpsTrackListActivity"
             android:label="Track List" />
         <activity android:name=".activity.TrackDetailsActivity" />
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/title_activity_about" >
+        </activity>
 
         <service android:name=".service.UploadService" />
         <service

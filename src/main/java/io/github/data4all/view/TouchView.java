@@ -217,8 +217,6 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-        int pointRadius = (int) (MotionInterpreter.POINT_RADIUS * getResources()
-                .getDisplayMetrics().density);
         path.reset();
         if (newPolygon != null && newPolygon.size() != 0) {
             path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
@@ -604,12 +602,10 @@ public class TouchView extends View {
      * 
      * 
      * @author sbollen
-     * @param rotation
-     *            create the element with the givin rotation
      * @return the created AbstractDataElement (with located nodes)
      */
-    public AbstractDataElement create(int rotation) {
-        return interpreter.create(polygon, rotation);
+    public AbstractDataElement create() {
+        return interpreter.create(polygon);
     }
 
     /**
