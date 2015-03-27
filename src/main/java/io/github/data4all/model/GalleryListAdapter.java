@@ -18,8 +18,11 @@ package io.github.data4all.model;
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.ShowPictureActivity;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.Gallery.Informations;
+import io.github.data4all.util.MapUtil;
+import io.github.data4all.view.D4AMapView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,6 +35,8 @@ import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.location.Location;
+import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,9 +75,12 @@ public class GalleryListAdapter implements ListAdapter {
             Informations infos = gallery.getImageInformations(id);
             File imageFile = gallery.getImageFile(id);
 
+            final Bundle extras = new Bundle();
+            extras.putLong(Gallery.GALLERY_ID_EXTRA, id);
+
             ShowPictureActivity.startActivity(context, imageFile,
                     infos.getParameters(), infos.getOrientation(),
-                    infos.getDimension());
+                    infos.getDimension(), extras);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -152,7 +160,8 @@ public class GalleryListAdapter implements ListAdapter {
             result = inflater.inflate(R.layout.view_listitem, null);
             layout =
                     new Layout(result.findViewById(R.id.gallery_date_text),
-                            result.findViewById(R.id.gallery_thumbnail));
+                            result.findViewById(R.id.gallery_thumbnail),
+                            result.findViewById(R.id.gallery_map));
             result.setTag(layout);
         } else {
             layout = (Layout) convertView.getTag();
@@ -173,6 +182,26 @@ public class GalleryListAdapter implements ListAdapter {
                 layout.image.setRotation(0);
             }
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            final Informations info =
+                    gallery.getImageInformations(getItemId(position));
+            final Location location = info.getParameters().getLocation();
+            final Node node =
+                    new Node(-1, location.getLatitude(),
+                            location.getLongitude());
+
+            layout.map.getController().setCenter(
+                    MapUtil.getCenterFromOsmElement(node));
+            layout.map
+                    .setBoundingBox(MapUtil.getBoundingBoxForOsmElement(node));
+            layout.map.setScrollable(false);
+            layout.map.getOverlays().clear();
+            layout.map.addOsmElementToMap(context, node);
+            layout.map.postInvalidate();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -316,11 +345,13 @@ public class GalleryListAdapter implements ListAdapter {
     private static final class Layout {
         private final TextView text;
         private final ImageView image;
+        private final D4AMapView map;
 
-        private Layout(View text, View image) {
+        private Layout(View text, View image, View map) {
             super();
             this.text = (TextView) text;
             this.image = (ImageView) image;
+            this.map = (D4AMapView) map;
         }
     }
 }
