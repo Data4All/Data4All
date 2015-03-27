@@ -75,6 +75,9 @@ public class Gallery {
 
     private static final String LOG_TAG = Gallery.class.getSimpleName();
 
+    public static final String GALLERY_ID_EXTRA = Gallery.class.getName()
+            + ":GALLERY_ID";
+
     /**
      * The working directory of this gallery.
      */

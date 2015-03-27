@@ -21,6 +21,7 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
@@ -386,6 +387,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
+        
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
+        }
+        
         startActivityForResult(intent);
     }
 }

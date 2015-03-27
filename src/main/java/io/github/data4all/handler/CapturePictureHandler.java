@@ -221,16 +221,7 @@ public class CapturePictureHandler implements PictureCallback {
                 Log.d(TAG, "Picture successfully saved");
 
                 ShowPictureActivity.startActivity(context, photoFile,
-                        transformBean, deviceOrientation, viewSize);
-
-                // final Intent intent =
-                // new Intent(context, ShowPictureActivity.class);
-                // intent.putExtra(FILE_EXTRA, photoFile);
-                // intent.putExtra(TRANSFORM_BEAN, transformBean);
-                // intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
-                // intent.putExtra(SIZE_EXTRA, viewSize);
-                //
-                // context.startActivityForResult(intent);
+                        transformBean, deviceOrientation, viewSize, null);
 
             } else {
                 Toast.makeText(context, "Failed on taking picture",

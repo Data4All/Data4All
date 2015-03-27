@@ -24,6 +24,7 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.network.MapBoxTileSourceV4;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
@@ -40,10 +41,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -112,8 +115,9 @@ public class ResultViewActivity extends AbstractActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_ZOOM_LEVEL);
+        osmMap =
+                new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                        MAXIMAL_ZOOM_LEVEL);
 
         // Here is the OsmDroidMap created
         setContentView(R.layout.activity_result_view);
@@ -122,26 +126,29 @@ public class ResultViewActivity extends AbstractActivity implements
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-        final BoundingBoxE6 boundingBox = MapUtil
-                .getBoundingBoxForOsmElement(element);
+        final BoundingBoxE6 boundingBox =
+                MapUtil.getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
         mapView.addOsmElementToMap(this, element);
         // Here the List of tags is created
         listView = (ListView) this.findViewById(R.id.listViewResultView);
         res = getResources();
-        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
-                res);
+        tagMap =
+                Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
+                        res);
         mapTag = Tagging.getUnclassifiedMapKeys(res);
         if (!Tagging.getAllNonSelectedTags(element.getTags(),
                 getIntent().getExtras().getInt("TYPE_DEF")).isEmpty()) {
             final LayoutInflater inflater = getLayoutInflater();
-            viewFooter = ((LayoutInflater) this
-                    .getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(
-                    R.drawable.footer_listviewresult, null, false);
+            viewFooter =
+                    ((LayoutInflater) this
+                            .getSystemService(LAYOUT_INFLATER_SERVICE))
+                            .inflate(R.drawable.footer_listviewresult, null,
+                                    false);
             listView.addFooterView(viewFooter);
-            final TextView tVFooter = ((TextView) viewFooter
-                    .findViewById(R.id.titleFooter));
+            final TextView tVFooter =
+                    ((TextView) viewFooter.findViewById(R.id.titleFooter));
             tVFooter.setOnClickListener(this);
             viewFooter.setOnClickListener(new OnClickListener() {
 
@@ -167,11 +174,11 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             }
         });
-        final ImageButton resultButton = (ImageButton) this
-                .findViewById(R.id.buttonResult);
+        final ImageButton resultButton =
+                (ImageButton) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
-        final ImageButton resultButtonToCamera = (ImageButton) this
-                .findViewById(R.id.buttonResultToCamera);
+        final ImageButton resultButtonToCamera =
+                (ImageButton) this.findViewById(R.id.buttonResultToCamera);
         resultButtonToCamera.setOnClickListener(this);
     }
 
@@ -257,15 +264,17 @@ public class ResultViewActivity extends AbstractActivity implements
      */
     private void changeClassifiedTag(final String selectedString) {
         Log.i(TAG, "Classified Tag");
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                ResultViewActivity.this,
-                android.R.style.Theme_Holo_Dialog_MinWidth);
+        final AlertDialog.Builder alertDialog =
+                new AlertDialog.Builder(ResultViewActivity.this,
+                        android.R.style.Theme_Holo_Dialog_MinWidth);
         alertDialog.setTitle("Select Tag");
         final CharSequence[] showArray;
-        showArray = Tagging.ClassifiedValueList(tagMap.get(selectedString)
-                .getClassifiedValues(), res);
-        classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString)
-                .getClassifiedValues(), res, false);
+        showArray =
+                Tagging.ClassifiedValueList(tagMap.get(selectedString)
+                        .getClassifiedValues(), res);
+        classifiedMap =
+                Tagging.classifiedValueMap(tagMap.get(selectedString)
+                        .getClassifiedValues(), res, false);
         alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -290,8 +299,9 @@ public class ResultViewActivity extends AbstractActivity implements
      *            is the String which is selected
      */
     private void changeUnclassifiedTag(final String selectedString) {
-        dialog = new Dialog(ResultViewActivity.this,
-                android.R.style.Theme_Holo_Dialog_MinWidth);
+        dialog =
+                new Dialog(ResultViewActivity.this,
+                        android.R.style.Theme_Holo_Dialog_MinWidth);
         dialog.setContentView(R.layout.dialog_dynamic);
         dialog.setTitle(selectedString);
         final Button okay = new Button(ResultViewActivity.this);
@@ -300,8 +310,8 @@ public class ResultViewActivity extends AbstractActivity implements
         text.setInputType(mapTag.get(selectedString).getType());
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
-        final LinearLayout layout = (LinearLayout) dialog
-                .findViewById(R.id.dialogDynamic);
+        final LinearLayout layout =
+                (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
         layout.addView(text);
         layout.addView(okay);
         okay.setOnClickListener(new OnClickListener() {
@@ -332,25 +342,7 @@ public class ResultViewActivity extends AbstractActivity implements
         switch (v.getId()) {
         case R.id.buttonResult:
             this.addOsmElementToDB(element);
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    ResultViewActivity.this);
-            builder.setMessage(R.string.resultViewAlertDialogMessage);
-            final Intent intent = new Intent(this, LoginActivity.class);
-            builder.setPositiveButton(R.string.yes,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startActivityForResult(intent);
-                        }
-                    });
-            builder.setNegativeButton(R.string.no,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            setResult(RESULT_OK);
-                            finishWorkflow(null);
-                        }
-                    });
-            alert = builder.create();
-            alert.show();
+            askForGalleryDelete();
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
@@ -366,17 +358,93 @@ public class ResultViewActivity extends AbstractActivity implements
         }
     }
 
+    private void askForGalleryDelete() {
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            final long id =
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0);
+            final String preferenceChoise = getPreferenceChoise();
+
+            if ("yes".equals(preferenceChoise)) {
+                new Gallery(this).deleteImage(id);
+                this.askForUpload();
+            } else if ("no".equals(preferenceChoise)) {
+                this.askForUpload();
+            } else {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.delete)
+                        .setMessage(
+                                "Do you want to delete the image from the gallery?")
+                        .setPositiveButton(R.string.yes,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        new Gallery(ResultViewActivity.this)
+                                                .deleteImage(id);
+                                        ResultViewActivity.this.askForUpload();
+                                    }
+                                })
+                        .setNegativeButton(R.string.no,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        ResultViewActivity.this.askForUpload();
+                                    }
+                                }).show();
+            }
+        } else {
+            askForUpload();
+        }
+    }
+
+    /**
+     * TODO: tbrose
+     * 
+     * @return
+     */
+    private String getPreferenceChoise() {
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        final Resources res = getResources();
+        final String key = res.getString(R.string.pref_gallery_deletemode_key);
+        final String choise = prefs.getString(key, null);
+        return choise;
+    }
+
+    private void askForUpload() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.resultViewAlertDialogMessage);
+        final Intent intent = new Intent(this, LoginActivity.class);
+        builder.setPositiveButton(R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startActivityForResult(intent);
+                    }
+                });
+        builder.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        setResult(RESULT_OK);
+                        finishWorkflow(null);
+                    }
+                });
+        alert = builder.create();
+        alert.show();
+    }
+
     /**
      * creates the Dialog with the List of all unclassified Tags which are not
      * used.
      * 
      */
     private void createDialogAddTags() {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                ResultViewActivity.this,
-                android.R.style.Theme_Holo_Dialog_MinWidth);
-        final List<Tag> list = Tagging.getAllNonSelectedTags(element.getTags(),
-                getIntent().getExtras().getInt("TYPE_DEF"));
+        final AlertDialog.Builder alertDialog =
+                new AlertDialog.Builder(ResultViewActivity.this,
+                        android.R.style.Theme_Holo_Dialog_MinWidth);
+        final List<Tag> list =
+                Tagging.getAllNonSelectedTags(element.getTags(), getIntent()
+                        .getExtras().getInt("TYPE_DEF"));
         final String[] listString;
         listString = Tagging.TagsToStringRes(list, res);
         alertDialog.setItems(listString, new DialogInterface.OnClickListener() {
@@ -407,7 +475,7 @@ public class ResultViewActivity extends AbstractActivity implements
         if (dataElement.getOsmId() == -1) {
             db.createDataElement(dataElement);
         } else {
-            //if the Element allready exists
+            // if the Element allready exists
             db.updateDataElement(dataElement);
         }
         db.close();

@@ -24,6 +24,7 @@ import org.osmdroid.util.GeoPoint;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import android.content.Intent;
 import android.location.Location;
@@ -156,6 +157,11 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.getClass().getSimpleName() + " with Coordinates "
                 + element.toString());
         intent.putExtra(OSM, element);
+        
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
+        }
 
         startActivityForResult(intent);
     }

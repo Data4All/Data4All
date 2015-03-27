@@ -22,6 +22,7 @@ import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.TouchView;
 
@@ -62,7 +63,8 @@ public class ShowPictureActivity extends AbstractActivity {
     private static final String TAG = ShowPictureActivity.class.getSimpleName();
 
     /** Name of the DeviceOrientation to give to the next activity */
-    public static final String CURRENT_ORIENTATION_EXTRA = "current_orientation";
+    public static final String CURRENT_ORIENTATION_EXTRA =
+            "current_orientation";
 
     /** Name of the TransformationParamBean to give to the next activity */
     public static final String TRANSFORM_BEAN_EXTRA = "transform_bean";
@@ -166,8 +168,7 @@ public class ShowPictureActivity extends AbstractActivity {
 
         if (getIntent().hasExtra(TRANSFORM_BEAN_EXTRA)) {
             transformBean =
-                    getIntent().getExtras().getParcelable(
-                            TRANSFORM_BEAN_EXTRA);
+                    getIntent().getExtras().getParcelable(TRANSFORM_BEAN_EXTRA);
             intent.putExtra(LOCATION, transformBean.getLocation());
         }
 
@@ -175,6 +176,11 @@ public class ShowPictureActivity extends AbstractActivity {
             currentOrientation =
                     getIntent().getExtras().getParcelable(
                             CURRENT_ORIENTATION_EXTRA);
+        }
+
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
         }
 
         // Set the display size as photo size to get a coordinate system for the
@@ -359,7 +365,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private Bitmap loadFromCamera(Uri photoUri) throws IOException {
         final AssetFileDescriptor fileDescriptor =
                 getContentResolver().openAssetFileDescriptor(photoUri, "r");
-        
+
         final Options options = new Options();
         options.inSampleSize = 2;
 
@@ -424,23 +430,22 @@ public class ShowPictureActivity extends AbstractActivity {
     }
 
     private double getScreenRation() {
-        final Point size =
-                getIntent()
-                        .getParcelableExtra(SIZE_EXTRA);
+        final Point size = getIntent().getParcelableExtra(SIZE_EXTRA);
         Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
         return (1.0 * size.x) / size.y;
     }
 
     public static final void startActivity(AbstractActivity context,
             File photoFile, TransformationParamBean transformBean,
-            DeviceOrientation deviceOrientation, Point viewSize) {
+            DeviceOrientation deviceOrientation, Point viewSize, Bundle extras) {
         final Intent intent = new Intent(context, ShowPictureActivity.class);
         intent.putExtra(FILE_EXTRA, photoFile);
         intent.putExtra(TRANSFORM_BEAN_EXTRA, transformBean);
-        intent.putExtra(CURRENT_ORIENTATION_EXTRA,
-                deviceOrientation);
+        intent.putExtra(CURRENT_ORIENTATION_EXTRA, deviceOrientation);
         intent.putExtra(SIZE_EXTRA, viewSize);
-
+        if(extras != null) {
+            intent.putExtras(extras);
+        }
         context.startActivityForResult(intent);
     }
 }
