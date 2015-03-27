@@ -83,6 +83,7 @@ public abstract class AbstractActivity extends Activity {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Notification.Builder mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_logo_white)
+                .setOngoing(true)
                 .setContentTitle("Data4All is running").setAutoCancel(true)
                 .setContentText("The Data4All App is still Running");
 
