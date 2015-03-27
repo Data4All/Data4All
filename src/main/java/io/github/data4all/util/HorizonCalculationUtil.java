@@ -15,6 +15,10 @@
  *******************************************************************************/
 package io.github.data4all.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.drawing.Point;
 
@@ -22,11 +26,28 @@ import io.github.data4all.model.drawing.Point;
  * This class calculates the horizon for the display of the device.
  * 
  * @author burghardt
- * @version 0.1
+ * @version 1.1
  *
  */
 
 public class HorizonCalculationUtil {
+    private Point point1, point2;
+    private Point[] corners;
+    /**
+     * 3 for first two edges 5 for first and 3. corner 9 for first and 4. corner
+     * 6 for second and 3. corner 10 for second and 4. corner 12 for 3. and 4.
+     * corner
+     */
+    private int edges = 0;
+    /**
+     * Information for the general direction of the horizon
+     */
+    private int direction;
+    /**
+     * 2 Vectors for the x- and the y-axe
+     */
+    final private double[] xaxe = { 1, 0, 0 };
+    final private double[] yaxe = { 0, 1, 0 };
 
     /**
      * calculates the horizon for the display of the device.
@@ -45,40 +66,23 @@ public class HorizonCalculationUtil {
      *            of DeviceOrientation
      * @return object of the inner class returnValues
      */
-    public ReturnValues calcHorizontalPoints(float maxPitch, float maxRoll,
+    public ReturnValues calcHorizontalPoints(float horizontalViewAngle, float verticalViewAngle,
             float maxWidth, float maxHeight, float maxhorizon,
             DeviceOrientation deviceOrientation) {
-        // zero if the general deviceorientation directed to the ground.
         final ReturnValues rV = new ReturnValues();
+        // Set Cornerpoints
+        Point[] corners = { new Point(0.0f, 0.0f), new Point(maxWidth, 0.0f),
+                new Point(maxWidth, maxHeight), new Point(0.0f, maxHeight), };
+        this.corners = corners;
 
-        final double[] vector = new double[3];
-        // without any rotation .
-        vector[2] = -1;
-        vector[1] = 0;
-        vector[0] = 0;
-        // rotate around X-Achse with pitch.
+        // initial Vector
+        final double[] vector = { 0, 0, -1, };
+        // rotate around y-axe with roll
+        final double roll = -deviceOrientation.getRoll();
+        double[] vector2 = MathUtil.rotate(vector, yaxe, roll);
+        // rotate around x-axe with pitch
         final double pitch = deviceOrientation.getPitch();
-        final double[] vector2 = new double[3];
-        vector2[0] = 0;
-        vector2[1] = Math.sin(pitch);
-        vector2[2] = -Math.cos(pitch);
-        // rotate around line through origin with pitch angle.
-        final double roll = deviceOrientation.getRoll();
-        final double[] vector3 = new double[3];
-        vector3[0] = -vector2[1] * Math.sin(pitch) * Math.sin(roll)
-                + vector2[2] * Math.cos(pitch) * Math.sin(roll);
-        vector3[1] = vector2[1]
-                * (Math.cos(pitch) * Math.cos(pitch) * (1 - Math.cos(roll)) + Math
-                        .cos(roll)) + vector2[2] * Math.cos(pitch)
-                * Math.sin(pitch) * (1 - Math.cos(roll));
-        vector3[2] = vector2[1]
-                * Math.sin(pitch)
-                * Math.cos(pitch)
-                * (1 - Math.cos(roll))
-                + vector2[2]
-                * (Math.sin(pitch) * Math.sin(pitch) * (1 - Math.cos(roll)) + Math
-                        .cos(roll));
-
+        double[] vector3 = MathUtil.rotate(vector2, xaxe, pitch);
         // calculate angle between vector and z-axis and subtract from
         // maxhorizon.
         final double angle = maxhorizon - Math.acos(-vector3[2]);
@@ -86,15 +90,17 @@ public class HorizonCalculationUtil {
         if (angle <= 0) {
             rV.setSkylook(true);
         }
+
         /*
-         * calculate a roatationvector vertical to vector3with the length of 1
+         * calculate a roatationvector vertical to vector3 with the length of 1
          * and wich is on the x-y-plane.
          */
         final double rotateVectorLengthMultiplicator = Math
                 .sqrt((vector3[0] * vector3[0]) + (vector3[1] * vector3[1]));
         final double[] rotateVector = {
                 -vector3[1] / rotateVectorLengthMultiplicator,
-                vector3[0] / rotateVectorLengthMultiplicator, };
+                vector3[0] / rotateVectorLengthMultiplicator, 0, };
+
         /*
          * rotate the (0|0|-1) vector with the calculated angle and.
          * rotationvector.
@@ -102,32 +108,57 @@ public class HorizonCalculationUtil {
         final double[] vector4 = new double[3];
         vector4[0] = (rotateVector[1] * Math.sin(angle));
         vector4[1] = (rotateVector[0] * Math.sin(angle));
-        vector4[2] = Math.cos(angle);
+        vector4[2] = -Math.cos(angle);
 
         // calculate the pitch- and roll-angles.
-        final double horizonPitch = Math.atan(vector4[1] / (vector[2]));
-        final double horizonRoll = Math.atan(vector4[0] / (vector[2]));
+        double horizonPitch = Math.atan(vector4[1] / (vector4[2]));
+        double horizonRoll = Math.atan(vector4[0] / (vector4[2]));
         // calculate a point on the horizont vertical to the mid of the display.
-        final float x = calculatePixelFromAngle(horizonRoll, maxWidth, maxRoll);
-        final float y = calculatePixelFromAngle(horizonPitch, maxHeight, maxPitch);
+        float x = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth, horizontalViewAngle);
+        float y = MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight, verticalViewAngle);
+
+        // set general direction / side of te horizon
+        if (y <= 0 && x < 0) {
+            direction = 0;
+        }
+        if (y < 0 && x >= 0) {
+            direction = 1;
+        }
+        if (y >= 0 && x >= 0) {
+            direction = 2;
+        }
+        if (y > 0 && x <= 0) {
+            direction = 3;
+        }
+
+        // calculation of the gradiants
+        vector2 = MathUtil.rotate(xaxe, xaxe, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+        // calculate the pitch- and roll-angles.
+        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
+        horizonRoll = Math.atan(vector3[0] / (vector3[2]));
+        float xgradiant = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth,
+                horizontalViewAngle);
+        float ygradiant = MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight,
+                verticalViewAngle);
+
+        vector2 = MathUtil.rotate(yaxe, xaxe, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+        // calculate the pitch- and roll-angles.
+        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
+        horizonRoll = Math.atan(vector3[0] / (vector3[2]));
+        // calculate a point on the horizont vertical to the mid of the display.
+        xgradiant = xgradiant
+                - MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth, horizontalViewAngle);
+        ygradiant = ygradiant
+                - MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight, verticalViewAngle);
+
         // calculate and return the returnValues.
-        return calculatePoints(maxWidth, maxHeight, x, y, rV);
+        return calculatePoints(maxWidth, maxHeight, x, y, xgradiant, ygradiant,
+                rV);
     }
 
-    /**
-     * @param angle
-     *            difference to the deviceorientation
-     * @param width
-     *            width or height of the devicedisplay
-     * @param maxAngle
-     *            maximum angle of the camera
-     * @return the pixel
-     */
-    private float calculatePixelFromAngle(double angle, double width,
-            double maxAngle) {
-        final double adjacent = (width / 2) / Math.tan(maxAngle / 2);
-        return (float) (Math.tan(angle) * adjacent);
-    }
+
 
     /**
      * An inner Class for saving points, the visibility of the horizon and if
@@ -135,13 +166,9 @@ public class HorizonCalculationUtil {
      */
     public class ReturnValues {
         /**
-         * first point on the edge of the display representing the horizon
+         * A list of Points to draw the horizon on the view
          */
-        private Point point1;
-        /**
-         * second point on the edge of the display representing the horizon
-         */
-        private Point point2;
+        private List<Point> points = new ArrayList<Point>();
         /**
          * true if more than 50% of the display is above the horizon
          */
@@ -151,20 +178,12 @@ public class HorizonCalculationUtil {
          */
         private boolean visible = true;
 
-        public Point getPoint1() {
-            return point1;
+        public List<Point> getPoints() {
+            return points;
         }
 
-        public void setPoint1(Point point1) {
-            this.point1 = point1;
-        }
-
-        public Point getPoint2() {
-            return point2;
-        }
-
-        public void setPoint2(Point point2) {
-            this.point2 = point2;
+        public void setPoints(List<Point> points) {
+            this.points = points;
         }
 
         public boolean isSkylook() {
@@ -198,57 +217,122 @@ public class HorizonCalculationUtil {
      * @return object of returnValues
      */
     private ReturnValues calculatePoints(float maxWidth, float maxHeight,
-            float x, float y, ReturnValues rV) {
+            float x, float y, float xgradiant, float ygradiant, ReturnValues rV) {
         // counter for the added points.
         int iter = 0;
+        // information Bits to check which edges are hit by the horizon
+        edges = 0;
         // check if horizon is parallel to a side of the display.
-        if (Float.floatToRawIntBits(y) == 0) {
-            rV.setPoint1(new Point(maxWidth / 2 + x, 0));
-            rV.setPoint2(new Point(maxWidth / 2 + x, maxHeight));
-        } else if (Float.floatToRawIntBits(x) == 0) {
-            rV.setPoint1(new Point(0, maxHeight / 2 + y));
-            rV.setPoint2(new Point(maxWidth, maxHeight / 2 + y));
+        if (y == 0) {
+            point1 = new Point(maxWidth / 2 + x, 0);
+            point2 = new Point(maxWidth / 2 + x, maxHeight);
+            edges = 10;
+        } else if (x == 0) {
+            point1 = new Point(0, maxHeight / 2 + y);
+            point2 = new Point(maxWidth, maxHeight / 2 + y);
+            edges = 5;
         } else {
             // calculade the collision of the horizonline with the displayedges.
             // check wich collision is important and add it to the returnvalues.
-            final float xMin = y + x * ((maxWidth / 2 + x) / y) + maxHeight / 2;
+            final float xMin = y + ygradiant
+                    * ((-maxWidth / 2 - x) / xgradiant) + maxHeight / 2;
             if (xMin > 0 && xMin <= maxHeight) {
-                rV.setPoint1(new Point(0, xMin));
+                point1 = new Point(0, xMin);
                 iter++;
+                edges += 1;
             }
-            final float yMin = x - y * ((-maxHeight / 2 - y) / x) + maxWidth / 2;
+
+            final float yMin = x + xgradiant
+                    * ((-maxHeight / 2 - y) / ygradiant) + maxWidth / 2;
             if (yMin > 0 && yMin <= maxWidth) {
                 if (iter == 0) {
-                    rV.setPoint1(new Point(yMin, 0));
+                    point1 = new Point(yMin, 0);
                 } else {
-                    rV.setPoint2(new Point(yMin, 0));
+                    point2 = new Point(yMin, 0);
                 }
                 iter++;
+                edges += 2;
             }
-            final float xMax = y + x * ((-maxWidth / 2 + x) / y) + maxHeight / 2;
+
+            final float xMax = y + ygradiant * ((maxWidth / 2 - x) / xgradiant)
+                    + maxHeight / 2;
             if (xMax > 0 && xMax <= maxHeight) {
                 if (iter == 0) {
-                    rV.setPoint1(new Point(maxWidth, xMax));
+                    point1 = new Point(maxWidth, xMax);
                 } else {
-                    rV.setPoint2(new Point(maxWidth, xMax));
+                    point2 = new Point(maxWidth, xMax);
                 }
                 iter++;
+                edges += 4;
             }
-            final float yMax = x - y * ((maxHeight / 2 - y) / x) + maxWidth / 2;
+
+            final float yMax = x + xgradiant
+                    * ((maxHeight / 2 - y) / ygradiant) + maxWidth / 2;
             if (yMax > 0 && yMax <= maxWidth) {
                 if (iter == 0) {
-                    rV.setPoint1(new Point(yMax, maxHeight));
+                    point1 = new Point(yMax, maxHeight);
                 } else {
-                    rV.setPoint2(new Point(yMax, maxHeight));
+                    point2 = new Point(yMax, maxHeight);
                 }
                 iter++;
+                edges += 8;
             }
             // check if more or less then 2 points have been added.
             if (iter != 2) {
                 rV.setVisible(false);
+                return rV;
             }
         }
+        return addCorners(rV);
+    }
+
+    /**
+     * 
+     * @param rV
+     *            the returnValue with set Skylook and Visibility
+     * @return an ReturnValueObjekt with all needed information
+     */
+    private ReturnValues addCorners(ReturnValues rV) {
+        // list of points for the drawingPath
+        List<Point> points = new ArrayList<Point>();
+        // add first Point
+        points.add(point1);
+        // Check if the Horizon hits two facing edges .
+        // and adding the corners to the list
+        if (edges == 5) {
+            if (direction >= 2) {
+                points.add(corners[3]);
+                points.add(corners[2]);
+            } else {
+                points.add(corners[0]);
+                points.add(corners[1]);
+            }
+        } else if (edges == 10) {
+            if (direction == 1 || direction == 2) {
+                points.add(corners[1]);
+                points.add(corners[2]);
+            } else {
+                points.add(corners[0]);
+                points.add(corners[3]);
+            }
+        } else {
+            // Horizon doesnt hit facing edges, so add the one missing corner
+            points.add(corners[direction]);
+        }
+        // add last point
+        points.add(point2);
+        rV.setPoints(points);
         return rV;
     }
+
+    public Point getPoint1() {
+        return point1;
+    }
+
+    public Point getPoint2() {
+        return point2;
+    }
+
+
 
 }

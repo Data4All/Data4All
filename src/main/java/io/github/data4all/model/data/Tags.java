@@ -64,7 +64,7 @@ public final class Tags {
      */
     public static Tag getTagWithId(int id) {
         for (Tag t : TAG_LIST) {
-            if (t.getId() == id) {
+            if (t.getId() == id ) {
                 return t;
             }
         }
@@ -355,5 +355,7 @@ public final class Tags {
         TAG_LIST.add(new ClassifiedTag(14, "landuse", -1, landuseValues,
                 new int[] { AREA_TAG }));
     }
+    
+   
 
 }

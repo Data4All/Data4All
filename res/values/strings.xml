@@ -9,6 +9,7 @@
     <string name="action_map">Map</string>
     <string name="action_help">Help</string>
     <string name="action_login">Login</string>
+    <string name="action_about">About</string>
 
     <!-- generell strings -->
     <string name="yes">Yes</string>
@@ -30,6 +31,10 @@
     <string name="redo">Redo Function</string>
     <string name="undo">Undo Function</string>
 
+    <!-- infoBubble -->
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+
     <!-- dialogs -->
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="resultViewAlertDialogMessage">Upload now?</string>
@@ -40,7 +45,6 @@
 
     <!-- Login Activity Strings -->
     <string name="usernameHint">username</string>
-    <string name="or">Or</string>
     <string name="passwordHint">password</string>
     <string name="loginDescription">Login to OpenStreetMap</string>
     <string name="loginButton">Sign in</string>
@@ -86,5 +90,29 @@
     <string name="noLocationFound">No Location found. Turn on location service </string>
     <string name="retry">Cannot find the right Tag. Try Again.</string>
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
+    <string name="show_pwd">Show Password</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+     <!-- track list and details -->
+    <string name="list_tracks">Tracks</string>
+    <string name="track_id">Track ID:</string>
+    <string name="trackpoints">Trackpoints:</string>
+    <string name="trackname">Name:</string>
+    
+    <!-- URLs -->
+    <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Follow us on Facebook</a></string>
+    <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Follow us on Twitter</a></string>
+    <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
+    <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Join us on GitHub!</a></string>
+    
+    <!-- credits / about -->
+    <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
+        You can find out more about us and this project on the following pages: </string>
+    <string name="githubFollow">Since Data4All is an Open Source project, you can join us and participate 
+        on GitHub: </string>    
+
+    <string name="deleteTagsResultview">Do you want to delete this Tag ?</string>
+    <string name="maybe">Discard</string>
 
 </resources>

@@ -10,12 +10,17 @@
         style="@style/imageViewTakedPicture"
         android:contentDescription="@string/returnToActualPosition" />
 
+    <io.github.data4all.view.CaptureAssistView
+        android:id="@+id/cameraAssistView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" />
+
     <io.github.data4all.view.TouchView
         android:id="@+id/touchView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/imageButton5" />
+        android:layout_alignParentRight="true" />
 
     <LinearLayout
         android:id="@+id/layout_choose_interpreter"
@@ -24,44 +29,46 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" >
 
-        <ImageButton
+        <io.github.data4all.widged.CustomImageButton
             android:id="@+id/imageButton1"
             style="@style/imageButtonDrawPoint"
             android:contentDescription="@string/drawPoint"
             android:onClick="onClickPoint" />
 
-        <ImageButton
+        <io.github.data4all.widged.CustomImageButton
             android:id="@+id/imageButton2"
             style="@style/imageButtonDrawWay"
             android:contentDescription="@string/drawWay"
             android:onClick="onClickPath" />
 
-        <ImageButton
+        <io.github.data4all.widged.CustomImageButton
             android:id="@+id/imageButton3"
             style="@style/imageButtonDrawArea"
             android:contentDescription="@string/drawArea"
             android:onClick="onClickArea" />
-<!--    TODO building is not supported yet -->
-<!--         <ImageButton -->
-<!--             android:id="@+id/imageButton4" -->
-<!--             style="@style/imageButtonDrawBuilding" -->
-<!--             android:contentDescription="@string/drawBuilding" -->
-<!--             android:onClick="onClickBuilding" /> -->
+        <!-- TODO building is not supported yet -->
+        <!-- <ImageButton -->
+
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/imageButton4"
+            style="@style/imageButtonDrawBuilding"
+            android:contentDescription="@string/drawBuilding"
+            android:onClick="onClickBuilding" />
     </LinearLayout>
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/okbtn"
         style="@style/imageButtonOkay"
         android:contentDescription="@string/noDescription"
         android:onClick="onClickOkay" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/redobtn"
         style="@style/imageButtonRedoPictureActivity"
         android:contentDescription="@string/redo"
         android:onClick="onClickRedo" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/undobtn"
         style="@style/imageButtonUndoPictureActivity"
         android:contentDescription="@string/undo"

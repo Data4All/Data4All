@@ -18,17 +18,17 @@ package io.github.data4all.model.map;
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
-import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.views.MapView;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.view.MotionEvent;
+import android.content.Context;
+import android.content.res.Resources;
 
 /**
  * With LongClick deletable Map Marker.
@@ -36,11 +36,11 @@ import android.view.MotionEvent;
  * @author Oliver Schwartz
  *
  */
-public class MapMarker extends Marker implements
-        DialogInterface.OnClickListener {
+public class MapMarker extends Marker {
 
-    private AbstractActivity activity;
+    private static final String TAG = "MapMarker";
     private D4AMapView mapView;
+    private AbstractActivity activity;
     private AbstractDataElement element;
 
     /**
@@ -62,52 +62,41 @@ public class MapMarker extends Marker implements
         this.activity = ctx;
         this.mapView = mv;
         setIcon(ctx.getResources().getDrawable(R.drawable.ic_setpoint));
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.osmdroid.bonuspack.overlays.Marker#onLongPress(android.view.MotionEvent
-     * , org.osmdroid.views.MapView)
-     */
-    @Override
-    public boolean onLongPress(final MotionEvent e, final MapView mapView) {
         if (activity instanceof MapViewActivity) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    mapView.getContext());
-            builder.setMessage(activity.getString(R.string.deleteDialog))
-                    .setPositiveButton(activity.getString(R.string.yes), this)
-                    .setNegativeButton(activity.getString(R.string.no), this)
-                    .show();
+            mInfoWindow = new CustomInfoWindow(this.mapView, ele, this,
+                    activity);
+        } else {
+            mInfoWindow = null;
         }
-        return true;
-
+        setInfo();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * android.content.DialogInterface.OnClickListener#onClick(android.content
-     * .DialogInterface, int)
-     */
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-        case DialogInterface.BUTTON_POSITIVE:
-            // Yes button clicked
-            mapView.removeOverlayFromMap(this);
-            final DataBaseHandler db = new DataBaseHandler(activity);
-            db.deleteDataElement(element);
-            db.close();
-            break;
-        case DialogInterface.BUTTON_NEGATIVE:
-            // No button clicked
-            break;
-        default:
-            break;
+    public void setInfo() {
+        if (!element.getTags().keySet().isEmpty()
+                && !element.getTags().values().isEmpty()) {
+            Log.i(TAG, element.getTags().toString());
+            Tag tag = (Tag) element.getTags().keySet().toArray()[0];
+            String key = tag.getKey();
+            String value = element.getTags().get(tag);
+            Log.i(TAG, tag.toString());
+            setTitle(activity.getString(tag.getNameRessource()));
+            if (tag instanceof ClassifiedTag) {
+                setSubDescription(getLocalizedName(activity, key, value));
+            } else {
+                setSubDescription(element.getTags().get(tag));
+            }
+        }
+    }
+
+    public String getLocalizedName(Context context, String key, String value) {
+        Resources resources = context.getResources();
+        String s = "name_" + key + "_" + value;
+        int id = resources.getIdentifier(s.replace(":", "_"),
+                "string", context.getPackageName());
+        if (id == 0) {
+            return null;
+        } else {
+            return resources.getString(id);
         }
     }
 }

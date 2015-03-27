@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
@@ -136,8 +137,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void startCamera() {
         if (Optimizer.currentLocation() == null) {
             final String text = getString(R.string.noLocationFound);
-            Toast.makeText(getApplicationContext(), text,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                    .show();
         } else {
             final Intent camera = new Intent(this, CameraActivity.class);
             startActivity(camera);
@@ -154,12 +155,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         super.onResume();
         // clear all Overlays
         mapView.getOverlays().clear();
-        // add osmElements from the database to the map
-        final DataBaseHandler db = new DataBaseHandler(this);
-        final List<AbstractDataElement> list = db.getAllDataElements();
-        mapView.addOsmElementsToMap(this, list);
-
-        db.close();
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
@@ -168,6 +163,14 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
+        
+        // add osmElements from the database to the map
+        DataBaseHandler db = new DataBaseHandler(this);
+        List<AbstractDataElement> list = db.getAllDataElements();
+        mapView.addOsmElementsToMap(this, list);
+        //load lastChoice from database
+        LastChoiceHandler.load(db);
+        db.close();
 
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
@@ -217,8 +220,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
      */
     @Override
     protected void onWorkflowFinished(Intent data) {

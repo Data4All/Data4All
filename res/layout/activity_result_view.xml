@@ -12,12 +12,12 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp" />
     
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/buttonResult"
         style="@style/imageButtonOkay"
         android:contentDescription="@string/returnToActualPosition" />
 
-    <ImageButton
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/buttonResultToCamera"
         style="@style/imageButtonReturnToCamera"
         android:contentDescription="@string/returnToCamera" />

@@ -89,8 +89,16 @@ public abstract class AbstractActivity extends Activity {
             startActivity(new Intent(this, SettingsActivity.class));
             status = true;
             break;
+        case R.id.action_about:
+            startActivity(new Intent(this, AboutActivity.class));
+            status = true;
+            break;
         case R.id.action_help:
             // TODO set help activity here
+            status = true;
+            break;
+        case R.id.list_tracks:
+            startActivity(new Intent(this, GpsTrackListActivity.class));
             status = true;
             break;
         // finish workflow, return to mapview
