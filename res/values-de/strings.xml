@@ -86,7 +86,7 @@
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
     
     <!-- for gallery -->
-    <string name="gallery_sec">"%s 1 Minute"</string>
+    <string name="gallery_sec">"%s gerade"</string>
     <string name="gallery_mins">"%s Minuten"</string>
     <string name="gallery_hour">"%s 1 Stunde"</string>
     <string name="gallery_hours">"%s Stunden"</string>

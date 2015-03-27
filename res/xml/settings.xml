@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <io.github.data4all.preference.CurrentUserPreference 
-        android:title="@string/pref_currentuser_title" />
+    <io.github.data4all.preference.CurrentUserPreference android:title="@string/pref_currentuser_title" />
 
     <EditTextPreference
         android:defaultValue="@integer/pref_bodyheight_default"
@@ -12,5 +12,14 @@
         android:maxLength="3"
         android:summary="@string/pref_bodyheight_summary"
         android:title="@string/pref_bodyheight_title" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_gallery_deletemode_default"
+        android:dialogTitle="@string/pref_gallery_deletemode_dialog_title"
+        android:entries="@array/pref_gallery_deletemode_option"
+        android:entryValues="@array/pref_gallery_deletemode_keys"
+        android:key="@string/pref_gallery_deletemode_key"
+        android:summary="@string/pref_gallery_deletemode_summary"
+        android:title="@string/pref_gallery_deletemode_title" />
 
 </PreferenceScreen>

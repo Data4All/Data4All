@@ -13,4 +13,11 @@
 	<string name="pref_currentuser_dialog_title">Logout</string>
     <string name="pref_currentuser_dialog_message">Do you want to logout?</string>
     <string name="pref_currentuser_null">Not logged in</string>
+    
+    <string name="pref_gallery_deletemode_key" translatable="false">PREF_GALLERY_DELETEMODE</string>
+    <string name="pref_gallery_deletemode_title">Gallery default delete action</string>
+    <string name="pref_gallery_deletemode_summary">Should the image be deleted afterwards?</string>
+    <string name="pref_gallery_deletemode_dialog_title">Delete action</string>
+    
+    <string name="pref_gallery_deletemode_default">ask</string>
 </resources>

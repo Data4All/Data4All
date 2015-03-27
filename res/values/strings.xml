@@ -85,7 +85,7 @@
     <string name="upload_to_openstreetmap_error">Upload failed</string>
     
     <!-- for gallery -->
-    <string name="gallery_sec">"%s &lt; 1 minute"</string>
+    <string name="gallery_sec">"%s now"</string>
     <string name="gallery_min">"%s 1 minute"</string>
     <string name="gallery_mins">"%s minutes"</string>
     <string name="gallery_hour">"%s 1 hour"</string>
