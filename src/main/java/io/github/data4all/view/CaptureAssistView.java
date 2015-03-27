@@ -55,6 +55,7 @@ public class CaptureAssistView extends View {
     private int mMeasuredWidth;
     private int mMeasuredHeight;
     private float horizontalViewAngle, verticalViewAngle;
+    private float horizondegree = 86;
     private DeviceOrientation deviceOrientation;
     private boolean skylook;
     private boolean visible;
@@ -174,7 +175,7 @@ public class CaptureAssistView extends View {
         if (informationSet) {
             ReturnValues returnValues = horizonCalculationUtil
                     .calcHorizontalPoints(horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
-                            mMeasuredHeight, (float) Math.toRadians(85),
+                            mMeasuredHeight, (float) Math.toRadians(horizondegree),
                             deviceOrientation);
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
