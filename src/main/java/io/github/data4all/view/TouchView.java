@@ -217,8 +217,6 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-        int pointRadius = (int) (MotionInterpreter.POINT_RADIUS * getResources()
-                .getDisplayMetrics().density);
         path.reset();
         if (newPolygon != null && newPolygon.size() != 0) {
             path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
