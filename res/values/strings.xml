@@ -72,6 +72,9 @@
     <string name="fax">fax</string>
     <string name="website">website</string>
     <string name="email">email</string>
+    
+      <!-- lastchoice -->
+    <string name="name_lastchoice">Last Choice</string>
 
     <!-- for upload -->
     <string name="upload_success">Successfully uploaded</string>
