@@ -274,6 +274,12 @@ public class TouchView extends View {
             default:
                 Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
             }
+        } else if(action == MotionEvent.ACTION_UP){
+        	 polygon = newPolygon;
+        	 redoUndo = new RedoUndo(newPolygon);
+             this.undoUseable();
+             this.redoUseable();
+             this.undoRedoListener.okUseable(hasEnoughNodes());
         }
         return true;
     }
