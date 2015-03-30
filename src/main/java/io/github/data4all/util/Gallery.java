@@ -27,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -203,12 +205,22 @@ public class Gallery {
      */
     public long[] getImages() {
         final File[] files = this.getImageFiles();
-        final long[] result = new long[files.length];
+        final Long[] timestamps = new Long[files.length];
         for (int i = 0; i < files.length; i++) {
             final File f = files[i];
-            result[i] = Long.parseLong(f.getName().replace(ENDING_JPEG, ""));
+            timestamps[i] = Long.parseLong(f.getName().replace(ENDING_JPEG, ""));
         }
-        Arrays.sort(result);
+        List<Long> asList = Arrays.asList(timestamps);
+        Collections.sort(asList, new Comparator<Long>() {
+            @Override
+            public int compare(Long lhs, Long rhs) {
+                return rhs.compareTo(lhs);
+            }
+        });
+        long[] result = new long[asList.size()];
+        for (int i = 0; i < asList.size(); i++) {
+            result[i] = asList.get(i);
+        }
         return result;
     }
 
