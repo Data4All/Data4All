@@ -15,6 +15,8 @@
  */
 package io.github.data4all.service;
 
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
@@ -123,11 +125,13 @@ public class UploadService extends IntentService {
             final ResultReceiver receiver = intent.getParcelableExtra(HANDLER);
 
             final DataBaseHandler db = new DataBaseHandler(this);
-            final User user = db.getAllUser().get(0);
+            final List<User> users = db.getAllUser();
             db.close();
-
-            this.uploadElems(receiver, user);
-            stopNext = false;
+            if (users != null && !users.isEmpty()) {
+                final User user = users.get(0);
+                this.uploadElems(receiver, user);
+                stopNext = false;
+            }
         }
     }
 
@@ -155,7 +159,7 @@ public class UploadService extends IntentService {
             String changesetXml = null;
             if (!stopNext) {
                 changesetXml = ChangesetUtil.getChangesetXml(this, requestId);
-                Log.d(TAG, changesetXml.replaceAll("\n", ""));   
+                Log.d(TAG, changesetXml.replaceAll("\n", ""));
             }
             if (!stopNext) {
                 // Upload the changeset

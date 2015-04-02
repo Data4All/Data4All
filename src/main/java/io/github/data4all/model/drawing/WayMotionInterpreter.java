@@ -194,10 +194,10 @@ public class WayMotionInterpreter implements MotionInterpreter {
      *      int)
      */
     @Override
-    public AbstractDataElement create(List<Point> polygon, int rotation) {
+    public AbstractDataElement create(List<Point> polygon) {
         final PolyElement element = new PolyElement(-1, PolyElementType.WAY);
 
-        final List<Node> nodeList = pointTrans.transform(polygon, rotation);
+        final List<Node> nodeList = pointTrans.transform(polygon);
         element.addNodes(nodeList, false);
         return element;
     }

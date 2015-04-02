@@ -84,7 +84,7 @@ public class Tagging {
         for (int i = 0; i < tags.size(); i++) {
             array[i] = res.getString(tags.get(i).getNameRessource());
         }
-        return LastChoiceHandler.addLastChoiceForType(type,array);
+        return LastChoiceHandler.addLastChoiceForType(type,array,res);
     	}
     }
     /**
