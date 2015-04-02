@@ -14,7 +14,7 @@
     <string name="name_contact_website">Website</string>
     <string name="name_contact_email">Email</string>
 
-    <!-- classified tags_ highway -->
+    <!-- classified tags highway -->
     <string name="name_highway">Highway</string>
     <string name="name_highway_residential">Residential</string>
     <string name="name_highway_service">Service</string>
@@ -39,7 +39,17 @@
     <string name="name_highway_pedestrian">Pedestrian</string>
     <string name="name_highway_road">Road</string>
 
-    <!-- classified tags_ barrier -->
+    <!--  classified tag waterway -->
+    <string name="name_waterway">Waterway</string>
+    <string name="name_waterway_stream">Stream</string>
+    <string name="name_waterway_river">River</string>
+    <string name="name_waterway_ditch">Ditch</string>
+    <string name="name_waterway_riverbank">Riverbank</string>
+    <string name="name_waterway_dam">Dam</string>
+    <string name="name_waterway_weir">Weir</string>
+    <string name="name_waterway_lock_gate">Lock gate</string>    
+    
+    <!-- classified tags barrier -->
     <string name="name_barrier">Barrier</string>
     <string name="name_barrier_fence">Fence</string>
     <string name="name_barrier_wall">Wall</string>
@@ -59,7 +69,7 @@
     <string name="name_barrier_city_wall">Citywall</string>
     <string name="name_barrier_ditch">Ditch</string>
 
-    <!-- classified tags_ amenity -->
+    <!-- classified tags amenity -->
     <string name="name_amenity">Amenity</string>
     <string name="name_amenity_parking">Parking</string>
     <string name="name_amenity_place_of_worship">Place of worship</string>
@@ -118,7 +128,7 @@
     <string name="name_amenity_embassy">Embassy</string>
     <string name="name_amenity_water_point">Water point</string>
 
-    <!-- classified tags_ building -->
+    <!-- classified tags building -->
     <string name="name_building">Building</string>
     <string name="name_building_house">House</string>
     <string name="name_building_residential">Residential</string>
@@ -143,8 +153,9 @@
     <string name="name_building_farm">Farm</string>
     <string name="name_building_manufacture">Manufacture</string>
     <string name="name_building_cabin">Cabin</string>
+    <string name="name_building_yes">Unkown</string>
 
-    <!-- classified tags_ landuse -->
+    <!-- classified tags landuse -->
     <string name="name_landuse">Landuse</string>
     <string name="name_landuse_forest">Forest</string>
     <string name="name_landuse_residential">Residential</string>
@@ -170,6 +181,37 @@
     <!-- classified tags leisure -->
     <string name="name_leisure">Leisure</string>
     <string name="name_leisure_swimming_pool">Swimming pool</string>
+    <string name="name_leisure_pitch">Pitch</string>
+    <string name="name_leisure_park">Park</string>
+    <string name="name_leisure_swimming">Swimming</string>
+    <string name="name_leisure_playground">Playground</string>
+    <string name="name_leisure_garden">Garden</string>
+    <string name="name_leisure_sports_centre">Sport centre</string>
+    <string name="name_leisure_nature_reserve">Nature reserve</string>
+    <string name="name_leisure_track">Track</string>
+    <string name="name_leisure_stadium">Stadium</string>
+    <string name="name_leisure_golf_course">Golf course</string>
+    <string name="name_leisure_marina">Marina</string>
+    <string name="name_leisure_water_park">Water park</string>
+    <string name="name_leisure_fishing">Fishing</string>
+    
+    <!-- classified tags vending -->
+    <string name="name_vending">Vending</string>
+    <string name="name_vending_cigarettes">Cigarettes</string>
+    <string name="name_vending_parking_tickets">Parking tickets</string>
+    <string name="name_vending_excrement_bags">Excrement bags</string>
+    <string name="name_vending_public_transport_tickets">Public transport tickets</string>
+    <string name="name_vending_drinks">Drinks</string>
+    <string name="name_vending_sweets">Sweets</string>
+    <string name="name_vending_parcel_pickup">Parcel pickup</string>
+    <string name="name_vending_parcel_mail_in">Parcel mail in</string>
+    <string name="name_vending_condoms">Condoms</string>
+    <string name="name_vending_stamps">Stamps</string>
+    <string name="name_vending_news_paper">News paper</string>
+    <string name="name_vending_bicycle_tube">Bicycle tube</string>
+    <string name="name_vending_food">Food</string>
+    <string name="name_vending_fuel">Fuel</string>
+    <string name="name_vending_yes">Unbekannt</string>    
 
     <!-- address tags -->
     <string name="hint_addr_street">Main Street</string>
