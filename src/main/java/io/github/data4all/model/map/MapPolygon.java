@@ -54,6 +54,9 @@ public class MapPolygon extends Polygon {
     private D4AMapView mapView;
     private AbstractDataElement element;
     private boolean editable;
+    
+    //midpoint of the bounding box of the polygon
+    Point midpoint;
 
     // start time for touch event action_down
     private long timeStart;
@@ -96,8 +99,6 @@ public class MapPolygon extends Polygon {
      */
     private int xStart = 0;
     private int yStart = 0;
-
-    Point midpoint;
 
     /**
      * List of GeoPoints of the MapPolygon before it was edited.
