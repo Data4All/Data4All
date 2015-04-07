@@ -65,10 +65,5 @@
         style="@style/imageButtonUndoPictureActivity"
         android:contentDescription="@string/undo"
         android:onClick="onClickUndo" />
-    
-    <io.github.data4all.widged.CustomImageButton
-        android:id="@+id/awaybtn"
-        style="@style/imageButtonAwayPictureActivity"
-        android:onClick="onClickAway" />
 
 </RelativeLayout>

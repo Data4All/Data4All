@@ -81,7 +81,6 @@ public class ShowPictureActivity extends AbstractActivity {
     private ImageButton undo;
     private ImageButton redo;
     private ImageButton ok;
-    private ImageButton away;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -121,8 +120,6 @@ public class ShowPictureActivity extends AbstractActivity {
         redo = (ImageButton) findViewById(R.id.redobtn);
         redo.setVisibility(View.GONE);
         ok = (ImageButton) findViewById(R.id.okbtn);
-        away = (ImageButton) findViewById(R.id.awaybtn);
-        redo.setVisibility(View.VISIBLE);
         touchView.setUndoRedoListener(new UndoRedoListener() {
             @Override
             public void canUndo(boolean state) {
@@ -265,16 +262,6 @@ public class ShowPictureActivity extends AbstractActivity {
         touchView.setInterpretationType(TouchView.InterpretationType.POINT);
         touchView.invalidate();
         intent.putExtra(TYPE, POINT);
-    }
-    
-    /**
-     * Define method to hide the buttons.<br\>
-     * 
-     * @param view
-     *            current view used this method
-     */
-    public void onClickAway(View view) {
-    	touchView.hideButtons();
     }
 
     /**

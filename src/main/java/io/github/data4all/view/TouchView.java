@@ -241,10 +241,6 @@ public class TouchView extends View {
 			}
 		}
 	}
-	
-	public void hideButtons(){
-		btnAnimator.onRotate();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -258,6 +254,8 @@ public class TouchView extends View {
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 			currentMotion = new DrawingMotion();
+			isLeft = false;
+			isRight = false;
 			this.startEvent(event);
 			break;
 		case MotionEvent.ACTION_UP:
@@ -277,8 +275,33 @@ public class TouchView extends View {
 		return true;
 	}
 	
+	private boolean isScreenLeft(float eventX , float eventY) {
+		if(!isLeft && eventX < 30){
+		return true;
+		}
+		return false;
+	}
+	
+	private boolean isScreenRight(float eventX, float eventY) {
+		if(!isRight && eventX > this.getWidth()-30){
+		return true;
+		}
+		return false;
+	}
+	
 	private void startEvent(MotionEvent event){
-		this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);if (lookUpPoint != null){
+		this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
+		if(isScreenLeft(event.getX(),event.getY()))
+		 {
+			Log.e(this.getClass().getSimpleName(), "IS LEFT SIDE");
+			isLeft = true;
+			this.startEvent = event;
+		}else if(isScreenRight(event.getX(),event.getY()))
+		 {
+			Log.e(this.getClass().getSimpleName(), "IS RIGHT SIDE");
+			isRight = true;
+			this.startEvent = event;
+		} else if (lookUpPoint != null){
 			Log.e(this.getClass().getSimpleName(), "POINT FOUND");
 			this.mover = movePoint(lookUpPoint);
 			isDelete = true;
@@ -291,6 +314,10 @@ public class TouchView extends View {
 	}
 	
 	private void moveEvent(MotionEvent event){
+		if(isLeft && Math.abs(startEvent.getX()-event.getX()) < 30 || 
+				isRight && Math.abs(startEvent.getX()-event.getX()) < 30){
+			currentMotion = null;
+		}
 		if (mover != null) {
 			if (Math.abs(startPoint.getX() - event.getX()) > 10
 					&& Math.abs(startPoint.getY() - event.getY()) > 10) {
@@ -312,7 +339,14 @@ public class TouchView extends View {
 			this.deletePoint(startPoint);
 			mover = null;
 			isDelete = false;
-		} else {
+		}else if(isLeft && currentMotion == null){
+			if(!(btnAnimator.isAway())){
+			btnAnimator.onRotate();
+			}
+		}else if(isRight && currentMotion == null){
+			if(btnAnimator.isAway()){
+			btnAnimator.onRotate();
+			}} else {
 			if (mover != null) {
 				mover = null;
 			} else if(!isLeft && !isRight){
