@@ -22,9 +22,13 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.service.OrientationListener;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
+import io.github.data4all.view.TouchView;
 
 import java.util.Arrays;
+import java.util.Timer;
 
+import android.R.color;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,6 +37,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -40,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -58,6 +64,7 @@ import android.widget.Toast;
  * @version 1.2
  * 
  */
+
 public class CameraActivity extends AbstractActivity {
 
     // Logger Tag
@@ -73,6 +80,28 @@ public class CameraActivity extends AbstractActivity {
 
     private OrientationEventListener listener;
     private ShutterCallback shutterCallback;
+
+    private Button btnCStatus;
+    // runs without a timer by reposting this handler at the end of the runnable
+    private boolean setUpComplete = false;
+    long startTime = 0;
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            if (setUpComplete) {
+                updateCalibrationStatus();
+            }
+
+            timerHandler.postDelayed(this, 500);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +133,7 @@ public class CameraActivity extends AbstractActivity {
 
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
-
+        btnCStatus = (Button) findViewById(R.id.calibrationStatus);
         listener = new ButtonRotationListener(this,
                 Arrays.asList((View) btnCapture));
 
@@ -141,6 +170,8 @@ public class CameraActivity extends AbstractActivity {
         }
         listener.enable();
         startService(new Intent(this, OrientationListener.class));
+        setUpComplete = true;
+        this.timerRunnable.run();
     }
 
     @Override
@@ -154,6 +185,31 @@ public class CameraActivity extends AbstractActivity {
         }
         listener.disable();
         stopService(new Intent(this, OrientationListener.class));
+        timerHandler.removeCallbacks(timerRunnable);
+        setUpComplete = false;
+    }
+
+    private void updateCalibrationStatus() {
+        switch (OrientationListener.CALIBRATION_STATUS) {
+        case OrientationListener.CALIBRATION_OK:
+            this.btnCStatus.setBackgroundResource(R.color.sensorOk);
+            this.btnCStatus.setClickable(false);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_ALL:
+            this.btnCStatus.setBackgroundResource(R.color.sensorBrokenAll);
+            this.btnCStatus.setClickable(true);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER:
+            this.btnCStatus.setBackgroundResource(R.color.sensorBroken);
+            this.btnCStatus.setClickable(true);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER:
+            this.btnCStatus.setBackgroundResource(R.color.sensorBroken);
+            this.btnCStatus.setClickable(true);
+            break;
+        }
+
+        
     }
 
     /*
@@ -187,7 +243,7 @@ public class CameraActivity extends AbstractActivity {
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (OrientationListener.CALIBRATION_OK) {
+                if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
                     mCamera.takePicture(shutterCallback, null,
@@ -202,7 +258,7 @@ public class CameraActivity extends AbstractActivity {
         button.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (OrientationListener.CALIBRATION_OK) {
+                if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
                     mAutoFocusCrossHair.showStart();
@@ -244,19 +300,42 @@ public class CameraActivity extends AbstractActivity {
     }
 
     /**
+     * Define method to check calibration status.
+     * 
+     * @param view
+     *            current view used this method
+     */
+    public void onClickCalibrationStatus(View view) {
+        showCalibrationDialog();
+    }
+
+    /**
      * This method shows an AlertDialog if the phone need recalibration.
      */
     private void showCalibrationDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         // set title
-        alertDialogBuilder.setTitle(R.string.badSensorCalibrationTitle);
+        switch (OrientationListener.CALIBRATION_STATUS) {
+        case OrientationListener.CALIBRATION_OK:
+            alertDialogBuilder.setTitle(R.string.goodSensorCalibrationTitle);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_ALL:
+            alertDialogBuilder.setTitle(R.string.badSensorCalibrationTitle);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER:
+            alertDialogBuilder.setTitle(R.string.badAcceleometerCalibrationTitle);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER:
+            alertDialogBuilder.setTitle(R.string.badMagnetometerCalibrationTitle);
+            break;
+        }
 
         // set dialog message
         alertDialogBuilder
                 .setMessage(R.string.badSensorCalibration)
                 .setCancelable(false)
-                .setNegativeButton(R.string.ok,
+                .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();

@@ -74,7 +74,11 @@ public class OrientationListener extends Service implements SensorEventListener 
     private float[] orientation = new float[ARRAYLENGTH];
 
     // Calibration needed
-    public static boolean CALIBRATION_OK = false;
+    public final static int CALIBRATION_BROKEN_ALL = 100;
+    public final static int CALIBRATION_BROKEN_ACCELEROMETER = 200;
+    public final static int CALIBRATION_BROKEN_MAGNETOMETER = 201;
+    public final static int CALIBRATION_OK = 300;
+    public static int CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
     private boolean accOk = false;
     private boolean magOk = false;
 
@@ -204,10 +208,18 @@ public class OrientationListener extends Service implements SensorEventListener 
     }
 
     private void checkAccuracy() {
-        if (accOk && magOk) {
-            CALIBRATION_OK = true;
+        if (accOk) {
+            if(magOk){
+                CALIBRATION_STATUS = CALIBRATION_OK;
+            }else{
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER;
+            }
         } else {
-            CALIBRATION_OK = false;
+            if(magOk){
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER;
+            }else{
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
+            }
         }
     }
 
