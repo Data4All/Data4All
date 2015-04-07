@@ -3,6 +3,7 @@
  */
 package io.github.data4all.util;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 
 import java.util.LinkedList;
@@ -13,6 +14,8 @@ import java.util.List;
  *
  */
 public class RectangleFunction {
+
+    private static String TAG = "RectangleFunction";
 
     /**
      * Transforms a quadrangle into a rectangle.
@@ -55,19 +58,24 @@ public class RectangleFunction {
             double cdLength = Math.sqrt((cdx * cdx) + (cdy * cdy));
             double daLength = Math.sqrt((dax * dax) + (day * day));
 
-            double alpha = Math.acos(((-1 * dax * abx) + (-1 * day * aby)
-                    / (daLength * abLength)));
-            double beta = Math.acos(((-1 * abx * bcx) + (-1 * aby * bcy))
-                    / (abLength * bcLength));
-            double gamma = Math.acos(((-1 * bcx * cdx) + (-1 * bcy * cdy))
-                    / (bcLength * cdLength));
-            double delta = Math.acos(((-1 * cdx * dax) + (-1 * cdy * day)
-                    / (cdLength * daLength)));
+            double alpha = Math
+                    .acos((((-1 * dax * abx) + (-1 * day * aby)) / (daLength * abLength)));
+            double beta = Math
+                    .acos((((-1 * abx * bcx) + (-1 * aby * bcy)) / (abLength * bcLength)));
+            double gamma = Math
+                    .acos((((-1 * bcx * cdx) + (-1 * bcy * cdy)) / (bcLength * cdLength)));
+            double delta = Math
+                    .acos((((-1 * cdx * dax) + (-1 * cdy * day)) / (cdLength * daLength)));
 
             double alphaMinus = (Math.PI / 2) - alpha;
             double betaMinus = (Math.PI / 2) - beta;
             double gammaMinus = (Math.PI / 2) - gamma;
             double deltaMinus = (Math.PI / 2) - delta;
+
+            Log.d(TAG, "2PI" + 2 * Math.PI + " alpha " + alpha + " beta "
+                    + beta + " gamma " + gamma + " delta " + delta
+                    + " Pi half " + Math.PI / 2 + "quadrangle"
+                    + (alpha + beta + gamma + delta));
 
             List<Node> result = new LinkedList<Node>();
             double temp;
@@ -78,7 +86,7 @@ public class RectangleFunction {
                         - (aby * Math.sin(alphaMinus));
                 aby = (temp * Math.sin(alphaMinus))
                         + (aby * Math.cos(alphaMinus));
-
+                Log.d(TAG, "temp " + temp + "abx " + abx);
                 bx = ax + abx;
                 by = ay + aby;
 
@@ -92,7 +100,7 @@ public class RectangleFunction {
                         - (bcy * Math.sin(betaMinus));
                 bcy = (temp * Math.sin(betaMinus))
                         + (bcy * Math.cos(betaMinus));
-
+                Log.d(TAG, "temp " + temp + "bcx " + bcx);
                 cx = bx + bcx;
                 cy = by + bcy;
 
@@ -106,7 +114,7 @@ public class RectangleFunction {
                         - (cdy * Math.sin(gammaMinus));
                 cdy = (temp * Math.sin(gammaMinus))
                         + (cdy * Math.cos(gammaMinus));
-
+                Log.d(TAG, "temp " + temp + "cdx " + cdx);
                 dx = cx + cdx;
                 dy = cy + cdy;
 
@@ -120,7 +128,7 @@ public class RectangleFunction {
                         - (day * Math.sin(deltaMinus));
                 day = (temp * Math.sin(deltaMinus))
                         + (day * Math.cos(deltaMinus));
-
+                Log.d(TAG, "temp " + temp + "dax " + dax);
                 ax = dx + dax;
                 ay = dy + day;
 
