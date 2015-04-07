@@ -304,12 +304,12 @@ public class TouchView extends View {
             downY = event.getY();
             if (action.equals("start")) {
 
-                longClickHandler.postDelayed(mLongPressed, 1000);
+                // longClickHandler.postDelayed(mLongPressed, 1000);
 
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
-                    longClickHandler.removeCallbacks(mLongPressed);
-                    Log.d("", "Long Press cancled because there is a point");
+                    // longClickHandler.removeCallbacks(mLongPressed);
+                    // Log.d("", "Long Press cancled because there is a point");
 
                     this.mover = movePoint(lookUpPoint);
                     isDelete = true;
@@ -317,13 +317,22 @@ public class TouchView extends View {
                     lookUpPoint = null;
 
                 } else {
-                    startPoint = new Point(downX, downY);
-                    if (insidePolygon(startPoint)==false) {
 
-                        currentMotion.addPoint(event.getX(), event.getY());
-                        newPolygon = interpreter.interprete(polygon,
-                                currentMotion);
+                    startPoint = new Point(downX, downY);
+                    // if (insidePolygon(startPoint) == false) {
+                    // polygonclicked(false);
+
+                    if (!polygonclicked) {
+                        if (!insidePolygon(startPoint)) {
+                            currentMotion.addPoint(event.getX(), event.getY());
+                            newPolygon = interpreter.interprete(polygon,
+                                    currentMotion);
+                        }
+                        // } else {
+                        // polygonclicked(true);
                     }
+
+                    // }
                 }
             } else if (action.equals("move")) {
 
@@ -333,10 +342,10 @@ public class TouchView extends View {
                 Log.d("", "polygonclicked: " + polygonclicked);
                 if (polygonclicked) {
 
-                    if (Math.abs(offsetX) > 15 || Math.abs(offsetY) > 15) {
-                        movePolygon(offsetX, offsetY);
-                        startPoint = new Point(downX, downY);
-                    }
+                    // if (Math.abs(offsetX) > 15 || Math.abs(offsetY) > 15) {
+                    movePolygon(offsetX, offsetY);
+                    startPoint = new Point(downX, downY);
+                    // }
 
                 } else if (mover != null) {
                     if (Math.abs(offsetX) > 10 && Math.abs(offsetY) > 10
@@ -356,15 +365,20 @@ public class TouchView extends View {
                     }
                 }
             } else if (action.equals("end")) {
-                longClickHandler.removeCallbacks(mLongPressed);
-                if (polygonclicked) {
-                    longClickHandler.removeCallbacks(mLongPressed);
-                    polygonclicked = false;
+                // longClickHandler.removeCallbacks(mLongPressed);
+                if (startPoint.getX() - event.getX() < 5
+                        && startPoint.getY() - event.getY() < 5) {
+                    polygonclicked(insidePolygon(startPoint));
+                }
 
-                    areaPaint.setColor(MotionInterpreter.AREA_COLOR);
-                    areaPaint.setAlpha(100);
-                    Log.d("", "Long Press canceld END");
-                } else if (isDelete) {
+                // if (polygonclicked) {
+                // longClickHandler.removeCallbacks(mLongPressed);
+                // polygonclicked = false;
+                //
+                // areaPaint.setColor(MotionInterpreter.AREA_COLOR);
+                // areaPaint.setAlpha(100);
+                // Log.d("", "Long Press canceld END");
+                if (isDelete) {
                     redoUndo.add(startPoint, delete, mover.getIdx());
                     this.deletePoint(startPoint);
                     mover = null;
@@ -405,6 +419,27 @@ public class TouchView extends View {
             }
         }
     };
+
+    public void polygonclicked(boolean clicked) {
+        if (polygonclicked && clicked) {
+            polygonclicked = false;
+        } else if (!polygonclicked && clicked) {
+            polygonclicked = true;
+
+        }
+
+        if (polygonclicked) {
+            Paint paint = new Paint();
+            paint.setColor(Color.GREEN);
+            paint.setAlpha(100);
+            areaPaint = paint;
+        } else {
+            Paint paint = new Paint();
+            paint.setColor(Color.BLUE);
+            paint.setAlpha(100);
+            areaPaint = paint;
+        }
+    }
 
     /**
      * Deletes a Point of the polygon.
@@ -448,7 +483,8 @@ public class TouchView extends View {
                 result = !result;
             }
         }
-        Log.d(this.getClass().getSimpleName(), "-------inside polygon:" + result);
+        Log.d(this.getClass().getSimpleName(), "-------inside polygon:"
+                + result);
         return result;
     }
 
@@ -466,18 +502,48 @@ public class TouchView extends View {
      */
     public void movePolygon(float x, float y) {
         Log.e(this.getClass().getSimpleName(), "----MOVEpolygon");
+        List<Point> poly = new ArrayList<Point>();
         x = -x;
         y = -y;
-        for (int i = 0; i < polygon.size(); i++) {
-            float xcoord = polygon.get(i).getX() + x;
-            float ycoord = polygon.get(i).getY() + y;
-            polygon.set(i, new Point(xcoord, ycoord));
-        }
-        invalidate();
+        poly.clear();
+        poly = polygon;
+        boolean isOverhorizont = false;
+        boolean error = false;
+        loop: for (int i = 0; i < polygon.size(); i++) {
+             float xcoord = polygon.get(i).getX() + x;
+             float ycoord = polygon.get(i).getY() + y;
+            // ||xcoord<getResources()
+            // .getDisplayMetrics().widthPixels||ycoord<getResources()
+            // .getDisplayMetrics().heightPixels
+            Log.e(this.getClass().getSimpleName(), "width: "
+                    + getResources().getDisplayMetrics().widthPixels);
 
+            if (xcoord < 1 || ycoord < 1) {
+                error = true;
+                Log.e(this.getClass().getSimpleName(),
+                        "move: point outside of touchview" + xcoord);
+                break loop;
+            }
+
+            if (cameraAssistView.overHorizont(new Point(xcoord, ycoord))) {
+                Log.d(this.getClass().getSimpleName(), "move: isOverHorizont");
+                isOverhorizont = true;
+                // return false;
+                break loop;
+            }
+            Log.d(this.getClass().getSimpleName(), "move: point" + xcoord);
+            // polygon.set(i, new Point(xcoord, ycoord));
+            poly.set(i, new Point(xcoord, ycoord));
+
+        }
+        if (!isOverhorizont || !error) {
+            polygon = poly;
+        }
+        Log.d(this.getClass().getSimpleName(), "move: polygon=poly");
+        postInvalidate();
+        // return true;
     }
 
- 
     /**
      * This function determines if there is a Point of the polygon close to the
      * given coordinates.
