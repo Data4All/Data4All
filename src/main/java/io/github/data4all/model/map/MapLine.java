@@ -51,8 +51,8 @@ public class MapLine extends Polyline {
     private AbstractDataElement element;
     private AbstractActivity activity;
     private D4AMapView mapView;
-
     private boolean editable;
+    private boolean lengthSet = true;
 
     // midpoint of the bounding box of the polyline
     Point midpoint;
@@ -334,13 +334,16 @@ public class MapLine extends Polyline {
                 Point point = pj.toPixels(originalPoints.get(i), null);
                 int xOffset = (point.x - midpoint.x);
                 int yOffset = (point.y - midpoint.y);
-
+             // get the length of the vector from the midpoint to the point
+                if (lengthSet) {
                 double offsetLength = Math.sqrt((xOffset * xOffset)
                         + (yOffset * yOffset));
                 pOffsetLength.add(offsetLength);
+                }
 
                 pointsOffset.add(new Point(xOffset, yOffset));
             }
+            lengthSet = false;
         }
         return pointsOffset;
     }
