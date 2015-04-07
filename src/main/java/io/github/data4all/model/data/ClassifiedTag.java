@@ -43,12 +43,10 @@ public class ClassifiedTag extends Tag {
      *            The Type of the tag
      * @param classifiedValues
      *            the classifiedValues of the tag
-     * @param osmObjects
-     *            The OpenStreetObject the tag refers to
      */
     public ClassifiedTag(int id, String key, int type,
-            List<ClassifiedValue> classifiedValues, int... osmObjects) {
-        super(id, key, type, osmObjects);
+            List<ClassifiedValue> classifiedValues) {
+        super(id, key, type);
         this.classifiedValues = classifiedValues;
     }
 

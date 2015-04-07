@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -29,6 +30,7 @@ import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -110,6 +112,9 @@ public class ResultViewActivity extends AbstractActivity implements
     private Map<String, Tag> mapTag;
     // The Map with the String and ClassifiedValue
     private Map<String, ClassifiedValue> classifiedMap;
+ 
+    public static String tmp;
+
 
     private View viewFooter;
 
@@ -179,7 +184,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 } else if (keyList.get(position).equals(res.getString(R.string.SelectTag))){
                 	Log.i(TAG, "right");
                 	addClassifiedTag();
-                } else{	
+                } else {
                     ResultViewActivity.this
                             .changeUnclassifiedTag(selectedString);
                 }
@@ -285,11 +290,11 @@ public class ResultViewActivity extends AbstractActivity implements
      * Shows the Tags in a List
      */
     private void output() {
-        endList = new ArrayList<String>();
-        keyList = new ArrayList<String>();
-        final List<Tag> tagList = new ArrayList<Tag>();
-        for (Entry entry : element.getTags().entrySet()) {
-            final Tag tagKey = (Tag) entry.getKey();
+        endList = new LinkedList<String>();
+        keyList = new LinkedList<String>();
+        List<Tag> tagList = new LinkedList<Tag>();
+        for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+            final Tag tagKey = entry.getKey();
             tagList.add(tagKey);
             Log.i(TAG, tagKey.getKey());
             keyList.add(res.getString(tagKey.getNameRessource()));
@@ -322,6 +327,9 @@ public class ResultViewActivity extends AbstractActivity implements
         	endList.add("");
         }
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
+        LastChoiceHandler.getInstance().setLastChoice(
+                getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
+        LastChoiceHandler.getInstance().save(this);
     }
 
     /**

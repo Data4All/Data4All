@@ -61,17 +61,9 @@ public class Tag {
     private int type;
 
     /**
-     * constant values to define which osmObject the tag refers to.
+     * store the last Tag value e.g the last value for addr:street.
      */
-    public static final int NODE_TAG = 1;
-    public static final int WAY_TAG = 2;
-    public static final int BUILDING_TAG = 3;
-    public static final int AREA_TAG = 4;
-
-    /**
-     * define to which osm objects the tag refers.
-     */
-    private int[] osmObjects;
+    private String lastValue;
 
     /**
      * Constructor to create nameRessource and hintRessource from the key.
@@ -82,19 +74,19 @@ public class Tag {
      *            The Key of the Tag.
      * @param type
      *            The InputType method.
-     * @param osmObjects
-     *            The osm Objects the Tag refers to.
      */
-    public Tag(int id, String key, int type, int... osmObjects) {
+    public Tag(int id, String key, int type) {
         this.id = id;
         this.key = key;
         this.type = type;
         try {
-            this.nameRessource = (Integer) R.string.class.getDeclaredField(
-                    "name_" + key.replaceAll(":", "_")).get(null);
+            this.nameRessource =
+                    (Integer) R.string.class.getDeclaredField(
+                            "name_" + key.replaceAll(":", "_")).get(null);
             if (type != -1) {
-                this.hintRessource = (Integer) R.string.class.getDeclaredField(
-                        "hint_" + key.replaceAll(":", "_")).get(null);
+                this.hintRessource =
+                        (Integer) R.string.class.getDeclaredField(
+                                "hint_" + key.replaceAll(":", "_")).get(null);
             }
         } catch (IllegalArgumentException e) {
             Log.e(LOG_TAG, "IllegalArgumentException", e);
@@ -103,8 +95,6 @@ public class Tag {
         } catch (NoSuchFieldException e) {
             Log.e(LOG_TAG, "NoSuchFieldException", e);
         }
-
-        this.setOsmObjects(osmObjects);
     }
 
     public int getHintRessource() {
@@ -121,10 +111,6 @@ public class Tag {
 
     public int getNameRessource() {
         return nameRessource;
-    }
-
-    public int[] getOsmObjects() {
-        return osmObjects;
     }
 
     public int getType() {
@@ -147,10 +133,6 @@ public class Tag {
         this.nameRessource = nameRessource;
     }
 
-    public void setOsmObjects(int[] osmObjects) {
-        this.osmObjects = osmObjects;
-    }
-
     public void setType(int type) {
         this.type = type;
     }
@@ -161,8 +143,15 @@ public class Tag {
     @Override
     public String toString() {
         return "key: " + key + " nameRessource: " + nameRessource
-                + " hintRessource: " + hintRessource + " osmObjects: "
-                + "type:" + type + Arrays.toString(osmObjects);
+                + " hintRessource: " + hintRessource +" type: " + type;
+    }
+
+    public String getLastValue() {
+        return lastValue;
+    }
+
+    public void setLastValue(String lastValue) {
+        this.lastValue = lastValue;
     }
 
 }
