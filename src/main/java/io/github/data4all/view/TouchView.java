@@ -86,7 +86,8 @@ public class TouchView extends View {
 	private boolean isDelete;
 	private boolean isLeft;
 	private boolean isRight;
-	private MotionEvent startEvent;
+	private float startY;
+	private float startX;
 
 	/**
 	 * Point to set if the current start motion found a point
@@ -289,24 +290,38 @@ public class TouchView extends View {
 		return false;
 	}
 	
+	private boolean isSlide(float sx,float sy,float x,float y){
+		Log.e(this.getClass().getSimpleName(), "sx:" + sx + " sy:" + sy +" x:" + x +" y:" + y );
+		if(Math.abs(sy-y) < 90 && sx < x){
+			Log.e(this.getClass().getSimpleName(), "IS TRUE SLIDE");
+		return true;
+		}
+		isLeft = false;
+		isRight = false;
+		currentMotion = new DrawingMotion();
+		return false;
+	}
+	
 	private void startEvent(MotionEvent event){
 		this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
-		if(isScreenLeft(event.getX(),event.getY()))
-		 {
-			Log.e(this.getClass().getSimpleName(), "IS LEFT SIDE");
-			isLeft = true;
-			this.startEvent = event;
-		}else if(isScreenRight(event.getX(),event.getY()))
-		 {
-			Log.e(this.getClass().getSimpleName(), "IS RIGHT SIDE");
-			isRight = true;
-			this.startEvent = event;
-		} else if (lookUpPoint != null){
+		if (lookUpPoint != null){
 			Log.e(this.getClass().getSimpleName(), "POINT FOUND");
 			this.mover = movePoint(lookUpPoint);
 			isDelete = true;
 			startPoint = lookUpPoint;
 			lookUpPoint = null;
+		}else if(isScreenLeft(event.getX(),event.getY()))
+		 {
+			Log.e(this.getClass().getSimpleName(), "IS LEFT SIDE");
+			isLeft = true;
+			this.startX = event.getX();
+			this.startY = event.getY();
+		}else if(isScreenRight(event.getX(),event.getY()))
+		 {
+			Log.e(this.getClass().getSimpleName(), "IS RIGHT SIDE");
+			isRight = true;
+			this.startX = event.getX();
+			this.startY = event.getY();
 		} else {
 			Log.e(this.getClass().getSimpleName(), "ADD POINT");
 			currentMotion.addPoint(event.getX(), event.getY());
@@ -314,8 +329,8 @@ public class TouchView extends View {
 	}
 	
 	private void moveEvent(MotionEvent event){
-		if(isLeft && Math.abs(startEvent.getX()-event.getX()) < 30 || 
-				isRight && Math.abs(startEvent.getX()-event.getX()) < 30){
+		if(isLeft && isSlide(startX,startY,event.getX(),event.getY())|| 
+				isRight && isSlide(event.getX(),event.getY(),startX,startY)){
 			currentMotion = null;
 		}
 		if (mover != null) {
