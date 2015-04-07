@@ -20,6 +20,7 @@ import java.util.List;
 
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.PolyElement;
@@ -36,7 +37,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -54,7 +54,7 @@ public class MapLine extends Polyline {
 
     private boolean editable;
 
-    //midpoint of the bounding box of the polyline
+    // midpoint of the bounding box of the polyline
     Point midpoint;
 
     // start time for touch event action_down
@@ -71,7 +71,7 @@ public class MapLine extends Polyline {
     private static final int DEFAULT_STROKE_COLOR = Color.BLUE;
     // Active Stroke Color
     private static final int ACTIVE_STROKE_COLOR = Color.GREEN;
-    
+
     // Maximum distance from the touch point to the mapline in pixel
     private static final int TOLERANCE = 20;
 
@@ -103,19 +103,19 @@ public class MapLine extends Polyline {
     private List<GeoPoint> originalPoints;
 
     /**
-     * List of vectors from the first point in the MapPolygon to every point.
+     * List of vectors from the midpoint of the bounding box to every point.
      */
     private List<Point> pointsOffset;
+
+    /**
+     * List of the length of all vectors from the midpoint to every point.
+     */
+    private List<Double> pOffsetLength;
 
     /**
      * List of GeoPoints for editing the MapPolygon.
      */
     private List<GeoPoint> geoPointList;
-
-    /**
-     * First point of the MapPolygon in pixel coordinates.
-     */
-    private Point firstPoint;
 
     /**
      * Projection of the mapView.
@@ -214,9 +214,9 @@ public class MapLine extends Polyline {
                 break;
             case MotionEvent.ACTION_UP:
                 Log.d(TAG, "action_up");
-                GeoPoint geoPoint = (GeoPoint) pj.fromPixels((int) event.getX(),
-                        (int) event.getY());
-                
+                GeoPoint geoPoint = (GeoPoint) pj.fromPixels(
+                        (int) event.getX(), (int) event.getY());
+
                 if (active) {
                     // set the new information to the element
                     ((PolyElement) element).setNodesFromGeoPoints(geoPointList);
@@ -237,7 +237,7 @@ public class MapLine extends Polyline {
                         moveToNewPosition(event, mapView);
                     } else if (mode == ROTATE) {
                         Log.d(TAG, "rotate polygon");
-                        //rotatePolygon(event);
+                        // rotatePolygon(event);
                     }
                 }
                 break;
@@ -257,9 +257,12 @@ public class MapLine extends Polyline {
         Log.d(TAG, "actual activity mode: " + active);
         if (!active) {
             this.setColor(ACTIVE_STROKE_COLOR);
-            mapView.invalidate();
+            pj = mapView.getProjection();
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
+            setOriginalPoints();
+            pointsOffset = getOffset();
+            mapView.invalidate();
             active = true;
         } else {
             this.setColor(DEFAULT_STROKE_COLOR);
@@ -324,12 +327,18 @@ public class MapLine extends Polyline {
     public List<Point> getOffset() {
         Log.i(TAG, "number of points in the polygon: " + originalPoints.size());
         List<Point> pointsOffset = new ArrayList<Point>();
+        pOffsetLength = new ArrayList<Double>();
 
         if (originalPoints.size() > 0) {
             for (int i = 0; i < originalPoints.size(); i++) {
                 Point point = pj.toPixels(originalPoints.get(i), null);
                 int xOffset = (point.x - midpoint.x);
                 int yOffset = (point.y - midpoint.y);
+
+                double offsetLength = Math.sqrt((xOffset * xOffset)
+                        + (yOffset * yOffset));
+                pOffsetLength.add(offsetLength);
+
                 pointsOffset.add(new Point(xOffset, yOffset));
             }
         }
