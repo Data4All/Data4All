@@ -15,6 +15,7 @@
  */
 package io.github.data4all.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osmdroid.DefaultResourceProxyImpl;
@@ -25,6 +26,7 @@ import org.osmdroid.util.GeoPoint;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.util.MapUtil;
@@ -49,8 +51,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     // The OsmElement which should be added
     private AbstractDataElement element;
 
-    private BoundingBoxE6 boundingBox;
-
     /**
      * Standard Constructor
      **/
@@ -74,24 +74,33 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         }
         setUpOverlays();
 
-        boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+        final BoundingBoxE6 boundingBox = MapUtil
+                .getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
 
+        // Setup the rotation listener
+        final List<View> buttons = new ArrayList<View>();
+        
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
+        buttons.add(findViewById(id));
 
         id = R.id.okay;
         final ImageButton okay = (ImageButton) findViewById(R.id.okay);
         okay.setOnClickListener(this);
+        buttons.add(findViewById(id));
 
         id = R.id.switch_maps;
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
+        buttons.add(findViewById(id));
+        
+        listener = new ButtonRotationListener(this, buttons);
     }
 
     /*
@@ -115,6 +124,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         switch (v.getId()) {
         case R.id.return_to_actual_Position:
             mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
+            final BoundingBoxE6 boundingBox = MapUtil
+                    .getBoundingBoxForOsmElement(element);
             mapView.zoomToBoundingBox(boundingBox);
             break;
         case R.id.switch_maps:
@@ -142,6 +153,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         }
         final DataBaseHandler db = new DataBaseHandler(this);
         final List<AbstractDataElement> list = db.getAllDataElements();
+        list.remove(element);
         mapView.addOsmElementsToMap(this, list);
         db.close();
         mapView.addOsmElementToMap(this, element, true);

@@ -13,6 +13,7 @@
     
       <string name="pref_pointsize_title">Aktuelle Punktgröße</string>
     <string name="pref_pointsize_dialog_title">Punktgröße</string>
-    <string name="pref_pointsize_dialog_message">Bitte geben sie die neue Punktgröße an.</string>
+    <string name="pref_pointsize_dialog_message">Bitte geben sie die neue Punktgröße an.</string>   
+    <string name="auto_rotate_title">Automatische Kartenorientierung</string>
 
 </resources>

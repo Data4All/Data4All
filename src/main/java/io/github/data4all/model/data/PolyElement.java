@@ -462,6 +462,13 @@ public class PolyElement extends AbstractDataElement {
         default:
             break;
         }
+    }
 
+    public boolean equals(Object obj) {
+        if (obj instanceof PolyElement) {
+            return ((PolyElement) obj).getType() == this.type
+                    && super.equals(obj);
+        }
+        return false;
     }
 }

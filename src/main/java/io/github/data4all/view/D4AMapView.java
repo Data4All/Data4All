@@ -55,6 +55,12 @@ public class D4AMapView extends MapView {
     // Fill Color for Polygons
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
+    // Default Marked Color
+    protected static final int MARKED_STROKE_COLOR = Color.RED;
+   
+    // Fill Color for Polygons
+    protected static final int MARKED_FILL_COLOR = Color.argb(100, 255, 0, 0);
+
     private boolean scrollable = true;
 
     private static final String TAG = "MapPreview";
@@ -191,7 +197,8 @@ public class D4AMapView extends MapView {
         poi.setPosition(node.toGeoPoint());
         poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         if (edit) {
-            poi.setDraggable(true);
+            //set the polygon to editable
+            ((MapMarker)poi).setEditable(true);
         }
         this.getOverlays().add(poi);
         this.postInvalidate();
@@ -214,11 +221,11 @@ public class D4AMapView extends MapView {
         Log.i(TAG, "Set Area Points to " + polyElement.toString());
         area.setPoints(polyElement.getGeoPoints());
         if (edit) {
-            Log.i(TAG, "Set Area Fill Color to " + Color.YELLOW);
-            area.setFillColor(Color.argb(100, 255, 0, 0));
+            Log.i(TAG, "Set Area Fill Color to " + MARKED_FILL_COLOR);
+            area.setFillColor(MARKED_FILL_COLOR);
 
-            Log.i(TAG, "Set Stroke Color to " + Color.YELLOW);
-            area.setStrokeColor(Color.RED);
+            Log.i(TAG, "Set Stroke Color to " + MARKED_STROKE_COLOR);
+            area.setStrokeColor(MARKED_STROKE_COLOR);
         } else {
             Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
             area.setFillColor(DEFAULT_FILL_COLOR);
@@ -228,9 +235,6 @@ public class D4AMapView extends MapView {
         }
         Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
         area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-
-        Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
-        area.setStrokeColor(DEFAULT_STROKE_COLOR);
 
         if (edit) {
             //set the polygon to editable
@@ -260,8 +264,8 @@ public class D4AMapView extends MapView {
         Log.i(TAG, "Set Path Points to " + polyElement.toString());
         path.setPoints(polyElement.getGeoPoints());
         if (edit) {
-            Log.i(TAG, "Set Path Color to " + Color.YELLOW);
-            path.setColor(Color.RED);
+            Log.i(TAG, "Set Path Color to " + MARKED_STROKE_COLOR);
+            path.setColor(MARKED_STROKE_COLOR);
         } else {
             Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
             path.setColor(DEFAULT_STROKE_COLOR);

@@ -202,5 +202,18 @@ public abstract class AbstractDataElement implements Parcelable {
             dest.writeString(tags.get(t));
         }
     }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if(obj instanceof AbstractDataElement){
+            if(((AbstractDataElement) obj).getOsmId() == this.osmId){
+                return true;
+            }
+        }
+        return false;
+    }
     
 }

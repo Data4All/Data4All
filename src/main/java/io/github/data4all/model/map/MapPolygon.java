@@ -66,14 +66,14 @@ public class MapPolygon extends Polygon {
     private static final int TIME_DIFF = 200;
 
     // Default Stroke Color
-    private static final int DEFAULT_STROKE_COLOR = Color.BLUE;
+    protected static final int DEFAULT_STROKE_COLOR = Color.BLUE;
     // Active Stroke Color
-    private static final int ACTIVE_STROKE_COLOR = Color.GREEN;
+    protected static final int ACTIVE_STROKE_COLOR = Color.GREEN;
 
     // Fill Color for Polygons
-    private static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
+    protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
     // Fill Color for activated Polygons
-    private static final int ACTIVE_FILL_COLOR = Color.argb(100, 50, 255, 50);
+    protected static final int ACTIVE_FILL_COLOR = Color.argb(100, 50, 255, 50);
 
     /**
      * Modes for edits which differ from touch events.
@@ -271,8 +271,8 @@ public class MapPolygon extends Polygon {
             mapView.invalidate();
             active = true;
         } else {
-            this.setFillColor(DEFAULT_FILL_COLOR);
-            this.setStrokeColor(DEFAULT_STROKE_COLOR);
+            this.setFillColor(CustomInfoWindow.MARKED_FILL_COLOR);
+            this.setStrokeColor(CustomInfoWindow.MARKED_STROKE_COLOR);
             mapView.invalidate();
             active = false;
         }

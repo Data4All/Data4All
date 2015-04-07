@@ -62,7 +62,12 @@ public class CustomInfoWindow extends BasicInfoWindow implements
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
     // Default Marked Color
-    protected static final int DEFAULT_MARKED_COLOR = Color.RED;
+    protected static final int MARKED_STROKE_COLOR = Color.RED;
+   
+    // Fill Color for Polygons
+    protected static final int MARKED_FILL_COLOR = Color.argb(100, 255, 0, 0);
+
+    
     private static final String TAG = "CustomInfoWindow";
 
     AbstractDataElement element;
@@ -148,11 +153,11 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         InfoWindow.closeAllInfoWindowsOn(mMapView);
         if (overlay instanceof MapPolygon) {
             MapPolygon poly = (MapPolygon) overlay;
-            poly.setFillColor(DEFAULT_MARKED_COLOR);
-            poly.setStrokeColor(DEFAULT_MARKED_COLOR);
+            poly.setFillColor(MARKED_FILL_COLOR);
+            poly.setStrokeColor(MARKED_STROKE_COLOR);
         } else if (overlay instanceof MapLine) {
             MapLine line = (MapLine) overlay;
-            line.setColor(DEFAULT_MARKED_COLOR);
+            line.setColor(MARKED_STROKE_COLOR);
         }
     }
 
