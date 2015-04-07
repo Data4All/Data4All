@@ -97,6 +97,8 @@ public class MapPolygon extends Polygon {
     private int xStart = 0;
     private int yStart = 0;
 
+    Point midpoint;
+
     /**
      * List of GeoPoints of the MapPolygon before it was edited.
      */
@@ -197,17 +199,17 @@ public class MapPolygon extends Polygon {
         if (editable) {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+
+                pj = mapView.getProjection();
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
-                    pj = mapView.getProjection();
                     // actual polygon point list
                     geoPointList = this.getPoints();
-                    // get the position of the first point as the basis for
-                    // moving
-                    firstPoint = pj.toPixels(geoPointList.get(0), null);
                     // get the offset of all points in the list to the first one
-                    pointsOffset = getOffset();
+                    if (pointsOffset == null) {
+                        pointsOffset = getOffset();
+                    }
 
                     xStart = (int) event.getX();
                     yStart = (int) event.getY();
@@ -243,10 +245,10 @@ public class MapPolygon extends Polygon {
                 Log.d(TAG, "action_move");
                 if (active) {
                     if (mode == MOVE) {
-                        Log.d(TAG, "moooooooooooooooooooove");
+                        Log.d(TAG, "move polygon");
                         moveToNewPosition(event, mapView);
                     } else if (mode == ROTATE) {
-                        Log.d(TAG, "rotaaaaaaaaaaaaaate");
+                        Log.d(TAG, "rotate polygon");
                         rotatePolygon(event);
                     }
                 }
@@ -269,6 +271,8 @@ public class MapPolygon extends Polygon {
             this.setFillColor(ACTIVE_FILL_COLOR);
             this.setStrokeColor(ACTIVE_STROKE_COLOR);
             mapView.invalidate();
+            midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
+                    null);
             active = true;
         } else {
             this.setFillColor(DEFAULT_FILL_COLOR);
@@ -302,7 +306,7 @@ public class MapPolygon extends Polygon {
         double radians2 = Math.atan2(delta_yStart, delta_xStart);
 
         double radians = radians1 - radians2;
-        Log.d(TAG, "Radians: " + radians);
+        Log.d(TAG, "Rotation in radians: " + radians);
 
         // Get the midpoint of the element to rotate around this point.
         Point midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
@@ -381,17 +385,16 @@ public class MapPolygon extends Polygon {
             Log.i(TAG, "moveMapPolygon from: " + xStart + " " + yStart);
             Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
 
-            // move the first point
-            firstPoint.set((firstPoint.x + (xEnd - xStart)),
-                    (firstPoint.y + (yEnd - yStart)));
-            geoPointList.set(0, (GeoPoint) pj.fromPixels((int) firstPoint.x,
-                    (int) firstPoint.y));
+            // move the midpoint
+            midpoint.set((midpoint.x + (xEnd - xStart)),
+                    (midpoint.y + (yEnd - yStart)));
+            Log.i(TAG, "new midpoint :" + midpoint.x + " " + midpoint.y);
 
             // set all other points depending on the first point
-            for (int i = 1; i < geoPointList.size(); i++) {
+            for (int i = 0; i < geoPointList.size(); i++) {
                 Point newPoint = new Point();
-                newPoint.set((firstPoint.x + pointsOffset.get(i).x),
-                        (firstPoint.y + pointsOffset.get(i).y));
+                newPoint.set((midpoint.x + pointsOffset.get(i).x),
+                        (midpoint.y + pointsOffset.get(i).y));
                 geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
                         (int) newPoint.y));
             }
@@ -412,14 +415,14 @@ public class MapPolygon extends Polygon {
      * @return List with all vectors
      */
     public List<Point> getOffset() {
-        Log.i(TAG, "" + originalPoints.size());
+        Log.i(TAG, "number of points in the polygon: " + originalPoints.size());
         List<Point> pointsOffset = new ArrayList<Point>();
+
         if (originalPoints.size() > 0) {
-            Point firstPoint = pj.toPixels(originalPoints.get(0), null);
             for (int i = 0; i < originalPoints.size(); i++) {
                 Point point = pj.toPixels(originalPoints.get(i), null);
-                int xOffset = (point.x - firstPoint.x);
-                int yOffset = (point.y - firstPoint.y);
+                int xOffset = (point.x - midpoint.x);
+                int yOffset = (point.y - midpoint.y);
                 pointsOffset.add(new Point(xOffset, yOffset));
             }
         }
