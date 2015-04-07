@@ -64,8 +64,8 @@ public abstract class AbstractActivity extends Activity {
     private NotificationManager notificationManager;
 
     // Counter is used to count the start of activities to remove the status bar
-    // icon when no activie is running
-    private static int counter = 0;
+    // icon when no active is running
+    private static int counter;
 
     /*
      * (non-Javadoc)
@@ -81,7 +81,7 @@ public abstract class AbstractActivity extends Activity {
 
         // set a notification to Status Bar
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification.Builder mBuilder = new Notification.Builder(this)
+       final Notification.Builder mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_logo_white)
                 .setOngoing(true)
                 .setContentTitle("Data4All is running").setAutoCancel(true)
@@ -147,7 +147,7 @@ public abstract class AbstractActivity extends Activity {
             break;
         // finish workflow, return to mapview
         case android.R.id.home:
-            onWorkflowFinished(null);
+            this.onWorkflowFinished(null);
             status = true;
             break;
         default:
