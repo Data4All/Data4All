@@ -91,7 +91,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         id = R.id.switch_maps;
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
-        
+
         id = R.id.rect;
         final ImageButton rect = (ImageButton) findViewById(id);
         rect.setOnClickListener(this);
@@ -175,13 +175,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private void startRectangularPreview() {
         if (element instanceof PolyElement) {
             PolyElement rect = (PolyElement) element;
-            Intent rectangle = getIntent();
-            if (getIntent().hasExtra("OSM_ELEMENT")
-                    && rect.replaceNodes(RectangleFunction
-                            .transformIntoRectangle(rect.getNodes()))) {
-                rectangle.removeExtra("OSM_ELEMENT");
-                rectangle.putExtra("OSM_ELEMENT", rect);
-                startActivityForResult(rectangle);
+            if (rect.replaceNodes(RectangleFunction.transformIntoRectangle(rect
+                    .getNodes()))) {
+                mapView.getOverlays().clear();
+                this.setUpOverlays();
             }
         }
     }
