@@ -176,7 +176,10 @@ public class ResultViewActivity extends AbstractActivity implements
                 final String selectedString = keyList.get(position);
                 if (Tagging.isClassifiedTag(keyList.get(position), res)) {
                     ResultViewActivity.this.changeClassifiedTag(selectedString);
-                } else {
+                } else if (keyList.get(position).equals(res.getString(R.string.SelectTag))){
+                	Log.i(TAG, "right");
+                	addClassifiedTag();
+                } else{	
                     ResultViewActivity.this
                             .changeUnclassifiedTag(selectedString);
                 }
@@ -248,6 +251,34 @@ public class ResultViewActivity extends AbstractActivity implements
                 });
         alert = builder.create();
         alert.show();
+    	
+    }
+    
+    
+    private void addClassifiedTag() {
+    	  final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                  ResultViewActivity.this,
+                  android.R.style.Theme_Holo_Dialog_MinWidth);
+          alertDialog.setTitle(R.string.SelectTag);
+          final CharSequence[] showArray;
+          showArray = Tagging.getArrayKeys(
+                  getIntent().getExtras().getInt("TYPE_DEF"), res);
+          alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                  final String key = (String) showArray[which];
+                  Log.i(TAG, tagMap.get(key).getKey());
+                  ResultViewActivity.this.changeClassifiedTag(key);
+              }
+          });
+          alert = alertDialog.create();
+          alert.getWindow().setBackgroundDrawable(
+                  new ColorDrawable(android.graphics.Color.TRANSPARENT));
+          alert.show();
+
+
+          
+          
     	
     }
     /**
