@@ -204,6 +204,8 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param polyElement
      *            the area which should be added to the map
+     * @param edit
+     *            is the Element editable
      **/
     private void addAreaToMap(AbstractActivity ctx, PolyElement polyElement,
             boolean edit) {
@@ -211,10 +213,19 @@ public class D4AMapView extends MapView {
 
         Log.i(TAG, "Set Area Points to " + polyElement.toString());
         area.setPoints(polyElement.getGeoPoints());
+        if (edit) {
+            Log.i(TAG, "Set Area Fill Color to " + Color.YELLOW);
+            area.setFillColor(Color.argb(100, 255, 0, 0));
 
-        Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
-        area.setFillColor(DEFAULT_FILL_COLOR);
+            Log.i(TAG, "Set Stroke Color to " + Color.YELLOW);
+            area.setStrokeColor(Color.RED);
+        } else {
+            Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
+            area.setFillColor(DEFAULT_FILL_COLOR);
 
+            Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
+            area.setStrokeColor(DEFAULT_STROKE_COLOR);
+        }
         Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
         area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
 
@@ -239,26 +250,30 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param polyElement
      *            the path which should be added to the map
+     * @param edit
+     *            is the Element editable
      **/
-    private void addPathToMap(AbstractActivity ctx, PolyElement polyElement, boolean edit) {
+    private void addPathToMap(AbstractActivity ctx, PolyElement polyElement,
+            boolean edit) {
         final Polyline path = new MapLine(ctx, this, polyElement);
 
         Log.i(TAG, "Set Path Points to " + polyElement.toString());
         path.setPoints(polyElement.getGeoPoints());
-
-        Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
-        path.setColor(DEFAULT_STROKE_COLOR);
-
+        if (edit) {
+            Log.i(TAG, "Set Path Color to " + Color.YELLOW);
+            path.setColor(Color.RED);
+        } else {
+            Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
+            path.setColor(DEFAULT_STROKE_COLOR);
+        }
         Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
         path.setWidth(DEFAULT_STROKE_WIDTH);
-        
         if (edit) {
             //set the polygon to editable
             ((MapLine)path).setEditable(true);
             //set the original points to calculate the offset of all points
             ((MapLine)path).setOriginalPoints();
         }
-        
         this.getOverlays().add(path);
         this.postInvalidate();
     }
