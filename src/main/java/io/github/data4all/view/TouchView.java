@@ -139,10 +139,10 @@ public class TouchView extends View {
     /**
      * Standard strings for actions
      */
-    final static String add = "ADD";
-    final static String delete = "DELETE";
-    final static String moveFrom = "MOVE_FROM";
-    final static String moveTo = "MOVE_TO";
+    static final String add = "ADD";
+    static final String delete = "DELETE";
+    static final String moveFrom = "MOVE_FROM";
+    static final String moveTo = "MOVE_TO";
 
     /**
      * Simple constructor to use when creating a view from code.
@@ -420,8 +420,8 @@ public class TouchView extends View {
      * @return true if the Point was added
      */
     private boolean addPointOnLine(Point p) {
-        //tolerance used for detecting lines. adapts to the specific Display
-        int tolerance = (int) (5 * getResources().getDisplayMetrics().density);
+        // tolerance used for detecting lines. adapts to the specific Display
+        final int tolerance = (int) (5 * getResources().getDisplayMetrics().density);
         if (polygon.size() >= 3) {
             for (int i = 0; i < polygon.size() - 1; i++) {
                 if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
@@ -457,9 +457,9 @@ public class TouchView extends View {
      *            specifies how close point C has to be to the line.
      * @return true if point C is on/near the Line between A and B
      */
-    private boolean isOnALine(Point A, Point B, Point C, double tolerance) {
-        double distACBC = distance(A, C) + distance(B, C);
-        double ergebnis = Math.abs(distACBC - distance(A, B));
+    private boolean isOnALine(Point a, Point b, Point c, double tolerance) {
+        final double distacbc = distance(a, c) + distance(b, c);
+        final double ergebnis = Math.abs(distacbc - distance(a, b));
         if (ergebnis < tolerance) {
             return true;
         }
