@@ -23,7 +23,8 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
-import io.github.data4all.service.GPSservice;
+import io.github.data4all.suggestion.AddressSuggestionView;
+import io.github.data4all.suggestion.Addresse;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
@@ -31,7 +32,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -52,13 +52,12 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,6 +94,10 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     private AbstractDataElement element;
     // The Ressource
     private Resources res;
+    
+    AddressSuggestionView addressView;
+    Spinner addressSugestionSpinner;
+    
 
     /**
      * Called when the activity is first created.
@@ -331,8 +334,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     public void createDialog(List<Tag> arrayList, String title,
             final Boolean first1) {
         
-        TagSuggestionHandler handler=GPSservice.tagSuggestionHandler;
-
+        if(addressView==null){
+        addressView = new AddressSuggestionView(context);
+        
+        }  
+        
+        
         dialog1 = new Dialog(this);
         dialog1.setCancelable(false);
         dialog1.setContentView(R.layout.dialog_dynamic);
@@ -346,23 +353,45 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         next.setId(R.id.buttonNext);
         finish.setId(R.id.buttonFinish);
         first = first1;
+        
+        if(TagSuggestionHandler.getAddressList()!=null && !TagSuggestionHandler.getAddressList().isEmpty() && first){
+        	addressView.setAddresses(TagSuggestionHandler.getAddressList());
+        	addressView.fillSpinner(this);
+        	if(addressSugestionSpinner==null){
+        		addressSugestionSpinner=addressView.getSpinner();
+        	    layout.addView(addressSugestionSpinner);
+        	}
+        	
+        }
+        Addresse bestLocation = addressView.getBestLocation();
+        if(bestLocation!=null){
+        	addressSugestionSpinner.setSelection(addressView.getDataAdapter().getPosition(bestLocation.getFullAddress()));
+        	addressView.getDataAdapter().notifyDataSetChanged();
+        }
         edit = new ArrayList<EditText>();
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             final Tag tag = arrayList.get(i);
             //check if a tag has a lastvalue(e.g street, country, etc...)
-            if(tag!=null && tag.getId()==1 && handler.getAddress1()!=null && !handler.getAddress1().isEmpty()){
-                text.setText(handler.getAddress1());
+            text.setHint(tag.getHintRessource());
+           
+			if(tag!=null && tag.getId()==1 ){
+               text.setText(bestLocation==null?"":bestLocation.getRoad());
+               addressView.setRoad(text);
             }
-            else if(tag!=null && tag.getId()==2 && handler.getAddresseNr()!=null && !handler.getAddresseNr().isEmpty()){
-                text.setText(handler.getAddresseNr());
-            }else if(tag!=null && tag.getId()==3 && handler.getPIN()!=null && !handler.getPIN().isEmpty()){
-                text.setText(handler.getPIN());
-            }else if(tag!=null && tag.getId()==4 && handler.getCity()!=null && !handler.getCity().isEmpty()){
-                text.setText(handler.getCity());
+            else if(tag!=null && tag.getId()==2){
+            	text.setText(bestLocation==null?"":bestLocation.getAddresseNr());
+                addressView.setHouseNumber(text);
+            }else if(tag!=null && tag.getId()==3 ){
+            	text.setText(bestLocation==null?"":bestLocation.getPostCode());
+                addressView.setPostCode(text);
+            }else if(tag!=null && tag.getId()==4 ){
+            	text.setText(bestLocation==null?"":bestLocation.getCity());
+                addressView.setCity(text);
             }
-            else if(tag!=null && tag.getId()==5 && handler.getCountry()!=null && !handler.getCountry().isEmpty()){
-                text.setText(handler.getCountry());
+            else if(tag!=null && tag.getId()==5 ){
+            	text.setText(bestLocation==null?"":bestLocation.getCountry());
+                addressView.setCountry(text);
             }
             else if (tag.getLastValue() != null) {
                 text.setText(tag.getLastValue());
