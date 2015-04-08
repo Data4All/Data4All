@@ -108,20 +108,20 @@ public class MapMarker extends Marker {
         } else {
             mInfoWindow = null;
         }
-        setInfo();
+        this.setInfo();
     }
 
     public void setInfo() {
         if (!element.getTags().keySet().isEmpty()
                 && !element.getTags().values().isEmpty()) {
             Log.i(TAG, element.getTags().toString());
-            Tag tag = (Tag) element.getTags().keySet().toArray()[0];
-            String key = tag.getKey();
-            String value = element.getTags().get(tag);
+            final Tag tag = (Tag) element.getTags().keySet().toArray()[0];
+            final String key = tag.getKey();
+            final String value = element.getTags().get(tag);
             Log.i(TAG, tag.toString());
             setTitle(activity.getString(tag.getNameRessource()));
             if (tag instanceof ClassifiedTag) {
-                setSubDescription(getLocalizedName(activity, key, value));
+                setSubDescription(this.getLocalizedName(activity, key, value));
             } else {
                 setSubDescription(element.getTags().get(tag));
             }
@@ -129,9 +129,9 @@ public class MapMarker extends Marker {
     }
 
     public String getLocalizedName(Context context, String key, String value) {
-        Resources resources = context.getResources();
-        String s = "name_" + key + "_" + value;
-        int id = resources.getIdentifier(s.replace(":", "_"), "string",
+        final Resources resources = context.getResources();
+        final String s = "name_" + key + "_" + value;
+        final int id = resources.getIdentifier(s.replace(":", "_"), "string",
                 context.getPackageName());
         if (id == 0) {
             return null;
@@ -167,16 +167,15 @@ public class MapMarker extends Marker {
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
                         && hitTest(event, mapView)) {
-                    changeMode();
+                    this.changeMode();
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, "action_move");
-                if (active) {
-                    if (mode == MOVE) {
-                        Log.d(TAG, "move marker");
-                        moveToNewPosition(event, mapView);
-                    }
+                if (active && mode == MOVE) {
+                    Log.d(TAG, "move marker");
+                    this.moveToNewPosition(event, mapView);
+
                 }
                 break;
             default:
@@ -199,8 +198,8 @@ public class MapMarker extends Marker {
     public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
 
         // set the end coordinates of the movement
-        int xEnd = (int) event.getX();
-        int yEnd = (int) event.getY();
+        final int xEnd = (int) event.getX();
+        final int yEnd = (int) event.getY();
 
         Log.i(TAG, "moveMapMarker from: " + xStart + " " + yStart);
         Log.i(TAG, "moveMapMarker to: " + xEnd + " " + yEnd);
@@ -225,7 +224,8 @@ public class MapMarker extends Marker {
             mapView.invalidate();
             active = true;
         } else {
-            setIcon(activity.getResources().getDrawable(R.drawable.ic_setpoint_red));
+            setIcon(activity.getResources().getDrawable(
+                    R.drawable.ic_setpoint_red));
             mapView.invalidate();
             active = false;
         }

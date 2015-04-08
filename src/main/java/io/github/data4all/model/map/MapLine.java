@@ -99,7 +99,7 @@ public class MapLine extends Polyline {
      */
     private int xStartM = 0;
     private int yStartM = 0;
-    
+
     /**
      * List of the geopoints in a coordinate system with the center as the
      * average of all Points.
@@ -150,7 +150,7 @@ public class MapLine extends Polyline {
         } else {
             mInfoWindow = null;
         }
-        setInfo();
+        this.setInfo();
     }
 
     /**
@@ -160,13 +160,13 @@ public class MapLine extends Polyline {
         if (!element.getTags().keySet().isEmpty()
                 && !element.getTags().values().isEmpty()) {
             Log.i(TAG, element.getTags().toString());
-            Tag tag = (Tag) element.getTags().keySet().toArray()[0];
-            String key = tag.getKey();
-            String value = element.getTags().get(tag);
+            final Tag tag = (Tag) element.getTags().keySet().toArray()[0];
+            final String key = tag.getKey();
+            final String value = element.getTags().get(tag);
             Log.i(TAG, tag.toString());
             setTitle(activity.getString(tag.getNameRessource()));
             if (tag instanceof ClassifiedTag) {
-                setSubDescription(getLocalizedName(activity, key, value));
+                setSubDescription(this.getLocalizedName(activity, key, value));
             } else {
                 setSubDescription(element.getTags().get(tag));
             }
@@ -185,8 +185,8 @@ public class MapLine extends Polyline {
      * @return the localized name
      */
     public String getLocalizedName(Context context, String key, String value) {
-        Resources resources = context.getResources();
-        String s = "name_" + key + "_" + value;
+        final Resources resources = context.getResources();
+        final String s = "name_" + key + "_" + value;
         int id = resources.getIdentifier(s.replace(":", "_"), "string",
                 context.getPackageName());
         if (id == 0) {
@@ -230,7 +230,7 @@ public class MapLine extends Polyline {
                 break;
             case MotionEvent.ACTION_UP:
                 Log.d(TAG, "action_up");
-                GeoPoint geoPoint = (GeoPoint) pj.fromPixels(
+                final GeoPoint geoPoint = (GeoPoint) pj.fromPixels(
                         (int) event.getX(), (int) event.getY());
 
                 if (active) {
@@ -250,10 +250,10 @@ public class MapLine extends Polyline {
                 if (active) {
                     if (mode == MOVE) {
                         Log.d(TAG, "move polygon");
-                        moveToNewPos(event, mapView);
+                        this.moveToNewPos(event, mapView);
                     } else if (mode == ROTATE) {
                         Log.d(TAG, "rotate polygon");
-                        rotatePolygon(event);
+                        this.rotatePolygon(event);
                     }
                 }
                 break;
@@ -303,8 +303,8 @@ public class MapLine extends Polyline {
      */
     public void moveToNewPos(final MotionEvent event, final MapView mapView) {
         // set the end coordinates of the movement
-        int xEnd = (int) event.getX();
-        int yEnd = (int) event.getY();
+        final int xEnd = (int) event.getX();
+        final int yEnd = (int) event.getY();
 
         if (pointsOffset == null) {
             pointsOffset = getOffset(geoPointList);
@@ -343,32 +343,32 @@ public class MapLine extends Polyline {
      */
     private void rotatePolygon(MotionEvent event) {
         // set end values for the next rotation action
-        int xEndPo1 = (int) event.getX(0);
-        int xEndPo2 = (int) event.getX(1);
+        final int xEndPo1 = (int) event.getX(0);
+        final int xEndPo2 = (int) event.getX(1);
 
-        int yEndPo1 = (int) event.getY(0);
-        int yEndPo2 = (int) event.getY(1);
+        final int yEndPo1 = (int) event.getY(0);
+        final int yEndPo2 = (int) event.getY(1);
 
         // get the rotation angle
-        double delta_xEnd = (xEndPo1 - xEndPo2);
-        double delta_yEnd = (yEndPo1 - yEndPo2);
-        double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
+        final double delta_xEnd = (xEndPo1 - xEndPo2);
+        final double delta_yEnd = (yEndPo1 - yEndPo2);
+        final double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
 
-        double delta_xStart = (xStartPo1 - xStartPo2);
-        double delta_yStart = (yStartPo1 - yStartPo2);
-        double radians2 = Math.atan2(delta_yStart, delta_xStart);
-        double radians = radians1 - radians2;
+        final double delta_xStart = (xStartPo1 - xStartPo2);
+        final double delta_yStart = (yStartPo1 - yStartPo2);
+        final double radians2 = Math.atan2(delta_yStart, delta_xStart);
+        final double radians = radians1 - radians2;
 
         geoPointList = new ArrayList<GeoPoint>();
         // rotate all coordinates
         for (double[] preCoord : pointCoords) {
-            double[] coord = new double[2];
+            final double[] coord = new double[2];
             coord[1] = preCoord[1] * Math.cos(radians) - preCoord[0]
                     * Math.sin(radians);
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
             // transfer coordinates to gpsPoints
-            Node node = PointToCoordsTransformUtil.calculateGPSPoint(
+            final Node node = PointToCoordsTransformUtil.calculateGPSPoint(
                     midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
@@ -385,11 +385,11 @@ public class MapLine extends Polyline {
      * @return List with all vectors
      */
     public List<Point> getOffset(List<GeoPoint> gpointList) {
-        List<Point> pointsOffset = new ArrayList<Point>();
+        final List<Point> pointsOffset = new ArrayList<Point>();
         for (int i = 0; i < geoPointList.size(); i++) {
-            Point point = pj.toPixels(geoPointList.get(i), null);
-            int xOffset = (point.x - midpoint.x);
-            int yOffset = (point.y - midpoint.y);
+            final Point point = pj.toPixels(geoPointList.get(i), null);
+            final int xOffset = (point.x - midpoint.x);
+            final int yOffset = (point.y - midpoint.y);
             pointsOffset.add(new Point(xOffset, yOffset));
         }
         return pointsOffset;
@@ -420,7 +420,7 @@ public class MapLine extends Polyline {
         this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            double[] preCoord = PointToCoordsTransformUtil
+            final double[] preCoord = PointToCoordsTransformUtil
                     .calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint

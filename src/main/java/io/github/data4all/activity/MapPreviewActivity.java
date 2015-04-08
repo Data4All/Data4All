@@ -72,7 +72,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         if (getIntent().hasExtra("OSM_ELEMENT")) {
             element = getIntent().getParcelableExtra("OSM_ELEMENT");
         }
-        setUpOverlays();
+        this.setUpOverlays();
 
         final BoundingBoxE6 boundingBox = MapUtil
                 .getBoundingBoxForOsmElement(element);
@@ -131,7 +131,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         case R.id.switch_maps:
             switchMaps();
             mapView.getOverlays().clear();
-            setUpOverlays();
+            this.setUpOverlays();
             break;
         case R.id.okay:
             this.accept();
@@ -143,8 +143,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     private void setUpOverlays() {
         if (getIntent().hasExtra("LOCATION")) {
-            Location l = (Location) getIntent().getParcelableExtra("LOCATION");
-            Marker m = new Marker(mapView);
+            final Location l = (Location) getIntent().getParcelableExtra("LOCATION");
+            final Marker m = new Marker(mapView);
             m.setPosition(new GeoPoint(l));
             m.setIcon(new DefaultResourceProxyImpl(this)
                     .getDrawable(ResourceProxy.bitmap.person));

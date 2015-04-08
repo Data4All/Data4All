@@ -69,18 +69,18 @@ public class CustomInfoWindow extends BasicInfoWindow implements
 
     private static final String TAG = "CustomInfoWindow";
 
-    AbstractDataElement element;
-    OverlayWithIW overlay;
-    AbstractActivity activity;
+    protected AbstractDataElement element;
+    protected OverlayWithIW overlay;
+    protected AbstractActivity activity;
 
     /**
      * Constructor for an InfoBubble on an given Overlay, Element and MapView.
      * Invoked by the given activity.
      * 
-     * @param mapView
-     * @param element
-     * @param overlay
-     * @param activity
+     * @param mapView the current mapView
+     * @param the element to this InfoWindow
+     * @param overlay the overlay with this InfoWindow
+     * @param activity the context activity
      **/
     public CustomInfoWindow(MapView mapView, AbstractDataElement element,
             OverlayWithIW overlay, AbstractActivity activity) {
@@ -108,14 +108,14 @@ public class CustomInfoWindow extends BasicInfoWindow implements
     public void onClose() {
         super.onClose();
         if (overlay instanceof MapPolygon) {
-            MapPolygon poly = (MapPolygon) overlay;
+            final MapPolygon poly = (MapPolygon) overlay;
             poly.setFillColor(DEFAULT_FILL_COLOR);
             poly.setStrokeColor(DEFAULT_STROKE_COLOR);
         } else if (overlay instanceof MapLine) {
-            MapLine line = (MapLine) overlay;
+            final MapLine line = (MapLine) overlay;
             line.setColor(DEFAULT_STROKE_COLOR);
         } else if (overlay instanceof MapMarker) {
-            MapMarker marker = (MapMarker) overlay;
+            final MapMarker marker = (MapMarker) overlay;
             marker.setIcon(activity.getResources().getDrawable(
                     R.drawable.ic_setpoint_blue));
         }
@@ -138,7 +138,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
                     .show();
             break;
         case R.id.bubble_edit:
-            editElement();
+            this.editElement();
             close();
             break;
         default:
@@ -157,14 +157,14 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         super.onOpen(item);
         InfoWindow.closeAllInfoWindowsOn(mMapView);
         if (overlay instanceof MapPolygon) {
-            MapPolygon poly = (MapPolygon) overlay;
+            final MapPolygon poly = (MapPolygon) overlay;
             poly.setFillColor(MARKED_FILL_COLOR);
             poly.setStrokeColor(MARKED_STROKE_COLOR);
         } else if (overlay instanceof MapLine) {
-            MapLine line = (MapLine) overlay;
+            final MapLine line = (MapLine) overlay;
             line.setColor(MARKED_STROKE_COLOR);
         } else if (overlay instanceof MapMarker) {
-            MapMarker marker = (MapMarker) overlay;
+            final MapMarker marker = (MapMarker) overlay;
             marker.setIcon(activity.getResources().getDrawable(
                     R.drawable.ic_setpoint_red));
         }
@@ -206,7 +206,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         if (element instanceof Node) {
             type = POINT;
         } else if (element instanceof PolyElement) {
-            PolyElement polyElement = (PolyElement) element;
+            final PolyElement polyElement = (PolyElement) element;
             if (polyElement.getType() == PolyElementType.WAY) {
                 type = WAY;
             } else if (polyElement.getType() == PolyElementType.AREA) {

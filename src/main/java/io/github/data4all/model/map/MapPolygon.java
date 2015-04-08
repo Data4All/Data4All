@@ -251,10 +251,10 @@ public class MapPolygon extends Polygon {
                 if (active) {
                     if (mode == MOVE) {
                         Log.d(TAG, "move polygon");
-                        moveToNewPos(event, mapView);
+                        this.moveToNewPos(event, mapView);
                     } else if (mode == ROTATE) {
                         Log.d(TAG, "rotate polygon");
-                        rotatePolygon(event);
+                        this.rotatePolygon(event);
                     }
                 }
                 break;
@@ -384,6 +384,9 @@ public class MapPolygon extends Polygon {
     /**
      * Get the vectors to all points of the polygon starting from the midpoint.
      * Necessary for moving the polygon.
+     * 
+     * @param gpointList
+     *            list of all geopoints of the polygon
      * 
      * @return List with all vectors
      */
