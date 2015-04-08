@@ -198,7 +198,7 @@ public class PointToCoordsTransformUtilTest {
         location.setLatitude(0);
         location.setLongitude(0);
         double[] coord = { 0, 0 };
-        Node node = util.calculateGPSPoint(location, coord);
+        Node node = PointToCoordsTransformUtil.calculateGPSPoint(location, coord);
         assertThat(node.getLat(), is(location.getLatitude()));
         assertThat(node.getLon(), is(location.getLongitude()));
     }
@@ -211,7 +211,7 @@ public class PointToCoordsTransformUtilTest {
         location.setLatitude(0);
         location.setLongitude(0);
         double[] coord = { 10, 10 };
-        Node node = util.calculateGPSPoint(location, coord);
+        Node node = PointToCoordsTransformUtil.calculateGPSPoint(location, coord);
         assertThat(node.getLat(), greaterThan(location.getLatitude()));
         assertThat(node.getLon(), greaterThan(location.getLongitude()));
     }
@@ -224,7 +224,7 @@ public class PointToCoordsTransformUtilTest {
         location.setLatitude(0);
         location.setLongitude(0);
         double[] coord = { -10, -10 };
-        Node node = util.calculateGPSPoint(location, coord);
+        Node node = PointToCoordsTransformUtil.calculateGPSPoint(location, coord);
         assertThat(node.getLat(), lessThan(location.getLatitude()));
         assertThat(node.getLon(), lessThan(location.getLongitude()));
     }
@@ -237,12 +237,12 @@ public class PointToCoordsTransformUtilTest {
         location.setLatitude(0);
         location.setLongitude(179.9999999);
         double[] coord = { 100000, 100000 };
-        Node node = util.calculateGPSPoint(location, coord);
+        Node node = PointToCoordsTransformUtil.calculateGPSPoint(location, coord);
         assertThat(node.getLon(), lessThan(-100.0));
         location.setLatitude(0);
         location.setLongitude(-179.9999999);
         double[] coord2 = { -100000, -100000 };
-        Node node2 = util.calculateGPSPoint(location, coord2);
+        Node node2 = PointToCoordsTransformUtil.calculateGPSPoint(location, coord2);
         assertThat(node2.getLon(), greaterThan(100.0));
     }
     
