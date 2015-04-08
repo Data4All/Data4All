@@ -15,7 +15,7 @@
  */
 package io.github.data4all.service;
 
-import io.github.data4all.R;
+
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.smoothing.BasicSensorSmoother;
@@ -29,7 +29,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
-import android.widget.Toast;
 
 /**
  * A service for listening for orientation changes. Whenever the sensor changes
@@ -139,10 +138,9 @@ public class OrientationListener extends Service implements SensorEventListener 
             System.arraycopy(event.values, 0, mGeomagnetic, 0, ARRAYLENGTH);
         }
 
-        // when the 2 Sensors data are available
+        // when the 2 sensors data are available
         if (mGravity != null && mGeomagnetic != null && event.accuracy >= 3) {
 
-            // Log.d("TEST", "Test ");
             final boolean success = SensorManager.getRotationMatrix(mR, mI,
                     mGravity, mGeomagnetic);
 

@@ -351,7 +351,6 @@ public class CameraActivity extends AbstractActivity {
      */
     private void showCalibrationDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
         // set title
         switch (OrientationListener.CALIBRATION_STATUS) {
         case OrientationListener.CALIBRATION_OK:
@@ -369,7 +368,6 @@ public class CameraActivity extends AbstractActivity {
                     .setTitle(R.string.badMagnetometerCalibrationTitle);
             break;
         }
-
         // set dialog message
         alertDialogBuilder
                 .setMessage(R.string.badSensorCalibration)
@@ -380,10 +378,8 @@ public class CameraActivity extends AbstractActivity {
                                 dialog.cancel();
                             }
                         });
-
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
-
         // show it
         alertDialog.show();
     }
