@@ -15,7 +15,6 @@
  */
 package io.github.data4all.service;
 
-
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.smoothing.BasicSensorSmoother;
@@ -139,29 +138,34 @@ public class OrientationListener extends Service implements SensorEventListener 
         }
 
         // when the 2 sensors data are available
-        if (mGravity != null && mGeomagnetic != null && event.accuracy >= 3) {
+        if (mGravity != null && mGeomagnetic != null) {
 
             final boolean success = SensorManager.getRotationMatrix(mR, mI,
                     mGravity, mGeomagnetic);
 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);
-                // saving the new model with the orientation in the RingBuffer
-                Log.d(TAG,
-                        "Orientation " + Math.toDegrees(orientation[0]) + " ; "
-                                + Math.toDegrees(orientation[1]) + " ; "
-                                + Math.toDegrees(orientation[2]) + " ; "
-                                + "EventAccuracy:" + event.accuracy);
-                deviceOrientation = new DeviceOrientation(orientation[0],
-                        orientation[1], orientation[LAST_INDEX],
-                        System.currentTimeMillis());
-                Optimizer.putDevOrient(deviceOrientation);
 
-                
+                if (event.accuracy >= 1) {
+
+                    // saving the new model with the orientation in the
+                    // RingBuffer
+                    Log.d(TAG, "Orientation " + Math.toDegrees(orientation[0])
+                            + " ; " + Math.toDegrees(orientation[1]) + " ; "
+                            + Math.toDegrees(orientation[2]) + " ; "
+                            + "EventAccuracy:" + event.accuracy);
+                    deviceOrientation = new DeviceOrientation(orientation[0],
+                            orientation[1], orientation[LAST_INDEX],
+                            System.currentTimeMillis());
+                    Optimizer.putDevOrient(deviceOrientation);
+                }
+
+                if (horizonListener != null) {
+                    horizonListener.makeHorizon(true);
+                }
+
             }
-            if (horizonListener != null) {
-                horizonListener.makeHorizon(true);
-            }
+
         }
 
     }
