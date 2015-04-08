@@ -150,8 +150,7 @@ public class GPSservice extends Service implements LocationListener {
                     // dbHandler.updateTrack(track);
                 }
             }
-            tagSuggestionHandler=new TagSuggestionHandler();
-            tagSuggestionHandler.execute();
+
             
         }
     }
