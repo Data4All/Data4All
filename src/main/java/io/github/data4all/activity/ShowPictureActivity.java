@@ -28,6 +28,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.PointToCoordsTransformUtil;
+import io.github.data4all.view.CaptureAssistView;
 import io.github.data4all.view.TouchView;
 
 import java.io.File;
@@ -42,6 +43,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -64,6 +66,7 @@ public class ShowPictureActivity extends AbstractActivity {
 
     private static final String TAG = ShowPictureActivity.class.getSimpleName();
 
+    private CaptureAssistView cameraAssistView;
     private TouchView touchView;
     private ImageView imageView;
     private Intent intent;
@@ -107,7 +110,10 @@ public class ShowPictureActivity extends AbstractActivity {
         setContentView(R.layout.activity_picture);
 
         imageView = (ImageView) findViewById(R.id.imageView1);
+        cameraAssistView =
+                (CaptureAssistView) findViewById(R.id.cameraAssistView);
         touchView = (TouchView) findViewById(R.id.touchView1);
+
         intent = new Intent(this, MapPreviewActivity.class);
         undo = (ImageButton) findViewById(R.id.undobtn);
         undo.setVisibility(View.GONE);
@@ -146,7 +152,10 @@ public class ShowPictureActivity extends AbstractActivity {
             }
         });
 
-        if (getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null
+                && getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {
             this.setBackground((File) getIntent().getSerializableExtra(
                     CapturePictureHandler.FILE_EXTRA));
 
@@ -155,14 +164,17 @@ public class ShowPictureActivity extends AbstractActivity {
             this.finish();
         }
 
-        if (getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
+        if (extras != null
+                && getIntent().hasExtra(CapturePictureHandler.TRANSFORM_BEAN)) {
             transformBean =
                     getIntent().getExtras().getParcelable(
                             CapturePictureHandler.TRANSFORM_BEAN);
             intent.putExtra(LOCATION, transformBean.getLocation());
         }
 
-        if (getIntent().hasExtra(CapturePictureHandler.CURRENT_ORIENTATION)) {
+        if (extras != null
+                && getIntent().hasExtra(
+                        CapturePictureHandler.CURRENT_ORIENTATION)) {
             currentOrientation =
                     getIntent().getExtras().getParcelable(
                             CapturePictureHandler.CURRENT_ORIENTATION);
@@ -180,6 +192,16 @@ public class ShowPictureActivity extends AbstractActivity {
         // height
         touchView.setTransformUtil(new PointToCoordsTransformUtil(
                 transformBean, currentOrientation));
+
+        // set the HorizontView
+        cameraAssistView.setInformations(
+                (float) transformBean.getCameraMaxVerticalViewAngle(),
+                (float) transformBean.getCameraMaxHorizontalViewAngle(),
+                currentOrientation);
+        cameraAssistView.invalidate();
+
+        touchView.setCameraAssistView(cameraAssistView);
+
         this.onClickArea(null);
 
         // Setup the rotation listener
@@ -189,15 +211,16 @@ public class ShowPictureActivity extends AbstractActivity {
         buttons.add(findViewById(R.id.imageButton1));
         buttons.add(findViewById(R.id.imageButton2));
         buttons.add(findViewById(R.id.imageButton3));
-        //TODO building is not supported yet, so it is commented out here and
-        //in activity_picture.xml
-        //buttons.add(findViewById(R.id.imageButton4));
+        // TODO building is not supported yet, so it is commented out here and
+        // in activity_picture.xml
+        buttons.add(findViewById(R.id.imageButton4));
         buttons.add(ok);
 
         listener = new ButtonRotationListener(this, buttons);
 
         AbstractActivity.addNavBarMargin(getResources(),
                 findViewById(R.id.layout_choose_interpreter));
+
     }
 
     @Override
@@ -219,7 +242,7 @@ public class ShowPictureActivity extends AbstractActivity {
      *            current view used this method
      */
     public void onClickOkay(View view) {
-        //first get sure that there is a valid location
+        // first get sure that there is a valid location
         if (transformBean.getLocation() == null) {
             final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
@@ -229,19 +252,11 @@ public class ShowPictureActivity extends AbstractActivity {
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
-        // 0 or Rotation0 if portrait
-        // 90 or Rotation1 if home-button to the right
-        // 270 or Rotation3 if home-button to the left
-        final int rotation =
-                ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                        .getDefaultDisplay().getRotation();
-
-        // create an abstract data element from the given data and pass it to
-        // the next
-        // activity
-        final AbstractDataElement osmElement = touchView.create(rotation);
-        intent.putExtra(OSM_ELEMENT, osmElement);
-        startActivityForResult(intent);
+            // create an abstract data element from the given data and pass it
+            // to the next activity
+            final AbstractDataElement osmElement = touchView.create();
+            intent.putExtra(OSM_ELEMENT, osmElement);
+            startActivityForResult(intent);
         }
     }
 
@@ -406,6 +421,13 @@ public class ShowPictureActivity extends AbstractActivity {
 
         Log.v("NEW_PARAMETER", "x: " + x + " y: " + y + " h: " + height
                 + " w: " + width);
+
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
 
         return Bitmap.createBitmap(bitmap, x, y, width, height, matrix, true);
     }

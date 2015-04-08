@@ -8,6 +8,12 @@
         android:id="@+id/cameraPreview"
         style="@style/cameraPreview" />
 
+    <io.github.data4all.view.CaptureAssistView
+        android:id="@+id/cameraAssistView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" />
+
     <io.github.data4all.view.AutoFocusCrossHair
         android:id="@+id/af_crosshair"
         style="@style/autoFocusCrossHair" />

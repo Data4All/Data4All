@@ -27,6 +27,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
@@ -40,6 +41,12 @@ import android.widget.Toast;
  * 
  */
 public class OrientationListener extends Service implements SensorEventListener {
+
+    private final IBinder mBinder = new LocalBinder();
+
+    private HorizonListener horizonListener;
+
+    private DeviceOrientation deviceOrientation;
 
     /** sensor accelerometer. */
     private Sensor accelerometer;
@@ -135,6 +142,7 @@ public class OrientationListener extends Service implements SensorEventListener 
         // when the 2 Sensors data are available
         if (mGravity != null && mGeomagnetic != null && event.accuracy >= 3) {
 
+            // Log.d("TEST", "Test ");
             final boolean success = SensorManager.getRotationMatrix(mR, mI,
                     mGravity, mGeomagnetic);
 
@@ -144,11 +152,17 @@ public class OrientationListener extends Service implements SensorEventListener 
                 Log.d(TAG,
                         "Orientation " + Math.toDegrees(orientation[0]) + " ; "
                                 + Math.toDegrees(orientation[1]) + " ; "
-                                + Math.toDegrees(orientation[2])
+                                + Math.toDegrees(orientation[2]) + " ; "
                                 + "EventAccuracy:" + event.accuracy);
-                Optimizer.putPos(new DeviceOrientation(orientation[0],
-                        orientation[1], orientation[LAST_INDEX], System
-                                .currentTimeMillis()));
+                deviceOrientation = new DeviceOrientation(orientation[0],
+                        orientation[1], orientation[LAST_INDEX],
+                        System.currentTimeMillis());
+                Optimizer.putDevOrient(deviceOrientation);
+
+                
+            }
+            if (horizonListener != null) {
+                horizonListener.makeHorizon(true);
             }
         }
 
@@ -209,17 +223,23 @@ public class OrientationListener extends Service implements SensorEventListener 
 
     private void checkAccuracy() {
         if (accOk) {
-            if(magOk){
+            if (magOk) {
                 CALIBRATION_STATUS = CALIBRATION_OK;
-            }else{
+            } else {
                 CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER;
             }
         } else {
-            if(magOk){
+            if (magOk) {
                 CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER;
-            }else{
+            } else {
                 CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
             }
+        }
+    }
+
+    public class LocalBinder extends Binder {
+        public OrientationListener getService() {
+            return OrientationListener.this;
         }
     }
 
@@ -230,6 +250,38 @@ public class OrientationListener extends Service implements SensorEventListener 
      */
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
+
+    /**
+     * A
+     * 
+     * @author tbrose
+     */
+    public interface HorizonListener {
+        /**
+         * Draws a new Horizon.
+         * 
+         * @param state
+         *            The current undo state
+         */
+        void makeHorizon(boolean state);
+    }
+
+    public HorizonListener getHorizonListener() {
+        return horizonListener;
+    }
+
+    public void setHorizonListener(HorizonListener horizonListener) {
+        this.horizonListener = horizonListener;
+    }
+
+    public DeviceOrientation getDeviceOrientation() {
+        return deviceOrientation;
+    }
+
+    public void setDeviceOrientation(DeviceOrientation deviceOrientation) {
+        this.deviceOrientation = deviceOrientation;
+    }
+
 }

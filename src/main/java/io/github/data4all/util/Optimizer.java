@@ -19,8 +19,8 @@ import io.github.data4all.model.DeviceOrientation;
 import android.location.Location;
 
 /**
- * Optimize the position and location data of the device. Save the latest data
- * in a RingBuffer and optimize these to have one perfect location and position
+ * Optimize the location and device orientation data. Save the latest data in a
+ * RingBuffer and optimize these to have one perfect location and orientation
  * object
  * 
  * @author sbollen
@@ -44,7 +44,7 @@ public final class Optimizer {
     private static RingBuffer<Location> locRB = new RingBuffer<Location>(
             RB_SIZE);
     // a new Ringbuffer for saving the DevicePosition objects
-    private static RingBuffer<DeviceOrientation> posRB = new RingBuffer<DeviceOrientation>(
+    private static RingBuffer<DeviceOrientation> orientRB = new RingBuffer<DeviceOrientation>(
             RB_SIZE);
 
     /**
@@ -67,11 +67,11 @@ public final class Optimizer {
     /**
      * Put a DeviceOrientation object to the DeviceOrientation RingBuffer.
      * 
-     * @param pos
+     * @param orient
      *            the new device orientation
      */
-    public static void putPos(DeviceOrientation pos) {
-        posRB.put(pos);
+    public static void putDevOrient(DeviceOrientation orient) {
+        orientRB.put(orient);
     }
 
     /**
@@ -99,7 +99,7 @@ public final class Optimizer {
      * @return the current DeviceOrientation
      */
     public static DeviceOrientation currentDeviceOrientation() {
-        return posRB.getLast();
+        return orientRB.getLast();
     }
 
     /**
@@ -202,6 +202,6 @@ public final class Optimizer {
      */
     public static void clear() {
         locRB.clear();
-        posRB.clear();
+        orientRB.clear();
     }
 }
