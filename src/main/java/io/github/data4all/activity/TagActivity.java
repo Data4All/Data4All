@@ -363,9 +363,9 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         	}
         	
         }
-        Addresse bestLocation = addressView.getBestAddresse();
-        if(bestLocation!=null){
-        	addressSugestionSpinner.setSelection(addressView.getDataAdapter().getPosition(bestLocation.getFullAddress()));
+        Addresse bestAddress = addressView.getBestAddresse();
+        if(bestAddress!=null){
+        	addressSugestionSpinner.setSelection(addressView.getDataAdapter().getPosition(bestAddress.getFullAddress()));
         	addressView.getDataAdapter().notifyDataSetChanged();
         }
         edit = new ArrayList<EditText>();
@@ -376,26 +376,26 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             text.setHint(tag.getHintRessource());
            
 			if(tag!=null && tag.getId()==1 ){
-               text.setText(bestLocation==null?"":bestLocation.getRoad());
+               text.setText(bestAddress==null?"":bestAddress.getRoad());
                addressView.setRoad(text);
             }
             else if(tag!=null && tag.getId()==2){
-            	text.setText(bestLocation==null?"":bestLocation.getAddresseNr());
+            	text.setText(bestAddress==null?"":bestAddress.getAddresseNr());
                 addressView.setHouseNumber(text);
             }else if(tag!=null && tag.getId()==3 ){
-            	text.setText(bestLocation==null?"":bestLocation.getPostCode());
+            	text.setText(bestAddress==null?"":bestAddress.getPostCode());
                 addressView.setPostCode(text);
             }else if(tag!=null && tag.getId()==4 ){
-            	text.setText(bestLocation==null?"":bestLocation.getCity());
+            	text.setText(bestAddress==null?"":bestAddress.getCity());
                 addressView.setCity(text);
             }
             else if(tag!=null && tag.getId()==5 ){
-            	text.setText(bestLocation==null?"":bestLocation.getCountry());
+            	text.setText(bestAddress==null?"":bestAddress.getCountry());
                 addressView.setCountry(text);
             }
-            else if (tag.getLastValue() != null) {
+            /*else if (tag.getLastValue() != null) {
                 text.setText(tag.getLastValue());
-            } else {
+            }*/ else {
                 text.setHint(tag.getHintRessource());
             }
             text.setHintTextColor(Color.GRAY);

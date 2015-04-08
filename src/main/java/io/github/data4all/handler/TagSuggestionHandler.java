@@ -38,27 +38,55 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
 	private String full_address = "";
 	Location lastLocation;
+
 	private static List<Addresse> addressList = new LinkedList<Addresse>();
 
-	public void getlistOfSuggestionAddress() {
-		List<Addresse> addressListTemp = new LinkedList<Addresse>();
-		for (Location location : locationSuggestions()) {
-			Addresse addr = getAddress(location);
-			if (addr != null && !addressListTemp.contains(addr)) {
-				addressListTemp.add(addr);
-			}
+	/**
+	 * 
+	 * @return a full address based on latitude an longitude
+	 */
+	public String getAddress() {
+		if (Optimizer.currentBestLoc() == null) {
+			return "";
 		}
-		if (!addressListTemp.isEmpty()) {
-			addressList.clear();
-			addressList.addAll(addressListTemp);
-		}
+		return getAddress(Optimizer.currentBestLoc()).getFullAddress();
 	}
 
-	public static List<Addresse> getAddressList() {
-		return addressList;
+	/**
+	 * get the current best address based on latitude and longitude
+	 * 
+	 * @param location
+	 * @return
+	 */
+	public Addresse getAddress(Location location) {
+		try {
+			JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
+					+ location.getLatitude()
+					+ "&lon=" + location.getLongitude()
+					+ "&zoom=18&addressdetails=1");
+		
+				JSONObject address = jsonObj.getJSONObject("address");
+
+				postCode = address.getString("postcode");
+				addresseNr = address.getString("house_number");
+				road = address.getString("road");
+				city = address.getString("city");
+				country = address.getString("country");
+			
+			Addresse addresse = new Addresse();
+			addresse.setAddresseNr(addresseNr);
+			addresse.setRoad(road);
+			addresse.setCity(city);
+			addresse.setPostCode(postCode);
+			addresse.setCountry(country);
+			return addresse;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
-	
 	public static JSONObject getJSONfromURL(String url) {
 
 		// initialize
@@ -103,73 +131,49 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		return jObject;
 	}
 
-	public String getAddress() {
-		if (Optimizer.currentBestLoc() == null) {
-			return "";
-		}
-		return getAddress(Optimizer.currentBestLoc()).getFullAddress();
-	}
-
-	
 	/**
-	 * get the current best address based on latitude and longitude 
-	 * @param location
-	 * @return
+	 * 
+	 * @return city
 	 */
-	public Addresse getAddress(Location location) {
-		try {
-			JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
-					+ location.getLatitude()
-					+ "&lon="
-					+ location.getLongitude() + "&zoom=18&addressdetails=1");
-		        
-				JSONObject address = jsonObj.getJSONObject("address");
-				postCode = address.getString("postcode");
-				addresseNr = address.getString("house_number");
-				road = address.getString("road");
-				city = address.getString("city");
-				country = address.getString("country");
-			
-			Addresse addresse = new Addresse();
-			addresse.setAddresseNr(addresseNr);
-			addresse.setRoad(road);
-			addresse.setCity(city);
-			addresse.setPostCode(postCode);
-			addresse.setCountry(country);
-			return addresse;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	@Override
-	protected String doInBackground(String... params) {
-		getlistOfSuggestionAddress();
-		return "";
-	}
-
 	public String getCity() {
 		return city;
 	}
 
+	/**
+	 * 
+	 * @return country
+	 */
 	public String getCountry() {
 		return country;
 	}
 
+	/**
+	 * 
+	 * @return road
+	 */
 	public String getRoad() {
 		return road;
 	}
 
+	/**
+	 * 
+	 * @return postcode
+	 */
 	public String getPostCode() {
 		return postCode;
 	}
 
+	/**
+	 * 
+	 * @return full_address
+	 */
 	public String getFull_address() {
 		return full_address;
 	}
 
+	/**
+	 * @return housenumber
+	 */
 	public String getAddresseNr() {
 		return addresseNr;
 	}
@@ -178,10 +182,16 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		return lastLocation;
 	}
 
+	// list of location
 	static List<Location> locations = new LinkedList<Location>();
+	// current location
 	static Location current = null;
 
-	public static List<Location> locationSuggestions() {
+	/**
+	 * 
+	 * @return a list of location
+	 */
+	private static List<Location> locationSuggestions() {
 		if (current == null) {
 			current = Optimizer.currentBestLoc();
 		} else {
@@ -205,6 +215,13 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		return locations;
 	}
 
+	/**
+	 * check if a location exist
+	 * 
+	 * @param locations
+	 * @param location
+	 * @return
+	 */
 	private static boolean locationsExist(List<Location> locations,
 			Location location) {
 		for (Location l : locations) {
@@ -216,6 +233,14 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		return false;
 	}
 
+	/**
+	 * get latitude and longitude in an given environment
+	 * 
+	 * @param x0
+	 * @param y0
+	 * @param radius
+	 * @return location
+	 */
 	public static Location getLocation(double x0, double y0, int radius) {
 		Location l = new Location("");
 		Random random = new Random();
@@ -242,6 +267,9 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		return l;
 	}
 
+	/**
+	 * collect Address every 30 seconds
+	 */
 	public static void startAdresseCollector() {
 		Thread thread = new Thread() {
 			public void run() {
@@ -261,6 +289,36 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		};
 		thread.start();
 
+	}
+
+	/**
+	 * suggest a list of addresses
+	 */
+	private void getlistOfSuggestionAddress() {
+		List<Addresse> addressListTemp = new LinkedList<Addresse>();
+		for (Location location : locationSuggestions()) {
+			Addresse addr = getAddress(location);
+			if (addr != null && !addressListTemp.contains(addr)) {
+				addressListTemp.add(addr);
+			}
+		}
+		if (!addressListTemp.isEmpty()) {
+			addressList.clear();
+			addressList.addAll(addressListTemp);
+		}
+	}
+
+	/**
+	 * @return get a list of address
+	 */
+	public static List<Addresse> getAddressList() {
+		return addressList;
+	}
+
+	@Override
+	protected String doInBackground(String... params) {
+		getlistOfSuggestionAddress();
+		return "";
 	}
 
 }

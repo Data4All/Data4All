@@ -18,16 +18,16 @@ import android.widget.Spinner;
 
 /**
  * this class represents the view of all suggestions addresses
- * Spinners provide a quick way to select one value from a set. 
- * In the default state, a spinner shows its currently selected value.
- *  Touching the spinner displays a dropdown menu with all other available values, 
- *  from which the user can select a new one.
- *  
  * @author Steeve
  *
  */
 public class AddressSuggestionView implements OnItemSelectedListener {
 	
+	/*Spinners provide a quick way to select one value from a set. 
+	* In the default state, a spinner shows its currently selected value.
+	*Touching the spinner displays a dropdown menu with all other available values, 
+	*from which the user can select a new one
+	*/
 	private Spinner spinner;
 	
 	private List<Addresse> addresses = new LinkedList<Addresse>();
@@ -52,7 +52,11 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 	public ArrayAdapter<String> getDataAdapter() {
 		return dataAdapter;
 	}
-
+    
+	/**
+	 * Default constructor for AddressSuggestionView
+	 * @param context
+	 */
 	public AddressSuggestionView(Context context) {
 		spinner = new Spinner(context);
 		spinner.setOnItemSelectedListener(this);
@@ -62,7 +66,11 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 		dataAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	}
-
+    
+	/**
+	 * get Spinner
+	 * @return spinner
+	 */
 	public Spinner getSpinner() {
 		return spinner;
 	}
@@ -70,7 +78,11 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 	public void setSpinner(Spinner spinner) {
 		this.spinner = spinner;
 	}
-
+    
+	/**
+	 * get a list of address
+	 * @return
+	 */
 	public List<Addresse> getAddresses() {
 		return addresses;
 	}
@@ -79,10 +91,15 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 		this.addresses.clear();
 		this.addresses.addAll(addresses);
 		if(!this.addresses.isEmpty()){
+			// set bestaddress an first position
 			bestAdresse=this.addresses.get(0);
 		}
 	}
    
+	/**
+	 * filled Spinner with a list of addresses
+	 * @param activity
+	 */
 	public void fillSpinner(Activity activity) {
 		if (addresses == null || addresses.isEmpty()) {
 			return;
@@ -97,6 +114,7 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 		for (Addresse a : addresses) {
 			fullAdresses.add(a.getFullAddress());
 		}
+		//sort full address
 		Collections.sort(fullAdresses, new Comparator<String>() {
 			@Override
 			public int compare(String lhs, String rhs) {
@@ -104,13 +122,17 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 			}
 		});
 		
+		//add all address in dataAdapter
 		for (String a : fullAdresses) {
 			dataAdapter.add(a);
 		}
 		dataAdapter.notifyDataSetChanged();
 	}
     
-	
+	/**
+	 * @param fullAddress
+	 * @return a selected Address 
+	 */
 	public Addresse getSelectedAddress(String fullAddress) {
 
 		for (Addresse a : addresses) {
@@ -148,23 +170,42 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 
 	}
 
-	
+	/**
+	 * set road
+	 * @param road
+	 */
 	public void setRoad(EditText road) {
 		this.road = road;
 	}
-
+    
+	/**
+	 * set housenumber
+	 * @param houseNumber
+	 */
 	public void setHouseNumber(EditText houseNumber) {
 		this.houseNumber = houseNumber;
 	}
-
+    
+	/**
+	 * set postCode
+	 * @param postCode
+	 */
 	public void setPostCode(EditText postCode) {
 		this.postCode = postCode;
 	}
-
+   
+	/**
+	 * set city
+	 * @param city
+	 */
 	public void setCity(EditText city) {
 		this.city = city;
 	}
 
+	/**
+	 * set country
+	 * @param country
+	 */
 	public void setCountry(EditText country) {
 		this.country = country;
 	}
