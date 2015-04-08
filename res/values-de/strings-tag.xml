@@ -1,4 +1,6 @@
 <resources>
+    
+    <!-- names: -->
 
     <!-- address tags -->
     <string name="name_addr_street">Straße</string>
@@ -15,6 +17,7 @@
 
     <!-- classified tag highway -->
     <string name="name_highway">Verkehrsweg</string>
+    <!-- classified values highway -->
     <string name="name_highway_residential">Wohngebiets-Straße</string>
     <string name="name_highway_service">Zugangsweg</string>
     <string name="name_highway_track">Feldweg</string>
@@ -40,6 +43,7 @@
 
     <!-- classified tag waterway -->
     <string name="name_waterway">Wasserweg</string>
+    <!-- classified values wateray -->
     <string name="name_waterway_stream">Bach</string>
     <string name="name_waterway_river">Fluss</string>
     <string name="name_waterway_ditch">Entwässerungsgraben</string>
@@ -48,8 +52,9 @@
     <string name="name_waterway_weir">Wehr</string>
     <string name="name_waterway_lock_gate">Schleusentor</string>
 
-    <!-- classified tags barrier -->
+    <!-- classified tag barrier -->
     <string name="name_barrier">Absperrung</string>
+    <!-- classified values barrier -->
     <string name="name_barrier_fence">Zaun</string>
     <string name="name_barrier_wall">Mauer</string>
     <string name="name_barrier_gate">Tor</string>
@@ -68,8 +73,9 @@
     <string name="name_barrier_city_wall">Wallanlage</string>
     <string name="name_barrier_ditch">Graben</string>
 
-    <!-- classified tags amenity -->
+    <!-- classified tag amenity -->
     <string name="name_amenity">Einrichtung</string>
+    <!-- classified values amenity -->
     <string name="name_amenity_parking">Parkplatz</string>
     <string name="name_amenity_place_of_worship">Anbetungsort</string>
     <string name="name_amenity_school">Schule</string>
@@ -127,8 +133,9 @@
     <string name="name_amenity_embassy">Botschaft</string>
     <string name="name_amenity_water_point">Wasserstelle</string>
 
-    <!-- classified tags building -->
+    <!-- classified tag building -->
     <string name="name_building">Gebäude</string>
+    <!-- classified values building -->
     <string name="name_building_house">Wohnhaus</string>
     <string name="name_building_residential">Wohngebäude</string>
     <string name="name_building_garage">Garage</string>
@@ -154,8 +161,9 @@
     <string name="name_building_cabin">Kabine</string>
     <string name="name_building_yes">Unbekannt</string>
 
-    <!-- classified tags landuse -->
+    <!-- classified tag landuse -->
     <string name="name_landuse">Landnutzung</string>
+    <!-- classified values landuse -->
     <string name="name_landuse_forest">Wald</string>
     <string name="name_landuse_residential">Wohngebiet</string>
     <string name="name_landuse_grass">Rasenfläche</string>
@@ -177,8 +185,9 @@
     <string name="name_landuse_village_green">Dorfwiese</string>
     <string name="name_landuse_military">Militär</string>
 
-    <!-- classified tags leisure -->
+    <!-- classified tag leisure -->
     <string name="name_leisure">Freizeit</string>
+    <!-- classified values leisure -->
     <string name="name_leisure_swimming_pool">Schwimmbad</string>
     <string name="name_leisure_pitch">Spielfeld / Sportplatz</string>
     <string name="name_leisure_park">Park</string>
@@ -194,8 +203,9 @@
     <string name="name_leisure_water_park">Freibad</string>
     <string name="name_leisure_fishing">Angelplatz</string>
 
-    <!-- classified tags vending -->
+    <!-- classified tag vending -->
     <string name="name_vending">Automaten</string>
+    <!-- classified values vending -->
     <string name="name_vending_cigarettes">Zigarettenautomat</string>
     <string name="name_vending_parking_tickets">Parkscheinautomat</string>
     <string name="name_vending_excrement_bags">Hundetütenspender</string>
@@ -212,14 +222,44 @@
     <string name="name_vending_fuel">Tankautomaten</string>
     <string name="name_vending_yes">Unbekannt</string>
 
-    <!-- address tags -->
+    <!-- classified tag shop -->
+    <string name="name_shop">Einkaufsmöglichkeiten</string>
+    <!-- classified values shop -->
+    <string name="name_shop_supermarket">Supermarkt</string>
+    <string name="name_shop_convenience">Nachbarschaftsladen</string>
+    <string name="name_shop_clothes">Bekleidungsgeschäft</string>
+    <string name="name_shop_bakery">Bäcker</string>
+    <string name="name_shop_hairdresser">Frisör</string>
+    <string name="name_shop_car_repair">Autoreperatur</string>
+    <string name="name_shop_car">Autohaus</string>
+    <string name="name_shop_kiosk">Kiosk</string>
+    <string name="name_shop_doityourself">Baumarkt</string>
+    <string name="name_shop_yes">Unbekannt</string>
+    <string name="name_shop_butcher">Fleischer</string>
+    <string name="name_shop_florist">Blumenhändler</string>
+    <string name="name_shop_mall">Einkaufszentrum</string>
+    <string name="name_shop_furniture">Möbelhaus</string>
+    <string name="name_shop_bicycle">Fahrradgeschäft</string>
+    <string name="name_shop_alcohol">Spirituosenladen</string>
+    <string name="name_shop_books">Buchladen</string>
+    <string name="name_shop_shoes">Schuhgeschäft</string>
+    <string name="name_shop_electronics">Elektronikgeschäft</string>
+    <string name="name_shop_department_store">Warenhaus</string>
+    <string name="name_shop_hardware">Eisenwaren</string>
+    <string name="name_shop_jewelry">Schmuck</string>
+    <string name="name_shop_optician">Optiker</string>
+    <string name="name_shop_mobile_phone">Handyshop</string>
+
+    <!-- hints: -->
+
+    <!-- address hints -->
     <string name="hint_addr_street">Main Street</string>
     <string name="hint_addr_housenumber">1234</string>
     <string name="hint_addr_postcode">123456</string>
     <string name="hint_addr_city">Anytown</string>
     <string name="hint_addr_country">USA</string>
 
-    <!-- contact tags -->
+    <!-- contact hints -->
     <string name="hint_contact_phone">+01 234567890</string>
     <string name="hint_contact_fax">+01 234567890</string>
     <string name="hint_contact_website">http_//www.website.com</string>
