@@ -96,7 +96,14 @@
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
     <string name="or">oder</string>
-      <string name="show_pwd">Passwort anzeigen</string>
+    
+    <string name="badSensorCalibration">Bitte rotieren Sie ihr Smartphone langsam 3 mal um jede Achse. Und/Oder zeichnen Sie eine Acht mit ihren Smartphone. </string>
+    <string name="badSensorCalibrationTitle">Sensoren brauchen Rekalibrierung.</string>
+    <string name="badAcceleometerCalibrationTitle">Accelerometer braucht Rekalibrierung.</string>
+    <string name="badMagnetometerCalibrationTitle">Magnetometer braucht Rekalibrierung.</string>
+    <string name="goodSensorCalibrationTitle">Sensoren sind okay.</string>
+    
+    <string name="show_pwd">Passwort anzeigen</string>
       
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Folgt uns auf Facebook</a></string>
