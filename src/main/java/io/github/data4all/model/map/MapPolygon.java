@@ -40,8 +40,9 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 /**
- * Polygon which is editable. It is deletable with a LongClick and movable with
- * a TouchEvent.
+ * Polygon which is editable. It has an InfoWindow opened with a single tap, if
+ * it is not editable and it is movable and rotatable with a TouchEvent, if it
+ * is editable.
  * 
  * @author Oliver Schwartz
  * @author sbollen
@@ -54,11 +55,16 @@ public class MapPolygon extends Polygon {
     private D4AMapView mapView;
     private AbstractDataElement element;
     private boolean editable;
+    // checks, that the length of the offset vectors is be calculated only once
+    private boolean lengthSet = true;
+
+    // midpoint of the bounding box of the polygon
+    private Point midpoint;
 
     // start time for touch event action_down
     private long timeStart;
 
-    // True when the edit mode is active.
+    // True when the edit mode is active
     private boolean active = false;
 
     // the maximum time difference between action_down and action_up, so that
@@ -86,16 +92,16 @@ public class MapPolygon extends Polygon {
     /**
      * Start values for rotation.
      */
-    int xStartValue1 = 0;
-    int xStartValue2 = 0;
-    int yStartValue1 = 0;
-    int yStartValue2 = 0;
+    private int xStartPo1 = 0;
+    private int yStartPo1 = 0;
+    private int xStartPo2 = 0;
+    private int yStartPo2 = 0;
 
     /**
      * Start values for moving.
      */
-    private int xStart = 0;
-    private int yStart = 0;
+    private int xStartM = 0;
+    private int yStartM = 0;
 
     /**
      * List of GeoPoints of the MapPolygon before it was edited.
@@ -103,19 +109,19 @@ public class MapPolygon extends Polygon {
     private List<GeoPoint> originalPoints;
 
     /**
-     * List of vectors from the first point in the MapPolygon to every point.
+     * List of vectors from the midpoint of the MapPolygon to every point.
      */
     private List<Point> pointsOffset;
+
+    /**
+     * List of the length of all vectors from the midpoint to every point.
+     */
+    private List<Double> pOffsetLength;
 
     /**
      * List of GeoPoints for editing the MapPolygon.
      */
     private List<GeoPoint> geoPointList;
-
-    /**
-     * First point of the MapPolygon in pixel coordinates.
-     */
-    private Point firstPoint;
 
     /**
      * Projection of the mapView.
@@ -132,7 +138,7 @@ public class MapPolygon extends Polygon {
      *            the Mapview
      * 
      * @param ele
-     *            the associateded OsmElement
+     *            the associated OsmElement
      */
     public MapPolygon(AbstractActivity ctx, D4AMapView mv,
             AbstractDataElement ele) {
@@ -174,9 +180,12 @@ public class MapPolygon extends Polygon {
      * Get the localized name of the element to show in the InfoWindow.
      * 
      * @param context
+     *            the context of the application
      * @param key
+     *            the tag key
      * @param value
-     * @return
+     *            the tag value
+     * @return the localized name
      */
     public String getLocalizedName(Context context, String key, String value) {
         Resources resources = context.getResources();
@@ -197,21 +206,20 @@ public class MapPolygon extends Polygon {
         if (editable) {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                pj = mapView.getProjection();
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
-                    pj = mapView.getProjection();
                     // actual polygon point list
                     geoPointList = this.getPoints();
-                    // get the position of the first point as the basis for
-                    // moving
-                    firstPoint = pj.toPixels(geoPointList.get(0), null);
                     // get the offset of all points in the list to the first one
-                    pointsOffset = getOffset();
-
-                    xStart = (int) event.getX();
-                    yStart = (int) event.getY();
-                    Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
+                    if (pointsOffset == null) {
+                        pointsOffset = getOffset();
+                    }
+                    xStartM = (int) event.getX();
+                    yStartM = (int) event.getY();
+                    Log.d(TAG, "action_down at point: " + xStartM + " "
+                            + yStartM);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -219,10 +227,10 @@ public class MapPolygon extends Polygon {
                 if (active) {
                     mode = ROTATE;
                     // set the start values for the rotation
-                    xStartValue1 = (int) event.getX(0);
-                    xStartValue2 = (int) event.getX(1);
-                    yStartValue1 = (int) event.getY(0);
-                    yStartValue2 = (int) event.getY(1);
+                    xStartPo1 = (int) event.getX(0);
+                    xStartPo2 = (int) event.getX(1);
+                    yStartPo1 = (int) event.getY(0);
+                    yStartPo2 = (int) event.getY(1);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -243,10 +251,10 @@ public class MapPolygon extends Polygon {
                 Log.d(TAG, "action_move");
                 if (active) {
                     if (mode == MOVE) {
-                        Log.d(TAG, "moooooooooooooooooooove");
-                        moveToNewPosition(event, mapView);
+                        Log.d(TAG, "move polygon");
+                        moveToNewPos(event, mapView);
                     } else if (mode == ROTATE) {
-                        Log.d(TAG, "rotaaaaaaaaaaaaaate");
+                        Log.d(TAG, "rotate polygon");
                         rotatePolygon(event);
                     }
                 }
@@ -264,18 +272,27 @@ public class MapPolygon extends Polygon {
      * change the mode whether the edit function is active or not.
      */
     public void changeMode() {
-        Log.d(TAG, "actual activity mode: " + active);
         if (!active) {
+            // change mode to active, polygon is now rotatable and movable
             this.setFillColor(ACTIVE_FILL_COLOR);
             this.setStrokeColor(ACTIVE_STROKE_COLOR);
+            pj = mapView.getProjection();
+            midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
+                    null);
+            setOriginalPoints();
+            lengthSet = true;
+            pointsOffset = getOffset();
             mapView.invalidate();
             active = true;
         } else {
-            this.setFillColor(CustomInfoWindow.MARKED_FILL_COLOR);
-            this.setStrokeColor(CustomInfoWindow.MARKED_STROKE_COLOR);
+            // change mode to not active, polygon is not modifiable now
+            //TODO change color
+            this.setFillColor(DEFAULT_FILL_COLOR);
+            this.setStrokeColor(DEFAULT_STROKE_COLOR);
             mapView.invalidate();
             active = false;
         }
+        Log.d(TAG, "actual activity mode: " + active);
     }
 
     /**
@@ -286,71 +303,63 @@ public class MapPolygon extends Polygon {
      */
     private void rotatePolygon(MotionEvent event) {
         // set end values for the next rotation action
-        int xEndValue1 = (int) event.getX(0);
-        int xEndValue2 = (int) event.getX(1);
+        int xEndPo1 = (int) event.getX(0);
+        int xEndPo2 = (int) event.getX(1);
 
-        int yEndValue1 = (int) event.getY(0);
-        int yEndValue2 = (int) event.getY(1);
+        int yEndPo1 = (int) event.getY(0);
+        int yEndPo2 = (int) event.getY(1);
 
         // get the rotation angle
-        double delta_xEnd = (xEndValue1 - xEndValue2);
-        double delta_yEnd = (yEndValue1 - yEndValue2);
+        double delta_xEnd = (xEndPo1 - xEndPo2);
+        double delta_yEnd = (yEndPo1 - yEndPo2);
         double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
 
-        double delta_xStart = (xStartValue1 - xStartValue2);
-        double delta_yStart = (yStartValue1 - yStartValue2);
+        double delta_xStart = (xStartPo1 - xStartPo2);
+        double delta_yStart = (yStartPo1 - yStartPo2);
         double radians2 = Math.atan2(delta_yStart, delta_xStart);
 
         double radians = radians1 - radians2;
-        Log.d(TAG, "Radians: " + radians);
 
-        // Get the midpoint of the element to rotate around this point.
-        Point midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
-                null);
-        Log.i(TAG, "midpoint of element: " + midpoint.x + " " + midpoint.y);
+        if ((Math.abs(xStartPo1 - xEndPo1) > 0 && Math.abs(yStartPo1 - yEndPo1) > 0)
+                || (Math.abs(xStartPo2 - xEndPo2) > 0 && Math.abs(yStartPo2
+                        - yEndPo2) > 0)) {
+            if (Math.abs(radians) > 0.0) {
+                // get the offset of all points in the list to the first one
+                if (pointsOffset.size() < geoPointList.size()) {
+                    pointsOffset = getOffset();
+                }
+                Log.d(TAG, "Rotation in radians: " + radians);
+                // Get the sin and cos of the rotation angle
+                float sin = (float) Math.sin(radians);
+                float cos = (float) Math.cos(radians);
 
-        // Get the sin and cos of the rotation angle
-        float sin = (float) Math.sin(radians);
-        float cos = (float) Math.cos(radians);
+                // set all rotated points of the polygon
+                for (int i = 0; i < geoPointList.size(); i++) {
+                    Point newPoint = new Point();
+                    Point offset = pointsOffset.get(i);
+                    // calculate new offset with rotation angle
+                    double xOffset = offset.x * cos - offset.y * sin;
+                    double yOffset = offset.x * sin + offset.y * cos;
+                    double newOffsetLength = Math.sqrt((xOffset * xOffset)
+                            + (yOffset * yOffset));
+                    double offsetLength = pOffsetLength.get(i);
+                    xOffset = xOffset * (offsetLength / newOffsetLength);
+                    yOffset = yOffset * (offsetLength / newOffsetLength);
+                    offset.set((int) xOffset, (int) yOffset);
 
-        // translate point back to origin:
-        firstPoint.x -= midpoint.x;
-        firstPoint.y -= midpoint.y;
-
-        // rotate point
-        float xnew = firstPoint.x * cos - firstPoint.y * sin;
-        float ynew = firstPoint.x * sin + firstPoint.y * cos;
-
-        // translate point back:
-        firstPoint.x = (int) xnew + midpoint.x;
-        firstPoint.y = (int) ynew + midpoint.y;
-
-        geoPointList.set(0, (GeoPoint) pj.fromPixels((int) firstPoint.x,
-                (int) firstPoint.y));
-
-        // set all other points depending on the first point
-        for (int i = 1; i < geoPointList.size(); i++) {
-            Point newPoint = new Point();
-            Point offset = pointsOffset.get(i);
-            // calculate new offset with rotation angle
-            int xOffset = (int) (offset.x * cos - offset.y * sin);
-            int yOffset = (int) (offset.x * sin + offset.y * cos);
-            offset.set(xOffset, yOffset);
-            // TODO problem: offset is changing and therefore the polygon is
-            // changing
-            pointsOffset.set(i, offset);
-
-            newPoint.set((firstPoint.x + xOffset), (firstPoint.y + yOffset));
-            geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
-                    (int) newPoint.y));
+                    newPoint.set((midpoint.x + (int) xOffset),
+                            (midpoint.y + (int) yOffset));
+                    geoPointList.set(i, (GeoPoint) pj.fromPixels(
+                            (int) newPoint.x, (int) newPoint.y));
+                }
+            }
         }
-
         // set new start values for the next rotation action
-        xStartValue1 = (int) event.getX(0);
-        xStartValue2 = (int) event.getX(1);
+        xStartPo1 = (int) event.getX(0);
+        xStartPo2 = (int) event.getX(1);
 
-        yStartValue1 = (int) event.getY(0);
-        yStartValue2 = (int) event.getY(1);
+        yStartPo1 = (int) event.getY(0);
+        yStartPo2 = (int) event.getY(1);
 
         // set the list with the changed points
         this.setPoints(geoPointList);
@@ -358,15 +367,16 @@ public class MapPolygon extends Polygon {
     }
 
     /**
-     * Move this polygon to the new position handling the touch events.
+     * Move this polygon to the new position handling the touch events. Move the
+     * midpoint of the bounding box of the polygon and after that add the offset
+     * of all points of the polygon to the new midpoint.
      * 
      * @param event
      *            the current MotionEvent from onTouchEvent
      * @param mapView
      *            the current mapView
      */
-    public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
-
+    public void moveToNewPos(final MotionEvent event, final MapView mapView) {
         // set the end coordinates of the movement
         int xEnd = (int) event.getX();
         int yEnd = (int) event.getY();
@@ -374,30 +384,25 @@ public class MapPolygon extends Polygon {
         if (pointsOffset == null) {
             pointsOffset = getOffset();
         }
-
         // only move the polygon if there is a movement
-        if (Math.abs(xEnd - xStart) > 0 && Math.abs(yEnd - yStart) > 0) {
-
-            Log.i(TAG, "moveMapPolygon from: " + xStart + " " + yStart);
+        if (Math.abs(xEnd - xStartM) > 0 && Math.abs(yEnd - yStartM) > 0) {
+            Log.i(TAG, "moveMapPolygon from: " + xStartM + " " + yStartM);
             Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
+            // move the midpoint
+            midpoint.set((midpoint.x + (xEnd - xStartM)),
+                    (midpoint.y + (yEnd - yStartM)));
 
-            // move the first point
-            firstPoint.set((firstPoint.x + (xEnd - xStart)),
-                    (firstPoint.y + (yEnd - yStart)));
-            geoPointList.set(0, (GeoPoint) pj.fromPixels((int) firstPoint.x,
-                    (int) firstPoint.y));
-
-            // set all other points depending on the first point
-            for (int i = 1; i < geoPointList.size(); i++) {
+            // set all other points depending on the midpoint
+            for (int i = 0; i < geoPointList.size(); i++) {
                 Point newPoint = new Point();
-                newPoint.set((firstPoint.x + pointsOffset.get(i).x),
-                        (firstPoint.y + pointsOffset.get(i).y));
+                newPoint.set((midpoint.x + pointsOffset.get(i).x),
+                        (midpoint.y + pointsOffset.get(i).y));
                 geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
                         (int) newPoint.y));
             }
             // set new start values for the next move action
-            xStart = (int) event.getX();
-            yStart = (int) event.getY();
+            xStartM = (int) event.getX();
+            yStartM = (int) event.getY();
 
             // set the list with the changed points
             this.setPoints(geoPointList);
@@ -406,36 +411,45 @@ public class MapPolygon extends Polygon {
     }
 
     /**
-     * Get the vectors to all points of the polygon starting from the first
-     * point. Necessary for moving the polygon.
+     * Get the vectors to all points of the polygon starting from the midpoint.
+     * Necessary for moving the polygon.
      * 
      * @return List with all vectors
      */
     public List<Point> getOffset() {
-        Log.i(TAG, "" + originalPoints.size());
+        Log.i(TAG, "number of points in the polygon: " + originalPoints.size());
         List<Point> pointsOffset = new ArrayList<Point>();
+        if (lengthSet) {
+            pOffsetLength = new ArrayList<Double>();
+        }
         if (originalPoints.size() > 0) {
-            Point firstPoint = pj.toPixels(originalPoints.get(0), null);
             for (int i = 0; i < originalPoints.size(); i++) {
                 Point point = pj.toPixels(originalPoints.get(i), null);
-                int xOffset = (point.x - firstPoint.x);
-                int yOffset = (point.y - firstPoint.y);
+                int xOffset = (point.x - midpoint.x);
+                int yOffset = (point.y - midpoint.y);
+                // get the length of the vector from the midpoint to the point
+                if (lengthSet) {
+                    double offsetLength = Math.sqrt((xOffset * xOffset)
+                            + (yOffset * yOffset));
+                    pOffsetLength.add(offsetLength);
+                }
                 pointsOffset.add(new Point(xOffset, yOffset));
             }
+            lengthSet = false;
         }
         return pointsOffset;
     }
 
     /**
-     * Set the points of the polygon. Called when the polygon is added to the
-     * map.
+     * Set the original points of the polygon. Called when the polygon is added
+     * to the map.
      */
     public void setOriginalPoints() {
         this.originalPoints = this.getPoints();
     }
 
     /**
-     * Setter for editable. Set whether the polygon is editable.
+     * Set whether the polygon is editable.
      * 
      * @param editable
      *            true if polygon is editable
