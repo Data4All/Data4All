@@ -23,9 +23,11 @@ import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.Polyline;
@@ -37,6 +39,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.location.Location;
 import android.view.MotionEvent;
 
 /**
@@ -55,8 +58,6 @@ public class MapLine extends Polyline {
     private D4AMapView mapView;
     private AbstractActivity activity;
     private boolean editable;
-    // checks, that the length of the offset vectors is be calculated only once
-    private boolean lengthSet = true;
 
     // midpoint of the bounding box of the polyline
     private Point midpoint;
@@ -98,21 +99,14 @@ public class MapLine extends Polyline {
      */
     private int xStartM = 0;
     private int yStartM = 0;
-
-    /**
-     * List of GeoPoints of the MapPolygon before it was edited.
-     */
-    private List<GeoPoint> originalPoints;
+    
+    private List<double[]> saveGeoPoints;
+    private Location midLocation;
 
     /**
      * List of vectors from the midpoint of the bounding box to every point.
      */
     private List<Point> pointsOffset;
-
-    /**
-     * List of the length of all vectors from the midpoint to every point.
-     */
-    private List<Double> pOffsetLength;
 
     /**
      * List of GeoPoints for editing the MapPolygon.
@@ -207,10 +201,7 @@ public class MapLine extends Polyline {
                     mode = MOVE;
                     // actual polygon point list
                     geoPointList = this.getPoints();
-                    // get the offset of all points in the list to the first one
-                    if (pointsOffset == null) {
-                        pointsOffset = getOffset();
-                    }
+
                     xStartM = (int) event.getX();
                     yStartM = (int) event.getY();
                     Log.d(TAG, "action_down at point: " + xStartM + " "
@@ -221,6 +212,7 @@ public class MapLine extends Polyline {
                 Log.d(TAG, "more than one pointer on screen");
                 if (active) {
                     mode = ROTATE;
+                    saveGeoPoints();
                     // set the start values for the rotation
                     xStartPo1 = (int) event.getX(0);
                     xStartPo2 = (int) event.getX(1);
@@ -253,7 +245,7 @@ public class MapLine extends Polyline {
                         moveToNewPos(event, mapView);
                     } else if (mode == ROTATE) {
                         Log.d(TAG, "rotate polygon");
-                        // rotatePolygon(event);
+                        rotatePolygon(event);
                     }
                 }
                 break;
@@ -276,14 +268,15 @@ public class MapLine extends Polyline {
             pj = mapView.getProjection();
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
-            setOriginalPoints();
-            lengthSet = true;
-            pointsOffset = getOffset();
+            // get the offset of all points in the list to the first one
+            if (pointsOffset == null) {
+                pointsOffset = getOffset(geoPointList);
+            }
             mapView.invalidate();
             active = true;
         } else {
             // change mode to not active, polyline is not modifiable now
-            //TODO change color
+            // TODO change color
             this.setColor(Color.BLUE);
             mapView.invalidate();
             active = false;
@@ -307,10 +300,10 @@ public class MapLine extends Polyline {
         int yEnd = (int) event.getY();
 
         if (pointsOffset == null) {
-            pointsOffset = getOffset();
+            pointsOffset = getOffset(geoPointList);
         }
         // only move the polygon if there is a movement
-        if (Math.abs(xEnd - xStartM) > 0 && Math.abs(yEnd - yStartM) > 0) {
+        if (Math.abs(xEnd - xStartM) > 0 || Math.abs(yEnd - yStartM) > 0) {
             Log.i(TAG, "moveMapPolygon from: " + xStartM + " " + yStartM);
             Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
             // move the midpoint
@@ -336,41 +329,92 @@ public class MapLine extends Polyline {
     }
 
     /**
-     * Get the vectors to all points of the polyline starting from the midpoint.
-     * Necessary for moving the polyline.
+     * Rotate the polyline handling the touch events.
+     *
+     * @param event
+     *            the actual touch event
+     */
+    private void rotatePolygon(MotionEvent event) {
+        // set end values for the next rotation action
+        int xEndPo1 = (int) event.getX(0);
+        int xEndPo2 = (int) event.getX(1);
+
+        int yEndPo1 = (int) event.getY(0);
+        int yEndPo2 = (int) event.getY(1);
+
+        // get the rotation angle
+        double delta_xEnd = (xEndPo1 - xEndPo2);
+        double delta_yEnd = (yEndPo1 - yEndPo2);
+        double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
+
+        double delta_xStart = (xStartPo1 - xStartPo2);
+        double delta_yStart = (yStartPo1 - yStartPo2);
+        double radians2 = Math.atan2(delta_yStart, delta_xStart);
+
+        // Log.d("TEST", "Rotate");
+        double radians = radians1 - radians2;
+        geoPointList = new ArrayList<GeoPoint>();
+        for (double[] preCoord : saveGeoPoints) {
+            double[] coord = new double[2];
+            coord[1] = preCoord[1] * Math.cos(radians) - preCoord[0]
+                    * Math.sin(radians);
+            coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
+                    * Math.cos(radians);
+            Node node = PointToCoordsTransformUtil.calculateGPSPoint(
+                    midLocation, coord);
+            geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
+        }
+        // set the list with the changed points
+        this.setPoints(geoPointList);
+        pointsOffset = getOffset(geoPointList);
+        mapView.invalidate();
+    }
+
+    /**
+     * Get the vectors to all points of the polygon starting from the midpoint.
+     * Necessary for moving the polygon.
      * 
      * @return List with all vectors
      */
-    public List<Point> getOffset() {
-        Log.i(TAG, "number of points in the polygon: " + originalPoints.size());
+    public List<Point> getOffset(List<GeoPoint> gpointList) {
         List<Point> pointsOffset = new ArrayList<Point>();
-        if (lengthSet) {
-            pOffsetLength = new ArrayList<Double>();
-        }
-        if (originalPoints.size() > 0) {
-            for (int i = 0; i < originalPoints.size(); i++) {
-                Point point = pj.toPixels(originalPoints.get(i), null);
-                int xOffset = (point.x - midpoint.x);
-                int yOffset = (point.y - midpoint.y);
-                // get the length of the vector from the midpoint to the point
-                if (lengthSet) {
-                    double offsetLength = Math.sqrt((xOffset * xOffset)
-                            + (yOffset * yOffset));
-                    pOffsetLength.add(offsetLength);
-                }
-                pointsOffset.add(new Point(xOffset, yOffset));
-            }
-            lengthSet = false;
+        for (int i = 0; i < geoPointList.size(); i++) {
+            Point point = pj.toPixels(geoPointList.get(i), null);
+            int xOffset = (point.x - midpoint.x);
+            int yOffset = (point.y - midpoint.y);
+            pointsOffset.add(new Point(xOffset, yOffset));
         }
         return pointsOffset;
     }
 
     /**
-     * Set the original points of the polyline. Called when the polyline is
-     * added to the map.
+     * Set the original points of the polygon. Called when the polygon is added
+     * to the map.
      */
     public void setOriginalPoints() {
-        this.originalPoints = this.getPoints();
+        geoPointList = this.getPoints();
+    }
+
+    public void saveGeoPoints() {
+        double lat = 0, lon = 0;
+        int i = 0;
+        for (GeoPoint geoPoint : this.getPoints()) {
+            lat += geoPoint.getLatitude();
+            lon += geoPoint.getLongitude();
+            i++;
+        }
+        this.midLocation = new Location("provide");
+        this.midLocation.setLatitude(lat / i);
+        this.midLocation.setLongitude(lon / i);
+        this.saveGeoPoints = new ArrayList<double[]>();
+        for (GeoPoint geoPoint : this.getPoints()) {
+            double[] preCoord = PointToCoordsTransformUtil
+                    .calculateCoordFromGPS(
+                            midLocation,
+                            new Node(0, geoPoint.getLatitude(), geoPoint
+                                    .getLongitude()));
+            saveGeoPoints.add(preCoord);
+        }
     }
 
     /**
@@ -382,5 +426,4 @@ public class MapLine extends Polyline {
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
-
 }
