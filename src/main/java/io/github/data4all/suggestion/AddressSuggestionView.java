@@ -15,6 +15,17 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+
+/**
+ * this class represents the view of all suggestions addresses
+ * Spinners provide a quick way to select one value from a set. 
+ * In the default state, a spinner shows its currently selected value.
+ *  Touching the spinner displays a dropdown menu with all other available values, 
+ *  from which the user can select a new one.
+ *  
+ * @author Steeve
+ *
+ */
 public class AddressSuggestionView implements OnItemSelectedListener {
 	
 	private Spinner spinner;
@@ -32,7 +43,7 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 	 * get the bestAddress with the bestlocation
 	 * @return bestLocation
 	 */
-	public Addresse getBestLocation() {
+	public Addresse getBestAddresse() {
 		return bestAdresse;
 	}
 
@@ -71,7 +82,7 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 			bestAdresse=this.addresses.get(0);
 		}
 	}
-
+   
 	public void fillSpinner(Activity activity) {
 		if (addresses == null || addresses.isEmpty()) {
 			return;
@@ -98,7 +109,8 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 		}
 		dataAdapter.notifyDataSetChanged();
 	}
-
+    
+	
 	public Addresse getSelectedAddress(String fullAddress) {
 
 		for (Addresse a : addresses) {
@@ -108,7 +120,8 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 		}
 		return null;
 	}
-
+    
+	
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
@@ -135,6 +148,7 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 
 	}
 
+	
 	public void setRoad(EditText road) {
 		this.road = road;
 	}

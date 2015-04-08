@@ -2,19 +2,34 @@ package io.github.data4all.suggestion;
 
 import android.location.Location;
 
+/**
+ * This class contains all the informations of an Address
+ * e.g road, house_number, postCode, city, country
+ * @author Steeve
+ *
+ */
 public class Addresse {
-
+    
+	//housenumber
     private String addresseNr="";
+    //road
     private String road = "";
+    //city
     private String city = "";
+    //country
     private String country = "";
+    //postCode
     private String postCode = "";
-    private Location location; 
+   
+    // private Location location; 
+    
+    
+    //all getter and setter method
     
     public void setAddresseNr(String addresseNr) {
 		this.addresseNr = addresseNr;
 	}
-
+   
 	public void setRoad(String road) {
 		this.road = road;
 	}
@@ -50,14 +65,14 @@ public class Addresse {
     public String getAddresseNr() {
         return addresseNr;
     }
-
+/*
     public Location getLocation() {
         return location;
     }
     
     public void setLocation(Location location ){
     	this.location = location;
-    }
+    }*/
     
     /**
      * get full address 

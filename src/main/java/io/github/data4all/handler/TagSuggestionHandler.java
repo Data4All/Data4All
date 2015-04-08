@@ -58,6 +58,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		return addressList;
 	}
 
+	
 	public static JSONObject getJSONfromURL(String url) {
 
 		// initialize
@@ -109,13 +110,19 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		return getAddress(Optimizer.currentBestLoc()).getFullAddress();
 	}
 
+	
+	/**
+	 * get the current best address based on latitude and longitude 
+	 * @param location
+	 * @return
+	 */
 	public Addresse getAddress(Location location) {
 		try {
 			JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
 					+ location.getLatitude()
 					+ "&lon="
-					+ +location.getLongitude() + "&zoom=18&addressdetails=1");
-		
+					+ location.getLongitude() + "&zoom=18&addressdetails=1");
+		        
 				JSONObject address = jsonObj.getJSONObject("address");
 				postCode = address.getString("postcode");
 				addresseNr = address.getString("house_number");
@@ -188,9 +195,9 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		}
 		locations.clear();
 		locations.add(current);
-		while (locations.size() < 10) {
+		while (locations.size() < 5) {
 			Location location = getLocation(current.getLongitude(),
-					current.getLatitude(), 25);
+					current.getLatitude(), 50);
 			if (!locationsExist(locations, location)) {
 				locations.add(location);
 			}

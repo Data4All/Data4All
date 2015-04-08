@@ -363,7 +363,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         	}
         	
         }
-        Addresse bestLocation = addressView.getBestLocation();
+        Addresse bestLocation = addressView.getBestAddresse();
         if(bestLocation!=null){
         	addressSugestionSpinner.setSelection(addressView.getDataAdapter().getPosition(bestLocation.getFullAddress()));
         	addressView.getDataAdapter().notifyDataSetChanged();
