@@ -362,11 +362,11 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         finish.setOnClickListener(this);
         next.setOnClickListener(this);
 
-        if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
+    /**    if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
                 .getOsmObjects(), getIntent().getExtras().getInt("TYPE_DEF"))
                 && first) {
             layout.addView(next);
-        }
+        }*/
         layout.addView(finish);
 
         final InputMethodManager imm = (InputMethodManager) this

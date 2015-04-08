@@ -17,6 +17,7 @@ package io.github.data4all.model.map;
 
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
+import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.ResultViewActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
@@ -187,7 +188,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
      * Invoke ResultViewActivity to edit the Tags of the given Element.
      **/
     private void editElement() {
-        final Intent intent = new Intent(activity, ResultViewActivity.class);
+        final Intent intent = new Intent(activity, MapPreviewActivity.class);
         int type = -1;
         if (element instanceof Node) {
             type = POINT;
@@ -207,7 +208,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         intent.putExtra(TYPE, type);
 
         intent.putExtra(OSM_ELEMENT, element);
-
+        Log.i(TAG, element.getTags().toString());
         // Start ResultView Activity
         Log.i(TAG, "Start ResultViewActivity");
         activity.startActivityForResult(intent, 0);

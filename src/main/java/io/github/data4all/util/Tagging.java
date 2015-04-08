@@ -16,6 +16,7 @@
 package io.github.data4all.util;
 
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
@@ -78,13 +79,17 @@ public class Tagging {
     		final String [] list = new String [0];
     		return list;
     	}else{
-        List<Tag> tags = getKeys(type);
-        
+    		
+    		List<Tag> tags = getKeys(type);
+    		Log.i(TAG, "tags" + tags.toString());
         final String[] array = new String[tags.size()];
         for (int i = 0; i < tags.size(); i++) {
-            array[i] = res.getString(tags.get(i).getNameRessource());
+        	array[i] = res.getString(tags.get(i).getNameRessource());
+        	
         }
-        return LastChoiceHandler.addLastChoiceForType(type,array);
+        	Log.i(TAG, "array " + array [0]);
+        	return LastChoiceHandler.addLastChoiceForType(type,array);
+        	
     	}
     }
     /**
@@ -248,13 +253,19 @@ public class Tagging {
      * @param type The type (area, node, etc.)
      * @return The List of Tags 
      */
-    public static List <Tag> getAllNonSelectedTags(Map <Tag, String> map, int type){
+    public static List <Tag> getAllNonSelectedTags(Map <Tag, String> map, ClassifiedValue value){
     	List <Tag> tagList = new ArrayList<Tag>();
     	tagList.addAll(Tags.getAllAddressTags());
-		 if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
-	                .getOsmObjects(), type)){
-			 tagList.addAll(Tags.getAllContactTags());
-		 }
+    	tagList.addAll(Tags.getAllContactTags());
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	if(value != null){
+    	booleanList = value.getAllUnclassifiedBooleans();
+    	for (int i = 0; i < tagList.size(); i++) {
+			if(!booleanList.get(i)){
+				tagList.remove(tagList.get(i));
+			}
+		}
+    	}
 		for (Entry entry : map.entrySet()) {
             Tag tag = (Tag) entry.getKey();
             if(tagList.contains(tag)){
@@ -278,6 +289,36 @@ public class Tagging {
 		}
 		return resList;
     	
+    }
+    /**
+     * Get all unclassified Tags
+     * @param value The ClassifiedValue
+     * @param res The Ressource
+     * @param keyList The List of Strings in which they are stored
+     * @param element The Abstract Data Element
+     * @return The keyList with the new Values
+     */
+    public static List <String> getUnclassifiedTags(ClassifiedValue value, Resources res, List <String> keyList, AbstractDataElement element){
+    	List <Tag> tagList = new ArrayList<Tag>();
+    	tagList.addAll(Tags.getAllAddressTags());
+    	tagList.addAll(Tags.getAllContactTags());
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	booleanList = value.getAllUnclassifiedBooleans();
+    	for (int i = 0; i < booleanList.size(); i++) {
+			if(booleanList.get(i) && !compareStrings(res.getString(tagList.get(i).getNameRessource()) ,keyList) ){
+				keyList.add(res.getString(tagList.get(i).getNameRessource()));
+			}
+		}
+    	return keyList;
+    }
+    
+    private static boolean compareStrings(String key, List<String> list){
+    	for (String string : list) {
+			if(string.equals(key)){
+				return true;
+			}
+		}
+    	return false;
     }
 
 }

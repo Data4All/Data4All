@@ -15,6 +15,9 @@
  */
 package io.github.data4all.model.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import android.content.Context;
@@ -70,6 +73,7 @@ public class ClassifiedValue {
     private boolean hasContactFax;
     private boolean hasContactWebsite;
     private boolean hasContactEmail;
+     
 
     /**
      * Constructor to create nameRessource and hintRessource from the key.
@@ -97,6 +101,21 @@ public class ClassifiedValue {
         }
     }
 
+    public List <Boolean> getAllUnclassifiedBooleans(){
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	booleanList.add(hasAddrStreet);
+    	booleanList.add(hasAddrHousnumber);
+    	booleanList.add(hasAddrPostcode);
+    	booleanList.add(hasAddrCity);
+    	booleanList.add(hasAddrCountry);
+    	booleanList.add(hasContactPhone);
+    	booleanList.add(hasContactFax);
+    	booleanList.add(hasContactWebsite);
+    	booleanList.add(hasContactEmail);
+    	
+    	return booleanList;
+    	
+    }
     public int getId() {
         return id;
     }

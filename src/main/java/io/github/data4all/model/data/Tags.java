@@ -206,8 +206,10 @@ public final class Tags {
                     }
                 }
             }
+            if(!classifiedValues.isEmpty()){
             result.add(new ClassifiedTag(t.getId(), t.getKey(), t.getType(),
                     classifiedValues));
+            }
         }
         return result;
     }
@@ -231,8 +233,10 @@ public final class Tags {
                     }
                 }
             }
+            if(!classifiedValues.isEmpty()){
             result.add(new ClassifiedTag(t.getId(), t.getKey(), t.getType(),
                     classifiedValues));
+            }
         }
         return result;
     }
@@ -256,8 +260,10 @@ public final class Tags {
                     }
                 }
             }
+            if(!classifiedValues.isEmpty()){
             result.add(new ClassifiedTag(t.getId(), t.getKey(), t.getType(),
                     classifiedValues));
+            }
         }
         return result;
     }
@@ -281,8 +287,10 @@ public final class Tags {
                     }
                 }
             }
+            if(!classifiedValues.isEmpty()){
             result.add(new ClassifiedTag(t.getId(), t.getKey(), t.getType(),
                     classifiedValues));
+            }
         }
         return result;
     }

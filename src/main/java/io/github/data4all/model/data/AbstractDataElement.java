@@ -88,6 +88,12 @@ public abstract class AbstractDataElement implements Parcelable {
     	this.tags.remove(tag);
     }
 
+    /**
+     * Removes all Tags
+     */
+    public void clearTags() {
+    	this.tags.clear();
+    }
     
     
     /**
@@ -198,8 +204,10 @@ public abstract class AbstractDataElement implements Parcelable {
         dest.writeLong(osmId);
         dest.writeInt(tags.size());
         for (Tag t : tags.keySet()) {
+        	if(t != null){
             dest.writeInt(t.getId());
             dest.writeString(tags.get(t));
+        	}
         }
     }
     
