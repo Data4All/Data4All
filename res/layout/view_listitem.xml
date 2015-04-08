@@ -13,19 +13,37 @@
         <ImageView
             android:id="@+id/gallery_thumbnail"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:contentDescription="@string/noDescription" />
 
         <io.github.data4all.view.D4AMapView
             android:id="@+id/gallery_map"
             android:layout_width="100dp"
-            android:layout_height="100dp">
+            android:layout_height="100dp" >
         </io.github.data4all.view.D4AMapView>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/gallery_date_text"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_marginTop="10dp" >
+
+        <TextView
+            android:id="@+id/gallery_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageButton
+            android:id="@+id/gallery_delete"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/noDescription"
+            android:src="@android:drawable/ic_menu_close_clear_cancel" />
+    </RelativeLayout>
 
 </LinearLayout>

@@ -8,6 +8,15 @@
         android:id="@+id/cameraPreview"
         style="@style/cameraPreview" />
 
+    <View
+        android:id="@+id/cam_callback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha="0"
+        android:background="@drawable/cam_callback_border"
+        android:visibility="invisible" />
+
     <io.github.data4all.view.AutoFocusCrossHair
         android:id="@+id/af_crosshair"
         style="@style/autoFocusCrossHair" />
@@ -25,31 +34,35 @@
         android:orientation="horizontal"
         android:paddingBottom="10dp" >
 
-        <TextView
-            android:id="@+id/middleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/cam_border"
+            android:contentDescription="@string/noDescription" />
+
+        <ImageView
+            android:id="@+id/middleImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:textColor="#fafa"
-            android:textSize="15dp" />
+            android:contentDescription="@string/noDescription" />
 
-        <TextView
-            android:id="@+id/leftText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/middleText"
-            android:textColor="#faaa"
-            android:textSize="15dp" />
+        <ImageView
+            android:id="@+id/leftImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@id/middleImage"
+            android:contentDescription="@string/noDescription" />
 
-        <TextView
-            android:id="@+id/rightText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/middleText"
-            android:textColor="#faaa"
-            android:textSize="15dp" />
+        <ImageView
+            android:id="@+id/rightImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@id/middleImage"
+            android:contentDescription="@string/noDescription" />
     </RelativeLayout>
 
 </RelativeLayout>

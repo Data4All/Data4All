@@ -210,14 +210,14 @@ public class Gallery {
             final File f = files[i];
             timestamps[i] = Long.parseLong(f.getName().replace(ENDING_JPEG, ""));
         }
-        List<Long> asList = Arrays.asList(timestamps);
+        final List<Long> asList = Arrays.asList(timestamps);
         Collections.sort(asList, new Comparator<Long>() {
             @Override
             public int compare(Long lhs, Long rhs) {
                 return rhs.compareTo(lhs);
             }
         });
-        long[] result = new long[asList.size()];
+        final long[] result = new long[asList.size()];
         for (int i = 0; i < asList.size(); i++) {
             result[i] = asList.get(i);
         }

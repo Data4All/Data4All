@@ -17,161 +17,199 @@ package io.github.data4all;
 
 import java.util.List;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.view.ViewPropertyAnimator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 /**
+ * This class manage swipe events of the top bar of the camera and animates it.
+ * 
  * @author tbrose
  *
  */
 public class SwipeListManager {
+    /**
+     * The margin for the inner element.
+     */
+    private static final int MARGIN = 40;
+
+    /**
+     * The default animation duration.
+     */
     private static final int DEFAULT_ANIMATION_DURATION = 500;
 
-    private static final Integer green = 0xffaaffaa;
-    private static final Integer gray = 0xffaaaaaa;
+    /**
+     * The view object of the middle image.
+     */
+    private final ImageView mMiddleImage;
 
-    private final TextView mMiddleText;
-    private final TextView mLeftText;
-    private final TextView mRightText;
-    private final List<String> textItems;
+    /**
+     * The view object of the left image.
+     */
+    private final ImageView mLeftImage;
 
+    /**
+     * The view object of the right image.
+     */
+    private final ImageView mRightImage;
+
+    /**
+     * The list off all drawable-ids that should be selectable
+     */
+    private final List<Integer> idItems;
+
+    /**
+     * The index of the current image selected.
+     */
     private int mCurrentIndex;
 
+    /**
+     * The animation duration for this manager.
+     */
     private int animationDuration;
 
+    /**
+     * Whether or not swipes will be performed.
+     */
     private boolean canSwipe;
 
-    public SwipeListManager(Activity activity, List<String> textItems) {
-        this(activity, textItems, DEFAULT_ANIMATION_DURATION);
+    /**
+     * Constructs a SwipeListManager for the given ressource-ids with the
+     * DEFAULT_ANIMATION_DURATION.
+     * 
+     * @param activity
+     *            The context of this manager
+     * @param idItems
+     *            The ressource-ids to use
+     */
+    public SwipeListManager(Activity activity, List<Integer> idItems) {
+        this(activity, idItems, DEFAULT_ANIMATION_DURATION);
     }
 
-    public SwipeListManager(Activity activity, List<String> textItems,
+    /**
+     * Constructs a SwipeListManager for the given ressource-ids with the given
+     * animation duration.
+     * 
+     * @param activity
+     *            The context of this manager
+     * @param idItems
+     *            The ressource-ids to use
+     * @param animationDuration
+     *            The animation duration to use
+     */
+    public SwipeListManager(Activity activity, List<Integer> idItems,
             int animationDuration) {
         this.animationDuration = animationDuration;
-        if (textItems == null) {
+        if (idItems == null) {
             throw Exceptions.nullArgument("textItems");
         }
-        this.textItems = textItems;
-        mMiddleText = (TextView) activity.findViewById(R.id.middleText);
-        mLeftText = (TextView) activity.findViewById(R.id.leftText);
-        mRightText = (TextView) activity.findViewById(R.id.rightText);
-        setContent(0);
+        this.idItems = idItems;
+
+        mMiddleImage = (ImageView) activity.findViewById(R.id.middleImage);
+        mLeftImage = (ImageView) activity.findViewById(R.id.leftImage);
+        mRightImage = (ImageView) activity.findViewById(R.id.rightImage);
+        this.setContent(0);
     }
 
+    /**
+     * Perform a swipe from left to right. After the swipe, the current index is
+     * decremented by one and the item that was left of the middle item is now
+     * the middle item.
+     * 
+     * If the current index is 0, nothing is done.
+     */
     public void swipeFromLeft() {
         if (canSwipe && mCurrentIndex > 0) {
-            final int middleWidth = mMiddleText.getWidth();
-            final int leftWidth = mLeftText.getWidth();
-            final int shift = (middleWidth + leftWidth + 40) / 2;
-            performSwipe(shift);
+            final int middleWidth = mMiddleImage.getWidth();
+            final int leftWidth = mLeftImage.getWidth();
+            final int shift = (middleWidth + leftWidth + MARGIN) / (1 + 1);
+            this.performSwipe(shift);
         }
     }
 
+    /**
+     * Perform a swipe from right to left. After the swipe, the current index is
+     * incremented by one and the item that was right of the middle item is now
+     * the middle item.
+     * 
+     * If the current index is at the last item in the list, nothing is done.
+     */
     public void swipeFromRight() {
-        if (canSwipe && mCurrentIndex < textItems.size() - 1) {
-            final int middleWidth = mMiddleText.getWidth();
-            final int rightWidth = mRightText.getWidth();
-            final int shift = (middleWidth + rightWidth + 40) / 2;
-            performSwipe(-shift);
+        if (canSwipe && mCurrentIndex < idItems.size() - 1) {
+            final int middleWidth = mMiddleImage.getWidth();
+            final int rightWidth = mRightImage.getWidth();
+            final int shift = (middleWidth + rightWidth + MARGIN) / (1 + 1);
+            this.performSwipe(-shift);
         }
     }
 
+    /**
+     * Animates the movement of the items on the screen and resets the views
+     * afterwards.
+     * 
+     * @param shift
+     *            The movement direction and length
+     */
     private void performSwipe(final int shift) {
         canSwipe = false;
-        final float middleX = mMiddleText.getX();
-        final float leftX = mLeftText.getX();
-        final float rightX = mRightText.getX();
-
-        final ValueAnimator middleColorAnimation =
-                ValueAnimator.ofObject(new ArgbEvaluator(), green, gray);
-        middleColorAnimation.setDuration(animationDuration).addUpdateListener(
-                new AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        mMiddleText.setTextColor((Integer) animator
-                                .getAnimatedValue());
-                    }
-
-                });
-        middleColorAnimation.setInterpolator(new DecelerateInterpolator());
-
-        final ValueAnimator otherColorAnimation =
-                ValueAnimator.ofObject(new ArgbEvaluator(), gray, green);
-        otherColorAnimation.setDuration(animationDuration).addUpdateListener(
-                new AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        if (shift > 0) {
-                            mLeftText.setTextColor((Integer) animator
-                                    .getAnimatedValue());
-                        } else {
-                            mRightText.setTextColor((Integer) animator
-                                    .getAnimatedValue());
-                        }
-                    }
-
-                });
-        otherColorAnimation.setInterpolator(new AccelerateInterpolator());
+        final float middleX = mMiddleImage.getX();
+        final float leftX = mLeftImage.getX();
+        final float rightX = mRightImage.getX();
 
         final ViewPropertyAnimator middleAnimator =
-                mMiddleText.animate().xBy(shift).setDuration(animationDuration);
+                mMiddleImage.animate().xBy(shift)
+                        .setDuration(animationDuration);
         final ViewPropertyAnimator rightAnimator =
-                mRightText.animate().xBy(shift).setDuration(animationDuration);
+                mRightImage.animate().xBy(shift).setDuration(animationDuration);
         final ViewPropertyAnimator leftAnimator =
-                mLeftText.animate().xBy(shift).setDuration(animationDuration)
+                mLeftImage.animate().xBy(shift).setDuration(animationDuration)
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
                                 middleAnimator.cancel();
                                 rightAnimator.cancel();
-                                middleColorAnimation.cancel();
-                                otherColorAnimation.cancel();
-                                mMiddleText.setX(middleX);
-                                mMiddleText.setTextColor(green);
-                                mRightText.setX(rightX);
-                                mRightText.setTextColor(gray);
-                                mLeftText.setX(leftX);
-                                mLeftText.setTextColor(gray);
-                                setContent(mCurrentIndex
+                                mMiddleImage.setX(middleX);
+                                mRightImage.setX(rightX);
+                                mLeftImage.setX(leftX);
+                                SwipeListManager.this.setContent(mCurrentIndex
                                         - (int) Math.signum(shift));
                                 canSwipe = true;
                             }
                         });
 
         middleAnimator.start();
-        middleColorAnimation.start();
         rightAnimator.start();
         leftAnimator.start();
-        otherColorAnimation.start();
     }
 
+    /**
+     * Sets the contenst of the list that was shown on the screen to the given
+     * index.
+     * 
+     * @param index
+     *            The index of the item that should now be the middle item
+     */
     public void setContent(int index) {
-        if (index < 0 || index >= textItems.size()) {
+        if (index < 0 || index >= idItems.size()) {
             throw new IndexOutOfBoundsException("index is out of range [0..."
-                    + (textItems.size() - 1) + "]");
+                    + (idItems.size() - 1) + "]");
         }
 
         mCurrentIndex = index;
         canSwipe = true;
 
         if (index - 1 >= 0) {
-            mLeftText.setText(textItems.get(index - 1));
+            mLeftImage.setImageResource(idItems.get(index - 1));
         } else {
-            mLeftText.setText(null);
+            mLeftImage.setImageBitmap(null);
         }
 
-        mMiddleText.setText(textItems.get(index));
+        mMiddleImage.setImageResource(idItems.get(index));
 
-        if (index + 1 < textItems.size()) {
-            mRightText.setText(textItems.get(index + 1));
+        if (index + 1 < idItems.size()) {
+            mRightImage.setImageResource(idItems.get(index + 1));
         } else {
-            mRightText.setText(null);
+            mRightImage.setImageBitmap(null);
         }
     }
 }

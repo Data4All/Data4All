@@ -16,6 +16,8 @@
 package io.github.data4all;
 
 /**
+ * Helper class for simplifying exception throwing.
+ * 
  * @author tbrose
  *
  */
@@ -23,7 +25,7 @@ public final class Exceptions {
     /**
      * The exception message for null arguments.
      */
-    static final String NULL_ARGUMENT = "Parameter '%s' cannot be null";
+    private static final String NULL_ARGUMENT = "Parameter '%s' cannot be null";
 
     private Exceptions() {
     }
