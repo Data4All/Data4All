@@ -100,7 +100,15 @@ public class MapLine extends Polyline {
     private int xStartM = 0;
     private int yStartM = 0;
     
-    private List<double[]> saveGeoPoints;
+    /**
+     * List of the geopoints in a coordinate system with the center as the
+     * average of all Points.
+     */
+    private List<double[]> pointCoords;
+
+    /**
+     * Average of all Points saved as a Location.
+     */
     private Location midLocation;
 
     /**
@@ -350,16 +358,17 @@ public class MapLine extends Polyline {
         double delta_xStart = (xStartPo1 - xStartPo2);
         double delta_yStart = (yStartPo1 - yStartPo2);
         double radians2 = Math.atan2(delta_yStart, delta_xStart);
-
-        // Log.d("TEST", "Rotate");
         double radians = radians1 - radians2;
+
         geoPointList = new ArrayList<GeoPoint>();
-        for (double[] preCoord : saveGeoPoints) {
+        // rotate all coordinates
+        for (double[] preCoord : pointCoords) {
             double[] coord = new double[2];
             coord[1] = preCoord[1] * Math.cos(radians) - preCoord[0]
                     * Math.sin(radians);
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
+            // transfer coordinates to gpsPoints
             Node node = PointToCoordsTransformUtil.calculateGPSPoint(
                     midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
@@ -395,6 +404,10 @@ public class MapLine extends Polyline {
         geoPointList = this.getPoints();
     }
 
+    /**
+     * Saves all Points in a different coordinate system and saves the Location
+     * of this system.
+     */
     public void saveGeoPoints() {
         double lat = 0, lon = 0;
         int i = 0;
@@ -406,14 +419,14 @@ public class MapLine extends Polyline {
         this.midLocation = new Location("provide");
         this.midLocation.setLatitude(lat / i);
         this.midLocation.setLongitude(lon / i);
-        this.saveGeoPoints = new ArrayList<double[]>();
+        this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
             double[] preCoord = PointToCoordsTransformUtil
                     .calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint
                                     .getLongitude()));
-            saveGeoPoints.add(preCoord);
+            pointCoords.add(preCoord);
         }
     }
 

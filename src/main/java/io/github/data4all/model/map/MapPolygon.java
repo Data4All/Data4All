@@ -105,13 +105,14 @@ public class MapPolygon extends Polygon {
     private int xStartM = 0;
     private int yStartM = 0;
 
-	/**
-     * List of the Geopoints in a Coordinatesystem with the center = average of all Points.
+    /**
+     * List of the geopoints in a coordinate system with the center as the
+     * average of all Points.
      */
     private List<double[]> pointCoords;
-    
+
     /**
-     * Average of all Points saved as a Location
+     * Average of all Points saved as a Location.
      */
     private Location midLocation;
 
@@ -212,9 +213,7 @@ public class MapPolygon extends Polygon {
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
-
                     geoPointList = this.getPoints();
-
                     xStartM = (int) event.getX();
                     yStartM = (int) event.getY();
                     Log.d(TAG, "action_down at point: " + xStartM + " "
@@ -315,7 +314,7 @@ public class MapPolygon extends Polygon {
             pointsOffset = getOffset(geoPointList);
         }
         // only move the polygon if there is a movement
-        if (Math.abs(xEnd - xStartM) > 0 && Math.abs(yEnd - yStartM) > 0) {
+        if (Math.abs(xEnd - xStartM) > 0 || Math.abs(yEnd - yStartM) > 0) {
             Log.i(TAG, "moveMapPolygon from: " + xStartM + " " + yStartM);
             Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
             // move the midpoint
@@ -363,16 +362,16 @@ public class MapPolygon extends Polygon {
         double delta_yStart = (yStartPo1 - yStartPo2);
         double radians2 = Math.atan2(delta_yStart, delta_xStart);
         double radians = radians1 - radians2;
-        
+
         geoPointList = new ArrayList<GeoPoint>();
-        //rotates all Coordinates
+        // rotate all coordinates
         for (double[] preCoord : pointCoords) {
             double[] coord = new double[2];
             coord[1] = preCoord[1] * Math.cos(radians) - preCoord[0]
                     * Math.sin(radians);
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
-            // transfers coords to gpsPoints
+            // transfer coordinates to gpsPoints
             Node node = PointToCoordsTransformUtil.calculateGPSPoint(
                     midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
@@ -409,7 +408,8 @@ public class MapPolygon extends Polygon {
     }
 
     /**
-     * Saves all Points in a different Coordinatessystem and saves the Location of this system
+     * Saves all Points in a different coordinate system and saves the Location
+     * of this system.
      */
     public void saveGeoPoints() {
         double lat = 0, lon = 0;
@@ -420,14 +420,15 @@ public class MapPolygon extends Polygon {
             i++;
         }
         this.midLocation = new Location("provide");
-        this.midLocation.setLatitude(lat/i);
-        this.midLocation.setLongitude(lon/i);        
+        this.midLocation.setLatitude(lat / i);
+        this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
             double[] preCoord = PointToCoordsTransformUtil
                     .calculateCoordFromGPS(
                             midLocation,
-                            new Node(0, geoPoint.getLatitude(), geoPoint.getLongitude()));
+                            new Node(0, geoPoint.getLatitude(), geoPoint
+                                    .getLongitude()));
             pointCoords.add(preCoord);
         }
     }
