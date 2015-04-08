@@ -1,200 +1,259 @@
 package io.github.data4all.handler;
 
+import io.github.data4all.suggestion.Addresse;
 import io.github.data4all.util.Optimizer;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 
-
 /**
- * this class represent a default values for unclassifiedTag
- * these values are determined based on GPS (longitude and latitude)
+ * this class represent a default values for unclassifiedTag these values are
+ * determined based on GPS (longitude and latitude)
+ * 
  * @author Steeve
  *
  */
-public class TagSuggestionHandler extends AsyncTask<String, Void, String>{
-    String addresseNr="";
-    String address1 = "";
-    String address2 = "";
-    String city = "";
-    String state = "";
-    String country = "";
-    String county = "";
-    String PIN = "";
-    String full_address = "";
-    Location lastLocation;
-    public String getAddress() {
-        
-        try {
-            
-            Location location=Optimizer.currentBestLoc();
-            if(lastLocation!=null && lastLocation.equals(location)){
-                return "";
-            }
-            lastLocation=location;
+public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
+	private String addresseNr = "";
+	private String road = "";
+	private String city = "";
+	private String country = "";
+	private String postCode = "";
 
-            JSONObject jsonObj = getJSONfromURL("http://maps.googleapis.com/maps/api/geocode/json?latlng="
-                    + location.getLatitude()+"" + "," + location.getLongitude()+"" + "&sensor=true");
-            String Status = jsonObj.getString("status");
-            if (Status.equalsIgnoreCase("OK")) {
-                JSONArray Results = jsonObj.getJSONArray("results");
-                JSONObject zero = Results.getJSONObject(0);
-                JSONArray address_components = zero
-                        .getJSONArray("address_components");
+	private String full_address = "";
+	Location lastLocation;
+	private static List<Addresse> addressList = new LinkedList<Addresse>();
 
-                for (int i = 0; i < address_components.length(); i++) {
-                    JSONObject zero2 = address_components.getJSONObject(i);
-                    String long_name = zero2.getString("long_name");
-                    JSONArray mtypes = zero2.getJSONArray("types");
-                    String Type = mtypes.getString(0);
+	public void getlistOfSuggestionAddress() {
+		List<Addresse> addressListTemp = new LinkedList<Addresse>();
+		for (Location location : locationSuggestions()) {
+			Addresse addr = getAddress(location);
+			if (addr != null && !addressListTemp.contains(addr)) {
+				addressListTemp.add(addr);
+			}
+		}
+		if (!addressListTemp.isEmpty()) {
+			addressList.clear();
+			addressList.addAll(addressListTemp);
+		}
+	}
 
-                    if (TextUtils.isEmpty(long_name) == false
-                            || !long_name.equals(null)
-                            || long_name.length() > 0 || long_name != "") {
-                        if (Type.equalsIgnoreCase("street_number")) {
-                            addresseNr = long_name + " ";
-                        } else if (Type.equalsIgnoreCase("route")) {
-                            address1 =  long_name;
-                        } else if (Type.equalsIgnoreCase("sublocality")) {
-                            address2 = long_name;
-                        } else if (Type.equalsIgnoreCase("locality")) {
-                            // Address2 = Address2 + long_name + ", ";
-                            city = long_name;
-                        } else if (Type
-                                .equalsIgnoreCase("administrative_area_level_2")) {
-                            county = long_name;
-                        } else if (Type
-                                .equalsIgnoreCase("administrative_area_level_1")) {
-                            state = long_name;
-                        } else if (Type.equalsIgnoreCase("country")) {
-                            country = long_name;
-                        } else if (Type.equalsIgnoreCase("postal_code")) {
-                            PIN = long_name;
-                        }
+	public static List<Addresse> getAddressList() {
+		return addressList;
+	}
 
-                    }
+	public static JSONObject getJSONfromURL(String url) {
 
-                    full_address = address1 + "," + address2 + "," + city + ","
-                            + state + "," + country + "," + PIN;
-                }
-            }
+		// initialize
+		InputStream is = null;
+		String address = "";
+		JSONObject jObject = null;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return full_address;
+		// http post
+		try {
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost(url);
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			is = entity.getContent();
 
-    }
+		} catch (Exception e) {
+			Log.e("log_tag", "Error in http connection " + e.toString());
+		}
 
-    public static JSONObject getJSONfromURL(String url) {
+		// convert response to string
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					is, "utf-8"), 8);
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			is.close();
+			address = sb.toString();
+		} catch (Exception e) {
+			Log.e("log_tag", "Error converting address " + e.toString());
+		}
 
-        // initialize
-        InputStream is = null;
-        String result = "";
-        JSONObject jObject = null;
+		// try parse the string to a JSON object
+		try {
+			jObject = new JSONObject(address);
+		} catch (JSONException e) {
+			Log.e("log_tag", "Error parsing data " + e.toString());
+		}
 
-        // http post
-        try {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(url);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity entity = response.getEntity();
-            is = entity.getContent();
+		return jObject;
+	}
 
-        } catch (Exception e) {
-            Log.e("log_tag", "Error in http connection " + e.toString());
-        }
+	public String getAddress() {
+		if (Optimizer.currentBestLoc() == null) {
+			return "";
+		}
+		return getAddress(Optimizer.currentBestLoc()).getFullAddress();
+	}
 
-        // convert response to string
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "utf-8"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            is.close();
-            result = sb.toString();
-        } catch (Exception e) {
-            Log.e("log_tag", "Error converting result " + e.toString());
-        }
+	public Addresse getAddress(Location location) {
+		try {
+			JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
+					+ location.getLatitude()
+					+ "&lon="
+					+ +location.getLongitude() + "&zoom=18&addressdetails=1");
+		
+				JSONObject address = jsonObj.getJSONObject("address");
+				postCode = address.getString("postcode");
+				addresseNr = address.getString("house_number");
+				road = address.getString("road");
+				city = address.getString("city");
+				country = address.getString("country");
+			
+			Addresse addresse = new Addresse();
+			addresse.setAddresseNr(addresseNr);
+			addresse.setRoad(road);
+			addresse.setCity(city);
+			addresse.setPostCode(postCode);
+			addresse.setCountry(country);
+			return addresse;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        // try parse the string to a JSON object
-        try {
-            jObject = new JSONObject(result);
-        } catch (JSONException e) {
-            Log.e("log_tag", "Error parsing data " + e.toString());
-        }
+		return null;
+	}
 
-        return jObject;
-    }
-    
-    public static void main(String[] args) {
-        TagSuggestionHandler handler=new TagSuggestionHandler();
-        
-        System.out.println(handler.getAddress());
-    }
+	@Override
+	protected String doInBackground(String... params) {
+		getlistOfSuggestionAddress();
+		return "";
+	}
 
-    @Override
-    protected String doInBackground(String... params) {
-        return getAddress();
-    }
+	public String getCity() {
+		return city;
+	}
 
-    public String getAddress1() {
-        return address1;
-    }
+	public String getCountry() {
+		return country;
+	}
 
-    public String getAddress2() {
-        return address2;
-    }
+	public String getRoad() {
+		return road;
+	}
 
-    public String getCity() {
-        return city;
-    }
+	public String getPostCode() {
+		return postCode;
+	}
 
-    public String getState() {
-        return state;
-    }
+	public String getFull_address() {
+		return full_address;
+	}
 
-    public String getCountry() {
-        return country;
-    }
+	public String getAddresseNr() {
+		return addresseNr;
+	}
 
-    public String getCounty() {
-        return county;
-    }
+	public Location getLastLocation() {
+		return lastLocation;
+	}
 
-    public String getPIN() {
-        return PIN;
-    }
+	static List<Location> locations = new LinkedList<Location>();
+	static Location current = null;
 
-    public String getFull_address() {
-        return full_address;
-    }
+	public static List<Location> locationSuggestions() {
+		if (current == null) {
+			current = Optimizer.currentBestLoc();
+		} else {
+			if (current.equals(Optimizer.currentBestLoc())) {
+				return locations;
+			}
+		}
+		locations = new LinkedList<Location>();
+		if (current == null) {
+			return locations;
+		}
+		locations.clear();
+		locations.add(current);
+		while (locations.size() < 10) {
+			Location location = getLocation(current.getLongitude(),
+					current.getLatitude(), 25);
+			if (!locationsExist(locations, location)) {
+				locations.add(location);
+			}
+		}
+		return locations;
+	}
 
-    public String getAddresseNr() {
-        return addresseNr;
-    }
+	private static boolean locationsExist(List<Location> locations,
+			Location location) {
+		for (Location l : locations) {
+			if (l.getLatitude() == location.getLatitude()
+					&& l.getLongitude() == location.getLongitude()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public Location getLastLocation() {
-        return lastLocation;
-    }
-    
+	public static Location getLocation(double x0, double y0, int radius) {
+		Location l = new Location("");
+		Random random = new Random();
+
+		// Convert radius from meters to degrees
+		double radiusInDegrees = radius / 111000f;
+
+		double u = random.nextDouble();
+		double v = random.nextDouble();
+		double w = radiusInDegrees * Math.sqrt(u);
+		double t = 2 * Math.PI * v;
+		double x = w * Math.cos(t);
+		double y = w * Math.sin(t);
+
+		// Adjust the x-coordinate for the shrinking of the east-west distances
+		double new_x = x / Math.cos(y0);
+
+		double foundLongitude = new_x + x0;
+		double foundLatitude = y + y0;
+		System.out.println("Longitude: " + foundLongitude + "  Latitude: "
+				+ foundLatitude);
+		l.setLatitude(foundLatitude);
+		l.setLongitude(foundLongitude);
+		return l;
+	}
+
+	public static void startAdresseCollector() {
+		Thread thread = new Thread() {
+			public void run() {
+				while (true) {
+					TagSuggestionHandler tagSuggestionHandler = new TagSuggestionHandler();
+					tagSuggestionHandler.execute();
+					if (Optimizer.currentBestLoc() != null) {
+						try {
+							sleep(30000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			};
+		};
+		thread.start();
+
+	}
 
 }
