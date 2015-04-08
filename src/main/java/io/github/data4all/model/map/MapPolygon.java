@@ -286,9 +286,8 @@ public class MapPolygon extends Polygon {
             active = true;
         } else {
             // change mode to not active, polygon is not modifiable now
-            //TODO change color
-            this.setFillColor(DEFAULT_FILL_COLOR);
-            this.setStrokeColor(DEFAULT_STROKE_COLOR);
+            this.setFillColor(CustomInfoWindow.MARKED_FILL_COLOR);
+            this.setStrokeColor(CustomInfoWindow.MARKED_STROKE_COLOR);
             mapView.invalidate();
             active = false;
         }

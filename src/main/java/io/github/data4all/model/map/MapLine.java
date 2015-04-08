@@ -284,7 +284,7 @@ public class MapLine extends Polyline {
         } else {
             // change mode to not active, polyline is not modifiable now
             //TODO change color
-            this.setColor(Color.BLUE);
+            this.setColor(Color.RED);
             mapView.invalidate();
             active = false;
         }
