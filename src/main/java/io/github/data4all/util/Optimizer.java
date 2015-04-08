@@ -204,4 +204,8 @@ public final class Optimizer {
         locRB.clear();
         orientRB.clear();
     }
+    
+    public static RingBuffer<Location> getLocRB(){
+    	return locRB;
+    }
 }
