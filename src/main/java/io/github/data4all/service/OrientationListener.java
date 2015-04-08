@@ -35,6 +35,7 @@ import android.os.IBinder;
  * 
  * @author Steeve
  * @author sbollen
+ * @author Richard (primary onAccuracyChanged)
  * 
  */
 public class OrientationListener extends Service implements SensorEventListener {
@@ -76,6 +77,15 @@ public class OrientationListener extends Service implements SensorEventListener 
     private float[] mGeomagnetic = new float[ARRAYLENGTH];
     // orientation values
     private float[] orientation = new float[ARRAYLENGTH];
+
+    // Calibration needed
+    public final static int CALIBRATION_BROKEN_ALL = 100;
+    public final static int CALIBRATION_BROKEN_ACCELEROMETER = 200;
+    public final static int CALIBRATION_BROKEN_MAGNETOMETER = 201;
+    public final static int CALIBRATION_OK = 300;
+    public static int CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
+    private boolean accOk = false;
+    private boolean magOk = false;
 
     @Override
     public void onCreate() {
@@ -127,29 +137,35 @@ public class OrientationListener extends Service implements SensorEventListener 
             System.arraycopy(event.values, 0, mGeomagnetic, 0, ARRAYLENGTH);
         }
 
-        // when the 2 Sensors data are available
+        // when the 2 sensors data are available
         if (mGravity != null && mGeomagnetic != null) {
 
-            // Log.d("TEST", "Test ");
             final boolean success = SensorManager.getRotationMatrix(mR, mI,
                     mGravity, mGeomagnetic);
 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);
-                // saving the new model with the orientation in the RingBuffer
-                Log.d(TAG,
-                        "Orientation " + Math.toDegrees(orientation[0]) + " ; "
-                                + Math.toDegrees(orientation[1]) + " ; "
-                                + Math.toDegrees(orientation[2]));
-                deviceOrientation = new DeviceOrientation(orientation[0],
-                        orientation[1], orientation[LAST_INDEX],
-                        System.currentTimeMillis());
-                Optimizer.putDevOrient(deviceOrientation);
+
+                if (event.accuracy >= 1) {
+
+                    // saving the new model with the orientation in the
+                    // RingBuffer
+                    Log.d(TAG, "Orientation " + Math.toDegrees(orientation[0])
+                            + " ; " + Math.toDegrees(orientation[1]) + " ; "
+                            + Math.toDegrees(orientation[2]) + " ; "
+                            + "EventAccuracy:" + event.accuracy);
+                    deviceOrientation = new DeviceOrientation(orientation[0],
+                            orientation[1], orientation[LAST_INDEX],
+                            System.currentTimeMillis());
+                    Optimizer.putDevOrient(deviceOrientation);
+                }
 
                 if (horizonListener != null) {
                     horizonListener.makeHorizon(true);
                 }
+
             }
+
         }
 
     }
@@ -173,8 +189,54 @@ public class OrientationListener extends Service implements SensorEventListener 
      */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // not implemented
 
+        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            if (accuracy < SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " it needs recalibration!");
+
+                accOk = false;
+            } else {
+
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " App ready to use!");
+                accOk = true;
+            }
+        }
+        if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            if (accuracy < SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " it needs recalibration!");
+
+                magOk = false;
+            } else {
+
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " App ready to use!");
+                magOk = true;
+            }
+        }
+        checkAccuracy();
+    }
+
+    private void checkAccuracy() {
+        if (accOk) {
+            if (magOk) {
+                CALIBRATION_STATUS = CALIBRATION_OK;
+            } else {
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER;
+            }
+        } else {
+            if (magOk) {
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER;
+            } else {
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
+            }
+        }
     }
 
     public class LocalBinder extends Binder {
@@ -224,4 +286,4 @@ public class OrientationListener extends Service implements SensorEventListener 
         this.deviceOrientation = deviceOrientation;
     }
 
-	}
+}
