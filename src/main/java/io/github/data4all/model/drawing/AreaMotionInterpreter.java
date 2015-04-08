@@ -130,10 +130,10 @@ public class AreaMotionInterpreter implements MotionInterpreter {
      *      int)
      */
     @Override
-    public AbstractDataElement create(List<Point> polygon, int rotation) {
+    public AbstractDataElement create(List<Point> polygon) {
         final PolyElement element = new PolyElement(-1, PolyElementType.AREA);
 
-        final List<Node> nodeList = pointTrans.transform(polygon, rotation);
+        final List<Node> nodeList = pointTrans.transform(polygon);
 
         nodeList.add(nodeList.get(0));
         element.addNodes(nodeList, false);

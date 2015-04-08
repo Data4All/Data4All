@@ -26,6 +26,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.IBinder;
 
 /**
@@ -34,143 +35,255 @@ import android.os.IBinder;
  * 
  * @author Steeve
  * @author sbollen
+ * @author Richard (primary onAccuracyChanged)
  * 
  */
 public class OrientationListener extends Service implements SensorEventListener {
 
-	/** sensor accelerometer. */
-	private Sensor accelerometer;
-	/** sensor magnetic_field. */
-	private Sensor magnetometer;
-	/** sensorManager. */
-	private SensorManager sManager;
+    private final IBinder mBinder = new LocalBinder();
 
-	/** object of SensorSmoother for smoothing the sensor data. */
-	private SensorSmoother smoothing = new BasicSensorSmoother();
+    private HorizonListener horizonListener;
 
-	private static final String TAG = "OrientationListener";
+    private DeviceOrientation deviceOrientation;
 
-	// Array length for mGeomagnetic, mGravity and orientation
-	private static final int ARRAYLENGTH = 3;
+    /** sensor accelerometer. */
+    private Sensor accelerometer;
+    /** sensor magnetic_field. */
+    private Sensor magnetometer;
+    /** sensorManager. */
+    private SensorManager sManager;
 
-	// Array length for mR and mI
-	private static final int LENGTH = 16;
+    /** object of SensorSmoother for smoothing the sensor data. */
+    private SensorSmoother smoothing = new BasicSensorSmoother();
 
-	// last index for orientation
-	private static final int LAST_INDEX = 2;
+    private static final String TAG = "OrientationListener";
 
-	// RotationmatrixR
-	private float[] mR = new float[LENGTH];
-	// RotationmatrixI
-	private float[] mI = new float[LENGTH];
-	// accelerometer sensor data
-	private float[] mGravity = new float[ARRAYLENGTH];
-	// magnetic field sensor data
-	private float[] mGeomagnetic = new float[ARRAYLENGTH];
-	// orientation values
-	private float[] orientation = new float[ARRAYLENGTH];
+    // Array length for mGeomagnetic, mGravity and orientation
+    private static final int ARRAYLENGTH = 3;
 
-	@Override
-	public void onCreate() {
-		sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		accelerometer = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		magnetometer = sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    // Array length for mR and mI
+    private static final int LENGTH = 16;
 
-		sManager.registerListener(this,
-				sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-				SensorManager.SENSOR_DELAY_NORMAL);
-		sManager.registerListener(this,
-				sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-				SensorManager.SENSOR_DELAY_NORMAL);
-	}
+    // last index for orientation
+    private static final int LAST_INDEX = 2;
 
-	/*
-	 * start recording data from accelerometer and magnetic_field, register the
-	 * SensorListener in The Service and when Android kill the sensor to free up
-	 * valuable resources, then use Start_STICKY to restart the Service when
-	 * Resource become available again
-	 */
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.i(TAG, "Service started");
-		return START_STICKY;
-	}
+    // RotationmatrixR
+    private float[] mR = new float[LENGTH];
+    // RotationmatrixI
+    private float[] mI = new float[LENGTH];
+    // accelerometer sensor data
+    private float[] mGravity = new float[ARRAYLENGTH];
+    // magnetic field sensor data
+    private float[] mGeomagnetic = new float[ARRAYLENGTH];
+    // orientation values
+    private float[] orientation = new float[ARRAYLENGTH];
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @param event when the two Sensors data are available then saved this in
-	 * model
-	 * 
-	 * @see
-	 * android.hardware.SensorEventListener#onSensorChanged(android.hardware
-	 * .SensorEvent)
-	 */
-	@Override
-	public void onSensorChanged(SensorEvent event) {
+    // Calibration needed
+    public final static int CALIBRATION_BROKEN_ALL = 100;
+    public final static int CALIBRATION_BROKEN_ACCELEROMETER = 200;
+    public final static int CALIBRATION_BROKEN_MAGNETOMETER = 201;
+    public final static int CALIBRATION_OK = 300;
+    public static int CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
+    private boolean accOk = false;
+    private boolean magOk = false;
 
-		// check sensor type
-		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-			// smoothing sensor data
-			mGravity = smoothing.filter(event.values.clone(), mGravity);
-			System.arraycopy(event.values, 0, mGravity, 0, ARRAYLENGTH);
-		} else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-			// smooting sensor data
-			mGeomagnetic = smoothing.filter(event.values.clone(), mGeomagnetic);
-			System.arraycopy(event.values, 0, mGeomagnetic, 0, ARRAYLENGTH);
-		}
+    @Override
+    public void onCreate() {
+        sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer = sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-		// when the 2 Sensors data are available
-		if (mGravity != null && mGeomagnetic != null) {
+        sManager.registerListener(this,
+                sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sManager.registerListener(this,
+                sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-			final boolean success = SensorManager.getRotationMatrix(mR, mI,
-					mGravity, mGeomagnetic);
+    /*
+     * start recording data from accelerometer and magnetic_field, register the
+     * SensorListener in The Service and when Android kill the sensor to free up
+     * valuable resources, then use Start_STICKY to restart the Service when
+     * Resource become available again
+     */
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "Service started");
+        return START_STICKY;
+    }
 
-			if (success) {
-				SensorManager.getOrientation(mR, orientation);
-				// saving the new model with the orientation in the RingBuffer
-				Log.d(TAG,
-						"Orientation " + Math.toDegrees(orientation[0]) + " ; "
-								+ Math.toDegrees(orientation[1]) + " ; "
-								+ Math.toDegrees(orientation[2]));
-				Optimizer.putPos(new DeviceOrientation(orientation[0],
-						orientation[1], orientation[LAST_INDEX], System
-								.currentTimeMillis()));
-			}
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @param event when the two Sensors data are available then saved this in
+     * model
+     * 
+     * @see
+     * android.hardware.SensorEventListener#onSensorChanged(android.hardware
+     * .SensorEvent)
+     */
+    @Override
+    public void onSensorChanged(SensorEvent event) {
 
-	}
+        // check sensor type
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            // smoothing sensor data
+            mGravity = smoothing.filter(event.values.clone(), mGravity);
+            System.arraycopy(event.values, 0, mGravity, 0, ARRAYLENGTH);
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            // smooting sensor data
+            mGeomagnetic = smoothing.filter(event.values.clone(), mGeomagnetic);
+            System.arraycopy(event.values, 0, mGeomagnetic, 0, ARRAYLENGTH);
+        }
 
-	/*
-	 * stop to recording data from accelerometer and magnetic_field and
-	 * unregister the SensorListener in The Service
-	 */
-	@Override
-	public void onDestroy() {
-		sManager.unregisterListener(this, accelerometer);
-		sManager.unregisterListener(this, magnetometer);
-		Log.i(TAG, "Service Destroyed");
-	}
+        // when the 2 sensors data are available
+        if (mGravity != null && mGeomagnetic != null) {
 
-	/*
-	 * (non-Javadoc) description
-	 * 
-	 * @see android.hardware.SensorEventListener#onAccuracyChanged
-	 * (android.hardware.Sensor,int)
-	 */
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// not implemented
+            final boolean success = SensorManager.getRotationMatrix(mR, mI,
+                    mGravity, mGeomagnetic);
 
-	}
+            if (success) {
+                SensorManager.getOrientation(mR, orientation);
 
-	/*
-	 * (non-Javadoc) description
-	 * 
-	 * @see android.app.Service#onBind(android.content.Intent)
-	 */
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+                if (event.accuracy >= 1) {
+
+                    // saving the new model with the orientation in the
+                    // RingBuffer
+                    Log.d(TAG, "Orientation " + Math.toDegrees(orientation[0])
+                            + " ; " + Math.toDegrees(orientation[1]) + " ; "
+                            + Math.toDegrees(orientation[2]) + " ; "
+                            + "EventAccuracy:" + event.accuracy);
+                    deviceOrientation = new DeviceOrientation(orientation[0],
+                            orientation[1], orientation[LAST_INDEX],
+                            System.currentTimeMillis());
+                    Optimizer.putDevOrient(deviceOrientation);
+                }
+
+                if (horizonListener != null) {
+                    horizonListener.makeHorizon(true);
+                }
+
+            }
+
+        }
+
+    }
+
+    /*
+     * stop to recording data from accelerometer and magnetic_field and
+     * unregister the SensorListener in The Service
+     */
+    @Override
+    public void onDestroy() {
+        sManager.unregisterListener(this, accelerometer);
+        sManager.unregisterListener(this, magnetometer);
+        Log.i(TAG, "Service Destroyed");
+    }
+
+    /*
+     * (non-Javadoc) description
+     * 
+     * @see android.hardware.SensorEventListener#onAccuracyChanged
+     * (android.hardware.Sensor,int)
+     */
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            if (accuracy < SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " it needs recalibration!");
+
+                accOk = false;
+            } else {
+
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " App ready to use!");
+                accOk = true;
+            }
+        }
+        if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            if (accuracy < SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " it needs recalibration!");
+
+                magOk = false;
+            } else {
+
+                Log.d(TAG, "The sensor: " + sensor.getName()
+                        + " has now the accuracy of " + accuracy
+                        + " App ready to use!");
+                magOk = true;
+            }
+        }
+        checkAccuracy();
+    }
+
+    private void checkAccuracy() {
+        if (accOk) {
+            if (magOk) {
+                CALIBRATION_STATUS = CALIBRATION_OK;
+            } else {
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER;
+            }
+        } else {
+            if (magOk) {
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER;
+            } else {
+                CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
+            }
+        }
+    }
+
+    public class LocalBinder extends Binder {
+        public OrientationListener getService() {
+            return OrientationListener.this;
+        }
+    }
+
+    /*
+     * (non-Javadoc) description
+     * 
+     * @see android.app.Service#onBind(android.content.Intent)
+     */
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    /**
+     * A
+     * 
+     * @author tbrose
+     */
+    public interface HorizonListener {
+        /**
+         * Draws a new Horizon.
+         * 
+         * @param state
+         *            The current undo state
+         */
+        void makeHorizon(boolean state);
+    }
+
+    public HorizonListener getHorizonListener() {
+        return horizonListener;
+    }
+
+    public void setHorizonListener(HorizonListener horizonListener) {
+        this.horizonListener = horizonListener;
+    }
+
+    public DeviceOrientation getDeviceOrientation() {
+        return deviceOrientation;
+    }
+
+    public void setDeviceOrientation(DeviceOrientation deviceOrientation) {
+        this.deviceOrientation = deviceOrientation;
+    }
+
 }

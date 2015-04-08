@@ -10,5 +10,9 @@
     <string name="pref_currentuser_dialog_title">Ausloggen</string>
     <string name="pref_currentuser_dialog_message">Möchten Sie sich wirklich ausloggen?</string>
     <string name="pref_currentuser_null">Nicht eingeloggt</string>
+    
+      <string name="pref_pointsize_title">Aktuelle Punktgröße</string>
+    <string name="pref_pointsize_dialog_title">Punktgröße</string>
+    <string name="pref_pointsize_dialog_message">Bitte geben sie die neue Punktgröße an.</string>
 
 </resources>

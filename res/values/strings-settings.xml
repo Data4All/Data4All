@@ -13,4 +13,11 @@
 	<string name="pref_currentuser_dialog_title">Logout</string>
     <string name="pref_currentuser_dialog_message">Do you want to logout?</string>
     <string name="pref_currentuser_null">Not logged in</string>
+    
+    <integer name="pref_pointsize_default">5</integer>
+    
+    <string name="pref_pointsize_key" translatable="false">PREF_POINT_SIZE</string>
+    <string name="pref_pointsize_title">Current Pointsize</string>
+    <string name="pref_pointsize_dialog_title">Pointsize</string>
+    <string name="pref_pointsize_dialog_message">Please set a new size for the point.</string>
 </resources>

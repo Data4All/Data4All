@@ -35,8 +35,8 @@ import android.graphics.Color;
  * 
  */
 public interface MotionInterpreter {
+    public static final int POINT_RADIUS = 10;    
     public static final int POINT_COLOR = Color.BLUE;
-    public static final int POINT_RADIUS = 10;
     public static final int PATH_COLOR = Color.BLUE;
     public static final int AREA_COLOR = Color.BLUE;
     public static final float PATH_STROKE_WIDTH = 5f;
@@ -47,11 +47,9 @@ public interface MotionInterpreter {
      * 
      * @param polygon
      *            the interpreted polygon
-     * @param rotation
-     *            the device rotation at the state of drawing
      * @return the created AbstractDataModel
      */
-    AbstractDataElement create(List<Point> polygon, int rotation);
+    AbstractDataElement create(List<Point> polygon);
 
     /**
      * Interprets the given motion and apply it to the polygon<br/>

@@ -134,7 +134,7 @@ public class GPSservice extends Service implements LocationListener {
 
         if (track != null) {
             final Location tp = Optimizer.currentBestLoc();
-            Log.d(TAG, "Track: " + track);
+
             final TrackPoint last = track.getLastTrackPoint();
 
             // check if new Location is already stored

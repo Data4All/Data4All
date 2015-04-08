@@ -32,9 +32,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
 /**
@@ -50,12 +55,13 @@ public class LoginActivity extends AbstractActivity {
     /**
      * Url to register a new User at OSM.
      */
-    private static final String OSM_REGISTRATION_URL =
-            "https://www.openstreetmap.org/user/new";
+    private static final String OSM_REGISTRATION_URL = "https://www.openstreetmap.org/user/new";
 
     private EditText osmName;
     private EditText osmPass;
     private View progress;
+
+    private CheckBox mCbShowPwd;
 
     /**
      * Sole Constructor.
@@ -78,9 +84,36 @@ public class LoginActivity extends AbstractActivity {
             this.osmName = (EditText) findViewById(R.id.osm_name);
             this.osmPass = (EditText) findViewById(R.id.osm_pass);
             this.progress = findViewById(R.id.progress);
+            // get the show/hide password Checkbox
+            this.mCbShowPwd = (CheckBox) findViewById(R.id.cbShowPwd);
+            setPasswortCheckBoxListener(mCbShowPwd, osmPass);
         }
     }
-    
+
+    private void setPasswortCheckBoxListener(final CheckBox checkbox,
+            final EditText passwordfield) {
+        // add onCheckedListener on checkbox
+        // when user clicks on this checkbox, this is the handler.
+        checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView,
+                    boolean isChecked) {
+                // checkbox status is changed from uncheck to checked.
+                if (!isChecked) {
+                    // show password
+                    passwordfield
+                            .setTransformationMethod(PasswordTransformationMethod
+                                    .getInstance());
+                } else {
+                    // hide password
+                    passwordfield
+                            .setTransformationMethod(HideReturnsTransformationMethod
+                                    .getInstance());
+                }
+            }
+        });
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -88,7 +121,7 @@ public class LoginActivity extends AbstractActivity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item= menu.findItem(R.id.upload_data);
+        MenuItem item = menu.findItem(R.id.upload_data);
         item.setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -160,23 +193,25 @@ public class LoginActivity extends AbstractActivity {
             } else if (!NetworkState.isNetworkAvailable(this)) {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.no_network_title)
-                        .setMessage(R.string.no_network_message)
-                        .show();
+                        .setMessage(R.string.no_network_message).show();
             } else {
                 this.showProgress(true);
                 new Thread(new Authentisator(username, password)).start();
             }
         }
         if (v.getId() == R.id.osm_register) {
-            final Intent intent =
-                    new Intent(Intent.ACTION_VIEW,
-                            Uri.parse(OSM_REGISTRATION_URL));
+            final Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(OSM_REGISTRATION_URL));
             startActivity(intent);
         }
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
      */
     @Override
     protected void onWorkflowFinished(Intent data) {
@@ -219,16 +254,15 @@ public class LoginActivity extends AbstractActivity {
         @Override
         public void run() {
             try {
-                final User user =
-                        new OsmOAuthAuthorizationClient(OAuthParameters.CURRENT)
-                                .authorise(username, password);
+                final User user = new OsmOAuthAuthorizationClient(
+                        OAuthParameters.CURRENT).authorise(username, password);
                 LoginActivity.this.saveUser(user);
                 LoginActivity.this.nextActivity();
             } catch (OsmLoginFailedException e) {
                 Log.e(TAG, "Login to osm failed:", e);
                 this.showDialog(getString(R.string.login_access_dialog_title),
 
-                        getString(R.string.login_access_dialog_mes));
+                getString(R.string.login_access_dialog_mes));
             } catch (OsmOAuthAuthorizationException e) {
                 Log.e(TAG, "Osm OAuth failed:", e);
                 this.showDialog(getString(R.string.login_alertdialog_error),
