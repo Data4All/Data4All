@@ -40,37 +40,39 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 /**
- * With LongClick deletable Polyline.
+ * Polyline which is editable. It has an InfoWindow opened with a single tap, if
+ * it is not editable and it is movable and rotatable with a TouchEvent, if it
+ * is editable.
  * 
  * @author Oliver Schwartz
+ * @author sbollen
  *
  */
 public class MapLine extends Polyline {
 
     private static final String TAG = "MapLine";
     private AbstractDataElement element;
-    private AbstractActivity activity;
     private D4AMapView mapView;
+    private AbstractActivity activity;
     private boolean editable;
+    // checks, that the length of the offset vectors is be calculated only once
     private boolean lengthSet = true;
 
     // midpoint of the bounding box of the polyline
-    Point midpoint;
+    private Point midpoint;
 
     // start time for touch event action_down
     private long timeStart;
 
-    // True when the edit mode is active.
+    // True when the edit mode is active
     private boolean active = false;
 
     // the maximum time difference between action_down and action_up, so that
     // the mode will be changed
     private static final int TIME_DIFF = 200;
 
-    // Default Stroke Color
-    private static final int DEFAULT_STROKE_COLOR = Color.BLUE;
     // Active Stroke Color
-    private static final int ACTIVE_STROKE_COLOR = Color.GREEN;
+    protected static final int ACTIVE_STROKE_COLOR = Color.GREEN;
 
     // Maximum distance from the touch point to the mapline in pixel
     private static final int TOLERANCE = 20;
@@ -86,16 +88,16 @@ public class MapLine extends Polyline {
     /**
      * Start values for rotation.
      */
-    int xStartValue1 = 0;
-    int xStartValue2 = 0;
-    int yStartValue1 = 0;
-    int yStartValue2 = 0;
+    private int xStartPo1 = 0;
+    private int yStartPo1 = 0;
+    private int xStartPo2 = 0;
+    private int yStartPo2 = 0;
 
     /**
      * Start values for moving.
      */
-    private int xStart = 0;
-    private int yStart = 0;
+    private int xStartM = 0;
+    private int yStartM = 0;
 
     /**
      * List of GeoPoints of the MapPolygon before it was edited.
@@ -132,13 +134,14 @@ public class MapLine extends Polyline {
      *            the Mapview
      * 
      * @param ele
-     *            the associateded OsmElement
+     *            the associated OsmElement
      */
     public MapLine(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
         super(ctx);
         this.element = ele;
         this.activity = ctx;
         this.mapView = mv;
+        this.editable = false;
         if (activity instanceof MapViewActivity) {
             mInfoWindow = new CustomInfoWindow(this.mapView, ele, this,
                     activity);
@@ -148,6 +151,9 @@ public class MapLine extends Polyline {
         setInfo();
     }
 
+    /**
+     * Set the info of the MapPolyline for the InfoWindow.
+     */
     public void setInfo() {
         if (!element.getTags().keySet().isEmpty()
                 && !element.getTags().values().isEmpty()) {
@@ -165,6 +171,17 @@ public class MapLine extends Polyline {
         }
     }
 
+    /**
+     * Get the localized name of the element to show in the InfoWindow.
+     * 
+     * @param context
+     *            the context of the application
+     * @param key
+     *            the tag key
+     * @param value
+     *            the tag value
+     * @return the localized name
+     */
     public String getLocalizedName(Context context, String key, String value) {
         Resources resources = context.getResources();
         String s = "name_" + key + "_" + value;
@@ -184,7 +201,6 @@ public class MapLine extends Polyline {
         if (editable) {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-
                 pj = mapView.getProjection();
                 timeStart = System.currentTimeMillis();
                 if (active) {
@@ -195,10 +211,10 @@ public class MapLine extends Polyline {
                     if (pointsOffset == null) {
                         pointsOffset = getOffset();
                     }
-
-                    xStart = (int) event.getX();
-                    yStart = (int) event.getY();
-                    Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
+                    xStartM = (int) event.getX();
+                    yStartM = (int) event.getY();
+                    Log.d(TAG, "action_down at point: " + xStartM + " "
+                            + yStartM);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -206,10 +222,10 @@ public class MapLine extends Polyline {
                 if (active) {
                     mode = ROTATE;
                     // set the start values for the rotation
-                    xStartValue1 = (int) event.getX(0);
-                    xStartValue2 = (int) event.getX(1);
-                    yStartValue1 = (int) event.getY(0);
-                    yStartValue2 = (int) event.getY(1);
+                    xStartPo1 = (int) event.getX(0);
+                    xStartPo2 = (int) event.getX(1);
+                    yStartPo1 = (int) event.getY(0);
+                    yStartPo2 = (int) event.getY(1);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -234,7 +250,7 @@ public class MapLine extends Polyline {
                 if (active) {
                     if (mode == MOVE) {
                         Log.d(TAG, "move polygon");
-                        moveToNewPosition(event, mapView);
+                        moveToNewPos(event, mapView);
                     } else if (mode == ROTATE) {
                         Log.d(TAG, "rotate polygon");
                         // rotatePolygon(event);
@@ -254,33 +270,38 @@ public class MapLine extends Polyline {
      * change the mode whether the edit function is active or not.
      */
     public void changeMode() {
-        Log.d(TAG, "actual activity mode: " + active);
         if (!active) {
+            // change mode to active, polyline is now rotatable and movable
             this.setColor(ACTIVE_STROKE_COLOR);
             pj = mapView.getProjection();
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
             setOriginalPoints();
+            lengthSet = true;
             pointsOffset = getOffset();
             mapView.invalidate();
             active = true;
         } else {
-            this.setColor(DEFAULT_STROKE_COLOR);
+            // change mode to not active, polyline is not modifiable now
+            //TODO change color
+            this.setColor(Color.BLUE);
             mapView.invalidate();
             active = false;
         }
+        Log.d(TAG, "actual activity mode: " + active);
     }
 
     /**
-     * Move this polyline to the new position handling the touch events.
+     * Move this polyline to the new position handling the touch events. Move
+     * the midpoint of the bounding box of the polyline and after that add the
+     * offset of all points of the polyline to the new midpoint.
      * 
      * @param event
      *            the current MotionEvent from onTouchEvent
      * @param mapView
      *            the current mapView
      */
-    public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
-
+    public void moveToNewPos(final MotionEvent event, final MapView mapView) {
         // set the end coordinates of the movement
         int xEnd = (int) event.getX();
         int yEnd = (int) event.getY();
@@ -288,19 +309,15 @@ public class MapLine extends Polyline {
         if (pointsOffset == null) {
             pointsOffset = getOffset();
         }
-
         // only move the polygon if there is a movement
-        if (Math.abs(xEnd - xStart) > 0 && Math.abs(yEnd - yStart) > 0) {
-
-            Log.i(TAG, "moveMapPolygon from: " + xStart + " " + yStart);
+        if (Math.abs(xEnd - xStartM) > 0 && Math.abs(yEnd - yStartM) > 0) {
+            Log.i(TAG, "moveMapPolygon from: " + xStartM + " " + yStartM);
             Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
-
             // move the midpoint
-            midpoint.set((midpoint.x + (xEnd - xStart)),
-                    (midpoint.y + (yEnd - yStart)));
-            Log.i(TAG, "new midpoint :" + midpoint.x + " " + midpoint.y);
+            midpoint.set((midpoint.x + (xEnd - xStartM)),
+                    (midpoint.y + (yEnd - yStartM)));
 
-            // set all other points depending on the first point
+            // set all other points depending on the midpoint
             for (int i = 0; i < geoPointList.size(); i++) {
                 Point newPoint = new Point();
                 newPoint.set((midpoint.x + pointsOffset.get(i).x),
@@ -309,8 +326,8 @@ public class MapLine extends Polyline {
                         (int) newPoint.y));
             }
             // set new start values for the next move action
-            xStart = (int) event.getX();
-            yStart = (int) event.getY();
+            xStartM = (int) event.getX();
+            yStartM = (int) event.getY();
 
             // set the list with the changed points
             this.setPoints(geoPointList);
@@ -319,28 +336,28 @@ public class MapLine extends Polyline {
     }
 
     /**
-     * Get the vectors to all points of the polyline starting from the first
-     * point. Necessary for moving the polyline.
+     * Get the vectors to all points of the polyline starting from the midpoint.
+     * Necessary for moving the polyline.
      * 
      * @return List with all vectors
      */
     public List<Point> getOffset() {
         Log.i(TAG, "number of points in the polygon: " + originalPoints.size());
         List<Point> pointsOffset = new ArrayList<Point>();
-        pOffsetLength = new ArrayList<Double>();
-
+        if (lengthSet) {
+            pOffsetLength = new ArrayList<Double>();
+        }
         if (originalPoints.size() > 0) {
             for (int i = 0; i < originalPoints.size(); i++) {
                 Point point = pj.toPixels(originalPoints.get(i), null);
                 int xOffset = (point.x - midpoint.x);
                 int yOffset = (point.y - midpoint.y);
-             // get the length of the vector from the midpoint to the point
+                // get the length of the vector from the midpoint to the point
                 if (lengthSet) {
-                double offsetLength = Math.sqrt((xOffset * xOffset)
-                        + (yOffset * yOffset));
-                pOffsetLength.add(offsetLength);
+                    double offsetLength = Math.sqrt((xOffset * xOffset)
+                            + (yOffset * yOffset));
+                    pOffsetLength.add(offsetLength);
                 }
-
                 pointsOffset.add(new Point(xOffset, yOffset));
             }
             lengthSet = false;
@@ -349,15 +366,15 @@ public class MapLine extends Polyline {
     }
 
     /**
-     * Set the points of the polyline. Called when the polyline is added to the
-     * map.
+     * Set the original points of the polyline. Called when the polyline is
+     * added to the map.
      */
     public void setOriginalPoints() {
         this.originalPoints = this.getPoints();
     }
 
     /**
-     * Setter for editable. Set whether the polyline is editable.
+     * Set whether the polyline is editable.
      * 
      * @param editable
      *            true if polyline is editable

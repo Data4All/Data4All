@@ -40,8 +40,9 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 /**
- * Polygon which is editable. It is deletable with a LongClick and movable with
- * a TouchEvent.
+ * Polygon which is editable. It has an InfoWindow opened with a single tap, if
+ * it is not editable and it is movable and rotatable with a TouchEvent, if it
+ * is editable.
  * 
  * @author Oliver Schwartz
  * @author sbollen
@@ -54,18 +55,16 @@ public class MapPolygon extends Polygon {
     private D4AMapView mapView;
     private AbstractDataElement element;
     private boolean editable;
+    // checks, that the length of the offset vectors is be calculated only once
     private boolean lengthSet = true;
-    
-    // TODO
-    double radiansComplete = 0.0;
 
     // midpoint of the bounding box of the polygon
-    Point midpoint;
+    private Point midpoint;
 
     // start time for touch event action_down
     private long timeStart;
 
-    // True when the edit mode is active.
+    // True when the edit mode is active
     private boolean active = false;
 
     // the maximum time difference between action_down and action_up, so that
@@ -73,14 +72,14 @@ public class MapPolygon extends Polygon {
     private static final int TIME_DIFF = 200;
 
     // Default Stroke Color
-    private static final int DEFAULT_STROKE_COLOR = Color.BLUE;
+    protected static final int DEFAULT_STROKE_COLOR = Color.BLUE;
     // Active Stroke Color
-    private static final int ACTIVE_STROKE_COLOR = Color.GREEN;
+    protected static final int ACTIVE_STROKE_COLOR = Color.GREEN;
 
     // Fill Color for Polygons
-    private static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
+    protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
     // Fill Color for activated Polygons
-    private static final int ACTIVE_FILL_COLOR = Color.argb(100, 50, 255, 50);
+    protected static final int ACTIVE_FILL_COLOR = Color.argb(100, 50, 255, 50);
 
     /**
      * Modes for edits which differ from touch events.
@@ -93,16 +92,16 @@ public class MapPolygon extends Polygon {
     /**
      * Start values for rotation.
      */
-    int xStartValue1 = 0;
-    int xStartValue2 = 0;
-    int yStartValue1 = 0;
-    int yStartValue2 = 0;
+    private int xStartPo1 = 0;
+    private int yStartPo1 = 0;
+    private int xStartPo2 = 0;
+    private int yStartPo2 = 0;
 
     /**
      * Start values for moving.
      */
-    private int xStart = 0;
-    private int yStart = 0;
+    private int xStartM = 0;
+    private int yStartM = 0;
 
     /**
      * List of GeoPoints of the MapPolygon before it was edited.
@@ -110,7 +109,7 @@ public class MapPolygon extends Polygon {
     private List<GeoPoint> originalPoints;
 
     /**
-     * List of vectors from the midpoint in the MapPolygon to every point.
+     * List of vectors from the midpoint of the MapPolygon to every point.
      */
     private List<Point> pointsOffset;
 
@@ -139,7 +138,7 @@ public class MapPolygon extends Polygon {
      *            the Mapview
      * 
      * @param ele
-     *            the associateded OsmElement
+     *            the associated OsmElement
      */
     public MapPolygon(AbstractActivity ctx, D4AMapView mv,
             AbstractDataElement ele) {
@@ -181,9 +180,12 @@ public class MapPolygon extends Polygon {
      * Get the localized name of the element to show in the InfoWindow.
      * 
      * @param context
+     *            the context of the application
      * @param key
+     *            the tag key
      * @param value
-     * @return
+     *            the tag value
+     * @return the localized name
      */
     public String getLocalizedName(Context context, String key, String value) {
         Resources resources = context.getResources();
@@ -204,7 +206,6 @@ public class MapPolygon extends Polygon {
         if (editable) {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-
                 pj = mapView.getProjection();
                 timeStart = System.currentTimeMillis();
                 if (active) {
@@ -215,10 +216,10 @@ public class MapPolygon extends Polygon {
                     if (pointsOffset == null) {
                         pointsOffset = getOffset();
                     }
-
-                    xStart = (int) event.getX();
-                    yStart = (int) event.getY();
-                    Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
+                    xStartM = (int) event.getX();
+                    yStartM = (int) event.getY();
+                    Log.d(TAG, "action_down at point: " + xStartM + " "
+                            + yStartM);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -226,10 +227,10 @@ public class MapPolygon extends Polygon {
                 if (active) {
                     mode = ROTATE;
                     // set the start values for the rotation
-                    xStartValue1 = (int) event.getX(0);
-                    xStartValue2 = (int) event.getX(1);
-                    yStartValue1 = (int) event.getY(0);
-                    yStartValue2 = (int) event.getY(1);
+                    xStartPo1 = (int) event.getX(0);
+                    xStartPo2 = (int) event.getX(1);
+                    yStartPo1 = (int) event.getY(0);
+                    yStartPo2 = (int) event.getY(1);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -251,7 +252,7 @@ public class MapPolygon extends Polygon {
                 if (active) {
                     if (mode == MOVE) {
                         Log.d(TAG, "move polygon");
-                        moveToNewPosition(event, mapView);
+                        moveToNewPos(event, mapView);
                     } else if (mode == ROTATE) {
                         Log.d(TAG, "rotate polygon");
                         rotatePolygon(event);
@@ -271,8 +272,8 @@ public class MapPolygon extends Polygon {
      * change the mode whether the edit function is active or not.
      */
     public void changeMode() {
-        Log.d(TAG, "actual activity mode: " + active);
         if (!active) {
+            // change mode to active, polygon is now rotatable and movable
             this.setFillColor(ACTIVE_FILL_COLOR);
             this.setStrokeColor(ACTIVE_STROKE_COLOR);
             pj = mapView.getProjection();
@@ -284,11 +285,14 @@ public class MapPolygon extends Polygon {
             mapView.invalidate();
             active = true;
         } else {
+            // change mode to not active, polygon is not modifiable now
+            //TODO change color
             this.setFillColor(DEFAULT_FILL_COLOR);
             this.setStrokeColor(DEFAULT_STROKE_COLOR);
             mapView.invalidate();
             active = false;
         }
+        Log.d(TAG, "actual activity mode: " + active);
     }
 
     /**
@@ -299,35 +303,31 @@ public class MapPolygon extends Polygon {
      */
     private void rotatePolygon(MotionEvent event) {
         // set end values for the next rotation action
-        int xEndValue1 = (int) event.getX(0);
-        int xEndValue2 = (int) event.getX(1);
+        int xEndPo1 = (int) event.getX(0);
+        int xEndPo2 = (int) event.getX(1);
 
-        int yEndValue1 = (int) event.getY(0);
-        int yEndValue2 = (int) event.getY(1);
+        int yEndPo1 = (int) event.getY(0);
+        int yEndPo2 = (int) event.getY(1);
 
         // get the rotation angle
-        double delta_xEnd = (xEndValue1 - xEndValue2);
-        double delta_yEnd = (yEndValue1 - yEndValue2);
+        double delta_xEnd = (xEndPo1 - xEndPo2);
+        double delta_yEnd = (yEndPo1 - yEndPo2);
         double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
 
-        double delta_xStart = (xStartValue1 - xStartValue2);
-        double delta_yStart = (yStartValue1 - yStartValue2);
+        double delta_xStart = (xStartPo1 - xStartPo2);
+        double delta_yStart = (yStartPo1 - yStartPo2);
         double radians2 = Math.atan2(delta_yStart, delta_xStart);
 
         double radians = radians1 - radians2;
 
-        // TODO is this if necessary?
-        if ((Math.abs(xStartValue1 - xEndValue1) > 0 && Math.abs(yStartValue1
-                - yEndValue1) > 0)
-                || (Math.abs(xStartValue2 - xEndValue2) > 0 && Math
-                        .abs(yStartValue2 - yEndValue2) > 0)) {
+        if ((Math.abs(xStartPo1 - xEndPo1) > 0 && Math.abs(yStartPo1 - yEndPo1) > 0)
+                || (Math.abs(xStartPo2 - xEndPo2) > 0 && Math.abs(yStartPo2
+                        - yEndPo2) > 0)) {
             if (Math.abs(radians) > 0.0) {
                 // get the offset of all points in the list to the first one
                 if (pointsOffset.size() < geoPointList.size()) {
                     pointsOffset = getOffset();
                 }
-                // TODO
-                radiansComplete += radians;
                 Log.d(TAG, "Rotation in radians: " + radians);
                 // Get the sin and cos of the rotation angle
                 float sin = (float) Math.sin(radians);
@@ -355,11 +355,11 @@ public class MapPolygon extends Polygon {
             }
         }
         // set new start values for the next rotation action
-        xStartValue1 = (int) event.getX(0);
-        xStartValue2 = (int) event.getX(1);
+        xStartPo1 = (int) event.getX(0);
+        xStartPo2 = (int) event.getX(1);
 
-        yStartValue1 = (int) event.getY(0);
-        yStartValue2 = (int) event.getY(1);
+        yStartPo1 = (int) event.getY(0);
+        yStartPo2 = (int) event.getY(1);
 
         // set the list with the changed points
         this.setPoints(geoPointList);
@@ -367,15 +367,16 @@ public class MapPolygon extends Polygon {
     }
 
     /**
-     * Move this polygon to the new position handling the touch events.
+     * Move this polygon to the new position handling the touch events. Move the
+     * midpoint of the bounding box of the polygon and after that add the offset
+     * of all points of the polygon to the new midpoint.
      * 
      * @param event
      *            the current MotionEvent from onTouchEvent
      * @param mapView
      *            the current mapView
      */
-    public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
-
+    public void moveToNewPos(final MotionEvent event, final MapView mapView) {
         // set the end coordinates of the movement
         int xEnd = (int) event.getX();
         int yEnd = (int) event.getY();
@@ -383,19 +384,15 @@ public class MapPolygon extends Polygon {
         if (pointsOffset == null) {
             pointsOffset = getOffset();
         }
-
         // only move the polygon if there is a movement
-        if (Math.abs(xEnd - xStart) > 0 && Math.abs(yEnd - yStart) > 0) {
-
-            Log.i(TAG, "moveMapPolygon from: " + xStart + " " + yStart);
+        if (Math.abs(xEnd - xStartM) > 0 && Math.abs(yEnd - yStartM) > 0) {
+            Log.i(TAG, "moveMapPolygon from: " + xStartM + " " + yStartM);
             Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
-
             // move the midpoint
-            midpoint.set((midpoint.x + (xEnd - xStart)),
-                    (midpoint.y + (yEnd - yStart)));
-            Log.i(TAG, "new midpoint :" + midpoint.x + " " + midpoint.y);
+            midpoint.set((midpoint.x + (xEnd - xStartM)),
+                    (midpoint.y + (yEnd - yStartM)));
 
-            // set all other points depending on the first point
+            // set all other points depending on the midpoint
             for (int i = 0; i < geoPointList.size(); i++) {
                 Point newPoint = new Point();
                 newPoint.set((midpoint.x + pointsOffset.get(i).x),
@@ -404,8 +401,8 @@ public class MapPolygon extends Polygon {
                         (int) newPoint.y));
             }
             // set new start values for the next move action
-            xStart = (int) event.getX();
-            yStart = (int) event.getY();
+            xStartM = (int) event.getX();
+            yStartM = (int) event.getY();
 
             // set the list with the changed points
             this.setPoints(geoPointList);
@@ -414,28 +411,28 @@ public class MapPolygon extends Polygon {
     }
 
     /**
-     * Get the vectors to all points of the polygon starting from the first
-     * point. Necessary for moving the polygon.
+     * Get the vectors to all points of the polygon starting from the midpoint.
+     * Necessary for moving the polygon.
      * 
      * @return List with all vectors
      */
     public List<Point> getOffset() {
         Log.i(TAG, "number of points in the polygon: " + originalPoints.size());
         List<Point> pointsOffset = new ArrayList<Point>();
-        pOffsetLength = new ArrayList<Double>();
-
+        if (lengthSet) {
+            pOffsetLength = new ArrayList<Double>();
+        }
         if (originalPoints.size() > 0) {
             for (int i = 0; i < originalPoints.size(); i++) {
                 Point point = pj.toPixels(originalPoints.get(i), null);
                 int xOffset = (point.x - midpoint.x);
                 int yOffset = (point.y - midpoint.y);
                 // get the length of the vector from the midpoint to the point
-                if (lengthSet || pOffsetLength.size() < originalPoints.size()) {
+                if (lengthSet) {
                     double offsetLength = Math.sqrt((xOffset * xOffset)
                             + (yOffset * yOffset));
                     pOffsetLength.add(offsetLength);
                 }
-
                 pointsOffset.add(new Point(xOffset, yOffset));
             }
             lengthSet = false;
@@ -444,15 +441,15 @@ public class MapPolygon extends Polygon {
     }
 
     /**
-     * Set the points of the polygon. Called when the polygon is added to the
-     * map.
+     * Set the original points of the polygon. Called when the polygon is added
+     * to the map.
      */
     public void setOriginalPoints() {
         this.originalPoints = this.getPoints();
     }
 
     /**
-     * Setter for editable. Set whether the polygon is editable.
+     * Set whether the polygon is editable.
      * 
      * @param editable
      *            true if polygon is editable
