@@ -50,6 +50,7 @@ public class PointToCoordsTransformUtil {
      */
     final private double[] xaxe = { 1, 0, 0 };
     final private double[] yaxe = { 0, 1, 0 };
+    final double radius = 6371004.0;
 
     public PointToCoordsTransformUtil() {
     }
@@ -93,17 +94,16 @@ public class PointToCoordsTransformUtil {
     public List<Node> transform(TransformationParamBean tps,
             DeviceOrientation deviceOrientation, List<Point> points) {
         this.tps = tps;
+
+        Log.i("CalcTest", tps.toString());
+        Log.i("CalcTest", deviceOrientation.toString());
         final List<Node> nodes = new ArrayList<Node>();
-        Log.d(TAG,
+        Log.d("CalcTest",
                 "Orientation: "
                         + Math.toDegrees(deviceOrientation.getAzimuth())
                         + " ; " + Math.toDegrees(deviceOrientation.getPitch())
                         + " ; " + Math.toDegrees(deviceOrientation.getRoll()));
-        Log.d(TAG,
-                "TPS-DATA Max-Camera-Pitch-Angle: "
-                        + tps.getCameraMaxHorizontalViewAngle()
-                        + " Max-camera-Rotation-Angle: "
-                        + tps.getCameraMaxVerticalViewAngle());
+        Log.d(TAG, tps.toString());
 
         // get the set height
         this.height = tps.getHeight();
@@ -159,8 +159,8 @@ public class PointToCoordsTransformUtil {
      */
     public Point fourthBuildingPoint(List<Point> points) {
         final List<double[]> coords = new ArrayList<double[]>();
-        float saveAzimuth = deviceOrientation.getAzimuth();
-        deviceOrientation.setAzimuth(0);
+        // float saveAzimuth = deviceOrientation.getAzimuth();
+        // deviceOrientation.setAzimuth(0);
         Log.d(TAG, "TPS-DATA pic height: " + tps.getPhotoHeight() + " width: "
                 + tps.getPhotoWidth() + " deviceHeight: " + tps.getHeight());
         if (points.size() != 3) {
@@ -180,19 +180,40 @@ public class PointToCoordsTransformUtil {
             }
         }
         double[] coord = MathUtil.calcFourthCoord(coords);
+        return coordToPixel(coord);
+    }
+
+    public Point coordToPixel(double[] coord) {
         double[] vector = new double[3];
-        vector[0] = coord[0];
-        vector[1] = coord[1];
+        double azimuth = deviceOrientation.getAzimuth();
+        vector[0] = ((coord[0] * Math.cos(azimuth)) - (coord[1] * Math
+                .sin(azimuth)));
+        vector[1] = ((coord[0] * Math.sin(azimuth)) + (coord[1] * Math
+                .cos(azimuth)));
         vector[2] = -tps.getHeight();
         // Rotate to the device coordinat-system
         double pitch = deviceOrientation.getPitch();
         double[] vector2 = MathUtil.rotate(vector, xaxe, pitch);
         double roll = deviceOrientation.getRoll();
         double[] vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+
+        if (vector3[2] >= 0) {
+            double length = Math.sqrt(vector3[0] * vector3[0] + vector3[1]
+                    * vector3[1] + vector3[2] * vector3[2]);
+            double multi = (1 - (vector3[2] / length));
+            multi = multi * multi
+                    * (tps.getPhotoHeight() + tps.getPhotoWidth());
+            multi = multi * multi;
+            return new Point((float) (vector3[0] * multi),
+                    (float) (-vector3[1] * multi));
+        }
+
         // calculate the pitch- and roll-angles.
         double horizonPitch = Math.atan(vector3[1] / vector3[2]);
         double horizonRoll = -Math.atan(vector3[0] / vector3[2]);
+
         // calculate a point on the horizont vertical to the mid of the display.
+        Log.i("TEST", tps.toString());
         float x = tps.getPhotoWidth()
                 / 2
                 + MathUtil.calculatePixelFromAngle(horizonRoll,
@@ -203,8 +224,41 @@ public class PointToCoordsTransformUtil {
                 + MathUtil.calculatePixelFromAngle(horizonPitch,
                         tps.getPhotoHeight(),
                         tps.getCameraMaxHorizontalViewAngle());
-        deviceOrientation.setAzimuth(saveAzimuth);
         return new Point(x, y);
+    }
+
+    public List<Point> calculateNodesToPoint(List<Node> nodes,
+            TransformationParamBean tps, DeviceOrientation deviceOrientation) {
+        this.tps = tps;
+        this.deviceOrientation = deviceOrientation;
+        double[] test = { -2, -232, };
+
+        Node n = calculateGPSPoint(tps.getLocation(), test);
+
+        // Log.i("TEST", "################### 2");
+        double[] t = calculateCoordFromGPS(tps.getLocation(), n);
+
+        Log.i("TEST", "################### " + t[0] + "     " + t[1]);
+
+        List<Point> points = new ArrayList<Point>();
+        for (Node node : nodes) {
+
+            double[] coord = calculateCoordFromGPS(tps.getLocation(), node);
+
+            // Log.i("TEST", " cord" + coord[0]+ "  :  " + coord[1]);
+            Point point = coordToPixel(coord);
+            points.add(point);
+
+            // Log.i("TEST", "Point  "+ point.toString());
+        }/*
+          * List<double[]> bla = new ArrayList<double[]>(); double[] c =
+          * {100,100,}; bla.add(c); double[] c2 = {-100,100,}; bla.add(c2);
+          * double[] c1 = {100,-100,}; bla.add(c1); double[] c3 = {-100,-100,};
+          * bla.add(c3); for(double[] i : bla){ Point point = coordToPixel(i);
+          * Log.i("TEST", "Point  "+ point.toString()); Log.i("TEST", i[0] +
+          * "   " + i[1]); points.add(point); }
+          */
+        return points;
     }
 
     /**
@@ -225,8 +279,9 @@ public class PointToCoordsTransformUtil {
         this.height = tps.getHeight();
         final double azimuth = -deviceOrientation.getAzimuth();
         // gets an angle for the point on the pitch axis
-        final double pixelpitch = - MathUtil.calculateAngleFromPixel(point.getY(),
-                tps.getPhotoHeight(), tps.getCameraMaxHorizontalViewAngle());
+        final double pixelpitch = -MathUtil.calculateAngleFromPixel(
+                point.getY(), tps.getPhotoHeight(),
+                tps.getCameraMaxHorizontalViewAngle());
         // gets an angle for the point on the roll axis
         final double pixelroll = MathUtil.calculateAngleFromPixel(point.getX(),
                 tps.getPhotoWidth(), tps.getCameraMaxVerticalViewAngle());
@@ -282,9 +337,10 @@ public class PointToCoordsTransformUtil {
         coord[0] = ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
         coord[1] = ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
         coord[2] = 0;
+        Log.i("CalcTest", "Coordinates: " + coord[0] + " ; " + coord[1]);
+
         return coord;
     }
-
 
     /**
      * calculates Node (with latitude and longitude) from coordinates in a local
@@ -297,7 +353,6 @@ public class PointToCoordsTransformUtil {
      * @return A Node with latitude and longitude
      */
     public Node calculateGPSPoint(Location location, double[] coord) {
-        final double radius = 6371004.0;
         final double lat = Math.toRadians(location.getLatitude());
         final double lon = Math.toRadians(location.getLongitude());
         // calculate the length of the current latitude line with the earth
@@ -321,6 +376,30 @@ public class PointToCoordsTransformUtil {
         lon2 = Math.toDegrees(lon2);
         // create a new Node with the latitude and longitude values
         return new Node(-1, lat2, lon2);
+    }
+
+    public double[] calculateCoordFromGPS(Location location, Node node) {
+        final double lat = Math.toRadians(location.getLatitude());
+        final double lon = Math.toRadians(location.getLongitude());
+        // calculate the length of the current latitude line with the earth
+        // radius
+        double lonLength = radius * Math.cos(lat);
+        lonLength = lonLength * 2 * Math.PI;
+        final double latLength = radius * 2 * Math.PI;
+        double[] coord = new double[2];
+        double test = (Math.toRadians(node.getLat()) - lat);
+        // Log.i("TEST", "lat "+lat+" nodelat "+node.getLat()+" latlength " +
+        // latLength+" test "+test);
+        // Log.i("TEST", "################### 3");
+        coord[1] = latLength * test / (Math.PI * 2);
+
+        // Log.i("TEST", "################### 4");
+        test = (Math.toRadians(node.getLon()) - lon);
+        coord[0] = lonLength * test / (Math.PI * 2);
+
+        // Log.i("TEST", "################### 5");
+
+        return coord;
     }
 
 }

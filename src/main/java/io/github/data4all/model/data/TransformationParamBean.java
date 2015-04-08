@@ -64,9 +64,9 @@ public class TransformationParamBean implements Parcelable {
      * @param location
      *            location of the device
      */
-    public TransformationParamBean(double height,
-            double verticalViewAngle, double horizontalViewAngle,
-            int photoWidth, int photoHeight, Location location) {
+    public TransformationParamBean(double height, double verticalViewAngle,
+            double horizontalViewAngle, int photoWidth, int photoHeight,
+            Location location) {
         this.height = height;
         this.horizontalViewAngle = horizontalViewAngle;
         this.verticalViewAngle = verticalViewAngle;
@@ -162,5 +162,11 @@ public class TransformationParamBean implements Parcelable {
         } else {
             dest.writeInt(0);
         }
+    }
+
+    public String toString() {
+        return "Height: " + height + " VerticalAngle: " + verticalViewAngle
+                + " HorizntalAngle: " + horizontalViewAngle + " Width: "
+                + photoWidth + " PhotoHeight: " + photoHeight;
     }
 }

@@ -19,11 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.Point;
 import io.github.data4all.util.HorizonCalculationUtil;
+import io.github.data4all.util.Optimizer;
 import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -31,6 +39,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.location.Location;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -62,6 +71,9 @@ public class CaptureAssistView extends View {
     private boolean informationSet;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
+    private List<PolyElement> polyElements;
+    private TransformationParamBean tps;
+    private PointToCoordsTransformUtil util;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
     private Runnable finishInflateListener;
@@ -124,6 +136,11 @@ public class CaptureAssistView extends View {
         this.skylook = false;
         this.visible = true;
 
+        // add osmElements from the database to the map
+        DataBaseHandler db = new DataBaseHandler(getContext());
+        this.polyElements = db.getAllPolyElements();
+        db.close();
+
         Resources r = this.getResources();
 
         cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -139,7 +156,8 @@ public class CaptureAssistView extends View {
         paint.setHinting(paint.HINTING_OFF);
         paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.FILL);
-
+        
+        util = new PointToCoordsTransformUtil();
     }
 
     /**
@@ -150,23 +168,23 @@ public class CaptureAssistView extends View {
      * @param maxRoll
      * @param deviceOrientation
      */
-    public void setInformations(float horizontalViewAngle, float verticalViewAngle,
-            DeviceOrientation deviceOrientation) {
+    public void setInformations(float horizontalViewAngle,
+            float verticalViewAngle, DeviceOrientation deviceOrientation) {
         Log.d(TAG, "setInformationsIsCalled");
         this.horizontalViewAngle = horizontalViewAngle;
         this.verticalViewAngle = verticalViewAngle;
         this.deviceOrientation = deviceOrientation;
         this.informationSet = true;
 
-        Log.d(TAG,
-                "MP" + horizontalViewAngle + " MR " + verticalViewAngle + " OR "
-                        + deviceOrientation.getPitch() + "  "
-                        + deviceOrientation.getRoll() + " MW+H "
-                        + mMeasuredWidth + " " + mMeasuredHeight);
+        Log.d(TAG, "MP" + horizontalViewAngle + " MR " + verticalViewAngle
+                + " OR " + deviceOrientation.getPitch() + "  "
+                + deviceOrientation.getRoll() + " MW+H " + mMeasuredWidth + " "
+                + mMeasuredHeight);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+
         Log.d(TAG, "onDrawCalled");
         // save the Size of the View
         this.mMeasuredWidth = getMeasuredWidth();
@@ -174,9 +192,33 @@ public class CaptureAssistView extends View {
         // when the needed information have been set: calculate the horizon
         if (informationSet) {
             ReturnValues returnValues = horizonCalculationUtil
-                    .calcHorizontalPoints(horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
-                            mMeasuredHeight, (float) Math.toRadians(horizondegree),
+                    .calcHorizontalPoints(horizontalViewAngle,
+                            verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
+                            (float) Math.toRadians(horizondegree),
                             deviceOrientation);
+
+        //    Log.i("TEST", "###################    <<<>>>   ");
+          //  Log.i("TEST", Optimizer.currentBestLoc().toString());
+            this.tps = new TransformationParamBean(1.5,
+                    horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
+                    mMeasuredHeight, Optimizer.currentBestLoc());
+            
+            for (PolyElement iter : polyElements) {
+                if (iter.getType() == PolyElementType.AREA
+                        || iter.getType() == PolyElementType.BUILDING) {   
+                    this.points = util.calculateNodesToPoint(iter.getNodes(), tps, deviceOrientation);
+
+
+                       // Log.i("TEST", "###################    <<<>>>   ");
+
+                }
+
+                Path path = getPath();
+                canvas.drawPath(path, invalidRegionPaint);
+            }         
+
+            
+            
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
@@ -202,9 +244,13 @@ public class CaptureAssistView extends View {
                         cameraStopPaint);
             }
         }
+
+
         canvas.restore();
 
     }
+    
+  
 
     /**
      * This method draws the lines for the horizon line. everything is filled
