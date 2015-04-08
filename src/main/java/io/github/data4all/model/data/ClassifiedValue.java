@@ -95,7 +95,7 @@ public class ClassifiedValue {
             this.setNameRessource((Integer) R.string.class.getDeclaredField(
                     "name_" + key + "_" + value).get(null));
             this.setDescriptionResource((Integer) R.string.class
-                    .getDeclaredField("description" + key + "_" + value).get(
+                    .getDeclaredField("description_" + key + "_" + value).get(
                             null));
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "IllegalArgumentException", e);
