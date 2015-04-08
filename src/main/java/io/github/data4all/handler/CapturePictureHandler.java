@@ -149,10 +149,10 @@ public class CapturePictureHandler implements PictureCallback {
                     .getInteger(R.integer.pref_bodyheight_default);
             // Save the default value
             prefs.edit().putString(key, "" + defaultValue).commit();
-            return (defaultValue - 20) / 100.0;
+            return (defaultValue - 30) / 100.0;
         } else {
             final double bodyHeight = Integer.parseInt(height);
-            return (bodyHeight - 20) / 100.0;
+            return (bodyHeight - 30) / 100.0;
         }
     }
 
