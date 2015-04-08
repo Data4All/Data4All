@@ -135,6 +135,9 @@ public class TouchView extends View {
      */
     private RedoUndo redoUndo;
 
+    /**
+     * is the polygon activated
+     */
     private Boolean polygonclicked = false;
 
     private float downX = 0;
@@ -312,10 +315,11 @@ public class TouchView extends View {
                     // Log.d("", "Long Press cancled because there is a point");
 
                     this.mover = movePoint(lookUpPoint);
-                    isDelete = true;
                     startPoint = lookUpPoint;
                     lookUpPoint = null;
-
+                    if (!polygonclicked) {
+                        isDelete = true;
+                    }
                 } else {
 
                     startPoint = new Point(downX, downY);
@@ -510,8 +514,8 @@ public class TouchView extends View {
         boolean isOverhorizont = false;
         boolean error = false;
         loop: for (int i = 0; i < polygon.size(); i++) {
-             float xcoord = polygon.get(i).getX() + x;
-             float ycoord = polygon.get(i).getY() + y;
+            float xcoord = polygon.get(i).getX() + x;
+            float ycoord = polygon.get(i).getY() + y;
             // ||xcoord<getResources()
             // .getDisplayMetrics().widthPixels||ycoord<getResources()
             // .getDisplayMetrics().heightPixels
