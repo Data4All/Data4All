@@ -18,6 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
@@ -175,6 +176,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
+        TagSuggestionHandler.startAdresseCollector();
     }
 
     /*
