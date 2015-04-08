@@ -184,7 +184,6 @@ public class CaptureAssistView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         Log.d(TAG, "onDrawCalled");
         // save the Size of the View
         this.mMeasuredWidth = getMeasuredWidth();
@@ -195,30 +194,20 @@ public class CaptureAssistView extends View {
                     .calcHorizontalPoints(horizontalViewAngle,
                             verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
                             (float) Math.toRadians(horizondegree),
-                            deviceOrientation);
-
-        //    Log.i("TEST", "###################    <<<>>>   ");
-          //  Log.i("TEST", Optimizer.currentBestLoc().toString());
+                            deviceOrientation);            
+            /*
             this.tps = new TransformationParamBean(1.5,
                     horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
-                    mMeasuredHeight, Optimizer.currentBestLoc());
-            
+                    mMeasuredHeight, Optimizer.currentBestLoc());            
             for (PolyElement iter : polyElements) {
                 if (iter.getType() == PolyElementType.AREA
                         || iter.getType() == PolyElementType.BUILDING) {   
                     this.points = util.calculateNodesToPoint(iter.getNodes(), tps, deviceOrientation);
-
-
-                       // Log.i("TEST", "###################    <<<>>>   ");
-
                 }
-
                 Path path = getPath();
                 canvas.drawPath(path, invalidRegionPaint);
-            }         
-
-            
-            
+            }
+            */       
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
@@ -244,10 +233,7 @@ public class CaptureAssistView extends View {
                         cameraStopPaint);
             }
         }
-
-
         canvas.restore();
-
     }
     
   
@@ -274,7 +260,6 @@ public class CaptureAssistView extends View {
             path.lineTo(points.get(0).getX(), points.get(0).getY());
         }
         return path;
-
     }
 
     /**

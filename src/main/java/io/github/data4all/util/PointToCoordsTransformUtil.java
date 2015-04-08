@@ -50,7 +50,6 @@ public class PointToCoordsTransformUtil {
      */
     final private double[] xaxe = { 1, 0, 0 };
     final private double[] yaxe = { 0, 1, 0 };
-    final double radius = 6371004.0;
 
     public PointToCoordsTransformUtil() {
     }
@@ -120,7 +119,7 @@ public class PointToCoordsTransformUtil {
             // transforms local coordinates in global GPS-coordinates set to.
             // Node.
             if (coord != null) {
-                final Node node = this.calculateGPSPoint(tps.getLocation(),
+                final Node node = calculateGPSPoint(tps.getLocation(),
                         coord);
                 Log.d(TAG,
                         "Calculated Lat: " + node.getLat() + " Lon: "
@@ -231,33 +230,12 @@ public class PointToCoordsTransformUtil {
             TransformationParamBean tps, DeviceOrientation deviceOrientation) {
         this.tps = tps;
         this.deviceOrientation = deviceOrientation;
-        double[] test = { -2, -232, };
-
-        Node n = calculateGPSPoint(tps.getLocation(), test);
-
-        // Log.i("TEST", "################### 2");
-        double[] t = calculateCoordFromGPS(tps.getLocation(), n);
-
-        Log.i("TEST", "################### " + t[0] + "     " + t[1]);
-
         List<Point> points = new ArrayList<Point>();
         for (Node node : nodes) {
-
             double[] coord = calculateCoordFromGPS(tps.getLocation(), node);
-
-            // Log.i("TEST", " cord" + coord[0]+ "  :  " + coord[1]);
             Point point = coordToPixel(coord);
             points.add(point);
-
-            // Log.i("TEST", "Point  "+ point.toString());
-        }/*
-          * List<double[]> bla = new ArrayList<double[]>(); double[] c =
-          * {100,100,}; bla.add(c); double[] c2 = {-100,100,}; bla.add(c2);
-          * double[] c1 = {100,-100,}; bla.add(c1); double[] c3 = {-100,-100,};
-          * bla.add(c3); for(double[] i : bla){ Point point = coordToPixel(i);
-          * Log.i("TEST", "Point  "+ point.toString()); Log.i("TEST", i[0] +
-          * "   " + i[1]); points.add(point); }
-          */
+        }
         return points;
     }
 
@@ -352,11 +330,12 @@ public class PointToCoordsTransformUtil {
      *            coordinate of the point in the local system
      * @return A Node with latitude and longitude
      */
-    public Node calculateGPSPoint(Location location, double[] coord) {
+    public static Node calculateGPSPoint(Location location, double[] coord) {
         final double lat = Math.toRadians(location.getLatitude());
         final double lon = Math.toRadians(location.getLongitude());
         // calculate the length of the current latitude line with the earth
         // radius
+        final double radius = 6371004.0;
         double lonLength = radius * Math.cos(lat);
         lonLength = lonLength * 2 * Math.PI;
         // add to the current latitude the distance of the coordinate
@@ -368,37 +347,26 @@ public class PointToCoordsTransformUtil {
         final double latLength = radius * 2 * Math.PI;
         // add to the current Longitude the distance of the coordinate
         double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
-        /*
-         * if (lon2 > (Math.PI/4)){ lon2 = (Math.PI/2) - lon2; } if (lon2 <
-         * (-Math.PI/4)){ lon2 = -(Math.PI/2) + lon2; }
-         */
         lat2 = Math.toDegrees(lat2);
         lon2 = Math.toDegrees(lon2);
         // create a new Node with the latitude and longitude values
         return new Node(-1, lat2, lon2);
     }
 
-    public double[] calculateCoordFromGPS(Location location, Node node) {
+    public static double[] calculateCoordFromGPS(Location location, Node node) {
         final double lat = Math.toRadians(location.getLatitude());
         final double lon = Math.toRadians(location.getLongitude());
         // calculate the length of the current latitude line with the earth
         // radius
+        final double radius = 6371004.0;
         double lonLength = radius * Math.cos(lat);
         lonLength = lonLength * 2 * Math.PI;
         final double latLength = radius * 2 * Math.PI;
         double[] coord = new double[2];
         double test = (Math.toRadians(node.getLat()) - lat);
-        // Log.i("TEST", "lat "+lat+" nodelat "+node.getLat()+" latlength " +
-        // latLength+" test "+test);
-        // Log.i("TEST", "################### 3");
         coord[1] = latLength * test / (Math.PI * 2);
-
-        // Log.i("TEST", "################### 4");
         test = (Math.toRadians(node.getLon()) - lon);
         coord[0] = lonLength * test / (Math.PI * 2);
-
-        // Log.i("TEST", "################### 5");
-
         return coord;
     }
 

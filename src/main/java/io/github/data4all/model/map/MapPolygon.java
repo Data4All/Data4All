@@ -23,9 +23,11 @@ import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.Polygon;
@@ -37,6 +39,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.location.Location;
 import android.view.MotionEvent;
 
 /**
@@ -109,8 +112,8 @@ public class MapPolygon extends Polygon {
      */
     private List<GeoPoint> originalPoints;
 
-    private List<GeoPoint> saveGeoPoints;
-    private GeoPoint geoMid;
+    private List<double[]> saveGeoPoints;
+    private Location midLocation;
 
     /**
      * List of vectors from the midpoint of the MapPolygon to every point.
@@ -344,7 +347,6 @@ public class MapPolygon extends Polygon {
         }
     }
 
-    // ////////////////////////////////////
 
     /**
      * Rotate the polygon handling the touch events.
@@ -369,46 +371,22 @@ public class MapPolygon extends Polygon {
         double delta_yStart = (yStartPo1 - yStartPo2);
         double radians2 = Math.atan2(delta_yStart, delta_xStart);
 
-       // Log.d("TEST", "Rotate");
+        // Log.d("TEST", "Rotate");
         double radians = radians1 - radians2;
         geoPointList = new ArrayList<GeoPoint>();
-        for(GeoPoint iter : saveGeoPoints){
-            double lat = iter.getLatitude() * Math.cos(radians) - iter.getLongitude() * Math.sin(radians);
-            double lon = iter.getLatitude() * Math.sin(radians) + iter.getLongitude() * Math.cos(radians);
-            geoPointList.add(new GeoPoint(lat + geoMid.getLatitude(), lon + geoMid.getLongitude()));  
+        for (double[] preCoord : saveGeoPoints) {
+            double[] coord = new double[2];
+            coord[1] = preCoord[1] * Math.cos(radians) - preCoord[0]
+                    * Math.sin(radians);
+            coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
+                    * Math.cos(radians);
+            Node node = PointToCoordsTransformUtil.calculateGPSPoint(
+                    midLocation, coord);
+            geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
-        /*
-          if ((Math.abs(xStartPo1 - xEndPo1) > 0 && Math.abs(yStartPo1 -
-          yEndPo1) > 0) || (Math.abs(xStartPo2 - xEndPo2) > 0 &&
-          Math.abs(yStartPo2 - yEndPo2) > 0)) { if (Math.abs(radians) > 0.0) {
-          // get the offset of all points in the list to the first one if
-         (pointsOffset.size() < geoPointList.size()) { pointsOffset =
-          getOffset(); } Log.d(TAG, "Rotation in radians: " + radians); // Get
-         the sin and cos of the rotation angle float sin = (float)
-          Math.sin(radians); float cos = (float) Math.cos(radians);
-          
-          // set all rotated points of the polygon for (int i = 0; i <
-         geoPointList.size(); i++) { Point newPoint = new Point(); Point
-          offset = pointsOffset.get(i); // calculate new offset with rotation
-          angle double xOffset = offset.x * cos - offset.y * sin; double
-          yOffset = offset.x * sin + offset.y * cos; double newOffsetLength =
-          Math.sqrt((xOffset * xOffset) + (yOffset * yOffset)); double
-          offsetLength = pOffsetLength.get(i); xOffset = xOffset *
-          (offsetLength / newOffsetLength); yOffset = yOffset * (offsetLength /
-          newOffsetLength); offset.set((int) xOffset, (int) yOffset);
-          
-         newPoint.set((midpoint.x + (int) xOffset), (midpoint.y + (int)
-          yOffset)); geoPointList.set(i, (GeoPoint) pj.fromPixels( (int)
-          newPoint.x, (int) newPoint.y)); } } } // set new start values for the
-          next rotation action xStartPo1 = (int) event.getX(0); xStartPo2 =
-          (int) event.getX(1);
-         
-          yStartPo1 = (int) event.getY(0); yStartPo2 = (int) event.getY(1);
-         */
         // set the list with the changed points
         this.setPoints(geoPointList);
 
-        setOriginalPoints();
         mapView.invalidate();
     }
 
@@ -449,9 +427,8 @@ public class MapPolygon extends Polygon {
     public void setOriginalPoints() {
         originalPoints = this.getPoints();
     }
-    
-    
-    public void saveGeoPoints(){
+
+    public void saveGeoPoints() {
         double lat = 0, lon = 0;
         int i = 0;
         for (GeoPoint geoPoint : this.getPoints()) {
@@ -459,19 +436,20 @@ public class MapPolygon extends Polygon {
             lon += geoPoint.getLongitude();
             i++;
         }
-        lat = lat / i;
-        lon = lon / i;
-        this.geoMid = new GeoPoint(lat, lon);
-        Log.d("TEST", "geoMid: " + lat + " ; "+lon);
-        this.saveGeoPoints = new ArrayList<GeoPoint>();
+        this.midLocation = new Location("provide");
+        this.midLocation.setLatitude(lat/i);
+        this.midLocation.setLongitude(lon/i);        
+        this.saveGeoPoints = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            saveGeoPoints.add(new GeoPoint(geoPoint.getLatitude() - lat,
-                    geoPoint.getLongitude() - lon));
-            Log.d("TEST", "GeoPoint: " + geoPoint.getLatitude() + " ; " + geoPoint.getLongitude());
+            double[] preCoord = PointToCoordsTransformUtil
+                    .calculateCoordFromGPS(
+                            midLocation,
+                            new Node(0, geoPoint.getLatitude(), geoPoint.getLongitude()));
+            saveGeoPoints.add(preCoord);
         }
     }
 
-    // /////////////////////
+    
     /**
      * Set whether the polygon is editable.
      * 
