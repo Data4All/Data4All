@@ -59,8 +59,6 @@ public class MapPolygon extends Polygon {
     private D4AMapView mapView;
     private AbstractDataElement element;
     private boolean editable;
-    // checks, that the length of the offset vectors is be calculated only once
-    private boolean lengthSet = true;
 
     // midpoint of the bounding box of the polygon
     private Point midpoint;
@@ -107,11 +105,6 @@ public class MapPolygon extends Polygon {
     private int xStartM = 0;
     private int yStartM = 0;
 
-    /**
-     * List of GeoPoints of the MapPolygon before it was edited.
-     */
-    private List<GeoPoint> originalPoints;
-
     private List<double[]> saveGeoPoints;
     private Location midLocation;
 
@@ -119,11 +112,6 @@ public class MapPolygon extends Polygon {
      * List of vectors from the midpoint of the MapPolygon to every point.
      */
     private List<Point> pointsOffset;
-
-    /**
-     * List of the length of all vectors from the midpoint to every point.
-     */
-    private List<Double> pOffsetLength;
 
     /**
      * List of GeoPoints for editing the MapPolygon.
@@ -217,12 +205,9 @@ public class MapPolygon extends Polygon {
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
-                    // actual polygon point list
+
                     geoPointList = this.getPoints();
-                    // get the offset of all points in the list to the first one
-                    if (pointsOffset == null) {
-                        pointsOffset = getOffset();
-                    }
+
                     xStartM = (int) event.getX();
                     yStartM = (int) event.getY();
                     Log.d(TAG, "action_down at point: " + xStartM + " "
@@ -287,9 +272,10 @@ public class MapPolygon extends Polygon {
             pj = mapView.getProjection();
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
-            // setOriginalPoints();
-            lengthSet = true;
-            pointsOffset = getOffset();
+            // get the offset of all points in the list to the first one
+            if (pointsOffset == null) {
+                pointsOffset = getOffset(geoPointList);
+            }
             mapView.invalidate();
             active = true;
         } else {
@@ -319,7 +305,7 @@ public class MapPolygon extends Polygon {
         int yEnd = (int) event.getY();
 
         if (pointsOffset == null) {
-            pointsOffset = getOffset();
+            pointsOffset = getOffset(geoPointList);
         }
         // only move the polygon if there is a movement
         if (Math.abs(xEnd - xStartM) > 0 && Math.abs(yEnd - yStartM) > 0) {
@@ -346,7 +332,6 @@ public class MapPolygon extends Polygon {
             mapView.invalidate();
         }
     }
-
 
     /**
      * Rotate the polygon handling the touch events.
@@ -386,7 +371,7 @@ public class MapPolygon extends Polygon {
         }
         // set the list with the changed points
         this.setPoints(geoPointList);
-
+        pointsOffset = getOffset(geoPointList);
         mapView.invalidate();
     }
 
@@ -396,26 +381,13 @@ public class MapPolygon extends Polygon {
      * 
      * @return List with all vectors
      */
-    public List<Point> getOffset() {
-        Log.i(TAG, "number of points in the polygon: " + originalPoints.size());
+    public List<Point> getOffset(List<GeoPoint> gpointList) {
         List<Point> pointsOffset = new ArrayList<Point>();
-        if (lengthSet) {
-            pOffsetLength = new ArrayList<Double>();
-        }
-        if (originalPoints.size() > 0) {
-            for (int i = 0; i < originalPoints.size(); i++) {
-                Point point = pj.toPixels(originalPoints.get(i), null);
-                int xOffset = (point.x - midpoint.x);
-                int yOffset = (point.y - midpoint.y);
-                // get the length of the vector from the midpoint to the point
-                if (lengthSet) {
-                    double offsetLength = Math.sqrt((xOffset * xOffset)
-                            + (yOffset * yOffset));
-                    pOffsetLength.add(offsetLength);
-                }
-                pointsOffset.add(new Point(xOffset, yOffset));
-            }
-            lengthSet = false;
+        for (int i = 0; i < geoPointList.size(); i++) {
+            Point point = pj.toPixels(geoPointList.get(i), null);
+            int xOffset = (point.x - midpoint.x);
+            int yOffset = (point.y - midpoint.y);
+            pointsOffset.add(new Point(xOffset, yOffset));
         }
         return pointsOffset;
     }
@@ -425,7 +397,7 @@ public class MapPolygon extends Polygon {
      * to the map.
      */
     public void setOriginalPoints() {
-        originalPoints = this.getPoints();
+        geoPointList = this.getPoints();
     }
 
     public void saveGeoPoints() {
@@ -437,19 +409,19 @@ public class MapPolygon extends Polygon {
             i++;
         }
         this.midLocation = new Location("provide");
-        this.midLocation.setLatitude(lat/i);
-        this.midLocation.setLongitude(lon/i);        
+        this.midLocation.setLatitude(lat / i);
+        this.midLocation.setLongitude(lon / i);
         this.saveGeoPoints = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
             double[] preCoord = PointToCoordsTransformUtil
                     .calculateCoordFromGPS(
                             midLocation,
-                            new Node(0, geoPoint.getLatitude(), geoPoint.getLongitude()));
+                            new Node(0, geoPoint.getLatitude(), geoPoint
+                                    .getLongitude()));
             saveGeoPoints.add(preCoord);
         }
     }
 
-    
     /**
      * Set whether the polygon is editable.
      * 
