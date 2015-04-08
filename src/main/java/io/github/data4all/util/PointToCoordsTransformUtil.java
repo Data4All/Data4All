@@ -181,7 +181,13 @@ public class PointToCoordsTransformUtil {
         double[] coord = MathUtil.calcFourthCoord(coords);
         return coordToPixel(coord);
     }
-
+    
+    /**
+     * Calculates a coordinate to a Pixel
+     * 
+     * @param coord
+     * @return a Point
+     */
     public Point coordToPixel(double[] coord) {
         double[] vector = new double[3];
         double azimuth = deviceOrientation.getAzimuth();
@@ -226,6 +232,13 @@ public class PointToCoordsTransformUtil {
         return new Point(x, y);
     }
 
+    /**
+     * Transfers GPSPoints to Points on the Display
+     * @param nodes
+     * @param tps
+     * @param deviceOrientation
+     * @return List of Points
+     */
     public List<Point> calculateNodesToPoint(List<Node> nodes,
             TransformationParamBean tps, DeviceOrientation deviceOrientation) {
         this.tps = tps;
@@ -353,6 +366,12 @@ public class PointToCoordsTransformUtil {
         return new Node(-1, lat2, lon2);
     }
 
+    /**
+     * transfers GPSPoints to a local Coordinate System
+     * @param location
+     * @param node
+     * @return coord
+     */
     public static double[] calculateCoordFromGPS(Location location, Node node) {
         final double lat = Math.toRadians(location.getLatitude());
         final double lon = Math.toRadians(location.getLongitude());
