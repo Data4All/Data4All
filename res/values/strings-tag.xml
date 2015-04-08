@@ -251,6 +251,7 @@
 
     <!-- hints: -->
 
+
     <!-- address hints -->
     <string name="hint_addr_street">Main Street</string>
     <string name="hint_addr_housenumber">1234</string>
@@ -263,5 +264,225 @@
     <string name="hint_contact_fax">+01 234567890</string>
     <string name="hint_contact_website">http_//www.website.com</string>
     <string name="hint_contact_email">foo@bar.com</string>
+
+    <!-- descriptions: -->
+
+
+    <!-- description classified values highway -->
+    <string name="description_highway_residential">Roads which are primarily lined with and serve as an access to housing.</string>
+    <string name="description_highway_service">For access roads to, or within an industrial estate, camp site, business park, car park etc. Can be used in conjunction with service=* to indicate the type of usage and with access=* to indicate who can use it and in what circumstances.</string>
+    <string name="description_highway_track">Roads for mostly agricultural or forestry uses. To describe the quality of a track, see tracktype=*. Note: Although tracks are often rough with unpaved surfaces, this tag is not describing the quality of a road but its use. Consequently, if you want to tag a general use road, use one of the general highway values instead of track.</string>
+    <string name="description_highway_unclassified">The least most important through roads in a country\'s system – i.e. minor roads of a lower classification than tertiary, but which serve a purpose other than access to properties. (The word \'unclassified\' is a historical artefact of the UK road system and does not mean that the classification is unknown; you can use highway=road for that.) </string>
+    <string name="description_highway_footway">For designated footpaths; i.e., mainly/exclusively for pedestrians. This includes walking tracks and gravel paths. If bicycles are allowed as well, you can indicate this by adding a bicycle=yes tag. Should not be used for paths where the primary or intended usage is unknown. Use highway=pedestrian for pedestrianised roads in shopping or residential areas and highway=track if it is usable by agricultural or similar vehicles.</string>
+    <string name="description_highway_tertiary">The next most important roads in a country\'s system.</string>
+    <string name="description_highway_path">A non-specific path. Use highway=footway for paths mainly for walkers, highway=cycleway for one also usable by cyclists, highway=bridleway for ones available to horses as well as walkers and highway=track for ones which is passable by agriculture or similar vehicles.</string>
+    <string name="description_highway_secondary">The next most important roads in a country\'s system. (Often link smaller towns and villages.) </string>
+    <string name="description_highway_primary">The next most important roads in a country\'s system. (Often link larger towns.) </string>
+    <string name="description_highway_bus_stop">A small bus stop. Can be mapped more rigorously using public_transport=stop_position for the position where the vehicle stops and public_transport=platform for the place where passengers wait. See public_transport=* for more details.</string>
+    <string name="description_highway_crossing">Pedestrians can cross a street here; e.g., zebra crossing </string>
+    <string name="description_highway_turning_circle">A turning circle is a rounded, widened area usually, but not necessarily, at the end of a road to facilitate easier turning of a vehicle. Also known as a cul de sac.</string>
+    <string name="description_highway_cycleway">For designated cycleways. Add foot=* only if default-access-restrictions do not apply.</string>
+    <string name="description_highway_traffic_signals">Lights that control the traffic </string>
+    <string name="description_highway_trunk">The most important roads in a country\'s system that aren\'t motorways. (Need not necessarily be a divided highway.)</string>
+    <string name="description_highway_living_street">For living streets, which are residential streets where pedestrians have legal priority over cars, speeds are kept very low and where children are allowed to play on the street.</string>
+    <string name="description_highway_motorway">A restricted access major divided highway, normally with 2 or more running lanes plus emergency hard shoulder. Equivalent to the Freeway, Autobahn, etc..</string>
+    <string name="description_highway_steps">For flights of steps (stairs) on footways. Use with step_count=* to indicate the number of steps</string>
+    <string name="description_highway_motorway_link">The link roads (sliproads/ramps) leading to/from a motorway from/to a motorway or lower class highway. Normally with the same motorway restrictions.</string>
+    <string name="description_highway_street_lamp">A street light, lamppost, street lamp, light standard, or lamp standard is a raised source of light on the edge of a road, which is turned on or lit at a certain time every night.</string>
+    <string name="description_highway_pedestrian">For roads used mainly/exclusively for pedestrians in shopping and some residential areas which may allow access by motorised vehicles only for very limited periods of the day. To create a \'square\' or \'plaza\' create a closed way and tag as pedestrian and also with area=yes.</string>
+    <string name="description_highway_road">A road where the mapper is unable to ascertain the classification from the information available. This is intended as a temporary tag to mark a road until it has been properly surveyed. Once it has been surveyed, the classification should be updated to the appropriate value.</string>
+
+    <!-- description classified values waterway -->
+    <string name="description_waterway_stream">A naturally-formed waterway that is too thin to be classed as a river. An active, able-bodied person should be able to jump over it if trees along it aren\'t too thick.</string>
+    <string name="description_waterway_river">For narrow rivers which will be rendered as a line. For larger rivers (defined as more than 12 m across) see waterway=riverbank.</string>
+    <string name="description_waterway_ditch">A small to moderate depression created to channel water.</string>
+    <string name="description_waterway_riverbank">Area 	Used for larger rivers, to define an area between the opposite riverbanks. See water=river for alternative tagging.</string>
+    <string name="description_waterway_dam">A wall built across a river or stream to impound the water. A dam normally does not have water flowing over the top of it.</string>
+    <string name="description_waterway_weir">A barrier built across a river, sometimes to divert water for industrial purposes. Water can still flow over the top.</string>
+    <string name="description_waterway_lock_gate">To mark the position of gates at each end of a lock. Alternatively, for smaller locks use a single lock=yes node in the middle of the lock.</string>
+
+    <!-- description classified values barrier -->
+    <string name="description_barrier_fence">A structure supported by posts driven into the ground and designed to prevent movement across a boundary. It is distinguished from a wall by the lightness of its construction. Use fence_type=* to add details.</string>
+    <string name="description_barrier_wall">A freestanding solid structure designed to restrict or prevent movement across a boundary. Usually made from solid brick, concrete or stone and almost always built so that it is opaque to vision.</string>
+    <string name="description_barrier_gate">An entrance that can be opened or closed to get through the barrier. Combine with access=* where appropriate.</string>
+    <string name="description_barrier_hedge">Is a line of closely spaced shrubs and bushes, planted and trained in such a way as to form a barrier or to mark the boundary of an area.</string>
+    <string name="description_barrier_bollard">Solid (usually concrete or metal) pillar or pillars in the middle of the road to prevent passage by some traffic.</string>
+    <string name="description_barrier_lift_gate">Solid (usually concrete or metal) pillar or pillars in the middle of the road to prevent passage by some traffic.</string>
+    <string name="description_barrier_retaining_wall">Retaining walls serve to retain the lateral pressure of soil. Right side is bottom, left side is top.</string>
+    <string name="description_barrier_stile">A stile allows pedestrians to cross a wall or fence, but never actually "opens" the barrier (unlike a gate, a stile has few or no moving parts).</string>
+    <string name="description_barrier_cycle_barrier">Barriers to bicycle traffic, most typically a pair of staggered steel bars perpendicular to the way itself whose gaps allow pedestrians to pass.</string>
+    <string name="description_barrier_entrance">A gap in a linear barrier with nothing that limits passing through. access=yes is implied. The limitations are the same of the way that crosses it, if there is such.</string>
+    <string name="description_barrier_block">A large, solid, immobile block that can be moved only with heavy machinery or great effort. Typically big solid things made of concrete for stopping larger vehicles. Sometimes natural boulders are used for the same purpose.</string>
+    <string name="description_barrier_kerb">A (for example footway) kerb is a barrier for vehicles and wheelchair drivers. The height of the kerb is important and with this information, the usage by different groups can be determined. The height of the kerb is tagged additionally as height=*, if available. Right side is bottom, left side is top.</string>
+    <string name="description_barrier_toll_booth">A road usage toll or fee is collected here. Used with toll=* and charge=*</string>
+    <string name="description_barrier_cattle_grid">Bars in the road surface that allow wheeled vehicles but not animals to cross. Sometimes known as a Texas Gate, even outside of Texas</string>
+    <string name="description_barrier_kissing_gate">A gate which allows people to cross, but not livestock.</string>
+    <string name="description_barrier_city_wall">A fortification used to defend a city or settlement from potential aggressors. From ancient to modern times, they are used to enclose settlements. right side is bottom, left side is top. if both sides are same height then add "two_sided=yes". See also historic=city_gate.</string>
+    <string name="description_barrier_ditch">A trench, ditch or ravine, usually with a stream at the bottom, that is not easily crossed, especially if not on foot. Can be used in combination with waterway=stream or waterway=drain.</string>
+
+    <!-- description classified values amenity -->
+    <string name="description_amenity_parking">Car park. Nodes and areas (without access tag) will get a parking symbol. Areas will be coloured. Streets on car parking are often tagged highway=service and service=parking_aisle.</string>
+    <string name="description_amenity_place_of_worship">A church, mosque, or temple, etc. Note that you also need religion=*, usually denomination=* and preferably name=* as well as amenity=place_of_worship. See the article for details.</string>
+    <string name="description_amenity_school">School and grounds</string>
+    <string name="description_amenity_restaurant">Restaurant (not fast food, see amenity=fast_food). The kind of food served can be tagged with cuisine=* and diet=*.</string>
+    <string name="description_amenity_bench">A bench to sit down and relax a bit</string>
+    <string name="description_amenity_fuel">Petrol station; gas station; marine fuel; … Streets to petrol stations are often tagged highway=service.</string>
+    <string name="description_amenity_bank">A bank (for a bank that also has an ATM, it is preferred that a separate node for each ATM is added).</string>
+    <string name="description_amenity_post_box">A box for the reception of mail. Alternative mail-carriers can be tagged via operator=*.</string>
+    <string name="description_amenity_fast_food">Fast food restaurant (see also amenity=restaurant). The kind of food served can be tagged with cuisine=* and diet=*.</string>
+    <string name="description_amenity_cafe">Cafe is generally an informal place that offers casual meals and beverages, typically, the focus is on coffee or tea. Also known as a coffeehouse/shop, bistro or sidewalk cafe. The kind of food served may be mapped with the tags cuisine=* and diet=*. See also the tags amenity=restaurant;bar;fast_food.</string>
+    <string name="description_amenity_grave_yard">A (smaller) place of burial, often you\'ll find a church nearby. Large places should be landuse=cemetery instead.</string>
+    <string name="description_amenity_recycling">Recycling facilities (bottle banks, etc.). Combine with recycling_type=container for containers or recycling_type=centre for recycling centres.</string>
+    <string name="description_amenity_kindergarten">For children too young for a regular school (also known as playschool or nursery school).</string>
+    <string name="description_amenity_pharmacy">Pharmacy dispensing=yes dispensing=no or omitted</string>
+    <string name="description_amenity_hospital">A building which forms part of a hospital. Use amenity=hospital for the hospital grounds.</string>
+    <string name="description_amenity_bicycle_parking">Parking for bicycles</string>
+    <string name="description_amenity_post_office">Post office building with postal services.</string>
+    <string name="description_amenity_waste_basket">A single small container for depositing garbage that is easily accesible for pedestrians.</string>
+    <string name="description_amenity_pub">A place selling beer and other alcoholic drinks; may also provide food or accommodation (UK). See description of amenity=bar and amenity=pub for distinction between bar and pub.</string>
+    <string name="description_amenity_toilets">Public toilets (might require a fee).</string>
+    <string name="description_amenity_public_building">A generic public building. See building=public</string>
+    <string name="description_amenity_shelter">A small shelter against bad weather conditions. To additionally describe the kind of shelter use shelter_type=*.</string>
+    <string name="description_amenity_telephone">Public telephone </string>
+    <string name="description_amenity_drinking_water">Drinking water is a place where humans can obtain potable water for consumption. Typically, the water is used for only drinking. Also known as a drinking fountain or water tap.</string>
+    <string name="description_amenity_atm">An ATM or cash point</string>
+    <string name="description_amenity_bar">Bar is a purpose-built commercial establishment that sells alcoholic drinks to be consumed on the premises. They are characterised by a noisy and vibrant atmosphere, similar to a party and usually don\'t sell food. See also the description of the tags amenity=pub;bar;restaurant for a distinction between these.</string>
+    <string name="description_amenity_fire_station">A fire station</string>
+    <string name="description_amenity_police">A police station</string>
+    <string name="description_amenity_townhall">Building where the administration of a village, town or city may be located, or just a community meeting place.</string>
+    <string name="description_amenity_parking_space">A single parking space. Group multiple parking spaces together with a relation using the tags type=site and site=parking. Do not mix with amenity=parking.</string>
+    <string name="description_amenity_hunting_stand">A hunting stand</string>
+    <string name="description_amenity_vending_machine">A machine selling goods – food, tickets, newspapers, etc. Add type of goods using vending=*</string>
+    <string name="description_amenity_fountain">A fountain for cultural / decorational / recreational purposes. </string>
+    <string name="description_amenity_library">A public library (municipal, university, …) to borrow books from. </string>
+    <string name="description_amenity_swimming_pool">A swimming pool is a place built for swimming as a recreational activity or sport, typically taking the form of an excavated and lined pool (wikipedia:Swimming_pool). Swimming pools may be open-air or housed within buildings.</string>
+    <string name="description_amenity_doctors">A doctors practice / surgery.</string>
+    <string name="description_amenity_university">A university building. Use amenity=university for the whole university area.</string>
+    <string name="description_amenity_social_facility">A facility that provides social services.</string>
+    <string name="description_amenity_car_wash">Wash a car</string>
+    <string name="description_amenity_college">A college campus or buildings </string>
+    <string name="description_amenity_bus_station">A bus station (has been replaced by public_transport=station).</string>
+    <string name="description_amenity_marketplace">A place where trade is regulated, e.g. a square. </string>
+    <string name="description_amenity_dentist">A dentist practice / surgery.</string>
+    <string name="description_amenity_waste_disposal">A place where canal boaters, caravaners, etc. can dispose of rubbish (trash/waste).</string>
+    <string name="description_amenity_community_centre">A place mostly used for local events and festivities.</string>
+    <string name="description_amenity_theatre">A theatre or opera house.</string>
+    <string name="description_amenity_taxi">A place where taxis wait for passengers.</string>
+    <string name="description_amenity_cinema">A place where films are shown (US: movie theater).</string>
+    <string name="description_amenity_parking_entrance">An entrance or exit to an underground or multi-storey parking facility. Group multiple parking entrances together with a relation using the tags type=site and site=parking. Do not mix with amenity=parking.</string>
+    <string name="description_amenity_clinic">A medium-sized medical facility or health centre.</string>
+    <string name="description_amenity_bicycle_rental">Rent a bicycle</string>
+    <string name="description_amenity_veterinary">A place where a veterinary surgeon (vet) practices.</string>
+    <string name="description_amenity_fire_hydrant">A fire hydrant is an active fire protection measure, and a source of water provided in most urban, suburban and rural areas with municipal water service or other water source to enable firefighters to tap into the municipal water supply to assist in extinguishing a fire.</string>
+    <string name="description_amenity_courthouse">A place where justice is dispensed.</string>
+    <string name="description_amenity_embassy">An Embassy</string>
+    <string name="description_amenity_water_point">Place where you can get large amounts of drinking water.</string>
+
+    <!-- description classified values buidling -->
+    <string name="description_building_house">A dwelling unit inhabited by a single household (a family or small group sharing facilities such as a kitchen). Houses forming half of a semi-detached pair, or one of a row of terraced houses, should share at least two nodes with joined neighbours, thereby defining the party wall between the properties.</string>
+    <string name="description_building_residential">A general tag for a building used primarily for residential purposes. Where additional detail is available consider using one or more areas tagged as \'apartments\', \'terrace\' or \'house\'.</string>
+    <string name="description_building_garage">A garage is a building suitable for the storage of one or possibly more motor vehicle or similar. See building=garages for larger shared buildings.</string>
+    <string name="description_building_apartments">A building arranged into individual dwellings, often on separate floors. May also have retail outlets on the ground floor. How does one map the retail elements? Use building:levels=* for the total number of floors.</string>
+    <string name="description_building_hut">A hut is a small and crude shelter. </string>
+    <string name="description_building_industrial">A building where some industrial process takes place. Use warehouse if the purpose is known to be primarily for storage/distribution. Consider using landuse=industrial for the surrounding area and the proposed industrial=* tag to describe the industrial activity.</string>
+    <string name="description_building_roof">A structure that consists of a roof with open sides, such as a rain shelter, and also gas stations.</string>
+    <string name="description_building_garages">A building that consists of a number of discrete storage spaces for different owners/tenants. See also building=garage.</string>
+    <string name="description_building_detached">A single dwelling unit inhabited by family or small group sharing facilities such as a kitchen.</string>
+    <string name="description_building_commercial">A building where non-specific commercial activities take place; use office=* to describe the type of office. Consider tagging the area using landuse=commercial. Use \'retail\' if the building consists primarily of shops.</string>
+    <string name="description_building_terrace">A single way used to define the outline of a linear row of residential dwellings, each of which normally has its own entrance, which form a terrace (row-house in North American English). Consider defining each dwelling separately using \'house\'.</string>
+    <string name="description_building_school">For any generic school buildings. Buildings for specific uses (sports halls etc) should be tagged for their purpose. Use amenity=school for the perimeter of the school grounds.</string>
+    <string name="description_building_shed">A shed is a simple, single-storey structure in a back garden or on an allotment that is used for storage, hobbies, or as a workshop.</string>
+    <string name="description_building_retail">A building primarily used for selling goods are sold to the public; use shop=* to identify the sort of goods sold. Consider use landuse=retail for the surrounding area. How is one meant to indicate that there is also residential accommodation or office use above?</string>
+    <string name="description_building_farm_auxiliary">A building on a farm that is not a dwelling (use \'farm\' or \'house\' for the farm house).</string>
+    <string name="description_building_church">A building that was built as a church. Used in conjunction with amenity=place_of_worship, religion=* , denomination=* and landuse=religious for the church grounds where it is in current use.</string>
+    <string name="description_building_service"></string>
+    <string name="description_building_greenhouse">A greenhouse is a glass or plastic covered building used to grow plants. Use landuse=greenhouse_horticulture for the area.</string>
+    <string name="description_building_barn">An agricultural building used for storage and as a covered workplace.</string>
+    <string name="description_building_construction">Used for buildings under construction. Use construction=* to hold the value for the completed building.</string>
+    <string name="description_building_farm">A historical farm, kept in it\'s original state.</string>
+    <string name="description_building_manufacture"></string>
+    <string name="description_building_cabin">A cabin is a small, roughly built house usually with a wood exterior and typically found in rural areas.</string>
+    <string name="description_building_yes">General tag for buildings.</string>
+
+    <!-- description classified values landuse -->
+    <string name="description_landuse_forest">Managed forest or woodland plantation.</string>
+    <string name="description_landuse_residential">Predominantly houses or apartment buildings.</string>
+    <string name="description_landuse_grass">For areas covered with grass. Consider landuse=meadow for meadow.</string>
+    <string name="description_landuse_farmland">An area of farmland used for tillage and pasture (animals, crops, vegetables, flowers, fruit growing).</string>
+    <string name="description_landuse_meadow">An area of land primarily vegetated by grass and other non-woody plants, usually mowed for making hay.</string>
+    <string name="description_landuse_farm"></string>
+    <string name="description_landuse_farmyard">An area of land with farm buildings like farmhouse, dwellings, farmsteads, sheds, stables, barns, equipment sheds, feed bunkers, etc. plus the open space in between them and the shrubbery/trees around them.</string>
+    <string name="description_landuse_industrial">Predominantly workshops, factories or warehouses.</string>
+    <string name="description_landuse_reservoir">Stores water, may be covered or uncovered; for a covered reservoir see also man_made=reservoir_covered (Other languages). See water=reservoir for alternative tagging.</string>
+    <string name="description_landuse_orchard">Intentional planting of trees or shrubs maintained for food production.</string>
+    <string name="description_landuse_cemetery">Place for burials. You can add religion=* (values listed in the place of worship page). Smaller places (e.g. with a church nearby) may use amenity=grave_yard instead.</string>
+    <string name="description_landuse_vineyard">A piece of land where grapes are grown.</string>
+    <string name="description_landuse_allotments">A piece of land given over to local residents for growing vegetables and flowers.</string>
+    <string name="description_landuse_commercial">Predominantly offices, business parks, etc.</string>
+    <string name="description_landuse_construction">Under construction site, should become something different once the construction is finished.</string>
+    <string name="description_landuse_basin">An area of water that drains into a river. Together with basin=* for stormwater/rainwater infiltration/detention/retention basins.</string>
+    <string name="description_landuse_quarry">Surface mineral extraction.</string>
+    <string name="description_landuse_retail">Predominantly shops</string>
+    <string name="description_landuse_village_green">An area of common land, usually grass, in the centre of a village (quintessentially English – defined separately from \'common land\' under the Commons Registration Act 1965 and the Commons Act 2006).</string>
+    <string name="description_landuse_military">Used by military</string>
+
+    <!-- description classified values leisure -->
+    <string name="description_leisure_swimming_pool">A swimming pool, see also Proposed features/Swimming pool and Tag:amenity=swimming pool</string>
+    <string name="description_leisure_pitch">e.g. a field for playing football/soccer, cricket, baseball sports, and skate parks. To describe what kind of sport(s) use sport=*.</string>
+    <string name="description_leisure_park">Open, green area for recreation, usually municipal.</string>
+    <string name="description_leisure_swimming"></string>
+    <string name="description_leisure_playground">Playground for little children.</string>
+    <string name="description_leisure_garden">Place where flowers and other plants are grown in a decorative and structured manner or for scientific purposes.</string>
+    <string name="description_leisure_sports_centre">A distinct facility where a range of sports take place within an enclosed area. To describe what kind of sport(s) use sport=*.</string>
+    <string name="description_leisure_nature_reserve">Protected area of importance for wildlife, flora, fauna or features of geological or other special interest.</string>
+    <string name="description_leisure_track">e.g. running, cycle-racing, greyhound, horses. To describe what kind of sport(s) use sport=*.</string>
+    <string name="description_leisure_stadium">A major sports arena with substantial tiered seating. To describe what kind of sport(s) use sport=*. </string>
+    <string name="description_leisure_golf_course">The outline of a golf course. The node form may be used to place an icon within the course. This tag implies sport=golf.</string>
+    <string name="description_leisure_marina">For mooring leisure yachts and motor boats.</string>
+    <string name="description_leisure_water_park">Amusement area with water slides, recreational swimming pools and dressing rooms.</string>
+    <string name="description_leisure_fishing"></string>
+
+    <!-- description classified values vending -->
+    <string name="description_vending_cigarettes">A cigarette machine is a vending machine that dispenses packets of cigarettes.</string>
+    <string name="description_vending_parking_tickets">A machine selling tickets for parking.</string>
+    <string name="description_vending_excrement_bags">Dispensing bags to collect dog poop.</string>
+    <string name="description_vending_public_transport_tickets">A machine for bus, tram, train... tickets</string>
+    <string name="description_vending_drinks">Soda vending machine: Soft drinks, water, ice tea</string>
+    <string name="description_vending_sweets">Sweets!</string>
+    <string name="description_vending_parcel_pickup">You can pick up your parcels there.</string>
+    <string name="description_vending_parcel_mail_in">You can drop off your parcels there.</string>
+    <string name="description_vending_condoms">Simple condoms selling point</string>
+    <string name="description_vending_stamps">A stamp selling machine.</string>
+    <string name="description_vending_news_paper">Newspapers</string>
+    <string name="description_vending_bicycle_tube">Vending machine for bicycle tubes.</string>
+    <string name="description_vending_food"></string>
+    <string name="description_vending_fuel">A vending machine dispensing motor fuel.</string>
+    <string name="description_vending_yes">A generic vending machine.</string>
+
+    <!-- description classified values shop -->
+    <string name="description_shop_supermarket">Supermarket</string>
+    <string name="description_shop_convenience">A small local shop carrying a small subset of the items you would find in a supermarket.</string>
+    <string name="description_shop_clothes">Shop focused on selling clothes (other related value in use is fashion).</string>
+    <string name="description_shop_bakery">Shop focused on selling bread.</string>
+    <string name="description_shop_hairdresser">Here you can get your hair cut, coloured.</string>
+    <string name="description_shop_car_repair">Shop focused on car repair (usually independent of a specific car brand).</string>
+    <string name="description_shop_car">Car store – a place to buy cars or to get your car repaired.</string>
+    <string name="description_shop_kiosk">A small shop on the pavement that sells magazines, tobacco, newspapers, sweets and stamps.</string>
+    <string name="description_shop_doityourself">Shop focused on selling tools and supplies to do-it-yourself householders, gardening, …</string>
+    <string name="description_shop_yes">A generic shop</string>
+    <string name="description_shop_butcher">Shop focused on selling meat.</string>
+    <string name="description_shop_florist">Shop focused on selling bouquets of flowers (see shop=garden_centre for potted flowers).</string>
+    <string name="description_shop_mall">A shopping mall – multiple stores under one roof (also known as a shopping centre).</string>
+    <string name="description_shop_furniture">Shop focused on selling furniture, might range from small decorational items to a whole flat interior.</string>
+    <string name="description_shop_bicycle">Shop focused on selling bicycles, bicycle equipment and may rent or repair them.</string>
+    <string name="description_shop_alcohol">Government owned or licensed shop selling alcohol. See also shop=beverages.</string>
+    <string name="description_shop_books">Shop focused on selling books (for a library that lends books, see amenity=library).</string>
+    <string name="description_shop_shoes">Shop focused on selling shoes.</string>
+    <string name="description_shop_electronics">Shop focused on selling consumer electronics (TV, radio, …). Larger ones may also sell computers, fridges, …</string>
+    <string name="description_shop_department_store">A single large store – often multiple storeys high – selling a large variety of goods (see also shop=mall).</string>
+    <string name="description_shop_hardware">Shop focused on selling building supplies including screws, bolts and paints, … See also shop=doityourself.</string>
+    <string name="description_shop_jewelry">Jewellers shops.</string>
+    <string name="description_shop_optician">Shop focused on selling eyeglasses, contact lenses (may also check your eyes).</string>
+    <string name="description_shop_mobile_phone">Shop focused on selling mobile phones and accessories.</string>
 
 </resources>
