@@ -696,7 +696,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * 
      * @return a list of poly elements.
      */
-    private List<PolyElement> getAllPolyElements() {
+    public List<PolyElement> getAllPolyElements() {
 
         final List<PolyElement> polyElements = new ArrayList<PolyElement>();
 

@@ -410,6 +410,24 @@ public class PolyElement extends AbstractDataElement {
         }
     }
 
+    /**
+     * Set the list of nodes from a given list of GeoPoints.
+     * 
+     * @author sbollen
+     * @param geoPointList
+     *            the given list of GeoPoints
+     */
+    public void setNodesFromGeoPoints(
+            List<org.osmdroid.util.GeoPoint> geoPointList) {
+        final List<Node> newNodes = new ArrayList<Node>();
+        for (int i = 0; i < geoPointList.size(); i++) {
+            Node node = new Node(nodes.get(i).getOsmId(), geoPointList.get(i)
+                    .getLatitude(), geoPointList.get(i).getLongitude());
+            newNodes.add(node);
+        }
+        nodes = newNodes;
+    }
+
     public void setType(PolyElementType type) {
         this.type = type;
     }
@@ -444,6 +462,13 @@ public class PolyElement extends AbstractDataElement {
         default:
             break;
         }
+    }
 
+    public boolean equals(Object obj) {
+        if (obj instanceof PolyElement) {
+            return ((PolyElement) obj).getType() == this.type
+                    && super.equals(obj);
+        }
+        return false;
     }
 }
