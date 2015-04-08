@@ -263,6 +263,9 @@ public class TouchView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         final int action = event.getAction();
+        
+        //TODO: dadurch wird jeglicher input überm horizont verhindert. so auch das verschieben
+        // besser beim hinzufügen von punkten überprüfen?
         if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
                 .getY())))) {
             switch (action) {
@@ -307,12 +310,8 @@ public class TouchView extends View {
             downY = event.getY();
             if (action.equals("start")) {
 
-                // longClickHandler.postDelayed(mLongPressed, 1000);
-
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
-                    // longClickHandler.removeCallbacks(mLongPressed);
-                    // Log.d("", "Long Press cancled because there is a point");
 
                     this.mover = movePoint(lookUpPoint);
                     startPoint = lookUpPoint;
@@ -323,20 +322,14 @@ public class TouchView extends View {
                 } else {
 
                     startPoint = new Point(downX, downY);
-                    // if (insidePolygon(startPoint) == false) {
-                    // polygonclicked(false);
-
                     if (!polygonclicked) {
                         if (!insidePolygon(startPoint)) {
                             currentMotion.addPoint(event.getX(), event.getY());
                             newPolygon = interpreter.interprete(polygon,
                                     currentMotion);
                         }
-                        // } else {
-                        // polygonclicked(true);
                     }
 
-                    // }
                 }
             } else if (action.equals("move")) {
 
@@ -346,16 +339,12 @@ public class TouchView extends View {
                 Log.d("", "polygonclicked: " + polygonclicked);
                 if (polygonclicked) {
 
-                    // if (Math.abs(offsetX) > 15 || Math.abs(offsetY) > 15) {
                     movePolygon(offsetX, offsetY);
                     startPoint = new Point(downX, downY);
-                    // }
 
                 } else if (mover != null) {
                     if (Math.abs(offsetX) > 10 && Math.abs(offsetY) > 10
                             && polygonclicked == false) {
-                        // handler.removeCallbacks(mLongPressed);
-                        // Log.d("", "Long Press cancled MOVE");
                         mover.moveTo(event.getX(), event.getY());
                         isDelete = false;
                         redoUndo.add(new Point(event.getX(), event.getY()),
@@ -369,19 +358,11 @@ public class TouchView extends View {
                     }
                 }
             } else if (action.equals("end")) {
-                // longClickHandler.removeCallbacks(mLongPressed);
                 if (startPoint.getX() - event.getX() < 5
                         && startPoint.getY() - event.getY() < 5) {
                     polygonclicked(insidePolygon(startPoint));
                 }
 
-                // if (polygonclicked) {
-                // longClickHandler.removeCallbacks(mLongPressed);
-                // polygonclicked = false;
-                //
-                // areaPaint.setColor(MotionInterpreter.AREA_COLOR);
-                // areaPaint.setAlpha(100);
-                // Log.d("", "Long Press canceld END");
                 if (isDelete) {
                     redoUndo.add(startPoint, delete, mover.getIdx());
                     this.deletePoint(startPoint);
@@ -505,42 +486,44 @@ public class TouchView extends View {
      *
      */
     public void movePolygon(float x, float y) {
-        Log.e(this.getClass().getSimpleName(), "----MOVEpolygon");
-        x = -x;
-        y = -y;
-
-        boolean allPointsOkay = true;
-        for (int i = 0; i < polygon.size(); i++) {
-            float xcoord = polygon.get(i).getX() + x;
-            float ycoord = polygon.get(i).getY() + y;
-
-            if (0 >= xcoord
-                    || ycoord <= 0
-                    || xcoord >= getResources().getDisplayMetrics().widthPixels
-                    || ycoord >= getResources().getDisplayMetrics().heightPixels) {
-                Log.d(this.getClass().getSimpleName(), "test move: outside: "
-                        + xcoord + " , " + ycoord);
-                allPointsOkay = false;
-                break;
-            } else
-
-            if (cameraAssistView.overHorizont(new Point(xcoord, ycoord))) {
-                Log.d(this.getClass().getSimpleName(), "test move: isOverHorizont");
-                allPointsOkay = false;
-                break;
-            }
-        }
-        if (allPointsOkay) {
-            for (int i = 0; i < polygon.size(); i++) {
+        if (interpreter.isArea()) {
+            Log.e(this.getClass().getSimpleName(), "----MOVEpolygon");
+            x = -x;
+            y = -y;
+            boolean allPointsOkay = true;
+           loop: for (int i = 0; i < polygon.size(); i++) {
                 float xcoord = polygon.get(i).getX() + x;
                 float ycoord = polygon.get(i).getY() + y;
-     
-                Log.d(this.getClass().getSimpleName(), "move: point to "
-                        + xcoord + " , " + ycoord);
-                polygon.set(i, new Point(xcoord, ycoord));
+
+                if (0 >= xcoord
+                        || ycoord <= 0
+                        || xcoord >= getResources().getDisplayMetrics().widthPixels
+                        || ycoord >= getResources().getDisplayMetrics().heightPixels) {
+                    Log.d(this.getClass().getSimpleName(),
+                            "test move: outside: " + xcoord + " , " + ycoord);
+                    allPointsOkay = false;
+                    break loop;
+                } else
+
+                if (cameraAssistView.overHorizont(new Point(xcoord, ycoord))) {
+                    Log.d(this.getClass().getSimpleName(),
+                            "test move: isOverHorizont");
+                    allPointsOkay = false;
+                    break loop;
+                }
             }
+            if (allPointsOkay) {
+                for (int i = 0; i < polygon.size(); i++) {
+                    float xcoord = polygon.get(i).getX() + x;
+                    float ycoord = polygon.get(i).getY() + y;
+
+                    Log.d(this.getClass().getSimpleName(), "move: point to "
+                            + xcoord + " , " + ycoord);
+                    polygon.set(i, new Point(xcoord, ycoord));
+                }
+            }
+            invalidate();
         }
-        invalidate();
     }
 
     /**
