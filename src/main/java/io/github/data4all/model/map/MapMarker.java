@@ -37,7 +37,7 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 /**
- * With LongClick deletable Map Marker.
+ * Map Marker which has an InfoWindow and is movable.
  * 
  * @author Oliver Schwartz
  *
@@ -60,7 +60,7 @@ public class MapMarker extends Marker {
     private static final int TIME_DIFF = 200;
 
     /**
-     * First point of the MapPolygon in pixel coordinates.
+     * Point representing the marker.
      */
     private Point point;
 
@@ -69,7 +69,6 @@ public class MapMarker extends Marker {
      */
     private static final int NONE = 0;
     private static final int MOVE = 1;
-    private static final int ROTATE = 2;
     private int mode = NONE;
 
     /**
@@ -93,7 +92,7 @@ public class MapMarker extends Marker {
      *            the Mapview
      * 
      * @param ele
-     *            the associateded OsmElement
+     *            the associated OsmElement
      */
     public MapMarker(AbstractActivity ctx, D4AMapView mv,
             AbstractDataElement ele) {
@@ -171,14 +170,11 @@ public class MapMarker extends Marker {
                     changeMode();
                 }
                 break;
-            case MotionEvent.ACTION_POINTER_UP:
-                mode = NONE;
-                break;
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, "action_move");
                 if (active) {
                     if (mode == MOVE) {
-                        Log.d(TAG, "moooooooooooooooooooove");
+                        Log.d(TAG, "move marker");
                         moveToNewPosition(event, mapView);
                     }
                 }
