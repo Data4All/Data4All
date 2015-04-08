@@ -15,6 +15,7 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -57,7 +58,7 @@ public class D4AMapView extends MapView {
 
     // Default Marked Color
     protected static final int MARKED_STROKE_COLOR = Color.RED;
-   
+
     // Fill Color for Polygons
     protected static final int MARKED_FILL_COLOR = Color.argb(100, 255, 0, 0);
 
@@ -197,8 +198,10 @@ public class D4AMapView extends MapView {
         poi.setPosition(node.toGeoPoint());
         poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         if (edit) {
-            //set the polygon to editable
-            ((MapMarker)poi).setEditable(true);
+            // set the polygon to editable
+            ((MapMarker) poi).setEditable(true);
+            poi.setIcon(ctx.getResources().getDrawable(
+                    R.drawable.ic_setpoint_red));
         }
         this.getOverlays().add(poi);
         this.postInvalidate();
@@ -220,7 +223,12 @@ public class D4AMapView extends MapView {
 
         Log.i(TAG, "Set Area Points to " + polyElement.toString());
         area.setPoints(polyElement.getGeoPoints());
+
         if (edit) {
+            // set the polygon to editable
+            ((MapPolygon) area).setEditable(true);
+            // set the original points to calculate the offset of all points
+            ((MapPolygon) area).setOriginalPoints();
             Log.i(TAG, "Set Area Fill Color to " + MARKED_FILL_COLOR);
             area.setFillColor(MARKED_FILL_COLOR);
 
@@ -235,13 +243,6 @@ public class D4AMapView extends MapView {
         }
         Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
         area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-
-        if (edit) {
-            //set the polygon to editable
-            ((MapPolygon)area).setEditable(true);
-            //set the original points to calculate the offset of all points
-            ((MapPolygon)area).setOriginalPoints();
-        }
 
         this.getOverlays().add(area);
         this.postInvalidate();
@@ -263,7 +264,12 @@ public class D4AMapView extends MapView {
 
         Log.i(TAG, "Set Path Points to " + polyElement.toString());
         path.setPoints(polyElement.getGeoPoints());
+
         if (edit) {
+            // set the polygon to editable
+            ((MapLine) path).setEditable(true);
+            // set the original points to calculate the offset of all points
+            ((MapLine) path).setOriginalPoints();
             Log.i(TAG, "Set Path Color to " + MARKED_STROKE_COLOR);
             path.setColor(MARKED_STROKE_COLOR);
         } else {
@@ -272,12 +278,7 @@ public class D4AMapView extends MapView {
         }
         Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
         path.setWidth(DEFAULT_STROKE_WIDTH);
-        if (edit) {
-            //set the polygon to editable
-            ((MapLine)path).setEditable(true);
-            //set the original points to calculate the offset of all points
-            ((MapLine)path).setOriginalPoints();
-        }
+
         this.getOverlays().add(path);
         this.postInvalidate();
     }

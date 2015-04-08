@@ -101,7 +101,7 @@ public class MapMarker extends Marker {
         this.activity = ctx;
         this.mapView = mv;
         this.editable = false;
-        setIcon(ctx.getResources().getDrawable(R.drawable.ic_setpoint));
+        setIcon(ctx.getResources().getDrawable(R.drawable.ic_setpoint_blue));
         if (activity instanceof MapViewActivity) {
             mInfoWindow = new CustomInfoWindow(this.mapView, ele, this,
                     activity);
@@ -221,9 +221,11 @@ public class MapMarker extends Marker {
     public void changeMode() {
         Log.d(TAG, "actual activity mode: " + active);
         if (!active) {
+            setIcon(activity.getResources().getDrawable(R.drawable.ic_setpoint));
             mapView.invalidate();
             active = true;
         } else {
+            setIcon(activity.getResources().getDrawable(R.drawable.ic_setpoint_red));
             mapView.invalidate();
             active = false;
         }
