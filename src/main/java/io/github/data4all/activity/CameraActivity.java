@@ -159,6 +159,7 @@ public class CameraActivity extends AbstractActivity {
         // Set the Focus animation
         mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
+        AbstractActivity.addNavBarMargin(getResources(), btnCStatus);
 
     }
 
