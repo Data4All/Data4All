@@ -15,6 +15,7 @@
  */
 package io.github.data4all.view;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -54,6 +55,12 @@ public class D4AMapView extends MapView {
 
     // Fill Color for Polygons
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
+
+    // Default Marked Color
+    protected static final int MARKED_STROKE_COLOR = Color.RED;
+
+    // Fill Color for Polygons
+    protected static final int MARKED_FILL_COLOR = Color.argb(100, 255, 0, 0);
 
     private boolean scrollable = true;
 
@@ -129,7 +136,7 @@ public class D4AMapView extends MapView {
             List<AbstractDataElement> list) {
         if (list != null && !list.isEmpty()) {
             for (AbstractDataElement elem : list) {
-                this.addOsmElementToMap(ctx, elem);
+                this.addOsmElementToMap(ctx, elem, false);
             }
         }
     }
@@ -141,16 +148,19 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param elem
      *            the OsmElement which should be added to the map
+     * @param edit
+     *            is OsmElement editable
+     * 
      **/
     public void addOsmElementToMap(AbstractActivity ctx,
-            AbstractDataElement elem) {
+            AbstractDataElement elem, boolean edit) {
         if (elem != null) {
             // if the Element is a Node
             if (elem instanceof Node) {
                 final Node node = (Node) elem;
                 Log.i(TAG, "Add Node with Coordinates "
                         + node.toGeoPoint().toString());
-                this.addNodeToMap(ctx, node);
+                this.addNodeToMap(ctx, node, edit);
                 // if the Element is Way
             } else if (elem instanceof PolyElement) {
                 final PolyElement polyElement = (PolyElement) elem;
@@ -160,13 +170,13 @@ public class D4AMapView extends MapView {
                     Log.i(TAG,
                             "Add Path with Coordinates "
                                     + polyElement.toString());
-                    this.addPathToMap(ctx, polyElement);
+                    this.addPathToMap(ctx, polyElement, edit);
                     // if the Element is an Area
                 } else {
                     Log.i(TAG,
                             "Add Area with Coordinates "
                                     + polyElement.toString());
-                    this.addAreaToMap(ctx, polyElement);
+                    this.addAreaToMap(ctx, polyElement, edit);
                 }
             }
         }
@@ -179,12 +189,20 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param node
      *            the node which should be added to the map
+     * @param edit
+     *            is the node editable
      **/
-    private void addNodeToMap(AbstractActivity ctx, Node node) {
+    private void addNodeToMap(AbstractActivity ctx, Node node, boolean edit) {
         final Marker poi = new MapMarker(ctx, this, node);
         Log.i(TAG, "Set Node Points to " + node.toString());
         poi.setPosition(node.toGeoPoint());
         poi.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        if (edit) {
+            // set the polygon to editable
+            ((MapMarker) poi).setEditable(true);
+            poi.setIcon(ctx.getResources().getDrawable(
+                    R.drawable.ic_setpoint_red));
+        }
         this.getOverlays().add(poi);
         this.postInvalidate();
     }
@@ -196,21 +214,35 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param polyElement
      *            the area which should be added to the map
+     * @param edit
+     *            is the Element editable
      **/
-    private void addAreaToMap(AbstractActivity ctx, PolyElement polyElement) {
+    private void addAreaToMap(AbstractActivity ctx, PolyElement polyElement,
+            boolean edit) {
         final Polygon area = new MapPolygon(ctx, this, polyElement);
 
         Log.i(TAG, "Set Area Points to " + polyElement.toString());
         area.setPoints(polyElement.getGeoPoints());
 
-        Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
-        area.setFillColor(DEFAULT_FILL_COLOR);
+        if (edit) {
+            // set the polygon to editable
+            ((MapPolygon) area).setEditable(true);
+            // set the original points to calculate the offset of all points
+            ((MapPolygon) area).setOriginalPoints();
+            Log.i(TAG, "Set Area Fill Color to " + MARKED_FILL_COLOR);
+            area.setFillColor(MARKED_FILL_COLOR);
 
+            Log.i(TAG, "Set Stroke Color to " + MARKED_STROKE_COLOR);
+            area.setStrokeColor(MARKED_STROKE_COLOR);
+        } else {
+            Log.i(TAG, "Set Area Fill Color to " + DEFAULT_FILL_COLOR);
+            area.setFillColor(DEFAULT_FILL_COLOR);
+
+            Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
+            area.setStrokeColor(DEFAULT_STROKE_COLOR);
+        }
         Log.i(TAG, "Set Stroke Width to " + DEFAULT_STROKE_WIDTH);
         area.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-
-        Log.i(TAG, "Set Stroke Color to " + DEFAULT_STROKE_COLOR);
-        area.setStrokeColor(DEFAULT_STROKE_COLOR);
 
         this.getOverlays().add(area);
         this.postInvalidate();
@@ -223,18 +255,30 @@ public class D4AMapView extends MapView {
      *            The invoking Activity
      * @param polyElement
      *            the path which should be added to the map
+     * @param edit
+     *            is the Element editable
      **/
-    private void addPathToMap(AbstractActivity ctx, PolyElement polyElement) {
+    private void addPathToMap(AbstractActivity ctx, PolyElement polyElement,
+            boolean edit) {
         final Polyline path = new MapLine(ctx, this, polyElement);
 
         Log.i(TAG, "Set Path Points to " + polyElement.toString());
         path.setPoints(polyElement.getGeoPoints());
 
-        Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
-        path.setColor(DEFAULT_STROKE_COLOR);
-
+        if (edit) {
+            // set the polygon to editable
+            ((MapLine) path).setEditable(true);
+            // set the original points to calculate the offset of all points
+            ((MapLine) path).setOriginalPoints();
+            Log.i(TAG, "Set Path Color to " + MARKED_STROKE_COLOR);
+            path.setColor(MARKED_STROKE_COLOR);
+        } else {
+            Log.i(TAG, "Set Path Color to " + DEFAULT_STROKE_COLOR);
+            path.setColor(DEFAULT_STROKE_COLOR);
+        }
         Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
         path.setWidth(DEFAULT_STROKE_WIDTH);
+
         this.getOverlays().add(path);
         this.postInvalidate();
     }

@@ -20,4 +20,5 @@
     <string name="pref_pointsize_title">Current Pointsize</string>
     <string name="pref_pointsize_dialog_title">Pointsize</string>
     <string name="pref_pointsize_dialog_message">Please set a new size for the point.</string>
+    <string name="auto_rotate_title">Auto-rotate Map</string>
 </resources>

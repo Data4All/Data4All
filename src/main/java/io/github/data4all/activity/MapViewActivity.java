@@ -18,18 +18,25 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 import io.github.data4all.util.Optimizer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -67,28 +74,37 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         if (savedInstanceState == null) {
             setUpLoadingScreen();
-        }else{
+        } else {
             view.setVisibility(View.GONE);
         }
-
+        // Setup the rotation listener
+        final List<View> buttons = new ArrayList<View>();
+        
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
+        buttons.add(findViewById(id));
 
         id = R.id.switch_maps;
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
-
+        buttons.add(findViewById(id));
+        
         id = R.id.to_camera;
         final ImageButton camera = (ImageButton) findViewById(id);
         camera.setOnClickListener(this);
+        buttons.add(findViewById(id));
 
         id = R.id.new_point;
         final ImageButton newPoint = (ImageButton) findViewById(id);
         newPoint.setOnClickListener(this);
+        buttons.add(findViewById(id));
+
+        listener = new ButtonRotationListener(this, buttons);
+
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -163,18 +179,19 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
+
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
-        //load lastChoice from database
+        // load lastChoice from database
         LastChoiceHandler.load(db);
         db.close();
 
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
+
     }
 
     /*

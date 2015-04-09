@@ -150,7 +150,7 @@ public class OrientationListener extends Service implements SensorEventListener 
 
                     // saving the new model with the orientation in the
                     // RingBuffer
-                    Log.d(TAG, "Orientation " + Math.toDegrees(orientation[0])
+                    Log.v(TAG, "Orientation " + Math.toDegrees(orientation[0])
                             + " ; " + Math.toDegrees(orientation[1]) + " ; "
                             + Math.toDegrees(orientation[2]) + " ; "
                             + "EventAccuracy:" + event.accuracy);

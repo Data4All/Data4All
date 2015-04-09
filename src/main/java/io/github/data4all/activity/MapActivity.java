@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.view.D4AMapView;
@@ -29,10 +30,13 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -128,6 +132,8 @@ public abstract class MapActivity extends AbstractActivity {
     protected static final String OSM_MAP_NAME = "mapbox.streets";
 
     protected CacheManager cacheManager;
+    
+    protected ButtonRotationListener listener;
 
     /**
      * Default constructor.
@@ -218,6 +224,13 @@ public abstract class MapActivity extends AbstractActivity {
                 actualZoomLevel, actualZoomLevel);
 
     }
+    
+    protected boolean getAutoRotate() {
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        return (prefs.getBoolean("auto_rotate", true));
+    }
 
     /*
      * (non-Javadoc)
@@ -243,6 +256,19 @@ public abstract class MapActivity extends AbstractActivity {
 
     /*
      * (non-Javadoc)
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    public void onResume(){
+        super.onResume();
+        if (!getAutoRotate()) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            listener.enable();
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
      * 
      * @see android.app.Activity#onPause()
      */
@@ -264,6 +290,8 @@ public abstract class MapActivity extends AbstractActivity {
         final String mTS = mapView.getTileProvider().getTileSource().name();
         Log.i(TAG, "Set actual MapTileSource: " + mTS);
         mapTileSource = mapView.getTileProvider().getTileSource();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        listener.disable();
     }
 
     /**

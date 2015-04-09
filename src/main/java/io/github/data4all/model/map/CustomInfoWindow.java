@@ -17,7 +17,7 @@ package io.github.data4all.model.map;
 
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
-import io.github.data4all.activity.ResultViewActivity;
+import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -62,21 +62,25 @@ public class CustomInfoWindow extends BasicInfoWindow implements
     protected static final int DEFAULT_FILL_COLOR = Color.argb(100, 0, 0, 255);
 
     // Default Marked Color
-    protected static final int DEFAULT_MARKED_COLOR = Color.RED;
+    protected static final int MARKED_STROKE_COLOR = Color.RED;
+
+    // Fill Color for Polygons
+    protected static final int MARKED_FILL_COLOR = Color.argb(100, 255, 0, 0);
+
     private static final String TAG = "CustomInfoWindow";
 
-    AbstractDataElement element;
-    OverlayWithIW overlay;
-    AbstractActivity activity;
+    protected AbstractDataElement element;
+    protected OverlayWithIW overlay;
+    protected AbstractActivity activity;
 
     /**
      * Constructor for an InfoBubble on an given Overlay, Element and MapView.
      * Invoked by the given activity.
      * 
-     * @param mapView 
-     * @param element
-     * @param overlay
-     * @param activity
+     * @param mapView the current mapView
+     * @param the element to this InfoWindow
+     * @param overlay the overlay with this InfoWindow
+     * @param activity the context activity
      **/
     public CustomInfoWindow(MapView mapView, AbstractDataElement element,
             OverlayWithIW overlay, AbstractActivity activity) {
@@ -94,26 +98,32 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         final Button edit = (Button) mView.findViewById(id);
         edit.setOnClickListener(this);
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see org.osmdroid.bonuspack.overlays.BasicInfoWindow#onClose()
      */
     @Override
     public void onClose() {
         super.onClose();
         if (overlay instanceof MapPolygon) {
-            MapPolygon poly = (MapPolygon) overlay;
+            final MapPolygon poly = (MapPolygon) overlay;
             poly.setFillColor(DEFAULT_FILL_COLOR);
             poly.setStrokeColor(DEFAULT_STROKE_COLOR);
         } else if (overlay instanceof MapLine) {
-            MapLine line = (MapLine) overlay;
+            final MapLine line = (MapLine) overlay;
             line.setColor(DEFAULT_STROKE_COLOR);
+        } else if (overlay instanceof MapMarker) {
+            final MapMarker marker = (MapMarker) overlay;
+            marker.setIcon(activity.getResources().getDrawable(
+                    R.drawable.ic_setpoint_blue));
         }
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.view.View.OnClickListener#onClick(android.view.View)
      */
     @Override
@@ -128,7 +138,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
                     .show();
             break;
         case R.id.bubble_edit:
-            editElement();
+            this.editElement();
             close();
             break;
         default:
@@ -147,12 +157,16 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         super.onOpen(item);
         InfoWindow.closeAllInfoWindowsOn(mMapView);
         if (overlay instanceof MapPolygon) {
-            MapPolygon poly = (MapPolygon) overlay;
-            poly.setFillColor(DEFAULT_MARKED_COLOR);
-            poly.setStrokeColor(DEFAULT_MARKED_COLOR);
+            final MapPolygon poly = (MapPolygon) overlay;
+            poly.setFillColor(MARKED_FILL_COLOR);
+            poly.setStrokeColor(MARKED_STROKE_COLOR);
         } else if (overlay instanceof MapLine) {
-            MapLine line = (MapLine) overlay;
-            line.setColor(DEFAULT_MARKED_COLOR);
+            final MapLine line = (MapLine) overlay;
+            line.setColor(MARKED_STROKE_COLOR);
+        } else if (overlay instanceof MapMarker) {
+            final MapMarker marker = (MapMarker) overlay;
+            marker.setIcon(activity.getResources().getDrawable(
+                    R.drawable.ic_setpoint_red));
         }
     }
 
@@ -187,12 +201,12 @@ public class CustomInfoWindow extends BasicInfoWindow implements
      * Invoke ResultViewActivity to edit the Tags of the given Element.
      **/
     private void editElement() {
-        final Intent intent = new Intent(activity, ResultViewActivity.class);
+        final Intent intent = new Intent(activity, MapPreviewActivity.class);
         int type = -1;
         if (element instanceof Node) {
             type = POINT;
         } else if (element instanceof PolyElement) {
-            PolyElement polyElement = (PolyElement) element;
+            final PolyElement polyElement = (PolyElement) element;
             if (polyElement.getType() == PolyElementType.WAY) {
                 type = WAY;
             } else if (polyElement.getType() == PolyElementType.AREA) {
