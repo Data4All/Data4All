@@ -73,7 +73,7 @@ public class CameraActivity extends AbstractActivity {
     /**
      * The minimum velocity for a swipe to change the mode.
      */
-    private static final int MIN_SWIPE_VELOCITY = 2000;
+    private static final int MIN_SWIPE_VELOCITY = 1000;
 
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();

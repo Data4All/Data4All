@@ -183,7 +183,7 @@ public class SwipeListManager {
     }
 
     /**
-     * Sets the contenst of the list that was shown on the screen to the given
+     * Sets the content of the list that was shown on the screen to the given
      * index.
      * 
      * @param index

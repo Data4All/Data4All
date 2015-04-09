@@ -322,7 +322,7 @@ public class Gallery {
      *            The orientation of the device
      * @param dimension
      *            The screen dimension of the device
-     * @return A JSONObject holding the infornations
+     * @return A JSONObject holding the informations
      * @throws IOException
      *             If an JSON error occurs
      */
