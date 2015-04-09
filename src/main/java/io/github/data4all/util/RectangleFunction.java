@@ -53,19 +53,25 @@ public class RectangleFunction {
             double dax = ax - dx;
             double day = ay - dy;
 
-            double abLength = Math.sqrt((abx * abx) + (aby * aby));
-            double bcLength = Math.sqrt((bcx * bcx) + (bcy * bcy));
-            double cdLength = Math.sqrt((cdx * cdx) + (cdy * cdy));
-            double daLength = Math.sqrt((dax * dax) + (day * day));
+            double abLength = Math.hypot(abx, aby);
+            double bcLength = Math.hypot(bcx, bcy);
+            double cdLength = Math.hypot(cdx, cdy);
+            double daLength = Math.hypot(dax, day);
 
-            double alpha = Math
-                    .acos((((-1 * dax * abx) + (-1 * day * aby)) / (daLength * abLength)));
-            double beta = Math
-                    .acos((((-1 * abx * bcx) + (-1 * aby * bcy)) / (abLength * bcLength)));
-            double gamma = Math
-                    .acos((((-1 * bcx * cdx) + (-1 * bcy * cdy)) / (bcLength * cdLength)));
-            double delta = Math
-                    .acos((((-1 * cdx * dax) + (-1 * cdy * day)) / (cdLength * daLength)));
+            double daxN = dax/daLength;
+            double dayN = day/daLength;
+            
+            double daxN90 = dayN;
+            double dayN90 = -daxN;
+            
+            double alpha = Math.acos(((dax * abx) + (day * aby))
+                    / (daLength * abLength));
+            double beta = Math.acos(((abx * bcx) + (aby * bcy))
+                    / (abLength * bcLength));
+            double gamma = Math.acos(((bcx * cdx) + (bcy * cdy))
+                    / (bcLength * cdLength));
+            double delta = Math.acos(((cdx * dax) + (cdy * day))
+                    / (cdLength * daLength));
 
             double alphaMinus = (Math.PI / 2) - alpha;
             double betaMinus = (Math.PI / 2) - beta;
@@ -81,12 +87,16 @@ public class RectangleFunction {
             double temp;
             switch (closestTo90(alphaMinus, betaMinus, gammaMinus, deltaMinus)) {
             case 1:
-                temp = abx;
-                abx = (temp * Math.cos(alphaMinus))
-                        - (aby * Math.sin(alphaMinus));
-                aby = (temp * Math.sin(alphaMinus))
-                        + (aby * Math.cos(alphaMinus));
-                Log.d(TAG, "temp " + temp + "abx " + abx);
+//                temp = abx;
+//                abx = (temp * Math.cos(alphaMinus))
+//                        - (aby * Math.sin(alphaMinus));
+//                aby = (temp * Math.sin(alphaMinus))
+//                        + (aby * Math.cos(alphaMinus));
+//                Log.d(TAG, "temp " + temp + "abx " + abx);
+                
+                abx = abLength * daxN90;
+                aby = abLength * dayN90;
+                
                 bx = ax + abx;
                 by = ay + aby;
 
@@ -100,7 +110,6 @@ public class RectangleFunction {
                         - (bcy * Math.sin(betaMinus));
                 bcy = (temp * Math.sin(betaMinus))
                         + (bcy * Math.cos(betaMinus));
-                Log.d(TAG, "temp " + temp + "bcx " + bcx);
                 cx = bx + bcx;
                 cy = by + bcy;
 
@@ -114,7 +123,6 @@ public class RectangleFunction {
                         - (cdy * Math.sin(gammaMinus));
                 cdy = (temp * Math.sin(gammaMinus))
                         + (cdy * Math.cos(gammaMinus));
-                Log.d(TAG, "temp " + temp + "cdx " + cdx);
                 dx = cx + cdx;
                 dy = cy + cdy;
 
@@ -128,7 +136,6 @@ public class RectangleFunction {
                         - (day * Math.sin(deltaMinus));
                 day = (temp * Math.sin(deltaMinus))
                         + (day * Math.cos(deltaMinus));
-                Log.d(TAG, "temp " + temp + "dax " + dax);
                 ax = dx + dax;
                 ay = dy + day;
 
@@ -162,35 +169,35 @@ public class RectangleFunction {
     }
 
     private static int closestTo90(double a, double b, double c, double d) {
-
-        if (Math.abs(a) > Math.abs(b)) {
-            if (Math.abs(b) > Math.abs(c)) {
-                if (Math.abs(c) > Math.abs(d)) {
-                    return 4;
-                } else {
-                    return 3;
-                }
-            } else {
-                if (Math.abs(b) > Math.abs(d)) {
-                    return 4;
-                } else {
-                    return 2;
-                }
-            }
-        } else {
-            if (Math.abs(a) > Math.abs(c)) {
-                if (Math.abs(c) > Math.abs(d)) {
-                    return 4;
-                } else {
-                    return 3;
-                }
-            } else {
-                if (Math.abs(a) > Math.abs(d)) {
-                    return 4;
-                } else {
-                    return 1;
-                }
-            }
-        }
+return 1;
+//        if (Math.abs(a) > Math.abs(b)) {
+//            if (Math.abs(b) > Math.abs(c)) {
+//                if (Math.abs(c) > Math.abs(d)) {
+//                    return 4;
+//                } else {
+//                    return 3;
+//                }
+//            } else {
+//                if (Math.abs(b) > Math.abs(d)) {
+//                    return 4;
+//                } else {
+//                    return 2;
+//                }
+//            }
+//        } else {
+//            if (Math.abs(a) > Math.abs(c)) {
+//                if (Math.abs(c) > Math.abs(d)) {
+//                    return 4;
+//                } else {
+//                    return 3;
+//                }
+//            } else {
+//                if (Math.abs(a) > Math.abs(d)) {
+//                    return 4;
+//                } else {
+//                    return 1;
+//                }
+//            }
+//        }
     }
 }
