@@ -67,7 +67,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         setUpMapView(savedInstanceState);
         if (savedInstanceState == null) {
             setUpLoadingScreen();
-        }else{
+        } else {
             view.setVisibility(View.GONE);
         }
 
@@ -87,8 +87,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         id = R.id.new_point;
         final ImageButton newPoint = (ImageButton) findViewById(id);
         newPoint.setOnClickListener(this);
+
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -96,8 +97,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        // Add record button only in this activity
+        inflater.inflate(R.menu.track_menu, menu);
         boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
+        
         return result;
     }
 
@@ -163,12 +168,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
+
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
-        //load lastChoice from database
+        // load lastChoice from database
         LastChoiceHandler.load(db);
         db.close();
 

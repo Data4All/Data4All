@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Track;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.CheckBox;
-import android.widget.Toast;
 
 /**
  * Global activity for all children activities.
@@ -63,9 +63,19 @@ public abstract class AbstractActivity extends Activity {
 
     public static final String SHARED_PREFS = "shared_prefs";
 
-    boolean recordActive = false;
-    boolean changeIcon = false;
+    /**
+     * Handle the changing of record/stop icon
+     */
+    boolean isChecked = false;
 
+    /**
+     * Indicates current recording
+     */
+    boolean recordActive = false;
+
+    /**
+     * Checkobox for RecordDialog
+     */
     CheckBox dontShowAgain;
 
     /*
@@ -111,28 +121,66 @@ public abstract class AbstractActivity extends Activity {
             onWorkflowFinished(null);
             status = true;
             break;
-        case R.id.record_track:
-            //recordActive = !recordActive;
-            if (recordActive) {
-                recordDialog();
-                if (changeIcon) {
-                    item.setIcon(R.drawable.stop_icon);
-                    recordActive = true;
-                }
-
-            } else {
-                stopDialog();
-                if (changeIcon) {
-                    item.setIcon(R.drawable.record_icon);
-                }
-
-            }
+        case R.id.toggleButton:
+            handleDialog(item);
             status = true;
             break;
         default:
+            Log.d("AbstractActivity", "default click");
             return super.onOptionsItemSelected(item);
         }
         return status;
+    }
+
+    /**
+     * Fetches from the SharedPreferences if the dialogs should be shown. When
+     * dialogs should be shown, it starts the {@link #recordDialog(MenuItem)} or
+     * {@link #stopDialog(MenuItem)} method.
+     * When there is no need for dialogs, it directly will start or stop a {@link Track}.
+     * 
+     * @author sbrede
+     * 
+     * @param item
+     *            The button to toggle the icon
+     */
+    private void handleDialog(MenuItem item) {
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
+        boolean skipDialog = settings.getBoolean("skipRecordDialog", false);
+        if (!skipDialog) {
+            if (!recordActive) {
+                recordDialog(item);
+            } else {
+                stopDialog(item);
+            }
+        } else {
+            if (!recordActive) {
+                Log.d("AbstractActivity", "start a track without dialog");
+                isChecked = true;
+                changeIconOfRecordButton(item, isChecked);
+                recordActive = true;
+                // TODO start Track
+            } else {
+                Log.d("AbstractActivity", "stop a track without dialog");
+                isChecked = false;
+                changeIconOfRecordButton(item, isChecked);
+                recordActive = false;
+                // TODO stop Track
+            }
+        }
+    }
+
+    /**
+     * Switch the icons of the record/stop button.
+     * @author sbrede
+     * @param item The button in the menu
+     * @param status Indicates which icon should be switched
+     */
+    private void changeIconOfRecordButton(MenuItem item, boolean status) {
+        if (status) {
+            item.setIcon(R.drawable.ic_stop);
+        } else {
+            item.setIcon(R.drawable.ic_record);
+        }
     }
 
     /**
@@ -144,12 +192,12 @@ public abstract class AbstractActivity extends Activity {
      * 
      * @author sbrede
      */
-    private void recordDialog() {
+    private void recordDialog(final MenuItem item) {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         LayoutInflater adbInflater = LayoutInflater.from(this);
-        View eulaLayout = adbInflater.inflate(R.layout.checkbox, null);
-        dontShowAgain = (CheckBox) eulaLayout.findViewById(R.id.skip);
-        adb.setView(eulaLayout);
+        View mLayout = adbInflater.inflate(R.layout.checkbox, null);
+        dontShowAgain = (CheckBox) mLayout.findViewById(R.id.skip);
+        adb.setView(mLayout);
         adb.setTitle(R.string.recordTrack);
         adb.setMessage(R.string.startRecordTrack);
         adb.setPositiveButton(R.string.yes,
@@ -162,11 +210,12 @@ public abstract class AbstractActivity extends Activity {
                                 dontShowAgain.isChecked());
                         // Commit the edits!
                         editor.commit();
-                        changeIcon = true;
+                        isChecked = true;
+                        changeIconOfRecordButton(item, isChecked);
                         recordActive = true;
+
                         // TODO start track routine
-                        Toast.makeText(getBaseContext(), "START WITH CHECKBOX",
-                                Toast.LENGTH_LONG).show();
+                        Log.d("AbstractActivity", "start a track with dialog");
                         return;
                     }
                 });
@@ -181,15 +230,19 @@ public abstract class AbstractActivity extends Activity {
                                 dontShowAgain.isChecked());
                         // Commit the edits!
                         editor.commit();
-                        changeIcon = false;
+                        isChecked = false;
+                        changeIconOfRecordButton(item, isChecked);
                         recordActive = false;
+                        Log.d("AbstractActivity", "deny start in dialog");
                         return;
                     }
                 });
         SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
         boolean skipDialog = settings.getBoolean("skipRecordDialog", false);
-        if (!skipDialog)
+        if (!skipDialog) {
             adb.show();
+        }
+
     }
 
     /**
@@ -202,12 +255,12 @@ public abstract class AbstractActivity extends Activity {
      * 
      * @author sbrede
      */
-    private void stopDialog() {
+    private void stopDialog(final MenuItem item) {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         LayoutInflater adbInflater = LayoutInflater.from(this);
-        View eulaLayout = adbInflater.inflate(R.layout.checkbox, null);
-        dontShowAgain = (CheckBox) eulaLayout.findViewById(R.id.skip);
-        adb.setView(eulaLayout);
+        View mLayout = adbInflater.inflate(R.layout.checkbox, null);
+        dontShowAgain = (CheckBox) mLayout.findViewById(R.id.skip);
+        adb.setView(mLayout);
         adb.setTitle(R.string.stopTrack);
         adb.setMessage(R.string.stopRecordTrack);
         adb.setPositiveButton(R.string.yes,
@@ -220,11 +273,12 @@ public abstract class AbstractActivity extends Activity {
                                 dontShowAgain.isChecked());
                         // Commit the edits!
                         editor.commit();
-                        changeIcon = true;
+                        isChecked = false;
+                        changeIconOfRecordButton(item, isChecked);
                         recordActive = false;
+
                         // TODO stop track routine
-                        Toast.makeText(getBaseContext(), "STOP WITH CHECKBOX",
-                                Toast.LENGTH_LONG).show();
+                        Log.d("AbstractActivity", "stop a track with dialog");
                         return;
                     }
                 });
@@ -239,15 +293,19 @@ public abstract class AbstractActivity extends Activity {
                                 dontShowAgain.isChecked());
                         // Commit the edits!
                         editor.commit();
-                        changeIcon = false;
+                        isChecked = true;
                         recordActive = true;
+                        changeIconOfRecordButton(item, isChecked);
+                        Log.d("AbstractActivity", "deny stop in dialog");
                         return;
                     }
                 });
         SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
         boolean skipDialog = settings.getBoolean("skipStopDialog", false);
-        if (!skipDialog)
+        if (!skipDialog) {
             adb.show();
+        }
+
     }
 
     /**
