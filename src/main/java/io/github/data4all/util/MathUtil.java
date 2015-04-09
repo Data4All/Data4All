@@ -16,6 +16,7 @@
 
 package io.github.data4all.util;
 
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.drawing.Point;
 
@@ -92,8 +93,7 @@ public class MathUtil {
         final double adjacent = (width / 2) / Math.tan(maxAngle / 2);
         return (float) (Math.tan(angle) * adjacent);
     }
-    
-    
+
     /**
      * Calculates the angle altered by the given pixel.
      * 
@@ -111,7 +111,7 @@ public class MathUtil {
         final double opposite = pixel - (axis / 2);
         return Math.atan(opposite / adjacent);
     }
-    
+
     /**
      * Calculates the fourth point in dependence of the first three points of
      * the given list.
@@ -127,10 +127,10 @@ public class MathUtil {
         final double x = a[0] + (c[0] - b[0]);
         final double y = a[1] + (c[1] - b[1]);
 
-        final double[] coord = {x,y,};
+        final double[] coord = { x, y, };
         return coord;
     }
-    
+
     /**
      * calculates Node (with latitude and longitude) from coordinates in a local
      * system and the current Location.
@@ -166,6 +166,7 @@ public class MathUtil {
 
     /**
      * transfers GPSPoints to a local Coordinate System
+     * 
      * @param location
      * @param node
      * @return coord
@@ -186,16 +187,15 @@ public class MathUtil {
         coord[0] = lonLength * test / (Math.PI * 2);
         return coord;
     }
-    
-    
+
     /**
-     * Calculates the coliding Point for 2 lines
-     * from java-forum.com
+     * Calculates the coliding Point for 2 lines from java-forum.com
+     * 
      * @param coords
      * @return double[]
      */
     public static double[] intersectLines(List<double[]> coords) {
-        
+
         double x1 = coords.get(0)[0];
         double x2 = coords.get(2)[0];
         double x3 = coords.get(1)[0];
@@ -210,7 +210,6 @@ public class MathUtil {
         double zy = (x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2)
                 * (x3 * y4 - y3 * x4);
 
-
         double n = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 
         double x = zx / n;
@@ -219,7 +218,7 @@ public class MathUtil {
         return coord;
 
     }
-    
+
     /**
      * Transforms a quadrangle into a rectangle.
      * 
@@ -229,20 +228,20 @@ public class MathUtil {
      */
     public static List<Node> transformIntoRectangle(List<Node> nodes) {
         if (nodes.size() == 5) {
-            nodes.remove(4);     
+            nodes.remove(4);
             Location location = new Location("provider");
             location.setLatitude(nodes.get(0).getLat());
-            location.setLongitude(nodes.get(0).getLon());     
+            location.setLongitude(nodes.get(0).getLon());
             List<double[]> coords = new ArrayList<double[]>();
             double x = 0, y = 0;
             for (Node iter : nodes) {
-                double[] coord =MathUtil.calculateCoordFromGPS(location, iter);
+                double[] coord = MathUtil.calculateCoordFromGPS(location, iter);
                 coords.add(coord);
                 x += coord[0];
                 y += coord[1];
             }
-            x = x/4;
-            y = y/4;
+            x = x / 4;
+            y = y / 4;
             double[] center = MathUtil.intersectLines(coords);
             List<Double> lengths = new ArrayList<Double>();
             List<double[]> coords2 = new ArrayList<double[]>();
@@ -259,15 +258,25 @@ public class MathUtil {
             List<double[]> coords3 = new ArrayList<double[]>();
             int i = 0;
             for (double[] iter : coords2) {
-                double[] coord = {
-                        (iter[0] * avgLength / lengths.get(i)) + x,
-                        (iter[1] * avgLength / lengths.get(i)) + y, };
+                double[] coord = { (iter[0] * avgLength / lengths.get(i)),
+                        (iter[1] * avgLength / lengths.get(i)), };
                 i++;
                 coords3.add(coord);
             }
+            if (Math.abs(coords3.get(0)[0] - coords3.get(2)[0]) < 0.01
+                    && Math.abs(coords3.get(0)[1] - coords3.get(2)[1]) < 0.01) {
+                double[] coord = {-coords3.get(0)[0], -coords3.get(0)[1],};
+                coords3.set(0, coord);
+            }
+            if (Math.abs(coords3.get(1)[0] - coords3.get(3)[0]) < 0.01
+                    && Math.abs(coords3.get(1)[1] - coords3.get(3)[1]) < 0.01) {
+                double[] coord = {-coords3.get(1)[0], -coords3.get(1)[1],};
+                coords3.set(1, coord);
+            }
             List<Node> nodes2 = new ArrayList<Node>();
             for (double[] iter : coords3) {
-                nodes2.add(MathUtil.calculateGPSPoint(location, iter));
+                double[] coord = {iter[0] + x , iter[1] + y,};
+                nodes2.add(MathUtil.calculateGPSPoint(location, coord));
             }
             nodes2.add(nodes2.get(0));
             return nodes2;

@@ -152,10 +152,15 @@ public class CaptureAssistView extends View {
         invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
         invalidRegionPaint.setStyle(Paint.Style.FILL);
 
-        paint = new Paint();
-        paint.setHinting(paint.HINTING_OFF);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.BLUE);
+        paint.setAlpha(64);
         paint.setStyle(Paint.Style.FILL);
+        
+
+        this.tps = new TransformationParamBean(1.5,
+                horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
+                mMeasuredHeight, Optimizer.currentBestLoc());  
         
         util = new PointToCoordsTransformUtil();
     }
@@ -174,8 +179,10 @@ public class CaptureAssistView extends View {
         this.horizontalViewAngle = horizontalViewAngle;
         this.verticalViewAngle = verticalViewAngle;
         this.deviceOrientation = deviceOrientation;
+        this.tps.setMaxHorizontalViewAngle(horizontalViewAngle);
+        this.tps.setCameraMaxVerticalViewAngle(verticalViewAngle);
+        this.tps.setLocation(Optimizer.currentBestLoc());
         this.informationSet = true;
-
         Log.d(TAG, "MP" + horizontalViewAngle + " MR " + verticalViewAngle
                 + " OR " + deviceOrientation.getPitch() + "  "
                 + deviceOrientation.getRoll() + " MW+H " + mMeasuredWidth + " "
@@ -195,19 +202,18 @@ public class CaptureAssistView extends View {
                             verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
                             (float) Math.toRadians(horizondegree),
                             deviceOrientation);            
-            /*
-            this.tps = new TransformationParamBean(1.5,
-                    horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
-                    mMeasuredHeight, Optimizer.currentBestLoc());            
+            tps.setPhotoHeight(mMeasuredHeight);
+            tps.setPhotoWidth(mMeasuredWidth);
+          
             for (PolyElement iter : polyElements) {
                 if (iter.getType() == PolyElementType.AREA
                         || iter.getType() == PolyElementType.BUILDING) {   
                     this.points = util.calculateNodesToPoint(iter.getNodes(), tps, deviceOrientation);
                 }
                 Path path = getPath();
-                canvas.drawPath(path, invalidRegionPaint);
+                canvas.drawPath(path, paint);
             }
-            */       
+                   
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
