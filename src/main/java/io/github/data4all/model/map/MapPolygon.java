@@ -447,4 +447,22 @@ public class MapPolygon extends Polygon {
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
+
+    @Override
+    public boolean onSingleTapConfirmed(final MotionEvent event,
+            final MapView mapView) {
+        if (mInfoWindow == null)
+            // no support for tap:
+            return false;
+        boolean tapped = contains(event);
+        if (tapped) {
+            Projection pj = mapView.getProjection();
+            GeoPoint position = (GeoPoint) pj.fromPixels((int) event.getX(),
+                    (int) event.getY());
+            mInfoWindow.open(this, position, 0, 0);
+            mapView.getController().animateTo(
+                    MapUtil.getCenterFromOsmElement(element));
+        }
+        return tapped;
+    }
 }

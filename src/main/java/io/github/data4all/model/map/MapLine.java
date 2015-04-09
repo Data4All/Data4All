@@ -438,4 +438,24 @@ public class MapLine extends Polyline {
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
+
+    @Override
+    public boolean onSingleTapConfirmed(final MotionEvent event,
+            final MapView mapView) {
+        if (mInfoWindow == null)
+            // no support for tap:
+            return false;
+        final Projection pj = mapView.getProjection();
+        GeoPoint eventPos = (GeoPoint) pj.fromPixels((int) event.getX(),
+                (int) event.getY());
+        double tolerance = TOLERANCE;
+        boolean tapped = isCloseTo(eventPos, tolerance, mapView);
+        if (tapped) {
+            mInfoWindow.open(this, MapUtil.getCenterFromOsmElement(element), 0,
+                    0);
+            mapView.getController().animateTo(
+                    MapUtil.getCenterFromOsmElement(element));
+        }
+        return tapped;
+    }
 }
