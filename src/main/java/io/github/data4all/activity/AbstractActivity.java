@@ -78,14 +78,14 @@ public abstract class AbstractActivity extends Activity {
 
         // Count up on each Activity which is create
         counter++;
-
+ 
         // set a notification to Status Bar
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
        final Notification.Builder mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_logo_white)
                 .setOngoing(true)
-                .setContentTitle("Data4All is running").setAutoCancel(true)
-                .setContentText("The Data4All App is still Running");
+                .setContentTitle(getString(R.string.statusNotificationHeadline)).setAutoCancel(true)
+                .setContentText(getString(R.string.statusNotification));
 
         notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
     }
