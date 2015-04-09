@@ -93,7 +93,7 @@ public class CapturePictureHandler implements PictureCallback {
      * @param context
      *            The Application context
      * @param preview
-     *            The Camera Preview           
+     *            The Camera Preview
      */
     public CapturePictureHandler(AbstractActivity context, CameraPreview preview) {
         this.context = context;
@@ -113,15 +113,16 @@ public class CapturePictureHandler implements PictureCallback {
 
         final Camera.Parameters params = camera.getParameters();
 
-        final double horizontalViewAngle = Math.toRadians(params
-                .getHorizontalViewAngle());
-        final double verticalViewAngle = Math.toRadians(params
-                .getVerticalViewAngle());
+        final double horizontalViewAngle =
+                Math.toRadians(params.getHorizontalViewAngle());
+        final double verticalViewAngle =
+                Math.toRadians(params.getVerticalViewAngle());
         final Size pictureSize = params.getPictureSize();
         final Location currentLocation = Optimizer.currentBestLoc();
-        transformBean = new TransformationParamBean(this.getDeviceHeight(),
-                verticalViewAngle, horizontalViewAngle, pictureSize.width,
-                pictureSize.height, currentLocation);
+        transformBean =
+                new TransformationParamBean(this.getDeviceHeight(),
+                        verticalViewAngle, horizontalViewAngle,
+                        pictureSize.width, pictureSize.height, currentLocation);
 
         // Start a thread to save the Raw Image in JPEG into SDCard
         new SavePhotoTask(Optimizer.currentDeviceOrientation(),
@@ -139,14 +140,14 @@ public class CapturePictureHandler implements PictureCallback {
      * @author tbrose
      */
     private double getDeviceHeight() {
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(context);
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
         final Resources res = context.getResources();
         final String key = res.getString(R.string.pref_bodyheight_key);
         final String height = prefs.getString(key, null);
         if (TextUtils.isEmpty(height)) {
-            final int defaultValue = res
-                    .getInteger(R.integer.pref_bodyheight_default);
+            final int defaultValue =
+                    res.getInteger(R.integer.pref_bodyheight_default);
             // Save the default value
             prefs.edit().putString(key, "" + defaultValue).commit();
             return (defaultValue - 30) / 100.0;
@@ -156,10 +157,27 @@ public class CapturePictureHandler implements PictureCallback {
         }
     }
 
+    public static File getImageFolder() {
+        return new File(Environment.getExternalStorageDirectory(), DIRECTORY);
+    }
+
+    private static File createFile() {
+        // Create a new folder on the internal storage named Data4all
+        final File folder = getImageFolder();
+        if (!folder.exists()) {
+            folder.mkdirs();
+            Log.i(TAG, "Folder was created");
+        }
+
+        // Save the file to the folder in the internal storage
+        final String name = System.currentTimeMillis() + FILE_FORMAT;
+        return new File(folder, name);
+    }
+
     /**
      * An inner Class for saving a picture in storage in a thread.
      */
-    class SavePhotoTask extends AsyncTask<byte[], String, String> {
+    private class SavePhotoTask extends AsyncTask<byte[], String, String> {
 
         private DeviceOrientation deviceOrientation;
         private Point viewSize;
@@ -180,7 +198,7 @@ public class CapturePictureHandler implements PictureCallback {
         @Override
         protected String doInBackground(byte[]... photoData) {
             try {
-                photoFile = CapturePictureHandler.this.createFile();
+                photoFile = CapturePictureHandler.createFile();
 
                 Log.d(TAG, "Picturepath:" + photoFile.getPath());
 
@@ -201,8 +219,8 @@ public class CapturePictureHandler implements PictureCallback {
             if ("successful".equals(result)) {
                 Log.d(TAG, "Picture successfully saved");
 
-                final Intent intent = new Intent(context,
-                        ShowPictureActivity.class);
+                final Intent intent =
+                        new Intent(context, ShowPictureActivity.class);
                 intent.putExtra(FILE_EXTRA, photoFile);
                 intent.putExtra(TRANSFORM_BEAN, transformBean);
                 intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
@@ -216,19 +234,5 @@ public class CapturePictureHandler implements PictureCallback {
             }
         }
 
-    }
-
-    private File createFile() {
-        // Create a new folder on the internal storage named Data4all
-        final File folder = new File(Environment.getExternalStorageDirectory(),
-                DIRECTORY);
-        if (!folder.exists()) {
-            folder.mkdirs();
-            Log.i(TAG, "Folder was created");
-        }
-
-        // Save the file to the folder in the internal storage
-        final String name = System.currentTimeMillis() + FILE_FORMAT;
-        return new File(folder, name);
     }
 }
