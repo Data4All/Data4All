@@ -86,7 +86,7 @@ public class CameraActivity extends AbstractActivity {
     boolean orientationBound;
 
     public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
-
+    private static boolean IGNORE_WARNING = false;
     private Camera mCamera;
 
     private CameraPreview cameraPreview;
@@ -272,7 +272,8 @@ public class CameraActivity extends AbstractActivity {
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK) {
+                if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK
+                        || IGNORE_WARNING) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
                     mCamera.takePicture(shutterCallback, null,
@@ -287,7 +288,8 @@ public class CameraActivity extends AbstractActivity {
         button.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK) {
+                if (OrientationListener.CALIBRATION_STATUS < OrientationListener.CALIBRATION_OK
+                        || IGNORE_WARNING) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
 
@@ -375,9 +377,17 @@ public class CameraActivity extends AbstractActivity {
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                IGNORE_WARNING = false;
                                 dialog.cancel();
                             }
-                        });
+                        })
+                .setNegativeButton(R.string.ignore,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        IGNORE_WARNING = true; 
+                        dialog.cancel();
+                    }
+                });
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
         // show it
