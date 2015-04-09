@@ -19,14 +19,6 @@
         android:key="@string/pref_pointsize_key"
         android:maxLength="1"
         android:title="@string/pref_pointsize_title" />
-    <EditTextPreference
-        android:defaultValue="@integer/pref_pointsize_default"
-        android:dialogMessage="@string/pref_pointsize_dialog_message"
-        android:dialogTitle="@string/pref_pointsize_dialog_title"
-        android:inputType="number"
-        android:key="@string/pref_pointsize_key"
-        android:maxLength="1"
-        android:title="@string/pref_pointsize_title" />
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="auto_rotate"
