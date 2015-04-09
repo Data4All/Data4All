@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.SwipeListManager;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
@@ -24,6 +25,7 @@ import io.github.data4all.service.OrientationListener.HorizonListener;
 import io.github.data4all.service.OrientationListener.LocalBinder;
 import io.github.data4all.util.HorizonCalculationUtil;
 import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
+import io.github.data4all.util.upload.Callback;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
 import io.github.data4all.view.TouchView;
@@ -39,6 +41,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.animation.TimeInterpolator;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -52,6 +55,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,6 +64,7 @@ import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -72,14 +78,25 @@ import android.widget.Toast;
  * {@link AutoFocusCrossHair}.
  * 
  * @author Andre Koch
+ * @author tbrose
  * @CreationDate 09.02.2015
- * @LastUpdate 12.02.2015
- * @version 1.2
+ * @LastUpdate 08.04.2015
+ * @version 1.3
  * 
  * @author Richard Rohde(Kalibration Feedback) 
  */
 
 public class CameraActivity extends AbstractActivity {
+
+    /**
+     * The duration of the vibration after the image is taken.
+     */
+    private static final int VIBRATION_DURATION = 200;
+
+    /**
+     * The minimum velocity for a swipe to change the mode.
+     */
+    private static final int MIN_SWIPE_VELOCITY = 1000;
 
     // Logger Tag
     private static final String TAG = CameraActivity.class.getSimpleName();
@@ -87,7 +104,19 @@ public class CameraActivity extends AbstractActivity {
     OrientationListener orientationListener;
     boolean orientationBound;
 
-    public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+    public static final String FINISH_TO_CAMERA =
+            "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+
+    /**
+     * Indicates the single picture mode
+     */
+    private static final int MODE_SINGLE = 0;
+
+    /**
+     * Indicates the gallery mode
+     */
+    private static final int MODE_GALLERY = 1;
+
     private Camera mCamera;
 
     private CameraPreview cameraPreview;
@@ -121,6 +150,16 @@ public class CameraActivity extends AbstractActivity {
         }
     };
 
+    private int currentMappingMode;
+
+    private CapturePictureHandler pictureHandler;
+
+    private GestureDetector mDetector;
+
+    private SwipeListManager mSwipeListManager;
+
+    private View mCallbackView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate is called");
@@ -137,10 +176,39 @@ public class CameraActivity extends AbstractActivity {
 
         shutterCallback = new ShutterCallback() {
             public void onShutter() {
-                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                vibrator.vibrate(200);
+                final Vibrator vibrator =
+                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(VIBRATION_DURATION);
             }
         };
+        mDetector =
+                new GestureDetector(this,
+                        new GestureDetector.SimpleOnGestureListener() {
+                            @Override
+                            public boolean onFling(MotionEvent e1,
+                                    MotionEvent e2, float x, float y) {
+                                if (x > MIN_SWIPE_VELOCITY) {
+                                    CameraActivity.this
+                                            .switchMode(currentMappingMode - 1);
+                                    return true;
+                                } else if (x < -MIN_SWIPE_VELOCITY) {
+                                    CameraActivity.this
+                                            .switchMode(currentMappingMode + 1);
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onTouchEvent(android.view.MotionEvent)
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mDetector.onTouchEvent(event);
     }
 
     /**
@@ -162,13 +230,19 @@ public class CameraActivity extends AbstractActivity {
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
         AbstractActivity.addNavBarMargin(getResources(), btnCStatus);
 
+        mSwipeListManager =
+                new SwipeListManager(this, Arrays.asList(
+                        R.drawable.ic_cam_single, R.drawable.ic_cam_multi));
+        mSwipeListManager.setContent(currentMappingMode);
+
+        mCallbackView = findViewById(R.id.cam_callback);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setLayout();
-        if (isDeviceSupportCamera()) {
+        this.setLayout();
+        if (this.isDeviceSupportCamera()) {
             try {
                 cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
 
@@ -256,6 +330,26 @@ public class CameraActivity extends AbstractActivity {
         }
     }
 
+    /**
+     * Changes the mode of the camera to the given id.
+     * 
+     * @author tbrose
+     * @param id
+     *            {@code 0} for single, {@code 1} for gallery
+     */
+    private void switchMode(int id) {
+        if (id == MODE_SINGLE) {
+            mSwipeListManager.swipeFromLeft();
+        } else if (id == MODE_GALLERY) {
+            mSwipeListManager.swipeFromRight();
+        } else {
+            // If the mode is not single and not gallery, break here.
+            return;
+        }
+        pictureHandler.setGallery(id == MODE_GALLERY);
+        currentMappingMode = id;
+    }
+
     /* ********************************************************** *
      * ********************************************************** *
      * **********************************************************
@@ -265,11 +359,24 @@ public class CameraActivity extends AbstractActivity {
      * Set the camera-action listener to the given image-button.
      * 
      * @author tbrose
-     * 
      * @param button
      *            The image-button to use.
      */
     private void setListener(ImageButton button) {
+        pictureHandler =
+                new CapturePictureHandler(CameraActivity.this, cameraPreview);
+        pictureHandler.setGallery(currentMappingMode == MODE_GALLERY);
+        pictureHandler.setGalleryCallback(new Callback<Exception>() {
+            @Override
+            public void callback(final Exception e) {
+                CameraActivity.this.galleryCallback(e);
+            }
+
+            @Override
+            public int interval() {
+                return 1;
+            }
+        });
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -277,9 +384,7 @@ public class CameraActivity extends AbstractActivity {
                         || !getWarning()) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
-                    mCamera.takePicture(shutterCallback, null,
-                            new CapturePictureHandler(CameraActivity.this,
-                                    cameraPreview));
+                    mCamera.takePicture(shutterCallback, null, pictureHandler);
                 } else {
                     showCalibrationDialog();
                 }
@@ -304,9 +409,7 @@ public class CameraActivity extends AbstractActivity {
                                 if (cameraAssistView != null
                                         && !cameraAssistView.isSkylook()) {
                                     mCamera.takePicture(shutterCallback, null,
-                                            new CapturePictureHandler(
-                                                    CameraActivity.this,
-                                                    cameraPreview));
+                                            pictureHandler);
 
                                 } else {
                                     mAutoFocusCrossHair.fail();
@@ -325,6 +428,63 @@ public class CameraActivity extends AbstractActivity {
 
             }
         });
+    }
+
+    /**
+     * This method is the callback for the gallery saving action.
+     * 
+     * @author tbrose
+     * @param e
+     *            The exception from the gallery or {@code null} if the
+     *            opperation succeeds.
+     */
+    private void galleryCallback(final Exception e) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (e == null) {
+                    CameraActivity.this.onGallerySuccess();
+                } else {
+                    Toast.makeText(CameraActivity.this,
+                            e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    btnCapture.setEnabled(true);
+                }
+            }
+        });
+    }
+
+    /**
+     * This method is the callback for the success-animation of the gallery
+     * saving action.
+     * 
+     * @author tbrose
+     */
+    protected void onGallerySuccess() {
+        mCallbackView.animate().alpha(1).setDuration(VIBRATION_DURATION)
+                .setInterpolator(new TimeInterpolator() {
+                    private TimeInterpolator ti =
+                            new AccelerateDecelerateInterpolator();
+
+                    @Override
+                    public float getInterpolation(float input) {
+                        return 2f * (0.5f - Math.abs(-ti
+                                .getInterpolation(input) + 0.5f));
+                    }
+                }).withStartAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallbackView.setVisibility(View.VISIBLE);
+                        Log.i(TAG, "starting success animation");
+                        mCamera.startPreview();
+                    }
+                }).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallbackView.setVisibility(View.INVISIBLE);
+                        mCallbackView.setAlpha(0);
+                        btnCapture.setEnabled(true);
+                        Log.i(TAG, "ending success animation");
+                    }
+                }).start();
     }
 
     /**

@@ -1,0 +1,9 @@
+<resources>
+
+    <string-array name="pref_gallery_deletemode_option">
+        <item name="yes">Immer</item>
+        <item name="no">Nie</item>
+        <item name="ask">Nachfragen</item>
+    </string-array>
+
+</resources>

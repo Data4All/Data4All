@@ -39,7 +39,9 @@
     <!-- dialogs -->
     <string name="deleteDialog">Wollen Sie dieses Objekt wirklich löschen?</string>
     <string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
-
+    <string name="deleteImage">Bild löschen</string>
+    <string name="deleteImageText">Soll das Bild aus der Galerie gelöscht werden?</string>
+    
     <!-- for network -->
     <string name="no_network_title">Kein Internet verfügbar</string>
     <string name="no_network_message">Bitte verbinden Sie ihr Gerät mit dem Internet</string>
@@ -90,6 +92,14 @@
     <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
     <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
+    
+    <!-- for gallery -->
+    <string name="gallery_sec">"%s gerade"</string>
+    <string name="gallery_mins">"%s Minuten"</string>
+    <string name="gallery_hour">"%s 1 Stunde"</string>
+    <string name="gallery_hours">"%s Stunden"</string>
+    <string name="gallery_yesterday">"%1$s gestern %2$s"</string>
+    <string name="gallery_delete_all">Alle löschen</string>
 
     <!-- other -->
     <string name="sensor_warning"> Sensoren Warnungen zeigen</string>

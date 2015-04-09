@@ -39,6 +39,8 @@
     <!-- dialogs -->
     <string name="deleteDialog">Are you sure you want to delete this object?</string>
     <string name="resultViewAlertDialogMessage">Upload now?</string>
+    <string name="deleteImage">Delete image</string>
+    <string name="deleteImageText">"Do you want to delete the taken image from the gallery?"</string>
 
     <!-- for network -->
     <string name="no_network_title">Network unavailable</string>
@@ -88,6 +90,15 @@
     <string name="upload_to_openstreetmap_progress">Download for %s in progress</string>
     <string name="upload_to_openstreetmap_success">Changes successfully uploaded</string>
     <string name="upload_to_openstreetmap_error">Upload failed</string>
+
+    <!-- for gallery -->
+    <string name="gallery_sec">"%s now"</string>
+    <string name="gallery_min">"%s 1 minute"</string>
+    <string name="gallery_mins">"%s minutes"</string>
+    <string name="gallery_hour">"%s 1 hour"</string>
+    <string name="gallery_hours">"%s hours"</string>
+    <string name="gallery_yesterday">"%1$s yesterday %2$s"</string>
+    <string name="gallery_delete_all">delete all</string>
 
     <!-- other -->
 	<string name="sensor_warning"> Show Sensor Warning</string>
