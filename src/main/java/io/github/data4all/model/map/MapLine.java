@@ -78,6 +78,9 @@ public class MapLine extends Polyline {
     // Maximum distance from the touch point to the mapline in pixel
     private static final int TOLERANCE = 20;
 
+    // Max distance from the touch point to the mapline in pixel on the main map
+    private static final int TOLERANCE_MAIN_MAP = 15;
+
     /**
      * Modes for edits which differ from touch events.
      */
@@ -448,7 +451,7 @@ public class MapLine extends Polyline {
         final Projection pj = mapView.getProjection();
         GeoPoint eventPos = (GeoPoint) pj.fromPixels((int) event.getX(),
                 (int) event.getY());
-        double tolerance = TOLERANCE;
+        double tolerance = TOLERANCE_MAIN_MAP;
         boolean tapped = isCloseTo(eventPos, tolerance, mapView);
         if (tapped) {
             mInfoWindow.open(this, MapUtil.getCenterFromOsmElement(element), 0,

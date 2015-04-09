@@ -83,6 +83,9 @@ public class MapPolygon extends Polygon {
     // Fill Color for activated Polygons
     protected static final int ACTIVE_FILL_COLOR = Color.argb(100, 50, 255, 50);
 
+    // Maximum distance from the touch point to the mapline in pixel
+    private static final int TOLERANCE = 1;
+
     /**
      * Modes for edits which differ from touch events.
      */
@@ -239,7 +242,7 @@ public class MapPolygon extends Polygon {
                     ((PolyElement) element).setNodesFromGeoPoints(geoPointList);
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
-                        && contains(event)) {
+                        && isTapped(event)) {
                     changeMode();
                 }
                 break;
@@ -448,18 +451,34 @@ public class MapPolygon extends Polygon {
     @Override
     public boolean onSingleTapConfirmed(final MotionEvent event,
             final MapView mapView) {
-        if (mInfoWindow == null)
-            // no support for tap:
-            return false;
-        boolean tapped = contains(event);
-        if (tapped) {
+        if (!editable) {
+            if (mInfoWindow == null) {
+                // no support for tap:
+                return false;
+            }
+            boolean isTapped = isTapped(event);
+            if (isTapped) {
+                mInfoWindow.open(this,
+                        MapUtil.getCenterFromOsmElement(element), 0, 0);
+                mapView.getController().animateTo(
+                        MapUtil.getCenterFromOsmElement(element));
+            }
+            return isTapped;
+        } else {
+            return super.onSingleTapConfirmed(event, mapView);
+        }
+    }
+
+    public boolean isTapped(MotionEvent event) {
+        if (contains(event)) {
+            return true;
+        } else {
             Projection pj = mapView.getProjection();
             GeoPoint position = (GeoPoint) pj.fromPixels((int) event.getX(),
                     (int) event.getY());
-            mInfoWindow.open(this, position, 0, 0);
-            mapView.getController().animateTo(
-                    MapUtil.getCenterFromOsmElement(element));
+            int distToCent = position.distanceTo(MapUtil
+                    .getCenterFromOsmElement(element));
+            return (distToCent < TOLERANCE);
         }
-        return tapped;
     }
 }
