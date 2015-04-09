@@ -72,6 +72,7 @@ public class CaptureAssistView extends View {
     private boolean skylook;
     private boolean visible;
     private boolean informationSet;
+    private boolean makeBitmap = false;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
     private List<PolyElement> polyElements;
@@ -159,12 +160,11 @@ public class CaptureAssistView extends View {
         paint.setColor(Color.BLUE);
         paint.setAlpha(64);
         paint.setStyle(Paint.Style.FILL);
-        
 
         this.tps = new TransformationParamBean(getDeviceHeight(),
                 horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
-                mMeasuredHeight, Optimizer.currentBestLoc());  
-        
+                mMeasuredHeight, Optimizer.currentBestLoc());
+
         util = new PointToCoordsTransformUtil();
     }
 
@@ -204,21 +204,8 @@ public class CaptureAssistView extends View {
                     .calcHorizontalPoints(horizontalViewAngle,
                             verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
                             (float) Math.toRadians(horizondegree),
-                            deviceOrientation);            
-            tps.setPhotoHeight(mMeasuredHeight);
-            tps.setPhotoWidth(mMeasuredWidth);
-          
-            if (getAugmented()) {
-                for (PolyElement iter : polyElements) {
-                    if (iter.getType() == PolyElementType.AREA
-                            || iter.getType() == PolyElementType.BUILDING) {
-                        this.points = util.calculateNodesToPoint(
-                                iter.getNodes(), tps, deviceOrientation);
-                    }
-                    Path path = getPath();
-                    canvas.drawPath(path, paint);
-                }
-            }
+                            deviceOrientation);
+
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
@@ -244,9 +231,22 @@ public class CaptureAssistView extends View {
                         cameraStopPaint);
             }
         }
+        if (getAugmented()) {
+            tps.setPhotoHeight(mMeasuredHeight);
+            tps.setPhotoWidth(mMeasuredWidth);
+            for (PolyElement iter : polyElements) {
+                if (iter.getType() == PolyElementType.AREA
+                        || iter.getType() == PolyElementType.BUILDING) {
+                    this.points = util.calculateNodesToPoint(iter.getNodes(),
+                            tps, deviceOrientation);
+                }
+                Path path = getPath();
+                canvas.drawPath(path, paint);
+            }
+        }
         canvas.restore();
     }
-    
+
     protected boolean getAugmented() {
         PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
         final SharedPreferences prefs = PreferenceManager
@@ -254,7 +254,6 @@ public class CaptureAssistView extends View {
         return (prefs.getBoolean("augmented_reality", false));
     }
 
-    
     /**
      * Reads the height of the device in condition of the bodyheight from the
      * preferences.
@@ -266,14 +265,14 @@ public class CaptureAssistView extends View {
      * @author tbrose
      */
     private double getDeviceHeight() {
-        final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getContext());
         final Resources res = getContext().getResources();
         final String key = res.getString(R.string.pref_bodyheight_key);
         final String height = prefs.getString(key, null);
         if (TextUtils.isEmpty(height)) {
-            final int defaultValue =
-                    res.getInteger(R.integer.pref_bodyheight_default);
+            final int defaultValue = res
+                    .getInteger(R.integer.pref_bodyheight_default);
             // Save the default value
             prefs.edit().putString(key, "" + defaultValue).commit();
             return (defaultValue - 30) / 100.0;
@@ -282,6 +281,7 @@ public class CaptureAssistView extends View {
             return (bodyHeight - 30) / 100.0;
         }
     }
+
     /**
      * This method draws the lines for the horizon line. everything is filled
      * from the top left corner and the upper right corner to the horizon line
@@ -324,6 +324,9 @@ public class CaptureAssistView extends View {
         if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT) {
             return false;
         }
+        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint.getColor()){
+            return false;
+        }
         return true;
     }
 
@@ -342,5 +345,6 @@ public class CaptureAssistView extends View {
     public boolean isSkylook() {
         return skylook;
     }
+
 
 }
