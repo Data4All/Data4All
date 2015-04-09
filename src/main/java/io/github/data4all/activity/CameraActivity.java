@@ -379,6 +379,7 @@ public class CameraActivity extends AbstractActivity {
                         mCallbackView.setAlpha(0);
                         btnCapture.setEnabled(true);
                         Log.i(TAG, "ending success animation");
+                        setLayout();
                     }
                 }).start();
     }
