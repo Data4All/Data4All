@@ -320,5 +320,34 @@ public class Tagging {
 		}
     	return false;
     }
+    
+    
+    public static Map<Tag, String> compareUnclassifiedTags(ClassifiedValue classValue, Map <Tag, String> map){
+    	Log.i(TAG, map.toString());
+    	Log.i(TAG, classValue.toString());
+    	List <Tag> tagList = new ArrayList<Tag>();
+    	tagList.addAll(Tags.getAllAddressTags());
+    	tagList.addAll(Tags.getAllContactTags());
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	booleanList = classValue.getAllUnclassifiedBooleans();
+    	List <Tag> rightTag = new ArrayList<Tag>();
+    	for (int i = 0; i < booleanList.size(); i++) {
+			if(booleanList.get(i)){
+				rightTag.add(tagList.get(i));
+			}
+		}
+    	Log.i(TAG, rightTag.toString());
+    	for (Entry<Tag,String> entry : map.entrySet()) {
+    			Log.i(TAG, "BOOLEAN " + rightTag.contains(entry.getKey()));
+    			if(!rightTag.contains(entry.getKey())){
+    				map.remove(entry.getKey());
+    				
+            	}
+    		
+   	 	}	
+    	Log.i(TAG, map.toString());
+		return map;
+    	
+    }
 
 }

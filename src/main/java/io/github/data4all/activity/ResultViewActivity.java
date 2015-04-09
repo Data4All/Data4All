@@ -151,7 +151,7 @@ public class ResultViewActivity extends AbstractActivity implements
         Log.i(TAG, "tagMap " + tagMap);
         mapTag = Tagging.getUnclassifiedMapKeys(res);
         classifiedValue = null;
-        if (!Tagging.getAllNonSelectedTags(element.getTags(),
+        /**if (!Tagging.getAllNonSelectedTags(element.getTags(),
                 classifiedValue).isEmpty()) {
             final LayoutInflater inflater = getLayoutInflater();
             viewFooter = ((LayoutInflater) this
@@ -168,8 +168,7 @@ public class ResultViewActivity extends AbstractActivity implements
 
                 }
             });
-        }
-        Log.i(TAG, "" + element.getTags().isEmpty());
+        }*/
         if(element.getTags().isEmpty()){
         	addClassifiedTag();
         }
@@ -390,9 +389,9 @@ public class ResultViewActivity extends AbstractActivity implements
         Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
         endList.remove(0);
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
-        LastChoiceHandler.getInstance().setLastChoice(
+       /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
-        LastChoiceHandler.getInstance().save(this);
+        LastChoiceHandler.getInstance().save(this); */
     }
 
     /**
@@ -428,14 +427,16 @@ public class ResultViewActivity extends AbstractActivity implements
                         break;
                	 	}	     
                 	element.removeTag(tagKey);
-                	map = element.getTags();
+                	map.putAll(element.getTags());
                 	Log.i(TAG, "MAP" + map.toString());
                 	element.clearTags();
                 	
                 }
                 element.addOrUpdateTag(tagMap.get(selectedString), realValue);
+                if(map != null){
+                Tagging.compareUnclassifiedTags(classifiedMap.get(value), map);
+                }
                 element.addTags(map);
-                Log.i(TAG, "TAGSSSSSSSSSSSSSSSSSS " + element.getTags());
                 ResultViewActivity.this.output();
             }
         });
@@ -471,6 +472,7 @@ public class ResultViewActivity extends AbstractActivity implements
         dialog.setContentView(R.layout.dialog_dynamic);
         dialog.setTitle(selectedString);
         final Button okay = new Button(ResultViewActivity.this);
+        final Button next = new Button(ResultViewActivity.this);
         final EditText text = new EditText(ResultViewActivity.this);
         text.setTextColor(Color.WHITE);
         Tag tag = mapTag.get(selectedString);
@@ -478,9 +480,14 @@ public class ResultViewActivity extends AbstractActivity implements
         text.setText(element.getTags().get(tag));
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
+        next.setText(R.string.next);
+        next.setTextColor(Color.WHITE);
         final LinearLayout layout = (LinearLayout) dialog
                 .findViewById(R.id.dialogDynamic);
         layout.addView(text);
+        if(keyList.indexOf(selectedString) < keyList.size()-1){
+        	layout.addView(next);
+        }
         layout.addView(okay);
         //Displays the Keyboard
         dialog.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -494,16 +501,25 @@ public class ResultViewActivity extends AbstractActivity implements
                     element.addOrUpdateTag(mapTag.get(selectedString), text
                             .getText().toString());
                     ResultViewActivity.this.output();
-                    // checks if you can add more Tags if not it removes footer
-                    if (Tagging.getAllNonSelectedTags(element.getTags(),
-                            classifiedValue)
-                            .isEmpty()) {
-                        listView.removeFooterView(viewFooter);
-                    }
                     dialog.dismiss();
                 }
             }
         });
+        next.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (text.getText().toString().matches("")) {
+					dialog.dismiss();
+					ResultViewActivity.this.changeUnclassifiedTag(keyList.get(keyList.indexOf(selectedString) +1));
+				} else {
+                    element.addOrUpdateTag(mapTag.get(selectedString), text
+                            .getText().toString());
+                    dialog.dismiss();
+                    ResultViewActivity.this.changeUnclassifiedTag(keyList.get(keyList.indexOf(selectedString) +1));            
+                }            
+			}
+		});
         dialog.show();
     }
 
@@ -513,6 +529,7 @@ public class ResultViewActivity extends AbstractActivity implements
         case R.id.buttonResult:
             final AlertDialog.Builder builder = new AlertDialog.Builder(
                     ResultViewActivity.this);
+            Log.i(TAG, element.getTags().toString());
             builder.setMessage(R.string.resultViewAlertDialogMessage);
             final Intent intent = new Intent(this, LoginActivity.class);
             builder.setPositiveButton(R.string.yes,
@@ -522,19 +539,20 @@ public class ResultViewActivity extends AbstractActivity implements
                             startActivityForResult(intent);
                         }
                     });
-            builder.setNegativeButton(R.string.no,
+            builder.setNegativeButton(R.string.maybe,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                        	 addOsmElementToDB(element);
+                        	
                             setResult(RESULT_OK);
                             finishWorkflow(null);
                         }
                     });
-            builder.setNeutralButton(R.string.maybe, 
+            builder.setNeutralButton(R.string.no, 
             		new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					addOsmElementToDB(element);
                     setResult(RESULT_OK);
                     finishWorkflow(null);
                     
@@ -549,9 +567,9 @@ public class ResultViewActivity extends AbstractActivity implements
             i.putExtra(CameraActivity.FINISH_TO_CAMERA, true);
             finishWorkflow(i);
             break;
-        case R.id.titleFooter:
+       /** case R.id.titleFooter:
             createDialogAddTags();
-            break;
+            break; */
         case R.id.buttonClassifiedTag:
         	addClassifiedTag();
         default:
@@ -564,7 +582,7 @@ public class ResultViewActivity extends AbstractActivity implements
      * used.
      * 
      */
-    private void createDialogAddTags() {
+   /** private void createDialogAddTags() {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
                 ResultViewActivity.this,
                 android.R.style.Theme_Holo_Dialog_MinWidth);
@@ -589,7 +607,7 @@ public class ResultViewActivity extends AbstractActivity implements
         alert.show();
 
     }
-
+*/
     /**
      * Adds an Osm Element to the DataBase
      * 
