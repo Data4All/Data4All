@@ -90,5 +90,6 @@
     <string name="retry">Cannot find the right Tag. Try Again.</string>
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
     <string name="show_pwd">Show Password</string>
-
+    <string name="statusNotificationHeadline">Data4All still running</string>
+	<string name="statusNotification">The Data4All App is still running on your system</string>
 </resources>
