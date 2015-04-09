@@ -33,6 +33,7 @@ import io.github.data4all.util.Optimizer;
 import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -40,6 +41,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.location.Location;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -152,10 +155,15 @@ public class CaptureAssistView extends View {
         invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
         invalidRegionPaint.setStyle(Paint.Style.FILL);
 
-        paint = new Paint();
-        paint.setHinting(paint.HINTING_OFF);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.BLUE);
+        paint.setAlpha(64);
         paint.setStyle(Paint.Style.FILL);
+        
+
+        this.tps = new TransformationParamBean(getDeviceHeight(),
+                horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
+                mMeasuredHeight, Optimizer.currentBestLoc());  
         
         util = new PointToCoordsTransformUtil();
     }
@@ -174,8 +182,10 @@ public class CaptureAssistView extends View {
         this.horizontalViewAngle = horizontalViewAngle;
         this.verticalViewAngle = verticalViewAngle;
         this.deviceOrientation = deviceOrientation;
+        this.tps.setMaxHorizontalViewAngle(verticalViewAngle);
+        this.tps.setCameraMaxVerticalViewAngle(horizontalViewAngle);
+        this.tps.setLocation(Optimizer.currentBestLoc());
         this.informationSet = true;
-
         Log.d(TAG, "MP" + horizontalViewAngle + " MR " + verticalViewAngle
                 + " OR " + deviceOrientation.getPitch() + "  "
                 + deviceOrientation.getRoll() + " MW+H " + mMeasuredWidth + " "
@@ -195,19 +205,20 @@ public class CaptureAssistView extends View {
                             verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
                             (float) Math.toRadians(horizondegree),
                             deviceOrientation);            
-            /*
-            this.tps = new TransformationParamBean(1.5,
-                    horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
-                    mMeasuredHeight, Optimizer.currentBestLoc());            
-            for (PolyElement iter : polyElements) {
-                if (iter.getType() == PolyElementType.AREA
-                        || iter.getType() == PolyElementType.BUILDING) {   
-                    this.points = util.calculateNodesToPoint(iter.getNodes(), tps, deviceOrientation);
+            tps.setPhotoHeight(mMeasuredHeight);
+            tps.setPhotoWidth(mMeasuredWidth);
+          
+            if (getAugmented()) {
+                for (PolyElement iter : polyElements) {
+                    if (iter.getType() == PolyElementType.AREA
+                            || iter.getType() == PolyElementType.BUILDING) {
+                        this.points = util.calculateNodesToPoint(
+                                iter.getNodes(), tps, deviceOrientation);
+                    }
+                    Path path = getPath();
+                    canvas.drawPath(path, paint);
                 }
-                Path path = getPath();
-                canvas.drawPath(path, invalidRegionPaint);
             }
-            */       
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
@@ -236,8 +247,41 @@ public class CaptureAssistView extends View {
         canvas.restore();
     }
     
-  
+    protected boolean getAugmented() {
+        PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getContext());
+        return (prefs.getBoolean("augmented_reality", false));
+    }
 
+    
+    /**
+     * Reads the height of the device in condition of the bodyheight from the
+     * preferences.
+     * 
+     * If the preference is empty or not set the default value is stored.
+     * 
+     * @return The height of the device or {@code 0} if the preference is not
+     *         set or empty
+     * @author tbrose
+     */
+    private double getDeviceHeight() {
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        final Resources res = getContext().getResources();
+        final String key = res.getString(R.string.pref_bodyheight_key);
+        final String height = prefs.getString(key, null);
+        if (TextUtils.isEmpty(height)) {
+            final int defaultValue =
+                    res.getInteger(R.integer.pref_bodyheight_default);
+            // Save the default value
+            prefs.edit().putString(key, "" + defaultValue).commit();
+            return (defaultValue - 30) / 100.0;
+        } else {
+            final double bodyHeight = Integer.parseInt(height);
+            return (bodyHeight - 30) / 100.0;
+        }
+    }
     /**
      * This method draws the lines for the horizon line. everything is filled
      * from the top left corner and the upper right corner to the horizon line

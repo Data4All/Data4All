@@ -409,6 +409,17 @@ public class PolyElement extends AbstractDataElement {
             return false;
         }
     }
+    /**
+     * Replaces all existing nodes in a PolyElement with a list of different ones.
+     * 
+     * @param newNodes
+     *            The new nodes.
+     * @return success of the operation
+     */
+    public boolean replaceNodes(List<Node> newNodes){
+        nodes.clear();
+        return nodes.addAll(newNodes);
+    }
 
     /**
      * Set the list of nodes from a given list of GeoPoints.

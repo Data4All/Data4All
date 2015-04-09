@@ -23,5 +23,13 @@
         android:defaultValue="true"
         android:key="auto_rotate"
         android:title="@string/auto_rotate_title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="augmented_reality"
+        android:title="@string/augmented_reality" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="sensor_warning"
+        android:title="@string/sensor_warning" />
 
 </PreferenceScreen>

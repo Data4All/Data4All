@@ -29,7 +29,9 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.MathUtil;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -84,7 +86,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
         // Setup the rotation listener
         final List<View> buttons = new ArrayList<View>();
-        
+
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -99,8 +101,26 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
         buttons.add(findViewById(id));
-        
+
+        id = R.id.rect;
+        final ImageButton rect = (ImageButton) findViewById(id);
+        rect.setOnClickListener(this);
+        buttons.add(findViewById(id));
+
+        if (element instanceof PolyElement) {
+            PolyElement elem = (PolyElement) element;
+            if (elem.getNodes().size() != 5
+                    || elem.getType().equals(PolyElement.PolyElementType.WAY)) {
+                rect.setClickable(false);
+                rect.setVisibility(View.GONE);
+            }
+        } else {
+            rect.setClickable(false);
+            rect.setVisibility(View.GONE);
+        }
+
         listener = new ButtonRotationListener(this, buttons);
+
     }
 
     /*
@@ -136,6 +156,9 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         case R.id.okay:
             this.accept();
             break;
+        case R.id.rect:
+            this.startRectangularPreview();
+            break;
         default:
             break;
         }
@@ -143,7 +166,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     private void setUpOverlays() {
         if (getIntent().hasExtra("LOCATION")) {
-            final Location l = (Location) getIntent().getParcelableExtra("LOCATION");
+            final Location l = (Location) getIntent().getParcelableExtra(
+                    "LOCATION");
             final Marker m = new Marker(mapView);
             m.setPosition(new GeoPoint(l));
             m.setIcon(new DefaultResourceProxyImpl(this)
@@ -177,6 +201,20 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         intent.putExtra(OSM, element);
 
         startActivityForResult(intent);
+    }
+
+    /*
+     * Starts new MapPreview with now rectangular Object
+     */
+    private void startRectangularPreview() {
+        if (element instanceof PolyElement) {
+            PolyElement rect = (PolyElement) element;
+            if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect
+                    .getNodes()))) {
+                mapView.getOverlays().clear();
+                this.setUpOverlays();
+            }
+        }
     }
 
     /*

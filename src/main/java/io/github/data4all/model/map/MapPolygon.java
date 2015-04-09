@@ -27,6 +27,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.MathUtil;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.D4AMapView;
 
@@ -247,6 +248,9 @@ public class MapPolygon extends Polygon {
                         && isTapped(event)) {
                     changeMode();
                 }
+                pj = mapView.getProjection();
+                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
+                        null);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 mode = NONE;
@@ -376,7 +380,7 @@ public class MapPolygon extends Polygon {
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
             // transfer coordinates to gpsPoints
-            Node node = PointToCoordsTransformUtil.calculateGPSPoint(
+            Node node = MathUtil.calculateGPSPoint(
                     midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
@@ -431,8 +435,7 @@ public class MapPolygon extends Polygon {
         this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            double[] preCoord = PointToCoordsTransformUtil
-                    .calculateCoordFromGPS(
+            double[] preCoord = MathUtil.calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint
                                     .getLongitude()));
