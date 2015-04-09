@@ -444,4 +444,19 @@ public class MapPolygon extends Polygon {
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
+     */
+    @Override
+    public void setPoints(final List<GeoPoint> points){
+        super.setPoints(points);
+        if(active){
+            GeoPoint center = MapUtil.getCenterFromPointList(points);
+            //mapView.getController().animateTo(center);
+            mapView.getController().setCenter(center);
+            mapView.postInvalidate();
+        }
+    }
 }

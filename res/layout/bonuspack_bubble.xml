@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/bonuspack_bubble"
@@ -9,86 +9,105 @@
         android:id="@+id/bubble_image"
         android:layout_width="65dp"
         android:layout_height="65dp"
-		android:visibility="gone"
-		android:contentDescription="@string/noDescription" />
-    <LinearLayout
-        android:layout_width="wrap_content"
+        android:contentDescription="@string/noDescription"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:orientation="vertical"
         android:paddingLeft="5dp" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/bubble_title"
+            android:layout_width="10dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/bubble_left"
+            android:layout_toLeftOf="@+id/bubble_right"
+            android:maxEms="17"
+            android:text="Title"
+            android:textColor="#000000" />
 
-            <TextView
-                android:id="@+id/bubble_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_weight="1"
-                android:maxEms="17"
-                android:text="Title"
-                android:textColor="#000000" />
+        <Button
+            android:id="@+id/bubble_edit"
+            style="@style/DefaultButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignLeft="@+id/bubble_left"
+            android:layout_alignRight="@+id/bubble_right"
+            android:layout_below="@+id/bubble_subdescription"
+            android:background="@drawable/register_button_bg"
+            android:text="@string/edit"
+            android:textColor="#000000"
+            android:textSize="12dp" />
 
-            <Button
-                android:id="@+id/bubble_moreinfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_weight="0"
-                android:background="@drawable/btn_moreinfo"
-                android:visibility="gone" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/bubble_delete"
+            style="@style/DefaultButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignLeft="@+id/bubble_left"
+            android:layout_alignRight="@+id/bubble_right"
+            android:layout_below="@+id/bubble_edit"
+            android:background="@drawable/register_button_bg"
+            android:paddingLeft="5dp"
+            android:text="@string/delete"
+            android:textColor="#660000"
+            android:textSize="12dp" />
 
         <TextView
             android:id="@+id/bubble_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/bubble_title"
+            android:layout_below="@+id/bubble_title"
+            android:layout_toRightOf="@+id/bubble_left"
+            android:layout_toLeftOf="@+id/bubble_right"
             android:maxEms="17"
             android:text="Description"
             android:textColor="#000000"
             android:textSize="12dp" />
 
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/bubble_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/bubble_subdescription"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/arrow_right" />
+
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/bubble_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/bubble_subdescription"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/arrow_left" />
+
         <TextView
             android:id="@+id/bubble_subdescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxEms="17"
-            android:text="Address"
+            android:layout_alignLeft="@+id/bubble_title"
+            android:layout_alignRight="@+id/bubble_title"
+            android:layout_below="@+id/bubble_title"
+            android:layout_toRightOf="@+id/bubble_left"
+            android:text="Description"
             android:textColor="#000000"
-            android:textSize="10dp"
-            android:visibility="gone" />
+            android:textSize="12dp" />
 
-        <RelativeLayout
+        <Button
+            android:id="@+id/bubble_moreinfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_gravity="right"
+            android:background="@drawable/btn_moreinfo"
+            android:visibility="gone" />
+    </RelativeLayout>
 
-            <Button
-                android:id="@+id/bubble_delete"
-                style="@style/DefaultButtonText"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:background="@drawable/register_button_bg"
-                android:paddingLeft="5dp"
-                android:text="@string/delete"
-                android:textColor="#660000"
-                android:textSize="12dp" />
-
-            <Button
-                android:id="@+id/bubble_edit"
-                style="@style/DefaultButtonText"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/bubble_delete"
-                android:background="@drawable/register_button_bg"
-                android:text="@string/edit"
-                android:textColor="#000000"
-                android:textSize="12dp"/>
-
-        </RelativeLayout>
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
