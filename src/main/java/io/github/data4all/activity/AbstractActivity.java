@@ -17,16 +17,21 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.util.HelpOverlay;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.ViewManager;
 
 /**
  * Global activity for all children activities.
@@ -55,6 +60,27 @@ public abstract class AbstractActivity extends Activity {
 
     public static final int RESULT_FINISH = 9998;
 
+    private HelpOverlay overlay;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initHelp();
+    }
+
+    /**
+     * Initiate the help-layout for the activity.
+     */
+    private void initHelp() {
+        overlay = new HelpOverlay(this);
+        overlay.showOnFirstTime();
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -64,8 +90,14 @@ public abstract class AbstractActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actionbar, menu);
+
+        // Remove the menu item if there is no overlay for this activity
+        if (!overlay.hasHelpOverlay()) {
+            menu.removeItem(R.id.action_help);
+        }
+
         final ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
         return super.onCreateOptionsMenu(menu);
@@ -94,7 +126,7 @@ public abstract class AbstractActivity extends Activity {
             status = true;
             break;
         case R.id.action_help:
-            // TODO set help activity here
+            overlay.show();
             status = true;
             break;
         case R.id.list_tracks:
@@ -103,13 +135,17 @@ public abstract class AbstractActivity extends Activity {
             break;
         // finish workflow, return to mapview
         case android.R.id.home:
-            onWorkflowFinished(null);
+            this.onHomePressed();
             status = true;
             break;
         default:
             return super.onOptionsItemSelected(item);
         }
         return status;
+    }
+
+    protected void onHomePressed() {
+        onWorkflowFinished(null);
     }
 
     /**
