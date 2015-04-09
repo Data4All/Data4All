@@ -119,7 +119,7 @@ public class PointToCoordsTransformUtil {
             // transforms local coordinates in global GPS-coordinates set to.
             // Node.
             if (coord != null) {
-                final Node node = calculateGPSPoint(tps.getLocation(),
+                final Node node = MathUtil.calculateGPSPoint(tps.getLocation(),
                         coord);
                 Log.d(TAG,
                         "Calculated Lat: " + node.getLat() + " Lon: "
@@ -218,7 +218,7 @@ public class PointToCoordsTransformUtil {
         double horizonRoll = -Math.atan(vector3[0] / vector3[2]);
 
         // calculate a point on the horizont vertical to the mid of the display.
-        Log.i("TEST", tps.toString());
+        Log.i(TAG, tps.toString());
         float x = tps.getPhotoWidth()
                 / 2
                 + MathUtil.calculatePixelFromAngle(horizonRoll,
@@ -245,7 +245,7 @@ public class PointToCoordsTransformUtil {
         this.deviceOrientation = deviceOrientation;
         List<Point> points = new ArrayList<Point>();
         for (Node node : nodes) {
-            double[] coord = calculateCoordFromGPS(tps.getLocation(), node);
+            double[] coord = MathUtil.calculateCoordFromGPS(tps.getLocation(), node);
             Point point = coordToPixel(coord);
             points.add(point);
         }
@@ -333,60 +333,6 @@ public class PointToCoordsTransformUtil {
         return coord;
     }
 
-    /**
-     * calculates Node (with latitude and longitude) from coordinates in a local
-     * system and the current Location.
-     * 
-     * @param location
-     *            current location of the device
-     * @param coord
-     *            coordinate of the point in the local system
-     * @return A Node with latitude and longitude
-     */
-    public static Node calculateGPSPoint(Location location, double[] coord) {
-        final double lat = Math.toRadians(location.getLatitude());
-        final double lon = Math.toRadians(location.getLongitude());
-        // calculate the length of the current latitude line with the earth
-        // radius
-        final double radius = 6371004.0;
-        double lonLength = radius * Math.cos(lat);
-        lonLength = lonLength * 2 * Math.PI;
-        // add to the current latitude the distance of the coordinate
-        double lon2 = lon + Math.toRadians((coord[0] * 360) / lonLength);
-        // fix the skip from -PI to +PI for the longitude
-        lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
-        // calculate the length of the current longitude line with the earth
-        // radius
-        final double latLength = radius * 2 * Math.PI;
-        // add to the current Longitude the distance of the coordinate
-        double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
-        lat2 = Math.toDegrees(lat2);
-        lon2 = Math.toDegrees(lon2);
-        // create a new Node with the latitude and longitude values
-        return new Node(-1, lat2, lon2);
-    }
 
-    /**
-     * transfers GPSPoints to a local Coordinate System
-     * @param location
-     * @param node
-     * @return coord
-     */
-    public static double[] calculateCoordFromGPS(Location location, Node node) {
-        final double lat = Math.toRadians(location.getLatitude());
-        final double lon = Math.toRadians(location.getLongitude());
-        // calculate the length of the current latitude line with the earth
-        // radius
-        final double radius = 6371004.0;
-        double lonLength = radius * Math.cos(lat);
-        lonLength = lonLength * 2 * Math.PI;
-        final double latLength = radius * 2 * Math.PI;
-        double[] coord = new double[2];
-        double test = (Math.toRadians(node.getLat()) - lat);
-        coord[1] = latLength * test / (Math.PI * 2);
-        test = (Math.toRadians(node.getLon()) - lon);
-        coord[0] = lonLength * test / (Math.PI * 2);
-        return coord;
-    }
 
 }
