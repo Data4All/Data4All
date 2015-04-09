@@ -10,7 +10,7 @@ import android.location.Location;
  */
 public class Addresse {
     
-	//housenumber
+	//house_number
     private String addresseNr="";
     //road
     private String road = "";
@@ -75,7 +75,7 @@ public class Addresse {
     }*/
     
     /**
-     * get full address 
+     * get a full address 
      * @return road + addresseNr + postCode + city + country
      */
     public String getFullAddress(){

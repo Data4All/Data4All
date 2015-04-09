@@ -40,14 +40,14 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 	private Addresse bestAdresse;
 
 	/**
-	 * get the bestAddress with the bestlocation
-	 * @return bestLocation
+	 * get the bestAddress with the best location
+	 * @return bestAdresse
 	 */
 	public Addresse getBestAddresse() {
 		return bestAdresse;
 	}
 
-	ArrayAdapter<String> dataAdapter;
+	private ArrayAdapter<String> dataAdapter;
 
 	public ArrayAdapter<String> getDataAdapter() {
 		return dataAdapter;
@@ -179,7 +179,7 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 	}
     
 	/**
-	 * set housenumber
+	 * set house_number
 	 * @param houseNumber
 	 */
 	public void setHouseNumber(EditText houseNumber) {
