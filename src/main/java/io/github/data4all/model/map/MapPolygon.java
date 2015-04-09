@@ -381,7 +381,7 @@ public class MapPolygon extends Polygon {
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        this.setPoints(geoPointList);
+        super.setPoints(geoPointList);
         pointsOffset = getOffset(geoPointList);
         mapView.invalidate();
     }
@@ -481,6 +481,21 @@ public class MapPolygon extends Polygon {
             int distToCent = position.distanceTo(MapUtil
                     .getCenterFromOsmElement(element));
             return (distToCent < TOLERANCE);
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
+     */
+    @Override
+    public void setPoints(final List<GeoPoint> points){
+        super.setPoints(points);
+        if(active){
+            GeoPoint center = MapUtil.getCenterFromPointList(points);
+            mapView.getController().animateTo(center);
+            //mapView.getController().setCenter(center);
+            mapView.postInvalidate();
         }
     }
 }

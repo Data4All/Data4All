@@ -125,4 +125,21 @@ public final class MapUtil {
         return points;
     }
 
+    public static GeoPoint getCenterFromPointList(
+            List<GeoPoint> list) {
+        BoundingBoxE6 bb = getBoundingBoxForPointList(list);
+        if(bb == null){
+            return null;
+        }
+        return bb.getCenter();
+    }
+    
+    public static BoundingBoxE6 getBoundingBoxForPointList(List<GeoPoint> list){
+        final ArrayList<GeoPoint> aList = new ArrayList<GeoPoint>();
+        aList.addAll(list);
+        if (aList.isEmpty()) {
+            return null;
+        }
+        return BoundingBoxE6.fromGeoPoints(aList);
+    }
 }

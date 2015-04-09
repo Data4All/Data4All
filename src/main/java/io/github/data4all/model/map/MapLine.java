@@ -207,8 +207,8 @@ public class MapLine extends Polyline {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 pj = mapView.getProjection();
-                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
-                        null);
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
@@ -378,7 +378,7 @@ public class MapLine extends Polyline {
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        this.setPoints(geoPointList);
+        super.setPoints(geoPointList);
         pointsOffset = getOffset(geoPointList);
         mapView.invalidate();
     }
@@ -462,5 +462,21 @@ public class MapLine extends Polyline {
                     MapUtil.getCenterFromOsmElement(element));
         }
         return tapped;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osmdroid.bonuspack.overlays.Polyline#setPoints(java.util.List)
+     */
+    @Override
+    public void setPoints(final List<GeoPoint> points) {
+        super.setPoints(points);
+        if (active) {
+            GeoPoint center = MapUtil.getCenterFromPointList(points);
+            // mapView.getController().animateTo(center);
+            mapView.getController().setCenter(center);
+            mapView.postInvalidate();
+        }
     }
 }

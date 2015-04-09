@@ -15,6 +15,8 @@
  */
 package io.github.data4all.model.map;
 
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
@@ -249,4 +251,17 @@ public class MapMarker extends Marker {
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
+     */
+    @Override
+    public void setPosition(final GeoPoint point) {
+        super.setPosition(point);
+        if (active) {
+            mapView.getController().setCenter(point);
+            mapView.postInvalidate();
+        }
+    }
 }
