@@ -229,21 +229,20 @@ public class MathUtil {
      */
     public static List<Node> transformIntoRectangle(List<Node> nodes) {
         if (nodes.size() == 5) {
-            nodes.remove(4);            
-            double lat = 0, lon = 0;
-            int i = 0;
-            for (Node iter : nodes) {
-                lat += iter.getLat();
-                lon += iter.getLon();
-                i++;
-            }
+            nodes.remove(4);     
             Location location = new Location("provider");
-            location.setLatitude(lat / i);
-            location.setLongitude(lon / i);
+            location.setLatitude(nodes.get(0).getLat());
+            location.setLongitude(nodes.get(0).getLon());     
             List<double[]> coords = new ArrayList<double[]>();
+            double x = 0, y = 0;
             for (Node iter : nodes) {
-                coords.add(MathUtil.calculateCoordFromGPS(location, iter));
+                double[] coord =MathUtil.calculateCoordFromGPS(location, iter);
+                coords.add(coord);
+                x += coord[0];
+                y += coord[1];
             }
+            x = x/4;
+            y = y/4;
             double[] center = MathUtil.intersectLines(coords);
             List<Double> lengths = new ArrayList<Double>();
             List<double[]> coords2 = new ArrayList<double[]>();
@@ -258,11 +257,11 @@ public class MathUtil {
             }
             avgLength = avgLength / 4;
             List<double[]> coords3 = new ArrayList<double[]>();
-            i = 0;
+            int i = 0;
             for (double[] iter : coords2) {
                 double[] coord = {
-                        (iter[0] * avgLength / lengths.get(i)) + center[0],
-                        (iter[1] * avgLength / lengths.get(i)) + center[1], };
+                        (iter[0] * avgLength / lengths.get(i)) + x,
+                        (iter[1] * avgLength / lengths.get(i)) + y, };
                 i++;
                 coords3.add(coord);
             }

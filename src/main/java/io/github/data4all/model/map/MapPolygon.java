@@ -243,6 +243,9 @@ public class MapPolygon extends Polygon {
                         && contains(event)) {
                     changeMode();
                 }
+                pj = mapView.getProjection();
+                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
+                        null);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 mode = NONE;
