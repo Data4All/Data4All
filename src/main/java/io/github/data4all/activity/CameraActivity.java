@@ -371,6 +371,8 @@ public class CameraActivity extends AbstractActivity {
                     public void run() {
                         mCallbackView.setVisibility(View.VISIBLE);
                         Log.i(TAG, "starting success animation");
+                        onPause();
+                        onResume();
                     }
                 }).withEndAction(new Runnable() {
                     @Override
@@ -379,7 +381,7 @@ public class CameraActivity extends AbstractActivity {
                         mCallbackView.setAlpha(0);
                         btnCapture.setEnabled(true);
                         Log.i(TAG, "ending success animation");
-                        setLayout();
+                        
                     }
                 }).start();
     }
