@@ -91,6 +91,7 @@
     <string name="gallery_hour">"%s 1 hour"</string>
     <string name="gallery_hours">"%s hours"</string>
     <string name="gallery_yesterday">"%1$s yesterday %2$s"</string>
+    <string name="gallery_delete_all">delete all</string>
 
     <!-- other -->
     <string name="noCamSupported">Sorry, your device has no supported camera</string>
