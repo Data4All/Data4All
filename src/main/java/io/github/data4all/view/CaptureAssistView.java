@@ -33,6 +33,7 @@ import io.github.data4all.util.Optimizer;
 import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -40,6 +41,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -205,15 +207,17 @@ public class CaptureAssistView extends View {
             tps.setPhotoHeight(mMeasuredHeight);
             tps.setPhotoWidth(mMeasuredWidth);
           
-            for (PolyElement iter : polyElements) {
-                if (iter.getType() == PolyElementType.AREA
-                        || iter.getType() == PolyElementType.BUILDING) {   
-                    this.points = util.calculateNodesToPoint(iter.getNodes(), tps, deviceOrientation);
+            if (getAugmented()) {
+                for (PolyElement iter : polyElements) {
+                    if (iter.getType() == PolyElementType.AREA
+                            || iter.getType() == PolyElementType.BUILDING) {
+                        this.points = util.calculateNodesToPoint(
+                                iter.getNodes(), tps, deviceOrientation);
+                    }
+                    Path path = getPath();
+                    canvas.drawPath(path, paint);
                 }
-                Path path = getPath();
-                canvas.drawPath(path, paint);
             }
-                   
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
@@ -242,7 +246,12 @@ public class CaptureAssistView extends View {
         canvas.restore();
     }
     
-  
+    protected boolean getAugmented() {
+        PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getContext());
+        return (prefs.getBoolean("augmented_reality", false));
+    }
 
     /**
      * This method draws the lines for the horizon line. everything is filled

@@ -91,6 +91,7 @@
 
     <!-- other -->
 
+	<string name="augmented_reality"> Show Augmented Reality</string>
     <string name="empty"> </string>
     <string name="noCamSupported">Sorry, your device has no supported camera</string>
     <string name="noLocationFound">No Location found. Turn on location service </string>
