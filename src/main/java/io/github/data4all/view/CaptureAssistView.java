@@ -181,8 +181,8 @@ public class CaptureAssistView extends View {
         this.horizontalViewAngle = horizontalViewAngle;
         this.verticalViewAngle = verticalViewAngle;
         this.deviceOrientation = deviceOrientation;
-        this.tps.setMaxHorizontalViewAngle(horizontalViewAngle);
-        this.tps.setCameraMaxVerticalViewAngle(verticalViewAngle);
+        this.tps.setMaxHorizontalViewAngle(verticalViewAngle);
+        this.tps.setCameraMaxVerticalViewAngle(horizontalViewAngle);
         this.tps.setLocation(Optimizer.currentBestLoc());
         this.informationSet = true;
         Log.d(TAG, "MP" + horizontalViewAngle + " MR " + verticalViewAngle
