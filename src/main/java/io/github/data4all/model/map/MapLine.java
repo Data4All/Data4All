@@ -27,6 +27,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.MathUtil;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.D4AMapView;
 
@@ -368,8 +369,7 @@ public class MapLine extends Polyline {
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
             // transfer coordinates to gpsPoints
-            final Node node = PointToCoordsTransformUtil.calculateGPSPoint(
-                    midLocation, coord);
+            final Node node = MathUtil.calculateGPSPoint(midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
@@ -420,7 +420,7 @@ public class MapLine extends Polyline {
         this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            final double[] preCoord = PointToCoordsTransformUtil
+            final double[] preCoord = MathUtil
                     .calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint

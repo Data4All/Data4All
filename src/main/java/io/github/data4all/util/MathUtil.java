@@ -16,9 +16,13 @@
 
 package io.github.data4all.util;
 
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.drawing.Point;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import android.location.Location;
 
 /**
  * This class provides some calculation methods
@@ -125,6 +129,151 @@ public class MathUtil {
 
         final double[] coord = {x,y,};
         return coord;
+    }
+    
+    /**
+     * calculates Node (with latitude and longitude) from coordinates in a local
+     * system and the current Location.
+     * 
+     * @param location
+     *            current location of the device
+     * @param coord
+     *            coordinate of the point in the local system
+     * @return A Node with latitude and longitude
+     */
+    public static Node calculateGPSPoint(Location location, double[] coord) {
+        final double lat = Math.toRadians(location.getLatitude());
+        final double lon = Math.toRadians(location.getLongitude());
+        // calculate the length of the current latitude line with the earth
+        // radius
+        final double radius = 6371004.0;
+        double lonLength = radius * Math.cos(lat);
+        lonLength = lonLength * 2 * Math.PI;
+        // add to the current latitude the distance of the coordinate
+        double lon2 = lon + Math.toRadians((coord[0] * 360) / lonLength);
+        // fix the skip from -PI to +PI for the longitude
+        lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+        // calculate the length of the current longitude line with the earth
+        // radius
+        final double latLength = radius * 2 * Math.PI;
+        // add to the current Longitude the distance of the coordinate
+        double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
+        lat2 = Math.toDegrees(lat2);
+        lon2 = Math.toDegrees(lon2);
+        // create a new Node with the latitude and longitude values
+        return new Node(-1, lat2, lon2);
+    }
+
+    /**
+     * transfers GPSPoints to a local Coordinate System
+     * @param location
+     * @param node
+     * @return coord
+     */
+    public static double[] calculateCoordFromGPS(Location location, Node node) {
+        final double lat = Math.toRadians(location.getLatitude());
+        final double lon = Math.toRadians(location.getLongitude());
+        // calculate the length of the current latitude line with the earth
+        // radius
+        final double radius = 6371004.0;
+        double lonLength = radius * Math.cos(lat);
+        lonLength = lonLength * 2 * Math.PI;
+        final double latLength = radius * 2 * Math.PI;
+        double[] coord = new double[2];
+        double test = (Math.toRadians(node.getLat()) - lat);
+        coord[1] = latLength * test / (Math.PI * 2);
+        test = (Math.toRadians(node.getLon()) - lon);
+        coord[0] = lonLength * test / (Math.PI * 2);
+        return coord;
+    }
+    
+    
+    /**
+     * Calculates the coliding Point for 2 lines
+     * from java-forum.com
+     * @param coords
+     * @return double[]
+     */
+    public static double[] intersectLines(List<double[]> coords) {
+        
+        double x1 = coords.get(0)[0];
+        double x2 = coords.get(2)[0];
+        double x3 = coords.get(1)[0];
+        double x4 = coords.get(3)[0];
+        double y1 = coords.get(0)[1];
+        double y2 = coords.get(2)[1];
+        double y3 = coords.get(1)[1];
+        double y4 = coords.get(3)[1];
+
+        double zx = (x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2)
+                * (x3 * y4 - y3 * x4);
+        double zy = (x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2)
+                * (x3 * y4 - y3 * x4);
+
+
+        double n = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+        double x = zx / n;
+        double y = zy / n;
+        double[] coord = { x, y, };
+        return coord;
+
+    }
+    
+    /**
+     * Transforms a quadrangle into a rectangle.
+     * 
+     * @param nodes
+     *            List of the nodes of the quadrangle
+     * @return result List of the nodes of the now rectangle.
+     */
+    public static List<Node> transformIntoRectangle(List<Node> nodes) {
+        if (nodes.size() == 5) {
+            nodes.remove(4);            
+            double lat = 0, lon = 0;
+            int i = 0;
+            for (Node iter : nodes) {
+                lat += iter.getLat();
+                lon += iter.getLon();
+                i++;
+            }
+            Location location = new Location("provider");
+            location.setLatitude(lat / i);
+            location.setLongitude(lon / i);
+            List<double[]> coords = new ArrayList<double[]>();
+            for (Node iter : nodes) {
+                coords.add(MathUtil.calculateCoordFromGPS(location, iter));
+            }
+            double[] center = MathUtil.intersectLines(coords);
+            List<Double> lengths = new ArrayList<Double>();
+            List<double[]> coords2 = new ArrayList<double[]>();
+            double avgLength = 0;
+            for (double[] iter : coords) {
+                double[] coord = { iter[0] - center[0], iter[1] - center[1], };
+                coords2.add(coord);
+                double length = Math.sqrt(coord[0] * coord[0] + coord[1]
+                        * coord[1]);
+                lengths.add(length);
+                avgLength += length;
+            }
+            avgLength = avgLength / 4;
+            List<double[]> coords3 = new ArrayList<double[]>();
+            i = 0;
+            for (double[] iter : coords2) {
+                double[] coord = {
+                        (iter[0] * avgLength / lengths.get(i)) + center[0],
+                        (iter[1] * avgLength / lengths.get(i)) + center[1], };
+                i++;
+                coords3.add(coord);
+            }
+            List<Node> nodes2 = new ArrayList<Node>();
+            for (double[] iter : coords3) {
+                nodes2.add(MathUtil.calculateGPSPoint(location, iter));
+            }
+            nodes2.add(nodes2.get(0));
+            return nodes2;
+        }
+        return nodes;
     }
 
 }

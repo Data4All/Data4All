@@ -31,7 +31,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
-import io.github.data4all.util.RectangleFunction;
+import io.github.data4all.util.MathUtil;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -196,8 +196,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private void startRectangularPreview() {
         if (element instanceof PolyElement) {
             PolyElement rect = (PolyElement) element;
-            if (rect.replaceNodes(RectangleFunction.transformIntoRectangle(rect
-                    .getNodes()))) {
+            if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect.getNodes()))) {
                 mapView.getOverlays().clear();
                 this.setUpOverlays();
             }
