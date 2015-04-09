@@ -371,9 +371,8 @@ public class ResultViewActivity extends AbstractActivity implements
                 this.askForUpload();
             } else {
                 new AlertDialog.Builder(this)
-                        .setTitle(R.string.delete)
-                        .setMessage(
-                                "Do you want to delete the image from the gallery?")
+                        .setTitle(R.string.deleteImage)
+                        .setMessage(R.string.deleteImageText)
                         .setPositiveButton(R.string.yes,
                                 new DialogInterface.OnClickListener() {
                                     @Override
