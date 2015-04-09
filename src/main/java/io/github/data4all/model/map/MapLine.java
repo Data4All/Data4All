@@ -207,6 +207,8 @@ public class MapLine extends Polyline {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 pj = mapView.getProjection();
+                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
+                        null);
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
