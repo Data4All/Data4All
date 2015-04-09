@@ -86,7 +86,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
         // Setup the rotation listener
         final List<View> buttons = new ArrayList<View>();
-        
+
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
@@ -106,6 +106,18 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         final ImageButton rect = (ImageButton) findViewById(id);
         rect.setOnClickListener(this);
         buttons.add(findViewById(id));
+
+        if (element instanceof PolyElement) {
+            PolyElement elem = (PolyElement) element;
+            if (elem.getNodes().size() != 5
+                    || elem.getType().equals(PolyElement.PolyElementType.WAY)) {
+                rect.setClickable(false);
+                rect.setVisibility(View.GONE);
+            }
+        } else {
+            rect.setClickable(false);
+            rect.setVisibility(View.GONE);
+        }
 
         listener = new ButtonRotationListener(this, buttons);
 
@@ -154,7 +166,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     private void setUpOverlays() {
         if (getIntent().hasExtra("LOCATION")) {
-            final Location l = (Location) getIntent().getParcelableExtra("LOCATION");
+            final Location l = (Location) getIntent().getParcelableExtra(
+                    "LOCATION");
             final Marker m = new Marker(mapView);
             m.setPosition(new GeoPoint(l));
             m.setIcon(new DefaultResourceProxyImpl(this)
@@ -196,7 +209,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private void startRectangularPreview() {
         if (element instanceof PolyElement) {
             PolyElement rect = (PolyElement) element;
-            if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect.getNodes()))) {
+            if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect
+                    .getNodes()))) {
                 mapView.getOverlays().clear();
                 this.setUpOverlays();
             }
