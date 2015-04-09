@@ -47,12 +47,12 @@ public class Tag {
     /**
      * nameRessource defines the displayed name/value in the tagging activity.
      */
-    private int nameRessource;
+    private int nameResource;
 
     /**
      * hintRessource defines the displayed hint/value in the tagging activity.
      */
-    private int hintRessource;
+    private int hintResource;
 
     /**
      * type defines if the tagging activity should display a keyboard or a
@@ -80,11 +80,11 @@ public class Tag {
         this.key = key;
         this.type = type;
         try {
-            this.nameRessource =
+            this.nameResource =
                     (Integer) R.string.class.getDeclaredField(
                             "name_" + key.replaceAll(":", "_")).get(null);
             if (type != -1) {
-                this.hintRessource =
+                this.hintResource =
                         (Integer) R.string.class.getDeclaredField(
                                 "hint_" + key.replaceAll(":", "_")).get(null);
             }
@@ -98,7 +98,7 @@ public class Tag {
     }
 
     public int getHintRessource() {
-        return hintRessource;
+        return hintResource;
     }
 
     public int getId() {
@@ -110,7 +110,7 @@ public class Tag {
     }
 
     public int getNameRessource() {
-        return nameRessource;
+        return nameResource;
     }
 
     public int getType() {
@@ -118,7 +118,7 @@ public class Tag {
     }
 
     public void setHintRessource(int hintRessource) {
-        this.hintRessource = hintRessource;
+        this.hintResource = hintRessource;
     }
 
     public void setId(int id) {
@@ -130,7 +130,7 @@ public class Tag {
     }
 
     public void setNameRessource(int nameRessource) {
-        this.nameRessource = nameRessource;
+        this.nameResource = nameRessource;
     }
 
     public void setType(int type) {
@@ -142,8 +142,8 @@ public class Tag {
      */
     @Override
     public String toString() {
-        return "key: " + key + " nameRessource: " + nameRessource
-                + " hintRessource: " + hintRessource +" type: " + type;
+        return "key: " + key + " nameRessource: " + nameResource
+                + " hintRessource: " + hintResource +" type: " + type;
     }
 
     public String getLastValue() {

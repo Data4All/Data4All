@@ -55,7 +55,13 @@ public class ClassifiedValue {
     /**
      * nameRessource defines the displayed name/value in the tagging activity.
      */
-    private int nameRessource;
+    private int nameResource;
+
+    /**
+     * descriptionRessource defines the displayed description for the classified
+     * value.
+     */
+    private int descriptionResource;
 
     /**
      * Attributes from the propertie file /res/raw/tag_values.txt.
@@ -92,6 +98,9 @@ public class ClassifiedValue {
         try {
             this.setNameRessource((Integer) R.string.class.getDeclaredField(
                     "name_" + key + "_" + value).get(null));
+            this.setDescriptionResource((Integer) R.string.class
+                    .getDeclaredField("description_" + key + "_" + value).get(
+                            null));
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "IllegalArgumentException", e);
         } catch (IllegalAccessException e) {
@@ -141,11 +150,11 @@ public class ClassifiedValue {
     }
 
     public int getNameRessource() {
-        return nameRessource;
+        return nameResource;
     }
 
     public void setNameRessource(int nameRessource) {
-        this.nameRessource = nameRessource;
+        this.nameResource = nameRessource;
     }
 
     public String getLocalizedName(Context context) {
@@ -263,6 +272,14 @@ public class ClassifiedValue {
 
     public void setHasContactEmail(boolean hasContactEmail) {
         this.hasContactEmail = hasContactEmail;
+    }
+
+    public int getDescriptionResource() {
+        return descriptionResource;
+    }
+
+    public void setDescriptionResource(int descriptionResource) {
+        this.descriptionResource = descriptionResource;
     }
 
 }
