@@ -42,6 +42,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.location.Location;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -160,7 +161,7 @@ public class CaptureAssistView extends View {
         paint.setStyle(Paint.Style.FILL);
         
 
-        this.tps = new TransformationParamBean(1.5,
+        this.tps = new TransformationParamBean(getDeviceHeight(),
                 horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
                 mMeasuredHeight, Optimizer.currentBestLoc());  
         
@@ -253,6 +254,34 @@ public class CaptureAssistView extends View {
         return (prefs.getBoolean("augmented_reality", false));
     }
 
+    
+    /**
+     * Reads the height of the device in condition of the bodyheight from the
+     * preferences.
+     * 
+     * If the preference is empty or not set the default value is stored.
+     * 
+     * @return The height of the device or {@code 0} if the preference is not
+     *         set or empty
+     * @author tbrose
+     */
+    private double getDeviceHeight() {
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        final Resources res = getContext().getResources();
+        final String key = res.getString(R.string.pref_bodyheight_key);
+        final String height = prefs.getString(key, null);
+        if (TextUtils.isEmpty(height)) {
+            final int defaultValue =
+                    res.getInteger(R.integer.pref_bodyheight_default);
+            // Save the default value
+            prefs.edit().putString(key, "" + defaultValue).commit();
+            return (defaultValue - 30) / 100.0;
+        } else {
+            final double bodyHeight = Integer.parseInt(height);
+            return (bodyHeight - 30) / 100.0;
+        }
+    }
     /**
      * This method draws the lines for the horizon line. everything is filled
      * from the top left corner and the upper right corner to the horizon line
