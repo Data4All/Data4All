@@ -36,14 +36,14 @@
             android:layout_marginLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <ImageButton
+        <!-- ImageButton
             android:id="@+id/gallery_delete"
             android:layout_width="18sp"
             android:layout_height="18sp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:contentDescription="@string/noDescription"
-            android:src="@android:drawable/ic_menu_close_clear_cancel" />
+            android:src="@android:drawable/ic_menu_close_clear_cancel" /-->
     </RelativeLayout>
 
 </LinearLayout>

@@ -233,8 +233,7 @@ public class GalleryListAdapter implements ListAdapter {
             layout =
                     new Layout(result.findViewById(R.id.gallery_date_text),
                             result.findViewById(R.id.gallery_thumbnail),
-                            result.findViewById(R.id.gallery_map),
-                            result.findViewById(R.id.gallery_delete));
+                            result.findViewById(R.id.gallery_map));
             result.setTag(layout);
         } else {
             layout = (Layout) convertView.getTag();
@@ -282,14 +281,6 @@ public class GalleryListAdapter implements ListAdapter {
             Log.e(this.getClass().getSimpleName(), "Error on getView("
                     + position + ")", e);
         }
-
-        layout.delete.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GalleryListAdapter.this.removeImage(GalleryListAdapter.this
-                        .getItemId(position));
-            }
-        });
 
         return result;
     }
@@ -442,14 +433,12 @@ public class GalleryListAdapter implements ListAdapter {
         private final TextView text;
         private final ImageView image;
         private final D4AMapView map;
-        private final ImageButton delete;
 
-        private Layout(View text, View image, View map, View delete) {
+        private Layout(View text, View image, View map) {
             super();
             this.text = (TextView) text;
             this.image = (ImageView) image;
             this.map = (D4AMapView) map;
-            this.delete = (ImageButton) delete;
         }
     }
 }
