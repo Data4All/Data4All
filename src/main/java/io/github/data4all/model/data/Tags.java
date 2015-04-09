@@ -69,11 +69,12 @@ public final class Tags {
      * Private constructor.
      */
     private Tags() {
-        
+
     }
 
     /**
-     * Reads all Tags from the properties. 
+     * Reads all Tags from the properties.
+     * 
      * @throws IOException
      */
     private static void readTags() throws IOException {
@@ -179,8 +180,34 @@ public final class Tags {
      */
     public static Tag getTagWithId(int id) {
         for (Tag t : TAG_LIST) {
-            if (t.getId() == id) {
-                return t;
+            if (t instanceof ClassifiedTag) {
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.getId() == id) {
+                        return new ClassifiedTag(t.getId(), t.getKey(),
+                                ((ClassifiedTag) t).getType(),
+                                ((ClassifiedTag) t).getClassifiedValues());
+                    }
+                }
+            } else {
+                return new Tag(t.getId(), t.getKey(), t.getType());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     */
+    public static ClassifiedValue getClassifiedValueWithId(int id) {
+        for (Tag t : TAG_LIST) {
+            if (t instanceof ClassifiedTag) {
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.getId() == id) {
+                        return v;
+                    }
+                }
             }
         }
         return null;
@@ -295,7 +322,7 @@ public final class Tags {
     public static List<Tag> getAllTags() {
         return TAG_LIST;
     }
-    
+
     /**
      * Returns all classified tags.
      * 
@@ -374,7 +401,7 @@ public final class Tags {
     public static List<Tag> getAllContactTags() {
         return CONTACT_TAG_LIST;
     }
-    
+
     /**
      * Reads the tags from the properties.
      */
@@ -385,5 +412,5 @@ public final class Tags {
             Log.e("Tags", "IOException:", e);
         }
     }
-    
+
 }
