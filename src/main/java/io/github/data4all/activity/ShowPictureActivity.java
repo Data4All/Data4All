@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
+import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
@@ -49,6 +50,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -80,6 +85,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private ImageButton undo;
     private ImageButton redo;
     private ImageButton ok;
+    private ButtonAnimationListener btnAnimator;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -87,6 +93,8 @@ public class ShowPictureActivity extends AbstractActivity {
     private DeviceOrientation currentOrientation;
 
     private ButtonRotationListener listener;
+    
+    private List<View> buttons;
 
     /**
      * public standard constructor.
@@ -120,7 +128,6 @@ public class ShowPictureActivity extends AbstractActivity {
         redo = (ImageButton) findViewById(R.id.redobtn);
         redo.setVisibility(View.GONE);
         ok = (ImageButton) findViewById(R.id.okbtn);
-        ok.setVisibility(View.GONE);
         touchView.setUndoRedoListener(new UndoRedoListener() {
             @Override
             public void canUndo(boolean state) {
@@ -147,7 +154,7 @@ public class ShowPictureActivity extends AbstractActivity {
                 if (state) {
                     ok.setVisibility(View.VISIBLE);
                 } else {
-                    ok.setVisibility(View.INVISIBLE);
+                    ok.setVisibility(View.GONE);
                 }
             }
         });
@@ -205,7 +212,7 @@ public class ShowPictureActivity extends AbstractActivity {
         this.onClickArea(null);
 
         // Setup the rotation listener
-        final List<View> buttons = new ArrayList<View>();
+        buttons = new ArrayList<View>();
         buttons.add(redo);
         buttons.add(undo);
         buttons.add(findViewById(R.id.imageButton1));
@@ -215,8 +222,9 @@ public class ShowPictureActivity extends AbstractActivity {
         // in activity_picture.xml
         buttons.add(findViewById(R.id.imageButton4));
         buttons.add(ok);
-
+        buttons.add(findViewById(R.id.customImageButton1));
         listener = new ButtonRotationListener(this, buttons);
+        btnAnimator = new ButtonAnimationListener(buttons);
 
         AbstractActivity.addNavBarMargin(getResources(),
                 findViewById(R.id.layout_choose_interpreter));
@@ -259,7 +267,7 @@ public class ShowPictureActivity extends AbstractActivity {
             startActivityForResult(intent);
         }
     }
-
+     
     /**
      * Define method to draw a point.<br\>
      * 
@@ -271,6 +279,10 @@ public class ShowPictureActivity extends AbstractActivity {
         touchView.setInterpretationType(TouchView.InterpretationType.POINT);
         touchView.invalidate();
         intent.putExtra(TYPE, POINT);
+    }
+    
+    public void onClickAway(View view) {
+     btnAnimator.onRotate();   
     }
 
     /**
@@ -344,6 +356,10 @@ public class ShowPictureActivity extends AbstractActivity {
     public void onClickUndo(View view) {
         touchView.undo();
         touchView.invalidate();
+    }
+    
+    public void onClickHide(View view) {
+    	
     }
 
     /**
