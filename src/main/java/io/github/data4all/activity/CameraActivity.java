@@ -51,6 +51,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,6 +76,7 @@ import android.widget.Toast;
  * @LastUpdate 12.02.2015
  * @version 1.2
  * 
+ * @author Richard Rohde(Kalibration Feedback) 
  */
 
 public class CameraActivity extends AbstractActivity {
@@ -86,7 +88,6 @@ public class CameraActivity extends AbstractActivity {
     boolean orientationBound;
 
     public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
-    private static boolean IGNORE_WARNING = false;
     private Camera mCamera;
 
     private CameraPreview cameraPreview;
@@ -273,7 +274,7 @@ public class CameraActivity extends AbstractActivity {
             @Override
             public void onClick(View v) {
                 if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK
-                        || IGNORE_WARNING) {
+                        || !getWarning()) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
                     mCamera.takePicture(shutterCallback, null,
@@ -289,7 +290,7 @@ public class CameraActivity extends AbstractActivity {
             @Override
             public boolean onLongClick(View v) {
                 if (OrientationListener.CALIBRATION_STATUS < OrientationListener.CALIBRATION_OK
-                        || IGNORE_WARNING) {
+                        || !getWarning()) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
 
@@ -377,21 +378,35 @@ public class CameraActivity extends AbstractActivity {
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                IGNORE_WARNING = false;
+                                setWarning(true);
                                 dialog.cancel();
                             }
                         })
                 .setNegativeButton(R.string.ignore,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        IGNORE_WARNING = true; 
-                        dialog.cancel();
-                    }
-                });
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                setWarning(false);
+                                dialog.cancel();
+                            }
+                        });
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
         // show it
         alertDialog.show();
+    }
+
+    private boolean getWarning() {
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        return (prefs.getBoolean("sensor_warning", true));
+    }
+
+    private void setWarning(boolean show) {
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean("sensor_warning", show).commit();
     }
 
     /**
