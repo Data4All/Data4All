@@ -18,6 +18,8 @@ package io.github.data4all.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,6 +74,32 @@ public class DeviceOrientationTest {
         newParcel.setDataPosition(0);
         DeviceOrientation deParcelDeviceOrientation = DeviceOrientation.CREATOR
                 .createFromParcel(newParcel);
+
+        assertEquals(testDeviceOrientation.getAzimuth(),
+                deParcelDeviceOrientation.getAzimuth(), 0);
+        assertEquals(testDeviceOrientation.getPitch(),
+                deParcelDeviceOrientation.getPitch(), 0);
+        assertEquals(testDeviceOrientation.getRoll(),
+                deParcelDeviceOrientation.getRoll(), 0);
+        assertEquals(testDeviceOrientation.getTimestamp(),
+                deParcelDeviceOrientation.getTimestamp(), 0);
+
+    }
+    
+    /**
+     * Instantiates a example DeviceOrientation and write it to a
+     * JSONArray. Afterwards the object is read from the JSONArray and checked
+     * if it contains the same values.
+     * 
+     * @author tbrose
+     */
+    @Test
+    public void test_json_node() throws JSONException {
+        DeviceOrientation testDeviceOrientation = new DeviceOrientation(10, 20,
+                30, 1234567);
+
+        JSONArray json = testDeviceOrientation.toJSON();
+        DeviceOrientation deParcelDeviceOrientation = DeviceOrientation.fromJSON(json);
 
         assertEquals(testDeviceOrientation.getAzimuth(),
                 deParcelDeviceOrientation.getAzimuth(), 0);

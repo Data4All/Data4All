@@ -14,6 +14,15 @@
         android:layout_height="match_parent"
         android:gravity="center" />
 
+    <View
+        android:id="@+id/cam_callback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha="0"
+        android:background="@drawable/cam_callback_border"
+        android:visibility="invisible" />
+
     <io.github.data4all.view.AutoFocusCrossHair
         android:id="@+id/af_crosshair"
         style="@style/autoFocusCrossHair" />
@@ -34,5 +43,44 @@
         android:background="@color/sensorOk"
         android:onClick="onClickCalibrationStatus"
         android:text="@string/empty" />
-   
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/black_to_transparent"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp" >
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/cam_border"
+            android:contentDescription="@string/noDescription" />
+
+        <ImageView
+            android:id="@+id/middleImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/noDescription" />
+
+        <ImageView
+            android:id="@+id/leftImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@id/middleImage"
+            android:contentDescription="@string/noDescription" />
+
+        <ImageView
+            android:id="@+id/rightImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@id/middleImage"
+            android:contentDescription="@string/noDescription" />
+    </RelativeLayout>
+
 </RelativeLayout>

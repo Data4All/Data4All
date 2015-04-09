@@ -20,6 +20,7 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.GalleryListAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
@@ -30,6 +31,8 @@ import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -37,11 +40,15 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -54,6 +61,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     // Logger Tag
     private static final String TAG = "MapViewActivity";
+
+    private DrawerLayout drawerLayout;
+
+    private ListView drawer;
+
+    private GalleryListAdapter drawerAdapter;
 
     /**
      * Default constructor.
@@ -71,6 +84,35 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (ListView) findViewById(R.id.left_drawer);
+        drawerAdapter = new GalleryListAdapter(this);
+        drawer.setAdapter(drawerAdapter);
+        drawer.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                    int position, final long id) {
+                new AlertDialog.Builder(MapViewActivity.this)
+                        .setTitle(R.string.delete)
+                        .setMessage(R.string.deleteDialog)
+                        .setPositiveButton(R.string.yes,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        drawerAdapter.removeImage(id);
+                                    }
+                                }).setNegativeButton(R.string.no, null).show();
+                return true;
+            }
+        });
+        drawer.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                drawerAdapter.tagImage(id);
+            }
+        });
         setUpMapView(savedInstanceState);
         if (savedInstanceState == null) {
             setUpLoadingScreen();
@@ -115,6 +157,20 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
         return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.activity.AbstractActivity#onHomePressed()
+     */
+    @Override
+    protected void onHomePressed() {
+        if (drawerLayout.isDrawerOpen(drawer)) {
+            drawerLayout.closeDrawer(drawer);
+        } else {
+            drawerLayout.openDrawer(drawer);
+        }
     }
 
     /*
@@ -192,6 +248,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
 
+        drawerAdapter.invalidate();
     }
 
     /*
@@ -219,8 +276,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
                     .show();
         } else {
             final Intent intent = new Intent(this, MapPreviewActivity.class);
-            final Node poi = new Node(-1, myPosition.getLatitude(),
-                    myPosition.getLongitude());
+            final Node poi =
+                    new Node(-1, myPosition.getLatitude(),
+                            myPosition.getLongitude());
 
             // Set Type Definition for Intent to Node
             Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);

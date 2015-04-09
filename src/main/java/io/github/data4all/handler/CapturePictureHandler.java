@@ -22,7 +22,9 @@ import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.upload.Callback;
 import io.github.data4all.view.CameraPreview;
 
 import java.io.File;
@@ -87,6 +89,12 @@ public class CapturePictureHandler implements PictureCallback {
 
     private CameraPreview preview;
 
+    private boolean gallery;
+
+    private Gallery mGallery;
+
+    private Callback<Exception> mGalleryCallback;
+
     /**
      * Default constructor.
      * 
@@ -98,6 +106,7 @@ public class CapturePictureHandler implements PictureCallback {
     public CapturePictureHandler(AbstractActivity context, CameraPreview preview) {
         this.context = context;
         this.preview = preview;
+        mGallery = new Gallery(context);
     }
 
     /**
@@ -108,7 +117,7 @@ public class CapturePictureHandler implements PictureCallback {
      *      android.hardware.Camera)
      */
     @Override
-    public void onPictureTaken(byte[] raw, Camera camera) {
+    public void onPictureTaken(final byte[] raw, Camera camera) {
         Log.d(TAG, "onPictureTaken is called");
 
         final Camera.Parameters params = camera.getParameters();
@@ -125,8 +134,24 @@ public class CapturePictureHandler implements PictureCallback {
                         pictureSize.width, pictureSize.height, currentLocation);
 
         // Start a thread to save the Raw Image in JPEG into SDCard
-        new SavePhotoTask(Optimizer.currentDeviceOrientation(),
-                preview.getViewSize()).execute(raw);
+        if (gallery) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mGallery.addImage(raw, transformBean,
+                                Optimizer.currentDeviceOrientation(),
+                                preview.getViewSize());
+                    } catch (IOException e) {
+                        mGalleryCallback.callback(e);
+                    }
+                    mGalleryCallback.callback(null);
+                }
+            }).start();
+        } else {
+            new SavePhotoTask(Optimizer.currentDeviceOrientation(),
+                    preview.getViewSize()).execute(raw);
+        }
     }
 
     /**
@@ -174,6 +199,10 @@ public class CapturePictureHandler implements PictureCallback {
         return new File(folder, name);
     }
 
+    public void setGallery(boolean gallery) {
+        this.gallery = gallery;
+    }
+
     /**
      * An inner Class for saving a picture in storage in a thread.
      */
@@ -219,14 +248,8 @@ public class CapturePictureHandler implements PictureCallback {
             if ("successful".equals(result)) {
                 Log.d(TAG, "Picture successfully saved");
 
-                final Intent intent =
-                        new Intent(context, ShowPictureActivity.class);
-                intent.putExtra(FILE_EXTRA, photoFile);
-                intent.putExtra(TRANSFORM_BEAN, transformBean);
-                intent.putExtra(CURRENT_ORIENTATION, deviceOrientation);
-                intent.putExtra(SIZE_EXTRA, viewSize);
-
-                context.startActivityForResult(intent);
+                ShowPictureActivity.startActivity(context, photoFile,
+                        transformBean, deviceOrientation, viewSize, null);
 
             } else {
                 Toast.makeText(context, "Failed on taking picture",
@@ -234,5 +257,9 @@ public class CapturePictureHandler implements PictureCallback {
             }
         }
 
+    }
+
+    public void setGalleryCallback(Callback<Exception> callback) {
+        this.mGalleryCallback = callback;
     }
 }
