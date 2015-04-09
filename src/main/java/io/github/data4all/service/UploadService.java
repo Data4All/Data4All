@@ -44,7 +44,7 @@ public class UploadService extends IntentService {
     /**
      * The comment for the changeset to open.
      */
-    private static final String CHANGESET_COMMENT =
+    public static final String CHANGESET_COMMENT =
             "User-triggered upload via App";
 
     /**

@@ -76,6 +76,7 @@
     <!-- for upload -->
     <string name="upload_success">Erfolgreich hochgeladen</string>
     <string name="upload_caption">Hochladen zu OpenStreetMap</string>
+    <string name="upload_comment">Kommentarfeld</string>
     <string name="upload_upload_text">"Hochzuladende Objekte: "</string>
     <string name="upload_cancle">Abbrechen</string>
     <string name="CancelButton">Abbrechen</string>

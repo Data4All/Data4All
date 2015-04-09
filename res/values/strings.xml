@@ -75,6 +75,7 @@
     <!-- for upload -->
     <string name="upload_success">Successfully uploaded</string>
     <string name="upload_caption">Upload to OpenStreetMap</string>
+    <string name="upload_comment">Comment</string>
     <string name="upload_upload_text">"Objects to upload: "</string>
     <string name="upload_cancle">Cancle</string>
     <string name="CancelButton">Cancle</string>

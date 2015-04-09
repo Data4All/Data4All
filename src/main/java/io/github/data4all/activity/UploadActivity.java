@@ -38,6 +38,7 @@ import android.os.ResultReceiver;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +59,7 @@ public class UploadActivity extends AbstractActivity {
     private D4AMapView mapView;
     private MapController mapController;
     private MapBoxTileSourceV4 osmMap;
+	private EditText uploadComment;
 
     /*
      * (non-Javadoc)
@@ -73,6 +75,7 @@ public class UploadActivity extends AbstractActivity {
         countText = (TextView) findViewById(R.id.upload_count_text);
         uploadButton = findViewById(R.id.upload_upload_button);
         cancleButton = findViewById(R.id.upload_cancle_button);
+        uploadComment = (EditText) findViewById(R.id.uploadComment);
         this.readObjectCount();
         mapView = (D4AMapView) this.findViewById(R.id.mapviewupload);
 
@@ -175,7 +178,7 @@ public class UploadActivity extends AbstractActivity {
             final Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.ACTION, UploadService.UPLOAD);
             intent.putExtra(UploadService.HANDLER, new MyReceiver());
-
+            intent.putExtra(UploadService.CHANGESET_COMMENT, uploadComment.getText().toString());
             startService(intent);
         }
     }
