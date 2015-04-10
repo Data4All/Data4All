@@ -193,10 +193,6 @@ public abstract class AbstractActivity extends Activity {
         onWorkflowFinished(null);
     }
 
-    protected void onHomePressed() {
-        onWorkflowFinished(null);
-    }
-
     /**
      * Same as calling startActivityForResult(Intent, int) with
      * {@link AbstractActivity#WORKFLOW_CODE WORKFLOW_CODE}.

@@ -72,6 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/cam_border"
             android:text="Bild, welches einen\nFinger auf dem Bildschirm\nzeigt, der vom linken\nRand nach rechts wischt" />
 
         <TextView
