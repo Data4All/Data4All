@@ -31,7 +31,9 @@ import io.github.data4all.view.CameraPreview;
 import io.github.data4all.view.TouchView;
 import io.github.data4all.view.CaptureAssistView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 
 import android.R.color;
@@ -128,7 +130,7 @@ public class CameraActivity extends AbstractActivity {
 
     private CaptureAssistView cameraAssistView;
 
-    private Button btnCStatus;
+    private ImageButton btnCStatus;
     // runs without a timer by reposting this handler at the end of the runnable
     private boolean setUpComplete = false;
     long startTime = 0;
@@ -221,12 +223,14 @@ public class CameraActivity extends AbstractActivity {
     private void setLayout() {
         setContentView(R.layout.activity_camera);
 
+        final List<View> buttons = new ArrayList<View>();
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
-        btnCStatus = (Button) findViewById(R.id.calibrationStatus);
-        listener = new ButtonRotationListener(this,
-                Arrays.asList((View) btnCapture));
-
+        buttons.add(btnCapture);
+        btnCStatus = (ImageButton) findViewById(R.id.calibrationStatus);
+        buttons.add(btnCStatus);
+        listener = new ButtonRotationListener(this,buttons);
+        
         cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
 
         // Set the Focus animation
@@ -301,19 +305,19 @@ public class CameraActivity extends AbstractActivity {
     private void updateCalibrationStatus() {
         switch (OrientationListener.CALIBRATION_STATUS) {
         case OrientationListener.CALIBRATION_OK:
-            this.btnCStatus.setBackgroundResource(R.color.sensorOk);
+            this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_okay);
             this.btnCStatus.setClickable(false);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ALL:
-            this.btnCStatus.setBackgroundResource(R.color.sensorBrokenAll);
+            this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_fail);
             this.btnCStatus.setClickable(true);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER:
-            this.btnCStatus.setBackgroundResource(R.color.sensorBroken);
+            this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_warning);
             this.btnCStatus.setClickable(true);
             break;
         case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER:
-            this.btnCStatus.setBackgroundResource(R.color.sensorBroken);
+            this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_warning);
             this.btnCStatus.setClickable(true);
             break;
         }
@@ -398,7 +402,7 @@ public class CameraActivity extends AbstractActivity {
         button.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (OrientationListener.CALIBRATION_STATUS < OrientationListener.CALIBRATION_OK
+                if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK
                         || !getWarning() || ignore) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);

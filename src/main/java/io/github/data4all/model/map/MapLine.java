@@ -18,6 +18,7 @@ package io.github.data4all.model.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
@@ -37,10 +38,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
 /**
@@ -280,9 +283,7 @@ public class MapLine extends Polyline {
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
             // get the offset of all points in the list to the first one
-            if (pointsOffset == null) {
-                pointsOffset = getOffset(geoPointList);
-            }
+            pointsOffset = getOffset(geoPointList);
             mapView.invalidate();
             active = true;
         } else {
@@ -469,16 +470,23 @@ public class MapLine extends Polyline {
     public void setPoints(final List<GeoPoint> points) {
         super.setPoints(points);
         if (active) {
-            GeoPoint center = MapUtil.getCenterFromPointList(points);
-            // mapView.getController().animateTo(center);
-            mapView.getController().setCenter(center);
+            final GeoPoint center = MapUtil.getCenterFromPointList(points);
+            final SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(activity);
+            final Resources res = activity.getResources();
+            final String key = res
+                    .getString(R.string.pref_moving_animation_key);
+            if ("Animate".equals(prefs.getString(key, null))) {
+                mapView.getController().animateTo(center);
+            } else {
+                mapView.getController().setCenter(center);
+            }
             mapView.postInvalidate();
         }
     }
 
     public int getTolerance() {
-        int tolerance = TOLERANCE * (int) (activity.getResources().getDisplayMetrics().density);
-        Log.i("Test", "" + tolerance);
-        return tolerance;
+        return TOLERANCE
+                * (int) (activity.getResources().getDisplayMetrics().density);
     }
 }

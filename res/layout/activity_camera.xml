@@ -32,17 +32,19 @@
         style="@style/imageButtonCamAction"
         android:contentDescription="@string/noDescription" />
  
- <Button
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/calibrationStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/sensorOk"
+        android:layout_alignTop="@+id/btnCapture"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="25dp"
+        android:background="@null"
+        android:contentDescription="@string/noDescription"
         android:onClick="onClickCalibrationStatus"
-        android:text="@string/empty" />
+        android:padding="0dp"
+        android:src="@drawable/ic_sensorstatus_warning" />
 
     <RelativeLayout
         android:layout_width="match_parent"
