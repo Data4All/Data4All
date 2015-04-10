@@ -16,8 +16,13 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
+import io.github.data4all.util.TrackUtil;
+
+import java.util.List;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -72,7 +77,7 @@ public abstract class AbstractActivity extends Activity {
     // Counter is used to count the start of activities to remove the status bar
     // icon when no active is running
     private static int counter;
-    
+
     private static final String SHARED_PREFS = "shared_prefs";
 
     /**
@@ -89,6 +94,8 @@ public abstract class AbstractActivity extends Activity {
      * Checkobox for RecordDialog
      */
     CheckBox dontShowAgain;
+    
+    private TrackUtil trackUtil;
 
     /*
      * (non-Javadoc)
@@ -99,17 +106,20 @@ public abstract class AbstractActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Count up on each Activity which is create 
+        // Count up on each Activity which is create
         counter++;
- 
-       // set a notification to Status Bar
-       notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-       final Notification.Builder mBuilder = new Notification.Builder(this)
+
+        // set a notification to Status Bar
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        final Notification.Builder mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_logo_white)
                 .setOngoing(true)
-                .setContentTitle(getString(R.string.statusNotificationHeadline)).setAutoCancel(true)
+                .setContentTitle(getString(R.string.statusNotificationHeadline))
+                .setAutoCancel(true)
                 .setContentText(getString(R.string.statusNotification));
         notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
+        
+        trackUtil = new TrackUtil(getApplicationContext());
     }
 
     /*
@@ -194,7 +204,7 @@ public abstract class AbstractActivity extends Activity {
         }
         return status;
     }
-    
+
     protected void onHomePressed() {
         onWorkflowFinished(null);
     }
@@ -202,8 +212,8 @@ public abstract class AbstractActivity extends Activity {
     /**
      * Fetches from the SharedPreferences if the dialogs should be shown. When
      * dialogs should be shown, it starts the {@link #recordDialog(MenuItem)} or
-     * {@link #stopDialog(MenuItem)} method.
-     * When there is no need for dialogs, it directly will start or stop a {@link Track}.
+     * {@link #stopDialog(MenuItem)} method. When there is no need for dialogs,
+     * it directly will start or stop a {@link Track}.
      * 
      * @author sbrede
      * 
@@ -238,9 +248,12 @@ public abstract class AbstractActivity extends Activity {
 
     /**
      * Switch the icons of the record/stop button.
+     * 
      * @author sbrede
-     * @param item The button in the menu
-     * @param status Indicates which icon should be switched
+     * @param item
+     *            The button in the menu
+     * @param status
+     *            Indicates which icon should be switched
      */
     private void changeIconOfRecordButton(MenuItem item, boolean status) {
         if (status) {
@@ -281,7 +294,7 @@ public abstract class AbstractActivity extends Activity {
                         changeIconOfRecordButton(item, isChecked);
                         recordActive = true;
                         startTrack();
-                        
+
                         Log.d("AbstractActivity", "start a track with dialog");
                         return;
                     }
@@ -374,13 +387,22 @@ public abstract class AbstractActivity extends Activity {
         }
 
     }
-    
+
     private void startTrack() {
-        //TODO start a track
+        trackUtil.startNewTrack();
     }
-    
+
     private void stopTrack() {
-        //TODO stop a tarck
+        DataBaseHandler db = new DataBaseHandler(getApplicationContext());
+        List<Track> tracks = db.getAllGPSTracks();
+        Track t = null;
+        for(Track track : tracks) {
+            if(!track.isFinished()) {
+                t = track;
+            }
+        }
+        t.finishTrack();
+        db.updateGPSTrack(t);
     }
 
     /**

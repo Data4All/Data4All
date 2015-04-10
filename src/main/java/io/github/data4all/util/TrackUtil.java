@@ -10,7 +10,7 @@ import java.util.List;
 import android.content.Context;
 import android.location.Location;
 
-public class TrackUtility {
+public class TrackUtil {
 
     private DataBaseHandler db;
 
@@ -18,7 +18,7 @@ public class TrackUtility {
 
     private static final String TAG = "TrackUtility";
 
-    public TrackUtility(Context ctx) {
+    public TrackUtil(Context ctx) {
         this.context = ctx;
     }
 

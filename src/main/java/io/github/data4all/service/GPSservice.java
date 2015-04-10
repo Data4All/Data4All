@@ -20,7 +20,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.util.Optimizer;
-import io.github.data4all.util.TrackUtility;
+import io.github.data4all.util.TrackUtil;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -58,8 +58,6 @@ public class GPSservice extends Service implements LocationListener {
     private static final float MIN_DISTANCE = 0;
 
     private Track track;
-
-    private TrackUtility trackUtil;
 
     @Override
     public void onCreate() {
