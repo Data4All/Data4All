@@ -16,8 +16,11 @@
 
 package io.github.data4all.util;
 import io.github.data4all.model.data.Node;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import android.graphics.Point;
 import android.location.Location;
 
 /**
@@ -273,6 +276,24 @@ public final class MathUtil {
             return nodes2;
         }
         return nodes;
+    }
+    
+    /**
+     * calculates the Perimeter of 3 given Points
+     * @param points
+     *          3 Points
+     * @return the perimeter
+     */
+    public static float perimeter(List<Point> points){
+        float length = 0;
+        for(int i = 0; i<=2 ; i++){
+            int j = i+1;
+            if(j==3) j = 2;
+            int x = points.get(i).x -points.get(j).x;
+            int y = points.get(i).y -points.get(j).y;
+            length += Math.sqrt(x*x+y*y);
+        }
+        return length;
     }
 
 }

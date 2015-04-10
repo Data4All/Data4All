@@ -95,13 +95,11 @@ public class MapPolygon extends Polygon {
     private static final int ROTATE = 2;
     private int mode = NONE;
 
+    
     /**
      * Start values for rotation.
      */
-    private int xStartPo1;
-    private int yStartPo1;
-    private int xStartPo2;
-    private int yStartPo2;
+    private List<Point> startPos;
 
     /**
      * Start values for moving.
@@ -114,6 +112,7 @@ public class MapPolygon extends Polygon {
      * average of all Points.
      */
     private List<double[]> pointCoords;
+    private float startPosPerimeter;
 
     /**
      * Average of all Points saved as a Location.
@@ -214,10 +213,10 @@ public class MapPolygon extends Polygon {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 pj = mapView.getProjection();
-                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
-                        null);
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 timeStart = System.currentTimeMillis();
-                if(active){
+                if (active) {
                     mode = MOVE;
                     geoPointList = this.getPoints();
                     xStartM = (int) event.getX();
@@ -232,10 +231,13 @@ public class MapPolygon extends Polygon {
                     mode = ROTATE;
                     // set the start values for the rotation
                     saveGeoPoints();
-                    xStartPo1 = (int) event.getX(0);
-                    xStartPo2 = (int) event.getX(1);
-                    yStartPo1 = (int) event.getY(0);
-                    yStartPo2 = (int) event.getY(1);
+                    startPos = new ArrayList<Point>();
+                    startPos.add(new Point((int) event.getX(0), (int) event.getY(0)));
+                    startPos.add(new Point((int) event.getX(1), (int) event.getY(1)));
+                    if(event.getPointerCount() == 3){
+                        startPos.add(new Point((int) event.getX(2), (int) event.getY(2)));
+                        startPosPerimeter = MathUtil.perimeter(startPos);
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -249,8 +251,8 @@ public class MapPolygon extends Polygon {
                     changeMode();
                 }
                 pj = mapView.getProjection();
-                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
-                        null);
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 mode = NONE;
@@ -262,8 +264,13 @@ public class MapPolygon extends Polygon {
                         Log.d(TAG, "move polygon");
                         this.moveToNewPos(event, mapView);
                     } else if (mode == ROTATE) {
-                        Log.d(TAG, "rotate polygon");
-                        this.rotatePolygon(event);
+                        if (event.getPointerCount() == 3) {
+                            Log.d(TAG, "scale polygon");
+                            this.scalePolygon(event);
+                        } else {
+                            Log.d(TAG, "rotate polygon");
+                            this.rotatePolygon(event);
+                        }
                     }
                 }
                 break;
@@ -348,6 +355,35 @@ public class MapPolygon extends Polygon {
     }
 
     /**
+     * Scales the given Polygon with a 3 Pointer MotionEvent
+     * @param event
+     *          the current MotionEvent from onTouchEvent
+     */
+    private void scalePolygon(MotionEvent event) {
+        // set end values for the next rotation action
+        List<Point> endPos = new ArrayList<Point>();
+        endPos.add(new Point((int) event.getX(0), (int) event.getY(0)));
+        endPos.add(new Point((int) event.getX(1), (int) event.getY(1)));
+        endPos.add(new Point((int) event.getX(2), (int) event.getY(2)));
+        float scaleFactor = MathUtil.perimeter(endPos) / startPosPerimeter;
+
+        geoPointList = new ArrayList<GeoPoint>();
+        // rotate all coordinates
+        for (double[] preCoord : pointCoords) {
+            double[] coord = new double[2];
+            coord[0] = preCoord[0] * scaleFactor;
+            coord[1] = preCoord[1] * scaleFactor;
+            // transfer coordinates to gpsPoints
+            final Node node = MathUtil.calculateGPSPoint(midLocation, coord);
+            geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
+        }
+        // set the list with the changed points
+        super.setPoints(geoPointList);
+        pointsOffset = getOffset(geoPointList);
+        mapView.invalidate();        
+    }
+
+    /**
      * Rotate the polygon handling the touch events.
      *
      * @param event
@@ -366,8 +402,8 @@ public class MapPolygon extends Polygon {
         final double delta_yEnd = (yEndPo1 - yEndPo2);
         final double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
 
-        final double delta_xStart = (xStartPo1 - xStartPo2);
-        final double delta_yStart = (yStartPo1 - yStartPo2);
+        final double delta_xStart = startPos.get(0).x - startPos.get(1).x;
+        final double delta_yStart = startPos.get(0).y - startPos.get(1).y;
         final double radians2 = Math.atan2(delta_yStart, delta_xStart);
         final double radians = radians1 - radians2;
 
@@ -380,8 +416,7 @@ public class MapPolygon extends Polygon {
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
             // transfer coordinates to gpsPoints
-            final Node node = MathUtil.calculateGPSPoint(
-                    midLocation, coord);
+            final Node node = MathUtil.calculateGPSPoint(midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
@@ -435,7 +470,8 @@ public class MapPolygon extends Polygon {
         this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            final double[] preCoord = MathUtil.calculateCoordFromGPS(
+            final double[] preCoord = MathUtil
+                    .calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint
                                     .getLongitude()));
@@ -479,25 +515,26 @@ public class MapPolygon extends Polygon {
             return true;
         } else {
             final Projection pj = mapView.getProjection();
-            final GeoPoint position = (GeoPoint) pj.fromPixels((int) event.getX(),
-                    (int) event.getY());
+            final GeoPoint position = (GeoPoint) pj.fromPixels(
+                    (int) event.getX(), (int) event.getY());
             final int distToCent = position.distanceTo(MapUtil
                     .getCenterFromOsmElement(element));
             return (distToCent < TOLERANCE);
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
      */
     @Override
-    public void setPoints(final List<GeoPoint> points){
+    public void setPoints(final List<GeoPoint> points) {
         super.setPoints(points);
-        if(active){
+        if (active) {
             final GeoPoint center = MapUtil.getCenterFromPointList(points);
             mapView.getController().animateTo(center);
-            //mapView.getController().setCenter(center);
+            // mapView.getController().setCenter(center);
             mapView.postInvalidate();
         }
     }
