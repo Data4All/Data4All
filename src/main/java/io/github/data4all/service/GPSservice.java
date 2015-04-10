@@ -137,12 +137,12 @@ public class GPSservice extends Service implements LocationListener {
 
             final TrackPoint last = track.getLastTrackPoint();
 
-            // TODO: test & complain about old function!
-
             Location lastKnownLoc = new Location("lastTrackPoint");
-            lastKnownLoc.setAltitude(last.getAlt());
-            lastKnownLoc.setLatitude(last.getLat());
-            lastKnownLoc.setLongitude(last.getLon());
+            if(last != null){                
+                lastKnownLoc.setAltitude(last.getAlt());
+                lastKnownLoc.setLatitude(last.getLat());
+                lastKnownLoc.setLongitude(last.getLon());
+            }
 
             final float distanceCovered = lastKnownLoc.distanceTo(tp);
 
