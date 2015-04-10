@@ -13,32 +13,73 @@
         android:visibility="gone" />
 
     <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:orientation="vertical"
-        android:paddingLeft="5dp" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/bubble_title"
-            android:layout_width="10dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/bubble_left"
-            android:layout_toLeftOf="@+id/bubble_right"
-            android:maxEms="17"
-            android:text="Title"
-            android:textColor="#000000" />
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <io.github.data4all.widged.CustomImageButton
+                android:id="@+id/bubble_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/titles"
+                android:src="@drawable/arrow_left" />
+
+            <RelativeLayout
+                android:id="@+id/titles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:layout_toRightOf="@+id/bubble_left">
+
+                <TextView
+                    android:id="@+id/bubble_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxEms="17"
+                    android:text="Title"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/bubble_subdescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/bubble_title"
+                    android:maxEms="17"
+                    android:text="Description"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/bubble_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/bubble_title"
+                    android:maxEms="17"
+                    android:text="Description"
+                    android:textColor="#000000"
+                    android:textSize="12dp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <io.github.data4all.widged.CustomImageButton
+                android:id="@+id/bubble_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/titles"
+                android:layout_toRightOf="@+id/titles"
+                android:src="@drawable/arrow_right" />
+        </RelativeLayout>
 
         <Button
             android:id="@+id/bubble_edit"
             style="@style/DefaultButtonText"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignLeft="@+id/bubble_left"
-            android:layout_alignRight="@+id/bubble_right"
-            android:layout_below="@+id/bubble_subdescription"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/header"
+            android:layout_alignRight="@+id/header"
+            android:layout_below="@+id/header"
             android:background="@drawable/register_button_bg"
             android:text="@string/edit"
             android:textColor="#000000"
@@ -48,57 +89,14 @@
             android:id="@+id/bubble_delete"
             style="@style/DefaultButtonText"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignLeft="@+id/bubble_left"
-            android:layout_alignRight="@+id/bubble_right"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/header"
+            android:layout_alignRight="@+id/header"
             android:layout_below="@+id/bubble_edit"
             android:background="@drawable/register_button_bg"
             android:paddingLeft="5dp"
             android:text="@string/delete"
             android:textColor="#660000"
-            android:textSize="12dp" />
-
-        <TextView
-            android:id="@+id/bubble_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/bubble_title"
-            android:layout_below="@+id/bubble_title"
-            android:layout_toRightOf="@+id/bubble_left"
-            android:layout_toLeftOf="@+id/bubble_right"
-            android:maxEms="17"
-            android:text="Description"
-            android:textColor="#000000"
-            android:textSize="12dp" />
-
-        <io.github.data4all.widged.CustomImageButton
-            android:id="@+id/bubble_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/bubble_subdescription"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/arrow_right" />
-
-        <io.github.data4all.widged.CustomImageButton
-            android:id="@+id/bubble_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/bubble_subdescription"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/arrow_left" />
-
-        <TextView
-            android:id="@+id/bubble_subdescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/bubble_title"
-            android:layout_alignRight="@+id/bubble_title"
-            android:layout_below="@+id/bubble_title"
-            android:layout_toRightOf="@+id/bubble_left"
-            android:text="Description"
-            android:textColor="#000000"
             android:textSize="12dp" />
 
         <Button

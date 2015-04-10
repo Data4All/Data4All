@@ -229,6 +229,7 @@ public class MapMarker extends Marker {
             mapView.invalidate();
             active = false;
         }
+        mapView.setBuiltInZoomControls(active);
     }
 
     /**
