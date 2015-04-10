@@ -320,12 +320,18 @@ public class Tagging {
 		}
     	return false;
     }
-    
+    /**
+     * Compares the UnclassifiedTag with the Tags of the classifiedValue
+     * @param classValue The classifiedValues
+     * @param map The map of the unclassified Tags
+     * @return The Map of the right unclassified Tags
+     */
     
     public static Map<Tag, String> compareUnclassifiedTags(ClassifiedValue classValue, Map <Tag, String> map){
     	Log.i(TAG, map.toString());
     	Log.i(TAG, classValue.toString());
     	List <Tag> tagList = new ArrayList<Tag>();
+    	Map <Tag, String> tagMap = new LinkedHashMap<Tag, String>();
     	tagList.addAll(Tags.getAllAddressTags());
     	tagList.addAll(Tags.getAllContactTags());
     	List <Boolean> booleanList = new ArrayList<Boolean>();
@@ -337,16 +343,21 @@ public class Tagging {
 			}
 		}
     	Log.i(TAG, rightTag.toString());
+    	if(rightTag.size() == map.size()){
+    		return map;
+    	}
     	for (Entry<Tag,String> entry : map.entrySet()) {
+    			Log.i(TAG, "keyset of map " + map.entrySet());
     			Log.i(TAG, "BOOLEAN " + rightTag.contains(entry.getKey()));
-    			if(!rightTag.contains(entry.getKey())){
-    				map.remove(entry.getKey());
+    			if(rightTag.contains(entry.getKey())){
+    				tagMap.put(entry.getKey(), entry.getKey().getKey());
     				
             	}
     		
    	 	}	
+    	
     	Log.i(TAG, map.toString());
-		return map;
+		return tagMap;
     	
     }
 

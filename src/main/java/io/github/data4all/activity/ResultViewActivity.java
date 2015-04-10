@@ -371,11 +371,7 @@ public class ResultViewActivity extends AbstractActivity implements
 			}
             ClassifiedValue classi = classifiedMap.get(value);
             classifiedValue = classi;
-            Log.i(TAG, element.getTags().get(tagKey));
-            Log.i(TAG, "Value"+classi);
-            Log.i(TAG, "before " + keyList.toString());
             keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
-            Log.i(TAG, "after "+keyList.toString());
             
         }
         
@@ -420,7 +416,6 @@ public class ResultViewActivity extends AbstractActivity implements
                 final String realValue = classifiedMap.get(value).getValue();
                 Log.i(TAG, "Value " + realValue);
                 Log.i(TAG, tagMap.get(selectedString).toString());
-                if(element.getTags() != null){
                 	Tag tagKey = null;
                 	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
                         tagKey = entry.getKey();
@@ -428,15 +423,17 @@ public class ResultViewActivity extends AbstractActivity implements
                	 	}	     
                 	element.removeTag(tagKey);
                 	map.putAll(element.getTags());
+                	map.remove(tagKey);
                 	Log.i(TAG, "MAP" + map.toString());
                 	element.clearTags();
                 	
-                }
+                
                 element.addOrUpdateTag(tagMap.get(selectedString), realValue);
-                if(map != null){
+                Log.i(TAG, "MAPPPPPPPPP" + map.toString());
                 Tagging.compareUnclassifiedTags(classifiedMap.get(value), map);
-                }
+                
                 element.addTags(map);
+                Log.i(TAG, "TAAAAAAAAAAGGGGGGGGGSSSSSSS" + element.getTags().toString());
                 ResultViewActivity.this.output();
             }
         });
@@ -471,13 +468,24 @@ public class ResultViewActivity extends AbstractActivity implements
                 android.R.style.Theme_Holo_Dialog_MinWidth);
         dialog.setContentView(R.layout.dialog_dynamic);
         dialog.setTitle(selectedString);
+        Map <Tag, String> hashMap = new LinkedHashMap<Tag, String>();
+        map.putAll(element.getTags());
         final Button okay = new Button(ResultViewActivity.this);
         final Button next = new Button(ResultViewActivity.this);
         final EditText text = new EditText(ResultViewActivity.this);
         text.setTextColor(Color.WHITE);
-        Tag tag = mapTag.get(selectedString);
-        text.setInputType(tag.getType());        
-        text.setText(element.getTags().get(tag));
+        final Tag tag = mapTag.get(selectedString);
+        text.setInputType(tag.getType());
+        Log.i(TAG, tag.toString());
+        Log.i(TAG, "VALUE: " + map.toString());
+        for(Entry<Tag,String> entry : map.entrySet()){
+        	Tag tag1 = entry.getKey();
+        	if(tag1.getKey().equals(tag.getKey())){
+        		Log.i(TAG, "true");
+        		text.setText(map.get(tag1));
+        	}
+        }
+        //text.setText(map.get(tag));
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
         next.setText(R.string.next);
@@ -498,6 +506,13 @@ public class ResultViewActivity extends AbstractActivity implements
                     ResultViewActivity.this.output();
                     dialog.dismiss();
                 } else {
+                	for(Entry<Tag,String> entry : map.entrySet()){
+                    	Tag tag1 = entry.getKey();
+                    	if(tag1.getKey().equals(tag.getKey())){
+                    		Log.i(TAG, "true");
+                    		element.removeTag(tag1);
+                    	}
+                    }
                     element.addOrUpdateTag(mapTag.get(selectedString), text
                             .getText().toString());
                     ResultViewActivity.this.output();
