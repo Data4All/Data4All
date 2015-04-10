@@ -147,11 +147,11 @@ public class TouchView extends View {
 	/**
 	 * is on line
 	 */
-	private Boolean isOnLine;
+	private boolean isOnLine;
 	/**
 	 * is the polygon activated
 	 */
-	private Boolean polygonclicked = false;
+	private boolean polygonclicked;
 
 	/**
 	 * The drawing size of a point (calculating with the density for same result
@@ -161,6 +161,11 @@ public class TouchView extends View {
 			.getDisplayMetrics().density);
 
 	/**
+     * Specifies the tolerance if a point is near the touchevent
+     */
+    private final int pointTolerance = 50;
+    
+	/**
 	 * The current used RedoUndo listener.
 	 */
 	private UndoRedoListener undoRedoListener;
@@ -168,15 +173,14 @@ public class TouchView extends View {
 	private CaptureAssistView cameraAssistView;
 
 	private Point movingPoint;
+	
 	/**
 	 * Standard strings for actions
 	 */
-	final static String add = "ADD";
-	final static String delete = "DELETE";
-	final static String moveFrom = "MOVE_FROM";
-	final static String moveTo = "MOVE_TO";
-	final static String movePolyFrom = "MOVE_POLY_FROM";
-	final static String movePolyTo = "MOVE_POLY_TO";
+    static final String add = "ADD";
+    static final String delete = "DELETE";
+    static final String moveFrom = "MOVE_FROM";
+    static final String moveTo = "MOVE_TO";
 
 	/**
 	 * Simple constructor to use when creating a view from code.
@@ -269,66 +273,69 @@ public class TouchView extends View {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.view.View#onTouchEvent(android.view.MotionEvent)
-	 */
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		super.onTouchEvent(event);
-		final int action = event.getAction();
-		// TODO: dadurch wird jeglicher input überm horizont verhindert. so auch
-		// das verschieben
-		// besser beim hinzufügen von punkten überprüfen?
-		if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
-				.getY())))) {
-			switch (action) {
-			case MotionEvent.ACTION_DOWN:
-				currentMotion = new DrawingMotion();
-				this.startMotion(event);
-				break;
-			case MotionEvent.ACTION_UP:
-				this.endMotion(event);
-				polygon = newPolygon;
-				this.undoUseable();
-				this.redoUseable();
-				this.undoRedoListener.okUseable(hasEnoughNodes());
-				break;
-			case MotionEvent.ACTION_MOVE:
-				this.moveMotion(event);
-				postInvalidate();
-				break;
-			default:
-				Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
-			}
-		}
-		return true;
-	}
+	 /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View#onTouchEvent(android.view.MotionEvent)
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        final int action = event.getAction();
+        // TODO: dadurch wird jeglicher input Ã¼berm horizont verhindert. so auch
+        // das verschieben
+        // besser beim hinzufÃ¼gen von punkten Ã¼berprÃ¼fen?
+        switch (action) {
+        case MotionEvent.ACTION_DOWN:
+            currentMotion = new DrawingMotion();
+            this.startMotion(event);
+            break;
+        case MotionEvent.ACTION_UP:
+            this.endMotion(event);
+            polygon = newPolygon;
+            this.undoUseable();
+            this.redoUseable();
+            this.undoRedoListener.okUseable(hasEnoughNodes());
+            break;
+        case MotionEvent.ACTION_MOVE:
+            this.moveMotion(event);
+            postInvalidate();
+            break;
+        default:
+            Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
+        }
+        return true;
+    }
 
 	private void startMotion(MotionEvent event) {
-		this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
-		if (!polygonclicked && lookUpPoint == null) {
-			addPointOnLine(new Point(event.getX(), event.getY()));
-		}
-		if (lookUpPoint != null) {
-			this.mover = movePoint(lookUpPoint);
-			startPoint = lookUpPoint;
-			lookUpPoint = null;
-			if (!polygonclicked) {
-				isDelete = true;
-			}
-		} else {
-			startPoint = new Point(event.getX(), event.getY());
-			movingPoint = startPoint;
-			if (!isOnLine && !polygonclicked) {
-				if (!insidePolygon(startPoint)) {
-					currentMotion.addPoint(event.getX(), event.getY());
-					newPolygon = interpreter.interprete(polygon, currentMotion);
-				}
-			}
+		 if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
+	                .getY())))) {
+	            this.lookUpPoint = lookUp(event.getX(), event.getY(),
+	                    pointTolerance);
+	            if (!polygonclicked && lookUpPoint == null) {
+	                addPointOnLine(new Point(event.getX(), event.getY()));
+	            }
+	            if (lookUpPoint != null) {
 
-		}
+	                this.mover = movePoint(lookUpPoint);
+	                startPoint = lookUpPoint;
+	                lookUpPoint = null;
+	                if (!polygonclicked) {
+	                    isDelete = true;
+	                }
+	            } else {
+
+	                startPoint = new Point(event.getX(), event.getY());
+	                movingPoint = startPoint;
+	                if (!isOnLine && !polygonclicked) {
+	                    if (!insidePolygon(startPoint)) {
+	                        currentMotion.addPoint(event.getX(), event.getY());
+	                        newPolygon = interpreter.interprete(polygon,
+	                                currentMotion);
+	                    }
+	                }
+
+	            }
+	        }
 	}
 
 	private void moveMotion(MotionEvent event) {
@@ -346,33 +353,41 @@ public class TouchView extends View {
 						mover.getIdx());
 			}
 		} else {
-			if (Math.abs(offsetX) > 5 && Math.abs(offsetY) > 5) {
-				currentMotion.addPoint(event.getX(), event.getY());
-				newPolygon = interpreter.interprete(polygon, currentMotion);
-			}
-		}
+
+            if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
+                    .getY())))) {
+                if (Math.abs(offsetX) > 5 && Math.abs(offsetY) > 5) {
+                    currentMotion.addPoint(event.getX(), event.getY());
+                    newPolygon = interpreter.interprete(polygon, currentMotion);
+                }
+            }
+        }
 	}
 
 	private void endMotion(MotionEvent event) {
-		if (polygon.size() > 0 && mover == null
-				&& startPoint.getX() - event.getX() < 5
-				&& startPoint.getY() - event.getY() < 5) {
-			polygonclicked(insidePolygon(startPoint));
-		}
-		if (isDelete) {
-			redoUndo.add(startPoint, delete, mover.getIdx());
-			this.deletePoint(startPoint);
-			mover = null;
-			isDelete = false;
-		} else {
-			if (mover != null) {
-				mover = null;
-			} else {
-				redoUndo = new RedoUndo(newPolygon);
-			}
-		}
-		invalidate();
-	}
+		if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
+                .getY())))) {
+            if (polygon.size() > 0 && mover == null
+                    && startPoint.getX() - event.getX() < 5
+                    && startPoint.getY() - event.getY() < 5) {
+                polygonclicked(insidePolygon(startPoint));
+            }
+
+            if (isDelete) {
+                redoUndo.add(startPoint, delete, mover.getIdx());
+                this.deletePoint(startPoint);
+                mover = null;
+                isDelete = false;
+            } else {
+                if (mover != null) {
+                    mover = null;
+                } else{
+                    redoUndo = new RedoUndo(newPolygon);
+                }
+            }
+            invalidate();
+        }
+    }
 
 	public void polygonclicked(boolean clicked) {
 		if (polygonclicked && clicked) {
@@ -681,11 +696,6 @@ public class TouchView extends View {
 			mover.moveTo(point.getX(), point.getY());
 			mover = null;
 		}
-		if (action.equals(movePolyFrom) || action.equals(movePolyTo)) {
-			Point nextPoint = redoUndo.redo();
-			movePolygon(point.getX() - nextPoint.getX(), point.getY()
-					- nextPoint.getY());
-		}
 		polygon = newPolygon;
 		this.redoUseable();
 		this.undoUseable();
@@ -718,11 +728,6 @@ public class TouchView extends View {
 			newPolygon = oldPolygon;
 			interpreter = oldInterpreter;
 			invalidate();
-		}
-		if (action.equals(movePolyFrom) || action.equals(movePolyTo)) {
-			Point nextPoint = redoUndo.undo();
-			movePolygon(point.getX() - nextPoint.getX(), point.getY()
-					- nextPoint.getY());
 		}
 		polygon = newPolygon;
 		this.redoUseable();
