@@ -1,0 +1,22 @@
+<resources>
+
+    <string-array name="pref_gallery_deletemode_keys" translatable="false">
+        <item name="yes">yes</item>
+        <item name="no">no</item>
+        <item name="ask">ask</item>
+    </string-array>
+    <string-array name="pref_gallery_deletemode_option">
+        <item name="yes">Always</item>
+        <item name="no">Never</item>
+        <item name="ask">Ask</item>
+    </string-array>
+    <string-array name="pref_moving_animation_keys" translatable="false">
+        <item name="move">Move</item>
+        <item name="animate">Animate</item>
+    </string-array>
+    <string-array name="pref_moving_animation_option">
+        <item name="move">Move map</item>
+        <item name="animate">Animate map</item>
+    </string-array>
+
+</resources>

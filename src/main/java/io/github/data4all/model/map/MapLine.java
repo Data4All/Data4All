@@ -18,6 +18,7 @@ package io.github.data4all.model.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
@@ -27,6 +28,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.MathUtil;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.D4AMapView;
 
@@ -36,10 +38,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
 /**
@@ -75,8 +79,8 @@ public class MapLine extends Polyline {
     // Active Stroke Color
     protected static final int ACTIVE_STROKE_COLOR = Color.GREEN;
 
-    // Maximum distance from the touch point to the mapline in pixel
-    private static final int TOLERANCE = 20;
+    // Max distance from the touch point to the mapline in dp
+    private static final int TOLERANCE = 9;
 
     /**
      * Modes for edits which differ from touch events.
@@ -204,6 +208,8 @@ public class MapLine extends Polyline {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 pj = mapView.getProjection();
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
@@ -238,7 +244,7 @@ public class MapLine extends Polyline {
                     ((PolyElement) element).setNodesFromGeoPoints(geoPointList);
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
-                        && this.isCloseTo(geoPoint, TOLERANCE, mapView)) {
+                        && this.isCloseTo(geoPoint, getTolerance(), mapView)) {
                     changeMode();
                 }
                 break;
@@ -277,9 +283,7 @@ public class MapLine extends Polyline {
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
             // get the offset of all points in the list to the first one
-            if (pointsOffset == null) {
-                pointsOffset = getOffset(geoPointList);
-            }
+            pointsOffset = getOffset(geoPointList);
             mapView.invalidate();
             active = true;
         } else {
@@ -369,12 +373,11 @@ public class MapLine extends Polyline {
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
             // transfer coordinates to gpsPoints
-            final Node node = PointToCoordsTransformUtil.calculateGPSPoint(
-                    midLocation, coord);
+            final Node node = MathUtil.calculateGPSPoint(midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        this.setPoints(geoPointList);
+        super.setPoints(geoPointList);
         pointsOffset = getOffset(geoPointList);
         mapView.invalidate();
     }
@@ -421,7 +424,7 @@ public class MapLine extends Polyline {
         this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            final double[] preCoord = PointToCoordsTransformUtil
+            final double[] preCoord = MathUtil
                     .calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint
@@ -438,5 +441,53 @@ public class MapLine extends Polyline {
      */
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(final MotionEvent event,
+            final MapView mapView) {
+        if (mInfoWindow == null)
+            // no support for tap:
+            return false;
+        final Projection pj = mapView.getProjection();
+        GeoPoint eventPos = (GeoPoint) pj.fromPixels((int) event.getX(),
+                (int) event.getY());
+        boolean tapped = isCloseTo(eventPos, getTolerance(), mapView);
+        if (tapped) {
+            mInfoWindow.open(this, MapUtil.getCenterFromOsmElement(element), 0,
+                    0);
+            mapView.getController().animateTo(
+                    MapUtil.getCenterFromOsmElement(element));
+        }
+        return tapped;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osmdroid.bonuspack.overlays.Polyline#setPoints(java.util.List)
+     */
+    @Override
+    public void setPoints(final List<GeoPoint> points) {
+        super.setPoints(points);
+        if (active) {
+            final GeoPoint center = MapUtil.getCenterFromPointList(points);
+            final SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(activity);
+            final Resources res = activity.getResources();
+            final String key = res
+                    .getString(R.string.pref_moving_animation_key);
+            if ("Animate".equals(prefs.getString(key, null))) {
+                mapView.getController().animateTo(center);
+            } else {
+                mapView.getController().setCenter(center);
+            }
+            mapView.postInvalidate();
+        }
+    }
+
+    public int getTolerance() {
+        return TOLERANCE
+                * (int) (activity.getResources().getDisplayMetrics().density);
     }
 }

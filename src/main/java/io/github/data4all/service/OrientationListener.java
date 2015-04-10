@@ -79,10 +79,10 @@ public class OrientationListener extends Service implements SensorEventListener 
     private float[] orientation = new float[ARRAYLENGTH];
 
     // Calibration needed
-    public final static int CALIBRATION_BROKEN_ALL = 100;
+    public final static int CALIBRATION_BROKEN_ALL = 300;
     public final static int CALIBRATION_BROKEN_ACCELEROMETER = 200;
     public final static int CALIBRATION_BROKEN_MAGNETOMETER = 201;
-    public final static int CALIBRATION_OK = 300;
+    public final static int CALIBRATION_OK = 100;
     public static int CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
     private boolean accOk = false;
     private boolean magOk = false;
@@ -150,7 +150,7 @@ public class OrientationListener extends Service implements SensorEventListener 
 
                     // saving the new model with the orientation in the
                     // RingBuffer
-                    Log.d(TAG, "Orientation " + Math.toDegrees(orientation[0])
+                    Log.v(TAG, "Orientation " + Math.toDegrees(orientation[0])
                             + " ; " + Math.toDegrees(orientation[1]) + " ; "
                             + Math.toDegrees(orientation[2]) + " ; "
                             + "EventAccuracy:" + event.accuracy);
@@ -158,10 +158,11 @@ public class OrientationListener extends Service implements SensorEventListener 
                             orientation[1], orientation[LAST_INDEX],
                             System.currentTimeMillis());
                     Optimizer.putDevOrient(deviceOrientation);
-                }
 
-                if (horizonListener != null) {
-                    horizonListener.makeHorizon(true);
+                    if (horizonListener != null) {
+                        horizonListener.makeHorizon(true);
+                    }
+
                 }
 
             }

@@ -15,6 +15,13 @@
  */
 package io.github.data4all.model.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -168,5 +175,38 @@ public class TransformationParamBean implements Parcelable {
         return "Height: " + height + " VerticalAngle: " + verticalViewAngle
                 + " HorizntalAngle: " + horizontalViewAngle + " Width: "
                 + photoWidth + " PhotoHeight: " + photoHeight;
+    }
+
+    public JSONArray toJSON() throws JSONException {
+        List<Object> attributes = new ArrayList<Object>(9);
+        attributes.add(height);
+        attributes.add(verticalViewAngle);
+        attributes.add(horizontalViewAngle);
+        attributes.add(photoWidth);
+        attributes.add(photoHeight);
+        if (getLocation() == null)
+            attributes.add(0);
+        else {
+            attributes.add(1);
+            attributes.add(location.getProvider());
+            attributes.add(location.getLatitude());
+            attributes.add(location.getLongitude());
+        }
+        return new JSONArray(attributes);
+    }
+
+    public static TransformationParamBean fromJSON(JSONArray json)
+            throws JSONException {
+        Location location;
+        if (json.getInt(5) == 0) {
+            location = null;
+        } else {
+            location = new Location(json.getString(6));
+            location.setLatitude(json.getDouble(7));
+            location.setLongitude(json.getDouble(8));
+        }
+        return new TransformationParamBean(json.getDouble(0),
+                json.getDouble(1), json.getDouble(2), json.getInt(3),
+                json.getInt(4), location);
     }
 }

@@ -15,6 +15,8 @@
  */
 package io.github.data4all.model.map;
 
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
@@ -23,6 +25,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.Tag;
+import io.github.data4all.util.MapUtil;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.DefaultResourceProxyImpl;
@@ -242,4 +245,24 @@ public class MapMarker extends Marker {
         this.editable = editable;
     }
 
+    @Override
+    protected boolean onMarkerClickDefault(Marker marker, MapView mapView) {
+        marker.showInfoWindow();
+        mapView.getController().animateTo(marker.getPosition());
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
+     */
+    @Override
+    public void setPosition(final GeoPoint point) {
+        super.setPosition(point);
+        if (active) {
+            mapView.getController().setCenter(point);
+            mapView.postInvalidate();
+        }
+    }
 }

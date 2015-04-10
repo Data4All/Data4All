@@ -19,14 +19,11 @@ import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.CaptureAssistView;
 import io.github.data4all.view.TouchView;
@@ -36,14 +33,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -67,6 +63,20 @@ public class ShowPictureActivity extends AbstractActivity {
     private static final String TAG = ShowPictureActivity.class.getSimpleName();
 
     private CaptureAssistView cameraAssistView;
+
+    /** Name of the DeviceOrientation to give to the next activity */
+    public static final String CURRENT_ORIENTATION_EXTRA =
+            "current_orientation";
+
+    /** Name of the TransformationParamBean to give to the next activity */
+    public static final String TRANSFORM_BEAN_EXTRA = "transform_bean";
+
+    /** The name of the extra info for the preview size in the intent */
+    public static final String SIZE_EXTRA = "preview_size";
+
+    /** The name of the extra info for the filepath in the intent */
+    public static final String FILE_EXTRA = "file_path";
+
     private TouchView touchView;
     private ImageView imageView;
     private Intent intent;
@@ -178,6 +188,11 @@ public class ShowPictureActivity extends AbstractActivity {
             currentOrientation =
                     getIntent().getExtras().getParcelable(
                             CapturePictureHandler.CURRENT_ORIENTATION);
+        }
+
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
         }
 
         // Set the display size as photo size to get a coordinate system for the
@@ -365,9 +380,12 @@ public class ShowPictureActivity extends AbstractActivity {
         final AssetFileDescriptor fileDescriptor =
                 getContentResolver().openAssetFileDescriptor(photoUri, "r");
 
+        final Options options = new Options();
+        options.inSampleSize = 2;
+
         final Bitmap photo =
                 BitmapFactory.decodeFileDescriptor(
-                        fileDescriptor.getFileDescriptor(), null, null);
+                        fileDescriptor.getFileDescriptor(), null, options);
         if (photo != null) {
             return this.scaleAndRotate(photo);
         } else {
@@ -433,10 +451,22 @@ public class ShowPictureActivity extends AbstractActivity {
     }
 
     private double getScreenRation() {
-        final Point size =
-                getIntent()
-                        .getParcelableExtra(CapturePictureHandler.SIZE_EXTRA);
+        final Point size = getIntent().getParcelableExtra(SIZE_EXTRA);
         Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
         return (1.0 * size.x) / size.y;
+    }
+
+    public static final void startActivity(AbstractActivity context,
+            File photoFile, TransformationParamBean transformBean,
+            DeviceOrientation deviceOrientation, Point viewSize, Bundle extras) {
+        final Intent intent = new Intent(context, ShowPictureActivity.class);
+        intent.putExtra(FILE_EXTRA, photoFile);
+        intent.putExtra(TRANSFORM_BEAN_EXTRA, transformBean);
+        intent.putExtra(CURRENT_ORIENTATION_EXTRA, deviceOrientation);
+        intent.putExtra(SIZE_EXTRA, viewSize);
+        if(extras != null) {
+            intent.putExtras(extras);
+        }
+        context.startActivityForResult(intent);
     }
 }

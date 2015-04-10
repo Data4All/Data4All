@@ -18,6 +18,7 @@ package io.github.data4all.model.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
@@ -27,6 +28,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.MathUtil;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.D4AMapView;
 
@@ -36,10 +38,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
 /**
@@ -67,7 +71,7 @@ public class MapPolygon extends Polygon {
     private long timeStart;
 
     // True when the edit mode is active
-    private boolean active = false;
+    private boolean active;
 
     // the maximum time difference between action_down and action_up, so that
     // the mode will be changed
@@ -83,6 +87,9 @@ public class MapPolygon extends Polygon {
     // Fill Color for activated Polygons
     protected static final int ACTIVE_FILL_COLOR = Color.argb(100, 50, 255, 50);
 
+    // Maximum distance from the touch point to the mapline in pixel
+    private static final int TOLERANCE = 1;
+
     /**
      * Modes for edits which differ from touch events.
      */
@@ -94,16 +101,16 @@ public class MapPolygon extends Polygon {
     /**
      * Start values for rotation.
      */
-    private int xStartPo1 = 0;
-    private int yStartPo1 = 0;
-    private int xStartPo2 = 0;
-    private int yStartPo2 = 0;
+    private int xStartPo1;
+    private int yStartPo1;
+    private int xStartPo2;
+    private int yStartPo2;
 
     /**
      * Start values for moving.
      */
-    private int xStartM = 0;
-    private int yStartM = 0;
+    private int xStartM;
+    private int yStartM;
 
     /**
      * List of the geopoints in a coordinate system with the center as the
@@ -166,9 +173,9 @@ public class MapPolygon extends Polygon {
         if (!element.getTags().keySet().isEmpty()
                 && !element.getTags().values().isEmpty()) {
             Log.i(TAG, element.getTags().toString());
-            Tag tag = (Tag) element.getTags().keySet().toArray()[0];
-            String key = tag.getKey();
-            String value = element.getTags().get(tag);
+            final Tag tag = (Tag) element.getTags().keySet().toArray()[0];
+            final String key = tag.getKey();
+            final String value = element.getTags().get(tag);
             Log.i(TAG, tag.toString());
             setTitle(activity.getString(tag.getNameRessource()));
             if (tag instanceof ClassifiedTag) {
@@ -191,9 +198,9 @@ public class MapPolygon extends Polygon {
      * @return the localized name
      */
     public String getLocalizedName(Context context, String key, String value) {
-        Resources resources = context.getResources();
-        String s = "name_" + key + "_" + value;
-        int id = resources.getIdentifier(s.replace(":", "_"), "string",
+        final Resources resources = context.getResources();
+        final String s = "name_" + key + "_" + value;
+        final int id = resources.getIdentifier(s.replace(":", "_"), "string",
                 context.getPackageName());
         if (id == 0) {
             return null;
@@ -210,6 +217,8 @@ public class MapPolygon extends Polygon {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 pj = mapView.getProjection();
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
@@ -239,9 +248,12 @@ public class MapPolygon extends Polygon {
                     ((PolyElement) element).setNodesFromGeoPoints(geoPointList);
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
-                        && contains(event)) {
+                        && isTapped(event)) {
                     changeMode();
                 }
+                pj = mapView.getProjection();
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 mode = NONE;
@@ -279,9 +291,7 @@ public class MapPolygon extends Polygon {
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
             // get the offset of all points in the list to the first one
-            if (pointsOffset == null) {
-                pointsOffset = getOffset(geoPointList);
-            }
+            pointsOffset = getOffset(geoPointList);
             mapView.invalidate();
             active = true;
         } else {
@@ -307,8 +317,8 @@ public class MapPolygon extends Polygon {
      */
     public void moveToNewPos(final MotionEvent event, final MapView mapView) {
         // set the end coordinates of the movement
-        int xEnd = (int) event.getX();
-        int yEnd = (int) event.getY();
+        final int xEnd = (int) event.getX();
+        final int yEnd = (int) event.getY();
 
         if (pointsOffset == null) {
             pointsOffset = getOffset(geoPointList);
@@ -347,21 +357,21 @@ public class MapPolygon extends Polygon {
      */
     private void rotatePolygon(MotionEvent event) {
         // set end values for the next rotation action
-        int xEndPo1 = (int) event.getX(0);
-        int xEndPo2 = (int) event.getX(1);
+        final int xEndPo1 = (int) event.getX(0);
+        final int xEndPo2 = (int) event.getX(1);
 
-        int yEndPo1 = (int) event.getY(0);
-        int yEndPo2 = (int) event.getY(1);
+        final int yEndPo1 = (int) event.getY(0);
+        final int yEndPo2 = (int) event.getY(1);
 
         // get the rotation angle
-        double delta_xEnd = (xEndPo1 - xEndPo2);
-        double delta_yEnd = (yEndPo1 - yEndPo2);
-        double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
+        final double delta_xEnd = (xEndPo1 - xEndPo2);
+        final double delta_yEnd = (yEndPo1 - yEndPo2);
+        final double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
 
-        double delta_xStart = (xStartPo1 - xStartPo2);
-        double delta_yStart = (yStartPo1 - yStartPo2);
-        double radians2 = Math.atan2(delta_yStart, delta_xStart);
-        double radians = radians1 - radians2;
+        final double delta_xStart = (xStartPo1 - xStartPo2);
+        final double delta_yStart = (yStartPo1 - yStartPo2);
+        final double radians2 = Math.atan2(delta_yStart, delta_xStart);
+        final double radians = radians1 - radians2;
 
         geoPointList = new ArrayList<GeoPoint>();
         // rotate all coordinates
@@ -372,12 +382,11 @@ public class MapPolygon extends Polygon {
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
             // transfer coordinates to gpsPoints
-            Node node = PointToCoordsTransformUtil.calculateGPSPoint(
-                    midLocation, coord);
+            final Node node = MathUtil.calculateGPSPoint(midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        this.setPoints(geoPointList);
+        super.setPoints(geoPointList);
         pointsOffset = getOffset(geoPointList);
         mapView.invalidate();
     }
@@ -394,9 +403,9 @@ public class MapPolygon extends Polygon {
     public List<Point> getOffset(List<GeoPoint> gpointList) {
         List<Point> pointsOffset = new ArrayList<Point>();
         for (int i = 0; i < geoPointList.size(); i++) {
-            Point point = pj.toPixels(geoPointList.get(i), null);
-            int xOffset = (point.x - midpoint.x);
-            int yOffset = (point.y - midpoint.y);
+            final Point point = pj.toPixels(geoPointList.get(i), null);
+            final int xOffset = (point.x - midpoint.x);
+            final int yOffset = (point.y - midpoint.y);
             pointsOffset.add(new Point(xOffset, yOffset));
         }
         return pointsOffset;
@@ -427,7 +436,7 @@ public class MapPolygon extends Polygon {
         this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            double[] preCoord = PointToCoordsTransformUtil
+            final double[] preCoord = MathUtil
                     .calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint
@@ -445,18 +454,61 @@ public class MapPolygon extends Polygon {
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
-    
+
+    @Override
+    public boolean onSingleTapConfirmed(final MotionEvent event,
+            final MapView mapView) {
+        if (!editable) {
+            if (mInfoWindow == null) {
+                // no support for tap:
+                return false;
+            }
+            final boolean isTapped = isTapped(event);
+            if (isTapped) {
+                mInfoWindow.open(this,
+                        MapUtil.getCenterFromOsmElement(element), 0, 0);
+                mapView.getController().animateTo(
+                        MapUtil.getCenterFromOsmElement(element));
+            }
+            return isTapped;
+        } else {
+            return super.onSingleTapConfirmed(event, mapView);
+        }
+    }
+
+    public boolean isTapped(MotionEvent event) {
+        if (contains(event)) {
+            return true;
+        } else {
+            final Projection pj = mapView.getProjection();
+            final GeoPoint position = (GeoPoint) pj.fromPixels(
+                    (int) event.getX(), (int) event.getY());
+            final int distToCent = position.distanceTo(MapUtil
+                    .getCenterFromOsmElement(element));
+            return (distToCent < TOLERANCE);
+        }
+    }
+
     /*
      * (non-Javadoc)
+     * 
      * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
      */
     @Override
-    public void setPoints(final List<GeoPoint> points){
+    public void setPoints(final List<GeoPoint> points) {
         super.setPoints(points);
-        if(active){
-            GeoPoint center = MapUtil.getCenterFromPointList(points);
-            //mapView.getController().animateTo(center);
-            mapView.getController().setCenter(center);
+        if (active) {
+            final GeoPoint center = MapUtil.getCenterFromPointList(points);
+            final SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(activity);
+            final Resources res = activity.getResources();
+            final String key = res
+                    .getString(R.string.pref_moving_animation_key);
+            if ("Animate".equals(prefs.getString(key, null))) {
+                mapView.getController().animateTo(center);
+            } else {
+                mapView.getController().setCenter(center);
+            }
             mapView.postInvalidate();
         }
     }
