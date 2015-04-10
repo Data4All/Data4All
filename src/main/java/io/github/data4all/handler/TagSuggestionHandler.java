@@ -82,6 +82,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 			addresse.setCity(city);
 			addresse.setPostCode(postCode);
 			addresse.setCountry(country);
+			Log.i(TAG, addresse.getFullAddress());
 			return addresse;
 		} catch (Exception e) {
 			e.printStackTrace();
