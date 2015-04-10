@@ -21,6 +21,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -79,14 +80,13 @@ public abstract class AbstractActivity extends Activity {
         // Count up on each Activity which is create
         counter++;
  
-        // set a notification to Status Bar
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+       // set a notification to Status Bar
+       notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
        final Notification.Builder mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_logo_white)
                 .setOngoing(true)
                 .setContentTitle(getString(R.string.statusNotificationHeadline)).setAutoCancel(true)
                 .setContentText(getString(R.string.statusNotification));
-
         notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
     }
 
