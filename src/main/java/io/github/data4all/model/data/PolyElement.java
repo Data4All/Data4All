@@ -475,6 +475,23 @@ public class PolyElement extends AbstractDataElement {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see io.github.data4all.model.data.AbstractDataElement#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see io.github.data4all.model.data.AbstractDataElement#equals(java.lang.Object)
+     */
     public boolean equals(Object obj) {
         if (obj instanceof PolyElement) {
             return ((PolyElement) obj).getType() == this.type
@@ -482,4 +499,6 @@ public class PolyElement extends AbstractDataElement {
         }
         return false;
     }
+
+    
 }
