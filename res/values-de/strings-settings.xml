@@ -21,4 +21,8 @@
     <string name="pref_gallery_deletemode_dialog_title">Standard Löschvorgang</string>
     
     <string name="pref_gallery_deletemode_default">Frage</string>
+    
+    <string name="pref_moving_animation_title">Animation beim Objekt verschieben</string>
+    <string name="pref_moving_animation_summary">Soll die Karte beim Verschieben von Objekten auf der Vorschaukarte animiert werden?</string>
+    <string name="pref_moving_animation_dialog_title">Animation beim Verschieben</string>
 </resources>
