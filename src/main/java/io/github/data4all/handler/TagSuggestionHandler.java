@@ -15,6 +15,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +39,8 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
 	private String full_address = "";
 	Location lastLocation;
+	
+    private static final String TAG = "TagSuggestion";
 
 	private static List<Addresse> addressList = new LinkedList<Addresse>();
 
@@ -97,6 +100,8 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		// http post
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
+			httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT,
+                    System.getProperty("http.agent"));
 			HttpPost httppost = new HttpPost(url);
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
@@ -125,7 +130,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		try {
 			jObject = new JSONObject(address);
 		} catch (JSONException e) {
-			Log.e("log_tag", "Error parsing data " + e.toString());
+			Log.e("log_tag", "Error parsing data [" + e.getMessage()+"] "+address);
 		}
 
 		return jObject;
@@ -234,10 +239,9 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	}
 
 	/**
-	 * get latitude and longitude in an given environment
-	 * 
-	 * @param x0
-	 * @param y0
+	 * this method generate random locations nearby a given Location
+	 * @param x0 longitude
+	 * @param y0 lattitude
 	 * @param radius
 	 * @return location
 	 */

@@ -1,6 +1,5 @@
 package io.github.data4all.suggestion;
 
-import android.location.Location;
 
 /**
  * This class contains all the informations of an Address
