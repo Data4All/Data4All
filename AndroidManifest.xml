@@ -61,10 +61,6 @@
             android:name=".activity.GpsTrackListActivity"
             android:label="Track List" />
         <activity android:name=".activity.TrackDetailsActivity" />
-        <activity
-            android:name=".activity.AboutActivity"
-            android:label="@string/title_activity_about" >
-        </activity>
 
         <service android:name=".service.UploadService" />
         <service
@@ -74,6 +70,15 @@
         <service
             android:name=".service.OrientationListener"
             android:enabled="true" />
+
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/title_activity_about" >
+        </activity>
+        <activity
+            android:name=".activity.LicensesActivity"
+            android:label="@string/title_activity_licenses" >
+        </activity>
     </application>
 
 </manifest>

@@ -15,8 +15,6 @@
  */
 package io.github.data4all.model.map;
 
-import java.util.List;
-
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
@@ -25,7 +23,6 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.Tag;
-import io.github.data4all.util.MapUtil;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.DefaultResourceProxyImpl;
@@ -186,6 +183,9 @@ public class MapMarker extends Marker {
             }
             return active;
         } else {
+            if (mInfoWindow != null && mInfoWindow.isOpen()) {
+                mInfoWindow.close();
+            }
             return super.onTouchEvent(event, mapView);
         }
     }

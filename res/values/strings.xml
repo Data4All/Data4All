@@ -10,6 +10,7 @@
     <string name="action_help">Help</string>
     <string name="action_login">Login</string>
     <string name="action_about">About</string>
+    <string name="action_licenses">Legal information</string>
 
     <!-- generell strings -->
     <string name="yes">Yes</string>
@@ -122,6 +123,7 @@
     <string name="show_pwd">Show Password</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_licenses">LicensesActivity</string>
 
      <!-- track list and details -->
     <string name="list_tracks">Tracks</string>
@@ -134,12 +136,21 @@
     <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Follow us on Twitter</a></string>
     <string name="linkToHomepage"><a href="http://data4all.github.io/">Official Homepage</a></string>
     <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Join us on GitHub!</a></string>
-    
-    <!-- credits / about -->
+    <string name="linkToOSMCopyright"><a href="http://www.openstreetmap.org/copyright">&#169; OpenStreetMap contributors</a></string>
+    <string name="linkToMapboxTOS"><a href="https://www.mapbox.com/tos/">Mapbox Terms of Service</a></string>
+    <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Licenses</a></string>
+    <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
+    <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
+
+    <!-- credits / about / licenses -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
         You can find out more about us and this project on the following pages: </string>
     <string name="githubFollow">Since Data4All is an Open Source project, you can join us and participate 
-        on GitHub: </string>    
+        on GitHub: </string>
+
+          <string name="underlyingLicenses">The following links will redirect you to the licenses underlying this 
+        application.</string>
+    <string name="librariesUsed">The following libraries have been used in this application.</string>
 
     <string name="deleteTagsResultview">Do you want to delete this Tag ?</string>
     <string name="maybe">Discard</string>
