@@ -113,7 +113,7 @@
     <string name="badMagnetometerCalibrationTitle">Magnetometer needs recalibration.</string>
     <string name="goodSensorCalibrationTitle">Sensor are okay.</string>
     <string name="badSensorCalibrationTitle">Sensor needs recalibration.</string>
-
+ 
     <string name="show_pwd">Show Password</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="hello_world">Hello world!</string>
