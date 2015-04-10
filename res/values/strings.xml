@@ -105,6 +105,7 @@
     <string name="linkToMapboxTOS"><a href="https://www.mapbox.com/tos/">Mapbox Terms of Service</a></string>
     <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Licenses</a></string>
     <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
+    <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
 
     <!-- credits / about / licences -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 

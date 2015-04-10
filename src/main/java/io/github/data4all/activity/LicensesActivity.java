@@ -29,6 +29,9 @@ public class LicensesActivity extends AbstractActivity {
         
         TextView osmdroid = (TextView) findViewById(R.id.linkToOSMDroidWiki);
         osmdroid.setMovementMethod(LinkMovementMethod.getInstance());
+        
+        TextView osmbonuspack = (TextView) findViewById(R.id.linkToOSMBonusPack);
+        osmbonuspack.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
