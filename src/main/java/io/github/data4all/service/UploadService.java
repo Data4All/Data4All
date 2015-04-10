@@ -126,13 +126,13 @@ public class UploadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getIntExtra(ACTION, 0) == UPLOAD) {
             final ResultReceiver receiver = intent.getParcelableExtra(HANDLER);
-
+            final String comment = intent.getStringExtra(CHANGESET_COMMENT);
             final DataBaseHandler db = new DataBaseHandler(this);
             final List<User> users = db.getAllUser();
             db.close();
             if (users != null && !users.isEmpty()) {
                 final User user = users.get(0);
-                this.uploadElems(receiver, user);
+                this.uploadElems(receiver, user,comment);
                 stopNext = false;
             }
         }
@@ -147,14 +147,14 @@ public class UploadService extends IntentService {
      * @param user
      *            The User to the data from
      */
-    private void uploadElems(final ResultReceiver receiver, final User user) {
+    private void uploadElems(final ResultReceiver receiver, final User user, final String comment) {
         try {
             this.startForeground(user);
             int requestId = 0;
             if (!stopNext) {
                 // Request the changesetId
                 final CloseableRequest request =
-                        ChangesetUtil.requestId(user, CHANGESET_COMMENT);
+                        ChangesetUtil.requestId(user, comment);
                 this.currentConnection = request;
                 requestId = request.request();
             }
