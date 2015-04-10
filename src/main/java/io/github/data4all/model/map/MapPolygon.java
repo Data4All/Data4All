@@ -29,7 +29,6 @@ import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.MathUtil;
-import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.Polygon;
@@ -64,8 +63,6 @@ public class MapPolygon extends Polygon {
     private AbstractDataElement element;
     private boolean editable;
 
-    // midpoint of the bounding box of the polygon
-    private Point midpoint;
 
     // start time for touch event action_down
     private long timeStart;
@@ -99,21 +96,19 @@ public class MapPolygon extends Polygon {
     private int mode = NONE;
 
     /**
-     * Start values for rotation.
+     * Start values for any movements.
      */
     private List<Point> startPos;
-
-    /**
-     * Start values for moving.
-     */
-    private int xStartM;
-    private int yStartM;
 
     /**
      * List of the geopoints in a coordinate system with the center as the
      * average of all Points.
      */
     private List<double[]> pointCoords;
+    
+    /**
+     * the Perimeter of the 3 Startpoints to scale 
+     */
     private float startPosPerimeter;
 
     /**
@@ -121,10 +116,7 @@ public class MapPolygon extends Polygon {
      */
     private Location midLocation;
 
-    /**
-     * List of vectors from the midpoint of the MapPolygon to every point.
-     */
-    private List<Point> pointsOffset;
+
 
     /**
      * List of GeoPoints for editing the MapPolygon.
@@ -215,16 +207,16 @@ public class MapPolygon extends Polygon {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 pj = mapView.getProjection();
-                midpoint = pj.toPixels(
-                        MapUtil.getCenterFromOsmElement(element), null);
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
                     geoPointList = this.getPoints();
-                    xStartM = (int) event.getX();
-                    yStartM = (int) event.getY();
-                    Log.d(TAG, "action_down at point: " + xStartM + " "
-                            + yStartM);
+                    startPos = new ArrayList<Point>();
+                    startPos.add(new Point((int) event.getX(0), (int) event
+                            .getY(0)));;
+                    Log.d(TAG, "action_down at point: " + event.getX(0) + " "
+                            + event.getY(0));
+                    Log.d("TEST", "Startpoints");
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -255,9 +247,6 @@ public class MapPolygon extends Polygon {
                         && isTapped(event)) {
                     changeMode();
                 }
-                pj = mapView.getProjection();
-                midpoint = pj.toPixels(
-                        MapUtil.getCenterFromOsmElement(element), null);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 mode = NONE;
@@ -267,7 +256,7 @@ public class MapPolygon extends Polygon {
                 if (active) {
                     if (mode == MOVE) {
                         Log.d(TAG, "move polygon");
-                        this.moveToNewPos(event, mapView);
+                        this.moveToNewPos(event);
                     } else if (mode == ROTATE) {
                         if (event.getPointerCount() == 3) {
                             Log.d(TAG, "scale polygon");
@@ -300,10 +289,6 @@ public class MapPolygon extends Polygon {
             this.setFillColor(ACTIVE_FILL_COLOR);
             this.setStrokeColor(ACTIVE_STROKE_COLOR);
             pj = mapView.getProjection();
-            midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
-                    null);
-            // get the offset of all points in the list to the first one
-            pointsOffset = getOffset(geoPointList);
             mapView.invalidate();
             active = true;
         } else {
@@ -327,38 +312,21 @@ public class MapPolygon extends Polygon {
      * @param mapView
      *            the current mapView
      */
-    public void moveToNewPos(final MotionEvent event, final MapView mapView) {
+    public void moveToNewPos(final MotionEvent event) {
         // set the end coordinates of the movement
-        final int xEnd = (int) event.getX();
-        final int yEnd = (int) event.getY();
-
-        if (pointsOffset == null) {
-            pointsOffset = getOffset(geoPointList);
+        Point endPoint = new Point((int) event.getX(0), (int) event
+                .getY(0));
+        int x = endPoint.x - startPos.get(0).x ;
+        int y = endPoint.y - startPos.get(0).y ;
+        pj = mapView.getProjection();
+        List<GeoPoint> returnList = new ArrayList<GeoPoint>();
+        for(GeoPoint geoPoint : geoPointList){
+            Point point = pj.toPixels(geoPoint, null);
+            point = new Point(point.x + x, point.y +y);
+            returnList.add((GeoPoint) pj.fromPixels(point.x, point.y));
         }
-        // only move the polygon if there is a movement
-        if (Math.abs(xEnd - xStartM) > 0 || Math.abs(yEnd - yStartM) > 0) {
-            Log.i(TAG, "moveMapPolygon from: " + xStartM + " " + yStartM);
-            Log.i(TAG, "moveMapPolygon to: " + xEnd + " " + yEnd);
-            // move the midpoint
-            midpoint.set((midpoint.x + (xEnd - xStartM)),
-                    (midpoint.y + (yEnd - yStartM)));
-
-            // set all other points depending on the midpoint
-            for (int i = 0; i < geoPointList.size(); i++) {
-                Point newPoint = new Point();
-                newPoint.set((midpoint.x + pointsOffset.get(i).x),
-                        (midpoint.y + pointsOffset.get(i).y));
-                geoPointList.set(i, (GeoPoint) pj.fromPixels((int) newPoint.x,
-                        (int) newPoint.y));
-            }
-            // set new start values for the next move action
-            xStartM = (int) event.getX();
-            yStartM = (int) event.getY();
-
-            // set the list with the changed points
-            this.setPoints(geoPointList);
-            mapView.invalidate();
-        }
+        super.setPoints(returnList);
+        mapView.invalidate();
     }
 
     /**
@@ -388,7 +356,6 @@ public class MapPolygon extends Polygon {
         if (MapUtil.getBoundingBoxForPointList(geoPointList)
                 .getDiagonalLengthInMeters() < 100 || scaleFactor < 1) {
             super.setPoints(geoPointList);
-            pointsOffset = getOffset(geoPointList);
             mapView.invalidate();
         }
     }
@@ -431,29 +398,10 @@ public class MapPolygon extends Polygon {
         }
         // set the list with the changed points
         super.setPoints(geoPointList);
-        pointsOffset = getOffset(geoPointList);
         mapView.invalidate();
     }
 
-    /**
-     * Get the vectors to all points of the polygon starting from the midpoint.
-     * Necessary for moving the polygon.
-     * 
-     * @param gpointList
-     *            list of all geopoints of the polygon
-     * 
-     * @return List with all vectors
-     */
-    public List<Point> getOffset(List<GeoPoint> gpointList) {
-        List<Point> pointsOffset = new ArrayList<Point>();
-        for (int i = 0; i < geoPointList.size(); i++) {
-            final Point point = pj.toPixels(geoPointList.get(i), null);
-            final int xOffset = (point.x - midpoint.x);
-            final int yOffset = (point.y - midpoint.y);
-            pointsOffset.add(new Point(xOffset, yOffset));
-        }
-        return pointsOffset;
-    }
+  
 
     /**
      * Set the original points of the polygon. Called when the polygon is added
