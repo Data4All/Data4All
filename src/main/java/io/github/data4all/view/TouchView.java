@@ -39,7 +39,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -152,6 +151,11 @@ public class TouchView extends View {
 	 */
 	private int pointRadius = (int) (getPointsize() * getResources()
 			.getDisplayMetrics().density);
+	
+	/**
+     * Specifies the tolerance if a point is near the touchevent
+     */
+	private final int pointTolerance = 50;
 
 	/**
 	 * The current used RedoUndo listener.
@@ -164,12 +168,12 @@ public class TouchView extends View {
 	/**
 	 * Standard strings for actions
 	 */
-	final static String add = "ADD";
-	final static String delete = "DELETE";
-	final static String moveFrom = "MOVE_FROM";
-	final static String moveTo = "MOVE_TO";
-	final static String movePolyFrom = "MOVE_POLY_FROM";
-	final static String movePolyTo = "MOVE_POLY_TO";
+	static final String add = "ADD";
+	static final String delete = "DELETE";
+	static final String moveFrom = "MOVE_FROM";
+	static final String moveTo = "MOVE_TO";
+	static final String movePolyFrom = "MOVE_POLY_FROM";
+	static final String movePolyTo = "MOVE_POLY_TO";
 
 	/**
 	 * Simple constructor to use when creating a view from code.
@@ -236,7 +240,7 @@ public class TouchView extends View {
 		canvas.drawARGB(0, 0, 0, 0);
 
 		path.reset();
-		if (newPolygon != null && newPolygon.size() != 0) {
+		if (newPolygon != null && !newPolygon.isEmpty()) {
 			path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
 			// first draw all lines
 			int limit = newPolygon.size();
@@ -300,7 +304,7 @@ public class TouchView extends View {
 
 	private void startMotion(MotionEvent event) {
 
-		this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
+		this.lookUpPoint = lookUp(event.getX(), event.getY(), pointTolerance);
 		if (!polygonclicked && lookUpPoint == null) {
 			addPointOnLine(new Point(event.getX(), event.getY()));
 		}
@@ -398,8 +402,8 @@ public class TouchView extends View {
 	}
 
 	/**
-	 * Adds a Point on a line, if there is a line.</br>
-	 * 
+	 * Adds a Point on a line, if there is a line.<br/>
+	 * <br/>
 	 * uses isOnALine() to validate that the Point is on a existing line
 	 * 
 	 * @author konerman
@@ -495,8 +499,8 @@ public class TouchView extends View {
 	}
 
 	/**
-	 * Return true if the given point is contained inside the polygon. See:
-	 * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+	 * Return true if the given point is contained inside the polygon.<br/>
+	 * See: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	 * 
 	 * @param test
 	 *            The point to check
@@ -889,8 +893,7 @@ public class TouchView extends View {
 			prefs.edit().putString(key, "" + defaultValue).commit();
 			return defaultValue;
 		} else {
-			final int pointsize = Integer.parseInt(size);
-			return pointsize;
+			return Integer.parseInt(size);
 		}
 
 	}
