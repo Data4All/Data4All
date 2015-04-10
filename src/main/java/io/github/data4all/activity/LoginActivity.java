@@ -104,11 +104,14 @@ public class LoginActivity extends AbstractActivity {
                     passwordfield
                             .setTransformationMethod(PasswordTransformationMethod
                                     .getInstance());
+                    passwordfield.setSelection(passwordfield.length());
+                    
                 } else {
                     // hide password
                     passwordfield
                             .setTransformationMethod(HideReturnsTransformationMethod
                                     .getInstance());
+                    passwordfield.setSelection(passwordfield.length());
                 }
             }
         });
