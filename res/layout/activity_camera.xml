@@ -31,15 +31,15 @@
         android:id="@+id/btnCapture"
         style="@style/imageButtonCamAction"
         android:contentDescription="@string/noDescription" />
- 
+
     <io.github.data4all.widged.CustomImageButton
         android:id="@+id/calibrationStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnCapture"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/btnCapture"
-        android:layout_marginRight="35dp"
-        android:layout_marginTop="25dp"
+        android:layout_toRightOf="@+id/btnCapture"
         android:background="@null"
         android:contentDescription="@string/noDescription"
         android:onClick="onClickCalibrationStatus"
