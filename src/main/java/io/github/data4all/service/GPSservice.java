@@ -36,7 +36,7 @@ import android.widget.Toast;
 /**
  * A service for listening for location changes.
  * 
- * @author konermann
+ * @author konermann, dahnken
  * 
  */
 public class GPSservice extends Service implements LocationListener {
@@ -140,8 +140,18 @@ public class GPSservice extends Service implements LocationListener {
 
             final TrackPoint last = track.getLastTrackPoint();
 
+            Location lastKnownLoc = new Location("lastTrackPoint");
+            if(last != null){                
+                lastKnownLoc.setAltitude(last.getAlt());
+                lastKnownLoc.setLatitude(last.getLat());
+                lastKnownLoc.setLongitude(last.getLon());
+            }
+
+            final float distanceCovered = lastKnownLoc.distanceTo(tp);
+
             // check if new Location is already stored
-            if (last != null && tp != null && this.sameTrackPoints(last, tp)) {
+            if (last != null && tp != null && !this.sameTrackPoints(last, tp)
+                    && distanceCovered >= 5.0) {
                 track.addTrackPoint(tp);
                 // After ten trackpoints updateDatabase
                 if ((track.getTrackPoints().size() % 10) == 0) {
@@ -162,11 +172,23 @@ public class GPSservice extends Service implements LocationListener {
      */
     private boolean sameTrackPoints(TrackPoint point1, Location loc) {
         final TrackPoint point2 = new TrackPoint(loc);
-        if (point1.getLat() == point2.getLat()
-                && point1.getLon() == point2.getLon()) {
+
+        // if (point1.getLat() == point2.getLat()
+        // && point1.getLon() == point2.getLon()) {
+        // return true;
+        // }
+
+        final double epsilon = 0.0000001;
+
+        double latDiff = Math.abs(point1.getLat() - point2.getLat());
+        double lonDiff = Math.abs(point1.getLon() - point2.getLon());
+
+        if (latDiff < epsilon && lonDiff < epsilon) {
             return true;
         }
+
         return false;
+
     }
 
     /*
