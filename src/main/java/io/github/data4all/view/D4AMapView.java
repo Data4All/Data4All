@@ -64,7 +64,7 @@ public class D4AMapView extends MapView {
 
     private boolean scrollable = true;
 
-    private static final String TAG = "MapPreview";
+    private static final String TAG = "D4AMapView";
     private BoundingBoxE6 boundingBox;
 
     /**

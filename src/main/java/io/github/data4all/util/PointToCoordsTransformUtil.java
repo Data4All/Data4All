@@ -24,7 +24,6 @@ import io.github.data4all.model.drawing.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.location.Location;
 
 /**
  * This class uses the orientation of the phone, the pixel of the drawn points
@@ -48,8 +47,8 @@ public class PointToCoordsTransformUtil {
     /**
      * 2 Vectors for the x- and the y-axe
      */
-    final private double[] xaxe = { 1, 0, 0 };
-    final private double[] yaxe = { 0, 1, 0 };
+    private static final double[] xaxe = {1,0,0,};
+    private static final double[] yaxe = {0,1,0,};
 
     public PointToCoordsTransformUtil() {
     }
@@ -94,10 +93,10 @@ public class PointToCoordsTransformUtil {
             DeviceOrientation deviceOrientation, List<Point> points) {
         this.tps = tps;
 
-        Log.i("CalcTest", tps.toString());
-        Log.i("CalcTest", deviceOrientation.toString());
+        Log.i(TAG, tps.toString());
+        Log.i(TAG, deviceOrientation.toString());
         final List<Node> nodes = new ArrayList<Node>();
-        Log.d("CalcTest",
+        Log.d(TAG,
                 "Orientation: "
                         + Math.toDegrees(deviceOrientation.getAzimuth())
                         + " ; " + Math.toDegrees(deviceOrientation.getPitch())
@@ -119,7 +118,7 @@ public class PointToCoordsTransformUtil {
             // transforms local coordinates in global GPS-coordinates set to.
             // Node.
             if (coord != null) {
-                final Node node = calculateGPSPoint(tps.getLocation(),
+                final Node node = MathUtil.calculateGPSPoint(tps.getLocation(),
                         coord);
                 Log.d(TAG,
                         "Calculated Lat: " + node.getLat() + " Lon: "
@@ -131,7 +130,8 @@ public class PointToCoordsTransformUtil {
     }
 
     /**
-     * 
+     * calculates with 3 Points and the given deviceorientation and tps
+     * informations the 4th point of a building
      * 
      * @param tps
      *            object of TransformParamBean
@@ -178,34 +178,35 @@ public class PointToCoordsTransformUtil {
                 coords.add(coord);
             }
         }
-        double[] coord = MathUtil.calcFourthCoord(coords);
+        final double[] coord = MathUtil.calcFourthCoord(coords);
         return coordToPixel(coord);
     }
-    
+
     /**
      * Calculates a coordinate to a Pixel
      * 
      * @param coord
-     * @return a Point
+     *            A geoPoint transfered to a local coordinate System
+     * @return a Point a Pixel to draw on the device
      */
     public Point coordToPixel(double[] coord) {
         double[] vector = new double[3];
-        double azimuth = deviceOrientation.getAzimuth();
+        final double azimuth = deviceOrientation.getAzimuth();
         vector[0] = ((coord[0] * Math.cos(azimuth)) - (coord[1] * Math
                 .sin(azimuth)));
         vector[1] = ((coord[0] * Math.sin(azimuth)) + (coord[1] * Math
                 .cos(azimuth)));
         vector[2] = -tps.getHeight();
         // Rotate to the device coordinat-system
-        double pitch = deviceOrientation.getPitch();
-        double[] vector2 = MathUtil.rotate(vector, xaxe, pitch);
-        double roll = deviceOrientation.getRoll();
-        double[] vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+        final double pitch = deviceOrientation.getPitch();
+        final double[] vector2 = MathUtil.rotate(vector, xaxe, pitch);
+        final double roll = deviceOrientation.getRoll();
+        final double[] vector3 = MathUtil.rotate(vector2, yaxe, -roll);
 
         if (vector3[2] >= 0) {
-            double length = Math.sqrt(vector3[0] * vector3[0] + vector3[1]
-                    * vector3[1] + vector3[2] * vector3[2]);
-            double multi = (1 - (vector3[2] / length));
+            final double length = Math.sqrt(vector3[0] * vector3[0]
+                    + vector3[1] * vector3[1] + vector3[2] * vector3[2]);
+            double multi = 1 - vector3[2] / length;
             multi = multi * multi
                     * (tps.getPhotoHeight() + tps.getPhotoWidth());
             multi = multi * multi;
@@ -214,17 +215,17 @@ public class PointToCoordsTransformUtil {
         }
 
         // calculate the pitch- and roll-angles.
-        double horizonPitch = Math.atan(vector3[1] / vector3[2]);
-        double horizonRoll = -Math.atan(vector3[0] / vector3[2]);
+        final double horizonPitch = Math.atan(vector3[1] / vector3[2]);
+        final double horizonRoll = -Math.atan(vector3[0] / vector3[2]);
 
         // calculate a point on the horizont vertical to the mid of the display.
-        Log.i("TEST", tps.toString());
-        float x = tps.getPhotoWidth()
+        Log.i(TAG, tps.toString());
+        final float x = tps.getPhotoWidth()
                 / 2
                 + MathUtil.calculatePixelFromAngle(horizonRoll,
                         tps.getPhotoWidth(),
                         tps.getCameraMaxVerticalViewAngle());
-        float y = tps.getPhotoHeight()
+        final float y = tps.getPhotoHeight()
                 / 2
                 + MathUtil.calculatePixelFromAngle(horizonPitch,
                         tps.getPhotoHeight(),
@@ -234,19 +235,24 @@ public class PointToCoordsTransformUtil {
 
     /**
      * Transfers GPSPoints to Points on the Display
+     * 
      * @param nodes
+     *            a GeoPoint
      * @param tps
+     *            Transformationparambean
      * @param deviceOrientation
-     * @return List of Points
+     *            the Orientation of the device
+     * @return List of Points a List of Points to draw on Device
      */
     public List<Point> calculateNodesToPoint(List<Node> nodes,
             TransformationParamBean tps, DeviceOrientation deviceOrientation) {
         this.tps = tps;
         this.deviceOrientation = deviceOrientation;
-        List<Point> points = new ArrayList<Point>();
+        final List<Point> points = new ArrayList<Point>();
         for (Node node : nodes) {
-            double[] coord = calculateCoordFromGPS(tps.getLocation(), node);
-            Point point = coordToPixel(coord);
+            final double[] coord = MathUtil.calculateCoordFromGPS(
+                    tps.getLocation(), node);
+            final Point point = coordToPixel(coord);
             points.add(point);
         }
         return points;
@@ -328,64 +334,8 @@ public class PointToCoordsTransformUtil {
         coord[0] = ((tempXX * Math.cos(azimuth)) - (tempYY * Math.sin(azimuth)));
         coord[1] = ((tempXX * Math.sin(azimuth)) + (tempYY * Math.cos(azimuth)));
         coord[2] = 0;
-        Log.i("CalcTest", "Coordinates: " + coord[0] + " ; " + coord[1]);
+        Log.i(TAG, "Coordinates: " + coord[0] + " ; " + coord[1]);
 
-        return coord;
-    }
-
-    /**
-     * calculates Node (with latitude and longitude) from coordinates in a local
-     * system and the current Location.
-     * 
-     * @param location
-     *            current location of the device
-     * @param coord
-     *            coordinate of the point in the local system
-     * @return A Node with latitude and longitude
-     */
-    public static Node calculateGPSPoint(Location location, double[] coord) {
-        final double lat = Math.toRadians(location.getLatitude());
-        final double lon = Math.toRadians(location.getLongitude());
-        // calculate the length of the current latitude line with the earth
-        // radius
-        final double radius = 6371004.0;
-        double lonLength = radius * Math.cos(lat);
-        lonLength = lonLength * 2 * Math.PI;
-        // add to the current latitude the distance of the coordinate
-        double lon2 = lon + Math.toRadians((coord[0] * 360) / lonLength);
-        // fix the skip from -PI to +PI for the longitude
-        lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
-        // calculate the length of the current longitude line with the earth
-        // radius
-        final double latLength = radius * 2 * Math.PI;
-        // add to the current Longitude the distance of the coordinate
-        double lat2 = lat + Math.toRadians((coord[1] * 360) / latLength);
-        lat2 = Math.toDegrees(lat2);
-        lon2 = Math.toDegrees(lon2);
-        // create a new Node with the latitude and longitude values
-        return new Node(-1, lat2, lon2);
-    }
-
-    /**
-     * transfers GPSPoints to a local Coordinate System
-     * @param location
-     * @param node
-     * @return coord
-     */
-    public static double[] calculateCoordFromGPS(Location location, Node node) {
-        final double lat = Math.toRadians(location.getLatitude());
-        final double lon = Math.toRadians(location.getLongitude());
-        // calculate the length of the current latitude line with the earth
-        // radius
-        final double radius = 6371004.0;
-        double lonLength = radius * Math.cos(lat);
-        lonLength = lonLength * 2 * Math.PI;
-        final double latLength = radius * 2 * Math.PI;
-        double[] coord = new double[2];
-        double test = (Math.toRadians(node.getLat()) - lat);
-        coord[1] = latLength * test / (Math.PI * 2);
-        test = (Math.toRadians(node.getLon()) - lon);
-        coord[0] = lonLength * test / (Math.PI * 2);
         return coord;
     }
 

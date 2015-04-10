@@ -20,6 +20,10 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.util.HelpOverlay;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -62,6 +66,14 @@ public abstract class AbstractActivity extends Activity {
 
     private HelpOverlay overlay;
 
+    private static final int NOTIFICATION_EX = 1;
+
+    private NotificationManager notificationManager;
+
+    // Counter is used to count the start of activities to remove the status bar
+    // icon when no active is running
+    private static int counter;
+
     /*
      * (non-Javadoc)
      * 
@@ -71,6 +83,18 @@ public abstract class AbstractActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initHelp();
+
+        // Count up on each Activity which is create 
+        counter++;
+ 
+       // set a notification to Status Bar
+       notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+       final Notification.Builder mBuilder = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_logo_white)
+                .setOngoing(true)
+                .setContentTitle(getString(R.string.statusNotificationHeadline)).setAutoCancel(true)
+                .setContentText(getString(R.string.statusNotification));
+        notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
     }
 
     /**
@@ -79,6 +103,23 @@ public abstract class AbstractActivity extends Activity {
     private void initHelp() {
         overlay = new HelpOverlay(this);
         overlay.showOnFirstTime();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // count down on each activity which is destroyed
+        counter--;
+        // when counter is 0, we have to remove the notification
+        if (counter <= 0) {
+            notificationManager.cancel(NOTIFICATION_EX);
+        }
     }
 
     /*
@@ -125,6 +166,10 @@ public abstract class AbstractActivity extends Activity {
             startActivity(new Intent(this, AboutActivity.class));
             status = true;
             break;
+        case R.id.action_licenses:
+            startActivity(new Intent(this, LicensesActivity.class));
+            status = true;
+            break;
         case R.id.action_help:
             overlay.show();
             status = true;
@@ -142,6 +187,10 @@ public abstract class AbstractActivity extends Activity {
             return super.onOptionsItemSelected(item);
         }
         return status;
+    }
+    
+    protected void onHomePressed() {
+        onWorkflowFinished(null);
     }
 
     protected void onHomePressed() {
@@ -243,9 +292,8 @@ public abstract class AbstractActivity extends Activity {
      * @return if the device uses the navigationbar
      */
     public static boolean hasNavBar(Resources resources) {
-        final int id =
-                resources.getIdentifier("config_showNavigationBar", "bool",
-                        "android");
+        final int id = resources.getIdentifier("config_showNavigationBar",
+                "bool", "android");
         if (id > 0) {
             return resources.getBoolean(id);
         } else {
@@ -264,9 +312,8 @@ public abstract class AbstractActivity extends Activity {
      * @return The height of the navigationbar
      */
     public static int getNavBarHeight(Resources resources) {
-        final int id =
-                resources.getIdentifier("navigation_bar_height", "dimen",
-                        "android");
+        final int id = resources.getIdentifier("navigation_bar_height",
+                "dimen", "android");
         if (id > 0) {
             return resources.getDimensionPixelSize(id);
         }

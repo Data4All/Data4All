@@ -15,9 +15,8 @@
  */
 package io.github.data4all.service;
 
-import java.util.List;
-
 import io.github.data4all.R;
+import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.User;
@@ -28,6 +27,10 @@ import io.github.data4all.util.upload.CloseableCloseRequest;
 import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
+
+import java.io.File;
+import java.util.List;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -46,7 +49,7 @@ public class UploadService extends IntentService {
     /**
      * The comment for the changeset to open.
      */
-    private static final String CHANGESET_COMMENT =
+    public static final String CHANGESET_COMMENT =
             "User-triggered upload via App";
 
     /**
@@ -123,13 +126,13 @@ public class UploadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getIntExtra(ACTION, 0) == UPLOAD) {
             final ResultReceiver receiver = intent.getParcelableExtra(HANDLER);
-
+            final String comment = intent.getStringExtra(CHANGESET_COMMENT);
             final DataBaseHandler db = new DataBaseHandler(this);
             final List<User> users = db.getAllUser();
             db.close();
             if (users != null && !users.isEmpty()) {
                 final User user = users.get(0);
-                this.uploadElems(receiver, user);
+                this.uploadElems(receiver, user,comment);
                 stopNext = false;
             }
         }
@@ -144,14 +147,14 @@ public class UploadService extends IntentService {
      * @param user
      *            The User to the data from
      */
-    private void uploadElems(final ResultReceiver receiver, final User user) {
+    private void uploadElems(final ResultReceiver receiver, final User user, final String comment) {
         try {
             this.startForeground(user);
             int requestId = 0;
             if (!stopNext) {
                 // Request the changesetId
                 final CloseableRequest request =
-                        ChangesetUtil.requestId(user, CHANGESET_COMMENT);
+                        ChangesetUtil.requestId(user, comment);
                 this.currentConnection = request;
                 requestId = request.request();
             }
@@ -181,6 +184,7 @@ public class UploadService extends IntentService {
             if (!stopNext) {
                 this.stopForeground(SUCCESS);
                 send(receiver, SUCCESS, (Bundle) null);
+                deleteImages();
             }
         } catch (OsmException e) {
             Log.e(TAG, "", e);
@@ -190,6 +194,23 @@ public class UploadService extends IntentService {
         if (stopNext) {
             this.stopForeground(CANCLE);
         }
+    }
+
+    /**
+     * Deletes all images in the "Data4All" folder, where the 'single-mode'
+     * images where saved.
+     */
+    private static void deleteImages() {
+        final File folder = CapturePictureHandler.getImageFolder();
+        final File[] images = folder.listFiles();
+
+        if (images != null) {
+            for (File image : images) {
+                image.delete();
+            }
+        }
+
+        folder.delete();
     }
 
     /**

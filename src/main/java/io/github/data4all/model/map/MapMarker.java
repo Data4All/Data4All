@@ -183,6 +183,9 @@ public class MapMarker extends Marker {
             }
             return active;
         } else {
+            if (mInfoWindow != null && mInfoWindow.isOpen()) {
+                mInfoWindow.close();
+            }
             return super.onTouchEvent(event, mapView);
         }
     }
@@ -229,6 +232,7 @@ public class MapMarker extends Marker {
             mapView.invalidate();
             active = false;
         }
+        mapView.setBuiltInZoomControls(active);
     }
 
     /**
@@ -241,4 +245,24 @@ public class MapMarker extends Marker {
         this.editable = editable;
     }
 
+    @Override
+    protected boolean onMarkerClickDefault(Marker marker, MapView mapView) {
+        marker.showInfoWindow();
+        mapView.getController().animateTo(marker.getPosition());
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
+     */
+    @Override
+    public void setPosition(final GeoPoint point) {
+        super.setPosition(point);
+        if (active) {
+            mapView.getController().setCenter(point);
+            mapView.postInvalidate();
+        }
+    }
 }
