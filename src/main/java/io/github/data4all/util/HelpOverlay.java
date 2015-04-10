@@ -45,6 +45,10 @@ public class HelpOverlay {
     private SharedPreferences prefs;
     private boolean isShown;
 
+    private boolean multiView;
+    private int currentChild;
+    private int childCount;
+
     /**
      * TODO
      */
@@ -69,7 +73,7 @@ public class HelpOverlay {
             helpView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    HelpOverlay.this.hide();
+                    HelpOverlay.this.next();
                 }
             });
 
@@ -82,6 +86,79 @@ public class HelpOverlay {
             rootView.addView(helpView, new LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
             helpView.bringToFront();
+        }
+
+        if (isMultiViewOverlay()) {
+            Log.d(TAG, "isMultiViewOverlay(true)");
+            multiView = true;
+            final ViewGroup group = (ViewGroup) helpView;
+            for (int i = 0; i < childCount; i++) {
+                final View child = group.getChildAt(i);
+                child.setVisibility(View.GONE);
+                child.setAlpha(0);
+            }
+            final View first = group.getChildAt(0);
+            first.setVisibility(View.VISIBLE);
+            first.setAlpha(1);
+        } else {
+            Log.d(TAG, "isMultiViewOverlay(false)");
+        }
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    private boolean isMultiViewOverlay() {
+        if (helpView instanceof ViewGroup) {
+            final ViewGroup group = (ViewGroup) helpView;
+            childCount = group.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                final View child = group.getChildAt(i);
+                if (!(child instanceof ViewGroup)) {
+                    return false;
+                }
+            }
+            return childCount > 1;
+        }
+        return false;
+    }
+
+    /**
+     * TODO
+     */
+    private void next() {
+        Log.d(TAG, "next(): currentChild=" + currentChild + " childCount="
+                + childCount);
+        if (multiView) {
+            currentChild++;
+            if (currentChild >= childCount) {
+                this.hide();
+            } else {
+                Log.d(TAG, "next(): show next child " + currentChild);
+                final View next =
+                        ((ViewGroup) helpView).getChildAt(currentChild);
+                final View last =
+                        ((ViewGroup) helpView).getChildAt(currentChild - 1);
+
+                // Hide last
+                last.animate().alpha(0).setDuration(250)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                last.setVisibility(View.GONE);
+                            }
+                        }).start();
+
+                // Show next
+                next.setAlpha(0);
+                next.setVisibility(View.VISIBLE);
+                next.animate().alpha(1).setStartDelay(250).setDuration(250)
+                        .start();
+            }
+        } else {
+            this.hide();
         }
     }
 
@@ -98,8 +175,7 @@ public class HelpOverlay {
      * TODO
      */
     public boolean wasShown() {
-        boolean result =
-                prefs.getBoolean(PREF_KEY_WAS_SHOWN_PREFIX + className, false);
+        boolean result = prefs.getBoolean(getPrefKey(), false);
         Log.d(TAG, "wasShown() = " + result);
         return result;
     }
@@ -115,9 +191,7 @@ public class HelpOverlay {
             helpView.setVisibility(View.VISIBLE);
             helpView.animate().alpha(1).setDuration(500).start();
 
-            prefs.edit()
-                    .putBoolean(PREF_KEY_WAS_SHOWN_PREFIX + className, true)
-                    .commit();
+            prefs.edit().putBoolean(getPrefKey(), true).commit();
         }
     }
 
@@ -135,6 +209,7 @@ public class HelpOverlay {
      */
     public void hide() {
         if (helpView != null && isShown()) {
+            currentChild = 0;
             helpView.animate().alpha(0).setDuration(500)
                     .withEndAction(new Runnable() {
                         @Override
@@ -148,6 +223,15 @@ public class HelpOverlay {
 
     /**
      * TODO
+     * 
+     * @return
+     */
+    private String getPrefKey() {
+        return PREF_KEY_WAS_SHOWN_PREFIX + className;
+    }
+
+    /**
+     * TODO
      */
     private synchronized void setShown(boolean isShown) {
         Log.d(TAG, "setShown(" + isShown + ")");
@@ -157,7 +241,7 @@ public class HelpOverlay {
     /**
      * TODO
      */
-    public synchronized boolean isShown() {
+    private synchronized boolean isShown() {
         return isShown;
     }
 }

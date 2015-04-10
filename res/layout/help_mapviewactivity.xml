@@ -3,11 +3,87 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        style="?android:attr/textAppearanceLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="pizza" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:paddingRight="10dp"
+            android:paddingTop="150dp"
+            android:text="Ansicht\nwechseln"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingTop="150dp"
+            android:text="Karte\nzentrieren"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="Willkommen\nbei\nData4All"
+            android:textSize="35sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/help_id1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="30dp"
+            android:text="Markiere einen Punkt ->"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/help_id1"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="55dp"
+            android:text="Markiere auf einem Foto ->"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/help_id2"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Bild, welches einen\nFinger auf dem Bildschirm\nzeigt, der vom linken\nRand nach rechts wischt" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/help_id2"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:text="Betrachte noch nicht getaggte\nBilder in der Galerie"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
 </RelativeLayout>
