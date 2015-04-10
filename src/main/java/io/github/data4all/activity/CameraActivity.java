@@ -31,7 +31,9 @@ import io.github.data4all.view.CameraPreview;
 import io.github.data4all.view.TouchView;
 import io.github.data4all.view.CaptureAssistView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 
 import android.R.color;
@@ -221,12 +223,14 @@ public class CameraActivity extends AbstractActivity {
     private void setLayout() {
         setContentView(R.layout.activity_camera);
 
+        final List<View> buttons = new ArrayList<View>();
         // Set the capturing button
         btnCapture = (ImageButton) findViewById(R.id.btnCapture);
+        buttons.add(btnCapture);
         btnCStatus = (ImageButton) findViewById(R.id.calibrationStatus);
-        listener = new ButtonRotationListener(this,
-                Arrays.asList((View) btnCapture));
-
+        buttons.add(btnCStatus);
+        listener = new ButtonRotationListener(this,buttons);
+        
         cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
 
         // Set the Focus animation
