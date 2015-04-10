@@ -18,6 +18,7 @@ package io.github.data4all.model.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
@@ -37,10 +38,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
 /**
@@ -214,10 +217,10 @@ public class MapPolygon extends Polygon {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 pj = mapView.getProjection();
-                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
-                        null);
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 timeStart = System.currentTimeMillis();
-                if(active){
+                if (active) {
                     mode = MOVE;
                     geoPointList = this.getPoints();
                     xStartM = (int) event.getX();
@@ -249,8 +252,8 @@ public class MapPolygon extends Polygon {
                     changeMode();
                 }
                 pj = mapView.getProjection();
-                midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
-                        null);
+                midpoint = pj.toPixels(
+                        MapUtil.getCenterFromOsmElement(element), null);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 mode = NONE;
@@ -288,9 +291,7 @@ public class MapPolygon extends Polygon {
             midpoint = pj.toPixels(MapUtil.getCenterFromOsmElement(element),
                     null);
             // get the offset of all points in the list to the first one
-            if (pointsOffset == null) {
-                pointsOffset = getOffset(geoPointList);
-            }
+            pointsOffset = getOffset(geoPointList);
             mapView.invalidate();
             active = true;
         } else {
@@ -380,8 +381,7 @@ public class MapPolygon extends Polygon {
             coord[0] = preCoord[1] * Math.sin(radians) + preCoord[0]
                     * Math.cos(radians);
             // transfer coordinates to gpsPoints
-            final Node node = MathUtil.calculateGPSPoint(
-                    midLocation, coord);
+            final Node node = MathUtil.calculateGPSPoint(midLocation, coord);
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
@@ -435,7 +435,8 @@ public class MapPolygon extends Polygon {
         this.midLocation.setLongitude(lon / i);
         this.pointCoords = new ArrayList<double[]>();
         for (GeoPoint geoPoint : this.getPoints()) {
-            final double[] preCoord = MathUtil.calculateCoordFromGPS(
+            final double[] preCoord = MathUtil
+                    .calculateCoordFromGPS(
                             midLocation,
                             new Node(0, geoPoint.getLatitude(), geoPoint
                                     .getLongitude()));
@@ -479,25 +480,34 @@ public class MapPolygon extends Polygon {
             return true;
         } else {
             final Projection pj = mapView.getProjection();
-            final GeoPoint position = (GeoPoint) pj.fromPixels((int) event.getX(),
-                    (int) event.getY());
+            final GeoPoint position = (GeoPoint) pj.fromPixels(
+                    (int) event.getX(), (int) event.getY());
             final int distToCent = position.distanceTo(MapUtil
                     .getCenterFromOsmElement(element));
             return (distToCent < TOLERANCE);
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see org.osmdroid.bonuspack.overlays.Polygon#setPoints(java.util.List)
      */
     @Override
-    public void setPoints(final List<GeoPoint> points){
+    public void setPoints(final List<GeoPoint> points) {
         super.setPoints(points);
-        if(active){
+        if (active) {
             final GeoPoint center = MapUtil.getCenterFromPointList(points);
-            mapView.getController().animateTo(center);
-            //mapView.getController().setCenter(center);
+            final SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(activity);
+            final Resources res = activity.getResources();
+            final String key = res
+                    .getString(R.string.pref_moving_animation_key);
+            if ("Animate".equals(prefs.getString(key, null))) {
+                mapView.getController().animateTo(center);
+            } else {
+                mapView.getController().setCenter(center);
+            }
             mapView.postInvalidate();
         }
     }
