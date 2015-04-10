@@ -268,6 +268,9 @@ public class MapLine extends Polyline {
             }
             return active;
         } else {
+            if (mInfoWindow != null && mInfoWindow.isOpen()) {
+                mInfoWindow.close();
+            }
             return super.onTouchEvent(event, mapView);
         }
     }
@@ -293,6 +296,7 @@ public class MapLine extends Polyline {
             active = false;
         }
         Log.d(TAG, "actual activity mode: " + active);
+        mapView.setBuiltInZoomControls(active);
     }
 
     /**

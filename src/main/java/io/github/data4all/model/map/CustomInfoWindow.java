@@ -15,6 +15,8 @@
  */
 package io.github.data4all.model.map;
 
+import java.util.List;
+
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
@@ -24,11 +26,14 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.util.MapUtil;
 
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
 import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.OverlayWithIW;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -37,6 +42,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 /**
  * InfoWindow which shows Information about an OsmElement and allows to delete
@@ -77,10 +83,14 @@ public class CustomInfoWindow extends BasicInfoWindow implements
      * Constructor for an InfoBubble on an given Overlay, Element and MapView.
      * Invoked by the given activity.
      * 
-     * @param mapView the current mapView
-     * @param the element to this InfoWindow
-     * @param overlay the overlay with this InfoWindow
-     * @param activity the context activity
+     * @param mapView
+     *            the current mapView
+     * @param the
+     *            element to this InfoWindow
+     * @param overlay
+     *            the overlay with this InfoWindow
+     * @param activity
+     *            the context activity
      **/
     public CustomInfoWindow(MapView mapView, AbstractDataElement element,
             OverlayWithIW overlay, AbstractActivity activity) {
@@ -97,6 +107,14 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         id = R.id.bubble_edit;
         final Button edit = (Button) mView.findViewById(id);
         edit.setOnClickListener(this);
+
+        id = R.id.bubble_left;
+        final ImageButton left = (ImageButton) mView.findViewById(id);
+        left.setOnClickListener(this);
+
+        id = R.id.bubble_right;
+        final ImageButton right = (ImageButton) mView.findViewById(id);
+        right.setOnClickListener(this);
     }
 
     /*
@@ -141,6 +159,12 @@ public class CustomInfoWindow extends BasicInfoWindow implements
             this.editElement();
             close();
             break;
+        case R.id.bubble_left:
+            this.left();
+            break;
+        case R.id.bubble_right:
+            this.right();
+            break;
         default:
             break;
         }
@@ -156,6 +180,8 @@ public class CustomInfoWindow extends BasicInfoWindow implements
     public void onOpen(Object item) {
         super.onOpen(item);
         InfoWindow.closeAllInfoWindowsOn(mMapView);
+        mMapView.getController().animateTo(
+                MapUtil.getCenterFromOsmElement(element));
         if (overlay instanceof MapPolygon) {
             final MapPolygon poly = (MapPolygon) overlay;
             poly.setFillColor(MARKED_FILL_COLOR);
@@ -167,6 +193,59 @@ public class CustomInfoWindow extends BasicInfoWindow implements
             final MapMarker marker = (MapMarker) overlay;
             marker.setIcon(activity.getResources().getDrawable(
                     R.drawable.ic_setpoint_red));
+        }
+    }
+
+    /**
+     * Open InfoWindow for the last known OverlayWithIW
+     **/
+    public void left() {
+        List<Overlay> list = mMapView.getOverlays();
+        int i = list.indexOf(overlay);
+        Log.d(TAG, "LISTNUMBER " + i);
+        Overlay next;
+        do {
+            if (i == 0) {
+                i = list.size() - 1;
+            } else {
+                i -= 1;
+            }
+            next = list.get(i);
+        } while (!((next instanceof MapLine) || (next instanceof MapPolygon) || (next instanceof MapMarker)));
+        if (next instanceof MapMarker) {
+            ((MapMarker) next).showInfoWindow();
+        } else {
+            CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
+                    .getInfoWindow();
+            GeoPoint position = MapUtil
+                    .getCenterFromOsmElement(nextWindow.element);
+            nextWindow.open(next, position, 0, 0);
+        }
+    }
+    
+    /**
+     * Open InfoWindow for the next known OverlayWithIW
+     **/
+    public void right() {
+        List<Overlay> list = mMapView.getOverlays();
+        int i = list.indexOf(overlay);
+        Overlay next;
+        do {
+            if (i == list.size() - 1) {
+                i = 1;
+            } else {
+                i += 1;
+            }
+            next = list.get(i);
+        } while (!((next instanceof MapLine) || (next instanceof MapPolygon) || (next instanceof MapMarker)));
+        if (next instanceof MapMarker) {
+            ((MapMarker) next).showInfoWindow();
+        } else {
+            CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
+                    .getInfoWindow();
+            GeoPoint position = MapUtil
+                    .getCenterFromOsmElement(nextWindow.element);
+            nextWindow.open(next, position, 0, 0);
         }
     }
 

@@ -275,6 +275,9 @@ public class MapPolygon extends Polygon {
             }
             return active;
         } else {
+            if (mInfoWindow != null && mInfoWindow.isOpen()) {
+                mInfoWindow.close();
+            }
             return super.onTouchEvent(event, mapView);
         }
     }
@@ -302,6 +305,7 @@ public class MapPolygon extends Polygon {
             active = false;
         }
         Log.d(TAG, "actual activity mode: " + active);
+        mapView.setBuiltInZoomControls(active);
     }
 
     /**
