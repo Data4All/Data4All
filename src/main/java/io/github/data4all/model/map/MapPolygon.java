@@ -500,14 +500,13 @@ public class MapPolygon extends Polygon {
     public void setPoints(final List<GeoPoint> points) {
         super.setPoints(points);
         if (active) {
-            GeoPoint center = MapUtil.getCenterFromPointList(points);
             final SharedPreferences prefs = PreferenceManager
                     .getDefaultSharedPreferences(activity);
             final Resources res = activity.getResources();
             final String key = res
                     .getString(R.string.pref_moving_animation_key);
             if ("Animate".equals(prefs.getString(key, null))) {
-                mapView.getController().animateTo(center);
+                mapView.getController().animateTo(newMapcenter);
             } else {
                 mapView.getController().setCenter(newMapcenter);
             }
