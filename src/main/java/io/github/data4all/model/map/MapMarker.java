@@ -17,6 +17,7 @@ package io.github.data4all.model.map;
 
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
+import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -35,6 +36,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ZoomControls;
 
 /**
  * Map Marker which has an InfoWindow and is movable.
@@ -232,7 +235,12 @@ public class MapMarker extends Marker {
             mapView.invalidate();
             active = false;
         }
-        mapView.setBuiltInZoomControls(active);
+        if (activity instanceof MapPreviewActivity) {
+            ZoomControls zoomControls = (ZoomControls) activity
+                    .findViewById(R.id.zoomcontrols);
+            int v = active ? View.VISIBLE : View.GONE;
+            zoomControls.setVisibility(v);
+        }
     }
 
     /**

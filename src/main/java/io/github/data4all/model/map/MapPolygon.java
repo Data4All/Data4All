@@ -20,6 +20,7 @@ import java.util.List;
 
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
+import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -45,6 +46,8 @@ import android.graphics.Point;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ZoomControls;
 
 /**
  * Polygon which is editable. It has an InfoWindow opened with a single tap, if
@@ -314,7 +317,12 @@ public class MapPolygon extends Polygon {
             active = false;
         }
         Log.d(TAG, "actual activity mode: " + active);
-        mapView.setBuiltInZoomControls(active);
+        if (activity instanceof MapPreviewActivity) {
+            ZoomControls zoomControls = (ZoomControls) activity
+                    .findViewById(R.id.zoomcontrols);
+            int v = active ? View.VISIBLE : View.GONE;
+            zoomControls.setVisibility(v);
+        }
     }
 
     /**
