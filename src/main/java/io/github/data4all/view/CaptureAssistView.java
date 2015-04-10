@@ -20,10 +20,8 @@ import java.util.List;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.TransformationParamBean;
@@ -40,7 +38,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.location.Location;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -72,7 +69,6 @@ public class CaptureAssistView extends View {
     private boolean skylook;
     private boolean visible;
     private boolean informationSet;
-    private boolean makeBitmap = false;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
     private List<PolyElement> polyElements;
@@ -80,7 +76,6 @@ public class CaptureAssistView extends View {
     private PointToCoordsTransformUtil util;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
-    private Runnable finishInflateListener;
 
     private static final String TAG = CaptureAssistView.class.getSimpleName();
 
@@ -330,17 +325,7 @@ public class CaptureAssistView extends View {
         return true;
     }
 
-    public void setOnFinishInflateListener(Runnable listener) {
-        this.finishInflateListener = listener;
-    }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        if (finishInflateListener != null) {
-            finishInflateListener.run();
-        }
-    }
 
     public boolean isSkylook() {
         return skylook;
