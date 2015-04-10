@@ -302,6 +302,7 @@ public class MapPolygon extends Polygon {
             active = false;
         }
         Log.d(TAG, "actual activity mode: " + active);
+        mapView.setBuiltInZoomControls(active);
     }
 
     /**

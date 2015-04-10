@@ -293,6 +293,7 @@ public class MapLine extends Polyline {
             active = false;
         }
         Log.d(TAG, "actual activity mode: " + active);
+        mapView.setBuiltInZoomControls(active);
     }
 
     /**
