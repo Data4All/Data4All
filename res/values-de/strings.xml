@@ -38,6 +38,9 @@
     <!-- dialogs -->
     <string name="deleteDialog">Wollen Sie dieses Objekt wirklich löschen?</string>
     <string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
+    <string name="doNotShowAgain">Nicht mehr anzeigen</string>
+    <string name="startRecordTrack">Wollen Sie einen neuen Track starten?</string>
+    <string name="stopRecordTrack">Wollen Sie den aktuellen Track stoppen und speichern?</string>
 
     <!-- for network -->
     <string name="no_network_title">Kein Internet verfügbar</string>
@@ -85,6 +88,12 @@
     <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
     <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
+    
+     <!-- track list and details -->
+    <string name="list_tracks">Tracks</string>
+    <string name="track_id">Track ID:</string>
+    <string name="trackpoints">Trackpunkte:</string>
+    <string name="trackname">Name:</string>
 
     <!-- other -->
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>

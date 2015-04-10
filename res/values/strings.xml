@@ -97,6 +97,7 @@
     <string name="retry">Cannot find the right Tag. Try Again.</string>
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
     <string name="show_pwd">Show Password</string>
+    <string name="or">or</string>
     
     <!-- Track Control Activity -->
      <string name="no_track_opened">No current track was found. Please start a new one.</string>
