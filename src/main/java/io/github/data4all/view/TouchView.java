@@ -16,6 +16,7 @@
 package io.github.data4all.view;
 
 import io.github.data4all.R;
+import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;

@@ -74,4 +74,9 @@
         android:contentDescription="@string/undo"
         android:onClick="onClickUndo" />
 
+    <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/customImageButton1"
+        style="@style/imageButtonAway"
+        android:onClick="onClickAway" />
+
 </RelativeLayout>
