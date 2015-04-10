@@ -135,16 +135,16 @@ public class HorizonCalculationUtil {
         vector3 = MathUtil.rotate(vector2, yaxe, -roll);
         // calculate the pitch- and roll-angles.
         horizonPitch = Math.atan(vector3[1] / (vector3[2]));
-        horizonRoll = Math.atan(vector3[0] / (vector3[2]));
-        vector2 = MathUtil.rotate(yaxe, xaxe, pitch);
-        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
-        // calculate the pitch- and roll-angles.
-        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
         horizonRoll = Math.atan(vector3[0] / (vector3[2]));   
         float xgradiant = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth,
                 horizontalViewAngle);
         float ygradiant = MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight,
                 verticalViewAngle);
+        vector2 = MathUtil.rotate(yaxe, xaxe, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+        // calculate the pitch- and roll-angles.
+        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
+        horizonRoll = Math.atan(vector3[0] / (vector3[2]));
         // calculate a point on the horizont vertical to the mid of the display.
         xgradiant = xgradiant
                 - MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth, horizontalViewAngle);
