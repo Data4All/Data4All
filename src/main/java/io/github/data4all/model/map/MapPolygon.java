@@ -127,7 +127,12 @@ public class MapPolygon extends Polygon {
      * Projection of the mapView.
      */
     private Projection pj;
-
+    
+    /**
+     * New MapCenter
+     */
+    private GeoPoint newMapcenter;
+    private GeoPoint oldMapcenter;
     /**
      * Default constructor.
      * 
@@ -211,6 +216,7 @@ public class MapPolygon extends Polygon {
                 if (active) {
                     mode = MOVE;
                     geoPointList = this.getPoints();
+                    oldMapcenter = (GeoPoint) mapView.getMapCenter();
                     startPos = new ArrayList<Point>();
                     startPos.add(new Point((int) event.getX(0), (int) event
                             .getY(0)));;
@@ -325,7 +331,11 @@ public class MapPolygon extends Polygon {
             point = new Point(point.x + x, point.y +y);
             returnList.add((GeoPoint) pj.fromPixels(point.x, point.y));
         }
-        super.setPoints(returnList);
+        Point point = pj.toPixels(oldMapcenter, null);
+        point = new Point(point.x + x, point.y +y);
+        newMapcenter = (GeoPoint) pj.fromPixels(point.x, point.y);
+        
+        this.setPoints(returnList);
         mapView.invalidate();
     }
 
@@ -490,16 +500,15 @@ public class MapPolygon extends Polygon {
     public void setPoints(final List<GeoPoint> points) {
         super.setPoints(points);
         if (active) {
-            final GeoPoint center = MapUtil.getCenterFromPointList(points);
             final SharedPreferences prefs = PreferenceManager
                     .getDefaultSharedPreferences(activity);
             final Resources res = activity.getResources();
             final String key = res
                     .getString(R.string.pref_moving_animation_key);
             if ("Animate".equals(prefs.getString(key, null))) {
-                mapView.getController().animateTo(center);
+                mapView.getController().animateTo(newMapcenter);
             } else {
-                mapView.getController().setCenter(center);
+                mapView.getController().setCenter(newMapcenter);
             }
             mapView.postInvalidate();
         }
