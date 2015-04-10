@@ -44,7 +44,6 @@ public final class Tags {
      * Logger.
      */
     public static String LOG_TAG = Tags.class.getSimpleName();
-    
     /**
      * Resource to the key properties.
      */
@@ -189,6 +188,29 @@ public final class Tags {
                 Log.d(LOG_TAG, "getTagWithId() return new tag with id: " + t.getId());
                 return new Tag(t.getId(), t.getKey(), t.getType());
             }
+            if (t instanceof ClassifiedTag) {
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.getId() == id) {
+                        Log.d(LOG_TAG,
+                                "getTagWithId() return new classified tag with id: "
+                                        + v.getId());
+                        return new ClassifiedTag(v.getId(), v.getKey(),
+                                ((ClassifiedTag) t).getType(),
+                                ((ClassifiedTag) t).getClassifiedValues());
+                    }
+                }
+            }
+        }
+        Log.d(LOG_TAG, "getTagWithId() could not find tag with id: " + id);
+        return null;
+    }
+
+    /**
+     * 
+     */
+    public static ClassifiedValue getClassifiedValueWithId(int id) {
+        for (Tag t : TAG_LIST) {
             if (t instanceof ClassifiedTag) {
                 for (ClassifiedValue v : ((ClassifiedTag) t)
                         .getClassifiedValues()) {
