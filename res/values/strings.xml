@@ -115,6 +115,9 @@
     <string name="badMagnetometerCalibrationTitle">Magnetometer needs recalibration.</string>
     <string name="goodSensorCalibrationTitle">Sensor are okay.</string>
     <string name="badSensorCalibrationTitle">Sensor needs recalibration.</string>
+    
+    <string name="statusNotificationHeadline">Data4All still running</string>
+    <string name="statusNotification">the Data4All app is still running.</string>
  
     <string name="show_pwd">Show Password</string>
     <string name="title_activity_about">AboutActivity</string>

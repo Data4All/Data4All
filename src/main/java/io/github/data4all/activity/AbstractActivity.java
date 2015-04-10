@@ -77,7 +77,7 @@ public abstract class AbstractActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Count up on each Activity which is create
+        // Count up on each Activity which is create 
         counter++;
  
        // set a notification to Status Bar
