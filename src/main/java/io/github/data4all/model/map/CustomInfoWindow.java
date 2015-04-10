@@ -78,7 +78,6 @@ public class CustomInfoWindow extends BasicInfoWindow implements
     protected AbstractDataElement element;
     protected OverlayWithIW overlay;
     protected AbstractActivity activity;
-    protected MapView mv;
 
     /**
      * Constructor for an InfoBubble on an given Overlay, Element and MapView.
@@ -197,6 +196,9 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         }
     }
 
+    /**
+     * Open InfoWindow for the last known OverlayWithIW
+     **/
     public void left() {
         List<Overlay> list = mMapView.getOverlays();
         int i = list.indexOf(overlay);
@@ -210,12 +212,20 @@ public class CustomInfoWindow extends BasicInfoWindow implements
             }
             next = list.get(i);
         } while (!((next instanceof MapLine) || (next instanceof MapPolygon) || (next instanceof MapMarker)));
-        CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
-                .getInfoWindow();
-        GeoPoint position = MapUtil.getCenterFromOsmElement(nextWindow.element);
-        nextWindow.open(next, position, 0, 0);
+        if (next instanceof MapMarker) {
+            ((MapMarker) next).showInfoWindow();
+        } else {
+            CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
+                    .getInfoWindow();
+            GeoPoint position = MapUtil
+                    .getCenterFromOsmElement(nextWindow.element);
+            nextWindow.open(next, position, 0, 0);
+        }
     }
-
+    
+    /**
+     * Open InfoWindow for the next known OverlayWithIW
+     **/
     public void right() {
         List<Overlay> list = mMapView.getOverlays();
         int i = list.indexOf(overlay);
@@ -228,10 +238,15 @@ public class CustomInfoWindow extends BasicInfoWindow implements
             }
             next = list.get(i);
         } while (!((next instanceof MapLine) || (next instanceof MapPolygon) || (next instanceof MapMarker)));
-        CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
-                .getInfoWindow();
-        GeoPoint position = MapUtil.getCenterFromOsmElement(nextWindow.element);
-        nextWindow.open(next, position, 0, 0);
+        if (next instanceof MapMarker) {
+            ((MapMarker) next).showInfoWindow();
+        } else {
+            CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
+                    .getInfoWindow();
+            GeoPoint position = MapUtil
+                    .getCenterFromOsmElement(nextWindow.element);
+            nextWindow.open(next, position, 0, 0);
+        }
     }
 
     /*
