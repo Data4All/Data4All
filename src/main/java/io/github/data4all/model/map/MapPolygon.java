@@ -95,7 +95,6 @@ public class MapPolygon extends Polygon {
     private static final int ROTATE = 2;
     private int mode = NONE;
 
-    
     /**
      * Start values for rotation.
      */
@@ -232,10 +231,13 @@ public class MapPolygon extends Polygon {
                     // set the start values for the rotation
                     saveGeoPoints();
                     startPos = new ArrayList<Point>();
-                    startPos.add(new Point((int) event.getX(0), (int) event.getY(0)));
-                    startPos.add(new Point((int) event.getX(1), (int) event.getY(1)));
-                    if(event.getPointerCount() == 3){
-                        startPos.add(new Point((int) event.getX(2), (int) event.getY(2)));
+                    startPos.add(new Point((int) event.getX(0), (int) event
+                            .getY(0)));
+                    startPos.add(new Point((int) event.getX(1), (int) event
+                            .getY(1)));
+                    if (event.getPointerCount() == 3) {
+                        startPos.add(new Point((int) event.getX(2), (int) event
+                                .getY(2)));
                         startPosPerimeter = MathUtil.perimeter(startPos);
                     }
                 }
@@ -356,8 +358,9 @@ public class MapPolygon extends Polygon {
 
     /**
      * Scales the given Polygon with a 3 Pointer MotionEvent
+     * 
      * @param event
-     *          the current MotionEvent from onTouchEvent
+     *            the current MotionEvent from onTouchEvent
      */
     private void scalePolygon(MotionEvent event) {
         // set end values for the next rotation action
@@ -366,7 +369,6 @@ public class MapPolygon extends Polygon {
         endPos.add(new Point((int) event.getX(1), (int) event.getY(1)));
         endPos.add(new Point((int) event.getX(2), (int) event.getY(2)));
         float scaleFactor = MathUtil.perimeter(endPos) / startPosPerimeter;
-
         geoPointList = new ArrayList<GeoPoint>();
         // rotate all coordinates
         for (double[] preCoord : pointCoords) {
@@ -378,9 +380,12 @@ public class MapPolygon extends Polygon {
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        super.setPoints(geoPointList);
-        pointsOffset = getOffset(geoPointList);
-        mapView.invalidate();        
+        if (MapUtil.getBoundingBoxForPointList(geoPointList)
+                .getDiagonalLengthInMeters() < 100 || scaleFactor < 1) {
+            super.setPoints(geoPointList);
+            pointsOffset = getOffset(geoPointList);
+            mapView.invalidate();
+        }
     }
 
     /**
