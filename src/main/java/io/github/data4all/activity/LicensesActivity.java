@@ -23,6 +23,12 @@ public class LicensesActivity extends AbstractActivity {
         
         TextView mapboxTOS = (TextView) findViewById(R.id.linkToMapboxTOS);
         mapboxTOS.setMovementMethod(LinkMovementMethod.getInstance());
+        
+        TextView apacheLicense = (TextView) findViewById(R.id.linkToApacheLicense);
+        apacheLicense.setMovementMethod(LinkMovementMethod.getInstance());
+        
+        TextView osmdroid = (TextView) findViewById(R.id.linkToOSMDroidWiki);
+        osmdroid.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override

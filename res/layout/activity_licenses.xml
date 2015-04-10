@@ -32,5 +32,31 @@
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
         android:text="@string/linkToMapboxTOS" />
+    
+    <TextView
+        android:id="@+id/linkToApacheLicense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linkToMapboxTOS"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/linkToApacheLicense" />
+    
+    <TextView 
+        android:id="@+id/librariesUsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linkToApacheLicense"
+        android:layout_marginTop="30dp"
+        android:text="@string/librariesUsed" />
+    
+    <TextView
+        android:id="@+id/linkToOSMDroidWiki"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/librariesUsed"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/linkToOSMDroidWiki" />
 
 </RelativeLayout>

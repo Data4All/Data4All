@@ -103,6 +103,8 @@
     <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Join us on GitHub!</a></string>
     <string name="linkToOSMCopyright"><a href="http://www.openstreetmap.org/copyright">&#169; OpenStreetMap contributors</a></string>
     <string name="linkToMapboxTOS"><a href="https://www.mapbox.com/tos/">Mapbox Terms of Service</a></string>
+    <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Licenses</a></string>
+    <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
 
     <!-- credits / about / licences -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
@@ -111,6 +113,7 @@
         on GitHub: </string>
     <string name="underlyingLicenses">The following links will redirect you to the licenses underlying this 
         application.</string>
+    <string name="librariesUsed">The following libraries have been used in this application.</string>
         
 
 </resources>
