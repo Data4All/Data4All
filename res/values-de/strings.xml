@@ -95,6 +95,7 @@
     
     <!-- for gallery -->
     <string name="gallery_sec">"%s gerade"</string>
+    <string name="gallery_min">"%s 1 Minute"</string>
     <string name="gallery_mins">"%s Minuten"</string>
     <string name="gallery_hour">"%s 1 Stunde"</string>
     <string name="gallery_hours">"%s Stunden"</string>
@@ -103,12 +104,12 @@
 
     <!-- other -->
     <string name="sensor_warning"> Sensoren Warnungen zeigen</string>
+    <string name="empty"> </string>
     <string name="augmented_reality">Augmented Reality zeigen</string>
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
-    <string name="or">oder</string>
     
     <string name="badSensorCalibration">Bitte rotieren Sie ihr Smartphone langsam 3 mal um jede Achse. Und/Oder zeichnen Sie eine Acht mit ihren Smartphone. </string>
     <string name="badSensorCalibrationTitle">Sensoren brauchen Rekalibrierung.</string>
@@ -117,6 +118,14 @@
     <string name="goodSensorCalibrationTitle">Sensoren sind okay.</string>
     
     <string name="show_pwd">Passwort anzeigen</string>
+    <string name="title_activity_about">Über diese Aktivität</string>
+    <string name="hello_world">Hallo Welt!</string>
+
+     <!-- track list and details -->
+    <string name="list_tracks">Tracks</string>
+    <string name="track_id">Track ID:</string>
+    <string name="trackpoints">Track Punkte:</string>
+    <string name="trackname">Name:</string>
       
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Folgt uns auf Facebook</a></string>
