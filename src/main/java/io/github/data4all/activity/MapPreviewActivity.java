@@ -144,10 +144,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.return_to_actual_Position:
-            mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-            final BoundingBoxE6 boundingBox = MapUtil
-                    .getBoundingBoxForOsmElement(element);
-            mapView.zoomToBoundingBox(boundingBox);
+            mapController.animateTo(MapUtil.getCenterFromOsmElement(element));
             break;
         case R.id.switch_maps:
             switchMaps();

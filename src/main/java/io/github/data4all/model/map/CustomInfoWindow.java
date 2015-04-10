@@ -232,7 +232,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         Overlay next;
         do {
             if (i == list.size() - 1) {
-                i = 1;
+                i = 0;
             } else {
                 i += 1;
             }
