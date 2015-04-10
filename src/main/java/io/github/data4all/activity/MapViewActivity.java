@@ -235,6 +235,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
+        
+        myLocationOverlay.enableFollowLocation();
 
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(this);
@@ -263,6 +265,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Disable Actual Location Overlay
         Log.i(TAG, "Disable Actual Location Overlay");
         myLocationOverlay.disableMyLocation();
+        myLocationOverlay.disableFollowLocation();
     }
 
     /**
@@ -317,6 +320,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private void returnToActualPosition() {
         if (myLocationOverlay.getMyLocation() != null) {
             setCenter(myLocationOverlay.getMyLocation());
+            myLocationOverlay.enableFollowLocation();
         } else {
             final String text = getString(R.string.noLocationFound);
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
