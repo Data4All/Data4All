@@ -159,12 +159,16 @@ public class CameraActivity extends AbstractActivity {
     private SwipeListManager mSwipeListManager;
 
     private View mCallbackView;
+    
+    private boolean ignore;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate is called");
         super.onCreate(savedInstanceState);
 
+        //setting ignore warnings
+        ignore = false;
         // remove title and status bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -381,7 +385,7 @@ public class CameraActivity extends AbstractActivity {
             @Override
             public void onClick(View v) {
                 if (OrientationListener.CALIBRATION_STATUS == OrientationListener.CALIBRATION_OK
-                        || !getWarning()) {
+                        || !getWarning() || ignore) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
                     mCamera.takePicture(shutterCallback, null, pictureHandler);
@@ -395,7 +399,7 @@ public class CameraActivity extends AbstractActivity {
             @Override
             public boolean onLongClick(View v) {
                 if (OrientationListener.CALIBRATION_STATUS < OrientationListener.CALIBRATION_OK
-                        || !getWarning()) {
+                        || !getWarning() || ignore) {
                     // After photo is taken, disable button for clicking twice
                     btnCapture.setEnabled(false);
 
@@ -542,10 +546,17 @@ public class CameraActivity extends AbstractActivity {
                                 dialog.cancel();
                             }
                         })
-                .setNegativeButton(R.string.ignore,
+                .setNegativeButton(R.string.alwaysIgnore,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 setWarning(false);
+                                dialog.cancel();
+                            }
+                        })
+                        .setNeutralButton(R.string.ignore,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                ignore = true;
                                 dialog.cancel();
                             }
                         });

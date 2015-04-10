@@ -16,6 +16,7 @@
     <string name="no">Nein</string>
     <string name="ok">OK</string>
 	<string name="ignore">Ignorieren</string>
+	<string name="alwaysIgnore"> Immer Ignorieren</string>
 
     <!-- Strings Content Description ImageButtons -->
     <string name="returnToActualPosition">Meine Position</string>
