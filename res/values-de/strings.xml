@@ -135,12 +135,6 @@
     <string name="show_pwd">Passwort anzeigen</string>
     <string name="title_activity_about">Über diese Aktivität</string>
     <string name="hello_world">Hallo Welt!</string>
-
-     <!-- track list and details -->
-    <string name="list_tracks">Tracks</string>
-    <string name="track_id">Track ID:</string>
-    <string name="trackpoints">Track Punkte:</string>
-    <string name="trackname">Name:</string>
       
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Folgt uns auf Facebook</a></string>

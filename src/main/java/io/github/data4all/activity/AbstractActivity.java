@@ -20,14 +20,16 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -70,6 +72,8 @@ public abstract class AbstractActivity extends Activity {
     // Counter is used to count the start of activities to remove the status bar
     // icon when no active is running
     private static int counter;
+    
+    private static final String SHARED_PREFS = "shared_prefs";
 
     /**
      * Handle the changing of record/stop icon
@@ -221,13 +225,13 @@ public abstract class AbstractActivity extends Activity {
                 isChecked = true;
                 changeIconOfRecordButton(item, isChecked);
                 recordActive = true;
-                // TODO start Track
+                startTrack();
             } else {
                 Log.d("AbstractActivity", "stop a track without dialog");
                 isChecked = false;
                 changeIconOfRecordButton(item, isChecked);
                 recordActive = false;
-                // TODO stop Track
+                stopTrack();
             }
         }
     }
@@ -276,8 +280,8 @@ public abstract class AbstractActivity extends Activity {
                         isChecked = true;
                         changeIconOfRecordButton(item, isChecked);
                         recordActive = true;
-
-                        // TODO start track routine
+                        startTrack();
+                        
                         Log.d("AbstractActivity", "start a track with dialog");
                         return;
                     }
@@ -340,7 +344,7 @@ public abstract class AbstractActivity extends Activity {
                         changeIconOfRecordButton(item, isChecked);
                         recordActive = false;
 
-                        // TODO stop track routine
+                        stopTrack();
                         Log.d("AbstractActivity", "stop a track with dialog");
                         return;
                     }
@@ -369,6 +373,14 @@ public abstract class AbstractActivity extends Activity {
             adb.show();
         }
 
+    }
+    
+    private void startTrack() {
+        //TODO start a track
+    }
+    
+    private void stopTrack() {
+        //TODO stop a tarck
     }
 
     /**
