@@ -10,6 +10,7 @@
     <string name="action_help">Hilfe</string>
     <string name="action_login">Einloggen</string>
     <string name="action_about">Über D4A</string>
+    <string name="action_licenses">Rechtliche Hinweise</string>
 
     <!-- generell strings -->
     <string name="yes">Ja</string>
@@ -137,6 +138,11 @@
     <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Folgt uns auf Twitter</a></string>
     <string name="linkToHomepage"><a href="http://data4all.github.io/">Offizielle Homepage</a></string>
     <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Werdet Teil des Projekts auf GitHub!</a></string>
+    <string name="linkToOSMCopyright"><a href="http://www.openstreetmap.org/copyright">&#169; OpenStreetMap-Mitwirkende</a></string>
+    <string name="linkToMapboxTOS"><a href="https://www.mapbox.com/tos/">Mapbox Nutzungsbedingungen</a></string>
+    <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Lizenzen</a></string>
+    <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
+    <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
     
     <!-- credits / about -->
     <string name="aboutText">Wir sind ein kleines Team von Bachelorstudenten der Universität Bremen. 
@@ -144,7 +150,12 @@
     <string name="githubFollow">Data4All ist ein Open Source Projekt und somit kann jeder mitmachen und dieses 
         Projekt gemeinsam mit uns weiterentwickeln: </string> 
 
+
     <string name="deleteTagsResultview">Möchten sie diesen Tag löschen ?</string>
     <string name="maybe">Verwerfen</string>
+
+    <string name="underlyingLicenses">Auf den folgenden Links findet ihr die Lizenzen, denen diese Anwendung 
+        unterliegt.</string>
+    <string name="librariesUsed">Zusätzlich wurden die folgenden Bibliotheken in dieser Anwendung benutzt.</string>
 
 </resources>
