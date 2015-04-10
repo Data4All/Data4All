@@ -30,12 +30,14 @@ import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.preference.PreferenceManager;
@@ -152,7 +154,6 @@ public class TouchView extends View {
     final static String moveFrom = "MOVE_FROM";
     final static String moveTo = "MOVE_TO";
 
-
     /**
      * Simple constructor to use when creating a view from code.
      * 
@@ -216,7 +217,6 @@ public class TouchView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawARGB(0, 0, 0, 0);
-		
         path.reset();
         if (newPolygon != null && newPolygon.size() != 0) {
             path.moveTo(newPolygon.get(0).getX(), newPolygon.get(0).getY());
@@ -230,6 +230,7 @@ public class TouchView extends View {
                 final Point a = newPolygon.get(i);
                 path.lineTo(a.getX(), a.getY());
                 path.lineTo(b.getX(), b.getY());
+
                 canvas.drawLine(a.getX(), a.getY(), b.getX(), b.getY(),
                         pathPaint);
             }
@@ -239,8 +240,7 @@ public class TouchView extends View {
             }
             // afterwards draw the points
             for (Point p : newPolygon) {
-                canvas.drawCircle(p.getX(), p.getY(),
-                		pointRadius, pathPaint);
+                canvas.drawCircle(p.getX(), p.getY(), pointRadius, pathPaint);
             }
         }
     }
@@ -274,6 +274,12 @@ public class TouchView extends View {
             default:
                 Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
             }
+        } else {
+        	 polygon = newPolygon;
+        	 redoUndo = new RedoUndo(newPolygon);
+             this.undoUseable();
+             this.redoUseable();
+             this.undoRedoListener.okUseable(hasEnoughNodes());
         }
         return true;
     }
@@ -292,7 +298,12 @@ public class TouchView extends View {
      */
     private void handleMotion(MotionEvent event, String action) {
         if (currentMotion != null) {
+
             if (action.equals("start")) {
+                this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
+                if (lookUpPoint == null) {
+                    addPointOnLine(new Point(event.getX(), event.getY()));
+                }
                 this.lookUpPoint = lookUp(event.getX(), event.getY(), 50);
                 if (lookUpPoint != null) {
                     this.mover = movePoint(lookUpPoint);
@@ -415,6 +426,79 @@ public class TouchView extends View {
     }
 
     /**
+     * Adds a Point on a line, if there is a line.</br>
+     * 
+     * uses isOnALine() to validate that the Point is on a existing line
+     * 
+     * @author konerman
+     * 
+     * @param Point
+     *            the point that should be added
+     * @return true if the Point was added
+     */
+    private boolean addPointOnLine(Point p) {
+        //tolerance used for detecting lines. adapts to the specific Display
+        int tolerance = (int) (5 * getResources().getDisplayMetrics().density);
+        if (polygon.size() >= 3) {
+            for (int i = 0; i < polygon.size() - 1; i++) {
+                if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
+                    Log.d("", "Point is on a Line");
+                    polygon.add(i + 1, p);
+                    redoUndo.add(p, add, i + 1);
+                    return true;
+                }
+            }
+            // check line between first and last point.
+            if (isOnALine(polygon.get(0), polygon.get(polygon.size() - 1), p,
+                    tolerance)) {
+                polygon.add(p);
+                redoUndo.add(p, add, polygon.size() - 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * checks if a point is on or near a line between two points.
+     * 
+     * @author konerman
+     * 
+     * @param Point
+     *            A startPoint of the line
+     * @param Point
+     *            B endPoint of the line
+     * @param Point
+     *            C the point that is eventually on the line
+     * @param tolerance
+     *            specifies how close point C has to be to the line.
+     * @return true if point C is on/near the Line between A and B
+     */
+    private boolean isOnALine(Point A, Point B, Point C, double tolerance) {
+        double distACBC = distance(A, C) + distance(B, C);
+        double ergebnis = Math.abs(distACBC - distance(A, B));
+        if (ergebnis < tolerance) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * calculates the distance of two points
+     * 
+     * @author konerman
+     * 
+     * @param p1
+     *            first point
+     * @param p2
+     *            second point
+     */
+    private double distance(Point p1, Point p2) {
+        return Math.sqrt((p1.getX() - p2.getX()) * (p1.getX() - p2.getX())
+                + (p1.getY() - p2.getY()) * (p1.getY() - p2.getY()));
+    }
+
+    /**
      * Sets the type of interpretation for this {@link TouchView}.
      * 
      * @param type
@@ -452,7 +536,7 @@ public class TouchView extends View {
         Point point = redoUndo.redo();
         Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
         if (action.equals(add)) {
-            newPolygon.add(point);
+            newPolygon.add(location, point);
         }
         if (action.equals(delete)) {
             newPolygon.remove(point);
@@ -524,15 +608,11 @@ public class TouchView extends View {
      * 
      * 
      * @author sbollen
-     * @param rotation
-     *            create the element with the givin rotation
      * @return the created AbstractDataElement (with located nodes)
      */
-    public AbstractDataElement create(int rotation) {
-        return interpreter.create(polygon, rotation);
+    public AbstractDataElement create() {
+        return interpreter.create(polygon);
     }
-
-	
 
     /**
      * Remove all recorded DrawingMotions from this TouchView.
@@ -591,32 +671,32 @@ public class TouchView extends View {
         }
     }
 
-	/**
-	 * Testing if the undo function is able to use
-	 * 
-	 * @author vkochno
-	 * 
-	 * @return If undo can be used
-	 */
-	public boolean undoUseable() {
-		if (!(interpreter instanceof BuildingMotionInterpreter)
-				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-				|| interpreter instanceof BuildingMotionInterpreter
-				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-				&& redoUndo.getMax() == 4) {
-			Log.d(this.getClass().getSimpleName(), "true undo");
-			if (undoRedoListener != null) {
-				undoRedoListener.canUndo(true);
-			}
-			return true;
-		} else {
-			Log.d(this.getClass().getSimpleName(), "false undo");
-			if (undoRedoListener != null) {
-				undoRedoListener.canUndo(false);
-			}
-			return false;
-		}
-	}
+    /**
+     * Testing if the undo function is able to use
+     * 
+     * @author vkochno
+     * 
+     * @return If undo can be used
+     */
+    public boolean undoUseable() {
+        if (!(interpreter instanceof BuildingMotionInterpreter)
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                || interpreter instanceof BuildingMotionInterpreter
+                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+                && redoUndo.getMax() == 4) {
+            Log.d(this.getClass().getSimpleName(), "true undo");
+            if (undoRedoListener != null) {
+                undoRedoListener.canUndo(true);
+            }
+            return true;
+        } else {
+            Log.d(this.getClass().getSimpleName(), "false undo");
+            if (undoRedoListener != null) {
+                undoRedoListener.canUndo(false);
+            }
+            return false;
+        }
+    }
 
     /**
      * Returns <code>true</code> if the drawing has the minimum of nodes for its

@@ -1,59 +1,130 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2015 Data4All
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+
 package io.github.data4all.util;
 
-import java.math.BigDecimal;
-import java.util.LinkedList;
+import io.github.data4all.model.drawing.Point;
 
+import java.util.List;
 
-
+/**
+ * This class provides some calculation methods
+ * 
+ * @author burghardt
+ * @version 1.1
+ *
+ */
 public class MathUtil {
 
-	private static final int DEF_DIV_SCALE = 10;
+    private MathUtil() {
+    }
 
-	private MathUtil() {
-	}
+    /**
+     * 
+     * @param vector
+     *            which is going to be rotated
+     * @param axis
+     *            around which the vector is rotated
+     * @param the
+     *            rotation angle
+     * @return the rotated vector
+     */
+    public static double[] rotate(double[] vector, double[] axis, double angle) {
+        double[][] matrix = new double[3][3];
+        matrix[0][0] = axis[0] * axis[0] * (1 - Math.cos(angle))
+                + Math.cos(angle);
+        matrix[0][1] = axis[0] * axis[1] * (1 - Math.cos(angle)) - axis[2]
+                * Math.sin(angle);
+        matrix[0][2] = axis[0] * axis[2] * (1 - Math.cos(angle)) + axis[1]
+                * Math.sin(angle);
+        matrix[1][0] = axis[1] * axis[0] * (1 - Math.cos(angle)) + axis[2]
+                * Math.sin(angle);
+        matrix[1][1] = axis[1] * axis[1] * (1 - Math.cos(angle))
+                + Math.cos(angle);
+        matrix[1][2] = axis[1] * axis[2] * (1 - Math.cos(angle)) - axis[0]
+                * Math.sin(angle);
+        matrix[2][0] = axis[2] * axis[0] * (1 - Math.cos(angle)) - axis[1]
+                * Math.sin(angle);
+        matrix[2][1] = axis[2] * axis[1] * (1 - Math.cos(angle)) + axis[0]
+                * Math.sin(angle);
+        matrix[2][2] = axis[2] * axis[2] * (1 - Math.cos(angle))
+                + Math.cos(angle);
 
-	public static double add(double v1, double v2) {
-		BigDecimal b1 = new BigDecimal(Double.toString(v1));
-		BigDecimal b2 = new BigDecimal(Double.toString(v2));
-		return b1.add(b2).doubleValue();
-	}
+        double[] returnVec = new double[3];
+        for (int i = 0; i < 3; i++) {
+            double value = 0;
+            for (int b = 0; b < 3; b++) {
+                value += vector[b] * matrix[i][b];
+            }
+            returnVec[i] = value;
+        }
+        return returnVec;
+    }
 
-	public static double sub(double v1, double v2) {
-		BigDecimal b1 = new BigDecimal(Double.toString(v1));
-		BigDecimal b2 = new BigDecimal(Double.toString(v2));
-		return b1.subtract(b2).doubleValue();
-	}
+    /**
+     * @param angle
+     *            difference to the deviceorientation
+     * @param width
+     *            width or height of the devicedisplay
+     * @param maxAngle
+     *            maximum angle of the camera
+     * @return the pixel
+     */
+    public static float calculatePixelFromAngle(double angle, double width,
+            double maxAngle) {
+        final double adjacent = (width / 2) / Math.tan(maxAngle / 2);
+        return (float) (Math.tan(angle) * adjacent);
+    }
+    
+    
+    /**
+     * Calculates the angle altered by the given pixel.
+     * 
+     * @param pixel
+     *            one coordinate of the pixel
+     * @param axis
+     *            the axis on which the angle is altered
+     * @param maxAngle
+     *            maximum camera angle
+     * @return altered Angle
+     */
+    public static double calculateAngleFromPixel(double pixel, double axis,
+            double maxAngle) {
+        final double adjacent = (axis / 2) / Math.tan(maxAngle / 2);
+        final double opposite = pixel - (axis / 2);
+        return Math.atan(opposite / adjacent);
+    }
+    
+    /**
+     * Calculates the fourth point in dependence of the first three points of
+     * the given list.
+     * 
+     * @param areaPoints
+     *            A list with exact three points
+     */
+    public static double[] calcFourthCoord(List<double[]> coords) {
+        final double[] a = coords.get(0);
+        final double[] b = coords.get(1);
+        final double[] c = coords.get(2);
 
-	public static double mul(double v1, double v2) {
-		BigDecimal b1 = new BigDecimal(Double.toString(v1));
-		BigDecimal b2 = new BigDecimal(Double.toString(v2));
-		return b1.multiply(b2).doubleValue();
-	}
+        final double x = a[0] + (c[0] - b[0]);
+        final double y = a[1] + (c[1] - b[1]);
 
-	public static double div(double v1, double v2) {
-		return div(v1, v2, DEF_DIV_SCALE);
-	}
-
-	public static double div(double v1, double v2, int scale) {
-		if (scale < 0) {
-			throw new IllegalArgumentException(
-					"The scale must be a positive integer or zero");
-		}
-		BigDecimal b1 = new BigDecimal(Double.toString(v1));
-		BigDecimal b2 = new BigDecimal(Double.toString(v2));
-		return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
-	}
-
-	public static double round(double v, int scale) {
-		if (scale < 0) {
-			throw new IllegalArgumentException(
-					"The scale must be a positive integer or zero");
-		}
-		BigDecimal b = new BigDecimal(Double.toString(v));
-		BigDecimal one = new BigDecimal("1");
-		return b.divide(one, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
-	}
-
-	
+        final double[] coord = {x,y,};
+        return coord;
+    }
 
 }

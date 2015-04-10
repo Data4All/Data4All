@@ -137,6 +137,24 @@ public class GPSservice extends Service implements LocationListener {
             Optimizer.putLoc(loc);
         }
 
+<<<<<<< HEAD
+//        if (track != null) {
+//            final Location tp = Optimizer.currentBestLoc();
+//            Log.d(TAG, "Track: " + track);
+//            final TrackPoint last = track.getLastTrackPoint();
+//
+//            if (last != null && tp != null) {
+//                // check if new Location is already stored
+//                if (trackUtil.sameTrackPoints(last, tp)) {
+//                    trackUtil.addPointToTrack(track, tp);
+//                    // After ten trackpoints updateDatabase
+//                    if ((track.getTrackPoints().size() % 10) == 0) {
+//                        trackUtil.updateTrack(track);
+//                    }
+//                }
+//            }
+//        }
+=======
         if (track != null) {
             final Location tp = Optimizer.currentBestLoc();
 
@@ -169,6 +187,7 @@ public class GPSservice extends Service implements LocationListener {
             return true;
         }
         return false;
+>>>>>>> develop
     }
 
     /*

@@ -9,6 +9,7 @@
     <string name="action_map">Karte</string>
     <string name="action_help">Hilfe</string>
     <string name="action_login">Einloggen</string>
+    <string name="action_about">Über D4A</string>
 
     <!-- generell strings -->
     <string name="yes">Ja</string>
@@ -92,4 +93,20 @@
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
     <string name="or">oder</string>
       <string name="show_pwd">Passwort anzeigen</string>
+      
+    <!-- URLs -->
+    <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Folgt uns auf Facebook</a></string>
+    <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Folgt uns auf Twitter</a></string>
+    <string name="linkToHomepage"><a href="http://data4all.github.io/">Offizielle Homepage</a></string>
+    <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Werdet Teil des Projekts auf GitHub!</a></string>
+    
+    <!-- credits / about -->
+    <string name="aboutText">Wir sind ein kleines Team von Bachelorstudenten der Universität Bremen. 
+        Ihr könnt mehr über uns und dieses Projekt auf den folgenden Seiten herausfinden: </string>
+    <string name="githubFollow">Data4All ist ein Open Source Projekt und somit kann jeder mitmachen und dieses 
+        Projekt gemeinsam mit uns weiterentwickeln: </string> 
+
+    <string name="deleteTagsResultview">Möchten sie diesen Tag löschen ?</string>
+    <string name="maybe">Verwerfen</string>
+
 </resources>
