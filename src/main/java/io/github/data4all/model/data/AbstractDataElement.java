@@ -77,19 +77,18 @@ public abstract class AbstractDataElement implements Parcelable {
     public void addOrUpdateTag(final Tag tag, final String value) {
         this.tags.put(tag, value);
     }
-    
+
     /**
      * Removes an existing tag of the DataElement
      * 
-     * @param tag the Tag to remove
-     * 	
+     * @param tag
+     *            the Tag to remove
+     * 
      */
     public void removeTag(final Tag tag) {
-    	this.tags.remove(tag);
+        this.tags.remove(tag);
     }
 
-    
-    
     /**
      * Add the tags of the DataElement.
      * 
@@ -205,6 +204,7 @@ public abstract class AbstractDataElement implements Parcelable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -218,16 +218,17 @@ public abstract class AbstractDataElement implements Parcelable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
+    @Override
     public boolean equals(Object obj) {
-        if(obj instanceof AbstractDataElement){
-            if(((AbstractDataElement) obj).getOsmId() == this.osmId){
+        if (obj instanceof AbstractDataElement) {
+            if (((AbstractDataElement) obj).getOsmId() == this.osmId) {
                 return true;
             }
         }
         return false;
     }
 
-    
 }

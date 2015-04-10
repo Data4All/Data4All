@@ -16,6 +16,7 @@
     <string name="no">No</string>
     <string name="ok">OK</string>
 	<string name="ignore">Ignore</string>
+	<string name="alwaysIgnore"> Always Ignore</string>
 	
     <!-- Strings Content Description ImageButtons -->
     <string name="returnToActualPosition">My Position</string>
@@ -82,6 +83,7 @@
     <!-- for upload -->
     <string name="upload_success">Successfully uploaded</string>
     <string name="upload_caption">Upload to OpenStreetMap</string>
+    <string name="upload_comment">Comment</string>
     <string name="upload_upload_text">"Objects to upload: "</string>
     <string name="upload_cancle">Cancle</string>
     <string name="CancelButton">Cancle</string>
@@ -113,6 +115,9 @@
     <string name="badMagnetometerCalibrationTitle">Magnetometer needs recalibration.</string>
     <string name="goodSensorCalibrationTitle">Sensor are okay.</string>
     <string name="badSensorCalibrationTitle">Sensor needs recalibration.</string>
+    
+    <string name="statusNotificationHeadline">Data4All still running</string>
+    <string name="statusNotification">the Data4All app is still running.</string>
  
     <string name="show_pwd">Show Password</string>
     <string name="title_activity_about">AboutActivity</string>
