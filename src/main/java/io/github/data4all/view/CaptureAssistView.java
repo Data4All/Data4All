@@ -231,7 +231,7 @@ public class CaptureAssistView extends View {
                         cameraStopPaint);
             }
         }
-        if (getAugmented()) {
+        if (informationSet && getAugmented()) {
             tps.setPhotoHeight(mMeasuredHeight);
             tps.setPhotoWidth(mMeasuredWidth);
             for (PolyElement iter : polyElements) {
@@ -239,9 +239,9 @@ public class CaptureAssistView extends View {
                         || iter.getType() == PolyElementType.BUILDING) {
                     this.points = util.calculateNodesToPoint(iter.getNodes(),
                             tps, deviceOrientation);
+                    Path path = getPath();
+                    canvas.drawPath(path, paint);
                 }
-                Path path = getPath();
-                canvas.drawPath(path, paint);
             }
         }
         canvas.restore();
