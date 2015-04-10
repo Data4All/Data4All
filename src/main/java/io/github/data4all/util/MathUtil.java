@@ -238,7 +238,7 @@ public final class MathUtil {
             final List<double[]> coords2 = new ArrayList<double[]>();
             double avgLength = 0;
             for (double[] iter : coords) {
-                final double[] coord = {iter[0] - center[0], iter[1] - center[1], };
+                final double[] coord = {iter[0] - center[0],iter[1] - center[1], };
                 coords2.add(coord);
                 final double length = Math.sqrt(coord[0] * coord[0] + coord[1]
                         * coord[1]);
