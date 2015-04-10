@@ -226,8 +226,6 @@ public class ShowPictureActivity extends AbstractActivity {
         buttons.add(findViewById(R.id.imageButton1));
         buttons.add(findViewById(R.id.imageButton2));
         buttons.add(findViewById(R.id.imageButton3));
-        // TODO building is not supported yet, so it is commented out here and
-        // in activity_picture.xml
         buttons.add(findViewById(R.id.imageButton4));
         buttons.add(ok);
 
