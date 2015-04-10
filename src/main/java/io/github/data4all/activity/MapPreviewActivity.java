@@ -15,6 +15,9 @@
  */
 package io.github.data4all.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -22,9 +25,14 @@ import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.MathUtil;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -45,8 +53,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     // The OsmElement which should be added
     private AbstractDataElement element;
-
-    private BoundingBoxE6 boundingBox;
 
     /**
      * Standard Constructor
@@ -69,26 +75,53 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         if (getIntent().hasExtra("OSM_ELEMENT")) {
             element = getIntent().getParcelableExtra("OSM_ELEMENT");
         }
-        setUpOverlays();
+        this.setUpOverlays();
 
-        boundingBox = MapUtil.getBoundingBoxForOsmElement(element);
+        final BoundingBoxE6 boundingBox = MapUtil
+                .getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
 
         // Set Overlay for the actual Position
         Log.i(TAG, "Added User Location Overlay to the map");
         mapView.getOverlays().add(myLocationOverlay);
 
+        // Setup the rotation listener
+        final List<View> buttons = new ArrayList<View>();
+
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
         returnToPosition.setOnClickListener(this);
+        buttons.add(findViewById(id));
 
         id = R.id.okay;
         final ImageButton okay = (ImageButton) findViewById(R.id.okay);
         okay.setOnClickListener(this);
+        buttons.add(findViewById(id));
 
         id = R.id.switch_maps;
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
+        buttons.add(findViewById(id));
+
+        id = R.id.rect;
+        final ImageButton rect = (ImageButton) findViewById(id);
+        rect.setOnClickListener(this);
+        buttons.add(findViewById(id));
+
+        if (element instanceof PolyElement) {
+            PolyElement elem = (PolyElement) element;
+            if (elem.getNodes().size() != 5
+                    || elem.getType().equals(PolyElement.PolyElementType.WAY)) {
+                rect.setClickable(false);
+                rect.setVisibility(View.GONE);
+            }
+        } else {
+            rect.setClickable(false);
+            rect.setVisibility(View.GONE);
+        }
+
+        listener = new ButtonRotationListener(this, buttons);
+
     }
 
     /*
@@ -112,15 +145,20 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         switch (v.getId()) {
         case R.id.return_to_actual_Position:
             mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
+            final BoundingBoxE6 boundingBox = MapUtil
+                    .getBoundingBoxForOsmElement(element);
             mapView.zoomToBoundingBox(boundingBox);
             break;
         case R.id.switch_maps:
             switchMaps();
             mapView.getOverlays().clear();
-            setUpOverlays();
+            this.setUpOverlays();
             break;
         case R.id.okay:
             this.accept();
+            break;
+        case R.id.rect:
+            this.startRectangularPreview();
             break;
         default:
             break;
@@ -129,15 +167,21 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     private void setUpOverlays() {
         if (getIntent().hasExtra("LOCATION")) {
-            Location l = (Location) getIntent().getParcelableExtra("LOCATION");
-            Marker m = new Marker(mapView);
+            final Location l = (Location) getIntent().getParcelableExtra(
+                    "LOCATION");
+            final Marker m = new Marker(mapView);
             m.setPosition(new GeoPoint(l));
             m.setIcon(new DefaultResourceProxyImpl(this)
                     .getDrawable(ResourceProxy.bitmap.person));
             m.setInfoWindow(null);
             mapView.getOverlays().add(m);
         }
-        mapView.addOsmElementToMap(this, element);
+        final DataBaseHandler db = new DataBaseHandler(this);
+        final List<AbstractDataElement> list = db.getAllDataElements();
+        list.remove(element);
+        mapView.addOsmElementsToMap(this, list);
+        db.close();
+        mapView.addOsmElementToMap(this, element, true);
     }
 
     /*
@@ -156,8 +200,27 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.getClass().getSimpleName() + " with Coordinates "
                 + element.toString());
         intent.putExtra(OSM, element);
+        
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
+        }
 
         startActivityForResult(intent);
+    }
+
+    /*
+     * Starts new MapPreview with now rectangular Object
+     */
+    private void startRectangularPreview() {
+        if (element instanceof PolyElement) {
+            PolyElement rect = (PolyElement) element;
+            if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect
+                    .getNodes()))) {
+                mapView.getOverlays().clear();
+                this.setUpOverlays();
+            }
+        }
     }
 
     /*

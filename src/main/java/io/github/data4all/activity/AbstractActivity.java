@@ -20,12 +20,14 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.view.LayoutInflater;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,7 +63,13 @@ public abstract class AbstractActivity extends Activity {
 
     public static final int RESULT_FINISH = 9998;
 
-    public static final String SHARED_PREFS = "shared_prefs";
+    private static final int NOTIFICATION_EX = 1;
+
+    private NotificationManager notificationManager;
+
+    // Counter is used to count the start of activities to remove the status bar
+    // icon when no active is running
+    private static int counter;
 
     /**
      * Handle the changing of record/stop icon
@@ -77,6 +85,45 @@ public abstract class AbstractActivity extends Activity {
      * Checkobox for RecordDialog
      */
     CheckBox dontShowAgain;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Count up on each Activity which is create 
+        counter++;
+ 
+       // set a notification to Status Bar
+       notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+       final Notification.Builder mBuilder = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_logo_white)
+                .setOngoing(true)
+                .setContentTitle(getString(R.string.statusNotificationHeadline)).setAutoCancel(true)
+                .setContentText(getString(R.string.statusNotification));
+        notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // count down on each activity which is destroyed
+        counter--;
+        // when counter is 0, we have to remove the notification
+        if (counter <= 0) {
+            notificationManager.cancel(NOTIFICATION_EX);
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -116,6 +163,10 @@ public abstract class AbstractActivity extends Activity {
             startActivity(new Intent(this, AboutActivity.class));
             status = true;
             break;
+        case R.id.action_licenses:
+            startActivity(new Intent(this, LicensesActivity.class));
+            status = true;
+            break;
         case R.id.action_help:
             // TODO set help activity here
             status = true;
@@ -126,7 +177,7 @@ public abstract class AbstractActivity extends Activity {
             break;
         // finish workflow, return to mapview
         case android.R.id.home:
-            onWorkflowFinished(null);
+            this.onHomePressed();
             status = true;
             break;
         case R.id.toggleButton:
@@ -138,6 +189,10 @@ public abstract class AbstractActivity extends Activity {
             return super.onOptionsItemSelected(item);
         }
         return status;
+    }
+    
+    protected void onHomePressed() {
+        onWorkflowFinished(null);
     }
 
     /**
