@@ -57,6 +57,7 @@ public class GPSservice extends Service implements LocationListener {
      */
     private static final float MIN_DISTANCE = 0;
 
+    private TrackUtil trackUtil;
     private Track track;
 
     @Override
@@ -82,7 +83,7 @@ public class GPSservice extends Service implements LocationListener {
             lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                     MIN_TIME, MIN_DISTANCE, this);
         }
-
+        trackUtil = new TrackUtil(getApplicationContext());
     }
 
     /*
@@ -92,14 +93,7 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // trackUtil = new TrackUtility(this);
-        // track = trackUtil.getLastTrack();
-        // TODO uncomment
-        // if (track == null) {
-        // trackUtil.startNewTrack();
-        // Log.d(TAG, "No opened track, so start a new one.");
-        // }
-
+        track = trackUtil.getLastTrack();
         Log.d(TAG, "onStartCommand");
         return START_STICKY;
     }
@@ -116,7 +110,9 @@ public class GPSservice extends Service implements LocationListener {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
 
-        // trackUtil.updateTrack(track);
+        if(track != null && !track.isFinished()) {
+            trackUtil.updateTrack(track);
+        }
 
         wakeLock.release();
 
@@ -131,11 +127,15 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location loc) {
+        Log.d(TAG, "onLocationChanged()");
+        track = trackUtil.getLastTrack();
         if (loc != null) {
             Optimizer.putLoc(loc);
         }
 
         if (track != null) {
+            Log.d(TAG, "Track not null. ID: " + track.getID());
+            
             final Location tp = Optimizer.currentBestLoc();
 
             final TrackPoint last = track.getLastTrackPoint();
@@ -152,13 +152,15 @@ public class GPSservice extends Service implements LocationListener {
             // check if new Location is already stored
             if (last != null && tp != null && !this.sameTrackPoints(last, tp)
                     && distanceCovered >= 5.0) {
-                track.addTrackPoint(tp);
+                //track.addTrackPoint(tp);
+                trackUtil.addPointToTrack(track, tp);
                 // After ten trackpoints updateDatabase
                 if ((track.getTrackPoints().size() % 10) == 0) {
-                    // dbHandler.updateTrack(track);
+                    trackUtil.updateTrack(track);
                 }
             }
         }
+        Log.d(TAG, "Track is null in GpsService");
     }
 
     /**
@@ -172,11 +174,6 @@ public class GPSservice extends Service implements LocationListener {
      */
     private boolean sameTrackPoints(TrackPoint point1, Location loc) {
         final TrackPoint point2 = new TrackPoint(loc);
-
-        // if (point1.getLat() == point2.getLat()
-        // && point1.getLon() == point2.getLon()) {
-        // return true;
-        // }
 
         final double epsilon = 0.0000001;
 
@@ -210,11 +207,7 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onProviderEnabled(String provider) {
-//        track = trackUtil.getLastTrack();
-//        if (track == null) {
-//            // start new track
-//            track = trackUtil.startNewTrack();
-//        }
+
     }
 
     /*
@@ -227,8 +220,8 @@ public class GPSservice extends Service implements LocationListener {
     public void onProviderDisabled(String provider) {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
-//        trackUtil.updateTrack(track);
-//        trackUtil.deleteEmptyTracks();
+        trackUtil.updateTrack(track);
+        trackUtil.deleteEmptyTracks();
         
         Toast.makeText(getBaseContext(), R.string.noLocationFound,
                 Toast.LENGTH_LONG).show();

@@ -191,6 +191,7 @@ public class Track implements Parcelable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
+        sb.append("ID: " + id + '\n');
         sb.append(trackName + '\n');
         sb.append("finished: " + finished + '\n');
         for (TrackPoint loc : tracklist) {

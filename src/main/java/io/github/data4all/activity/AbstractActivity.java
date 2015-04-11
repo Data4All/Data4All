@@ -94,7 +94,7 @@ public abstract class AbstractActivity extends Activity {
      * Checkobox for RecordDialog
      */
     CheckBox dontShowAgain;
-    
+
     private TrackUtil trackUtil;
 
     /*
@@ -118,7 +118,7 @@ public abstract class AbstractActivity extends Activity {
                 .setAutoCancel(true)
                 .setContentText(getString(R.string.statusNotification));
         notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
-        
+
         trackUtil = new TrackUtil(getApplicationContext());
     }
 
@@ -393,16 +393,10 @@ public abstract class AbstractActivity extends Activity {
     }
 
     private void stopTrack() {
-        DataBaseHandler db = new DataBaseHandler(getApplicationContext());
-        List<Track> tracks = db.getAllGPSTracks();
-        Track t = null;
-        for(Track track : tracks) {
-            if(!track.isFinished()) {
-                t = track;
-            }
+        Track track = trackUtil.getLastTrack();
+        if (track != null) {
+            trackUtil.saveTrack(track);
         }
-        t.finishTrack();
-        db.updateGPSTrack(t);
     }
 
     /**

@@ -145,7 +145,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 + KEY_TOKENSECRET + " TEXT" + ")";
         final String CREATE_GPSTRACK_TABLE = "CREATE TABLE " + TABLE_GPSTRACK
                 + " (" + KEY_INCID + " INTEGER PRIMARY KEY," + KEY_TRACKNAME
-                + " TEXT," + KEY_TRACKPOINTS + " TEXT" + ")";
+                + " TEXT," + KEY_TRACKPOINTS + " TEXT," + FLAG_FINISHED
+                + " INTEGER " + ")";
         final String CREATE_TRACKPOINT_TABLE = "CREATE TABLE "
                 + TABLE_TRACKPOINT + " (" + KEY_INCID + " INTEGER PRIMARY KEY,"
                 + KEY_LAT + " REAL," + KEY_LON + " REAL," + KEY_ALT + " REAL,"
@@ -1149,7 +1150,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             values.put(KEY_INCID, track.getID());
         }
         values.put(KEY_TRACKNAME, track.getTrackName());
-        
+
         values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
 
         final List<Long> trackPointIDs = this.createTrackPoints(track
@@ -1208,8 +1209,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             final List<TrackPoint> trackPoints = this
                     .getTrackPoints(trackPointIDs);
             track.setTrackPoints(trackPoints);
-            
-            boolean finishflag = cursor.getInt(3)>0;
+
+            boolean finishflag = cursor.getInt(3) > 0;
             track.setStatus(finishflag);
 
             cursor.close();
@@ -1271,7 +1272,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final ContentValues values = new ContentValues();
 
         values.put(KEY_TRACKNAME, track.getTrackName());
-        
+
         values.put(FLAG_FINISHED, track.isFinished());
 
         int count = 0;
@@ -1324,9 +1325,16 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 final List<TrackPoint> trackPoints = this
                         .getTrackPoints(trackPointIDs);
                 track.setTrackPoints(trackPoints);
-                
-                boolean finishflag = cursor.getInt(3)>0;
+
+                boolean finishflag = cursor.getInt(3) > 0;
                 track.setStatus(finishflag);
+
+                long trackID = cursor.getLong(0);
+                track.setID(trackID);
+                String trackName = cursor.getString(1);
+                track.setTrackName(trackName);
+                
+                Log.d(TAG, "Track: " + track.toString());
 
                 gpsTracks.add(track);
             }
