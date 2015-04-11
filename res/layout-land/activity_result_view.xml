@@ -24,7 +24,8 @@
         android:layout_marginLeft="10dp"
         android:layout_alignTop="@+id/buttonResult"
         android:background="@android:color/background_dark"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white" 
+        android:text="@string/SelectTag"/>
 
     <ListView
         android:id="@+id/listViewResultView"

@@ -43,6 +43,6 @@
          android:layout_marginTop="10dp" 
          android:background="@android:color/background_dark"
          android:textColor="@android:color/white"
-        android:text="" />
+        android:text="@string/SelectTag" />
 
 </RelativeLayout>
