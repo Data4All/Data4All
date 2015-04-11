@@ -25,6 +25,7 @@ import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.suggestion.AddressSuggestionView;
 import io.github.data4all.suggestion.Addresse;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -52,11 +54,13 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -452,6 +456,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
+        
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
+        }
+        
         startActivityForResult(intent);
     }
 }

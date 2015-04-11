@@ -17,16 +17,14 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
+import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.drawing.AreaMotionInterpreter;
-import io.github.data4all.model.drawing.BuildingMotionInterpreter;
-import io.github.data4all.model.drawing.PointMotionInterpreter;
-import io.github.data4all.model.drawing.WayMotionInterpreter;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 import io.github.data4all.view.CaptureAssistView;
 import io.github.data4all.view.TouchView;
@@ -36,19 +34,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -67,6 +68,20 @@ public class ShowPictureActivity extends AbstractActivity {
     private static final String TAG = ShowPictureActivity.class.getSimpleName();
 
     private CaptureAssistView cameraAssistView;
+
+    /** Name of the DeviceOrientation to give to the next activity */
+    public static final String CURRENT_ORIENTATION_EXTRA =
+            "current_orientation";
+
+    /** Name of the TransformationParamBean to give to the next activity */
+    public static final String TRANSFORM_BEAN_EXTRA = "transform_bean";
+
+    /** The name of the extra info for the preview size in the intent */
+    public static final String SIZE_EXTRA = "preview_size";
+
+    /** The name of the extra info for the filepath in the intent */
+    public static final String FILE_EXTRA = "file_path";
+
     private TouchView touchView;
     private ImageView imageView;
     private Intent intent;
@@ -80,6 +95,7 @@ public class ShowPictureActivity extends AbstractActivity {
     private ImageButton undo;
     private ImageButton redo;
     private ImageButton ok;
+    private ButtonAnimationListener btnAnimator;
 
     // the current TransformationBean and device orientation when the picture
     // was taken
@@ -87,6 +103,8 @@ public class ShowPictureActivity extends AbstractActivity {
     private DeviceOrientation currentOrientation;
 
     private ButtonRotationListener listener;
+    
+    private List<View> buttons;
 
     /**
      * public standard constructor.
@@ -120,7 +138,6 @@ public class ShowPictureActivity extends AbstractActivity {
         redo = (ImageButton) findViewById(R.id.redobtn);
         redo.setVisibility(View.GONE);
         ok = (ImageButton) findViewById(R.id.okbtn);
-        ok.setVisibility(View.GONE);
         touchView.setUndoRedoListener(new UndoRedoListener() {
             @Override
             public void canUndo(boolean state) {
@@ -147,7 +164,7 @@ public class ShowPictureActivity extends AbstractActivity {
                 if (state) {
                     ok.setVisibility(View.VISIBLE);
                 } else {
-                    ok.setVisibility(View.INVISIBLE);
+                    ok.setVisibility(View.GONE);
                 }
             }
         });
@@ -180,6 +197,11 @@ public class ShowPictureActivity extends AbstractActivity {
                             CapturePictureHandler.CURRENT_ORIENTATION);
         }
 
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
+        }
+
         // Set the display size as photo size to get a coordinate system for the
         // drawn points
         transformBean.setPhotoWidth(getBaseContext().getResources()
@@ -205,18 +227,17 @@ public class ShowPictureActivity extends AbstractActivity {
         this.onClickArea(null);
 
         // Setup the rotation listener
-        final List<View> buttons = new ArrayList<View>();
+        buttons = new ArrayList<View>();
         buttons.add(redo);
         buttons.add(undo);
         buttons.add(findViewById(R.id.imageButton1));
         buttons.add(findViewById(R.id.imageButton2));
         buttons.add(findViewById(R.id.imageButton3));
-        // TODO building is not supported yet, so it is commented out here and
-        // in activity_picture.xml
         buttons.add(findViewById(R.id.imageButton4));
         buttons.add(ok);
-
+        buttons.add(findViewById(R.id.customImageButton1));
         listener = new ButtonRotationListener(this, buttons);
+        btnAnimator = new ButtonAnimationListener(buttons);
 
         AbstractActivity.addNavBarMargin(getResources(),
                 findViewById(R.id.layout_choose_interpreter));
@@ -259,7 +280,7 @@ public class ShowPictureActivity extends AbstractActivity {
             startActivityForResult(intent);
         }
     }
-
+     
     /**
      * Define method to draw a point.<br\>
      * 
@@ -271,6 +292,10 @@ public class ShowPictureActivity extends AbstractActivity {
         touchView.setInterpretationType(TouchView.InterpretationType.POINT);
         touchView.invalidate();
         intent.putExtra(TYPE, POINT);
+    }
+    
+    public void onClickAway(View view) {
+     btnAnimator.onRotate();   
     }
 
     /**
@@ -345,6 +370,10 @@ public class ShowPictureActivity extends AbstractActivity {
         touchView.undo();
         touchView.invalidate();
     }
+    
+    public void onClickHide(View view) {
+    	
+    }
 
     /**
      * Get the file of an image and set this to local ImageView.
@@ -365,9 +394,12 @@ public class ShowPictureActivity extends AbstractActivity {
         final AssetFileDescriptor fileDescriptor =
                 getContentResolver().openAssetFileDescriptor(photoUri, "r");
 
+        final Options options = new Options();
+        options.inSampleSize = 2;
+
         final Bitmap photo =
                 BitmapFactory.decodeFileDescriptor(
-                        fileDescriptor.getFileDescriptor(), null, null);
+                        fileDescriptor.getFileDescriptor(), null, options);
         if (photo != null) {
             return this.scaleAndRotate(photo);
         } else {
@@ -433,10 +465,22 @@ public class ShowPictureActivity extends AbstractActivity {
     }
 
     private double getScreenRation() {
-        final Point size =
-                getIntent()
-                        .getParcelableExtra(CapturePictureHandler.SIZE_EXTRA);
+        final Point size = getIntent().getParcelableExtra(SIZE_EXTRA);
         Log.v("SCREEN_DIMENSION", "h:" + size.x + " w: " + size.y);
         return (1.0 * size.x) / size.y;
+    }
+
+    public static final void startActivity(AbstractActivity context,
+            File photoFile, TransformationParamBean transformBean,
+            DeviceOrientation deviceOrientation, Point viewSize, Bundle extras) {
+        final Intent intent = new Intent(context, ShowPictureActivity.class);
+        intent.putExtra(FILE_EXTRA, photoFile);
+        intent.putExtra(TRANSFORM_BEAN_EXTRA, transformBean);
+        intent.putExtra(CURRENT_ORIENTATION_EXTRA, deviceOrientation);
+        intent.putExtra(SIZE_EXTRA, viewSize);
+        if(extras != null) {
+            intent.putExtras(extras);
+        }
+        context.startActivityForResult(intent);
     }
 }

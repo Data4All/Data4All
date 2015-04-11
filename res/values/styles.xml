@@ -44,4 +44,160 @@
 	    <item name="android:shadowRadius">1</item>
 	</style>
 
+    <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/actionbar</item>
+        <item name="android:icon">@drawable/ic_logo_white</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+    </style>
+
+    <style name="CustomActivityThemeNoActionBar" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="imageButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@null</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="imageButtonReturnToActualPosition" parent="imageButtonStyle">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:src">@drawable/ic_point</item>
+    </style>
+
+    <style name="imageButtonReturnToCamera" parent="imageButtonStyle">
+         <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:src">@drawable/ic_cam</item>
+    </style>
+    
+    <style name="imageButtonSwitchMaps" parent="imageButtonStyle">
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:src">@drawable/ic_sat</item>
+    </style>
+
+    <style name="imageButtonNewPointOfInterest" parent="imageButtonStyle">
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/ic_poi</item>
+    </style>
+
+    <style name="imageButtonToCamera" parent="imageButtonStyle">
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">100dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/ic_cam</item>
+    </style>
+
+    <style name="imageButtonOkay" parent="imageButtonStyle">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:src">@drawable/ic_ok</item>
+    </style>
+
+    <style name="imageButtonCamAction" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:src">@drawable/ic_camaction</item>
+    </style>
+
+    <style name="imageButtonCamActionLand" parent="imageButtonStyle">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:src">@drawable/ic_camaction</item>
+    </style>
+
+    <style name="imageButtonDrawPoint" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:src">@drawable/ic_point</item>
+    </style>
+
+    <style name="imageButtonDrawWay" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:src">@drawable/ic_way</item>
+    </style>
+
+    <style name="imageButtonDrawArea" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:src">@drawable/ic_area</item>
+    </style>
+
+    <style name="imageButtonDrawBuilding" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:src">@drawable/ic_house</item>
+    </style>
+
+    <style name="startUpScreen">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/data4allport</item>
+    </style>
+
+    <style name="imageViewTakedPicture">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+    <style name="imageViewTakedPictureLand">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="imageButtonUndoPictureActivity" parent="imageButtonStyle">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:src">@drawable/ic_undo</item>
+    </style>
+
+    <style name="imageButtonRedoPictureActivity" parent="imageButtonStyle">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">120dp</item>
+        <item name="android:src">@drawable/ic_redo</item>
+    </style>
+
+    <style name="autoFocusCrossHair">
+        <item name="android:layout_width">65dp</item>
+        <item name="android:layout_height">65dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="cameraPreview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
 </resources>

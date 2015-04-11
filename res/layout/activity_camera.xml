@@ -14,6 +14,15 @@
         android:layout_height="match_parent"
         android:gravity="center" />
 
+    <View
+        android:id="@+id/cam_callback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha="0"
+        android:background="@drawable/cam_callback_border"
+        android:visibility="invisible" />
+
     <io.github.data4all.view.AutoFocusCrossHair
         android:id="@+id/af_crosshair"
         style="@style/autoFocusCrossHair" />
@@ -22,17 +31,58 @@
         android:id="@+id/btnCapture"
         style="@style/imageButtonCamAction"
         android:contentDescription="@string/noDescription" />
- 
- <Button
+
+    <io.github.data4all.widged.CustomImageButton
         android:id="@+id/calibrationStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/btnCapture"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/sensorOk"
+        android:layout_alignTop="@+id/btnCapture"
+        android:layout_toRightOf="@+id/btnCapture"
+        android:background="@null"
+        android:contentDescription="@string/noDescription"
         android:onClick="onClickCalibrationStatus"
-        android:text="@string/empty" />
-   
+        android:padding="0dp"
+        android:src="@drawable/ic_sensorstatus_warning" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/black_to_transparent"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp" >
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/cam_border"
+            android:contentDescription="@string/noDescription" />
+
+        <ImageView
+            android:id="@+id/middleImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/noDescription" />
+
+        <ImageView
+            android:id="@+id/leftImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@id/middleImage"
+            android:contentDescription="@string/noDescription" />
+
+        <ImageView
+            android:id="@+id/rightImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@id/middleImage"
+            android:contentDescription="@string/noDescription" />
+    </RelativeLayout>
+
 </RelativeLayout>

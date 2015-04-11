@@ -1,0 +1,13 @@
+<resources>
+
+    <string-array name="pref_gallery_deletemode_option">
+        <item name="yes">Immer</item>
+        <item name="no">Nie</item>
+        <item name="ask">Nachfragen</item>
+    </string-array>
+    <string-array name="pref_moving_animation_option">
+        <item name="move">Karte verschieben</item>
+        <item name="animate">Karte animieren</item>
+    </string-array>
+
+</resources>

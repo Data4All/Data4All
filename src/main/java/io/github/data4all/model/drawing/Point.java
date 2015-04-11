@@ -23,6 +23,8 @@ package io.github.data4all.model.drawing;
  */
 public class Point {
 
+    private static final float EPSILON = 1e-5F;
+
     /**
      * The x-coordinate.
      */
@@ -54,8 +56,9 @@ public class Point {
     @Override
     public boolean equals(Object o) {
         return (o == this)
-                || ((o instanceof Point) && x == ((Point) o).getX() && y == ((Point) o)
-                        .getY());
+                || ((o instanceof Point)
+                        && (Math.abs(x - ((Point) o).getX()) < EPSILON) && (Math
+                        .abs(y - ((Point) o).getY())) < EPSILON);
     }
 
     /**
@@ -68,7 +71,8 @@ public class Point {
      * @return if this points coordinates are equals to the given coordinates
      */
     public boolean equalsTo(float x, float y) {
-        return this.x == x && this.y == y;
+        return (Math.abs(this.x - x) < EPSILON)
+                && (Math.abs(this.y - y) < EPSILON);
     }
 
     /*

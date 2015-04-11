@@ -15,6 +15,15 @@
  */
 package io.github.data4all.model;
 
+import io.github.data4all.model.data.TransformationParamBean;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -157,5 +166,22 @@ public class DeviceOrientation implements Parcelable {
         dest.writeFloat(pitch);
         dest.writeFloat(roll);
         dest.writeLong(timestamp);
+    }
+
+    public JSONArray toJSON() throws JSONException {
+        List<Object> attributes = new ArrayList<Object>(4);
+        attributes.add((double) azimuth);
+        attributes.add((double) pitch);
+        attributes.add((double) roll);
+        attributes.add(timestamp);
+        return new JSONArray(attributes);
+    }
+
+    public static DeviceOrientation fromJSON(JSONArray json)
+            throws JSONException {
+
+        return new DeviceOrientation((float) json.getDouble(0),
+                (float) json.getDouble(1), (float) json.getDouble(2),
+                json.getLong(3));
     }
 }
