@@ -681,6 +681,10 @@ public class TouchView extends View {
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if (action.equals(add)) {
 			newPolygon.add(point);
+			if(interpreter instanceof BuildingMotionInterpreter){
+				point = redoUndo.redo();
+				newPolygon.add(point);
+			}
 		}
 		if (action.equals(delete)) {
 			newPolygon.remove(point);
@@ -713,6 +717,10 @@ public class TouchView extends View {
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if (action.equals(add)) {
 			newPolygon.remove(point);
+			if(interpreter instanceof BuildingMotionInterpreter){
+				point = redoUndo.undo();
+				newPolygon.remove(point);
+			}
 		}
 		if (action.equals(delete)) {
 			newPolygon.add(location, point);
@@ -846,7 +854,7 @@ public class TouchView extends View {
 				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
 				|| interpreter instanceof BuildingMotionInterpreter
 				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-				&& redoUndo.getMax() == 4) {
+				&& redoUndo.getMax() >= 4) {
 			Log.d(this.getClass().getSimpleName(), "true undo");
 			if (undoRedoListener != null) {
 				undoRedoListener.canUndo(true);
