@@ -15,6 +15,13 @@
  */
 package io.github.data4all.model.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -30,8 +37,8 @@ import android.os.Parcelable;
 public class TransformationParamBean implements Parcelable {
 
     private double height;
-    private double cameraMaxRotationAngle;
-    private double cameraMaxPitchAngle;
+    private double verticalViewAngle;
+    private double horizontalViewAngle;
     private int photoWidth;
     private int photoHeight;
     private Location location;
@@ -64,12 +71,12 @@ public class TransformationParamBean implements Parcelable {
      * @param location
      *            location of the device
      */
-    public TransformationParamBean(double height,
-            double cameraMaxRotationAngle, double cameraMaxPitchAngle,
-            int photoWidth, int photoHeight, Location location) {
+    public TransformationParamBean(double height, double verticalViewAngle,
+            double horizontalViewAngle, int photoWidth, int photoHeight,
+            Location location) {
         this.height = height;
-        this.cameraMaxPitchAngle = cameraMaxPitchAngle;
-        this.cameraMaxRotationAngle = cameraMaxRotationAngle;
+        this.horizontalViewAngle = horizontalViewAngle;
+        this.verticalViewAngle = verticalViewAngle;
         this.photoHeight = photoHeight;
         this.photoWidth = photoWidth;
         this.location = location;
@@ -83,8 +90,8 @@ public class TransformationParamBean implements Parcelable {
      */
     private TransformationParamBean(Parcel in) {
         height = in.readDouble();
-        cameraMaxRotationAngle = in.readDouble();
-        cameraMaxPitchAngle = in.readDouble();
+        verticalViewAngle = in.readDouble();
+        horizontalViewAngle = in.readDouble();
         photoWidth = in.readInt();
         photoHeight = in.readInt();
         if (in.readInt() != 0) {
@@ -99,12 +106,12 @@ public class TransformationParamBean implements Parcelable {
         return 0;
     }
 
-    public double getCameraMaxPitchAngle() {
-        return cameraMaxPitchAngle;
+    public double getCameraMaxHorizontalViewAngle() {
+        return horizontalViewAngle;
     }
 
-    public double getCameraMaxRotationAngle() {
-        return cameraMaxRotationAngle;
+    public double getCameraMaxVerticalViewAngle() {
+        return verticalViewAngle;
     }
 
     public double getHeight() {
@@ -123,12 +130,12 @@ public class TransformationParamBean implements Parcelable {
         return photoWidth;
     }
 
-    public void setCameraMaxPitchAngle(float cameraMaxPitchAngle) {
-        this.cameraMaxPitchAngle = cameraMaxPitchAngle;
+    public void setMaxHorizontalViewAngle(float horizontalViewAngle) {
+        this.horizontalViewAngle = horizontalViewAngle;
     }
 
-    public void setCameraMaxRotationAngle(float cameraMaxRotationAngle) {
-        this.cameraMaxRotationAngle = cameraMaxRotationAngle;
+    public void setCameraMaxVerticalViewAngle(float verticalViewAngle) {
+        this.verticalViewAngle = verticalViewAngle;
     }
 
     public void setHeight(float height) {
@@ -150,8 +157,8 @@ public class TransformationParamBean implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(height);
-        dest.writeDouble(cameraMaxRotationAngle);
-        dest.writeDouble(cameraMaxPitchAngle);
+        dest.writeDouble(verticalViewAngle);
+        dest.writeDouble(horizontalViewAngle);
         dest.writeInt(photoWidth);
         dest.writeInt(photoHeight);
         if (location != null) {
@@ -162,5 +169,44 @@ public class TransformationParamBean implements Parcelable {
         } else {
             dest.writeInt(0);
         }
+    }
+
+    public String toString() {
+        return "Height: " + height + " VerticalAngle: " + verticalViewAngle
+                + " HorizntalAngle: " + horizontalViewAngle + " Width: "
+                + photoWidth + " PhotoHeight: " + photoHeight;
+    }
+
+    public JSONArray toJSON() throws JSONException {
+        List<Object> attributes = new ArrayList<Object>(9);
+        attributes.add(height);
+        attributes.add(verticalViewAngle);
+        attributes.add(horizontalViewAngle);
+        attributes.add(photoWidth);
+        attributes.add(photoHeight);
+        if (getLocation() == null)
+            attributes.add(0);
+        else {
+            attributes.add(1);
+            attributes.add(location.getProvider());
+            attributes.add(location.getLatitude());
+            attributes.add(location.getLongitude());
+        }
+        return new JSONArray(attributes);
+    }
+
+    public static TransformationParamBean fromJSON(JSONArray json)
+            throws JSONException {
+        Location location;
+        if (json.getInt(5) == 0) {
+            location = null;
+        } else {
+            location = new Location(json.getString(6));
+            location.setLatitude(json.getDouble(7));
+            location.setLongitude(json.getDouble(8));
+        }
+        return new TransformationParamBean(json.getDouble(0),
+                json.getDouble(1), json.getDouble(2), json.getInt(3),
+                json.getInt(4), location);
     }
 }

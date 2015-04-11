@@ -25,6 +25,7 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.network.MapBoxTileSourceV4;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
@@ -46,11 +47,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.SharedPreferences;
+
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -126,12 +130,15 @@ public class ResultViewActivity extends AbstractActivity implements
     private Map<Tag, String> map = new LinkedHashMap<Tag, String>();
     
     private View viewFooter;
+    
+    private String type = "TYPE_DEF";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_ZOOM_LEVEL);
+        osmMap =
+                new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                        MAXIMAL_ZOOM_LEVEL);
 
         // Here is the OsmDroidMap created
         setContentView(R.layout.activity_result_view);
@@ -140,11 +147,11 @@ public class ResultViewActivity extends AbstractActivity implements
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-        final BoundingBoxE6 boundingBox = MapUtil
-                .getBoundingBoxForOsmElement(element);
+        final BoundingBoxE6 boundingBox =
+                MapUtil.getBoundingBoxForOsmElement(element);
         mapView.setBoundingBox(boundingBox);
         mapView.setScrollable(false);
-        mapView.addOsmElementToMap(this, element);
+        mapView.addOsmElementToMap(this, element, false);
         // Here the List of tags is created
         Log.i(TAG, "map ready");
         listView = (ListView) this.findViewById(R.id.listViewResultView);
@@ -157,12 +164,13 @@ public class ResultViewActivity extends AbstractActivity implements
         /**if (!Tagging.getAllNonSelectedTags(element.getTags(),
                 classifiedValue).isEmpty()) {
             final LayoutInflater inflater = getLayoutInflater();
-            viewFooter = ((LayoutInflater) this
-                    .getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(
-                    R.drawable.footer_listviewresult, null, false);
+                    ((LayoutInflater) this
+                            .getSystemService(LAYOUT_INFLATER_SERVICE))
+                            .inflate(R.drawable.footer_listviewresult, null,
+                                    false);
             listView.addFooterView(viewFooter);
-            final TextView tVFooter = ((TextView) viewFooter
-                    .findViewById(R.id.titleFooter));
+            final TextView tVFooter =
+                    ((TextView) viewFooter.findViewById(R.id.titleFooter));
             tVFooter.setOnClickListener(this);
             viewFooter.setOnClickListener(new OnClickListener() {
                 @Override
@@ -203,12 +211,11 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             }
         });
-       
-        final ImageButton resultButton = (ImageButton) this
-                .findViewById(R.id.buttonResult);
+        final ImageButton resultButton =
+                (ImageButton) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
-        final ImageButton resultButtonToCamera = (ImageButton) this
-                .findViewById(R.id.buttonResultToCamera);
+        final ImageButton resultButtonToCamera =
+                (ImageButton) this.findViewById(R.id.buttonResultToCamera);
         resultButtonToCamera.setOnClickListener(this);
     }
 
@@ -237,7 +244,7 @@ public class ResultViewActivity extends AbstractActivity implements
             break;
         // finish workflow, return to mapview
         case android.R.id.home:
-            onWorkflowFinished(null);
+            this.onWorkflowFinished(null);
             status = true;
             break;    
         default:
@@ -572,8 +579,9 @@ public class ResultViewActivity extends AbstractActivity implements
      *            is the String which is selected
      */
     private void changeUnclassifiedTag(final String selectedString) {
-        dialog = new Dialog(ResultViewActivity.this,
-                android.R.style.Theme_Holo_Dialog_MinWidth);
+        dialog =
+                new Dialog(ResultViewActivity.this,
+                        android.R.style.Theme_Holo_Dialog_MinWidth);
         dialog.setContentView(R.layout.dialog_dynamic);
         dialog.setTitle(selectedString);
         Map <Tag, String> hashMap = new LinkedHashMap<Tag, String>();
@@ -691,6 +699,9 @@ public class ResultViewActivity extends AbstractActivity implements
 			});
             alert = builder.create();
             alert.show();
+        	// createAlertDialogResult();
+            this.addOsmElementToDB(element);
+            askForGalleryDelete();
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
@@ -708,6 +719,97 @@ public class ResultViewActivity extends AbstractActivity implements
         }
     }
 
+    private void askForGalleryDelete() {
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            final long id =
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0);
+            final String preferenceChoise = getPreferenceChoise();
+
+            if ("yes".equals(preferenceChoise)) {
+                new Gallery(this).deleteImage(id);
+                this.createAlertDialogResult();
+            } else if ("no".equals(preferenceChoise)) {
+                this.createAlertDialogResult();
+            } else {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.deleteImage)
+                        .setMessage(R.string.deleteImageText)
+                        .setPositiveButton(R.string.yes,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        new Gallery(ResultViewActivity.this)
+                                                .deleteImage(id);
+                                        ResultViewActivity.this.createAlertDialogResult();
+                                    }
+                                })
+                        .setNegativeButton(R.string.no,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        ResultViewActivity.this.createAlertDialogResult();
+                                    }
+                                }).show();
+            }
+        } else {
+            createAlertDialogResult();
+        }
+    }
+
+    /**
+     * TODO: tbrose
+     * 
+     * @return
+     */
+    private String getPreferenceChoise() {
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        final Resources res = getResources();
+        final String key = res.getString(R.string.pref_gallery_deletemode_key);
+        final String choise = prefs.getString(key, null);
+        return choise;
+    }
+
+    /**
+     * create the AlertDialog at the end with a pos, negative and maybe Button
+     */
+    private void createAlertDialogResult(){
+    	final AlertDialog.Builder builder = new AlertDialog.Builder(
+                ResultViewActivity.this);
+        builder.setMessage(R.string.resultViewAlertDialogMessage);
+        final Intent intent = new Intent(this, LoginActivity.class);
+        builder.setPositiveButton(R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        addOsmElementToDB(element);
+                        startActivityForResult(intent);
+                    }
+                });
+        builder.setNegativeButton(R.string.maybe,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        setResult(RESULT_OK);
+                        finishWorkflow(null);
+                    }
+                });
+        builder.setNeutralButton(R.string.no, 
+        		new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				addOsmElementToDB(element);
+                setResult(RESULT_OK);
+                finishWorkflow(null);
+
+                
+			}
+		});
+        alert = builder.create();
+        alert.show();
+
+    }
     /**
      * creates the Dialog with the List of all unclassified Tags which are not
      * used.
@@ -750,7 +852,7 @@ public class ResultViewActivity extends AbstractActivity implements
         if (dataElement.getOsmId() == -1) {
             db.createDataElement(dataElement);
         } else {
-            //if the Element allready exists
+            // if the Element allready exists
             db.updateDataElement(dataElement);
         }
         db.close();

@@ -48,11 +48,12 @@
             android:onClick="onClickArea" />
         <!-- TODO building is not supported yet -->
         <!-- <ImageButton -->
-        <!-- <io.github.data4all.widged.CustomImageButton -->
-        <!-- android:id="@+id/imageButton4" -->
-        <!-- style="@style/imageButtonDrawBuilding" -->
-        <!-- android:contentDescription="@string/drawBuilding" -->
-        <!-- android:onClick="onClickBuilding" /> -->
+
+        <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/imageButton4"
+            style="@style/imageButtonDrawBuilding"
+            android:contentDescription="@string/drawBuilding"
+            android:onClick="onClickBuilding" />
     </LinearLayout>
 
     <io.github.data4all.widged.CustomImageButton
@@ -72,5 +73,10 @@
         style="@style/imageButtonUndoPictureActivity"
         android:contentDescription="@string/undo"
         android:onClick="onClickUndo" />
+
+    <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/customImageButton1"
+        style="@style/imageButtonAway"
+        android:onClick="onClickAway" />
 
 </RelativeLayout>

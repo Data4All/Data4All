@@ -56,16 +56,17 @@ public class PolyElement extends AbstractDataElement {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<PolyElement> CREATOR = new Parcelable.Creator<PolyElement>() {
+    public static final Parcelable.Creator<PolyElement> CREATOR =
+            new Parcelable.Creator<PolyElement>() {
 
-        public PolyElement createFromParcel(Parcel in) {
-            return new PolyElement(in);
-        }
+                public PolyElement createFromParcel(Parcel in) {
+                    return new PolyElement(in);
+                }
 
-        public PolyElement[] newArray(int size) {
-            return new PolyElement[size];
-        }
-    };
+                public PolyElement[] newArray(int size) {
+                    return new PolyElement[size];
+                }
+            };
 
     /**
      * Default Constructor.
@@ -267,7 +268,8 @@ public class PolyElement extends AbstractDataElement {
      * @return list of points
      */
     public List<org.osmdroid.util.GeoPoint> getGeoPoints() {
-        final List<org.osmdroid.util.GeoPoint> points = new LinkedList<org.osmdroid.util.GeoPoint>();
+        final List<org.osmdroid.util.GeoPoint> points =
+                new LinkedList<org.osmdroid.util.GeoPoint>();
         for (Node n : nodes) {
             points.add(n.toGeoPoint());
         }
@@ -302,7 +304,8 @@ public class PolyElement extends AbstractDataElement {
      * @return list of points
      */
     public List<org.osmdroid.util.GeoPoint> getUnsortedGeoPoints() {
-        final List<org.osmdroid.util.GeoPoint> points = new ArrayList<org.osmdroid.util.GeoPoint>();
+        final List<org.osmdroid.util.GeoPoint> points =
+                new ArrayList<org.osmdroid.util.GeoPoint>();
         for (Node n : nodes) {
             points.add(n.toGeoPoint());
         }
@@ -410,6 +413,38 @@ public class PolyElement extends AbstractDataElement {
         }
     }
 
+    /**
+     * Replaces all existing nodes in a PolyElement with a list of different
+     * ones.
+     * 
+     * @param newNodes
+     *            The new nodes.
+     * @return success of the operation
+     */
+    public boolean replaceNodes(List<Node> newNodes) {
+        nodes.clear();
+        return nodes.addAll(newNodes);
+    }
+
+    /**
+     * Set the list of nodes from a given list of GeoPoints.
+     * 
+     * @author sbollen
+     * @param geoPointList
+     *            the given list of GeoPoints
+     */
+    public void setNodesFromGeoPoints(
+            List<org.osmdroid.util.GeoPoint> geoPointList) {
+        final List<Node> newNodes = new ArrayList<Node>();
+        for (int i = 0; i < geoPointList.size(); i++) {
+            final Node node =
+                    new Node(nodes.get(i).getOsmId(), geoPointList.get(i)
+                            .getLatitude(), geoPointList.get(i).getLongitude());
+            newNodes.add(node);
+        }
+        nodes = newNodes;
+    }
+
     public void setType(PolyElementType type) {
         this.type = type;
     }
@@ -444,6 +479,36 @@ public class PolyElement extends AbstractDataElement {
         default:
             break;
         }
-
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.github.data4all.model.data.AbstractDataElement#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.model.data.AbstractDataElement#equals(java.lang.Object
+     * )
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PolyElement) {
+            return ((PolyElement) obj).getType() == this.type
+                    && super.equals(obj);
+        }
+        return false;
+    }
+
 }

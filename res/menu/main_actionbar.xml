@@ -13,9 +13,20 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
+    <item 
+        android:id="@+id/action_about"
+        android:orderInCategory="200"
+        android:showAsAction="never"
+        android:title="@string/action_about"/>    
+    <item 
+        android:id="@+id/action_licenses"
+        android:orderInCategory="300"
+        android:showAsAction="never"
+        android:title="@string/action_licenses"/>
     <item
         android:id="@+id/action_help"
         android:enabled="false"
         android:title="@string/action_help"/>
+    <item android:id="@+id/list_tracks" android:title="@string/list_tracks"></item>
 
 </menu>
