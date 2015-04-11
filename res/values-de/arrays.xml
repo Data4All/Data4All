@@ -6,8 +6,8 @@
         <item name="ask">Nachfragen</item>
     </string-array>
     <string-array name="pref_moving_animation_option">
-        <item name="move">Karte verschieben</item>
-        <item name="animate">Karte animieren</item>
+        <item name="move">Karte bewegen</item>
+        <item name="animate">Objekt bewegen</item>
     </string-array>
 
 </resources>
