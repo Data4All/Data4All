@@ -250,7 +250,7 @@ public class MapPolygon extends Polygon {
                 Log.d(TAG, "action_up");
                 if (active) {
                     // set the new information to the element
-                    ((PolyElement) element).setNodesFromGeoPoints(geoPointList);
+                    ((PolyElement) element).setNodesFromGeoPoints(this.getPoints());
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
                         && isTapped(event)) {
