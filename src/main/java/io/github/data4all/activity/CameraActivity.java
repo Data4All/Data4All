@@ -40,9 +40,11 @@ import android.R.color;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.animation.TimeInterpolator;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -57,6 +59,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -67,6 +70,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -85,7 +90,7 @@ import android.widget.Toast;
  * @LastUpdate 08.04.2015
  * @version 1.3
  * 
- * @author Richard Rohde(Kalibration Feedback) 
+ * @author Richard Rohde(Kalibration Feedback)
  */
 
 public class CameraActivity extends AbstractActivity {
@@ -106,8 +111,7 @@ public class CameraActivity extends AbstractActivity {
     OrientationListener orientationListener;
     boolean orientationBound;
 
-    public static final String FINISH_TO_CAMERA =
-            "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
+    public static final String FINISH_TO_CAMERA = "io.github.data4all.activity.CameraActivity:FINISH_TO_CAMERA";
 
     /**
      * Indicates the single picture mode
@@ -134,23 +138,23 @@ public class CameraActivity extends AbstractActivity {
     // runs without a timer by reposting this handler at the end of the runnable
     private boolean setUpComplete = false;
     long startTime = 0;
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
 
-        @Override
-        public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
+    // Broadcast receiver for receiving status updates from the IntentService
+    private class CalibrationReceiver extends BroadcastReceiver {
+        // Prevents instantiation
+        private CalibrationReceiver() {
+        }
 
-            if (setUpComplete) {
+        // Called when the BroadcastReceiver gets an Intent it's registered to
+        // receive
+
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.hasExtra(OrientationListener.INTENT_CAMERA_UPDATE)) {
                 updateCalibrationStatus();
             }
-
-            timerHandler.postDelayed(this, 500);
         }
-    };
+    }
 
     private int currentMappingMode;
 
@@ -161,7 +165,7 @@ public class CameraActivity extends AbstractActivity {
     private SwipeListManager mSwipeListManager;
 
     private View mCallbackView;
-    
+
     private boolean ignore;
 
     @Override
@@ -169,7 +173,7 @@ public class CameraActivity extends AbstractActivity {
         Log.i(TAG, "onCreate is called");
         super.onCreate(savedInstanceState);
 
-        //setting ignore warnings
+        // setting ignore warnings
         ignore = false;
         // remove title and status bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -182,29 +186,37 @@ public class CameraActivity extends AbstractActivity {
 
         shutterCallback = new ShutterCallback() {
             public void onShutter() {
-                final Vibrator vibrator =
-                        (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(VIBRATION_DURATION);
             }
         };
-        mDetector =
-                new GestureDetector(this,
-                        new GestureDetector.SimpleOnGestureListener() {
-                            @Override
-                            public boolean onFling(MotionEvent e1,
-                                    MotionEvent e2, float x, float y) {
-                                if (x > MIN_SWIPE_VELOCITY) {
-                                    CameraActivity.this
-                                            .switchMode(currentMappingMode - 1);
-                                    return true;
-                                } else if (x < -MIN_SWIPE_VELOCITY) {
-                                    CameraActivity.this
-                                            .switchMode(currentMappingMode + 1);
-                                    return true;
-                                }
-                                return false;
-                            }
-                        });
+        mDetector = new GestureDetector(this,
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onFling(MotionEvent e1, MotionEvent e2,
+                            float x, float y) {
+                        if (x > MIN_SWIPE_VELOCITY) {
+                            CameraActivity.this
+                                    .switchMode(currentMappingMode - 1);
+                            return true;
+                        } else if (x < -MIN_SWIPE_VELOCITY) {
+                            CameraActivity.this
+                                    .switchMode(currentMappingMode + 1);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+        // The filter's action is BROADCAST_CAMERA
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                OrientationListener.BROADCAST_CAMERA);
+        // Instantiates a new DownloadStateReceiver
+        CalibrationReceiver mCalibrationReceiver = new CalibrationReceiver();
+        // Registers the DownloadStateReceiver and its intent filters
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mCalibrationReceiver, mStatusIntentFilter);
+
     }
 
     /*
@@ -229,8 +241,8 @@ public class CameraActivity extends AbstractActivity {
         buttons.add(btnCapture);
         btnCStatus = (ImageButton) findViewById(R.id.calibrationStatus);
         buttons.add(btnCStatus);
-        listener = new ButtonRotationListener(this,buttons);
-        
+        listener = new ButtonRotationListener(this, buttons);
+
         cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
 
         // Set the Focus animation
@@ -238,9 +250,8 @@ public class CameraActivity extends AbstractActivity {
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
         AbstractActivity.addNavBarMargin(getResources(), btnCStatus);
 
-        mSwipeListManager =
-                new SwipeListManager(this, Arrays.asList(
-                        R.drawable.ic_cam_single, R.drawable.ic_cam_multi));
+        mSwipeListManager = new SwipeListManager(this, Arrays.asList(
+                R.drawable.ic_cam_single, R.drawable.ic_cam_multi));
         mSwipeListManager.setContent(currentMappingMode);
 
         mCallbackView = findViewById(R.id.cam_callback);
@@ -278,7 +289,6 @@ public class CameraActivity extends AbstractActivity {
                 Context.BIND_AUTO_CREATE);
         this.startService(intent);
         setUpComplete = true;
-        this.timerRunnable.run();
     }
 
     @Override
@@ -298,7 +308,6 @@ public class CameraActivity extends AbstractActivity {
         listener.disable();
 
         stopService(new Intent(this, OrientationListener.class));
-        timerHandler.removeCallbacks(timerRunnable);
         setUpComplete = false;
     }
 
@@ -306,18 +315,43 @@ public class CameraActivity extends AbstractActivity {
         switch (OrientationListener.CALIBRATION_STATUS) {
         case OrientationListener.CALIBRATION_OK:
             this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_okay);
+            AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+            anim.setDuration(3000);
+            anim.setStartOffset(3000);
+            anim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    btnCStatus.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    btnCStatus.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            this.btnCStatus.startAnimation(anim);
             this.btnCStatus.setClickable(false);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ALL:
             this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_fail);
+            this.btnCStatus.setVisibility(View.VISIBLE);
             this.btnCStatus.setClickable(true);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER:
-            this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_warning);
+            this.btnCStatus
+                    .setImageResource(R.drawable.ic_sensorstatus_warning);
+            this.btnCStatus.setVisibility(View.VISIBLE);
             this.btnCStatus.setClickable(true);
             break;
         case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER:
-            this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_warning);
+            this.btnCStatus
+                    .setImageResource(R.drawable.ic_sensorstatus_warning);
+            this.btnCStatus.setVisibility(View.VISIBLE);
             this.btnCStatus.setClickable(true);
             break;
         }
@@ -371,8 +405,8 @@ public class CameraActivity extends AbstractActivity {
      *            The image-button to use.
      */
     private void setListener(ImageButton button) {
-        pictureHandler =
-                new CapturePictureHandler(CameraActivity.this, cameraPreview);
+        pictureHandler = new CapturePictureHandler(CameraActivity.this,
+                cameraPreview);
         pictureHandler.setGallery(currentMappingMode == MODE_GALLERY);
         pictureHandler.setGalleryCallback(new Callback<Exception>() {
             @Override
@@ -469,8 +503,7 @@ public class CameraActivity extends AbstractActivity {
     protected void onGallerySuccess() {
         mCallbackView.animate().alpha(1).setDuration(VIBRATION_DURATION)
                 .setInterpolator(new TimeInterpolator() {
-                    private TimeInterpolator ti =
-                            new AccelerateDecelerateInterpolator();
+                    private TimeInterpolator ti = new AccelerateDecelerateInterpolator();
 
                     @Override
                     public float getInterpolation(float input) {
@@ -557,7 +590,7 @@ public class CameraActivity extends AbstractActivity {
                                 dialog.cancel();
                             }
                         })
-                        .setNeutralButton(R.string.ignore,
+                .setNeutralButton(R.string.ignore,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 ignore = true;

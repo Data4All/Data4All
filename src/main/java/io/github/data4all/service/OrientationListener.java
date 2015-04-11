@@ -28,6 +28,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 
 /**
  * A service for listening for orientation changes. Whenever the sensor changes
@@ -78,6 +79,8 @@ public class OrientationListener extends Service implements SensorEventListener 
     // orientation values
     private float[] orientation = new float[ARRAYLENGTH];
 
+    public final static String BROADCAST_CAMERA = "broadcastToCamera";
+    public final static String INTENT_CAMERA_UPDATE = "update";
     // Calibration needed
     public final static int CALIBRATION_BROKEN_ALL = 300;
     public final static int CALIBRATION_BROKEN_ACCELEROMETER = 200;
@@ -218,6 +221,16 @@ public class OrientationListener extends Service implements SensorEventListener 
             }
         }
         checkAccuracy();
+        /*
+         * Creates a new Intent containing a Uri object
+         * BROADCAST_ACTION is a custom Intent action
+         */
+        Intent localIntent =
+ new Intent(BROADCAST_CAMERA)
+                // Puts the status into the Intent
+                .putExtra(INTENT_CAMERA_UPDATE, true);
+        // Broadcasts the Intent to receivers in this app.
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
     private void checkAccuracy() {
