@@ -15,7 +15,7 @@
             android:gravity="center"
             android:paddingRight="10dp"
             android:paddingTop="150dp"
-            android:text="Ansicht\nwechseln"
+            android:text="@string/help_mapviewactivity_changecard"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
             android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingTop="150dp"
-            android:text="Karte\nzentrieren"
+            android:text="@string/help_mapviewactivity_centermap"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="Willkommen\nbei\nData4All"
+            android:text="@string/help_mapviewactivity_welcome"
             android:textSize="35sp"
             android:textStyle="bold" />
 
@@ -45,9 +45,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
             android:paddingBottom="30dp"
-            android:text="Markiere einen Punkt ->"
+            android:paddingRight="65dp"
+            android:text="@string/help_mapviewactivity_poi"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -55,9 +56,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id1"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
             android:paddingBottom="55dp"
-            android:text="Markiere auf einem Foto ->"
+            android:paddingRight="65dp"
+            android:text="@string/help_mapviewactivity_takepicture"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -66,14 +68,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <TextView
+        <ImageView
             android:id="@+id/help_id2"
             style="?android:attr/textAppearanceLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@drawable/cam_border"
-            android:text="Bild, welches einen\nFinger auf dem Bildschirm\nzeigt, der vom linken\nRand nach rechts wischt" />
+            android:contentDescription="@string/help_mapviewactivity_description_edgeswipe"
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -82,7 +85,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:paddingBottom="5dp"
-            android:text="Betrachte noch nicht getaggte\nBilder in der Galerie"
+            android:text="@string/help_mapviewactivity_gallery"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
