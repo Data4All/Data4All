@@ -445,21 +445,21 @@
     <string name="description_leisure_fishing">Angelstelle bzw. Angelgewässer </string>
 
     <!-- description classified values vending -->
-    <string name="description_vending_cigarettes">A cigarette machine is a vending machine that dispenses packets of cigarettes.</string>
-    <string name="description_vending_parking_tickets">A machine selling tickets for parking.</string>
-    <string name="description_vending_excrement_bags">Dispensing bags to collect dog poop.</string>
-    <string name="description_vending_public_transport_tickets">A machine for bus, tram, train... tickets</string>
-    <string name="description_vending_drinks">Soda vending machine: Soft drinks, water, ice tea</string>
-    <string name="description_vending_sweets">Sweets!</string>
-    <string name="description_vending_parcel_pickup">You can pick up your parcels there.</string>
-    <string name="description_vending_parcel_mail_in">You can drop off your parcels there.</string>
-    <string name="description_vending_condoms">Simple condoms selling point</string>
-    <string name="description_vending_stamps">A stamp selling machine.</string>
-    <string name="description_vending_news_paper">Newspapers</string>
-    <string name="description_vending_bicycle_tube">Vending machine for bicycle tubes.</string>
-    <string name="description_vending_food"></string>
-    <string name="description_vending_fuel">A vending machine dispensing motor fuel.</string>
-    <string name="description_vending_yes">A generic vending machine.</string>
+    <string name="description_vending_cigarettes">Zigarettenautomat</string>
+    <string name="description_vending_parking_tickets">Parkscheinautomat</string>
+    <string name="description_vending_excrement_bags">Hundetütenspender</string>
+    <string name="description_vending_public_transport_tickets">ÖPNV Fahrkarten (DB Automat)</string>
+    <string name="description_vending_drinks">Getränkeautomat: Soft drinks, Wasser, Eistee ... Für spezielle Getränke kombinierbar mit: drink=*</string>
+    <string name="description_vending_sweets">Süßigkeitenautomat</string>
+    <string name="description_vending_parcel_pickup">Du kannst Pakete dort abholen. Häufige Kombination: vending=parcel_pickup;parcel_mail_in </string>
+    <string name="description_vending_parcel_mail_in">Du kannst Pakete dort abgeben. Häufige Kombination: vending=parcel_pickup;parcel_mail_in</string>
+    <string name="description_vending_condoms">Kondomautomat</string>
+    <string name="description_vending_stamps">Briefmarkenautomat</string>
+    <string name="description_vending_news_paper">Zeitungsautomat</string>
+    <string name="description_vending_bicycle_tube">Fahrradschlauchautomat auch "Schlauchomat" genannt</string>
+    <string name="description_vending_food">Essenautomat, Snackautomat</string>
+    <string name="description_vending_fuel">Automat für Treibstoff (benutzen mit: amenity=fuel, vending_machine=yes, vending=fuel).</string>
+    <string name="description_vending_yes">Ein nicht weiter spezifizierter Automat.</string>
 
     <!-- description classified values shop -->
     <string name="description_shop_supermarket">Supermarkt</string>
