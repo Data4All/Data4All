@@ -41,7 +41,6 @@
                 android:layout_below="@id/upload_gpstracks_text"
                 android:layout_toRightOf="@id/upload_upload_text"
                 android:text="" />
-            
         </RelativeLayout>
 
         <ProgressBar
@@ -52,6 +51,18 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/upload_count_layout"
+            android:layout_margin="20dp"
+            android:indeterminate="false"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/upload_progress_elements"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/upload_progress"
             android:layout_margin="20dp"
             android:indeterminate="false"
             android:visibility="invisible" />

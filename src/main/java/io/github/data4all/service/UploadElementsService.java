@@ -55,7 +55,8 @@ public class UploadElementsService extends IntentService {
     /**
      * Logger.
      */
-    private static final String TAG = UploadElementsService.class.getSimpleName();
+    private static final String TAG = UploadElementsService.class
+            .getSimpleName();
 
     /**
      * Key/Message for handling intent extras.

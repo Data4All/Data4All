@@ -20,25 +20,13 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.User;
-import io.github.data4all.task.NewUploadTracksTask;
-import io.github.data4all.task.TrackParserTask;
-import io.github.data4all.task.UploadTracksTask;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
-import io.github.data4all.util.upload.ChangesetUtil;
-import io.github.data4all.util.upload.CloseableCloseRequest;
-import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.GpxTrackUtil;
 import io.github.data4all.util.upload.HttpCloseable;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
-
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -162,10 +150,12 @@ public class UploadTracksService extends IntentService {
                 // Log.d(TAG, "xml: " + gpxTrack.replaceAll("\n", ""));
 
                 if (!stopNext) {
-                    String track = NewUploadTracksTask.testTrack();
+                    String track = GpxTrackUtil.longTrack();
                     String description = "dies ist die beschreibung";
                     String tags = "tag1, tag2, tag3, tag4";
                     String visibility = "public";
+                    currentMaxProgress = track.length();
+                    send(receiver, MAX_PROGRESS, currentMaxProgress);
                     CloseableUpload upload;
 
                     upload =
@@ -175,6 +165,10 @@ public class UploadTracksService extends IntentService {
                 }
 
                 // }
+            }
+            if (!stopNext) {
+                this.stopForeground(SUCCESS);
+                send(receiver, SUCCESS, (Bundle) null);
             }
         } catch (OsmException e) {
             Log.e(TAG, "", e);

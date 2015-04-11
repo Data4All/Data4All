@@ -165,17 +165,14 @@ public final class ChangesetUtil {
      * Checks the number of elements in the database and returns true if is a
      * upload necessary.
      * 
-     * @param context the context
+     * @param context
+     *            the context
      * @return true, if upload is necessary
      */
     public static boolean needToUpload(Context context) {
         final DataBaseHandler db = new DataBaseHandler(context);
         final List<AbstractDataElement> elems = db.getAllDataElements();
-        if (!elems.isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
+        return !elems.isEmpty();
     }
 
     /**

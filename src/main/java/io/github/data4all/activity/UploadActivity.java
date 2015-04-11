@@ -50,7 +50,8 @@ import android.widget.Toast;
 public class UploadActivity extends AbstractActivity {
 
     public static final String TAG = UploadActivity.class.getSimpleName();
-    private ProgressBar progress;
+    private ProgressBar progressElements;
+    private ProgressBar progressTracks;
     private View indetermineProgress;
     private TextView countDataElementsText;
     private TextView countGPSTracksText;
@@ -69,7 +70,8 @@ public class UploadActivity extends AbstractActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
-        progress = (ProgressBar) findViewById(R.id.upload_progress);
+        progressElements = (ProgressBar) findViewById(R.id.upload_progress);
+        progressTracks = (ProgressBar) findViewById(R.id.upload_progress);
         indetermineProgress = findViewById(R.id.upload_indetermine_progress);
         countDataElementsText = (TextView) findViewById(R.id.upload_count_text);
         countGPSTracksText =
@@ -125,7 +127,7 @@ public class UploadActivity extends AbstractActivity {
             this.cancleButton.setEnabled(true);
             this.cancleButton.setVisibility(View.VISIBLE);
         } else {
-            this.progress.setVisibility(View.INVISIBLE);
+            this.progressElements.setVisibility(View.INVISIBLE);
             this.indetermineProgress.setVisibility(View.INVISIBLE);
 
             this.cancleButton.setEnabled(false);
@@ -196,20 +198,26 @@ public class UploadActivity extends AbstractActivity {
      */
     public void onClickCancle(View v) {
         if (v.getId() == R.id.upload_cancle_button) {
-            final Intent intentUploadElements = new Intent(this, UploadElementsService.class);
+            final Intent intentUploadElements =
+                    new Intent(this, UploadElementsService.class);
 
-            intentUploadElements.putExtra(UploadElementsService.ACTION, UploadElementsService.CANCLE);
-            intentUploadElements.putExtra(UploadElementsService.HANDLER, new MyReceiver());
+            intentUploadElements.putExtra(UploadElementsService.ACTION,
+                    UploadElementsService.CANCLE);
+            intentUploadElements.putExtra(UploadElementsService.HANDLER,
+                    new MyReceiver());
 
             startService(intentUploadElements);
-            
-            final Intent intentUploadTracks = new Intent(this, UploadTracksService.class);
 
-            intentUploadTracks.putExtra(UploadTracksService.ACTION, UploadTracksService.CANCLE);
-            intentUploadTracks.putExtra(UploadTracksService.HANDLER, new MyReceiver());
+            final Intent intentUploadTracks =
+                    new Intent(this, UploadTracksService.class);
+
+            intentUploadTracks.putExtra(UploadTracksService.ACTION,
+                    UploadTracksService.CANCLE);
+            intentUploadTracks.putExtra(UploadTracksService.HANDLER,
+                    new MyReceiver());
 
             startService(intentUploadTracks);
-            
+
             this.showProgress(false);
         }
     }
@@ -296,14 +304,65 @@ public class UploadActivity extends AbstractActivity {
                         "data=" + resultData.toString());
             }
             if (resultCode == UploadElementsService.CURRENT_PROGRESS) {
-                progress.setProgress(resultData.getInt(UploadElementsService.MESSAGE));
+                progressElements.setProgress(resultData
+                        .getInt(UploadElementsService.MESSAGE));
             } else if (resultCode == UploadElementsService.MAX_PROGRESS) {
-                progress.setMax(resultData.getInt(UploadElementsService.MESSAGE));
-                progress.setProgress(0);
-                progress.setVisibility(View.VISIBLE);
+                progressElements.setMax(resultData
+                        .getInt(UploadElementsService.MESSAGE));
+                progressElements.setProgress(0);
+                progressElements.setVisibility(View.VISIBLE);
                 indetermineProgress.setVisibility(View.INVISIBLE);
             } else if (resultCode == UploadElementsService.ERROR) {
-                final String msg = resultData.getString(UploadElementsService.MESSAGE);
+                final String msg =
+                        resultData.getString(UploadElementsService.MESSAGE);
+                UploadActivity.this.onError(msg);
+            } else if (resultCode == UploadElementsService.SUCCESS) {
+                UploadActivity.this.onSuccess();
+            }
+        }
+    }
+
+    /**
+     * IPC to receive a callback result from the UploadService.
+     * 
+     * @author tbrose
+     */
+    private class MyTracksReceiver extends ResultReceiver {
+        /**
+         * Constructs a new MyReceiver with an new Handler.
+         * 
+         * @see Handler
+         */
+        public MyTracksReceiver() {
+            super(new Handler());
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see android.os.ResultReceiver#onReceiveResult(int,
+         * android.os.Bundle)
+         */
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (resultData == null) {
+                Log.v("UploadActivity$MyHandler", "data=null");
+            } else {
+                Log.v("UploadActivity$MyHandler",
+                        "data=" + resultData.toString());
+            }
+            if (resultCode == UploadElementsService.CURRENT_PROGRESS) {
+                progressTracks.setProgress(resultData
+                        .getInt(UploadElementsService.MESSAGE));
+            } else if (resultCode == UploadElementsService.MAX_PROGRESS) {
+                progressTracks.setMax(resultData
+                        .getInt(UploadElementsService.MESSAGE));
+                progressTracks.setProgress(0);
+                progressTracks.setVisibility(View.VISIBLE);
+                indetermineProgress.setVisibility(View.INVISIBLE);
+            } else if (resultCode == UploadElementsService.ERROR) {
+                final String msg =
+                        resultData.getString(UploadElementsService.MESSAGE);
                 UploadActivity.this.onError(msg);
             } else if (resultCode == UploadElementsService.SUCCESS) {
                 UploadActivity.this.onSuccess();
