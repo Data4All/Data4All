@@ -240,7 +240,7 @@ public class CameraActivity extends AbstractActivity {
 
         mSwipeListManager =
                 new SwipeListManager(this, Arrays.asList(
-                        R.drawable.ic_cam_single, R.drawable.ic_cam_multi));
+                        R.drawable.ic_cammodus_single, R.drawable.ic_cammodus_single));
         mSwipeListManager.setContent(currentMappingMode);
 
         mCallbackView = findViewById(R.id.cam_callback);
