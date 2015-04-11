@@ -137,7 +137,7 @@ public class HelpOverlay {
                 }
             });
 
-            helpView.setAlpha(0);
+      helpView.setAlpha(0);
             helpView.setVisibility(View.GONE);
 
             ViewGroup rootView =
@@ -166,9 +166,10 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Returns whether or not the inflated layout is a multipage layout.
      * 
-     * @return
+     * @return true if the inflated layout is a multipage layout, false
+     *         otherwise
      */
     private boolean isMultiViewOverlay() {
         if (helpView instanceof ViewGroup) {
@@ -186,7 +187,9 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * If the layout is a multipage layout, the next page is shown. If the
+     * current page is the last page, the layout will be hidden. If the layout
+     * is not a multipage layout, the layout will be hidden.
      */
     private void next() {
         Log.d(TAG, "next(): currentChild=" + currentChild + " childCount="
@@ -223,7 +226,9 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Returns whether a help overlay resource is present.
+     * 
+     * @return whether a help overlay resource is present
      */
     public boolean hasHelpOverlay() {
         boolean result = resourceId != 0;
@@ -232,7 +237,9 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Returns whether the help overlay was previously shown.
+     * 
+     * @return whether the help overlay was previously shown
      */
     public boolean wasShown() {
         boolean result = prefs.getBoolean(getPrefKey(), false);
@@ -241,7 +248,8 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Show the first page of the multipage overlay or the whole overlay. If the
+     * overlay is already visible, nothing is done.
      */
     public void show() {
         if (!isShown()) {
@@ -256,7 +264,9 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Show the first page of the multipage overlay or the whole overlay, if is
+     * was not previously shown. If the overlay is already visible, nothing is
+     * done.
      */
     public void showOnFirstTime() {
         if (this.hasHelpOverlay() && !this.wasShown()) {
@@ -265,7 +275,7 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Hide the whole overlay. If the overlay is not visible, nothing is done.
      */
     public void hide() {
         if (helpView != null && isShown()) {
@@ -282,16 +292,20 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Builds the preference key for the current activity that indicates, if the
+     * overlay was previously shown.
      * 
-     * @return
+     * @return The activity-qualified preference key
      */
     private String getPrefKey() {
         return PREF_KEY_WAS_SHOWN_PREFIX + className;
     }
 
     /**
-     * TODO
+     * Set the shown status of this overlay.
+     * 
+     * @param isShown
+     *            The new status
      */
     private synchronized void setShown(boolean isShown) {
         Log.d(TAG, "setShown(" + isShown + ")");
@@ -299,7 +313,9 @@ public class HelpOverlay {
     }
 
     /**
-     * TODO
+     * Get the shown status of this overlay.
+     * 
+     * @return The current status
      */
     private synchronized boolean isShown() {
         return isShown;
