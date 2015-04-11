@@ -16,7 +16,7 @@
     </string-array>
     <string-array name="pref_moving_animation_option">
         <item name="move">Move map</item>
-        <item name="animate">Animate map</item>
+        <item name="animate">Move object</item>
     </string-array>
 
 </resources>

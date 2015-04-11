@@ -71,7 +71,7 @@ public class ButtonRotationListener extends OrientationEventListener {
     public void onOrientationChanged(int orientation) {
         final int newOrientation = ((orientation + 45) % 360) / 90;
         if (newOrientation != currentOrientation) {
-            Log.d("BLUB", "New orientation: " + newOrientation);
+            Log.d("ButtonRotationListener", "New orientation: " + newOrientation);
             rotate(currentOrientation, newOrientation);
             currentOrientation = newOrientation;
         }
