@@ -64,7 +64,6 @@ public class TrackUtil {
             Log.d(TAG, "Update track with id: " + track.getID());
             db.close();
         }
-        Log.e(TAG, "Track was null");
     }
 
     /**

@@ -110,7 +110,7 @@ public class GPSservice extends Service implements LocationListener {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
 
-        if(track != null && !track.isFinished()) {
+        if (track != null && !track.isFinished()) {
             trackUtil.updateTrack(track);
         }
 
@@ -133,13 +133,14 @@ public class GPSservice extends Service implements LocationListener {
         }
 
         if (track != null) {
-            
+
             final Location tp = Optimizer.currentBestLoc();
 
             final TrackPoint last = track.getLastTrackPoint();
 
             Location lastKnownLoc = new Location("lastTrackPoint");
-            if(last != null){                
+
+            if (last != null) {
                 lastKnownLoc.setAltitude(last.getAlt());
                 lastKnownLoc.setLatitude(last.getLat());
                 lastKnownLoc.setLongitude(last.getLon());
@@ -148,42 +149,14 @@ public class GPSservice extends Service implements LocationListener {
             final float distanceCovered = lastKnownLoc.distanceTo(tp);
 
             // check if new Location is already stored
-            if (last != null && tp != null && !this.sameTrackPoints(last, tp)
-                    && distanceCovered >= 5.0) {
-                //track.addTrackPoint(tp);
+            if (distanceCovered >= 5.0) {
+                // track.addTrackPoint(tp);
                 trackUtil.addPointToTrack(track, tp);
-                // After ten trackpoints updateDatabase
-                if ((trackUtil.getTrackSize(track) % 10) == 0) {
-                    Log.d(TAG, "+10 tp updateTrack()");
-                    trackUtil.updateTrack(track);
-                }
+
+                trackUtil.updateTrack(track);
+
             }
         }
-    }
-
-    /**
-     * Easy comparison of two TrackPoints. Only compares longitude and latitude.
-     * 
-     * @param point1
-     *            The first trackpoint
-     * @param point2
-     *            The second trackpoint
-     * @return true if lon and lat of the trackpoints are the same, else false
-     */
-    private boolean sameTrackPoints(TrackPoint point1, Location loc) {
-        final TrackPoint point2 = new TrackPoint(loc);
-
-        final double epsilon = 0.0000001;
-
-        double latDiff = Math.abs(point1.getLat() - point2.getLat());
-        double lonDiff = Math.abs(point1.getLon() - point2.getLon());
-
-        if (latDiff < epsilon && lonDiff < epsilon) {
-            return true;
-        }
-
-        return false;
-
     }
 
     /*
@@ -220,7 +193,7 @@ public class GPSservice extends Service implements LocationListener {
         lmgr.removeUpdates(this);
         trackUtil.updateTrack(track);
         trackUtil.deleteEmptyTracks();
-        
+
         Toast.makeText(getBaseContext(), R.string.noLocationFound,
                 Toast.LENGTH_LONG).show();
     }

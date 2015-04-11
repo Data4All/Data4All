@@ -152,7 +152,6 @@ public class Track implements Parcelable {
                 Log.d(TAG, "Added TrackPoint: " + location.toString());
             }
         }
-        Log.e(TAG, "Can not add TrackPoint because of finished Track");
     }
 
     public List<TrackPoint> getTrackPoints() {
