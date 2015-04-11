@@ -180,6 +180,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             });
         }*/
+
         if(element.getTags().isEmpty()){
         	addClassifiedTag();
         }
@@ -308,6 +309,22 @@ public class ResultViewActivity extends AbstractActivity implements
           });
           alertDialog.setCancelable(false);
           alert = alertDialog.create();
+          alert.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				 if (keyCode == KeyEvent.KEYCODE_BACK) {
+					 Log.i(TAG, element.getTags().toString());
+					 if(element.getTags().isEmpty()){
+						 return false; 
+					 } else {
+					 		alert.dismiss();	                    
+		                    return true;
+					 }	
+	                }
+	                return true;
+			}
+		});
           alert.getWindow().setBackgroundDrawable(
                   new ColorDrawable(android.graphics.Color.TRANSPARENT));
           alert.show();    	
@@ -325,6 +342,7 @@ public class ResultViewActivity extends AbstractActivity implements
         final Button resultButton = (Button) this
                 .findViewById(R.id.buttonClassifiedTag);
         resultButton.setOnClickListener(this);
+        resultButton.setText(R.string.SelectTag);
         for (Entry<Tag,String> entry : element.getTags().entrySet()) {
             if(entry.getKey() != null){
             final Tag tagKey = entry.getKey();
