@@ -16,6 +16,7 @@
 package io.github.data4all.handler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -1267,14 +1268,37 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     public int updateGPSTrack(Track track) {
 
         final SQLiteDatabase db = getWritableDatabase();
-
         final ContentValues values = new ContentValues();
+        
+        int count = 0;
+        
+        final List<Long> currentTrackPointIDs = new ArrayList<Long>();
+        
+        for(TrackPoint point : track.getTrackPoints()){
+            if(point.getID() != -1){                
+                currentTrackPointIDs.add(point.getID());
+            }
+        }
+        
+        final List<Long> addedTrackPointIDs = this.updateTrackPoints(track.getTrackPoints());
+        
+        currentTrackPointIDs.addAll(addedTrackPointIDs);
+        Collections.sort(currentTrackPointIDs);
+        
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("trackpointarray", new JSONArray(currentTrackPointIDs));
+        } catch (JSONException e) {
+            // ignore exception
+        }
+        final String arrayList = json.toString();
 
         values.put(KEY_TRACKNAME, track.getTrackName());
 
-        values.put(FLAG_FINISHED, track.isFinished() ? 1 : 0);
+        values.put(KEY_TRACKPOINTS, arrayList);
 
-        int count = 0;
+        values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
+
 
         if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
             count += db.update(TABLE_GPSTRACK, values, KEY_INCID + "=?",
@@ -1283,7 +1307,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             db.insert(TABLE_GPSTRACK, null, values);
         }
 
-        count += this.updateTrackPoints(track.getTrackPoints());
 
         return count;
     }
@@ -1461,12 +1484,12 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            a list of {@link TrackPoint}s that should be updated.
      * @return the number of rows that have been updated.
      */
-    public int updateTrackPoints(List<TrackPoint> trackPoints) {
+    public List<Long> updateTrackPoints(List<TrackPoint> trackPoints) {
         final SQLiteDatabase db = getWritableDatabase();
 
         final ContentValues values = new ContentValues();
 
-        int count = 0;
+        List<Long> trackPointIDs = new ArrayList<Long>();
 
         for (TrackPoint point : trackPoints) {
             values.put(KEY_LAT, point.getLat());
@@ -1476,13 +1499,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
             if (this.checkIfRecordExists(TABLE_TRACKPOINT, KEY_INCID,
                     point.getID())) {
-                count += db.update(TABLE_TRACKPOINT, values, KEY_INCID + "=?",
+                db.update(TABLE_TRACKPOINT, values, KEY_INCID + "=?",
                         new String[] { String.valueOf(point.getID()) });
             } else {
-                db.insert(TABLE_TRACKPOINT, null, values);
+                long insertedID = db.insert(TABLE_TRACKPOINT, null, values);
+                trackPointIDs.add(insertedID);
             }
         }
-        return count;
+        return trackPointIDs;
     }
 
     /**
