@@ -17,6 +17,7 @@ package io.github.data4all.model.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
@@ -25,11 +26,13 @@ import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.MathUtil;
+import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.bonuspack.overlays.Polygon;
@@ -159,46 +162,6 @@ public class MapPolygon extends Polygon {
                     activity);
         } else {
             mInfoWindow = null;
-        }
-        this.setInfo();
-    }
-
-    /**
-     * Set the info of the MapPolygon for the InfoWindow.
-     */
-    public void setInfo() {
-        if (!element.getTags().keySet().isEmpty()
-                && !element.getTags().values().isEmpty()) {
-            Log.i(TAG, element.getTags().toString());
-            final Tag tag = (Tag) element.getTags().keySet().toArray()[0];
-            final String key = tag.getKey();
-            final String value = element.getTags().get(tag);
-            Log.i(TAG, tag.toString());
-            setTitle(activity.getString(tag.getNameRessource()));
-            setSubDescription(this.getLocalizedName(activity, key, value));
-        }
-    }
-
-    /**
-     * Get the localized name of the element to show in the InfoWindow.
-     * 
-     * @param context
-     *            the context of the application
-     * @param key
-     *            the tag key
-     * @param value
-     *            the tag value
-     * @return the localized name
-     */
-    public String getLocalizedName(Context context, String key, String value) {
-        final Resources resources = context.getResources();
-        final String s = "name_" + key + "_" + value;
-        final int id = resources.getIdentifier(s.replace(":", "_"), "string",
-                context.getPackageName());
-        if (id == 0) {
-            return null;
-        } else {
-            return resources.getString(id);
         }
     }
 
