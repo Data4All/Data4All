@@ -146,7 +146,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final String CREATE_GPSTRACK_TABLE = "CREATE TABLE " + TABLE_GPSTRACK
                 + " (" + KEY_INCID + " INTEGER PRIMARY KEY," + KEY_TRACKNAME
                 + " TEXT," + KEY_TRACKPOINTS + " TEXT," + FLAG_FINISHED
-                + " INTEGER " + ")";
+                + " INTEGER" + ")";
         final String CREATE_TRACKPOINT_TABLE = "CREATE TABLE "
                 + TABLE_TRACKPOINT + " (" + KEY_INCID + " INTEGER PRIMARY KEY,"
                 + KEY_LAT + " REAL," + KEY_LON + " REAL," + KEY_ALT + " REAL,"
@@ -1151,8 +1151,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
         values.put(KEY_TRACKNAME, track.getTrackName());
 
-        values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
-
         final List<Long> trackPointIDs = this.createTrackPoints(track
                 .getTrackPoints());
 
@@ -1165,6 +1163,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final String arrayList = json.toString();
 
         values.put(KEY_TRACKPOINTS, arrayList);
+        values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
 
         final long rowID = db.insert(TABLE_GPSTRACK, null, values);
         Log.d(TAG, "New Track with name: " + track.getTrackName() + " created.");
@@ -1303,11 +1302,11 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GPSTRACK,
                 null);
 
-        final Track track = new Track();
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
 
+                final Track track = new Track();
                 final List<Long> trackPointIDs = new ArrayList<Long>();
                 try {
                     final JSONObject json = new JSONObject(cursor.getString(2));
