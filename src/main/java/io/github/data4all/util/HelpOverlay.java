@@ -15,6 +15,8 @@
  */
 package io.github.data4all.util;
 
+import java.util.Locale;
+
 import io.github.data4all.logger.Log;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -47,6 +49,8 @@ public class HelpOverlay {
      */
     private static final String PREF_KEY_WAS_SHOWN_PREFIX =
             "pref_helpoverlay_wasshown_";
+
+    private static final int ANIMATION_DURATION = 500;
 
     /**
      * The log tag of this class.
@@ -86,7 +90,7 @@ public class HelpOverlay {
     /**
      * Whether or not the layout is currently shown.
      */
-    private boolean isShown;
+    private boolean shown;
 
     /**
      * Whether or not the overlay is a multipage layout.
@@ -113,7 +117,8 @@ public class HelpOverlay {
      */
     public HelpOverlay(Activity activity) {
         this.activity = activity;
-        this.className = activity.getClass().getSimpleName().toLowerCase();
+        this.className =
+                activity.getClass().getSimpleName().toLowerCase(Locale.ENGLISH);
         this.resourceId =
                 activity.getResources().getIdentifier("help_" + className,
                         "layout", activity.getPackageName());
@@ -125,7 +130,7 @@ public class HelpOverlay {
      * right page of a multipage layout.
      */
     private void setupView() {
-        if (hasHelpOverlay() && helpView == null) {
+        if (this.hasHelpOverlay() && helpView == null) {
             helpView =
                     activity.getLayoutInflater().inflate(this.resourceId, null);
 
@@ -137,10 +142,10 @@ public class HelpOverlay {
                 }
             });
 
-      helpView.setAlpha(0);
+            helpView.setAlpha(0);
             helpView.setVisibility(View.GONE);
 
-            ViewGroup rootView =
+            final ViewGroup rootView =
                     (ViewGroup) activity.getWindow().getDecorView();
 
             rootView.addView(helpView, new LayoutParams(
@@ -148,7 +153,7 @@ public class HelpOverlay {
             helpView.bringToFront();
         }
 
-        if (isMultiViewOverlay()) {
+        if (this.isMultiViewOverlay()) {
             Log.d(TAG, "isMultiViewOverlay(true)");
             multiView = true;
             final ViewGroup group = (ViewGroup) helpView;
@@ -206,7 +211,8 @@ public class HelpOverlay {
                         ((ViewGroup) helpView).getChildAt(currentChild - 1);
 
                 // Hide last
-                last.animate().alpha(0).setDuration(250)
+                last.animate().alpha(0)
+                        .setDuration(ANIMATION_DURATION / (1 + 1))
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
@@ -217,8 +223,9 @@ public class HelpOverlay {
                 // Show next
                 next.setAlpha(0);
                 next.setVisibility(View.VISIBLE);
-                next.animate().alpha(1).setStartDelay(250).setDuration(250)
-                        .start();
+                next.animate().alpha(1)
+                        .setStartDelay(ANIMATION_DURATION / (1 + 1))
+                        .setDuration(ANIMATION_DURATION / (1 + 1)).start();
             }
         } else {
             this.hide();
@@ -231,7 +238,7 @@ public class HelpOverlay {
      * @return whether a help overlay resource is present
      */
     public boolean hasHelpOverlay() {
-        boolean result = resourceId != 0;
+        final boolean result = resourceId != 0;
         Log.d(TAG, "hasHelpOverlay() = " + result);
         return result;
     }
@@ -242,7 +249,7 @@ public class HelpOverlay {
      * @return whether the help overlay was previously shown
      */
     public boolean wasShown() {
-        boolean result = prefs.getBoolean(getPrefKey(), false);
+        final boolean result = prefs.getBoolean(this.getPrefKey(), false);
         Log.d(TAG, "wasShown() = " + result);
         return result;
     }
@@ -252,14 +259,14 @@ public class HelpOverlay {
      * overlay is already visible, nothing is done.
      */
     public void show() {
-        if (!isShown()) {
+        if (!this.isShown()) {
             this.setupView();
             this.setShown(true);
 
             helpView.setVisibility(View.VISIBLE);
-            helpView.animate().alpha(1).setDuration(500).start();
+            helpView.animate().alpha(1).setDuration(ANIMATION_DURATION).start();
 
-            prefs.edit().putBoolean(getPrefKey(), true).commit();
+            prefs.edit().putBoolean(this.getPrefKey(), true).commit();
         }
     }
 
@@ -278,9 +285,9 @@ public class HelpOverlay {
      * Hide the whole overlay. If the overlay is not visible, nothing is done.
      */
     public void hide() {
-        if (helpView != null && isShown()) {
+        if (helpView != null && this.isShown()) {
             currentChild = 0;
-            helpView.animate().alpha(0).setDuration(500)
+            helpView.animate().alpha(0).setDuration(ANIMATION_DURATION)
                     .withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -309,7 +316,7 @@ public class HelpOverlay {
      */
     private synchronized void setShown(boolean isShown) {
         Log.d(TAG, "setShown(" + isShown + ")");
-        this.isShown = isShown;
+        this.shown = isShown;
     }
 
     /**
@@ -318,6 +325,6 @@ public class HelpOverlay {
      * @return The current status
      */
     private synchronized boolean isShown() {
-        return isShown;
+        return shown;
     }
 }
