@@ -3,34 +3,34 @@
 
     <string name="help_mapviewactivity_changecard">Change\nview</string>
     <string name="help_mapviewactivity_centermap">Center\nmap</string>
-    <string name="help_mapviewactivity_welcome">Welcome\nby\nData4All</string>
+    <string name="help_mapviewactivity_welcome">Welcome\nto\nData4All</string>
     <string name="help_mapviewactivity_poi">Mark a point</string>
     <string name="help_mapviewactivity_takepicture">Mark on a photo</string>
     <string name="help_mapviewactivity_gallery">View pictures that are\nnot yet tagged in the gallery</string>
-    <string name="help_mapviewactivity_description_edgeswipe">Bild, welches einen Finger auf dem Bildschirm zeigt, der vom linken Rand nach rechts wischt</string>
+    <string name="help_mapviewactivity_description_edgeswipe">Image, which shows a finger on the screen swiping from the left edge to the right</string>
 
     <string name="help_cameraactivity_gallery">Decide whether you want\nto tag now or later</string>
-    <string name="help_cameraactivity_description_swipe">Bild, welches einen Finger auf dem Bildschirm zeigt, der nach links und rechts wischt</string>
+    <string name="help_cameraactivity_description_swipe">Image, which shows a finger on the screen swiping to the left and to the right</string>
 
     <string name="help_showpictureactivity_draw">Draw the object</string>
     <string name="help_showpictureactivity_deletepoint">Remove unnecessary points</string>
     <string name="help_showpictureactivity_movepoint">Correct wrong points</string>
     <string name="help_showpictureactivity_choosetool">Choose the Tool</string>
-    <string name="help_showpictureactivity_description_draw">Bild, welches einen\nFinger auf dem Bildschirm zeigt, der eine Figur zeichnet</string>
-    <string name="help_showpictureactivity_description_delete">Bild, welches einen\nFinger auf dem Bildschirm zeigt, der einen Punkt anklickt</string>
-    <string name="help_showpictureactivity_description_move">Bild, welches einen\nFinger auf dem Bildschirm zeigt, der einen Punkt verschiebt</string>
+    <string name="help_showpictureactivity_description_draw">Image, which shows a finger on the screen drawing a figure</string>
+    <string name="help_showpictureactivity_description_delete">Image, which shows a finger on the screen clicking a point</string>
+    <string name="help_showpictureactivity_description_move">Image, which shows a finger on the screen moving a point</string>
     
     <string name="help_mappreviewactivity_edit">Edit the object if it is not correct</string>
     <string name="help_mappreviewactivity_move">Move the object</string>
     <string name="help_mappreviewactivity_rotate">Rotate the object</string>
-    <string name="help_mappreviewactivity_zoom">Zoom the object</string>
+    <string name="help_mappreviewactivity_zoom">Scale the object</string>
     <string name="help_mappreviewactivity_accept">Confirm the object</string>
-    <string name="help_mappreviewactivity_description_select">Bild, welches einen\nFinger auf dem Bildschirm\nzeigt, der das\nObjekt anklickt</string>
-    <string name="help_mappreviewactivity_description_move">Bild, welches einen\nFinger auf dem Bildschirm\nzeigt, der verschiebt</string>
-    <string name="help_mappreviewactivity_description_rotate">Bild, welches zwei\nFinger auf dem Bildschirm\nzeigt, die drehen</string>
-    <string name="help_mappreviewactivity_description_zoom">Bild, welches drei\nFinger auf dem Bildschirm\nzeigt, die zoomen</string>
+    <string name="help_mappreviewactivity_description_select">Image, which shows a finger on the screen clicking the object</string>
+    <string name="help_mappreviewactivity_description_move">Image, which shows a finger on the screen displaying a moving gesture</string>
+    <string name="help_mappreviewactivity_description_rotate">Image, which shows two finger on the screen displaying a rotation gesture</string>
+    <string name="help_mappreviewactivity_description_zoom">Image, which shows three finger on the screen displaying a scaling gesture</string>
     
-    <string name="help_resultviewactivity_backtomap">Back\nto\nmap</string>
-    <string name="help_resultviewactivity_backtocam">Back\nto\ncam</string>
+    <string name="help_resultviewactivity_backtomap">Back\nto the\nmap</string>
+    <string name="help_resultviewactivity_backtocam">Back\nto the\ncam</string>
     <string name="help_resultviewactivity_addtags">Change existing tags\nor add new ones</string>
 </resources>
