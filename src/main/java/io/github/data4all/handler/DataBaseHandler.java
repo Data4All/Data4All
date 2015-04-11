@@ -1272,7 +1272,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         values.put(KEY_TRACKNAME, track.getTrackName());
 
-        values.put(FLAG_FINISHED, track.isFinished());
+        values.put(FLAG_FINISHED, track.isFinished() ? 1 : 0);
 
         int count = 0;
 
@@ -1332,8 +1332,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 track.setID(trackID);
                 String trackName = cursor.getString(1);
                 track.setTrackName(trackName);
-                
-                Log.d(TAG, "Track: " + track.toString());
 
                 gpsTracks.add(track);
             }

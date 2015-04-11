@@ -127,14 +127,12 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location loc) {
-        Log.d(TAG, "onLocationChanged()");
         track = trackUtil.getLastTrack();
         if (loc != null) {
             Optimizer.putLoc(loc);
         }
 
         if (track != null) {
-            Log.d(TAG, "Track not null. ID: " + track.getID());
             
             final Location tp = Optimizer.currentBestLoc();
 
@@ -155,12 +153,12 @@ public class GPSservice extends Service implements LocationListener {
                 //track.addTrackPoint(tp);
                 trackUtil.addPointToTrack(track, tp);
                 // After ten trackpoints updateDatabase
-                if ((track.getTrackPoints().size() % 10) == 0) {
+                if ((trackUtil.getTrackSize(track) % 10) == 0) {
+                    Log.d(TAG, "+10 tp updateTrack()");
                     trackUtil.updateTrack(track);
                 }
             }
         }
-        Log.d(TAG, "Track is null in GpsService");
     }
 
     /**

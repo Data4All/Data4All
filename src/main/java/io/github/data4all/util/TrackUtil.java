@@ -82,7 +82,6 @@ public class TrackUtil {
             Log.d(TAG, "Finish and update track in database with id: " + track.getID());
             db.close();
         }
-        Log.e(TAG, "Track was null");
     }
 
     /**
@@ -125,19 +124,22 @@ public class TrackUtil {
         List<Track> allGPSTracks = db.getAllGPSTracks();
         Log.d(TAG, "TrackList" + allGPSTracks.toString());
         if (!allGPSTracks.isEmpty()) {
-            for (int i = db.getGPSTrackCount()-1; i > 0; i--) {
-                Log.d(TAG, "Track flag: " + allGPSTracks.get(i).isFinished());
-                if (!allGPSTracks.get(i).isFinished()) {
-                    Track track = allGPSTracks.get(i);
-                    Log.d("TrackUtility", "Continue on last track with id: " + track.getID());
+            for(Track tr : allGPSTracks) {
+                if(!tr.isFinished()) {
+                    Log.d("TrackUtility", "Continue on last track with id: " + tr.getID());
                     db.close();
-                    return track;
+                    return tr;
                 }
             }
         }
         Log.d("TrackUtility", "There is no last opened track.");
         db.close();
         return null;
+    }
+    
+    public int getTrackSize(Track track) {
+        int size = track.getTrackPoints().size();
+        return size;
     }
 
     /**
