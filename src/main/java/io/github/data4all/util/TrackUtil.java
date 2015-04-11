@@ -28,8 +28,8 @@ public class TrackUtil {
      * @return the track
      */
     public Track startNewTrack() {
-        
-        //TODO check for active tracks and close them
+
+        // TODO check for active tracks and close them
         db = new DataBaseHandler(context.getApplicationContext());
         Track track = new Track();
         db.createGPSTrack(track);
@@ -78,7 +78,9 @@ public class TrackUtil {
             db = new DataBaseHandler(context.getApplicationContext());
             track.finishTrack();
             db.updateGPSTrack(track);
-            Log.d(TAG, "Finish and update track in database with id: " + track.getID());
+            Log.d(TAG,
+                    "Finish and update track in database with id: "
+                            + track.getID());
             db.close();
         }
     }
@@ -111,10 +113,31 @@ public class TrackUtil {
         }
         db.close();
     }
+    
+    /**
+     * Gets the track for a corresponding id and deletes this track from
+     * database.
+     * 
+     * @param id
+     */
+    public void deleteTrack(long id) {
+        DataBaseHandler db = new DataBaseHandler(context.getApplicationContext());
+        Track track = db.getGPSTrack(id);
+        db.deleteGPSTrack(track);
+        db.close();
+    }
+
+    public List<Track> getTracks() {
+        DataBaseHandler db = new DataBaseHandler(
+                context.getApplicationContext());
+        List<Track> trackList = db.getAllGPSTracks();
+        db.close();
+        return trackList;
+    }
 
     /**
-     * Returns the last opened and not finished track or null if there
-     * are no opened tracks
+     * Returns the last opened and not finished track or null if there are no
+     * opened tracks
      * 
      * @return last opened track or a new track
      */
@@ -123,9 +146,10 @@ public class TrackUtil {
         List<Track> allGPSTracks = db.getAllGPSTracks();
         Log.d(TAG, "TrackList" + allGPSTracks.toString());
         if (!allGPSTracks.isEmpty()) {
-            for(Track tr : allGPSTracks) {
-                if(!tr.isFinished()) {
-                    Log.d("TrackUtility", "Continue on last track with id: " + tr.getID());
+            for (Track tr : allGPSTracks) {
+                if (!tr.isFinished()) {
+                    Log.d("TrackUtility", "Continue on last track with id: "
+                            + tr.getID());
                     db.close();
                     return tr;
                 }
@@ -135,7 +159,7 @@ public class TrackUtil {
         db.close();
         return null;
     }
-    
+
     public int getTrackSize(Track track) {
         int size = track.getTrackPoints().size();
         return size;

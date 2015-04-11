@@ -1186,7 +1186,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Track track = new Track();
 
         final Cursor cursor = db.query(TABLE_GPSTRACK, new String[] {
-                KEY_INCID, KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_INCID + "=?",
+                KEY_INCID, KEY_TRACKNAME, KEY_TRACKPOINTS, FLAG_FINISHED, }, KEY_INCID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
