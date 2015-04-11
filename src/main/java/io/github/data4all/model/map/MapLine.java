@@ -370,7 +370,7 @@ public class MapLine extends Polyline {
         }
         // set the list with the changed points
         if (MapUtil.getBoundingBoxForPointList(geoPointList)
-                .getDiagonalLengthInMeters() < 100 || scaleFactor < 1) {
+                .getDiagonalLengthInMeters() < 250 || scaleFactor < 1) {
             super.setPoints(geoPointList);
             mapView.invalidate();
         }
