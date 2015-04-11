@@ -26,31 +26,90 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
 /**
- * TODO
+ * This class supports a full automatic help overlay for activities. The layout
+ * name needs to be 'help_' followed by the lower case name of the activity. <br/>
+ * 
+ * If the file does not exists, the overlay cannot be shown. <br/>
+ * 
+ * If the layout-parent is a ViewGroup and all its children are also ViewGroups,
+ * the layout is interpreted as a multipage-page layout and therefore only one
+ * child is shown at the same time.<br/>
+ * 
+ * If the layout is a multipage-layout the next page is shown on touch,
+ * otherwise the layout hides itself. After the last page of the
+ * multipage-layout the layout hides itself on touch.
  * 
  * @author tbrose
  */
 public class HelpOverlay {
+    /**
+     * The prefix for the preference for saving the shown-state.
+     */
     private static final String PREF_KEY_WAS_SHOWN_PREFIX =
             "pref_helpoverlay_wasshown_";
 
+    /**
+     * The log tag of this class.
+     */
     private static final String TAG = HelpOverlay.class.getSimpleName();
 
+    /**
+     * The background color of the overlay.
+     */
     private static final int BACKGROUND_COLOR = Color.parseColor("#77557777");
 
+    /**
+     * The activity to load and show the overlay for.
+     */
     private final Activity activity;
+
+    /**
+     * The lower case name of the activity.
+     */
     private final String className;
+
+    /**
+     * The resource id of the overlay layout or {@code 0} if there is none.
+     */
     private final int resourceId;
+
+    /**
+     * The View of the overlay layout.
+     */
     private View helpView;
+
+    /**
+     * The preferences of the application for the shown-state.
+     */
     private SharedPreferences prefs;
+
+    /**
+     * Whether or not the layout is currently shown.
+     */
     private boolean isShown;
 
+    /**
+     * Whether or not the overlay is a multipage layout.
+     */
     private boolean multiView;
+
+    /**
+     * The current visible child of the multipage layout. Unused, if the layout
+     * is not a multipage layout.
+     */
     private int currentChild;
+
+    /**
+     * The number of pages in the multipage layout. Unused, if the layout is not
+     * a multipage layout.
+     */
     private int childCount;
 
     /**
-     * TODO
+     * Constructs a new OverlayHelper for the given activity.
+     * 
+     * @param activity
+     *            The activity to show the overlay for
      */
     public HelpOverlay(Activity activity) {
         this.activity = activity;
@@ -62,7 +121,8 @@ public class HelpOverlay {
     }
 
     /**
-     * Inflate the view, if it exists and add the OnClickListener.
+     * Inflate the view, if it exists, add the OnClickListener and setup the
+     * right page of a multipage layout.
      */
     private void setupView() {
         if (hasHelpOverlay() && helpView == null) {
