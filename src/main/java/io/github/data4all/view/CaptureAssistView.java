@@ -311,6 +311,10 @@ public class CaptureAssistView extends View {
      * @author vkochno & burghardt
      */
     public boolean overHorizont(Point point) {
+        if (point.getX() < 0 || point.getX() > mMeasuredWidth
+                || point.getY() < 0 || point.getY() > mMeasuredHeight) {
+            return true;
+        }
         if (bitmap == null) {
             this.setDrawingCacheEnabled(true);
             bitmap = Bitmap.createBitmap(this.getDrawingCache());
@@ -319,17 +323,15 @@ public class CaptureAssistView extends View {
         if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT) {
             return false;
         }
-        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint.getColor()){
+        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint
+                .getColor()) {
             return false;
         }
         return true;
     }
 
-
-
     public boolean isSkylook() {
         return skylook;
     }
-
 
 }
