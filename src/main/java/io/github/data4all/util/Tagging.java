@@ -237,11 +237,11 @@ public class Tagging {
      * @param res The Ressource
      * @return The Array with the String of the ClassifiedValues 
      */
-    public static String[] ClassifiedValueList(List<ClassifiedValue> list,
+    public static List<String> ClassifiedValueList(List<ClassifiedValue> list,
             Resources res) {
-        String[] listValue = new String[list.size()];
+        List<String> listValue = new ArrayList<String>();
         for (int i = 0; i < list.size(); i++) {
-            listValue[i] = res.getString(list.get(i).getNameRessource());
+            listValue.add(res.getString(list.get(i).getNameRessource()));
         }
         return listValue;
     }
@@ -267,7 +267,7 @@ public class Tagging {
 		}
     	}
 		for (Entry entry : map.entrySet()) {
-            Tag tag = (Tag) entry.getKey();
+            final Tag tag = (Tag) entry.getKey();
             if(tagList.contains(tag)){
             	tagList.remove(tag);
             }
@@ -328,7 +328,7 @@ public class Tagging {
      */
     
     public static Map<Tag, String> compareUnclassifiedTags(ClassifiedValue classValue, Map <Tag, String> map){
-    	Log.i(TAG, map.toString());
+    	Log.i(TAG, "adasdasd" + map.toString());
     	Log.i(TAG, classValue.toString());
     	List <Tag> tagList = new ArrayList<Tag>();
     	Map <Tag, String> tagMap = new LinkedHashMap<Tag, String>();
@@ -342,23 +342,33 @@ public class Tagging {
 				rightTag.add(tagList.get(i));
 			}
 		}
-    	Log.i(TAG, rightTag.toString());
-    	if(rightTag.size() == map.size()){
-    		return map;
-    	}
+    
     	for (Entry<Tag,String> entry : map.entrySet()) {
-    			Log.i(TAG, "keyset of map " + map.entrySet());
-    			Log.i(TAG, "BOOLEAN " + rightTag.contains(entry.getKey()));
-    			if(rightTag.contains(entry.getKey())){
-    				tagMap.put(entry.getKey(), entry.getKey().getKey());
+    			Log.i(TAG, "keyset of map " + entry.getKey().toString());
+    			Log.i(TAG, "BOOLEAN " + compareTags(entry.getKey(), rightTag));
+    			
+    			if(compareTags(entry.getKey(), rightTag)){
+    				tagMap.put(entry.getKey(), map.get(entry.getKey()));
     				
             	}
     		
    	 	}	
     	
-    	Log.i(TAG, map.toString());
-		return tagMap;
+    	Log.i(TAG, tagMap.toString());
+    	map.clear();
+    	map.putAll(tagMap);
+		return map;
     	
+    }
+    
+    
+    private static boolean compareTags(Tag tag, List<Tag> tags){
+    	for (Tag tag2 : tags) {
+			if(tag.getKey().equals(tag2.getKey())){
+				return true;
+			}
+		}
+    	return false;
     }
 
 }

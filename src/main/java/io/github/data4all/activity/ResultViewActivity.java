@@ -30,6 +30,7 @@ import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,12 +61,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.view.ViewGroup;;
 
 /**
  * View after Drawing and Tagging
@@ -254,7 +257,15 @@ public class ResultViewActivity extends AbstractActivity implements
         builder.setPositiveButton(R.string.yes,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                    	element.removeTag(mapTag.get(selectedString));
+                    	map.putAll(element.getTags());
+                    	for(Entry<Tag,String> entry : map.entrySet()){
+                        	Tag tag1 = entry.getKey();
+                        	if(tag1.getKey().equals(mapTag.get(selectedString).getKey())){
+                        		Log.i(TAG, "true");
+                        		element.removeTag(tag1);
+                        	}
+                        }
+                        map.clear();
                     	output();
                     }
                 });
@@ -398,6 +409,104 @@ public class ResultViewActivity extends AbstractActivity implements
      *            is the Selected String
      */
     private void changeClassifiedTag(final String selectedString) {
+    	final Dialog dialog = new Dialog(ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
+    	dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_matches);
+        ListView listView = (ListView) dialog.findViewById(R.id.list);
+    	dialog.setTitle(R.string.SelectTag);
+    	final CharSequence[] showArray;
+    	final ArrayList <String> arrayList = (ArrayList<String>) Tagging.ClassifiedValueList(tagMap.get(selectedString)
+                .getClassifiedValues(), res);
+        classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString)
+                .getClassifiedValues(), res, false);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(
+                this,android.R.layout.simple_list_item_1, arrayList){
+            @Override
+            public View getView(int position, View convertView,
+                    ViewGroup parent) {
+                View view =super.getView(position, convertView, parent);
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+                textView.setTextColor(Color.WHITE);
+
+                return view;
+            }
+        };
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				final String value = arrayList.get(position);
+                final String realValue = classifiedMap.get(value).getValue();
+                Log.i(TAG, "Value " + realValue);
+                Log.i(TAG, tagMap.get(selectedString).toString());
+                	Tag tagKey = null;
+                	
+                	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+                        tagKey = entry.getKey();
+                        break;
+               	 	}	     
+                	element.removeTag(tagKey);
+                	map.putAll(element.getTags());
+                	map.remove(tagKey);
+                	Log.i(TAG, "MAP" + map.toString());
+                	element.clearTags();	
+                element.addOrUpdateTag(tagMap.get(selectedString), realValue);
+                Tagging.compareUnclassifiedTags(classifiedMap.get(value), map);
+                element.addTags(map);
+                map.clear();
+                dialog.dismiss();
+                ResultViewActivity.this.output();
+       
+				
+			}
+		});
+        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Log.i(TAG, "DISCRIPTION");
+				final String value = arrayList.get(position);
+                final ClassifiedValue classivalue = classifiedMap.get(value);
+                classivalue.getDescriptionResource();
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                        ResultViewActivity.this,
+                        android.R.style.Theme_Holo_Dialog_MinWidth);
+                alertDialog.setMessage(classivalue.getDescriptionResource());
+                
+                alertDialog.setNeutralButton(R.string.CancelButton, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						alert.dismiss();
+						
+					}
+				});
+                alert = alertDialog.create();
+                alert.getWindow().setBackgroundDrawable(
+                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                alert.show();
+				return true;
+			}
+		});
+        dialog.setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode,
+                    KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    dialog.dismiss();
+                    element.removeTag(tagMap.get(selectedString));
+                    addClassifiedTag();
+                    return true;
+                }
+                return true;
+            }
+        });
+		dialog.show();
+/**
         Log.i(TAG, "Classified Tag");
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
                 ResultViewActivity.this,
@@ -429,14 +538,12 @@ public class ResultViewActivity extends AbstractActivity implements
                 	
                 
                 element.addOrUpdateTag(tagMap.get(selectedString), realValue);
-                Log.i(TAG, "MAPPPPPPPPP" + map.toString());
                 Tagging.compareUnclassifiedTags(classifiedMap.get(value), map);
-                
                 element.addTags(map);
-                Log.i(TAG, "TAAAAAAAAAAGGGGGGGGGSSSSSSS" + element.getTags().toString());
                 ResultViewActivity.this.output();
             }
         });
+       
         alertDialog.setCancelable(false);
         alert = alertDialog.create();
         alert.getWindow().setBackgroundDrawable(
@@ -455,6 +562,7 @@ public class ResultViewActivity extends AbstractActivity implements
             }
         });
         alert.show();
+        */
     }
 
     /**
@@ -528,8 +636,16 @@ public class ResultViewActivity extends AbstractActivity implements
 					dialog.dismiss();
 					ResultViewActivity.this.changeUnclassifiedTag(keyList.get(keyList.indexOf(selectedString) +1));
 				} else {
+					for(Entry<Tag,String> entry : map.entrySet()){
+                    	Tag tag1 = entry.getKey();
+                    	if(tag1.getKey().equals(tag.getKey())){
+                    		Log.i(TAG, "true");
+                    		element.removeTag(tag1);
+                    	}
+                    }
                     element.addOrUpdateTag(mapTag.get(selectedString), text
                             .getText().toString());
+                    
                     dialog.dismiss();
                     ResultViewActivity.this.changeUnclassifiedTag(keyList.get(keyList.indexOf(selectedString) +1));            
                 }            

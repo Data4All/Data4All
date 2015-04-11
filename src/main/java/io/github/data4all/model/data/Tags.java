@@ -206,28 +206,6 @@ public final class Tags {
         return null;
     }
 
-    /**
-     * 
-     */
-    public static ClassifiedValue getClassifiedValueWithId(int id) {
-        for (Tag t : TAG_LIST) {
-            if (t instanceof ClassifiedTag) {
-                for (ClassifiedValue v : ((ClassifiedTag) t)
-                        .getClassifiedValues()) {
-                    if (v.getId() == id) {
-                        Log.d(LOG_TAG,
-                                "getTagWithId() return new classified tag with id: "
-                                        + v.getId());
-                        return new ClassifiedTag(v.getId(), v.getKey(),
-                                ((ClassifiedTag) t).getType(),
-                                ((ClassifiedTag) t).getClassifiedValues());
-                    }
-                }
-            }
-        }
-        Log.d(LOG_TAG, "getTagWithId() could not find tag with id: " + id);
-        return null;
-    }
 
     /**
      * returns an ArrayList containing all classified and unclassified tags

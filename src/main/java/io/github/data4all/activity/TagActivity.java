@@ -180,8 +180,8 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
      * 
      */
     private void createAlertDialogValue() {
-        array = Tagging.ClassifiedValueList(tagMap.get(key)
-                .getClassifiedValues(), res);
+       // array = Tagging.ClassifiedValueList(tagMap.get(key)
+       //         .getClassifiedValues(), res);
         final Map<String, ClassifiedValue> classifiedMap = Tagging
                 .classifiedValueMap(tagMap.get(key).getClassifiedValues(), res,
                         false);
