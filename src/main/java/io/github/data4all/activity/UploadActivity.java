@@ -183,7 +183,7 @@ public class UploadActivity extends AbstractActivity {
                 intentUploadTracks.putExtra(UploadTracksService.ACTION,
                         UploadTracksService.UPLOAD);
                 intentUploadTracks.putExtra(UploadTracksService.HANDLER,
-                        new MyReceiver());
+                        new MyTracksReceiver());
                 Log.d(TAG, "trying to start service to upload tracks");
                 startService(intentUploadTracks);
             }
@@ -325,7 +325,7 @@ public class UploadActivity extends AbstractActivity {
     /**
      * IPC to receive a callback result from the UploadService.
      * 
-     * @author tbrose
+     * @author tbrose, fkirchge
      */
     private class MyTracksReceiver extends ResultReceiver {
         /**
@@ -351,20 +351,20 @@ public class UploadActivity extends AbstractActivity {
                 Log.v("UploadActivity$MyHandler",
                         "data=" + resultData.toString());
             }
-            if (resultCode == UploadElementsService.CURRENT_PROGRESS) {
+            if (resultCode == UploadTracksService.CURRENT_PROGRESS) {
                 progressTracks.setProgress(resultData
-                        .getInt(UploadElementsService.MESSAGE));
+                        .getInt(UploadTracksService.MESSAGE));
             } else if (resultCode == UploadElementsService.MAX_PROGRESS) {
                 progressTracks.setMax(resultData
-                        .getInt(UploadElementsService.MESSAGE));
+                        .getInt(UploadTracksService.MESSAGE));
                 progressTracks.setProgress(0);
                 progressTracks.setVisibility(View.VISIBLE);
                 indetermineProgress.setVisibility(View.INVISIBLE);
-            } else if (resultCode == UploadElementsService.ERROR) {
+            } else if (resultCode == UploadTracksService.ERROR) {
                 final String msg =
-                        resultData.getString(UploadElementsService.MESSAGE);
+                        resultData.getString(UploadTracksService.MESSAGE);
                 UploadActivity.this.onError(msg);
-            } else if (resultCode == UploadElementsService.SUCCESS) {
+            } else if (resultCode == UploadTracksService.SUCCESS) {
                 UploadActivity.this.onSuccess();
             }
         }
