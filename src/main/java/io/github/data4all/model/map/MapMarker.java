@@ -265,9 +265,13 @@ public class MapMarker extends Marker {
 
     @Override
     protected boolean onMarkerClickDefault(Marker marker, MapView mapView) {
+        if (!editable) {
         marker.showInfoWindow();
         mapView.getController().animateTo(marker.getPosition());
         return true;
+        } else {
+            return super.onMarkerClickDefault(marker, mapView);
+        }
     }
 
     /*

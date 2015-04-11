@@ -599,6 +599,8 @@ public class ResultViewActivity extends AbstractActivity implements
         	if(tag1.getKey().equals(tag.getKey())){
         		Log.i(TAG, "true");
         		text.setText(map.get(tag1));
+        		text.setSelection(text.getText().length()-1);
+                
         	}
         }
         //text.setText(map.get(tag));
