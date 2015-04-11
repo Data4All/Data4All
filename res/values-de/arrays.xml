@@ -5,5 +5,9 @@
         <item name="no">Nie</item>
         <item name="ask">Nachfragen</item>
     </string-array>
+    <string-array name="pref_moving_animation_option">
+        <item name="move">Karte bewegen</item>
+        <item name="animate">Objekt bewegen</item>
+    </string-array>
 
 </resources>

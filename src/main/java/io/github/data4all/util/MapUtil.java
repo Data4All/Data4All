@@ -51,7 +51,7 @@ public final class MapUtil {
         if(bb == null){
             return null;
         }
-        return getBoundingBoxForOsmElement(element).getCenter();
+        return bb.getCenter();
     }
 
     /**
@@ -67,7 +67,7 @@ public final class MapUtil {
         if(bb == null){
             return null;
         }
-        return getBoundingBoxForOsmElements(list).getCenter();
+        return bb.getCenter();
     }
 
     /**

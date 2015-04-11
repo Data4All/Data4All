@@ -20,10 +20,8 @@ import java.util.List;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.TransformationParamBean;
@@ -40,7 +38,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.location.Location;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -72,7 +69,6 @@ public class CaptureAssistView extends View {
     private boolean skylook;
     private boolean visible;
     private boolean informationSet;
-    private boolean makeBitmap = false;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
     private List<PolyElement> polyElements;
@@ -80,7 +76,6 @@ public class CaptureAssistView extends View {
     private PointToCoordsTransformUtil util;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
-    private Runnable finishInflateListener;
 
     private static final String TAG = CaptureAssistView.class.getSimpleName();
 
@@ -231,7 +226,7 @@ public class CaptureAssistView extends View {
                         cameraStopPaint);
             }
         }
-        if (getAugmented()) {
+        if (informationSet && getAugmented()) {
             tps.setPhotoHeight(mMeasuredHeight);
             tps.setPhotoWidth(mMeasuredWidth);
             for (PolyElement iter : polyElements) {
@@ -239,9 +234,9 @@ public class CaptureAssistView extends View {
                         || iter.getType() == PolyElementType.BUILDING) {
                     this.points = util.calculateNodesToPoint(iter.getNodes(),
                             tps, deviceOrientation);
+                    Path path = getPath();
+                    canvas.drawPath(path, paint);
                 }
-                Path path = getPath();
-                canvas.drawPath(path, paint);
             }
         }
         canvas.restore();
@@ -316,6 +311,10 @@ public class CaptureAssistView extends View {
      * @author vkochno & burghardt
      */
     public boolean overHorizont(Point point) {
+        if (point.getX() < 0 || point.getX() > mMeasuredWidth
+                || point.getY() < 0 || point.getY() > mMeasuredHeight) {
+            return true;
+        }
         if (bitmap == null) {
             this.setDrawingCacheEnabled(true);
             bitmap = Bitmap.createBitmap(this.getDrawingCache());
@@ -324,27 +323,15 @@ public class CaptureAssistView extends View {
         if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT) {
             return false;
         }
-        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint.getColor()){
+        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint
+                .getColor()) {
             return false;
         }
         return true;
     }
 
-    public void setOnFinishInflateListener(Runnable listener) {
-        this.finishInflateListener = listener;
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        if (finishInflateListener != null) {
-            finishInflateListener.run();
-        }
-    }
-
     public boolean isSkylook() {
         return skylook;
     }
-
 
 }

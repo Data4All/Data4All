@@ -39,6 +39,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ZoomControls;
+import android.widget.ZoomButtonsController;
 
 /**
  * Activity to show an Osm_Element on a Preview Map.
@@ -108,6 +110,33 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         rect.setOnClickListener(this);
         buttons.add(findViewById(id));
 
+        id = R.id.zoomcontrols;
+        final ZoomControls zoomControls = (ZoomControls) findViewById(id);
+        zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapView.getController().zoomIn();
+                zoomControls.setIsZoomInEnabled(mapView.canZoomIn());
+                zoomControls.setIsZoomOutEnabled(mapView.canZoomOut());
+
+            }
+        });
+
+        zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                zoomControls.setIsZoomOutEnabled(mapView.canZoomOut());
+                mapView.getController().zoomOut();
+                zoomControls.setIsZoomInEnabled(mapView.canZoomIn());
+                zoomControls.setIsZoomOutEnabled(mapView.canZoomOut());
+
+            }
+        });
+
+        zoomControls.hide();
+
+        listener = new ButtonRotationListener(this, buttons);
+
         if (element instanceof PolyElement) {
             PolyElement elem = (PolyElement) element;
             if (elem.getNodes().size() != 5
@@ -119,8 +148,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             rect.setClickable(false);
             rect.setVisibility(View.GONE);
         }
-
-        listener = new ButtonRotationListener(this, buttons);
 
     }
 
@@ -144,10 +171,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.return_to_actual_Position:
-            mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
-            final BoundingBoxE6 boundingBox = MapUtil
-                    .getBoundingBoxForOsmElement(element);
-            mapView.zoomToBoundingBox(boundingBox);
+            mapController.animateTo(MapUtil.getCenterFromOsmElement(element));
             break;
         case R.id.switch_maps:
             switchMaps();
@@ -200,7 +224,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.getClass().getSimpleName() + " with Coordinates "
                 + element.toString());
         intent.putExtra(OSM, element);
-        
+
         if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
                     getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));

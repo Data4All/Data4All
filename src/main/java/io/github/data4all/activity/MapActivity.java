@@ -339,7 +339,6 @@ public abstract class MapActivity extends AbstractActivity {
             // Set ZoomCenter
             Log.i(TAG, "Set Mapcenter to " + point.toString());
             mapController.animateTo(point);
-            mapController.setCenter(point);
         }
 
     }

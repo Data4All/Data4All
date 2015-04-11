@@ -6,7 +6,4 @@
     <color name="camera_cross">#7DCAF0</color>
     <color name="camera_stop_cross">#EEFF0000</color>
     <color name="invalid_region">#44FF0000</color>
-    <color name="sensorBroken">#FFD700</color>
-    <color name="sensorBrokenAll">#FF0000</color>
-    <color name="sensorOk">#7CFC00</color>
 </resources>

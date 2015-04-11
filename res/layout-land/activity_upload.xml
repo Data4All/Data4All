@@ -1,93 +1,106 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/upload_caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:text="@string/upload_caption"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <LinearLayout
-        android:id="@+id/upload_linearlayout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/upload_caption"
-        android:orientation="horizontal" >
+        android:layout_height="match_parent" >
 
-        <io.github.data4all.view.D4AMapView
-            android:id="@+id/mapviewupload"
-            android:layout_width="250dp"
-            android:layout_height="150dp"
-            android:layout_margin="20dp" />
-
-        <RelativeLayout
-            android:id="@+id/upload_relativelayout2"
+        <TextView
+            android:id="@+id/upload_caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp" >
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="18dp"
+            android:text="@string/upload_caption"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <TextView
-                android:id="@+id/upload_upload_text"
+        <LinearLayout
+            android:id="@+id/upload_linearlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/upload_caption"
+            android:orientation="horizontal" >
+
+            <io.github.data4all.view.D4AMapView
+                android:id="@+id/mapviewupload"
+                android:layout_width="250dp"
+                android:layout_height="150dp"
+                android:layout_margin="20dp" />
+
+            <RelativeLayout
+                android:id="@+id/upload_relativelayout2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/upload_upload_text"  />
+                android:layout_margin="20dp" >
 
-            <TextView
-                android:id="@+id/upload_count_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/upload_upload_text"
-                android:text="" />
+                <TextView
+                    android:id="@+id/upload_upload_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/upload_upload_text" />
 
-            <ProgressBar
-                android:id="@+id/upload_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_margin="20dp"
-                android:indeterminate="false"
-                android:visibility="invisible" />
+                <TextView
+                    android:id="@+id/upload_count_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/upload_upload_text"
+                    android:text="" />
 
-            <ProgressBar
-                android:id="@+id/upload_indetermine_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_margin="20dp"
-                android:indeterminate="true"
-                android:visibility="invisible" />
+                <ProgressBar
+                    android:id="@+id/upload_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="20dp"
+                    android:indeterminate="false"
+                    android:visibility="invisible" />
 
-            <Button
-                android:id="@+id/upload_upload_button"
-                style="@style/DefaultButtonText"
-                android:layout_width="180dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/upload_progress"
-                android:background="@drawable/login_button_bg"
-                android:onClick="onClickUpload"
-                android:text="@string/UploadButton" />
+                <ProgressBar
+                    android:id="@+id/upload_indetermine_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="20dp"
+                    android:indeterminate="true"
+                    android:visibility="invisible" />
 
-            <Button
-                android:id="@+id/upload_cancle_button"
-                style="@style/DefaultButtonText"
-                android:layout_width="180dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/upload_progress"
-                android:background="@drawable/login_button_bg"
-                android:onClick="onClickCancel"
-                android:text="@string/CancelButton"
-                android:visibility="gone" />
-        </RelativeLayout>
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/uploadComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/upload_progress"
+                    android:ems="10"
+                    android:hint="@string/upload_comment" />
 
-</RelativeLayout>
+                <Button
+                    android:id="@+id/upload_upload_button"
+                    style="@style/DefaultButtonText"
+                    android:layout_width="180dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/uploadComment"
+                    android:background="@drawable/login_button_bg"
+                    android:onClick="onClickUpload"
+                    android:text="@string/UploadButton" />
+
+                <Button
+                    android:id="@+id/upload_cancle_button"
+                    style="@style/DefaultButtonText"
+                    android:layout_width="180dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/uploadComment"
+                    android:background="@drawable/login_button_bg"
+                    android:onClick="onClickCancel"
+                    android:text="@string/CancelButton"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>

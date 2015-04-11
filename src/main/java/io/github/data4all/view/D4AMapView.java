@@ -39,6 +39,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ZoomControls;
 
 /**
  * MapView with Function to add OSM Object and set scrollable modus.
@@ -64,7 +66,7 @@ public class D4AMapView extends MapView {
 
     private boolean scrollable = true;
 
-    private static final String TAG = "MapPreview";
+    private static final String TAG = "D4AMapView";
     private BoundingBoxE6 boundingBox;
 
     /**
