@@ -93,7 +93,6 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        track = trackUtil.getLastTrack();
         Log.d(TAG, "onStartCommand");
         return START_STICKY;
     }
