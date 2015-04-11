@@ -63,6 +63,11 @@ public class Track implements Parcelable {
     private final List<TrackPoint> tracklist;
 
     /**
+     * Flag that indicates if this track is currently active
+     */
+    private boolean finished;
+
+    /**
      * Methods to write and restore a Parcel.
      */
     public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
@@ -86,6 +91,7 @@ public class Track implements Parcelable {
         tracklist = new ArrayList<TrackPoint>();
         in.readTypedList(tracklist, TrackPoint.CREATOR);
         trackName = in.readString();
+        finished = (in.readInt() == 0) ? false : true;
     }
 
     /**
@@ -95,7 +101,7 @@ public class Track implements Parcelable {
     public Track() {
         this.tracklist = new ArrayList<TrackPoint>();
         this.trackName = this.getTimeStamp();
-        Log.d(TAG, "New Track with name: " + trackName + " created.");
+        this.finished = false;
     }
 
     public String getTrackName() {
@@ -118,6 +124,21 @@ public class Track implements Parcelable {
         return new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
     }
 
+    public void setStatus(boolean status) {
+        this.finished = status;
+    }
+
+    /**
+     * Finish a track and set the flag to true
+     */
+    public void finishTrack() {
+        setStatus(true);
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
     /**
      * Adds a TrackPoint to the ArrayList of TrackPoints.
      * 
@@ -125,9 +146,11 @@ public class Track implements Parcelable {
      *            The Location
      */
     public void addTrackPoint(final Location location) {
-        if (location != null) {
-            tracklist.add(new TrackPoint(location));
-            Log.d(TAG, "Added TrackPoint: " + location.toString());
+        if (!isFinished()) {
+            if (location != null) {
+                tracklist.add(new TrackPoint(location));
+                Log.d(TAG, "Added TrackPoint: " + location.toString());
+            }
         }
     }
 
@@ -148,7 +171,7 @@ public class Track implements Parcelable {
     }
 
     /**
-     * Returns the latest TrakPoint from this track.
+     * Returns the latest TrackPoint from this track.
      * 
      * @return trackpoint The latest TrackPoint in the list
      */
@@ -167,7 +190,9 @@ public class Track implements Parcelable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
+        sb.append("ID: " + id + '\n');
         sb.append(trackName + '\n');
+        sb.append("finished: " + finished + '\n');
         for (TrackPoint loc : tracklist) {
             sb.append(loc.toString() + '\n');
         }
@@ -196,5 +221,6 @@ public class Track implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(tracklist);
         dest.writeString(trackName);
+        dest.writeInt(finished ? 1 : 0);
     }
 }

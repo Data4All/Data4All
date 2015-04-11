@@ -1,4 +1,5 @@
 <resources>
+
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -10,39 +11,41 @@
             backward-compatibility can go here.
         -->
     </style>
-    
+
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
+
     <style name="Theme.Transparent" parent="@android:style/Theme.Dialog">
-  	 <!--  	<item name="android:windowIsTranslucent">true</item> 
+
+        <!--
+     	<item name="android:windowIsTranslucent">true</item> 
  		<item name="android:windowBackground">@android:color/transparent</item>
       	<item name="android:windowContentOverlay">@null</item>
    		<item name="android:windowNoTitle">true</item>
-   		<item name="android:textColor">@android:color/white</item>-->
-   		<item name="android:columnWidth">30sp</item>
-   	</style>
-   	
-    <style name="CustomDialog" parent="@android:style/Theme.DeviceDefault.Dialog.MinWidth">
-        <item name="android:text" >"Tag"</item>
+   		<item name="android:textColor">@android:color/white</item>
+        -->
+        <item name="android:columnWidth">30sp</item>
     </style>
-    
-    
+
+    <style name="CustomDialog" parent="@android:style/Theme.DeviceDefault.Dialog.MinWidth">
+        <item name="android:text">"Tag"</item>
+    </style>
+
     <style name="DefaultButtonText">
-	   <item name="android:layout_width">fill_parent</item>
-	    <item name="android:layout_height">wrap_content</item>
-	    <item name="android:textColor">#979797</item>
-	    <item name="android:gravity">center</item>
-	    <item name="android:layout_margin">3dp</item>
-	    <item name="android:textStyle">normal</item>
-	    <item name="android:textSize">20sp</item>
-	    <item name="android:shadowColor">#f9f9f9</item>
-	    <item name="android:shadowDx">1</item>
-	    <item name="android:shadowDy">1</item>
-	    <item name="android:shadowRadius">1</item>
-	</style>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#979797</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:shadowColor">#f9f9f9</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">1</item>
+    </style>
 
     <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@drawable/actionbar</item>

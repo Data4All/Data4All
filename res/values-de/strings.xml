@@ -41,9 +41,12 @@
     <!-- dialogs -->
     <string name="deleteDialog">Wollen Sie dieses Objekt wirklich löschen?</string>
     <string name="resultViewAlertDialogMessage">Jetzt Hochladen?</string>
+    <string name="doNotShowAgain">Nicht mehr anzeigen</string>
+    <string name="startRecordTrack">Wollen Sie einen neuen Track starten?</string>
+    <string name="stopRecordTrack">Wollen Sie den aktuellen Track stoppen und speichern?</string>
     <string name="deleteImage">Bild löschen</string>
     <string name="deleteImageText">Soll das Bild aus der Galerie gelöscht werden?</string>
-    
+
     <!-- for network -->
     <string name="no_network_title">Kein Internet verfügbar</string>
     <string name="no_network_message">Bitte verbinden Sie ihr Gerät mit dem Internet</string>
@@ -96,6 +99,12 @@
     <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
     
+     <!-- track list and details -->
+    <string name="list_tracks">Tracks</string>
+    <string name="track_id">Track ID:</string>
+    <string name="trackpoints">Trackpunkte:</string>
+    <string name="trackname">Name:</string>
+
     <!-- for gallery -->
     <string name="gallery_sec">"%s gerade"</string>
     <string name="gallery_min">"%s 1 Minute"</string>
@@ -126,12 +135,6 @@
     <string name="show_pwd">Passwort anzeigen</string>
     <string name="title_activity_about">Über diese Aktivität</string>
     <string name="hello_world">Hallo Welt!</string>
-
-     <!-- track list and details -->
-    <string name="list_tracks">Tracks</string>
-    <string name="track_id">Track ID:</string>
-    <string name="trackpoints">Track Punkte:</string>
-    <string name="trackname">Name:</string>
       
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Folgt uns auf Facebook</a></string>

@@ -16,8 +16,8 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.model.data.Track;
+import io.github.data4all.logger.Log;
+import io.github.data4all.util.TrackUtil;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -33,6 +33,8 @@ import android.widget.TextView;
  */
 public class TrackDetailsActivity extends AbstractActivity implements
         OnClickListener {
+    
+    private TrackUtil trackUtil;
 
     private TextView trackDetails;
     private TextView trackId;
@@ -49,6 +51,8 @@ public class TrackDetailsActivity extends AbstractActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_details);
+        
+        trackUtil = new TrackUtil(this.getApplicationContext());
 
         setFields();
 
@@ -105,10 +109,8 @@ public class TrackDetailsActivity extends AbstractActivity implements
      * @param id
      */
     private void deleteTrack(long id) {
-        DataBaseHandler db = new DataBaseHandler(getApplicationContext());
-        Track track = db.getGPSTrack(id);
-        db.deleteGPSTrack(track);
-        db.close();
+        Log.d("TrackDetailsActivity", "ID: " + id);
+        trackUtil.deleteTrack(id);
     }
 
     /*
@@ -120,7 +122,7 @@ public class TrackDetailsActivity extends AbstractActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.buttonDeleteTrack:
-            deleteTrack(getIntent().getLongExtra("id", -1));
+            deleteTrack(Long.valueOf(trackId.getText().toString()));//getIntent().getLongExtra("id", -1));
             Intent listActivity = new Intent(getApplicationContext(),
                     GpsTrackListActivity.class);
             startActivity(listActivity);
