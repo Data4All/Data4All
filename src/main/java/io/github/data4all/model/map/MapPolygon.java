@@ -163,7 +163,6 @@ public class MapPolygon extends Polygon {
         } else {
             mInfoWindow = null;
         }
-
     }
 
     @Override

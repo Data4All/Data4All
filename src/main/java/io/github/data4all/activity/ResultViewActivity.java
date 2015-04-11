@@ -180,6 +180,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             });
         }*/
+
         if(element.getTags().isEmpty()){
         	addClassifiedTag();
         }
@@ -308,6 +309,22 @@ public class ResultViewActivity extends AbstractActivity implements
           });
           alertDialog.setCancelable(false);
           alert = alertDialog.create();
+          alert.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				 if (keyCode == KeyEvent.KEYCODE_BACK) {
+					 Log.i(TAG, element.getTags().toString());
+					 if(element.getTags().isEmpty()){
+						 return false; 
+					 } else {
+					 		alert.dismiss();	                    
+		                    return true;
+					 }	
+	                }
+	                return true;
+			}
+		});
           alert.getWindow().setBackgroundDrawable(
                   new ColorDrawable(android.graphics.Color.TRANSPARENT));
           alert.show();    	
@@ -325,6 +342,7 @@ public class ResultViewActivity extends AbstractActivity implements
         final Button resultButton = (Button) this
                 .findViewById(R.id.buttonClassifiedTag);
         resultButton.setOnClickListener(this);
+        resultButton.setText(R.string.SelectTag);
         for (Entry<Tag,String> entry : element.getTags().entrySet()) {
             if(entry.getKey() != null){
             final Tag tagKey = entry.getKey();
@@ -599,6 +617,8 @@ public class ResultViewActivity extends AbstractActivity implements
         	if(tag1.getKey().equals(tag.getKey())){
         		Log.i(TAG, "true");
         		text.setText(map.get(tag1));
+        		text.setSelection(text.getText().length()-1);
+                
         	}
         }
         //text.setText(map.get(tag));
@@ -705,9 +725,11 @@ public class ResultViewActivity extends AbstractActivity implements
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
-            final Intent i = new Intent();
+            final Intent i = new Intent(this, CameraActivity.class);
             i.putExtra(CameraActivity.FINISH_TO_CAMERA, true);
-            finishWorkflow(i);
+            addOsmElementToDB(element);
+            finishWorkflow(null);
+            startActivityForResult(i);
             break;
        /** case R.id.titleFooter:
             createDialogAddTags();

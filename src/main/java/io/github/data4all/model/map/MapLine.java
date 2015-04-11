@@ -154,7 +154,6 @@ public class MapLine extends Polyline {
         }
     }
 
-
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
         super.onTouchEvent(event, mapView);

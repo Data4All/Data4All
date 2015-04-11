@@ -120,7 +120,7 @@ public class MapMarker extends Marker {
         } else {
             mInfoWindow = null;
         }
-    }
+}
 
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
@@ -236,9 +236,13 @@ public class MapMarker extends Marker {
 
     @Override
     protected boolean onMarkerClickDefault(Marker marker, MapView mapView) {
+        if (!editable) {
         marker.showInfoWindow();
         mapView.getController().animateTo(marker.getPosition());
         return true;
+        } else {
+            return super.onMarkerClickDefault(marker, mapView);
+        }
     }
 
     /*
