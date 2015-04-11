@@ -707,9 +707,11 @@ public class ResultViewActivity extends AbstractActivity implements
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
-            final Intent i = new Intent();
+            final Intent i = new Intent(this, CameraActivity.class);
             i.putExtra(CameraActivity.FINISH_TO_CAMERA, true);
-            finishWorkflow(i);
+            addOsmElementToDB(element);
+            finishWorkflow(null);
+            startActivityForResult(i);
             break;
        /** case R.id.titleFooter:
             createDialogAddTags();
