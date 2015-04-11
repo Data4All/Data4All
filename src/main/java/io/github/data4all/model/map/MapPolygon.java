@@ -65,6 +65,7 @@ public class MapPolygon extends Polygon {
     private D4AMapView mapView;
     private AbstractDataElement element;
     private boolean editable;
+    private boolean moveMap;
 
     // start time for touch event action_down
     private long timeStart;
@@ -335,6 +336,10 @@ public class MapPolygon extends Polygon {
                 new Node(0, endGeo.getLatitude(), endGeo.getLongitude()));
         double x = endCoord[0] - startCoord[0];
         double y = endCoord[1] - startCoord[1];
+        if(!moveMap){
+            x = -x;
+            y = -y;
+        }
         List<GeoPoint> returnList = new ArrayList<GeoPoint>();
         for (double[] preCoord : pointCoords) {
             double[] returnCoord = { preCoord[0] + x, preCoord[1] + y, };
@@ -453,6 +458,12 @@ public class MapPolygon extends Polygon {
                                     .getLongitude()));
             pointCoords.add(preCoord);
         }
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(activity);
+        final Resources res = activity.getResources();
+        final String key = res
+                .getString(R.string.pref_moving_animation_key);
+        this.moveMap = "Animate".equals(prefs.getString(key, null));
     }
 
     /**

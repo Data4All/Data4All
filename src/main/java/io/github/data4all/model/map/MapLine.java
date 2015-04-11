@@ -64,6 +64,7 @@ public class MapLine extends Polyline {
     private D4AMapView mapView;
     private AbstractActivity activity;
     private boolean editable;
+    private boolean moveMap;
 
     // start time for touch event action_down
     private long timeStart;
@@ -124,7 +125,7 @@ public class MapLine extends Polyline {
      * MapCenter values.
      */
     private GeoPoint newMapcenter;
-    private GeoPoint oldMapcenter;
+    private double[] oldMapcenter;
 
     /**
      * Default constructor.
@@ -207,9 +208,12 @@ public class MapLine extends Polyline {
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
-                    // actual polygon point list
-                    geoPointList = this.getPoints();
-                    oldMapcenter = (GeoPoint) mapView.getMapCenter();
+                    saveGeoPoints();
+                    GeoPoint mapCenter = (GeoPoint) mapView.getMapCenter();
+                    this.oldMapcenter = MathUtil.calculateCoordFromGPS(
+                            midLocation,
+                            new Node(0, mapCenter.getLatitude(), 
+                                    mapCenter.getLongitude()));
                     startPos = new ArrayList<Point>();
                     startPos.add(new Point((int) event.getX(0), (int) event
                             .getY(0)));
@@ -313,18 +317,29 @@ public class MapLine extends Polyline {
     public void moveToNewPos(final MotionEvent event) {
         // set the end coordinates of the movement
         Point endPoint = new Point((int) event.getX(0), (int) event.getY(0));
-        int x = endPoint.x - startPos.get(0).x;
-        int y = endPoint.y - startPos.get(0).y;
         pj = mapView.getProjection();
-        List<GeoPoint> returnList = new ArrayList<GeoPoint>();
-        for (GeoPoint geoPoint : geoPointList) {
-            Point point = pj.toPixels(geoPoint, null);
-            point = new Point(point.x + x, point.y + y);
-            returnList.add((GeoPoint) pj.fromPixels(point.x, point.y));
+        GeoPoint startGeo = (GeoPoint) pj.fromPixels(startPos.get(0).x,
+                startPos.get(0).y);
+        double[] startCoord = MathUtil.calculateCoordFromGPS(midLocation,
+                new Node(0, startGeo.getLatitude(), startGeo.getLongitude()));
+        GeoPoint endGeo = (GeoPoint) pj.fromPixels(endPoint.x, endPoint.y);
+        double[] endCoord = MathUtil.calculateCoordFromGPS(midLocation,
+                new Node(0, endGeo.getLatitude(), endGeo.getLongitude()));
+        double x = endCoord[0] - startCoord[0];
+        double y = endCoord[1] - startCoord[1];
+        if(!moveMap){
+            x = -x;
+            y = -y;
         }
-        Point point = pj.toPixels(oldMapcenter, null);
-        point = new Point(point.x + x, point.y + y);
-        newMapcenter = (GeoPoint) pj.fromPixels(point.x, point.y);
+        List<GeoPoint> returnList = new ArrayList<GeoPoint>();
+        for (double[] preCoord : pointCoords) {
+            double[] returnCoord = { preCoord[0] + x, preCoord[1] + y, };
+            Node node = MathUtil.calculateGPSPoint(midLocation, returnCoord);
+            returnList.add(new GeoPoint(node.getLat(), node.getLon()));
+        }
+        double[] returnCoord = { oldMapcenter[0] + x, oldMapcenter[1] + y, };
+        Node node = MathUtil.calculateGPSPoint(midLocation, returnCoord);
+        newMapcenter = new GeoPoint(node.getLat(), node.getLon());
 
         this.setPoints(returnList);
         mapView.invalidate();
@@ -434,6 +449,12 @@ public class MapLine extends Polyline {
                                     .getLongitude()));
             pointCoords.add(preCoord);
         }
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(activity);
+        final Resources res = activity.getResources();
+        final String key = res
+                .getString(R.string.pref_moving_animation_key);
+        this.moveMap = "Animate".equals(prefs.getString(key, null));
     }
 
     /**
