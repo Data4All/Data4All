@@ -175,11 +175,7 @@ public class MapPolygon extends Polygon {
             final String value = element.getTags().get(tag);
             Log.i(TAG, tag.toString());
             setTitle(activity.getString(tag.getNameRessource()));
-            if (tag instanceof ClassifiedTag) {
-                setSubDescription(this.getLocalizedName(activity, key, value));
-            } else {
-                setSubDescription(element.getTags().get(tag));
-            }
+            setSubDescription(this.getLocalizedName(activity, key, value));
         }
     }
 
