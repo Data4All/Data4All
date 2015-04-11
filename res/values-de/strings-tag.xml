@@ -68,7 +68,7 @@
     <string name="name_barrier_entrance">Lücke</string>
     <string name="name_barrier_block">stabiler Block</string>
     <string name="name_barrier_kerb">Bordstein</string>
-    <string name="name_barrier_toll_booth">Maustelle</string>
+    <string name="name_barrier_toll_booth">Mautstelle</string>
     <string name="name_barrier_cattle_grid">Weiderost</string>
     <string name="name_barrier_kissing_gate">halbrunde Stahlkonstruktion</string>
     <string name="name_barrier_city_wall">Wallanlage</string>
@@ -199,7 +199,7 @@
     <string name="name_leisure_nature_reserve">Naturschutzgebiet</string>
     <string name="name_leisure_track">Laufbahn</string>
     <string name="name_leisure_stadium">Stadium</string>
-    <string name="name_leisure_golf_course">Goldplatz</string>
+    <string name="name_leisure_golf_course">Golfplatz</string>
     <string name="name_leisure_marina">Hafen</string>
     <string name="name_leisure_water_park">Freibad</string>
     <string name="name_leisure_fishing">Angelplatz</string>
