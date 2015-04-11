@@ -49,7 +49,7 @@ import android.os.ResultReceiver;
  *
  */
 public final class GpxTrackUtil {
-
+    
     /**
      * Private Constructor, prevents instantiation.
      */
