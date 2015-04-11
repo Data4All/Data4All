@@ -176,7 +176,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
-        TagSuggestionHandler.startAdresseCollector();
+        
     }
 
     /*

@@ -353,7 +353,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         next.setId(R.id.buttonNext);
         finish.setId(R.id.buttonFinish);
         first = first1;
-        
+        TagSuggestionHandler.startAdresseCollector();
         if(TagSuggestionHandler.getAddressList()!=null && !TagSuggestionHandler.getAddressList().isEmpty() && first){
         	addressView.setAddresses(TagSuggestionHandler.getAddressList());
         	addressView.fillSpinner(this);
