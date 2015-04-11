@@ -211,8 +211,7 @@ public class MapLine extends Polyline {
                     saveGeoPoints();
                     GeoPoint mapCenter = (GeoPoint) mapView.getMapCenter();
                     this.oldMapcenter = MathUtil.calculateCoordFromGPS(
-                            midLocation,
-                            new Node(0, mapCenter.getLatitude(), 
+                            midLocation, new Node(0, mapCenter.getLatitude(),
                                     mapCenter.getLongitude()));
                     startPos = new ArrayList<Point>();
                     startPos.add(new Point((int) event.getX(0), (int) event
@@ -244,7 +243,8 @@ public class MapLine extends Polyline {
                         (int) event.getX(), (int) event.getY());
                 if (active) {
                     // set the new information to the element
-                    ((PolyElement) element).setNodesFromGeoPoints(this.getPoints());
+                    ((PolyElement) element).setNodesFromGeoPoints(this
+                            .getPoints());
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
                         && this.isCloseTo(geoPoint, getTolerance(), mapView)) {
@@ -327,7 +327,7 @@ public class MapLine extends Polyline {
                 new Node(0, endGeo.getLatitude(), endGeo.getLongitude()));
         double x = endCoord[0] - startCoord[0];
         double y = endCoord[1] - startCoord[1];
-        if(!moveMap){
+        if (!moveMap) {
             x = -x;
             y = -y;
         }
@@ -369,11 +369,11 @@ public class MapLine extends Polyline {
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        if (MapUtil.getBoundingBoxForPointList(geoPointList)
-                .getDiagonalLengthInMeters() < 250 || scaleFactor < 1) {
-            super.setPoints(geoPointList);
-            mapView.invalidate();
-        }
+        // if (MapUtil.getBoundingBoxForPointList(geoPointList)
+        // .getDiagonalLengthInMeters() < 250 || scaleFactor < 1) {
+        super.setPoints(geoPointList);
+        mapView.invalidate();
+        // }
     }
 
     /**
@@ -452,8 +452,7 @@ public class MapLine extends Polyline {
         final SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(activity);
         final Resources res = activity.getResources();
-        final String key = res
-                .getString(R.string.pref_moving_animation_key);
+        final String key = res.getString(R.string.pref_moving_animation_key);
         this.moveMap = "Animate".equals(prefs.getString(key, null));
     }
 
