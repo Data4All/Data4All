@@ -18,10 +18,7 @@ package io.github.data4all.service;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.User;
-import io.github.data4all.task.TrackParserTask;
-import io.github.data4all.task.UploadTracksTask;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
 import io.github.data4all.util.upload.ChangesetUtil;
@@ -29,10 +26,6 @@ import io.github.data4all.util.upload.CloseableCloseRequest;
 import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
 import io.github.data4all.util.upload.HttpCloseable;
-
-import java.io.File;
-import java.util.List;
-
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -42,11 +35,11 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 
 /**
- * Service to upload objects to the OSM API.
+ * Service to upload osm objects to the OSM API.
  * 
  * @author tbrose
  */
-public class UploadService extends IntentService {
+public class UploadElementsService extends IntentService {
 
     /**
      * The comment for the changeset to open.
@@ -62,17 +55,17 @@ public class UploadService extends IntentService {
     /**
      * Logger.
      */
-    private static final String TAG = UploadService.class.getSimpleName();
+    private static final String TAG = UploadElementsService.class.getSimpleName();
 
     /**
      * Key/Message for handling intent extras.
      */
     public static final String ACTION =
-            "io.github.data4all.service.UploadService:ACTION";
+            "io.github.data4all.service.UploadElementsService:ACTION";
     public static final String HANDLER =
-            "io.github.data4all.service.UploadService:HANDLER";
+            "io.github.data4all.service.UploadElementsService:HANDLER";
     public static final String MESSAGE =
-            "io.github.data4all.service.UploadService:MESSAGE";
+            "io.github.data4all.service.UploadElementsService:MESSAGE";
 
     /**
      * Codes to identify different events.
@@ -97,8 +90,8 @@ public class UploadService extends IntentService {
      * @param name
      *            Used to name the worker thread, important only for debugging
      */
-    public UploadService() {
-        super(UploadService.class.getSimpleName());
+    public UploadElementsService() {
+        super(UploadElementsService.class.getSimpleName());
     }
 
     /*
@@ -110,7 +103,7 @@ public class UploadService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getIntExtra(ACTION, 0) == CANCLE) {
-            Log.d("UploadService", "stopping...");
+            Log.d(TAG, "stopping upload service for osm elements...");
             stopNext = true;
             if (currentConnection != null) {
                 currentConnection.stop();
@@ -127,14 +120,12 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getIntExtra(ACTION, 0) == UPLOAD) {
+            Log.d(TAG, "upload element service started");
             final ResultReceiver receiver = intent.getParcelableExtra(HANDLER);
-
             final DataBaseHandler db = new DataBaseHandler(this);
             final User user = db.getAllUser().get(0);
             db.close();
-
             this.uploadElems(receiver, user);
-            this.uploadGpsTracks(user);
             stopNext = false;
         }
     }
@@ -194,30 +185,6 @@ public class UploadService extends IntentService {
         }
         if (stopNext) {
             this.stopForeground(CANCLE);
-        }
-    }
-
-    /**
-     * Uploads all in the database stored {@link Track} objects to the OSM API.
-     * 
-     * @param user
-     */
-    private void uploadGpsTracks(User user) {
-        final DataBaseHandler db = new DataBaseHandler(this);
-        final List<Track> gpsTracks = db.getAllGPSTracks();
-        db.close();
-        for (Track t : gpsTracks) {
-            TrackParserTask trackParser = new TrackParserTask(t);
-            String trackXml = trackParser.parseTrack(t);
-            Log.d(TAG, "trying to upload track with ID: " +t.getID() +" name: " +t.getTrackName());
-            Log.d(TAG, "xml: " +trackXml.replaceAll("\n", ""));
-            
-            // TODO: set description and tags 
-            UploadTracksTask trackUpload =
-                    new UploadTracksTask(this, user, trackXml, t.getTrackName(), "description", "tags",
-                            "true");
-            
-            trackUpload.execute();
         }
     }
 
@@ -377,7 +344,7 @@ public class UploadService extends IntentService {
         @Override
         public void callback(Integer t) {
             send(receiver, CURRENT_PROGRESS, t);
-            UploadService.this.updateForeground(t);
+            UploadElementsService.this.updateForeground(t);
         }
 
         /*

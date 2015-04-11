@@ -20,8 +20,11 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.network.MapBoxTileSourceV4;
-import io.github.data4all.service.UploadService;
+import io.github.data4all.service.UploadElementsService;
+import io.github.data4all.service.UploadTracksService;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.upload.ChangesetUtil;
+import io.github.data4all.util.upload.GpxTrackUtil;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.List;
@@ -69,7 +72,8 @@ public class UploadActivity extends AbstractActivity {
         progress = (ProgressBar) findViewById(R.id.upload_progress);
         indetermineProgress = findViewById(R.id.upload_indetermine_progress);
         countDataElementsText = (TextView) findViewById(R.id.upload_count_text);
-        countGPSTracksText = (TextView) findViewById(R.id.upload_gpstracks_count);
+        countGPSTracksText =
+                (TextView) findViewById(R.id.upload_gpstracks_count);
         uploadButton = findViewById(R.id.upload_upload_button);
         cancleButton = findViewById(R.id.upload_cancle_button);
         this.readObjectCount();
@@ -161,11 +165,26 @@ public class UploadActivity extends AbstractActivity {
     public void onClickUpload(View v) {
         if (v.getId() == R.id.upload_upload_button) {
             this.showProgress(true);
-            final Intent intent = new Intent(this, UploadService.class);
-            intent.putExtra(UploadService.ACTION, UploadService.UPLOAD);
-            intent.putExtra(UploadService.HANDLER, new MyReceiver());
-
-            startService(intent);
+            if (ChangesetUtil.needToUpload(this)) {
+                final Intent intentUploadElements =
+                        new Intent(this, UploadElementsService.class);
+                intentUploadElements.putExtra(UploadElementsService.ACTION,
+                        UploadElementsService.UPLOAD);
+                intentUploadElements.putExtra(UploadElementsService.HANDLER,
+                        new MyReceiver());
+                Log.d(TAG, "trying to start service to upload elements");
+                startService(intentUploadElements);
+            }
+            if (GpxTrackUtil.needToUpload(this)) {
+                final Intent intentUploadTracks =
+                        new Intent(this, UploadTracksService.class);
+                intentUploadTracks.putExtra(UploadTracksService.ACTION,
+                        UploadTracksService.UPLOAD);
+                intentUploadTracks.putExtra(UploadTracksService.HANDLER,
+                        new MyReceiver());
+                Log.d(TAG, "trying to start service to upload tracks");
+                startService(intentUploadTracks);
+            }
         }
     }
 
@@ -177,11 +196,20 @@ public class UploadActivity extends AbstractActivity {
      */
     public void onClickCancle(View v) {
         if (v.getId() == R.id.upload_cancle_button) {
-            final Intent intent = new Intent(this, UploadService.class);
-            intent.putExtra(UploadService.ACTION, UploadService.CANCLE);
-            intent.putExtra(UploadService.HANDLER, new MyReceiver());
+            final Intent intentUploadElements = new Intent(this, UploadElementsService.class);
 
-            startService(intent);
+            intentUploadElements.putExtra(UploadElementsService.ACTION, UploadElementsService.CANCLE);
+            intentUploadElements.putExtra(UploadElementsService.HANDLER, new MyReceiver());
+
+            startService(intentUploadElements);
+            
+            final Intent intentUploadTracks = new Intent(this, UploadTracksService.class);
+
+            intentUploadTracks.putExtra(UploadTracksService.ACTION, UploadTracksService.CANCLE);
+            intentUploadTracks.putExtra(UploadTracksService.HANDLER, new MyReceiver());
+
+            startService(intentUploadTracks);
+            
             this.showProgress(false);
         }
     }
@@ -267,17 +295,17 @@ public class UploadActivity extends AbstractActivity {
                 Log.v("UploadActivity$MyHandler",
                         "data=" + resultData.toString());
             }
-            if (resultCode == UploadService.CURRENT_PROGRESS) {
-                progress.setProgress(resultData.getInt(UploadService.MESSAGE));
-            } else if (resultCode == UploadService.MAX_PROGRESS) {
-                progress.setMax(resultData.getInt(UploadService.MESSAGE));
+            if (resultCode == UploadElementsService.CURRENT_PROGRESS) {
+                progress.setProgress(resultData.getInt(UploadElementsService.MESSAGE));
+            } else if (resultCode == UploadElementsService.MAX_PROGRESS) {
+                progress.setMax(resultData.getInt(UploadElementsService.MESSAGE));
                 progress.setProgress(0);
                 progress.setVisibility(View.VISIBLE);
                 indetermineProgress.setVisibility(View.INVISIBLE);
-            } else if (resultCode == UploadService.ERROR) {
-                final String msg = resultData.getString(UploadService.MESSAGE);
+            } else if (resultCode == UploadElementsService.ERROR) {
+                final String msg = resultData.getString(UploadElementsService.MESSAGE);
                 UploadActivity.this.onError(msg);
-            } else if (resultCode == UploadService.SUCCESS) {
+            } else if (resultCode == UploadElementsService.SUCCESS) {
                 UploadActivity.this.onSuccess();
             }
         }
