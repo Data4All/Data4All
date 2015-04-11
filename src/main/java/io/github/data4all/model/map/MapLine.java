@@ -240,7 +240,7 @@ public class MapLine extends Polyline {
                         (int) event.getX(), (int) event.getY());
                 if (active) {
                     // set the new information to the element
-                    ((PolyElement) element).setNodesFromGeoPoints(geoPointList);
+                    ((PolyElement) element).setNodesFromGeoPoints(this.getPoints());
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
                         && this.isCloseTo(geoPoint, getTolerance(), mapView)) {
