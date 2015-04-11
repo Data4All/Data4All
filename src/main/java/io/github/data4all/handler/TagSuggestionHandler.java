@@ -36,7 +36,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	private String city = "";
 	private String country = "";
 	private String postCode = "";
-
+    private String display_name ="";
 	private String full_address = "";
 	Location lastLocation;
 	
@@ -67,15 +67,29 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 					+ location.getLatitude()
 					+ "&lon=" + location.getLongitude()
 					+ "&zoom=18&addressdetails=1");
-		
-				JSONObject address = jsonObj.getJSONObject("address");
+		      
+			display_name = jsonObj.getString("display_name");
+			if (display_name.contains(",")) {
+			    // Split it.
+				String[] separate = display_name.split(",");	
+				addresseNr = separate[0];
+				road = separate[1];
+				city = separate[3];
+				postCode = separate[6];
+			}
+			JSONObject address = jsonObj.getJSONObject("address");
+			country = address.getString("country");
+			
+			
+			
+				/*JSONObject address = jsonObj.getJSONObject("address");
 
 				postCode = address.getString("postcode");
-				addresseNr = address.getString("house_number");
+				//addresseNr = address.getString("house_number");
 				road = address.getString("road");
 				city = address.getString("city");
 				country = address.getString("country");
-			
+			*/
 			Addresse addresse = new Addresse();
 			addresse.setAddresseNr(addresseNr);
 			addresse.setRoad(road);
@@ -211,9 +225,9 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		}
 		locations.clear();
 		locations.add(current);
-		while (locations.size() < 5) {
+		while (locations.size() < 10) {
 			Location location = getLocation(current.getLongitude(),
-					current.getLatitude(), 50);
+					current.getLatitude(), 100);
 			if (!locationsExist(locations, location)) {
 				locations.add(location);
 			}
