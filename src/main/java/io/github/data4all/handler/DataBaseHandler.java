@@ -1359,6 +1359,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 gpsTracks.add(track);
             }
         }
+        cursor.close();
         Log.i(TAG, gpsTracks.size()
                 + " GPS tracks were retrieved from the database.");
         return gpsTracks;
