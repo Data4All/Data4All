@@ -61,7 +61,8 @@
         <activity android:name=".activity.BasicActivity" />
         <activity android:name=".activity.SensorReactionActivity" />
 
-        <service android:name=".service.UploadService" />
+        <service android:name=".service.UploadElementsService" />
+        <service android:name=".service.UploadTracksService" />
         <service
             android:name=".service.GPSservice"
             android:label="GPS Service" >
