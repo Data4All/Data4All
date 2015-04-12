@@ -48,7 +48,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.SharedPreferences;
-
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -304,8 +303,19 @@ public class ResultViewActivity extends AbstractActivity implements
               @Override
               public void onClick(DialogInterface dialog, int which) {
                   final String key = (String) showArray[which];
-                  Log.i(TAG, tagMap.get(key).getKey());
-                  ResultViewActivity.this.changeClassifiedTag(key);
+                  String lastChoice = getString(R.string.name_lastchoice) ;
+                  if(lastChoice.equalsIgnoreCase(key)) {
+                      
+                  	element.setTags(LastChoiceHandler.getInstance()
+                              .getLastChoice(getIntent()
+                              .getExtras().getInt("TYPE_DEF")));
+                  	Log.i(TAG, "TAGSSSSSSLASTCHOICE" + element.getTags().toString());
+                  	ResultViewActivity.this.output();
+                      
+                  }else {
+                	  ResultViewActivity.this.changeClassifiedTag(key);
+                  }
+
               }
           });
           alertDialog.setCancelable(false);
@@ -422,9 +432,7 @@ public class ResultViewActivity extends AbstractActivity implements
         Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
         endList.remove(0);
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
-       /** LastChoiceHandler.getInstance().setLastChoice(
-                getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
-        LastChoiceHandler.getInstance().save(this); */
+
 
     }
 
@@ -688,41 +696,12 @@ public class ResultViewActivity extends AbstractActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.buttonResult:
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    ResultViewActivity.this);
-            Log.i(TAG, element.getTags().toString());
-            builder.setMessage(R.string.resultViewAlertDialogMessage);
-            final Intent intent = new Intent(this, LoginActivity.class);
-            builder.setPositiveButton(R.string.yes,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            addOsmElementToDB(element);
-                            startActivityForResult(intent);
-                        }
-                    });
-            builder.setNegativeButton(R.string.maybe,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                        	
-                            setResult(RESULT_OK);
-                            finishWorkflow(null);
-                        }
-                    });
-            builder.setNeutralButton(R.string.no, 
-            		new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					addOsmElementToDB(element);
-                    setResult(RESULT_OK);
-                    finishWorkflow(null);
-                    
-				}
-			});
-            alert = builder.create();
-            alert.show();
-        	// createAlertDialogResult();
-            this.addOsmElementToDB(element);
+        	LastChoiceHandler.getInstance().setLastChoice(
+                    getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
+            LastChoiceHandler.getInstance().save(this); 
+            
+            
+        	this.addOsmElementToDB(element);
             askForGalleryDelete();
             break;
         case R.id.buttonResultToCamera:
@@ -803,6 +782,8 @@ public class ResultViewActivity extends AbstractActivity implements
     	final AlertDialog.Builder builder = new AlertDialog.Builder(
                 ResultViewActivity.this);
         builder.setMessage(R.string.resultViewAlertDialogMessage);
+        
+        
         final Intent intent = new Intent(this, LoginActivity.class);
         builder.setPositiveButton(R.string.yes,
                 new DialogInterface.OnClickListener() {
@@ -822,7 +803,7 @@ public class ResultViewActivity extends AbstractActivity implements
         		new DialogInterface.OnClickListener() {
 			
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onClick(DialogInterface dialog, int which) {				
 				addOsmElementToDB(element);
                 setResult(RESULT_OK);
                 finishWorkflow(null);
@@ -830,8 +811,9 @@ public class ResultViewActivity extends AbstractActivity implements
                 
 			}
 		});
-        alert = builder.create();
+        alert = builder.show();
         alert.show();
+        
 
     }
     /**
@@ -893,4 +875,7 @@ public class ResultViewActivity extends AbstractActivity implements
     protected void onWorkflowFinished(Intent data) {
         finishWorkflow(data);
     }
+    
+    
+
 }

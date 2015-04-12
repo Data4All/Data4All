@@ -14,6 +14,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 
 /**
  * this class represent the lastChoice from a category.</br>
@@ -25,6 +26,8 @@ import android.content.res.Resources;
 public class LastChoiceHandler {
 
     private static LastChoiceHandler handler;
+    
+    private static final String TAG = "LastChoiceHandler";
     
     // The map were the last selected Tag are saved with his type 
     private Map<Integer, Map<Tag, String>> typWithLastchoice;
@@ -45,9 +48,11 @@ public class LastChoiceHandler {
      * @param lastChoice
      */
     public void setLastChoice(int typ, Map<Tag, String> lastChoice) {
+    	Log.i(TAG, "element.getTAgs" + lastChoice.toString());
         Map<Tag, String> lastChoiceCopie = sortMap(lastChoice);
 
         typWithLastchoice.put(typ, lastChoiceCopie);
+        Log.i(TAG, "map " + typWithLastchoice.toString());
     }
 
     /**
