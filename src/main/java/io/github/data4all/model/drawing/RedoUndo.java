@@ -61,14 +61,13 @@ public class RedoUndo {
     private int currentCount;
     
     /**
-     * Standard strings for actions
-     */
-    final static String add = "ADD";
-    final static String delete = "DELETE";
-    final static String moveFrom = "MOVE_FROM";
-    final static String moveTo = "MOVE_TO";
-    final static String movePolyFrom = "MOVE_POLY_FROM";
-    final static String movePolyTo = "MOVE_POLY_TO";
+	 * Standard strings for actions
+	 */
+	static final String add = "ADD";
+	static final String delete = "DELETE";
+	static final String moveFrom = "MOVE_FROM";
+	static final String moveTo = "MOVE_TO";
+	static final String clear = "CLEAR";
 
 
     /**
@@ -138,9 +137,8 @@ public class RedoUndo {
             } else if (action.equals(moveTo)
                     && actions.get(actions.size() - 1).equals(moveTo)) {
                 motions.set(actions.size() - 1, point);
-            } else if (action.equals(movePolyTo)
-                    && actions.get(actions.size() - 1).equals(movePolyTo)) {
-                motions.set(actions.size() - 1, point);
+            } else if (action.equals(clear)
+                    && motions.isEmpty()) {
             }else {
             	Log.d(TAG, "ADD ELSE");
                 motions.add(point);
@@ -177,7 +175,7 @@ public class RedoUndo {
      * when a new polygon is drawn.
      */
     private void remove() {
-        int loop = maxCount - currentCount;
+        int loop = maxCount - currentCount-1;
         Log.d(TAG, "remove some elements: " + loop);
         while (loop >= 0) {
             motions.remove(motions.size() - 1);

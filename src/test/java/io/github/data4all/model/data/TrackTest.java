@@ -222,11 +222,10 @@ public class TrackTest {
         track.addTrackPoint(bloc);
         track.addTrackPoint(cloc);
 
-        String expected = track.getTrackName() + "\n";
+        String expected = "ID: -1" + '\n' + track.getTrackName() + "\n" + "finished: false" + '\n';
         for (TrackPoint tp : track.getTrackPoints()) {
             String tmp = tp.toString();
             expected += tmp + "\n";
-
         }
         String actual = track.toString();
         assertTrue("Should be " + expected + " but was " + actual,

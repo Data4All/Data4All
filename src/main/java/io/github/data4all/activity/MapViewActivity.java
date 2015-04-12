@@ -34,14 +34,10 @@ import org.osmdroid.util.GeoPoint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -154,8 +150,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        // Add record button only in this activity
+        inflater.inflate(R.menu.track_menu, menu);
         boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
+        
         return result;
     }
 

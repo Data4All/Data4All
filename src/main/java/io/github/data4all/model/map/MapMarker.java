@@ -17,6 +17,7 @@ package io.github.data4all.model.map;
 
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
+import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -32,9 +33,13 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ZoomControls;
 
 /**
  * Map Marker which has an InfoWindow and is movable.
@@ -62,7 +67,7 @@ public class MapMarker extends Marker {
     /**
      * Point representing the marker.
      */
-    private Point point;
+    private GeoPoint point;
 
     /**
      * Modes for edits which differ from touch events.
@@ -81,6 +86,12 @@ public class MapMarker extends Marker {
      * Projection of the mapView.
      */
     private Projection pj;
+
+    /**
+     * MapCenter values.
+     */
+    private GeoPoint newMapcenter;
+    private GeoPoint oldMapcenter;
 
     /**
      * Default constructor.
@@ -152,7 +163,8 @@ public class MapMarker extends Marker {
                     mode = MOVE;
                     pj = mapView.getProjection();
                     // actual GeoPoint
-                    point = pj.toPixels(this.getPosition(), null);
+                    point = this.getPosition();
+                    oldMapcenter = (GeoPoint) mapView.getMapCenter();
                     xStart = (int) event.getX();
                     yStart = (int) event.getY();
                     Log.d(TAG, "action_down at point: " + xStart + " " + yStart);
@@ -174,7 +186,7 @@ public class MapMarker extends Marker {
                 Log.d(TAG, "action_move");
                 if (active && mode == MOVE) {
                     Log.d(TAG, "move marker");
-                    this.moveToNewPosition(event, mapView);
+                    this.moveToNewPosition(event);
 
                 }
                 break;
@@ -195,25 +207,26 @@ public class MapMarker extends Marker {
      * 
      * @param event
      *            the current MotionEvent from onTouchEvent
-     * @param mapView
-     *            the current mapView
      */
-    public void moveToNewPosition(final MotionEvent event, final MapView mapView) {
+    public void moveToNewPosition(final MotionEvent event) {
 
         // set the end coordinates of the movement
         final int xEnd = (int) event.getX();
         final int yEnd = (int) event.getY();
 
-        Log.i(TAG, "moveMapMarker from: " + xStart + " " + yStart);
-        Log.i(TAG, "moveMapMarker to: " + xEnd + " " + yEnd);
+        int x = xEnd - xStart;
+        int y = yEnd - yStart;
+        pj = mapView.getProjection();
+        Point marker = pj.toPixels(point, null);
+        marker = new Point(marker.x + x, marker.y + y);
 
-        // move the first point
-        point.set((point.x + (xEnd - xStart)), (point.y + (yEnd - yStart)));
-        setPosition((GeoPoint) pj.fromPixels((int) point.x, (int) point.y));
+        Point center = pj.toPixels(oldMapcenter, null);
+        center = new Point(center.x + x, center.y + y);
+        newMapcenter = (GeoPoint) pj.fromPixels(center.x, center.y);
 
-        // set new start values for the next move action
-        xStart = (int) event.getX();
-        yStart = (int) event.getY();
+        this.setPosition((GeoPoint) pj.fromPixels((int) marker.x,
+                (int) marker.y));
+
         mapView.invalidate();
     }
 
@@ -232,7 +245,12 @@ public class MapMarker extends Marker {
             mapView.invalidate();
             active = false;
         }
-        mapView.setBuiltInZoomControls(active);
+        if (activity instanceof MapPreviewActivity) {
+            ZoomControls zoomControls = (ZoomControls) activity
+                    .findViewById(R.id.zoomcontrols);
+            int v = active ? View.VISIBLE : View.GONE;
+            zoomControls.setVisibility(v);
+        }
     }
 
     /**
@@ -261,7 +279,16 @@ public class MapMarker extends Marker {
     public void setPosition(final GeoPoint point) {
         super.setPosition(point);
         if (active) {
-            mapView.getController().setCenter(point);
+            final SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(activity);
+            final Resources res = activity.getResources();
+            final String key = res
+                    .getString(R.string.pref_moving_animation_key);
+            if ("Animate".equals(prefs.getString(key, null))) {
+                mapView.getController().animateTo(newMapcenter);
+            } else {
+                mapView.getController().setCenter(newMapcenter);
+            }
             mapView.postInvalidate();
         }
     }

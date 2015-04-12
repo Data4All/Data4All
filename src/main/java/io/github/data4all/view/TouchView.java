@@ -16,7 +16,6 @@
 package io.github.data4all.view;
 
 import io.github.data4all.R;
-import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
@@ -162,10 +161,10 @@ public class TouchView extends View {
 			.getDisplayMetrics().density);
 
 	/**
-     * Specifies the tolerance if a point is near the touchevent
-     */
-    private final int pointTolerance = 50;
-    
+	 * Specifies the tolerance if a point is near the touchevent
+	 */
+	private final int pointTolerance = 5 * pointRadius;
+
 	/**
 	 * The current used RedoUndo listener.
 	 */
@@ -174,14 +173,14 @@ public class TouchView extends View {
 	private CaptureAssistView cameraAssistView;
 
 	private Point movingPoint;
-	
+
 	/**
 	 * Standard strings for actions
 	 */
-    static final String add = "ADD";
-    static final String delete = "DELETE";
-    static final String moveFrom = "MOVE_FROM";
-    static final String moveTo = "MOVE_TO";
+	static final String add = "ADD";
+	static final String delete = "DELETE";
+	static final String moveFrom = "MOVE_FROM";
+	static final String moveTo = "MOVE_TO";
 
 	/**
 	 * Simple constructor to use when creating a view from code.
@@ -274,130 +273,129 @@ public class TouchView extends View {
 		}
 	}
 
-	 /*
-     * (non-Javadoc)
-     * 
-     * @see android.view.View#onTouchEvent(android.view.MotionEvent)
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        final int action = event.getAction();
-        // TODO: dadurch wird jeglicher input Ã¼berm horizont verhindert. so auch
-        // das verschieben
-        // besser beim hinzufÃ¼gen von punkten Ã¼berprÃ¼fen?
-        switch (action) {
-        case MotionEvent.ACTION_DOWN:
-            currentMotion = new DrawingMotion();
-            this.startMotion(event);
-            break;
-        case MotionEvent.ACTION_UP:
-            this.endMotion(event);
-            polygon = newPolygon;
-            this.undoUseable();
-            this.redoUseable();
-            this.undoRedoListener.okUseable(hasEnoughNodes());
-            break;
-        case MotionEvent.ACTION_MOVE:
-            this.moveMotion(event);
-            postInvalidate();
-            break;
-        default:
-            Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
-        }
-        return true;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.view.View#onTouchEvent(android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		final int action = event.getAction();
+		// TODO: dadurch wird jeglicher input Ã¼berm horizont verhindert. so
+		// auch
+		// das verschieben
+		// besser beim hinzufÃ¼gen von punkten Ã¼berprÃ¼fen?
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			currentMotion = new DrawingMotion();
+			this.startMotion(event);
+			break;
+		case MotionEvent.ACTION_UP:
+			this.endMotion(event);
+			polygon = newPolygon;
+			this.undoUseable();
+			this.redoUseable();
+			this.undoRedoListener.okUseable(hasEnoughNodes());
+			break;
+		case MotionEvent.ACTION_MOVE:
+			this.moveMotion(event);
+			postInvalidate();
+			break;
+		default:
+			Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
+		}
+		return true;
+	}
 
 	private void startMotion(MotionEvent event) {
-		 if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
-	                .getY())))) {
-	            this.lookUpPoint = lookUp(event.getX(), event.getY(),
-	                    pointTolerance);
-	            if (!polygonclicked && lookUpPoint == null) {
-	                addPointOnLine(new Point(event.getX(), event.getY()));
-	            }
-	            if (lookUpPoint != null) {
+		if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
+				.getY())))) {
+			this.lookUpPoint = lookUp(event.getX(), event.getY(),
+					pointTolerance);
+			if (!polygonclicked && lookUpPoint == null) {
+				addPointOnLine(new Point(event.getX(), event.getY()));
+			}
+			if (lookUpPoint != null) {
 
-	                this.mover = movePoint(lookUpPoint);
-	                startPoint = lookUpPoint;
-	                lookUpPoint = null;
-	                if (!polygonclicked) {
-	                    isDelete = true;
-	                }
-	            } else {
+				this.mover = movePoint(lookUpPoint);
+				startPoint = lookUpPoint;
+				lookUpPoint = null;
+				if (!polygonclicked) {
+					isDelete = true;
+				}
+			} else {
 
-	                startPoint = new Point(event.getX(), event.getY());
-	                movingPoint = startPoint;
-	                if (!isOnLine && !polygonclicked) {
-	                    if (!insidePolygon(startPoint)) {
-	                        currentMotion.addPoint(event.getX(), event.getY());
-	                        newPolygon = interpreter.interprete(polygon,
-	                                currentMotion);
-	                    }
-	                }
+				startPoint = new Point(event.getX(), event.getY());
+				movingPoint = startPoint;
+				if (!isOnLine && !polygonclicked) {
+					if (!insidePolygon(startPoint)) {
+						currentMotion.addPoint(event.getX(), event.getY());
+						newPolygon = interpreter.interprete(polygon,
+								currentMotion);
+					}
+				}
 
-	            }
-	        }
+			}
+		}
 	}
 
 	private void moveMotion(MotionEvent event) {
 		float offsetX = movingPoint.getX() - event.getX();
 		float offsetY = movingPoint.getY() - event.getY();
-		Log.d("", "polygonclicked: " + polygonclicked);
-		if (polygonclicked) {
+		if (mover == null && polygonclicked) {
 			movePolygon(offsetX, offsetY);
 			movingPoint = new Point(event.getX(), event.getY());
-		} else if (mover != null) {
-			if (Math.abs(offsetX) > 10 && Math.abs(offsetY) > 10) {
-				mover.moveTo(event.getX(), event.getY());
-				isDelete = false;
-				redoUndo.add(new Point(event.getX(), event.getY()), moveTo,
-						mover.getIdx());
-			}
-		} else {
+		} else if (!(cameraAssistView.overHorizont(new Point(event.getX(),
+				event.getY())))) {
+			if (mover != null) {
+				if (Math.abs(offsetX) > pointTolerance
+						&& Math.abs(offsetY) > pointTolerance) {
+					mover.moveTo(event.getX(), event.getY());
+					isDelete = false;
+					redoUndo.add(new Point(event.getX(), event.getY()), moveTo,
+							mover.getIdx());
+				}
+			} else {
 
-            if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
-                    .getY())))) {
-                if (Math.abs(offsetX) > 5 && Math.abs(offsetY) > 5) {
-                    currentMotion.addPoint(event.getX(), event.getY());
-                    newPolygon = interpreter.interprete(polygon, currentMotion);
-                }
-            }
-        }
+				if (Math.abs(offsetX) > 5 && Math.abs(offsetY) > 5) {
+					currentMotion.addPoint(event.getX(), event.getY());
+					newPolygon = interpreter.interprete(polygon, currentMotion);
+				}
+			}
+		}
 	}
 
 	private void endMotion(MotionEvent event) {
 		if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
-                .getY())))) {
-            if (polygon.size() > 0 && mover == null
-                    && startPoint.getX() - event.getX() < 5
-                    && startPoint.getY() - event.getY() < 5) {
-                polygonclicked(insidePolygon(startPoint));
-            }
+				.getY())))) {
+			if (polygon.size() > 0 && mover == null
+					&& startPoint.getX() - event.getX() < 5
+					&& startPoint.getY() - event.getY() < 5) {
+				polygonclicked(insidePolygon(startPoint));
+			}
 
-            if (isDelete) {
-                redoUndo.add(startPoint, delete, mover.getIdx());
-                this.deletePoint(startPoint);
-                mover = null;
-                isDelete = false;
-            } else {
-                if (mover != null) {
-                    mover = null;
-                } else{
-                    redoUndo = new RedoUndo(newPolygon);
-                }
-            }
-            invalidate();
-        }
-    }
+			if (isDelete) {
+				redoUndo.add(startPoint, delete, mover.getIdx());
+				this.deletePoint(startPoint);
+				mover = null;
+				isDelete = false;
+			} else {
+				if (mover != null) {
+					mover = null;
+				} else {
+					redoUndo = new RedoUndo(newPolygon);
+				}
+			}
+			invalidate();
+		}
+	}
 
 	public void polygonclicked(boolean clicked) {
 		if (polygonclicked && clicked) {
 			polygonclicked = false;
 		} else if (!polygonclicked && clicked) {
 			polygonclicked = true;
-
 		}
-
 		if (polygonclicked) {
 			areaPaint.setColor(Color.GREEN);
 			areaPaint.setAlpha(100);
@@ -683,6 +681,10 @@ public class TouchView extends View {
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if (action.equals(add)) {
 			newPolygon.add(point);
+			if(interpreter instanceof BuildingMotionInterpreter){
+				point = redoUndo.redo();
+				newPolygon.add(point);
+			}
 		}
 		if (action.equals(delete)) {
 			newPolygon.remove(point);
@@ -715,6 +717,10 @@ public class TouchView extends View {
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if (action.equals(add)) {
 			newPolygon.remove(point);
+			if(interpreter instanceof BuildingMotionInterpreter){
+				point = redoUndo.undo();
+				newPolygon.remove(point);
+			}
 		}
 		if (action.equals(delete)) {
 			newPolygon.add(location, point);
@@ -836,32 +842,32 @@ public class TouchView extends View {
 		}
 	}
 
-    /**
-     * Testing if the undo function is able to use
-     * 
-     * @author vkochno
-     * 
-     * @return If undo can be used
-     */
-    public boolean undoUseable() {
-        if (!(interpreter instanceof BuildingMotionInterpreter)
-                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-                || interpreter instanceof BuildingMotionInterpreter
-                && redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
-                && redoUndo.getMax() == 4) {
-            Log.d(this.getClass().getSimpleName(), "true undo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canUndo(true);
-            }
-            return true;
-        } else {
-            Log.d(this.getClass().getSimpleName(), "false undo");
-            if (undoRedoListener != null) {
-                undoRedoListener.canUndo(false);
-            }
-            return false;
-        }
-    }
+	/**
+	 * Testing if the undo function is able to use
+	 * 
+	 * @author vkochno
+	 * 
+	 * @return If undo can be used
+	 */
+	public boolean undoUseable() {
+		if (!(interpreter instanceof BuildingMotionInterpreter)
+				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+				|| interpreter instanceof BuildingMotionInterpreter
+				&& redoUndo.getMax() != 0 && redoUndo.getCurrent() != 0
+				&& redoUndo.getMax() >= 4) {
+			Log.d(this.getClass().getSimpleName(), "true undo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canUndo(true);
+			}
+			return true;
+		} else {
+			Log.d(this.getClass().getSimpleName(), "false undo");
+			if (undoRedoListener != null) {
+				undoRedoListener.canUndo(false);
+			}
+			return false;
+		}
+	}
 
 	/**
 	 * Returns <code>true</code> if the drawing has the minimum of nodes for its

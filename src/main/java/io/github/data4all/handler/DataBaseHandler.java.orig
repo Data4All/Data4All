@@ -57,7 +57,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     private static final String TAG = "DataBaseHandler";
 
     // Database Version
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "Data4AllDB";
@@ -1186,7 +1186,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Track track = new Track();
 
         final Cursor cursor = db.query(TABLE_GPSTRACK, new String[] {
-                KEY_INCID, KEY_TRACKNAME, KEY_TRACKPOINTS, FLAG_FINISHED, }, KEY_INCID + "=?",
+                KEY_INCID, KEY_TRACKNAME, KEY_TRACKPOINTS, }, KEY_INCID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
@@ -1295,9 +1295,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         values.put(KEY_TRACKNAME, track.getTrackName());
 
+<<<<<<< HEAD
+        values.put(FLAG_FINISHED, track.isFinished() ? 1 : 0);
+=======
         values.put(KEY_TRACKPOINTS, arrayList);
 
         values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
+>>>>>>> 54769688ca6a741cd310a52be420ecba519fc8b1
 
 
         if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
@@ -1359,7 +1363,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 gpsTracks.add(track);
             }
         }
-        cursor.close();
         Log.i(TAG, gpsTracks.size()
                 + " GPS tracks were retrieved from the database.");
         return gpsTracks;

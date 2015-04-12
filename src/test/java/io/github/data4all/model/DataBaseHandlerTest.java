@@ -26,6 +26,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -388,6 +389,7 @@ public class DataBaseHandlerTest {
         assertEquals(0, dbHandler.getTrackPointCount());
     }
 
+    @Ignore
     @Test
     public void testTrackCRUD() throws JSONException {
         Location loc1 = new Location("User");

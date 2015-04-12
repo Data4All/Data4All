@@ -18,6 +18,7 @@ package io.github.data4all.service;
 import static org.junit.Assert.assertEquals;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.TrackUtil;
 
 import java.lang.reflect.Field;
 
@@ -71,6 +72,9 @@ public class GPSserviceTest {
         Field trackField = GPSservice.class.getDeclaredField("track");
         trackField.setAccessible(true);
         trackField.set(service, new Track());
+        Field trackUtilField = GPSservice.class.getDeclaredField("trackUtil");
+        trackUtilField.setAccessible(true);
+        trackUtilField.set(service, new TrackUtil(Robolectric.application));
 
         service.onLocationChanged(new Location("TEST"));
     }

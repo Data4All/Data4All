@@ -16,14 +16,13 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.util.ListAdapter;
+import io.github.data4all.util.TrackUtil;
 
 import java.util.List;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,6 +40,7 @@ public class GpsTrackListActivity extends AbstractActivity {
 
     private ArrayAdapter<Track> trackItemArrayAdapter;
     private List<Track> trackList;
+    private TrackUtil trackUtil;
 
     /*
      * (non-Javadoc)
@@ -51,6 +51,8 @@ public class GpsTrackListActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracklist_view);
+        
+        trackUtil = new TrackUtil(this.getApplicationContext());
 
         // Find the ListView resource.
         final ListView trackListView = (ListView) findViewById(R.id.trackListView);
@@ -103,9 +105,7 @@ public class GpsTrackListActivity extends AbstractActivity {
      * Get all Tracks from Database.
      */
     private void getTracks() {
-        DataBaseHandler db = new DataBaseHandler(this);
-        trackList = db.getAllGPSTracks();
-        db.close();
+        trackList = trackUtil.getTracks();
     }
 
     /* (non-Javadoc)
