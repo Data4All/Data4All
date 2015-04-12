@@ -182,6 +182,7 @@ public class ResultViewActivity extends AbstractActivity implements
         }*/
 
         if(element.getTags().isEmpty()){
+        	Log.i(TAG, "Add Tag");
         	addClassifiedTag();
         }
         this.output();
@@ -347,10 +348,11 @@ public class ResultViewActivity extends AbstractActivity implements
             if(entry.getKey() != null){
             final Tag tagKey = entry.getKey();
             tagList.add(tagKey);
-            keyList.add(res.getString(tagKey.getNameRessource()));
+            
             if (Tagging.isClassifiedTag(getString(tagKey.getNameRessource()),
                     res)) {
                 try {
+                	keyList.add(res.getString(tagKey.getNameRessource()));
                     endList.add(getString((Integer) R.string.class
                             .getDeclaredField(
                                     "name_"
@@ -366,9 +368,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 } catch (NoSuchFieldException e) {
                     Log.e(TAG, "", e);
                 }
-            } else {
-                endList.add(element.getTags().get(tagKey));
-            }
+            } 
 
             }
         }
@@ -408,6 +408,7 @@ public class ResultViewActivity extends AbstractActivity implements
             ClassifiedValue classi = classifiedMap.get(value);
             classifiedValue = classi;
             keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
+            endList = Tagging.addUnclassifiedValue(element, endList, keyList, res);
             
         }
         
@@ -424,6 +425,7 @@ public class ResultViewActivity extends AbstractActivity implements
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this); */
+
     }
 
     /**
