@@ -87,8 +87,11 @@ public class TwoColumnAdapter extends BaseAdapter {
         final TextView text2 = twoLineListItem.getText2();
 
         text1.setText(listKey.get(position));
+        if(listValue.size() > position){
         text2.setText(listValue.get(position));
-
+        } else {
+        text2.setText("");	
+        }
         return twoLineListItem;
     }
 

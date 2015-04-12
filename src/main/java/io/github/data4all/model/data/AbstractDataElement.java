@@ -90,6 +90,13 @@ public abstract class AbstractDataElement implements Parcelable {
     }
 
     /**
+     * Removes all Tags
+     */
+    public void clearTags() {
+        this.tags.clear();
+    }
+
+    /**
      * Add the tags of the DataElement.
      * 
      * @param tags
@@ -112,11 +119,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * @return unmodifiable collection of tags
      */
     public Map<Tag, String> getTags() {
-        if (!tags.isEmpty()) {
-            return tags;
-        } else {
-            return tags;
-        }
+        return tags;
     }
 
     /**
@@ -197,8 +200,10 @@ public abstract class AbstractDataElement implements Parcelable {
         dest.writeLong(osmId);
         dest.writeInt(tags.size());
         for (Tag t : tags.keySet()) {
-            dest.writeInt(t.getId());
-            dest.writeString(tags.get(t));
+            if (t != null) {
+                dest.writeInt(t.getId());
+                dest.writeString(tags.get(t));
+            }
         }
     }
 

@@ -20,13 +20,16 @@ import java.util.List;
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
+import io.github.data4all.activity.ResultViewActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.Tagging;
 
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
 import org.osmdroid.bonuspack.overlays.InfoWindow;
@@ -36,8 +39,10 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -99,7 +104,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         this.activity = activity;
         this.element = element;
         this.overlay = overlay;
-
+        setInfo();
         int id = R.id.bubble_delete;
         final Button delete = (Button) mView.findViewById(id);
         delete.setOnClickListener(this);
@@ -248,6 +253,51 @@ public class CustomInfoWindow extends BasicInfoWindow implements
             nextWindow.open(next, position, 0, 0);
         }
     }
+    
+    /**
+     * Set the info of the MapPolyline for the InfoWindow.
+     */
+    public void setInfo() {
+        if (!element.getTags().keySet().isEmpty()
+                && !element.getTags().values().isEmpty()) {
+            Log.i(TAG, element.getTags().toString());
+            final Tag tag = (Tag) element.getTags().keySet().toArray()[0];
+            final String key = tag.getKey();
+            final String value = element.getTags().get(tag);
+            Log.i(TAG, tag.toString());
+            overlay.setTitle(activity.getString(tag.getNameRessource()));
+            final Resources resources = activity.getResources();
+            if (Tagging.isClassifiedTag(
+                    activity.getString(tag.getNameRessource()), resources)) {
+                overlay.setSubDescription(this.getLocalizedName(activity, key, value));
+            } else {
+                overlay.setSubDescription(element.getTags().get(tag));
+            }
+        }
+    }
+
+    /**
+     * Get the localized name of the element to show in the InfoWindow.
+     * 
+     * @param context
+     *            the context of the application
+     * @param key
+     *            the tag key
+     * @param value
+     *            the tag value
+     * @return the localized name
+     */
+    public String getLocalizedName(Context context, String key, String value) {
+        final Resources resources = context.getResources();
+        final String s = "name_" + key + "_" + value;
+        int id = resources.getIdentifier(s.replace(":", "_"), "string",
+                context.getPackageName());
+        if (id == 0) {
+            return null;
+        } else {
+            return resources.getString(id);
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -300,7 +350,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         intent.putExtra(TYPE, type);
 
         intent.putExtra(OSM_ELEMENT, element);
-
+        Log.i(TAG, element.getTags().toString());
         // Start ResultView Activity
         Log.i(TAG, "Start ResultViewActivity");
         activity.startActivityForResult(intent, 0);

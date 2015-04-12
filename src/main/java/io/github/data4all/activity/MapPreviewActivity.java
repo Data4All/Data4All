@@ -212,7 +212,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
      * Starts new Tagactivity with Osm Object and Type Definition in the Intent
      */
     private void accept() {
-        final Intent intent = new Intent(this, TagActivity.class);
+        final Intent intent = new Intent(this, ResultViewActivity.class);
 
         // Set Type Definition for Intent
         Log.i(TAG, "Set intent extra " + TYPE + " to "

@@ -31,6 +31,8 @@ import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +46,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.SharedPreferences;
+
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,12 +65,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.view.ViewGroup;;
 
 /**
  * View after Drawing and Tagging
@@ -116,9 +123,12 @@ public class ResultViewActivity extends AbstractActivity implements
     // The Map with the String and ClassifiedValue
     private Map<String, ClassifiedValue> classifiedMap;
  
+    private ClassifiedValue classifiedValue;
+    
     public static String tmp;
 
-
+    private Map<Tag, String> map = new LinkedHashMap<Tag, String>();
+    
     private View viewFooter;
     
     private String type = "TYPE_DEF";
@@ -143,16 +153,17 @@ public class ResultViewActivity extends AbstractActivity implements
         mapView.setScrollable(false);
         mapView.addOsmElementToMap(this, element, false);
         // Here the List of tags is created
+        Log.i(TAG, "map ready");
         listView = (ListView) this.findViewById(R.id.listViewResultView);
         res = getResources();
-        tagMap =
-                Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
-                        res);
+        tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
+                res);
+        Log.i(TAG, "tagMap " + tagMap);
         mapTag = Tagging.getUnclassifiedMapKeys(res);
-        if (!Tagging.getAllNonSelectedTags(element.getTags(),
-                getIntent().getExtras().getInt(type)).isEmpty()) {
+        classifiedValue = null;
+        /**if (!Tagging.getAllNonSelectedTags(element.getTags(),
+                classifiedValue).isEmpty()) {
             final LayoutInflater inflater = getLayoutInflater();
-            viewFooter =
                     ((LayoutInflater) this
                             .getSystemService(LAYOUT_INFLATER_SERVICE))
                             .inflate(R.drawable.footer_listviewresult, null,
@@ -162,13 +173,16 @@ public class ResultViewActivity extends AbstractActivity implements
                     ((TextView) viewFooter.findViewById(R.id.titleFooter));
             tVFooter.setOnClickListener(this);
             viewFooter.setOnClickListener(new OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     createDialogAddTags();
 
                 }
             });
+        }*/
+
+        if(element.getTags().isEmpty()){
+        	addClassifiedTag();
         }
         this.output();
         listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -190,7 +204,9 @@ public class ResultViewActivity extends AbstractActivity implements
                 final String selectedString = keyList.get(position);
                 if (Tagging.isClassifiedTag(keyList.get(position), res)) {
                     ResultViewActivity.this.changeClassifiedTag(selectedString);
-                } else{
+                } else if (keyList.get(position).equals(res.getString(R.string.SelectTag))){
+                	addClassifiedTag();
+                } else {
                     ResultViewActivity.this
                             .changeUnclassifiedTag(selectedString);
                 }
@@ -231,7 +247,7 @@ public class ResultViewActivity extends AbstractActivity implements
         case android.R.id.home:
             this.onWorkflowFinished(null);
             status = true;
-            break;
+            break;    
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -249,7 +265,15 @@ public class ResultViewActivity extends AbstractActivity implements
         builder.setPositiveButton(R.string.yes,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                    	element.removeTag(mapTag.get(selectedString));
+                    	map.putAll(element.getTags());
+                    	for(Entry<Tag,String> entry : map.entrySet()){
+                        	Tag tag1 = entry.getKey();
+                        	if(tag1.getKey().equals(mapTag.get(selectedString).getKey())){
+                        		Log.i(TAG, "true");
+                        		element.removeTag(tag1);
+                        	}
+                        }
+                        map.clear();
                     	output();
                     }
                 });
@@ -263,17 +287,66 @@ public class ResultViewActivity extends AbstractActivity implements
         alert.show();
     	
     }
+    
+    /**
+     * adds the classified Tag 
+     */
+    private void addClassifiedTag() {
+    	  final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                  ResultViewActivity.this,
+                  android.R.style.Theme_Holo_Dialog_MinWidth);
+          alertDialog.setTitle(R.string.SelectTag);
+          final CharSequence[] showArray;
+          showArray = Tagging.getArrayKeys(
+                  getIntent().getExtras().getInt("TYPE_DEF"), res);
+          alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                  final String key = (String) showArray[which];
+                  Log.i(TAG, tagMap.get(key).getKey());
+                  ResultViewActivity.this.changeClassifiedTag(key);
+              }
+          });
+          alertDialog.setCancelable(false);
+          alert = alertDialog.create();
+          alert.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				 if (keyCode == KeyEvent.KEYCODE_BACK) {
+					 Log.i(TAG, element.getTags().toString());
+					 if(element.getTags().isEmpty()){
+						 return false; 
+					 } else {
+					 		alert.dismiss();	                    
+		                    return true;
+					 }	
+	                }
+	                return true;
+			}
+		});
+          alert.getWindow().setBackgroundDrawable(
+                  new ColorDrawable(android.graphics.Color.TRANSPARENT));
+          alert.show();    	
+    }
     /**
      * Shows the Tags in a List
+     * @throws NoSuchFieldException 
+     * @throws IllegalAccessException 
+     * @throws IllegalArgumentException 
      */
     private void output() {
         endList = new LinkedList<String>();
         keyList = new LinkedList<String>();
         List<Tag> tagList = new LinkedList<Tag>();
+        final Button resultButton = (Button) this
+                .findViewById(R.id.buttonClassifiedTag);
+        resultButton.setOnClickListener(this);
+        resultButton.setText(R.string.SelectTag);
         for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+            if(entry.getKey() != null){
             final Tag tagKey = entry.getKey();
             tagList.add(tagKey);
-            Log.i(TAG, tagKey.getKey());
             keyList.add(res.getString(tagKey.getNameRessource()));
             if (Tagging.isClassifiedTag(getString(tagKey.getNameRessource()),
                     res)) {
@@ -297,12 +370,60 @@ public class ResultViewActivity extends AbstractActivity implements
                 endList.add(element.getTags().get(tagKey));
             }
 
+            }
         }
-
+        	
+            if(keyList.size() >= 1){
+            Log.i(TAG, "KeyLIST" + keyList.toString());	
+        	Log.i(TAG, "Tag1 " + keyList.get(0));
+        	Log.i(TAG, "Tag " + tagMap.get(keyList.get(0)));
+        	classifiedMap = Tagging.classifiedValueMap(tagMap.get(keyList.get(0))
+                    .getClassifiedValues(), res, false);
+        	Log.i(TAG, classifiedMap.toString());
+        	Tag tagKey = null;
+        	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+                 tagKey = entry.getKey();
+                 break;
+        	 }     
+            String value = null;
+			try {
+				value = getString((Integer) R.string.class
+				        .getDeclaredField(
+				                "name_"
+				                        + tagKey.getKey()
+				                        + "_"
+				                        + element.getTags().get(tagKey)
+				                                .replaceAll(":", "_")).get(
+				                null));
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            ClassifiedValue classi = classifiedMap.get(value);
+            classifiedValue = classi;
+            keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
+            
+        }
+        
+        if(keyList.isEmpty() && endList.isEmpty()){
+        	String selectTag = res.getString(R.string.SelectTag);
+        	keyList.add(selectTag);
+        	endList.add("");
+        }
+        keyList.remove(0);
+        resultButton.setText(endList.get(0));
+        Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
+        endList.remove(0);
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
-        LastChoiceHandler.getInstance().setLastChoice(
+       /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
-        LastChoiceHandler.getInstance().save(this);
+        LastChoiceHandler.getInstance().save(this); */
     }
 
     /**
@@ -313,18 +434,115 @@ public class ResultViewActivity extends AbstractActivity implements
      *            is the Selected String
      */
     private void changeClassifiedTag(final String selectedString) {
-        Log.i(TAG, "Classified Tag");
-        final AlertDialog.Builder alertDialog =
-                new AlertDialog.Builder(ResultViewActivity.this,
+    	final Dialog dialog = new Dialog(ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
+    	dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_matches);
+        ListView listView = (ListView) dialog.findViewById(R.id.list);
+    	dialog.setTitle(R.string.SelectTag);
+    	final CharSequence[] showArray;
+    	final ArrayList <String> arrayList = (ArrayList<String>) Tagging.ClassifiedValueList(tagMap.get(selectedString)
+                .getClassifiedValues(), res);
+        classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString)
+                .getClassifiedValues(), res, false);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(
+                this,android.R.layout.simple_list_item_1, arrayList){
+            @Override
+            public View getView(int position, View convertView,
+                    ViewGroup parent) {
+                View view =super.getView(position, convertView, parent);
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+                textView.setTextColor(Color.WHITE);
+
+                return view;
+            }
+        };
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				final String value = arrayList.get(position);
+                final String realValue = classifiedMap.get(value).getValue();
+                Log.i(TAG, "Value " + realValue);
+                Log.i(TAG, tagMap.get(selectedString).toString());
+                	Tag tagKey = null;
+                	
+                	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+                        tagKey = entry.getKey();
+                        break;
+               	 	}	     
+                	element.removeTag(tagKey);
+                	map.putAll(element.getTags());
+                	map.remove(tagKey);
+                	Log.i(TAG, "MAP" + map.toString());
+                	element.clearTags();	
+                element.addOrUpdateTag(tagMap.get(selectedString), realValue);
+                Tagging.compareUnclassifiedTags(classifiedMap.get(value), map);
+                element.addTags(map);
+                map.clear();
+                dialog.dismiss();
+                ResultViewActivity.this.output();
+       
+				
+			}
+		});
+        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Log.i(TAG, "DISCRIPTION");
+				final String value = arrayList.get(position);
+                final ClassifiedValue classivalue = classifiedMap.get(value);
+                classivalue.getDescriptionResource();
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                        ResultViewActivity.this,
                         android.R.style.Theme_Holo_Dialog_MinWidth);
-        alertDialog.setTitle("Select Tag");
+                alertDialog.setMessage(classivalue.getDescriptionResource());
+                
+                alertDialog.setNeutralButton(R.string.CancelButton, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						alert.dismiss();
+						
+					}
+				});
+                alert = alertDialog.create();
+                alert.getWindow().setBackgroundDrawable(
+                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                alert.show();
+				return true;
+			}
+		});
+        dialog.setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode,
+                    KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    dialog.dismiss();
+                    element.removeTag(tagMap.get(selectedString));
+                    addClassifiedTag();
+                    return true;
+                }
+                return true;
+            }
+        });
+		dialog.show();
+/**
+        Log.i(TAG, "Classified Tag");
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
+        alertDialog.setTitle(R.string.SelectTag);
         final CharSequence[] showArray;
-        showArray =
-                Tagging.ClassifiedValueList(tagMap.get(selectedString)
-                        .getClassifiedValues(), res);
-        classifiedMap =
-                Tagging.classifiedValueMap(tagMap.get(selectedString)
-                        .getClassifiedValues(), res, false);
+        showArray = Tagging.ClassifiedValueList(tagMap.get(selectedString)
+                .getClassifiedValues(), res);
+        classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString)
+                .getClassifiedValues(), res, false);
+         
         alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -332,14 +550,44 @@ public class ResultViewActivity extends AbstractActivity implements
                 final String realValue = classifiedMap.get(value).getValue();
                 Log.i(TAG, "Value " + realValue);
                 Log.i(TAG, tagMap.get(selectedString).toString());
+                	Tag tagKey = null;
+                	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+                        tagKey = entry.getKey();
+                        break;
+               	 	}	     
+                	element.removeTag(tagKey);
+                	map.putAll(element.getTags());
+                	map.remove(tagKey);
+                	Log.i(TAG, "MAP" + map.toString());
+                	element.clearTags();
+                	
+                
                 element.addOrUpdateTag(tagMap.get(selectedString), realValue);
+                Tagging.compareUnclassifiedTags(classifiedMap.get(value), map);
+                element.addTags(map);
                 ResultViewActivity.this.output();
             }
         });
+       
+        alertDialog.setCancelable(false);
         alert = alertDialog.create();
         alert.getWindow().setBackgroundDrawable(
                 new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alert.setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode,
+                    KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    alert.dismiss();
+                    element.removeTag(tagMap.get(selectedString));
+                    addClassifiedTag();
+                    return true;
+                }
+                return true;
+            }
+        });
         alert.show();
+        */
     }
 
     /**
@@ -354,18 +602,36 @@ public class ResultViewActivity extends AbstractActivity implements
                         android.R.style.Theme_Holo_Dialog_MinWidth);
         dialog.setContentView(R.layout.dialog_dynamic);
         dialog.setTitle(selectedString);
+        Map <Tag, String> hashMap = new LinkedHashMap<Tag, String>();
+        map.putAll(element.getTags());
         final Button okay = new Button(ResultViewActivity.this);
+        final Button next = new Button(ResultViewActivity.this);
         final EditText text = new EditText(ResultViewActivity.this);
         text.setTextColor(Color.WHITE);
-
-        Tag tag = mapTag.get(selectedString);
-        text.setInputType(tag.getType());        
-        text.setText(element.getTags().get(tag));
+        final Tag tag = mapTag.get(selectedString);
+        text.setInputType(tag.getType());
+        Log.i(TAG, tag.toString());
+        Log.i(TAG, "VALUE: " + map.toString());
+        for(Entry<Tag,String> entry : map.entrySet()){
+        	Tag tag1 = entry.getKey();
+        	if(tag1.getKey().equals(tag.getKey())){
+        		Log.i(TAG, "true");
+        		text.setText(map.get(tag1));
+        		text.setSelection(text.getText().length()-1);
+                
+        	}
+        }
+        //text.setText(map.get(tag));
         okay.setText(R.string.ok);
         okay.setTextColor(Color.WHITE);
-        final LinearLayout layout =
-                (LinearLayout) dialog.findViewById(R.id.dialogDynamic);
+        next.setText(R.string.next);
+        next.setTextColor(Color.WHITE);
+        final LinearLayout layout = (LinearLayout) dialog
+                .findViewById(R.id.dialogDynamic);
         layout.addView(text);
+        if(keyList.indexOf(selectedString) < keyList.size()-1){
+        	layout.addView(next);
+        }
         layout.addView(okay);
         //Displays the Keyboard
         dialog.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -376,19 +642,43 @@ public class ResultViewActivity extends AbstractActivity implements
                     ResultViewActivity.this.output();
                     dialog.dismiss();
                 } else {
+                	for(Entry<Tag,String> entry : map.entrySet()){
+                    	Tag tag1 = entry.getKey();
+                    	if(tag1.getKey().equals(tag.getKey())){
+                    		Log.i(TAG, "true");
+                    		element.removeTag(tag1);
+                    	}
+                    }
                     element.addOrUpdateTag(mapTag.get(selectedString), text
                             .getText().toString());
                     ResultViewActivity.this.output();
-                    // checks if you can add more Tags if not it removes footer
-                    if (Tagging.getAllNonSelectedTags(element.getTags(),
-                            getIntent().getExtras().getInt("TYPE_DEF"))
-                            .isEmpty()) {
-                        listView.removeFooterView(viewFooter);
-                    }
                     dialog.dismiss();
                 }
             }
         });
+        next.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (text.getText().toString().matches("")) {
+					dialog.dismiss();
+					ResultViewActivity.this.changeUnclassifiedTag(keyList.get(keyList.indexOf(selectedString) +1));
+				} else {
+					for(Entry<Tag,String> entry : map.entrySet()){
+                    	Tag tag1 = entry.getKey();
+                    	if(tag1.getKey().equals(tag.getKey())){
+                    		Log.i(TAG, "true");
+                    		element.removeTag(tag1);
+                    	}
+                    }
+                    element.addOrUpdateTag(mapTag.get(selectedString), text
+                            .getText().toString());
+                    
+                    dialog.dismiss();
+                    ResultViewActivity.this.changeUnclassifiedTag(keyList.get(keyList.indexOf(selectedString) +1));            
+                }            
+			}
+		});
         dialog.show();
     }
 
@@ -396,19 +686,56 @@ public class ResultViewActivity extends AbstractActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.buttonResult:
+            final AlertDialog.Builder builder = new AlertDialog.Builder(
+                    ResultViewActivity.this);
+            Log.i(TAG, element.getTags().toString());
+            builder.setMessage(R.string.resultViewAlertDialogMessage);
+            final Intent intent = new Intent(this, LoginActivity.class);
+            builder.setPositiveButton(R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            addOsmElementToDB(element);
+                            startActivityForResult(intent);
+                        }
+                    });
+            builder.setNegativeButton(R.string.maybe,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        	
+                            setResult(RESULT_OK);
+                            finishWorkflow(null);
+                        }
+                    });
+            builder.setNeutralButton(R.string.no, 
+            		new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					addOsmElementToDB(element);
+                    setResult(RESULT_OK);
+                    finishWorkflow(null);
+                    
+				}
+			});
+            alert = builder.create();
+            alert.show();
         	// createAlertDialogResult();
             this.addOsmElementToDB(element);
             askForGalleryDelete();
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
-            final Intent i = new Intent();
+            final Intent i = new Intent(this, CameraActivity.class);
             i.putExtra(CameraActivity.FINISH_TO_CAMERA, true);
-            finishWorkflow(i);
+            addOsmElementToDB(element);
+            finishWorkflow(null);
+            startActivityForResult(i);
             break;
-        case R.id.titleFooter:
+       /** case R.id.titleFooter:
             createDialogAddTags();
-            break;
+            break; */
+        case R.id.buttonClassifiedTag:
+        	addClassifiedTag();
         default:
             break;
         }
@@ -510,13 +837,13 @@ public class ResultViewActivity extends AbstractActivity implements
      * used.
      * 
      */
-    private void createDialogAddTags() {
-        final AlertDialog.Builder alertDialog =
-                new AlertDialog.Builder(ResultViewActivity.this,
-                        android.R.style.Theme_Holo_Dialog_MinWidth);
-        final List<Tag> list =
-                Tagging.getAllNonSelectedTags(element.getTags(), getIntent()
-                        .getExtras().getInt("TYPE_DEF"));
+   /** private void createDialogAddTags() {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                ResultViewActivity.this,
+                android.R.style.Theme_Holo_Dialog_MinWidth);
+        Log.i(TAG, "bla" + classifiedValue);
+        final List<Tag> list = Tagging.getAllNonSelectedTags(element.getTags(), classifiedValue);
+        Log.i(TAG, list.toString());
         final String[] listString;
         listString = Tagging.TagsToStringRes(list, res);
         alertDialog.setItems(listString, new DialogInterface.OnClickListener() {
@@ -535,7 +862,7 @@ public class ResultViewActivity extends AbstractActivity implements
         alert.show();
 
     }
-
+*/
     /**
      * Adds an Osm Element to the DataBase
      * 

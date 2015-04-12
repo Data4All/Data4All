@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- names: -->
+
 
     <!-- address tags -->
     <string name="name_addr_street">Straße</string>
@@ -14,84 +16,475 @@
     <string name="name_contact_website">Website</string>
     <string name="name_contact_email">Email</string>
 
-    <!-- classified tags_ highway -->
+    <!-- classified tag highway -->
     <string name="name_highway">Verkehrsweg</string>
-    <string name="name_highway_motorway">Autobahn</string>
+    <!-- classified values highway -->
     <string name="name_highway_residential">Wohngebiets-Straße</string>
     <string name="name_highway_service">Zugangsweg</string>
     <string name="name_highway_track">Feldweg</string>
+    <string name="name_highway_unclassified">Unbekannt</string>
     <string name="name_highway_footway">Fußweg</string>
-    <string name="name_highway_road">Straße</string>
+    <string name="name_highway_tertiary">Nebenstraße</string>
     <string name="name_highway_path">Weg</string>
+    <string name="name_highway_secondary">Landesstraße</string>
+    <string name="name_highway_primary">Bundesstraße</string>
+    <string name="name_highway_bus_stop">Bushaltestelle</string>
+    <string name="name_highway_crossing">Fußgängerüberweg</string>
+    <string name="name_highway_turning_circle">Wendestraße</string>
+    <string name="name_highway_cycleway">Fahrradweg</string>
+    <string name="name_highway_traffic_signals">Ampel</string>
+    <string name="name_highway_trunk">Kraftstraße</string>
+    <string name="name_highway_living_street">Wohnstraße</string>
+    <string name="name_highway_motorway">Autobahn</string>
+    <string name="name_highway_steps">Treppen</string>
+    <string name="name_highway_motorway_link">Autobahnzubringer</string>
+    <string name="name_highway_street_lamp">Straßenlaterne</string>
+    <string name="name_highway_pedestrian">Weg, Platz, Straße für Fußgänger</string>
+    <string name="name_highway_road">Straße</string>
 
-    <!-- classified tags_ barrier -->
+    <!-- classified tag waterway -->
+    <string name="name_waterway">Wasserweg</string>
+    <!-- classified values wateray -->
+    <string name="name_waterway_stream">Bach</string>
+    <string name="name_waterway_river">Fluss</string>
+    <string name="name_waterway_ditch">Entwässerungsgraben</string>
+    <string name="name_waterway_riverbank">Flussufer / breiter Fluss</string>
+    <string name="name_waterway_dam">Damm</string>
+    <string name="name_waterway_weir">Wehr</string>
+    <string name="name_waterway_lock_gate">Schleusentor</string>
+
+    <!-- classified tag barrier -->
     <string name="name_barrier">Absperrung</string>
-    <string name="name_barrier_citywall">Wallanlage</string>
+    <!-- classified values barrier -->
     <string name="name_barrier_fence">Zaun</string>
     <string name="name_barrier_wall">Mauer</string>
-    <string name="name_barrier_bollard">Pfeiler</string>
     <string name="name_barrier_gate">Tor</string>
+    <string name="name_barrier_hedge">Hecke</string>
+    <string name="name_barrier_bollard">Pfeiler</string>
+    <string name="name_barrier_lift_gate">Schlagbaum</string>
+    <string name="name_barrier_retaining_wall">Stützmauer</string>
+    <string name="name_barrier_stile">Tritt über Zaun</string>
+    <string name="name_barrier_cycle_barrier">Beschränkung Fahrraddurchfahrt</string>
+    <string name="name_barrier_entrance">Lücke</string>
+    <string name="name_barrier_block">stabiler Block</string>
+    <string name="name_barrier_kerb">Bordstein</string>
+    <string name="name_barrier_toll_booth">Mautstelle</string>
+    <string name="name_barrier_cattle_grid">Weiderost</string>
+    <string name="name_barrier_kissing_gate">halbrunde Stahlkonstruktion</string>
+    <string name="name_barrier_city_wall">Wallanlage</string>
+    <string name="name_barrier_ditch">Graben</string>
 
-    <!-- classified tags_ amenity -->
+    <!-- classified tag amenity -->
     <string name="name_amenity">Einrichtung</string>
-    <string name="name_amenity_bar">Bar</string>
-    <string name="name_amenity_cafe">Cafe</string>
-    <string name="name_amenity_restaurant">Restaurant</string>
-    <string name="name_amenity_fast_food">Fast Food</string>
-    <string name="name_amenity_pub">Kneipe</string>
-    <string name="name_amenity_college">Hochschule</string>
-    <string name="name_amenity_library">Bücherrei</string>
-    <string name="name_amenity_school">Schule</string>
-    <string name="name_amenity_university">Universität</string>
+    <!-- classified values amenity -->
     <string name="name_amenity_parking">Parkplatz</string>
-    <string name="name_amenity_taxi">Taxi</string>
+    <string name="name_amenity_place_of_worship">Anbetungsort</string>
+    <string name="name_amenity_school">Schule</string>
+    <string name="name_amenity_restaurant">Restaurant</string>
+    <string name="name_amenity_bench">Sitzbank</string>
     <string name="name_amenity_fuel">Tankstelle</string>
     <string name="name_amenity_bank">Bank</string>
-    <string name="name_amenity_hospital">Klinikum</string>
+    <string name="name_amenity_post_box">Briefkasten</string>
+    <string name="name_amenity_fast_food">Fast Food</string>
+    <string name="name_amenity_cafe">Cafe</string>
+    <string name="name_amenity_grave_yard">Friedhof</string>
+    <string name="name_amenity_recycling">Recycling-Einrichtung</string>
+    <string name="name_amenity_kindergarten">Kindergarten</string>
     <string name="name_amenity_pharmacy">Apotheke</string>
-    <string name="name_amenity_cinema">Kino</string>
-    <string name="name_amenity_bench">Sitzbank</string>
-    <string name="name_amenity_embassy">Botschaft</string>
-    <string name="name_amenity_marketplace">Marktplatz</string>
-    <string name="name_amenity_police">Polizei</string>
+    <string name="name_amenity_hospital">Krankenhaus</string>
+    <string name="name_amenity_bicycle_parking">Fahrradparkplatz</string>
     <string name="name_amenity_post_office">Postamt</string>
+    <string name="name_amenity_waste_basket">Mülleimer</string>
+    <string name="name_amenity_pub">Kneipe</string>
     <string name="name_amenity_toilets">Toilette</string>
-    <string name="name_amenity_water_point">Wasserstelle</string>
+    <string name="name_amenity_public_building">Öffentliches Gebäude</string>
+    <string name="name_amenity_shelter">Unterstand</string>
+    <string name="name_amenity_telephone">Telefon</string>
+    <string name="name_amenity_drinking_water">Trinkwasserstelle</string>
+    <string name="name_amenity_atm">Geldautomat</string>
+    <string name="name_amenity_bar">Bar</string>
     <string name="name_amenity_fire_station">Feuerwehr</string>
-    <string name="name_amenity_public_building">Öffentliche Einrichtung</string>
-    
-    <!-- classified tags_ building -->
+    <string name="name_amenity_police">Polizei</string>
+    <string name="name_amenity_townhall">Rathaus</string>
+    <string name="name_amenity_parking_space">Parkplatzstellfläche</string>
+    <string name="name_amenity_hunting_stand">Hochsitz</string>
+    <string name="name_amenity_vending_machine">Verkaufsautomat</string>
+    <string name="name_amenity_fountain">Springbrunnen</string>
+    <string name="name_amenity_library">Bücherrei</string>
+    <string name="name_amenity_swimming_pool">Schwimmbecken</string>
+    <string name="name_amenity_doctors">Doktor</string>
+    <string name="name_amenity_university">Universität</string>
+    <string name="name_amenity_social_facility">Soziale Einrichtung</string>
+    <string name="name_amenity_car_wash">Autowaschanlage</string>
+    <string name="name_amenity_college">Hochschule</string>
+    <string name="name_amenity_bus_station">Haltestelle</string>
+    <string name="name_amenity_marketplace">Marktplatz</string>
+    <string name="name_amenity_dentist">Zahnarzt</string>
+    <string name="name_amenity_waste_disposal">Müllentsorgungsort</string>
+    <string name="name_amenity_community_centre">Gemeinschaftszentrum</string>
+    <string name="name_amenity_theatre">Theater, Oper, Schauspielhaus</string>
+    <string name="name_amenity_taxi">Taxi</string>
+    <string name="name_amenity_cinema">Kino</string>
+    <string name="name_amenity_parking_entrance">Parkplatzeinfahrt</string>
+    <string name="name_amenity_clinic">Klinik</string>
+    <string name="name_amenity_bicycle_rental">Fahrradverleihstation</string>
+    <string name="name_amenity_veterinary">Tierarztpraxis</string>
+    <string name="name_amenity_fire_hydrant">Hydrant</string>
+    <string name="name_amenity_courthouse">Gericht</string>
+    <string name="name_amenity_embassy">Botschaft</string>
+    <string name="name_amenity_water_point">Wasserstelle</string>
+
+    <!-- classified tag building -->
     <string name="name_building">Gebäude</string>
+    <!-- classified values building -->
+    <string name="name_building_house">Wohnhaus</string>
     <string name="name_building_residential">Wohngebäude</string>
     <string name="name_building_garage">Garage</string>
-    <string name="name_building_house">Wohnhaus</string>
     <string name="name_building_apartments">Wohnungen</string>
-    <string name="name_building_retail">Einzelhandel</string>
+    <string name="name_building_hut">Hütte</string>
     <string name="name_building_industrial">Industrie</string>
+    <string name="name_building_roof">Dach</string>
+    <string name="name_building_garages">Garagenkomplex</string>
+    <string name="name_building_detached">Einfamilienhaus</string>
     <string name="name_building_commercial">Geschäft</string>
-    
-    <!-- classified tags_ landuse -->
+    <string name="name_building_terrace">Häuserreihe</string>
+    <string name="name_building_school">Schule</string>
+    <string name="name_building_shed">Lager</string>
+    <string name="name_building_retail">Einzelhandel</string>
+    <string name="name_building_farm_auxiliary">Stall</string>
+    <string name="name_building_church">Kirche</string>
+    <string name="name_building_service">Service</string>
+    <string name="name_building_greenhouse">Gewächshaus</string>
+    <string name="name_building_barn">Speicher</string>
+    <string name="name_building_construction">Konstruktion</string>
+    <string name="name_building_farm">Bauernhof</string>
+    <string name="name_building_manufacture">Manufaktur</string>
+    <string name="name_building_cabin">Kabine</string>
+    <string name="name_building_yes">Unbekannt</string>
+
+    <!-- classified tag landuse -->
     <string name="name_landuse">Landnutzung</string>
+    <!-- classified values landuse -->
+    <string name="name_landuse_forest">Wald</string>
+    <string name="name_landuse_residential">Wohngebiet</string>
+    <string name="name_landuse_grass">Rasenfläche</string>
+    <string name="name_landuse_farmland">Ackerland</string>
+    <string name="name_landuse_meadow">Wiese</string>
+    <string name="name_landuse_farm">Weideland</string>
+    <string name="name_landuse_farmyard">Ackerland</string>
+    <string name="name_landuse_industrial">Industriegebiet</string>
+    <string name="name_landuse_reservoir">Speicherbecken</string>
+    <string name="name_landuse_orchard">Obstplantage</string>
+    <string name="name_landuse_cemetery">Friedhof</string>
+    <string name="name_landuse_vineyard">Weinberg</string>
+    <string name="name_landuse_allotments">Kleingarten</string>
     <string name="name_landuse_commercial">Gewerbepark</string>
     <string name="name_landuse_construction">Baustelle</string>
-    <string name="name_landuse_farmland">Ackerland</string>
-    <string name="name_landuse_forest">Wald</string>
-    <string name="name_landuse_grass">Grasfläche</string>
-    <string name="name_landuse_industrial">Industriegebiet</string>
+    <string name="name_landuse_basin">Regenwasserrückhaltebecken</string>
+    <string name="name_landuse_quarry">Steinbruch</string>
+    <string name="name_landuse_retail">Einkaufszentrum</string>
+    <string name="name_landuse_village_green">Dorfwiese</string>
     <string name="name_landuse_military">Militär</string>
-    <string name="name_landuse_residential">Wohngebiet</string>
-    
-     <!-- address tags -->
+
+    <!-- classified tag leisure -->
+    <string name="name_leisure">Freizeit</string>
+    <!-- classified values leisure -->
+    <string name="name_leisure_swimming_pool">Schwimmbad</string>
+    <string name="name_leisure_pitch">Spielfeld / Sportplatz</string>
+    <string name="name_leisure_park">Park</string>
+    <string name="name_leisure_swimming">Bademöglichkeit</string>
+    <string name="name_leisure_playground">Spielplatz</string>
+    <string name="name_leisure_garden">Garten</string>
+    <string name="name_leisure_sports_centre">Sportzentrum</string>
+    <string name="name_leisure_nature_reserve">Naturschutzgebiet</string>
+    <string name="name_leisure_track">Laufbahn</string>
+    <string name="name_leisure_stadium">Stadium</string>
+    <string name="name_leisure_golf_course">Golfplatz</string>
+    <string name="name_leisure_marina">Hafen</string>
+    <string name="name_leisure_water_park">Freibad</string>
+    <string name="name_leisure_fishing">Angelplatz</string>
+
+    <!-- classified tag vending -->
+    <string name="name_vending">Automaten</string>
+    <!-- classified values vending -->
+    <string name="name_vending_cigarettes">Zigarettenautomat</string>
+    <string name="name_vending_parking_tickets">Parkscheinautomat</string>
+    <string name="name_vending_excrement_bags">Hundetütenspender</string>
+    <string name="name_vending_public_transport_tickets">Fahrkartenautomat</string>
+    <string name="name_vending_drinks">Getränkeautomat</string>
+    <string name="name_vending_sweets">Süßigkeitenautomat</string>
+    <string name="name_vending_parcel_pickup">Packstation / Pakete abholen</string>
+    <string name="name_vending_parcel_mail_in">Packstation / Pakete abgeben</string>
+    <string name="name_vending_condoms">Kondomautomat</string>
+    <string name="name_vending_stamps">Briefmarkenautomat</string>
+    <string name="name_vending_news_paper">Zeitungsautomat</string>
+    <string name="name_vending_bicycle_tube">Fahrradschlauchautomat</string>
+    <string name="name_vending_food">Snackautomat</string>
+    <string name="name_vending_fuel">Tankautomaten</string>
+    <string name="name_vending_yes">Unbekannt</string>
+
+    <!-- classified tag shop -->
+    <string name="name_shop">Einkaufsmöglichkeiten</string>
+    <!-- classified values shop -->
+    <string name="name_shop_supermarket">Supermarkt</string>
+    <string name="name_shop_convenience">Nachbarschaftsladen</string>
+    <string name="name_shop_clothes">Bekleidungsgeschäft</string>
+    <string name="name_shop_bakery">Bäcker</string>
+    <string name="name_shop_hairdresser">Frisör</string>
+    <string name="name_shop_car_repair">Autoreperatur</string>
+    <string name="name_shop_car">Autohaus</string>
+    <string name="name_shop_kiosk">Kiosk</string>
+    <string name="name_shop_doityourself">Baumarkt</string>
+    <string name="name_shop_yes">Unbekannt</string>
+    <string name="name_shop_butcher">Fleischer</string>
+    <string name="name_shop_florist">Blumenhändler</string>
+    <string name="name_shop_mall">Einkaufszentrum</string>
+    <string name="name_shop_furniture">Möbelhaus</string>
+    <string name="name_shop_bicycle">Fahrradgeschäft</string>
+    <string name="name_shop_alcohol">Spirituosenladen</string>
+    <string name="name_shop_books">Buchladen</string>
+    <string name="name_shop_shoes">Schuhgeschäft</string>
+    <string name="name_shop_electronics">Elektronikgeschäft</string>
+    <string name="name_shop_department_store">Warenhaus</string>
+    <string name="name_shop_hardware">Eisenwaren</string>
+    <string name="name_shop_jewelry">Schmuck</string>
+    <string name="name_shop_optician">Optiker</string>
+    <string name="name_shop_mobile_phone">Handyshop</string>
+
+    <!-- hints: -->
+
+
+    <!-- address hints -->
     <string name="hint_addr_street">Main Street</string>
     <string name="hint_addr_housenumber">1234</string>
     <string name="hint_addr_postcode">123456</string>
     <string name="hint_addr_city">Anytown</string>
     <string name="hint_addr_country">USA</string>
 
-    <!-- contact tags -->
+    <!-- contact hints -->
     <string name="hint_contact_phone">+01 234567890</string>
     <string name="hint_contact_fax">+01 234567890</string>
     <string name="hint_contact_website">http_//www.website.com</string>
     <string name="hint_contact_email">foo@bar.com</string>
 
+    <!-- descriptions: -->
+
+
+    <!-- description classified values highway -->
+    <string name="description_highway_residential">Straße an und in Wohngebieten, die keiner anderen Straßenklasse angehört (unclassified, tertiary, secondary, primary). Impliziert nicht maxspeed=30. Bitte für Tempo-30-Zonen explizit maxspeed setzen.</string>
+    <string name="description_highway_service">Erschließungsweg zu Einrichtungen wie Sportanlagen, Stränden, Autobahnraststätten oder allgemein zu Gebäuden. Wird auch für den Zugang zu Parkplätzen oder Recyclinghöfen benutzt.</string>
+    <string name="description_highway_track">Wirtschafts-, Feld- oder Waldweg, kann mit tracktype=1-5 näher spezifiziert werden und muss breit genug für ein Fahrzeug sein, anderenfalls ist highway=path zu verwenden.</string>
+    <string name="description_highway_unclassified">Öffentlich befahrbare Nebenstraßen mit einfachstem Ausbauzustand, typischerweise keine Mittellinie. Z. B. Gemeindestraßen (Wikipedia) mit Verbindungscharakter, die zu schmal sind, um als highway=tertiary zu gelten. \'unclassified\' ist kein Platzhalter für Straßen, für die noch keine Zuordnung gewählt wurde. Hierfür bitte highway=road verwenden. Sollte möglichst bis zur nächsten höherklassigen Straße durchgezogen werden, auch innerorts. Falls nicht asphaltiert, sollte der Bodenbelag erfasst werden: surface=*, Straßen auf Privatgelände bekommen üblicherweise die Zuordnung highway=service.</string>
+    <string name="description_highway_footway">Fußweg, zur ausschließlichen Benutzung durch Fußgänger geeignet. Bei einem ausgeschilderten Gehweg (Verbot der Benutzung durch andere Verkehrsteilnehmer) muss zusätzlich foot=designated angegeben werden.</string>
+    <string name="description_highway_tertiary">Deutschland: Kreisstraße, sehr gut ausgebaute Gemeindeverbindungsstraße. Österreich: Nicht so gut ausgebaute Landesstraße, die in erster Linie regionalen Verkehrsbedürfnissen dient. Wenig befahrene Vorfahrtstraße, die kleinere Orte verbindet. Schweiz: Nebenstrassen. Allgemein auch: Innerstädtische Vorfahrtstraßen mit Durchfahrtscharakter (urban).</string>
+    <string name="description_highway_path">Allgemeiner (schmaler) Weg oder Pfad ohne vorgegebene Nutzungsart ohne Routing für Motorfahrzeuge (PKW/LKW). Vorrangig für (schmale) Wanderwege oder Trampelpfade.</string>
+    <string name="description_highway_secondary">Deutschland: Land-, (Staats-,) oder sehr gut ausgebaute Kreisstraße. Straße mit Mittellinie, die kleinere Städte oder größere Orte verbindet. Diese Straßen dienen dem zwischen-regionalem Verkehr. Österreich: gut ausgebaute Landesstraße. Schweiz: Nicht nummerierte Hauptstrassen (blau geschilderte Straßen).</string>
+    <string name="description_highway_primary">Deutschland/Österreich: Bundesstraßen. Hauptverbindungsstraße unter zentraler Verwaltung (D:Bund/A:Bundesland) mit besonderer Kennzeichnung (D: Nummer unterhalb der Vorfahrtsschilder), die meist größere Städte verbindet und dem überregionalem Verkehr dient. Schweiz: nummerierte Hauptstrassen unabhängig des Eigentümers. Außerdem: Straßen mit übergeordneter Verkehrsbedeutung (beispielsweise mindestens 10.000 Kfz / Tag) </string>
+    <string name="description_highway_bus_stop">Bushaltestelle</string>
+    <string name="description_highway_crossing">Fußgängerüberweg (Zebrastreifen, Fußgängerfurt)</string>
+    <string name="description_highway_turning_circle">Eine Wendestelle oder ein breiter Bereich in der Straße, um Autos wenden zu können.</string>
+    <string name="description_highway_cycleway">Ausgewiesene Fahrradwege</string>
+    <string name="description_highway_traffic_signals">Eine Ampel bzw. ein Lichtsignal um den Verkehrsfluss zu steuern.</string>
+    <string name="description_highway_trunk">Autobahnähnliche Straße (Wikipedia), z.T. auch Kraftfahrstraße bzw. Autostrasse: Autobahnähnlich ausgebaute Straße (aber keine Autobahn) oder andere Straße mit Ausschluss des Langsamverkehrs. Deutschland: oft „gelbe Autobahnen“ genannt. Die Fahrtrichtungen müssen nicht baulich getrennt sein (vgl aber auch STVO §3 (3) 2c), aber der sonstige Ausbau ist autobahnähnlich, also generell kreuzungsfrei. Straßen die durch das Verkehrszeichen Kraftfahrstraße gekennzeichnet sind, werden Schnellstraßen genannt und zusätzlich zum passenden Attribut highway (dies kann manchmal z.B. auch primary statt trunk sein) mit einem motorroad=yes markiert, um die Autobahn-ähnlichen Verkehrsregeln zu kennzeichnen. Österreich: Alle Schnellstrassen und Kraftfahrstrassen. Schweiz: Alle Autostrassen.</string>
+    <string name="description_highway_living_street">Verkehrsberuhigter Bereich, Ö: Wohnstraße, umgangssprachlich auch „Spielstraße“.</string>
+    <string name="description_highway_motorway">Autobahn: Straße mit baulich getrennten Fahrtrichtungen (i.Allg. Grünstreifen) und besonderen Nutzungsbeschränkungen. Typischerweise zwei Fahrspuren je Fahrtrichtung oder mehr und ein Standstreifen. Äquivalent zu Freeway usw. (Ob eine Autobahn implizit oneway=yes vorliegen kann, wird momentan diskutiert. Explizit in Deutschland oneway=yes zu setzen ist empfehlenswert.) Benennung in Deutschland mit (ref=A 7), in Österreich ohne Leerzeichen (ref=A2): </string>
+    <string name="description_highway_steps">Treppen auf Fuß-/Wanderwegen</string>
+    <string name="description_highway_motorway_link">Autobahn-Zubringer oder Autobahnanschlussstelle, typischerweise gelten die gleichen Verkehrsregeln wie auf Autobahnen selber.</string>
+    <string name="description_highway_street_lamp">Straßenlaterne oder Lichtmast. Generell kann zu jedem Straßentyp mit dem Tag lit=yes oder lit=no die Information hinzugefügt werden, ob die Straße beleuchtet ist oder nicht.</string>
+    <string name="description_highway_pedestrian">Weg, Platz oder Straße auf der nur Fußgänger erlaubt sind (z. B. Fußgängerzone). Typisch für Einkaufspassagen.</string>
+    <string name="description_highway_road">Straße unbekannter Klassifikation. Diese Bezeichnung ist gedacht um Straßen vorübergehend zu kennzeichnen, bis ihnen die richtigen Eigenschaften zugewiesen werden können. Für Wege unbekannter Klassifikation siehe auch \'path\' oder \'track\'.</string>
+
+    <!-- description classified values waterway -->
+    <string name="description_waterway_stream">Bach - natürliches schmales Gewässer, zu klein für die Bezeichnung Fluss. Faustregel: kann man über das Gewässer springen, ist es ein Bach.</string>
+    <string name="description_waterway_river">Fluss</string>
+    <string name="description_waterway_ditch">Entwässerungsgraben (Regenwasser)</string>
+    <string name="description_waterway_riverbank">Flussufer - wird für große (breite) Flüsse verwendet, um die Fläche zwischen den Ufern zu definieren.</string>
+    <string name="description_waterway_dam">Staudamm oder Staumauer. Für Speichersee und Ähnliches. Schutzdämme sollten mit man_made=dyke gekennzeichnet werden.</string>
+    <string name="description_waterway_weir">Wehr</string>
+    <string name="description_waterway_lock_gate">Schleusentor</string>
+
+    <!-- description classified values barrier -->
+    <string name="description_barrier_fence">Zaun</string>
+    <string name="description_barrier_wall">Mauer</string>
+    <string name="description_barrier_gate">Tor, Schranke oder sonstige Absperrung, die geöffnet werden kann.</string>
+    <string name="description_barrier_hedge">Hecke als Gartenumzäunung, auch um Felder, Windschutz, in sehr unterschiedlichen Höhen, auch mit durchgewachsenen Bäumen zur Brennholzgewinnung. (Achtung: Doppeldeutigkeit bei der Nutzung auf Area (closed ways); einige Anwendungen interpretieren die gesamte Fläche als Hecke) </string>
+    <string name="description_barrier_bollard">Ein Poller, Pfosten oder eine Bake auf einem Weg oder einer Straße, der die Durchfahrt verhindert.</string>
+    <string name="description_barrier_lift_gate">Schlagbaum</string>
+    <string name="description_barrier_retaining_wall">Eine Stützmauer ist ein Gebilde, das Erde oder Felsen von einem Gebäude, einem Aufbau oder einer Fläche zurückhält. Stützmauern können talwärts gerichtete Bodenbewegungen oder Erosion unterbinden und bieten eine Abstützung für senkrechte oder nahezu senkrechte Böschungen. Die tiefe Seite ist rechts des Weges.</string>
+    <string name="description_barrier_stile">Tritt über Zaun</string>
+    <string name="description_barrier_cycle_barrier">Beschränkung der Fahrraddurchfahrt. Gängige Bezeichnungen sind Drängelgitter oder Umlaufsperre. Typischerweise zwei in den Weg hineinreichende versetzte Metallbügel, die das Durchfahren mit Fahrrädern oder Motorrädern unmöglich machen oder zumindest verzögern, die Passage von Fußgängern erlauben. In Deutschland oft am Ende von Radwegen um Radfahrer nicht direkt auf die vorfahrtsberechtigte Straße fahren zu lassen oder das Befahren des Radweges mit motorisierten Fahrzeugen zu verhindern. Sehr häufig finden sich solche Umlaufsperren auch an Fußgängerüberwegen über Bahnstrecken.</string>
+    <string name="description_barrier_entrance">Eine Lücke in einer Barriere, nichts behindert den Durchgang. Standardmäßig gilt access=yes. Mit den Rechten access=* eines durchführenden Weges kombinieren.</string>
+    <string name="description_barrier_block">Großer, stabiler Block, der nur mit schwerem Gerät oder großer Anstrengung versetzt werden kann. Typischerweise aus stabilem Material wie Beton, um größere Fahrzeuge zu stoppen, oder auch Naturstein.</string>
+    <string name="description_barrier_kerb">Ein Bordstein (z.B. an Bürgersteigen) stellt ein Hindernis für Fahrzeuge und Rollstuhlfahrer dar. Die Höhe des Bordsteins ist wichtig, um die möglichen Benutzergruppen eingrenzen zu können. Falls vorhanden, kann diese zusätzlich mit height=* markiert werden. Die rechte Seite ist unten, die linke oben.</string>
+    <string name="description_barrier_toll_booth">Mautstelle</string>
+    <string name="description_barrier_cattle_grid">Weiderost, "Bovi-Stop" (überfahrbarer Gitterrost, für Huftiere unüberwindbar) </string>
+    <string name="description_barrier_kissing_gate">Eine halb runde Stahlkonstruktion, die Menschen das passieren ermöglicht, Vieh aber abhält.</string>
+    <string name="description_barrier_city_wall">Stadtmauer</string>
+    <string name="description_barrier_ditch">Graben, normalerweise mit Wasser am Grund, kann zusammen mit waterway=stream oder waterway=drain verwendet werden.</string>
+
+    <!-- description classified values amenity -->
+    <string name="description_amenity_parking">Parkplatz</string>
+    <string name="description_amenity_place_of_worship">Anbetungsort (Kirche, Synagoge, Moschee, …) mit religion=*, ggf. denomination=* und möglichst name=* können nähere Informationen zu Konfession usw. angegeben werden.</string>
+    <string name="description_amenity_school">Schule</string>
+    <string name="description_amenity_restaurant">Restaurant (ohne Fast-Food). Die Art der Küche kann mit cuisine=* angegeben werden, als Wert z.B. =italian für italienische oder =greek für griechische Küche.</string>
+    <string name="description_amenity_bench">Parkbank, öffentliche, im Freien aufgestellte Bank.</string>
+    <string name="description_amenity_fuel">Tankstelle</string>
+    <string name="description_amenity_bank">Bank, Geldinstitut (eine Bank mit Geldautomat / Bankomat wird als amenity=bank und atm=yes attributiert)</string>
+    <string name="description_amenity_post_box">Briefkasten (Anbieter mit operator=* markieren).</string>
+    <string name="description_amenity_fast_food">Schnell-Restaurant, Imbiss. Die Art kann mit cuisine=* angegeben werden, als Wert z.B. =burger für ein Burgerrestaurant oder =kebab für einen Dönerimbiss.</string>
+    <string name="description_amenity_cafe">Café, Bistro, Teeladen, Kaffeeladen; letztere beide stehen allerdings in Konkurrenz zu shop=tea und shop=coffee</string>
+    <string name="description_amenity_grave_yard">Kleiner Friedhof (wenige Gräber z. B. direkt neben einer Kirche, Gräberfeld, Leihhof) für größere Friedhöfe möglichst landuse=cemetery verwenden</string>
+    <string name="description_amenity_recycling">Recycling-Einrichtung (Flaschen-, Glas-, Papier-Container etc.). Verwende zusätzlich recycling_type=container für einfache Container oder recycling_type=centre für Wertstoffhöfe.</string>
+    <string name="description_amenity_kindergarten">Kindergarten</string>
+    <string name="description_amenity_pharmacy">Apotheke (Rezepteinlösung mit dispensing=* versehen)</string>
+    <string name="description_amenity_hospital">Krankenhaus (oft zusammen mit emergency=* genutzt, um anzugeben, ob das Krankenhaus über eine Notfallaufnahme verfügt)</string>
+    <string name="description_amenity_bicycle_parking">Fahrradparkplatz</string>
+    <string name="description_amenity_post_office">Postamt</string>
+    <string name="description_amenity_waste_basket">Ein Mülleimer ist ein einzelnes Behältnis für die Müllentsorgung, welches für Fußgänger leicht zu erreichen ist.</string>
+    <string name="description_amenity_pub">Kneipe</string>
+    <string name="description_amenity_toilets">Öffentliche Toilette (z.T. mit Gebühr)</string>
+    <string name="description_amenity_public_building">Öffentliches Gebäude, alternativ auch building=public.</string>
+    <string name="description_amenity_shelter">Ein Unterstand ist ein überdachter, offener Platz als Schutz vor der Witterung. Die Art des Unterstands kann mit shelter_type=* genauer beschrieben werden.</string>
+    <string name="description_amenity_telephone">Telefon</string>
+    <string name="description_amenity_drinking_water">Eine öffentlich zugängliche Trinkwasserstelle.</string>
+    <string name="description_amenity_atm">Geldautomat / Bankomat</string>
+    <string name="description_amenity_bar">Bar, Nachtlokal. Es werden hauptsächlich alkoholische Getränke serviert. Siehe auch Beschreibung von amenity=bar und amenity=pub zur Unterscheidung von Bar und Pub (Kneipe).</string>
+    <string name="description_amenity_fire_station">Feuerwache</string>
+    <string name="description_amenity_police">Polizeistation</string>
+    <string name="description_amenity_townhall">Rathaus</string>
+    <string name="description_amenity_parking_space">Für einzelne Parkplatzstellflächen. Mehrere Stellplätze werden mit einer Relation zusammengefasst, die die Attribute type=site + site=parking haben. Nicht mit amenity=parking kombinieren.</string>
+    <string name="description_amenity_hunting_stand">Hochsitz</string>
+    <string name="description_amenity_vending_machine">Verkaufsautomat (Fahrkarten, Getränke,...) Muss mit vending=* kombiniert werden.</string>
+    <string name="description_amenity_fountain">Ein Springbrunnen; künstlerisches Objekt oder zur Dekoration </string>
+    <string name="description_amenity_library">Bibliothek, Bücherei</string>
+    <string name="description_amenity_swimming_pool">Schwimmbad</string>
+    <string name="description_amenity_doctors">Arztpraxis, Ärztehaus</string>
+    <string name="description_amenity_university">Universität (Campus oder Gebäude)</string>
+    <string name="description_amenity_social_facility">Soziale Einrichtung wie Altersheim, betreutes Wohnen, Wohngruppe, Obdachlosenheim, Kinderheim, Behindertenwerkstatt, Die Tafel, soziale Interessenvertretung uvm.</string>
+    <string name="description_amenity_car_wash">Autowaschanlage</string>
+    <string name="description_amenity_college">Hochschule (siehe auch amenity=university für Universität)</string>
+    <string name="description_amenity_bus_station">Busbahnhof (große Haltestelle), eine Haltestelle wird mit highway=bus_stop bezeichnet.</string>
+    <string name="description_amenity_marketplace">Markt, Wochenmarkt</string>
+    <string name="description_amenity_dentist">Zahnarztpraxis</string>
+    <string name="description_amenity_waste_disposal">Stelle, an der Bootsfahrer, Camper und Leute im Allgemeinen Müll entsorgen können.</string>
+    <string name="description_amenity_community_centre">Gemeinschaftszentrum, Einrichtung für Veranstaltungen von begrenzten Personengruppen</string>
+    <string name="description_amenity_theatre">Theater, Oper, Schauspielhaus</string>
+    <string name="description_amenity_taxi">Taxistand</string>
+    <string name="description_amenity_cinema">Kino</string>
+    <string name="description_amenity_parking_entrance">Für Ein- und Ausfahrten in Tiefgaragen und Parkhäuser. Mehrere Ein- oder Ausgänge werden mit einer Relation zusammengefasst, die die Attribute type=site + site=parking haben. Nicht mit amenity=parking kombinieren.</string>
+    <string name="description_amenity_clinic">Klinik, integrierte, ambulante medizinische Einrichtung </string>
+    <string name="description_amenity_bicycle_rental">Fahrradverleihstation (z.B. an Bahnhöfen)</string>
+    <string name="description_amenity_veterinary">Tierarztpraxis, Tierklinik</string>
+    <string name="description_amenity_fire_hydrant">Hydrant, ist Teil der zentralen Löschwasserversorgung von Städten und Gemeinden. Er ermöglicht der Feuerwehr, aber auch öffentlichen (z. B. Straßenmeisterei, Stadtbetriebe) und privaten (z. B. Straßenreinigungsfirmen, Zeltfestveranstaltern) Nutzern die Wasserentnahme aus dem öffentlichen Wasserleitungsnetz (Sammelwasserversorgung).</string>
+    <string name="description_amenity_courthouse">Gericht</string>
+    <string name="description_amenity_embassy">Botschaft, Botschaftsgebäude</string>
+    <string name="description_amenity_water_point">Plätze, wo es große Mengen an Trinkwasser gibt.</string>
+
+    <!-- description classified values buidling -->
+    <string name="description_building_house">Einfamilienhaus. Handelt es sich um eine Doppelhaushälfte oder ein Reihenhaus müssen mindestens 2 Nodes mit den benachbarten Häuser geteilt werden. Für freistehende Häuser kann building=detached verwendet werden.</string>
+    <string name="description_building_residential">Ein allgemeiner Wert für ein Gebäude, das hauptsächlich als Wohnraum genutzt wird. Wenn weitere Details verfügbar sind, sollten ein oder mehrere Flächen mit dem Attribut \'apartments\', \'terrace\' oder \'house\' angelegt werden.</string>
+    <string name="description_building_garage">Ein Garagenbauwerk. Nutze landuse=garages für ein Gebiet mit einzelnen Boxen. Der Tag building=garages wird auch für aneinandergereihte Garagen verwendet.</string>
+    <string name="description_building_apartments">Großes Gebäude mit Wohnungen. Im Erdgeschoss befinden sich gelegentlich Läden.</string>
+    <string name="description_building_hut">Eine Hütte, ein kleines, primitives Gebäude.</string>
+    <string name="description_building_industrial">Industrieanlage. Nutze landuse=industrial für das Gebiet.</string>
+    <string name="description_building_roof">Für Dächer, die seitlich offen sind, z.B. Tankstellen, Unterstände, …</string>
+    <string name="description_building_garages">Ein Gebäude, das eine Vielzahl von Stellplätzen für Fahrzeuge für verschiedene Besitzer oder Mieter zur Verfügung stellt. Siehe auch building=garage.</string>
+    <string name="description_building_detached">Ein einzeln stehendes Einfamilienhaus, ähnlich wie building=house.</string>
+    <string name="description_building_commercial">Ein Gebäude mit wirtschaftlichen Aktivitäten. Wahrscheinlich mit shop=* genutzt.</string>
+    <string name="description_building_terrace">Reihenhäuser. Eine Reihe verbundener Wohnhäuser, einzeln abgetrennt sind sie als building=house zu taggen.</string>
+    <string name="description_building_school">Schulgebäude. Verwende amenity=school für das gesamte Schulgelände.</string>
+    <string name="description_building_shed">Ein Schuppen, ein einfaches einstöckiges Gebäude zur Lagerung oder als Werkstatt.</string>
+    <string name="description_building_retail">Einzelhandel. Ergänze mit shop=*.</string>
+    <string name="description_building_farm_auxiliary">Ein Gebäude auf einem Bauernhof, das kein Wohnhaus ist.</string>
+    <string name="description_building_church">Ein Gebäude, das als Kirche erbaut wurde. Dies sollte mit amenity=place_of_worship, religion=* and denomination=* vervollständigt werden, es sei denn, sie wird nicht mehr für diesen Zweck genutzt.</string>
+    <string name="description_building_service"></string>
+    <string name="description_building_greenhouse">Ein Treibhaus/Gewächshaus/Glashaus, um Pflanzen zu ziehen. Verwende landuse=greenhouse_horticulture für das Gebiet, in dem die Treibhäuser/Gewächshäuser einschließlich der Wasserbecken sind.</string>
+    <string name="description_building_barn">Eine Scheune die als landwirtschaftliches Gebäude als Lager und als geschützter Arbeitsplatz dient.</string>
+    <string name="description_building_construction">Wird für Gebäude benutzt, die sich im Bau befinden. Benutze construction=* um den Gebäudetype festzulegen.</string>
+    <string name="description_building_farm">Wohngebäude eines Bauernhofs (landuse=farmyard). Andere Gebäude auf Bauernhöfen siehe building=barn und building=farm_auxiliary.</string>
+    <string name="description_building_manufacture"></string>
+    <string name="description_building_cabin">Ein "cabin" ist ein kleines, normalerweise grob aus Holz gebautes Haus, welches typischerweise in ländlichen Gegenden zu finden ist.</string>
+    <string name="description_building_yes">Benutze diesen Wert, wenn du building:type=* bevorzugst oder du keinen Gebäudetyp spezifizieren willst oder kannst.</string>
+
+    <!-- description classified values landuse -->
+    <string name="description_landuse_forest">Forst, Landwirtschaftlich genutzer Wald. Die meisten Wälder in Deutschland und in der Schweiz sind forstwirtschaftlich genutzt. Nur vollkommen unbewirtschaftete Wälder (Urwaldzonen) sollten mit natural=wood getagged werden. Die Tags nie gleichzeitig verwenden.</string>
+    <string name="description_landuse_residential">Wohngebiet</string>
+    <string name="description_landuse_grass">Rasenfläche, vorzugsweise innerorts. Für Weideland und Wiesen siehe landuse=meadow.</string>
+    <string name="description_landuse_farmland">Landwirtschaftlich genutzte Flächen wie Äcker für Getreide und Gemüse. Nicht für Weide und Grünland.</string>
+    <string name="description_landuse_meadow">Wiese/Weideland meist außerorts (im Gegensatz zu landuse=village_green nicht explizit für öffentliche Zwecke, z. B. Veranstaltungen, vorgesehen).</string>
+    <string name="description_landuse_farm"></string>
+    <string name="description_landuse_farmyard">Landwirtschaftlich genutzte Flächen mit Gebäuden wie Häusern, Unterkünften, Unterständen, Ställen, Fahrzeughallen, Futterspeichern usw. Ebenso die Flächen zwischen den Gebäuden, sowie nahe Bäume, Hecken und Grünflächen.</string>
+    <string name="description_landuse_industrial">Gewerbe-/Industriegebiet (überwiegend Werkstätten, Fabriken oder Lagerhallen)</string>
+    <string name="description_landuse_reservoir">Speicherbecken</string>
+    <string name="description_landuse_orchard">Obstplantage, Obstgarten, Gemüseanbau, Anpflanzung von Bäumen oder Sträuchern zur Lebensmittelproduktion.</string>
+    <string name="description_landuse_cemetery">Friedhof</string>
+    <string name="description_landuse_vineyard">Weinberg, Weingut</string>
+    <string name="description_landuse_allotments">Kleingarten (Schrebergarten, Grabeland)</string>
+    <string name="description_landuse_commercial">überwiegend Büros, Business Parks</string>
+    <string name="description_landuse_construction">Baugebiet (Wenn die Bebauung abgeschlossen ist, sollte der Wert dem aktuellen Zustand angepasst werden)</string>
+    <string name="description_landuse_basin">Regenwasserrückhaltebecken, Hochwasserrückhaltebecken</string>
+    <string name="description_landuse_quarry">Steinbruch, Grube (Kies, Ton, ...) Oberflächlicher Abbau von Rohstoffen (Tagebau).</string>
+    <string name="description_landuse_retail">Einkaufszentrum oder überwiegend Einzelhandelsgeschäfte</string>
+    <string name="description_landuse_village_green">Grasbewachsener Dorfplatz (auch Dorfanger, Dorfwiese). In Deutschland noch gelegentlich im ländlichen Raum zu finden. Im Gegensatz zu landuse=meadow ist der Dorfplatz explizit für öffentliche Zwecke, z. B. Veranstaltungen, vorgesehen.</string>
+    <string name="description_landuse_military">Militärisch genutztes Gebiet (Kasernen, Truppenübungsplätze, usw.))</string>
+
+    <!-- description classified values leisure -->
+    <string name="description_leisure_swimming_pool">Schwimmbecken</string>
+    <string name="description_leisure_pitch">Spielfeld z. B. Fußball, Tennis, Handball, Hockey. Die Sportart kann mit sport=* angegeben werden.</string>
+    <string name="description_leisure_park">Park, Grünanlage</string>
+    <string name="description_leisure_swimming"></string>
+    <string name="description_leisure_playground">Ein Spielplatz für Kinder.</string>
+    <string name="description_leisure_garden">Ein Garten ist ein Gelände, in dem Blumen und andere Pflanzen in dekorativer und strukturierter Form wachsen oder zu Forschungszwecken gezogen werden, zum Beispiel ein Botanischer Garten.</string>
+    <string name="description_leisure_sports_centre">Sportzentrum, auch kommerzielle Freizeitsportanbieter, Fitnesscenter u.ä. Die Sportart kann mit sport=* angegeben werden.</string>
+    <string name="description_leisure_nature_reserve">Naturschutzgebiet (NSG), dieses Attribut ist ausschließlich für (echte) Naturschutzgebiete zu gebrauchen. Andere Gebiete – wie z. B. Nationalparks, Biosphärenreservate, Landschaftsschutzgebiet, Naturdenkmäler, Bio- oder Geotope usw. – sind von der rechtlichen Definition her und auch in der Praxis und keine Natuschutzgebiete. Für diese Gebiete fehlen oft noch die passenden Attribute.</string>
+    <string name="description_leisure_track">Laufbahn oder Rennbahn zum Beispiel für Wett-, Rad-, Hunde- oder Pferderennen. Die Sportart kann mit sport=* angegeben werden.</string>
+    <string name="description_leisure_stadium">Stadion Eine größere Sportanlage mit permanenten, gestaffelten Sitzreihen. Die Sportart kann mit sport=* angegeben werden.</string>
+    <string name="description_leisure_golf_course">Golfanlage. Impliziert sport=golf.</string>
+    <string name="description_leisure_marina">Jachthafen Liegeplatz für Jachten und Motorboote.</string>
+    <string name="description_leisure_water_park">Wasserpark Vergnügnungsstätte mit Wasserrutschen, Schwimmbecken und Umkleiden.</string>
+    <string name="description_leisure_fishing">Angelstelle bzw. Angelgewässer </string>
+
+    <!-- description classified values vending -->
+    <string name="description_vending_cigarettes">Zigarettenautomat</string>
+    <string name="description_vending_parking_tickets">Parkscheinautomat</string>
+    <string name="description_vending_excrement_bags">Hundetütenspender</string>
+    <string name="description_vending_public_transport_tickets">ÖPNV Fahrkarten (DB Automat)</string>
+    <string name="description_vending_drinks">Getränkeautomat: Soft drinks, Wasser, Eistee ... Für spezielle Getränke kombinierbar mit: drink=*</string>
+    <string name="description_vending_sweets">Süßigkeitenautomat</string>
+    <string name="description_vending_parcel_pickup">Du kannst Pakete dort abholen. Häufige Kombination: vending=parcel_pickup;parcel_mail_in </string>
+    <string name="description_vending_parcel_mail_in">Du kannst Pakete dort abgeben. Häufige Kombination: vending=parcel_pickup;parcel_mail_in</string>
+    <string name="description_vending_condoms">Kondomautomat</string>
+    <string name="description_vending_stamps">Briefmarkenautomat</string>
+    <string name="description_vending_news_paper">Zeitungsautomat</string>
+    <string name="description_vending_bicycle_tube">Fahrradschlauchautomat auch "Schlauchomat" genannt</string>
+    <string name="description_vending_food">Essenautomat, Snackautomat</string>
+    <string name="description_vending_fuel">Automat für Treibstoff (benutzen mit: amenity=fuel, vending_machine=yes, vending=fuel).</string>
+    <string name="description_vending_yes">Ein nicht weiter spezifizierter Automat.</string>
+
+    <!-- description classified values shop -->
+    <string name="description_shop_supermarket">Supermarkt</string>
+    <string name="description_shop_convenience">Nachbarschaftsladen, Lebensmittelgeschäft, Tante-Emma-Laden auch Tankstellen-Shops</string>
+    <string name="description_shop_clothes">Bekleidungsgeschäft</string>
+    <string name="description_shop_bakery">Bäckerei</string>
+    <string name="description_shop_hairdresser">Frisör</string>
+    <string name="description_shop_car_repair">Autowerkstatt, Autoreparatur</string>
+    <string name="description_shop_car">Autohaus</string>
+    <string name="description_shop_kiosk">Kiosk, Büdchen (ein kleines Geschäft, das Magazine, Tabak, Zeitungen, Süßigkeiten und Briefmarken verkauft).</string>
+    <string name="description_shop_doityourself">Baumarkt, Heimwerkergeschäft (Verkauf von Werkzeug und Baumaterial)</string>
+    <string name="description_shop_yes">Eine nicht weiter spezifizierte Einkaufsmöglichkeit.</string>
+    <string name="description_shop_butcher">Metzgerei, Fleischerei, Schlachterei</string>
+    <string name="description_shop_florist">Florist, Blumenladen, Blumenhandel</string>
+    <string name="description_shop_mall">Einkaufszentrum mit vielen einzelnen meist kleineren Geschäften.</string>
+    <string name="description_shop_furniture">Möbelhaus, Einrichtungshaus, Wohnstudio</string>
+    <string name="description_shop_bicycle">Fahrradgeschäft, Fahrradwerkstatt, Fahrradverleih, Fahrradservice</string>
+    <string name="description_shop_alcohol">staatlich regulierter Spirituosenladen; gibt es u.a. in einigen skandinavischen Ländern; in Deutschland, Österreich, Schweiz nicht vorhanden</string>
+    <string name="description_shop_books">Buchhandlung</string>
+    <string name="description_shop_shoes">Schuhgeschäft</string>
+    <string name="description_shop_electronics">Elektronikmarkt (Audio-, Video-, PC- und Telekommunikationsfachgeschäft)</string>
+    <string name="description_shop_department_store">Warenhaus, in der Regel mehrstöckiges Kaufhaus mit breitem Sortiment.</string>
+    <string name="description_shop_hardware">Eisenwaren</string>
+    <string name="description_shop_jewelry">Schmuck, Juwelier</string>
+    <string name="description_shop_optician">Optiker</string>
+    <string name="description_shop_mobile_phone">Handy-Shop, Mobiltelefonladen. Laden, der hauptsächlich Mobilltelefone (Handys, Natels) und Zubehör anbietet.</string>
+    
 </resources>
