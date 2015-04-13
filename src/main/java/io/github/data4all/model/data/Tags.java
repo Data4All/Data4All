@@ -39,20 +39,20 @@ import android.text.InputType;
  *
  */
 public final class Tags {
-    
+
     /**
      * Logger.
      */
-    public static String LOG_TAG = Tags.class.getSimpleName();
+    public static final String LOG_TAG = Tags.class.getSimpleName();
     /**
      * Resource to the key properties.
      */
-    public static int RESOURCE_TAG_KEYS = R.raw.tag_keys;
+    public static final int RESOURCE_TAG_KEYS = R.raw.tag_keys;
 
-    /***
+    /**
      * Resource to the value properties.
      */
-    public static int RESOURCE_TAG_VALUES = R.raw.tag_values;
+    public static final int RESOURCE_TAG_VALUES = R.raw.tag_values;
 
     /**
      * list of all classified and unclassified tags.
@@ -83,7 +83,7 @@ public final class Tags {
      */
     private static void readTags() throws IOException {
         for (int id : readKeys().keySet()) {
-            String key = readKeys().get(id);
+            final String key = readKeys().get(id);
             TAG_LIST.add(createClassifiedTag(id, key));
         }
     }
@@ -105,30 +105,26 @@ public final class Tags {
         final List<ClassifiedValue> classifiedValues =
                 new LinkedList<ClassifiedValue>();
         for (String[] s : readValues()) {
-            if (s.length == 16) {
-                if (s[2].equals(Integer.toString(id))) {
-                    ClassifiedValue cv =
-                            new ClassifiedValue(Integer.parseInt(s[0]), key,
-                                    s[1]);
-                    cv.setCanBeNode(Boolean.parseBoolean(s[3]));
-                    cv.setCanBeWay(Boolean.parseBoolean(s[4]));
-                    cv.setCanBeArea(Boolean.parseBoolean(s[5]));
-                    cv.setCanBeBuilding(Boolean.parseBoolean(s[6]));
-                    cv.setHasAddrStreet(Boolean.parseBoolean(s[7]));
-                    cv.setHasAddrHousnumber(Boolean.parseBoolean(s[8]));
-                    cv.setHasAddrPostcode(Boolean.parseBoolean(s[9]));
-                    cv.setHasAddrCity(Boolean.parseBoolean(s[10]));
-                    cv.setHasAddrCountry(Boolean.parseBoolean(s[11]));
-                    cv.setHasContactPhone(Boolean.parseBoolean(s[12]));
-                    cv.setHasContactFax(Boolean.parseBoolean(s[13]));
-                    cv.setHasContactWebsite(Boolean.parseBoolean(s[14]));
-                    cv.setHasContactEmail(Boolean.parseBoolean(s[15]));
-                    classifiedValues.add(cv);
-                }
+            if (s.length == 16 && s[2].equals(Integer.toString(id))) {
+                final ClassifiedValue cv =
+                        new ClassifiedValue(Integer.parseInt(s[0]), key, s[1]);
+                cv.setCanBeNode(Boolean.parseBoolean(s[3]));
+                cv.setCanBeWay(Boolean.parseBoolean(s[4]));
+                cv.setCanBeArea(Boolean.parseBoolean(s[5]));
+                cv.setCanBeBuilding(Boolean.parseBoolean(s[6]));
+                cv.setHasAddrStreet(Boolean.parseBoolean(s[7]));
+                cv.setHasAddrHousnumber(Boolean.parseBoolean(s[8]));
+                cv.setHasAddrPostcode(Boolean.parseBoolean(s[9]));
+                cv.setHasAddrCity(Boolean.parseBoolean(s[10]));
+                cv.setHasAddrCountry(Boolean.parseBoolean(s[11]));
+                cv.setHasContactPhone(Boolean.parseBoolean(s[12]));
+                cv.setHasContactFax(Boolean.parseBoolean(s[13]));
+                cv.setHasContactWebsite(Boolean.parseBoolean(s[14]));
+                cv.setHasContactEmail(Boolean.parseBoolean(s[15]));
+                classifiedValues.add(cv);
             }
         }
-        ClassifiedTag tag = new ClassifiedTag(id, key, -1, classifiedValues);
-        return tag;
+        return new ClassifiedTag(id, key, -1, classifiedValues);
     }
 
     /**
@@ -138,11 +134,11 @@ public final class Tags {
      * @throws IOException
      */
     private static Map<Integer, String> readKeys() throws IOException {
-        BufferedReader reader =
+        final BufferedReader reader =
                 new BufferedReader(new InputStreamReader(
                         Data4AllApplication.context.getResources()
                                 .openRawResource(RESOURCE_TAG_KEYS)));
-        Map<Integer, String> keys = new HashMap<Integer, String>();
+        final Map<Integer, String> keys = new HashMap<Integer, String>();
         String line;
         while ((line = reader.readLine()) != null) {
             String[] key;
@@ -160,8 +156,8 @@ public final class Tags {
      * @throws IOException
      */
     private static List<String[]> readValues() throws IOException {
-        List<String[]> values = new ArrayList<String[]>();
-        BufferedReader reader =
+        final List<String[]> values = new ArrayList<String[]>();
+        final BufferedReader reader =
                 new BufferedReader(new InputStreamReader(
                         Data4AllApplication.context.getResources()
                                 .openRawResource(RESOURCE_TAG_VALUES)));
@@ -185,19 +181,13 @@ public final class Tags {
     public static Tag getTagWithId(int id) {
         for (Tag t : TAG_LIST) {
             if (t.getId() == id) {
-                Log.d(LOG_TAG, "getTagWithId() return new tag with id: " + t.getId());
-                return new Tag(t.getId(), t.getKey(), t.getType());
+                return t;
             }
             if (t instanceof ClassifiedTag) {
                 for (ClassifiedValue v : ((ClassifiedTag) t)
                         .getClassifiedValues()) {
                     if (v.getId() == id) {
-                        Log.d(LOG_TAG,
-                                "getTagWithId() return new classified tag with id: "
-                                        + v.getId());
-                        return new ClassifiedTag(v.getId(), v.getKey(),
-                                ((ClassifiedTag) t).getType(),
-                                ((ClassifiedTag) t).getClassifiedValues());
+                        return t;
                     }
                 }
             }
@@ -206,7 +196,6 @@ public final class Tags {
         return null;
     }
 
-
     /**
      * returns an ArrayList containing all classified and unclassified tags
      * which are relevant for node objects.
@@ -214,12 +203,11 @@ public final class Tags {
      * @return tagList
      */
     public static List<Tag> getAllNodeTags() {
-        List<Tag> result = new ArrayList<Tag>();
+        final List<Tag> result = new ArrayList<Tag>();
         for (Tag t : TAG_LIST) {
-            List<ClassifiedValue> classifiedValues =
+            final List<ClassifiedValue> classifiedValues =
                     new ArrayList<ClassifiedValue>();
             if (t instanceof ClassifiedTag) {
-                ClassifiedTag ct = (ClassifiedTag) t;
                 for (ClassifiedValue v : ((ClassifiedTag) t)
                         .getClassifiedValues()) {
                     if (v.canBeNode()) {
@@ -242,9 +230,9 @@ public final class Tags {
      * @return tagList
      */
     public static List<Tag> getAllWayTags() {
-        List<Tag> result = new ArrayList<Tag>();
+        final List<Tag> result = new ArrayList<Tag>();
         for (Tag t : TAG_LIST) {
-            List<ClassifiedValue> classifiedValues =
+            final List<ClassifiedValue> classifiedValues =
                     new ArrayList<ClassifiedValue>();
             if (t instanceof ClassifiedTag) {
                 for (ClassifiedValue v : ((ClassifiedTag) t)
@@ -269,9 +257,9 @@ public final class Tags {
      * @return tagList
      */
     public static List<Tag> getAllAreaTags() {
-        List<Tag> result = new ArrayList<Tag>();
+        final List<Tag> result = new ArrayList<Tag>();
         for (Tag t : TAG_LIST) {
-            List<ClassifiedValue> classifiedValues =
+            final List<ClassifiedValue> classifiedValues =
                     new ArrayList<ClassifiedValue>();
             if (t instanceof ClassifiedTag) {
                 for (ClassifiedValue v : ((ClassifiedTag) t)
@@ -296,9 +284,9 @@ public final class Tags {
      * @return tagList
      */
     public static List<Tag> getAllBuildingTags() {
-        List<Tag> result = new ArrayList<Tag>();
+        final List<Tag> result = new ArrayList<Tag>();
         for (Tag t : TAG_LIST) {
-            List<ClassifiedValue> classifiedValues =
+            final List<ClassifiedValue> classifiedValues =
                     new ArrayList<ClassifiedValue>();
             if (t instanceof ClassifiedTag) {
                 for (ClassifiedValue v : ((ClassifiedTag) t)
@@ -331,7 +319,7 @@ public final class Tags {
      * @return list of all classified tags
      */
     public static List<ClassifiedTag> getAllClassifiedTags() {
-        List<ClassifiedTag> ct = new ArrayList<ClassifiedTag>();
+        final List<ClassifiedTag> ct = new ArrayList<ClassifiedTag>();
         for (Tag t : TAG_LIST) {
             if (t instanceof ClassifiedTag) {
                 ct.add((ClassifiedTag) t);
@@ -349,7 +337,7 @@ public final class Tags {
     public static void printTags(List<Tag> tags) {
         for (Tag t : tags) {
             if (t instanceof ClassifiedTag) {
-                ClassifiedTag ct = (ClassifiedTag) t;
+                final ClassifiedTag ct = (ClassifiedTag) t;
                 for (ClassifiedValue v : ct.getClassifiedValues()) {
                     Log.d("TAG", "classified: " + " key : " + v.getKey()
                             + " value: " + v.getValue());

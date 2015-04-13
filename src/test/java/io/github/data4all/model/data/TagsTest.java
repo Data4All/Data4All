@@ -47,7 +47,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllWayTags() {
-        assertEquals(9, Tags.getAllWayTags().size());
+        assertEquals(5, Tags.getAllWayTags().size());
     }
 
     /**
@@ -56,7 +56,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllRelationTags() {
-        assertEquals(9, Tags.getAllBuildingTags().size());
+        assertEquals(4, Tags.getAllBuildingTags().size());
     }
 
     /**
@@ -65,7 +65,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllAreaTags() {
-        assertEquals(9, Tags.getAllAreaTags().size());
+        assertEquals(5, Tags.getAllAreaTags().size());
     }
 
     /**
