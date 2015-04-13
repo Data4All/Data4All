@@ -179,7 +179,10 @@ public class HelpOverlay {
 
     private boolean isFullscreen() {
         final int flags = activity.getWindow().getAttributes().flags;
-        return (flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
+        final int flagFullscreen = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        final boolean result = (flags & flagFullscreen) != 0;
+        Log.d(TAG, "isFullscreen(" + result + ")");
+        return result;
     }
 
     /**
