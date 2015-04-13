@@ -15,6 +15,8 @@
  */
 package io.github.data4all.model;
 
+import io.github.data4all.suggestion.AddressSuggestionView;
+
 import java.util.List;
 
 import android.content.Context;
@@ -36,6 +38,7 @@ public class TwoColumnAdapter extends BaseAdapter {
     private Context context;
     private List<String> listKey;
     private List<String> listValue;
+    AddressSuggestionView suggestionView;
 
     /**
      * Default Constructor.
@@ -92,7 +95,15 @@ public class TwoColumnAdapter extends BaseAdapter {
         } else {
         text2.setText("");	
         }
+        if(suggestionView!=null){
+           suggestionView.registriereTwoLineListItem(listKey.get(position),text1,text2);
+        }
         return twoLineListItem;
     }
+
+
+	public void setSuggestionView(AddressSuggestionView suggestionView) {
+		this.suggestionView = suggestionView;
+	}
 
 }
