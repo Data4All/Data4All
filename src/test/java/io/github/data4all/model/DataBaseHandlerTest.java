@@ -225,7 +225,7 @@ public class DataBaseHandlerTest {
         Map<Tag, String> tagMap = new Hashtable<Tag, String>();
         Tag tag1 = Tags.getTagWithId(1);
         tagMap.put(tag1, "Hollywood Blvd.");
-        Tag tag2 = Tags.getTagWithId(2);
+        Tag tag2 = Tags.getTagWithId(55);
         tagMap.put(tag2, "113");
 
         polyElement1.addTags(tagMap);
@@ -236,7 +236,6 @@ public class DataBaseHandlerTest {
         assertEquals(2, dbHandler.getDataElementCount());
         assertEquals(1, dbHandler.getPolyElementCount());
         assertEquals(1, dbHandler.getNodeCount());
-
         assertEquals(2, dbHandler.getDataElement(1).getTags().size());
         assertEquals(0, dbHandler.getDataElement(2).getTags().size());
 
@@ -283,9 +282,9 @@ public class DataBaseHandlerTest {
         Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
         Tag tag1 = Tags.getTagWithId(1);
         tagMap.put(tag1, "Hollywood");
-        Tag tag2 = Tags.getTagWithId(2);
+        Tag tag2 = Tags.getTagWithId(20);
         tagMap.put(tag2, "113");
-        Tag tag3 = Tags.getTagWithId(3);
+        Tag tag3 = Tags.getTagWithId(76);
         tagMap.put(tag3, "04229");
 
         ArrayList<Integer> tagIDs = new ArrayList<Integer>();
@@ -295,11 +294,10 @@ public class DataBaseHandlerTest {
 
         node.addTags(tagMap);
         dbHandler.createDataElement(node);
-
         Node rNode = (Node) dbHandler.getDataElement(node.getOsmId());
         assertEquals(3, dbHandler.getTagMapCount(node.getOsmId()));
 
-        Tag tag4 = Tags.getTagWithId(4);
+        Tag tag4 = Tags.getTagWithId(98);
         tagMap.put(tag4, "Los Angeles");
         tagIDs.add(tag4.getId());
 
@@ -307,13 +305,12 @@ public class DataBaseHandlerTest {
         dbHandler.updateDataElement(node);
         assertEquals(4, dbHandler.getTagMapCount(node.getOsmId()));
         rNode = (Node) dbHandler.getDataElement(node.getOsmId());
-
-        assertTrue(rNode.getTags().containsKey(tag1));
-        assertTrue(rNode.getTags().containsValue("Hollywood"));
-        assertTrue(rNode.getTags().containsKey(tag2));
-        assertTrue(rNode.getTags().containsValue("113"));
-        assertTrue(rNode.getTags().containsKey(tag3));
-        assertTrue(rNode.getTags().containsValue("Los Angeles"));
+        assertEquals(4, dbHandler.getTagMap(node.getOsmId()).size());
+        assertEquals(4, rNode.getTags().size());
+        
+        assertTrue(rNode.hasTag(tag1, "Hollywood"));
+        assertTrue(rNode.hasTag(tag2, "113"));
+        assertTrue(rNode.hasTag(tag3, "Los Angeles"));
 
         node.getTags().clear();
 
