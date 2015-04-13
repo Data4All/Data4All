@@ -20,6 +20,9 @@ public class Addresse {
     //postCode
     private String postCode = "";
    
+    //id of address
+    private int addressId;
+    
     // private Location location; 
     
     
@@ -89,7 +92,15 @@ public class Addresse {
     	// TODO Auto-generated method stub
     	return getFullAddress().equals(((Addresse)o).getFullAddress());
     }   
-    
+   
+
+	public int getAddressId() {
+		return addressId;
+	}
+
+	public void setAddressId(int addressId) {
+		this.addressId = addressId;
+	}
     
 
 
