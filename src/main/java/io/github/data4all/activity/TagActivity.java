@@ -338,10 +338,10 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     public void createDialog(List<Tag> arrayList, String title,
             final Boolean first1) {
         
-        if(addressView==null){
+        /*if(addressView==null){
         addressView = new AddressSuggestionView(context);
         
-        }  
+        } */ 
         
         
         dialog1 = new Dialog(this);
@@ -357,7 +357,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         next.setId(R.id.buttonNext);
         finish.setId(R.id.buttonFinish);
         first = first1;
-        TagSuggestionHandler.startAdresseCollector();
+       /* TagSuggestionHandler.startAdresseCollector();
         if(TagSuggestionHandler.getAddressList()!=null && !TagSuggestionHandler.getAddressList().isEmpty() && first){
         	addressView.setAddresses(TagSuggestionHandler.getAddressList());
         	addressView.fillSpinner(this);
@@ -371,7 +371,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         if(bestAddress!=null){
         	addressSugestionSpinner.setSelection(addressView.getDataAdapter().getPosition(bestAddress.getFullAddress()));
         	addressView.getDataAdapter().notifyDataSetChanged();
-        }
+        }*/
         edit = new ArrayList<EditText>();
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
@@ -379,7 +379,7 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             //check if a tag has a lastvalue(e.g street, country, etc...)
             text.setHint(tag.getHintRessource());
            
-			if(tag!=null && tag.getId()==1 ){
+			/*if(tag!=null && tag.getId()==1 ){
                text.setText(bestAddress==null?"":bestAddress.getRoad());
                addressView.setRoad(text);
             }
@@ -396,12 +396,10 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
             else if(tag!=null && tag.getId()==5 ){
             	text.setText(bestAddress==null?"":bestAddress.getCountry());
                 addressView.setCountry(text);
-            }
+            }*/
             /*else if (tag.getLastValue() != null) {
                 text.setText(tag.getLastValue());
-            }*/ else {
-                text.setHint(tag.getHintRessource());
-            }
+            }*/
             text.setHintTextColor(Color.GRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
