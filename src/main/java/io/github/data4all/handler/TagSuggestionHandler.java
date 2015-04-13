@@ -1,5 +1,6 @@
 package io.github.data4all.handler;
 
+import io.github.data4all.suggestion.AddressSuggestionView;
 import io.github.data4all.suggestion.Addresse;
 import io.github.data4all.util.Optimizer;
 
@@ -19,6 +20,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -31,18 +33,29 @@ import android.util.Log;
  *
  */
 public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
-	private String addresseNr = "";
-	private String road = "";
-	private String city = "";
-	private String country = "";
-	private String postCode = "";
-    private String display_name ="";
-	private String full_address = "";
-	Location lastLocation;
 	
-    private static final String TAG = "TagSuggestion";
+	//house_number
+	private String addresseNr = "";
+	//road
+	private String road = "";
+	//city
+	private String city = "";
+	//country
+	private String country = "";
+	//postCode
+	private String postCode = "";
+	
+	private String display_name = "";
+	
+	//object for AddressSuggestion View
+	private AddressSuggestionView view;
 
+	private static final String TAG = "TagSuggestion";
+
+	//represent the list of all suggestions Adresses
 	private static List<Addresse> addressList = new LinkedList<Addresse>();
+
+	private Context context;
 
 	/**
 	 * 
@@ -56,7 +69,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	}
 
 	/**
-	 * get the current best address based on latitude and longitude
+	 * get a address based on latitude and longitude(nominatim api)
 	 * 
 	 * @param location
 	 * @return
@@ -65,31 +78,26 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		try {
 			JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
 					+ location.getLatitude()
-					+ "&lon=" + location.getLongitude()
-					+ "&zoom=18&addressdetails=1");
-		      
-			display_name = jsonObj.getString("display_name");
-			if (display_name.contains(",")) {
-			    // Split it.
-				String[] separate = display_name.split(",");	
-				addresseNr = separate[0];
-				road = separate[1];
-				city = separate[3];
-				postCode = separate[6];
-			}
-			JSONObject address = jsonObj.getJSONObject("address");
-			country = address.getString("country");
-			
-			
-			
-				/*JSONObject address = jsonObj.getJSONObject("address");
+					+ "&lon="
+					+ location.getLongitude() + "&zoom=18&addressdetails=1");
 
-				postCode = address.getString("postcode");
+			/*
+			 * display_name = jsonObj.getString("display_name"); if
+			 * (display_name.contains(",")) { // Split it. String[] separate =
+			 * display_name.split(","); addresseNr = separate[0]; road =
+			 * separate[1]; city = separate[3]; postCode = separate[6]; }
+			 * JSONObject address = jsonObj.getJSONObject("address"); country =
+			 * address.getString("country");
+			 */
+
+			JSONObject address = jsonObj.getJSONObject("address");
+
 				//addresseNr = address.getString("house_number");
-				road = address.getString("road");
+				postCode = address.getString("postcode");
+				//road = address.getString("road");
 				city = address.getString("city");
-				country = address.getString("country");
-			*/
+				country = address.getString("country");	
+			
 			Addresse addresse = new Addresse();
 			addresse.setAddresseNr(addresseNr);
 			addresse.setRoad(road);
@@ -116,7 +124,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT,
-                    System.getProperty("http.agent"));
+					System.getProperty("http.agent"));
 			HttpPost httppost = new HttpPost(url);
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
@@ -145,62 +153,13 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		try {
 			jObject = new JSONObject(address);
 		} catch (JSONException e) {
-			Log.e("log_tag", "Error parsing data [" + e.getMessage()+"] "+address);
+			Log.e("log_tag", "Error parsing data [" + e.getMessage() + "] "
+					+ address);
 		}
 
 		return jObject;
 	}
 
-	/**
-	 * 
-	 * @return city
-	 */
-	public String getCity() {
-		return city;
-	}
-
-	/**
-	 * 
-	 * @return country
-	 */
-	public String getCountry() {
-		return country;
-	}
-
-	/**
-	 * 
-	 * @return road
-	 */
-	public String getRoad() {
-		return road;
-	}
-
-	/**
-	 * 
-	 * @return postcode
-	 */
-	public String getPostCode() {
-		return postCode;
-	}
-
-	/**
-	 * 
-	 * @return full_address
-	 */
-	public String getFull_address() {
-		return full_address;
-	}
-
-	/**
-	 * @return housenumber
-	 */
-	public String getAddresseNr() {
-		return addresseNr;
-	}
-
-	public Location getLastLocation() {
-		return lastLocation;
-	}
 
 	// list of location
 	static List<Location> locations = new LinkedList<Location>();
@@ -209,7 +168,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
 	/**
 	 * 
-	 * @return a list of location
+	 * @return a list of location nearby of the current location
 	 */
 	private static List<Location> locationSuggestions() {
 		if (current == null) {
@@ -219,15 +178,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 				return locations;
 			}
 		}
-		locations = new LinkedList<Location>();
-		if (current == null) {
-			return locations;
-		}
+
 		locations.clear();
 		locations.add(current);
-		while (locations.size() < 10) {
+		while (locations.size() < 5) {
 			Location location = getLocation(current.getLongitude(),
-					current.getLatitude(), 100);
+					current.getLatitude(), 25);
 			if (!locationsExist(locations, location)) {
 				locations.add(location);
 			}
@@ -255,8 +211,11 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
 	/**
 	 * this method generate random locations nearby a given Location
-	 * @param x0 longitude
-	 * @param y0 lattitude
+	 * 
+	 * @param x0
+	 *            longitude
+	 * @param y0
+	 *            lattitude
 	 * @param radius
 	 * @return location
 	 */
@@ -287,37 +246,28 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	}
 
 	/**
-	 * collect Address every 30 seconds
-	 */
-	public static void startAdresseCollector() {
-		Thread thread = new Thread() {
-			public void run() {
-				while (true) {
-					TagSuggestionHandler tagSuggestionHandler = new TagSuggestionHandler();
-					tagSuggestionHandler.execute();
-					if (Optimizer.currentBestLoc() != null) {
-						try {
-							sleep(30000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-			};
-		};
-		thread.start();
-
-	}
-
-	/**
 	 * suggest a list of addresses
 	 */
 	private void getlistOfSuggestionAddress() {
 		List<Addresse> addressListTemp = new LinkedList<Addresse>();
+		DataBaseHandler db = new DataBaseHandler(context);
 		for (Location location : locationSuggestions()) {
-			Addresse addr = getAddress(location);
+			Addresse addr = db.getAddressFromDb(location);
+			boolean isneu = false;
+			//when an address is not in database, then load address based from nominatim
+			
+			if (addr == null) {
+				addr = getAddress(location);
+				isneu = true;
+			}
 			if (addr != null && !addressListTemp.contains(addr)) {
+				//when a address was already in database, then update this address
+				//when not so insert this address in database
+				if (isneu) {
+					db.insertOrUpdateAddressInDb(location,
+							addr.getAddresseNr(), addr.getRoad(),
+							addr.getRoad(), addr.getCity(), addr.getCountry());
+				}
 				addressListTemp.add(addr);
 			}
 		}
@@ -325,6 +275,10 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 			addressList.clear();
 			addressList.addAll(addressListTemp);
 		}
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
 	}
 
 	/**
@@ -337,7 +291,23 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	@Override
 	protected String doInBackground(String... params) {
 		getlistOfSuggestionAddress();
+
 		return "";
+	}
+
+	@Override
+	protected void onPostExecute(String result) {
+		super.onPostExecute(result);
+		if (!addressList.isEmpty()) {
+			view.setAddresses(addressList);
+			view.fillDialog();
+			view.show();
+		}
+	}
+
+	public void setView(AddressSuggestionView addressSuggestionView) {
+		this.view = addressSuggestionView;
+
 	}
 
 }
