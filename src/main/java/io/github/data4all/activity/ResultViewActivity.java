@@ -25,6 +25,7 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.network.MapBoxTileSourceV4;
+import io.github.data4all.suggestion.AddressSuggestionView;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
@@ -48,7 +49,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.SharedPreferences;
-
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -132,6 +132,7 @@ public class ResultViewActivity extends AbstractActivity implements
     private View viewFooter;
     
     private String type = "TYPE_DEF";
+    AddressSuggestionView addressSuggestionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,9 +181,15 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             });
         }*/
-
+        Button addressSuggestions = (Button)this.findViewById(R.id.buttonAddressSuggestions);
+        addressSuggestionView=new AddressSuggestionView(this, this, addressSuggestions);
+        
         if(element.getTags().isEmpty()){
+        	addressSuggestions.setVisibility(1);
         	addClassifiedTag();
+        	
+        }else {
+        	addressSuggestions.setVisibility(0);
         }
         this.output();
         listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -212,6 +219,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             }
         });
+       
         final ImageButton resultButton =
                 (ImageButton) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
@@ -420,7 +428,12 @@ public class ResultViewActivity extends AbstractActivity implements
         resultButton.setText(endList.get(0));
         Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
         endList.remove(0);
-        listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
+        TwoColumnAdapter twoColumnAdapter = new TwoColumnAdapter(this, keyList, endList);
+        twoColumnAdapter.setSuggestionView(addressSuggestionView);
+		listView.setAdapter(twoColumnAdapter);
+        addressSuggestionView.addKeyMapEntry(res,classifiedValue);
+        addressSuggestionView.setListview(listView);
+        addressSuggestionView.setKeyList(keyList);
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this); */
