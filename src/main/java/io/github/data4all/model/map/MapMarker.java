@@ -24,6 +24,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.Tag;
+import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.DefaultResourceProxyImpl;
@@ -119,37 +120,7 @@ public class MapMarker extends Marker {
         } else {
             mInfoWindow = null;
         }
-        this.setInfo();
-    }
-
-    public void setInfo() {
-        if (!element.getTags().keySet().isEmpty()
-                && !element.getTags().values().isEmpty()) {
-            Log.i(TAG, element.getTags().toString());
-            final Tag tag = (Tag) element.getTags().keySet().toArray()[0];
-            final String key = tag.getKey();
-            final String value = element.getTags().get(tag);
-            Log.i(TAG, tag.toString());
-            setTitle(activity.getString(tag.getNameRessource()));
-            if (tag instanceof ClassifiedTag) {
-                setSubDescription(this.getLocalizedName(activity, key, value));
-            } else {
-                setSubDescription(element.getTags().get(tag));
-            }
-        }
-    }
-
-    public String getLocalizedName(Context context, String key, String value) {
-        final Resources resources = context.getResources();
-        final String s = "name_" + key + "_" + value;
-        final int id = resources.getIdentifier(s.replace(":", "_"), "string",
-                context.getPackageName());
-        if (id == 0) {
-            return null;
-        } else {
-            return resources.getString(id);
-        }
-    }
+}
 
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
@@ -265,9 +236,13 @@ public class MapMarker extends Marker {
 
     @Override
     protected boolean onMarkerClickDefault(Marker marker, MapView mapView) {
+        if (!editable) {
         marker.showInfoWindow();
         mapView.getController().animateTo(marker.getPosition());
         return true;
+        } else {
+            return super.onMarkerClickDefault(marker, mapView);
+        }
     }
 
     /*

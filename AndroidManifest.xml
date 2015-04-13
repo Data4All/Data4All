@@ -50,7 +50,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ResultViewActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:configChanges="keyboardHidden|screenSize" />
         <activity android:name=".activity.SettingsActivity" />
         <activity
             android:name=".activity.TagActivity"

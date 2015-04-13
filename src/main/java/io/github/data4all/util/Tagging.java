@@ -16,6 +16,7 @@
 package io.github.data4all.util;
 
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
@@ -78,12 +79,15 @@ public class Tagging {
     		final String [] list = new String [0];
     		return list;
     	}else{
-        List<Tag> tags = getKeys(type);
-        
+    		
+    		List<Tag> tags = getKeys(type);
+    		Log.i(TAG, "tags" + tags.toString());
         final String[] array = new String[tags.size()];
         for (int i = 0; i < tags.size(); i++) {
-            array[i] = res.getString(tags.get(i).getNameRessource());
+        	array[i] = res.getString(tags.get(i).getNameRessource());
+        	
         }
+
         return LastChoiceHandler.addLastChoiceForType(type,array,res);
     	}
     }
@@ -232,11 +236,11 @@ public class Tagging {
      * @param res The Ressource
      * @return The Array with the String of the ClassifiedValues 
      */
-    public static String[] ClassifiedValueList(List<ClassifiedValue> list,
+    public static List<String> ClassifiedValueList(List<ClassifiedValue> list,
             Resources res) {
-        String[] listValue = new String[list.size()];
+        List<String> listValue = new ArrayList<String>();
         for (int i = 0; i < list.size(); i++) {
-            listValue[i] = res.getString(list.get(i).getNameRessource());
+            listValue.add(res.getString(list.get(i).getNameRessource()));
         }
         return listValue;
     }
@@ -248,15 +252,21 @@ public class Tagging {
      * @param type The type (area, node, etc.)
      * @return The List of Tags 
      */
-    public static List <Tag> getAllNonSelectedTags(Map <Tag, String> map, int type){
+    public static List <Tag> getAllNonSelectedTags(Map <Tag, String> map, ClassifiedValue value){
     	List <Tag> tagList = new ArrayList<Tag>();
     	tagList.addAll(Tags.getAllAddressTags());
-		 if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
-	                .getOsmObjects(), type)){
-			 tagList.addAll(Tags.getAllContactTags());
-		 }
+    	tagList.addAll(Tags.getAllContactTags());
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	if(value != null){
+    	booleanList = value.getAllUnclassifiedBooleans();
+    	for (int i = 0; i < tagList.size(); i++) {
+			if(!booleanList.get(i)){
+				tagList.remove(tagList.get(i));
+			}
+		}
+    	}
 		for (Entry entry : map.entrySet()) {
-            Tag tag = (Tag) entry.getKey();
+            final Tag tag = (Tag) entry.getKey();
             if(tagList.contains(tag)){
             	tagList.remove(tag);
             }
@@ -277,6 +287,106 @@ public class Tagging {
 			resList [i] = res.getString(list.get(i).getNameRessource());
 		}
 		return resList;
+    	
+    }
+    /**
+     * Get all unclassified Tags
+     * @param value The ClassifiedValue
+     * @param res The Ressource
+     * @param keyList The List of Strings in which they are stored
+     * @param element The Abstract Data Element
+     * @return The keyList with the new Values
+     */
+    public static List <String> getUnclassifiedTags(ClassifiedValue value, Resources res, List <String> keyList, AbstractDataElement element){
+    	List <Tag> tagList = new ArrayList<Tag>();
+    	tagList.addAll(Tags.getAllAddressTags());
+    	tagList.addAll(Tags.getAllContactTags());
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	booleanList = value.getAllUnclassifiedBooleans();
+    	for (int i = 0; i < booleanList.size(); i++) {
+			if(booleanList.get(i) && !compareStrings(res.getString(tagList.get(i).getNameRessource()) ,keyList) ){
+				keyList.add(res.getString(tagList.get(i).getNameRessource()));
+			}
+		}
+    	return keyList;
+    }
+    
+    private static boolean compareStrings(String key, List<String> list){
+    	for (String string : list) {
+			if(string.equals(key)){
+				return true;
+			}
+		}
+    	return false;
+    }
+    /**
+     * Compares the UnclassifiedTag with the Tags of the classifiedValue
+     * @param classValue The classifiedValues
+     * @param map The map of the unclassified Tags
+     * @return The Map of the right unclassified Tags
+     */
+    
+    public static Map<Tag, String> compareUnclassifiedTags(ClassifiedValue classValue, Map <Tag, String> map){
+    	Log.i(TAG, "adasdasd" + map.toString());
+    	Log.i(TAG, classValue.toString());
+    	List <Tag> tagList = new ArrayList<Tag>();
+    	Map <Tag, String> tagMap = new LinkedHashMap<Tag, String>();
+    	tagList.addAll(Tags.getAllAddressTags());
+    	tagList.addAll(Tags.getAllContactTags());
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	booleanList = classValue.getAllUnclassifiedBooleans();
+    	List <Tag> rightTag = new ArrayList<Tag>();
+    	for (int i = 0; i < booleanList.size(); i++) {
+			if(booleanList.get(i)){
+				rightTag.add(tagList.get(i));
+			}
+		}
+    
+    	for (Entry<Tag,String> entry : map.entrySet()) {
+    			Log.i(TAG, "keyset of map " + entry.getKey().toString());
+    			Log.i(TAG, "BOOLEAN " + compareTags(entry.getKey(), rightTag));
+    			
+    			if(compareTags(entry.getKey(), rightTag)){
+    				tagMap.put(entry.getKey(), map.get(entry.getKey()));
+    				
+            	}
+    		
+   	 	}	
+    	
+    	Log.i(TAG, tagMap.toString());
+    	map.clear();
+    	map.putAll(tagMap);
+		return map;
+    	
+    }
+    
+    
+    private static boolean compareTags(Tag tag, List<Tag> tags){
+    	for (Tag tag2 : tags) {
+			if(tag.getKey().equals(tag2.getKey())){
+				return true;
+			}
+		}
+    	return false;
+    }
+    
+    public static List <String> addUnclassifiedValue(AbstractDataElement element, List<String> endList, List<String> keyList,  Resources res) {
+    	List <String> tags = new ArrayList<String>();
+    	List<Tag> tagKeys = new ArrayList<Tag>();
+    	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+            tags.add(res.getString(entry.getKey().getNameRessource()));
+            tagKeys.add(entry.getKey());
+   	 	}     
+		for (int i = 1; i < keyList.size(); i++) {
+			if(tags.contains(keyList.get(i))){
+				
+				endList.add(element.getTags().get(tagKeys.get(tags.indexOf(keyList.get(i)))));
+			} else {
+				endList.add("");
+			}
+		
+		}
+		return endList;
     	
     }
 

@@ -122,6 +122,7 @@
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
+
     
     <string name="badSensorCalibration">Bitte rotieren Sie ihr Smartphone langsam 3 mal um jede Achse. Und/Oder zeichnen Sie eine Acht mit ihren Smartphone. </string>
     <string name="badSensorCalibrationTitle">Sensoren brauchen Rekalibrierung.</string>
