@@ -1,86 +1,116 @@
 package io.github.data4all.suggestion;
 
+import io.github.data4all.R;
+import io.github.data4all.handler.TagSuggestionHandler;
+import io.github.data4all.model.data.ClassifiedValue;
+import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.Tags;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnKeyListener;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
-
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 /**
  * this class represents the view of all suggestions addresses
+ * 
  * @author Steeve
  *
  */
-public class AddressSuggestionView implements OnItemSelectedListener {
+public class AddressSuggestionView implements OnClickListener,
+		android.view.View.OnClickListener {
+
+	/*
+	 * Spinners provide a quick way to select one value from a set. In the
+	 * default state, a spinner shows its currently selected value.Touching the
+	 * spinner displays a dropdown menu with all other available values,from
+	 * which the user can select a new one
+	 */
+	// private Spinner spinner;
 	
-	/*Spinners provide a quick way to select one value from a set. 
-	* In the default state, a spinner shows its currently selected value.
-	*Touching the spinner displays a dropdown menu with all other available values, 
-	*from which the user can select a new one
-	*/
-	private Spinner spinner;
 	
+	 // The Dialog which show a list of suggestion addresses
+	private AlertDialog.Builder alertDialog;
+	
+	//dialog of suggestion addresses
+	private Dialog dialog;
+	
+	//Proposed List of all addresses
 	private List<Addresse> addresses = new LinkedList<Addresse>();
+
+	//textview for road
+	private TextView road;
 	
-	private EditText road;
-	private EditText houseNumber;
-	private EditText postCode;
-	private EditText city;
-	private EditText country;
+	//textview for houseNumber
+	private TextView houseNumber;
+	//textView for postCode
+	private TextView postCode;
+	//textview for city
+	private TextView city;
+	//textview for country
+	private TextView country;
+	
+	//the best addresse based on the best current location
 	private Addresse bestAdresse;
+	private Context context;
+	
+	//this array represents the list of proposal addresses
+	private String[] array;
+	
+	Map<String, Integer> keyMapView = new HashMap<String, Integer>();
+
+	//the button which suggest addresses
+	private Button textview;
+
+	private Activity activity;
+	AlertDialog alert;
 
 	/**
 	 * get the bestAddress with the best location
+	 * 
 	 * @return bestAdresse
 	 */
 	public Addresse getBestAddresse() {
 		return bestAdresse;
 	}
 
-	private ArrayAdapter<String> dataAdapter;
-
-	public ArrayAdapter<String> getDataAdapter() {
-		return dataAdapter;
-	}
-    
 	/**
 	 * Default constructor for AddressSuggestionView
+	 * 
 	 * @param context
 	 */
-	public AddressSuggestionView(Context context) {
-		spinner = new Spinner(context);
-		spinner.setOnItemSelectedListener(this);
-		dataAdapter = new ArrayAdapter<String>(context,
-				android.R.layout.simple_spinner_item);
-		spinner.setAdapter(dataAdapter);
-		dataAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	}
-    
-	/**
-	 * get Spinner
-	 * @return spinner
-	 */
-	public Spinner getSpinner() {
-		return spinner;
+	public AddressSuggestionView(Activity activity, Context context,
+			Button button) {
+		this.setContext(context);
+		this.activity = activity;
+		this.textview = button;
+		textview.setOnClickListener(this);
+
 	}
 
-	public void setSpinner(Spinner spinner) {
-		this.spinner = spinner;
-	}
-    
 	/**
 	 * get a list of address
+	 * 
 	 * @return
 	 */
 	public List<Addresse> getAddresses() {
@@ -90,31 +120,28 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 	public void setAddresses(List<Addresse> addresses) {
 		this.addresses.clear();
 		this.addresses.addAll(addresses);
-		if(!this.addresses.isEmpty()){
+		if (!this.addresses.isEmpty()) {
 			// set bestaddress an first position
-			bestAdresse=this.addresses.get(0);
+			bestAdresse = this.addresses.get(0);
 		}
 	}
-   
+
 	/**
-	 * filled Spinner with a list of addresses
+	 * filled dialog with a list of addresses
+	 * 
 	 * @param activity
 	 */
-	public void fillSpinner(Activity activity) {
+	public void fillDialog() {
 		if (addresses == null || addresses.isEmpty()) {
 			return;
 		}
-		if (dataAdapter.getCount() > 0) {
-			dataAdapter.clear();
-			dataAdapter.notifyDataSetChanged();
-		}
-		dataAdapter.add("Adresse auswählen:");
-		List<String> fullAdresses=new ArrayList<String>();
-		
+
+		List<String> fullAdresses = new ArrayList<String>();
+
 		for (Addresse a : addresses) {
 			fullAdresses.add(a.getFullAddress());
 		}
-		//sort full address
+		// sort full address
 		Collections.sort(fullAdresses, new Comparator<String>() {
 			@Override
 			public int compare(String lhs, String rhs) {
@@ -122,16 +149,19 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 			}
 		});
 		
-		//add all address in dataAdapter
-		for (String a : fullAdresses) {
-			dataAdapter.add(a);
+		//add fullAdresses in array
+		array = new String[fullAdresses.size()];
+		int i = 0;
+		for (String string : fullAdresses) {
+			array[i] = string;
+			i++;
 		}
-		dataAdapter.notifyDataSetChanged();
+
 	}
-    
+
 	/**
 	 * @param fullAddress
-	 * @return a selected Address 
+	 * @return a selected Address
 	 */
 	public Addresse getSelectedAddress(String fullAddress) {
 
@@ -142,63 +172,73 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 		}
 		return null;
 	}
-    
-	
+
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position,
-			long id) {
-		Addresse selectedAddress = getSelectedAddress(parent.getItemAtPosition(
-				position).toString());
-		if (selectedAddress != null) {
-			houseNumber.setText(selectedAddress.getAddresseNr());
-			road.setText(selectedAddress.getRoad());
-			postCode.setText(selectedAddress.getPostCode());
-			city.setText(selectedAddress.getCity());
-			country.setText(selectedAddress.getCountry());
-		}else{
-			houseNumber.setText("");
-			road.setText("");
-			postCode.setText("");
-			city.setText("");
-			country.setText("");
+	public void onClick(View arg0) {
+		// TODO Auto-generated method stub
+		Button textview1 = (Button) arg0;
+
+		/*
+		 * load addresses after user click on the button textView, 
+		 */
+		if (textview1.getText().equals(textview.getText())) {
+			TagSuggestionHandler handler = new TagSuggestionHandler();
+			handler.setContext(context);
+			handler.setView(this);
+			handler.execute();
 		}
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
+	public void onClick(DialogInterface arg0, int which) {
 		// TODO Auto-generated method stub
-
+		final String value = (String) array[which];
+		Addresse selectedAddress = getSelectedAddress(value);
+		if (selectedAddress != null) {
+		    houseNumber.setText(selectedAddress.getAddresseNr());
+			road.setText(selectedAddress.getRoad());
+		    postCode.setText(selectedAddress.getPostCode());
+			 city.setText(selectedAddress.getCity());
+			 country.setText(selectedAddress.getCountry());
+		} else {
+			 houseNumber.setText("");
+			 road.setText("");
+			 postCode.setText("");
+			 city.setText("");
+			 country.setText("");
+		}
+		alert.dismiss();
 	}
 
 	/**
 	 * set road
 	 * @param road
 	 */
-	public void setRoad(EditText road) {
+	public void setRoad(TextView road) {
 		this.road = road;
 	}
-    
+
 	/**
 	 * set house_number
 	 * @param houseNumber
 	 */
-	public void setHouseNumber(EditText houseNumber) {
+	public void setHouseNumber(TextView houseNumber) {
 		this.houseNumber = houseNumber;
 	}
-    
+
 	/**
 	 * set postCode
 	 * @param postCode
 	 */
-	public void setPostCode(EditText postCode) {
+	public void setPostCode(TextView postCode) {
 		this.postCode = postCode;
 	}
-   
+
 	/**
 	 * set city
 	 * @param city
 	 */
-	public void setCity(EditText city) {
+	public void setCity(TextView city) {
 		this.city = city;
 	}
 
@@ -206,7 +246,96 @@ public class AddressSuggestionView implements OnItemSelectedListener {
 	 * set country
 	 * @param country
 	 */
-	public void setCountry(EditText country) {
+	public void setCountry(TextView country) {
 		this.country = country;
 	}
+
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+   
+	/*
+	 * show addresses in dialog
+	 */
+	public void show() {
+		alertDialog = new AlertDialog.Builder(activity);
+		alertDialog.setCancelable(false);
+		TextView textview = new TextView(context);
+		textview.setText(R.string.selectAddress);
+		alertDialog.setCustomTitle(textview);
+		alertDialog.setItems(array, this);
+		alert = alertDialog.create();
+		alert.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+					KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					activity.setResult(Activity.RESULT_FIRST_USER);
+					return true;
+				}
+				return true;
+			}
+		});
+		alert.getWindow().setBackgroundDrawable(
+				new ColorDrawable(android.graphics.Color.TRANSPARENT));
+		alert.show();
+
+	}
+
+	public Button getTextview() {
+		return textview;
+	}
+
+	ListView listView;
+
+	public void setListview(ListView listView) {
+		this.listView = listView;
+
+	}
+
+	public void addKeyMapEntry(Resources res, ClassifiedValue value) {
+		if(value==null){
+			return;
+		}
+		List <Tag> tagList = new LinkedList<Tag>();
+    	tagList.addAll(Tags.getAllAddressTags());
+    	List <Boolean> booleanList = new ArrayList<Boolean>();
+    	booleanList = value.getAllUnclassifiedBooleans();
+    	
+    	for (int i = 0; i < booleanList.size(); i++) {
+			if(booleanList.get(i) && !keyMapView.containsValue(res.getString(tagList.get(i).getNameRessource())) ){
+				Tag tag=tagList.get(i);
+				keyMapView.put(res.getString(tag.getNameRessource()), tag.getId());
+			}
+		}
+	}
+
+	public void setKeyList(List<String> keyList) {
+	     int position = 0;
+	}
+
+	public void registriereTwoLineListItem(String key,TextView text1, TextView text2) {
+		Integer tagid = keyMapView.get(key);
+		if(tagid==null){
+			return;
+		}
+		if (tagid.intValue() == 401) {
+			road=text2;
+			
+		}
+		if (tagid.intValue() == 402) {
+			houseNumber=text2;
+		}
+		if (tagid.intValue() == 403) {
+			postCode=text2;
+		}
+		if (tagid.intValue() == 404) {
+			city=text2;
+		}
+		if (tagid.intValue() == 405) {
+			country=text2;
+		}
+	}
+
 }
