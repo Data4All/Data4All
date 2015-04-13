@@ -136,11 +136,6 @@ public class HelpOverlay {
             helpView =
                     activity.getLayoutInflater().inflate(this.resourceId, null);
 
-            if (this.isFullscreen()) {
-                AbstractActivity.addNavBarMargin(activity.getResources(),
-                        helpView);
-            }
-
             helpView.setBackgroundColor(BACKGROUND_COLOR);
             helpView.setOnClickListener(new OnClickListener() {
                 @Override
@@ -175,14 +170,6 @@ public class HelpOverlay {
         } else {
             Log.d(TAG, "isMultiViewOverlay(false)");
         }
-    }
-
-    private boolean isFullscreen() {
-        final int flags = activity.getWindow().getAttributes().flags;
-        final int flagFullscreen = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        final boolean result = (flags & flagFullscreen) != 0;
-        Log.d(TAG, "isFullscreen(" + result + ")");
-        return result;
     }
 
     /**
