@@ -14,16 +14,18 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@drawable/cam_border"
-            android:gravity="center"
-            android:contentDescription="@string/help_showpictureactivity_description_draw" />
+            android:contentDescription="@string/help_showpictureactivity_description_draw"
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id1"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="5dp"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"
             android:text="@string/help_showpictureactivity_draw"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -40,16 +42,18 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@drawable/cam_border"
-            android:gravity="center"
-            android:contentDescription="@string/help_showpictureactivity_description_delete" />
+            android:contentDescription="@string/help_showpictureactivity_description_delete"
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id2"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="5dp"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"
             android:text="@string/help_showpictureactivity_deletepoint"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -66,16 +70,18 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@drawable/cam_border"
-            android:gravity="center"
-            android:contentDescription="@string/help_showpictureactivity_description_move" />
+            android:contentDescription="@string/help_showpictureactivity_description_move"
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id3"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="5dp"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"
             android:text="@string/help_showpictureactivity_movepoint"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -85,8 +91,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:paddingBottom="65dp"
+            android:background="@drawable/bg_help_text"
+            android:layout_marginBottom="60dp"
+            android:padding="5dp"
             android:text="@string/help_showpictureactivity_choosetool"
             android:textSize="20sp"
             android:textStyle="bold" />
