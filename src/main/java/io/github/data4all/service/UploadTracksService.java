@@ -141,30 +141,28 @@ public class UploadTracksService extends IntentService {
                 db.close();
             }
 
-            if (!stopNext) {
+            //if (!stopNext) {
                 // for (Track t : gpsTracks) {
                 // TrackParserTask trackParser = new TrackParserTask(t);
                 // String gpxTrack = trackParser.parseTrack(t);
                 // Log.d(TAG, "parsed track with id: " + t.getID()
                 // + " track name: " + t.getTrackName());
                 // Log.d(TAG, "xml: " + gpxTrack.replaceAll("\n", ""));
-
-                if (!stopNext) {
-                    String track = GpxTrackUtil.longTrack();
-                    String description = "dies ist die beschreibung";
-                    String tags = "tag1, tag2, tag3, tag4";
-                    String visibility = "public";
-                    currentMaxProgress = track.length();
-                    send(receiver, MAX_PROGRESS, currentMaxProgress);
-                    CloseableUpload upload;
-
-                    upload =
-                            GpxTrackUtil.upload(this, user, track, description,
-                                    tags, visibility, new MyCallback(receiver));
-                    upload.upload();
-                }
-
                 // }
+            // }
+            if (!stopNext) {
+                String track = GpxTrackUtil.longTrack();
+                String description = "dies ist die beschreibung";
+                String tags = "tag1, tag2, tag3, tag4";
+                String visibility = "public";
+                currentMaxProgress = track.length();
+                send(receiver, MAX_PROGRESS, currentMaxProgress);
+                CloseableUpload upload;
+
+                upload =
+                        GpxTrackUtil.upload(this, user, track, description,
+                                tags, visibility, new MyCallback(receiver));
+                upload.upload();
             }
             if (!stopNext) {
                 this.stopForeground(SUCCESS);

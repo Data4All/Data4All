@@ -23,6 +23,7 @@ import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -88,10 +89,7 @@ public final class GpxTrackUtil {
             Callback<Integer> callback) throws OsmException {
         final HttpPost request = getUploadPost(user);
 
-        final HttpEntity entity = new MultiCallbackEntry(callback);
-        request.setEntity(entity);
-
-        final MultipartEntity reqEntity = new MultipartEntity();
+        final MultipartEntity reqEntity = new MultiCallbackEntry(callback);
         final FileBody fileBody =
                 new FileBody(createGpxFile(context, track, "file.gpx"));
 

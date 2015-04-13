@@ -70,8 +70,8 @@ public class UploadActivity extends AbstractActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
-        progressElements = (ProgressBar) findViewById(R.id.upload_progress);
-        progressTracks = (ProgressBar) findViewById(R.id.upload_progress);
+        progressElements = (ProgressBar) findViewById(R.id.upload_progress_elements);
+        progressTracks = (ProgressBar) findViewById(R.id.upload_progress_tracks);
         indetermineProgress = findViewById(R.id.upload_indetermine_progress);
         countDataElementsText = (TextView) findViewById(R.id.upload_count_text);
         countGPSTracksText =
