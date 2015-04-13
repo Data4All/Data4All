@@ -49,16 +49,20 @@ public class LastChoiceHandlerTest {
         Tag tag = Tags.getTagWithId(5);
         lastChoice.put(tag, "building");
            
-        Tag street = Tags.getTagWithId(1);
+        Tag street = Tags.getTagWithId(401);
         lastChoice.put(street, "findorf");
         
-        Tag housenummer = Tags.getTagWithId(2);
+        Tag housenummer = Tags.getTagWithId(402);
         lastChoice.put(housenummer, "40");
         
-        Tag city = Tags.getTagWithId(4);
-        lastChoice.put(city, "bremen");
+
+        Tag postCode = Tags.getTagWithId(403);
+        lastChoice.put(postCode, "28277");
         
-        Tag country = Tags.getTagWithId(6);
+        Tag city = Tags.getTagWithId(404);
+        lastChoice.put(city,"bremen");
+        
+        Tag country = Tags.getTagWithId(405);
         lastChoice.put(country, "Germany");
        
         lcHandler.setLastChoice(3, lastChoice);    
@@ -78,9 +82,10 @@ public class LastChoiceHandlerTest {
         dbhandler.getTagMap((long)1.0);
         
         assertTrue(dbhandler.getTagMap((long)1.0).containsKey(tag));
-        assertTrue(dbhandler.getTagMap((long)1.0).containsValue("bremen"));
         assertTrue(dbhandler.getTagMap((long)1.0).containsValue("Germany"));
         assertTrue(dbhandler.getTagMap((long)1.0).containsKey(housenummer));
+        assertTrue(dbhandler.getTagMap((long)1.0).containsValue("bremen"));
+        assertTrue(dbhandler.getTagMap((long)1.0).containsKey(postCode));
        
         
     }
