@@ -52,7 +52,8 @@ public class UploadActivity extends AbstractActivity {
     public static final String TAG = UploadActivity.class.getSimpleName();
     private ProgressBar progressElements;
     private ProgressBar progressTracks;
-    private View indetermineProgress;
+    private View indetermineProgressElements;
+    private View indetermineProgressTracks;
     private TextView countDataElementsText;
     private TextView countGPSTracksText;
     private View uploadButton;
@@ -72,7 +73,8 @@ public class UploadActivity extends AbstractActivity {
         setContentView(R.layout.activity_upload);
         progressElements = (ProgressBar) findViewById(R.id.upload_progress_elements);
         progressTracks = (ProgressBar) findViewById(R.id.upload_progress_tracks);
-        indetermineProgress = findViewById(R.id.upload_indetermine_progress);
+        indetermineProgressElements = findViewById(R.id.upload_indetermine_progress_elements);
+        indetermineProgressTracks = findViewById(R.id.upload_indetermine_progress_tracks);
         countDataElementsText = (TextView) findViewById(R.id.upload_count_text);
         countGPSTracksText =
                 (TextView) findViewById(R.id.upload_gpstracks_count);
@@ -120,16 +122,17 @@ public class UploadActivity extends AbstractActivity {
      */
     private void showProgress(boolean show) {
         if (show) {
-            this.indetermineProgress.setVisibility(View.VISIBLE);
-
+            this.indetermineProgressElements.setVisibility(View.VISIBLE);
+            this.indetermineProgressTracks.setVisibility(View.VISIBLE);
             this.uploadButton.setEnabled(false);
             this.uploadButton.setVisibility(View.GONE);
             this.cancleButton.setEnabled(true);
             this.cancleButton.setVisibility(View.VISIBLE);
         } else {
             this.progressElements.setVisibility(View.INVISIBLE);
-            this.indetermineProgress.setVisibility(View.INVISIBLE);
-
+            this.progressTracks.setVisibility(View.INVISIBLE);
+            this.indetermineProgressElements.setVisibility(View.INVISIBLE);
+            this.indetermineProgressTracks.setVisibility(View.INVISIBLE);
             this.cancleButton.setEnabled(false);
             this.cancleButton.setVisibility(View.GONE);
             this.uploadButton.setEnabled(true);
@@ -311,7 +314,7 @@ public class UploadActivity extends AbstractActivity {
                         .getInt(UploadElementsService.MESSAGE));
                 progressElements.setProgress(0);
                 progressElements.setVisibility(View.VISIBLE);
-                indetermineProgress.setVisibility(View.INVISIBLE);
+                indetermineProgressElements.setVisibility(View.INVISIBLE);
             } else if (resultCode == UploadElementsService.ERROR) {
                 final String msg =
                         resultData.getString(UploadElementsService.MESSAGE);
@@ -359,7 +362,7 @@ public class UploadActivity extends AbstractActivity {
                         .getInt(UploadTracksService.MESSAGE));
                 progressTracks.setProgress(0);
                 progressTracks.setVisibility(View.VISIBLE);
-                indetermineProgress.setVisibility(View.INVISIBLE);
+                indetermineProgressTracks.setVisibility(View.INVISIBLE);
             } else if (resultCode == UploadTracksService.ERROR) {
                 final String msg =
                         resultData.getString(UploadTracksService.MESSAGE);
