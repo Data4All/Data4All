@@ -15,18 +15,6 @@
  */
 package io.github.data4all.handler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
@@ -38,6 +26,16 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -1143,7 +1141,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param track
      *            the {@link Track} object from which the data will be taken.
      */
-    public void createGPSTrack(Track track) {
+    public long createGPSTrack(Track track) {
 
         final SQLiteDatabase db = getWritableDatabase();
         final ContentValues values = new ContentValues();
@@ -1170,6 +1168,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final long rowID = db.insert(TABLE_GPSTRACK, null, values);
         Log.d(TAG, "New Track with name: " + track.getTrackName() + " created.");
         Log.i(TAG, "GPSTrack " + rowID + " has been added.");
+        return rowID;
     }
 
     /**
@@ -1333,6 +1332,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 final Track track = new Track();
                 final List<Long> trackPointIDs = new ArrayList<Long>();
                 try {
+                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
+                            + cursor.getString(0) + " cursor.getString(1): "
+                            + cursor.getString(1) + " cursor.getString(2): " +cursor.getString(2));
                     final JSONObject json = new JSONObject(cursor.getString(2));
                     final JSONArray jArray = json
                             .optJSONArray("trackpointarray");
@@ -1395,9 +1397,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         List<Long> trackPointIDs = new ArrayList<Long>();
 
         for (TrackPoint point : trackPoints) {
-            if (point.getID() != -1) {
-                values.put(KEY_INCID, point.getID());
-            }
+//            if (point.getID() != -1) {
+//                values.put(KEY_INCID, point.getID());
+//            }
             values.put(KEY_LAT, point.getLat());
             values.put(KEY_LON, point.getLon());
             values.put(KEY_ALT, point.getAlt());

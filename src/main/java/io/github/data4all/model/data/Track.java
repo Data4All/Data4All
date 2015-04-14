@@ -111,11 +111,11 @@ public class Track implements Parcelable {
     public void setTrackName(String timestamp) {
         this.trackName = timestamp;
     }
-
+    
     public long getID() {
         return id;
     }
-
+    
     public void setID(long id) {
         this.id = id;
     }
@@ -147,9 +147,9 @@ public class Track implements Parcelable {
      */
     public void addTrackPoint(final Location location) {
         if (!isFinished()) {
-            if (location != null) {
-                tracklist.add(new TrackPoint(location));
-                Log.d(TAG, "Added TrackPoint: " + location.toString());
+        if (location != null) {
+            tracklist.add(new TrackPoint(location));
+            Log.d(TAG, "Added TrackPoint: " + location.toString());
             }
         }
     }
@@ -163,7 +163,7 @@ public class Track implements Parcelable {
      * another list of TrackPoints to it.
      * 
      * @param trackPoints
-     *            the given list of TrackPoints
+     * @param trackPoints the given list of TrackPoints
      */
     public void setTrackPoints(List<TrackPoint> trackPoints) {
         tracklist.clear();

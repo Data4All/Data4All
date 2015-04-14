@@ -20,7 +20,6 @@ import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 
 import java.util.ArrayList;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

@@ -15,7 +15,17 @@
  */
 package io.github.data4all.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.Tags;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.model.data.TrackPoint;
+import io.github.data4all.model.data.User;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -34,15 +44,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.location.Location;
-import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Tag;
-import io.github.data4all.model.data.Tags;
-import io.github.data4all.model.data.Track;
-import io.github.data4all.model.data.TrackPoint;
-import io.github.data4all.model.data.User;
-import io.github.data4all.model.data.PolyElement.PolyElementType;
 
 /**
  * This class tests all methods of the DataBaseHandler.
@@ -416,6 +417,14 @@ public class DataBaseHandlerTest {
         loc3.setTime(30000);
         TrackPoint tp3 = new TrackPoint(loc3);
         tp3.setID(4);
+        
+        Location loc4 = new Location("User");
+        loc4.setAltitude(13.13);
+        loc4.setLatitude(13.13);
+        loc4.setLongitude(13.13);
+        loc4.setTime(13455);
+        TrackPoint tp4 = new TrackPoint(loc4);
+        tp4.setID(5);
 
         List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
         trackPoints.add(tp1);
@@ -427,21 +436,24 @@ public class DataBaseHandlerTest {
         track.setTrackPoints(trackPoints);
 
         dbHandler.createGPSTrack(track);
-
+        
         assertEquals(1, dbHandler.getGPSTrackCount());
-
+        
         Track reTrack = dbHandler.getGPSTrack(track.getID());
-
-        assertEquals(track.getTrackName(), reTrack.getTrackName());
-
-        track.setTrackName("2015_02_20_15_18_25");
-
-        dbHandler.updateGPSTrack(track);
-
-        reTrack = dbHandler.getGPSTrack(track.getID());
         
         assertEquals(track.getTrackName(), reTrack.getTrackName());
-
+        
+        track.setTrackName("2015_02_20_15_18_25");
+        
+        trackPoints.add(tp4);
+        track.setTrackPoints(trackPoints);
+        
+        dbHandler.updateGPSTrack(track);
+                
+        reTrack = dbHandler.getGPSTrack(track.getID());
+        
+        assertEquals(4, reTrack.getTrackPoints().size());
+        
     }
 
     @After

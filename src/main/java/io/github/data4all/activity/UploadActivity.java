@@ -20,8 +20,11 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.network.MapBoxTileSourceV4;
-import io.github.data4all.service.UploadService;
+import io.github.data4all.service.UploadElementsService;
+import io.github.data4all.service.UploadTracksService;
 import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.upload.ChangesetUtil;
+import io.github.data4all.util.upload.GpxTrackUtil;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.List;
@@ -51,9 +54,12 @@ import android.widget.Toast;
 public class UploadActivity extends AbstractActivity {
 
     public static final String TAG = UploadActivity.class.getSimpleName();
-    private ProgressBar progress;
-    private View indetermineProgress;
-    private TextView countText;
+    private ProgressBar progressElements;
+    private ProgressBar progressTracks;
+    private View indetermineProgressElements;
+    private View indetermineProgressTracks;
+    private TextView countDataElementsText;
+    private TextView countGPSTracksText;
     private View uploadButton;
     private View cancleButton;
     private D4AMapView mapView;
@@ -70,9 +76,13 @@ public class UploadActivity extends AbstractActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
-        progress = (ProgressBar) findViewById(R.id.upload_progress);
-        indetermineProgress = findViewById(R.id.upload_indetermine_progress);
-        countText = (TextView) findViewById(R.id.upload_count_text);
+        progressElements = (ProgressBar) findViewById(R.id.upload_progress_elements);
+        progressTracks = (ProgressBar) findViewById(R.id.upload_progress_tracks);
+        indetermineProgressElements = findViewById(R.id.upload_indetermine_progress_elements);
+        indetermineProgressTracks = findViewById(R.id.upload_indetermine_progress_tracks);
+        countDataElementsText = (TextView) findViewById(R.id.upload_count_text);
+        countGPSTracksText =
+                (TextView) findViewById(R.id.upload_gpstracks_count);
         uploadButton = findViewById(R.id.upload_upload_button);
         cancleButton = findViewById(R.id.upload_cancle_button);
         uploadComment = (EditText) findViewById(R.id.uploadComment);
@@ -109,11 +119,13 @@ public class UploadActivity extends AbstractActivity {
      */
     private void readObjectCount() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        final int count = db.getDataElementCount();
+        final int countDataElements = db.getDataElementCount();
+        final int countGPSTracks = db.getGPSTrackCount();
         db.close();
 
-        countText.setText(Integer.toString(count));
-        if (count > 0) {
+        countDataElementsText.setText(Integer.toString(countDataElements));
+        countGPSTracksText.setText(Integer.toString(countGPSTracks));
+        if (countDataElements > 0 || countGPSTracks > 0) {
             uploadButton.setEnabled(true);
         } else {
             uploadButton.setEnabled(false);
@@ -128,16 +140,17 @@ public class UploadActivity extends AbstractActivity {
      */
     private void showProgress(boolean show) {
         if (show) {
-            this.indetermineProgress.setVisibility(View.VISIBLE);
-
+            this.indetermineProgressElements.setVisibility(View.VISIBLE);
+            this.indetermineProgressTracks.setVisibility(View.VISIBLE);
             this.uploadButton.setEnabled(false);
             this.uploadButton.setVisibility(View.GONE);
             this.cancleButton.setEnabled(true);
             this.cancleButton.setVisibility(View.VISIBLE);
         } else {
-            this.progress.setVisibility(View.INVISIBLE);
-            this.indetermineProgress.setVisibility(View.INVISIBLE);
-
+            this.progressElements.setVisibility(View.INVISIBLE);
+            this.progressTracks.setVisibility(View.INVISIBLE);
+            this.indetermineProgressElements.setVisibility(View.INVISIBLE);
+            this.indetermineProgressTracks.setVisibility(View.INVISIBLE);
             this.cancleButton.setEnabled(false);
             this.cancleButton.setVisibility(View.GONE);
             this.uploadButton.setEnabled(true);
@@ -175,11 +188,26 @@ public class UploadActivity extends AbstractActivity {
     public void onClickUpload(View v) {
         if (v.getId() == R.id.upload_upload_button) {
             this.showProgress(true);
-            final Intent intent = new Intent(this, UploadService.class);
-            intent.putExtra(UploadService.ACTION, UploadService.UPLOAD);
-            intent.putExtra(UploadService.HANDLER, new MyReceiver());
-            intent.putExtra(UploadService.CHANGESET_COMMENT, uploadComment.getText().toString());
-            startService(intent);
+            if (ChangesetUtil.needToUpload(this)) {
+                final Intent intentUploadElements =
+                        new Intent(this, UploadElementsService.class);
+                intentUploadElements.putExtra(UploadElementsService.ACTION,
+                        UploadElementsService.UPLOAD);
+                intentUploadElements.putExtra(UploadElementsService.HANDLER,
+                        new MyReceiver());
+                Log.d(TAG, "trying to start service to upload elements");
+                startService(intentUploadElements);
+            }
+            if (GpxTrackUtil.needToUpload(this)) {
+                final Intent intentUploadTracks =
+                        new Intent(this, UploadTracksService.class);
+                intentUploadTracks.putExtra(UploadTracksService.ACTION,
+                        UploadTracksService.UPLOAD);
+                intentUploadTracks.putExtra(UploadTracksService.HANDLER,
+                        new MyTracksReceiver());
+                Log.d(TAG, "trying to start service to upload tracks");
+                startService(intentUploadTracks);
+            }
         }
     }
 
@@ -191,11 +219,26 @@ public class UploadActivity extends AbstractActivity {
      */
     public void onClickCancel(View v) {
         if (v.getId() == R.id.upload_cancle_button) {
-            final Intent intent = new Intent(this, UploadService.class);
-            intent.putExtra(UploadService.ACTION, UploadService.CANCLE);
-            intent.putExtra(UploadService.HANDLER, new MyReceiver());
+            final Intent intentUploadElements =
+                    new Intent(this, UploadElementsService.class);
 
-            startService(intent);
+            intentUploadElements.putExtra(UploadElementsService.ACTION,
+                    UploadElementsService.CANCLE);
+            intentUploadElements.putExtra(UploadElementsService.HANDLER,
+                    new MyReceiver());
+
+            startService(intentUploadElements);
+
+            final Intent intentUploadTracks =
+                    new Intent(this, UploadTracksService.class);
+
+            intentUploadTracks.putExtra(UploadTracksService.ACTION,
+                    UploadTracksService.CANCLE);
+            intentUploadTracks.putExtra(UploadTracksService.HANDLER,
+                    new MyReceiver());
+
+            startService(intentUploadTracks);
+
             this.showProgress(false);
         }
     }
@@ -206,6 +249,7 @@ public class UploadActivity extends AbstractActivity {
     private void deleteAllElements() {
         final DataBaseHandler db = new DataBaseHandler(this);
         db.deleteAllDataElements();
+        db.deleteAllGPSTracks();
         db.close();
         this.readObjectCount();
     }
@@ -281,17 +325,68 @@ public class UploadActivity extends AbstractActivity {
                 Log.v("UploadActivity$MyHandler",
                         "data=" + resultData.toString());
             }
-            if (resultCode == UploadService.CURRENT_PROGRESS) {
-                progress.setProgress(resultData.getInt(UploadService.MESSAGE));
-            } else if (resultCode == UploadService.MAX_PROGRESS) {
-                progress.setMax(resultData.getInt(UploadService.MESSAGE));
-                progress.setProgress(0);
-                progress.setVisibility(View.VISIBLE);
-                indetermineProgress.setVisibility(View.INVISIBLE);
-            } else if (resultCode == UploadService.ERROR) {
-                final String msg = resultData.getString(UploadService.MESSAGE);
+            if (resultCode == UploadElementsService.CURRENT_PROGRESS) {
+                progressElements.setProgress(resultData
+                        .getInt(UploadElementsService.MESSAGE));
+            } else if (resultCode == UploadElementsService.MAX_PROGRESS) {
+                progressElements.setMax(resultData
+                        .getInt(UploadElementsService.MESSAGE));
+                progressElements.setProgress(0);
+                progressElements.setVisibility(View.VISIBLE);
+                indetermineProgressElements.setVisibility(View.INVISIBLE);
+            } else if (resultCode == UploadElementsService.ERROR) {
+                final String msg =
+                        resultData.getString(UploadElementsService.MESSAGE);
                 UploadActivity.this.onError(msg);
-            } else if (resultCode == UploadService.SUCCESS) {
+            } else if (resultCode == UploadElementsService.SUCCESS) {
+                UploadActivity.this.onSuccess();
+            }
+        }
+    }
+
+    /**
+     * IPC to receive a callback result from the UploadService.
+     * 
+     * @author tbrose, fkirchge
+     */
+    private class MyTracksReceiver extends ResultReceiver {
+        /**
+         * Constructs a new MyReceiver with an new Handler.
+         * 
+         * @see Handler
+         */
+        public MyTracksReceiver() {
+            super(new Handler());
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see android.os.ResultReceiver#onReceiveResult(int,
+         * android.os.Bundle)
+         */
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (resultData == null) {
+                Log.v("UploadActivity$MyHandler", "data=null");
+            } else {
+                Log.v("UploadActivity$MyHandler",
+                        "data=" + resultData.toString());
+            }
+            if (resultCode == UploadTracksService.CURRENT_PROGRESS) {
+                progressTracks.setProgress(resultData
+                        .getInt(UploadTracksService.MESSAGE));
+            } else if (resultCode == UploadElementsService.MAX_PROGRESS) {
+                progressTracks.setMax(resultData
+                        .getInt(UploadTracksService.MESSAGE));
+                progressTracks.setProgress(0);
+                progressTracks.setVisibility(View.VISIBLE);
+                indetermineProgressTracks.setVisibility(View.INVISIBLE);
+            } else if (resultCode == UploadTracksService.ERROR) {
+                final String msg =
+                        resultData.getString(UploadTracksService.MESSAGE);
+                UploadActivity.this.onError(msg);
+            } else if (resultCode == UploadTracksService.SUCCESS) {
                 UploadActivity.this.onSuccess();
             }
         }

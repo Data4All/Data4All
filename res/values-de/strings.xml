@@ -71,7 +71,7 @@
     <string name="login_access_dialog_mes">Benutzername oder Passwort nicht korrekt.</string>
 
 
-    <!-- for tags --> 
+    <!-- for tags -->
     <string name="SelectTag">Passenden Tag auswählen</string>
     <string name="AddAddress">Adresse hinzufügen</string>
     <string name="AddContact">Kontakt hinzufügen</string>
@@ -98,7 +98,7 @@
     <string name="upload_to_openstreetmap_progress">Am hochladen für %s</string>
     <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
-    
+
      <!-- track list and details -->
     <string name="list_tracks">Tracks</string>
     <string name="track_id">Track ID:</string>
@@ -114,11 +114,14 @@
     <string name="gallery_yesterday">"%1$s gestern %2$s"</string>
     <string name="gallery_delete_all">Alle löschen</string>
 
+    <string name="upload_gpstracks_text">"Aufgenommene GPS Tracks: "</string>
+
     <!-- other -->
     <string name="sensor_warning"> Sensoren Warnungen zeigen</string>
     <string name="empty"> </string>
     <string name="augmented_reality">Augmented Reality zeigen</string>
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
+
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
@@ -161,5 +164,9 @@
     <string name="underlyingLicenses">Auf den folgenden Links findet ihr die Lizenzen, denen diese Anwendung 
         unterliegt.</string>
     <string name="librariesUsed">Zusätzlich wurden die folgenden Bibliotheken in dieser Anwendung benutzt.</string>
+
+    <string name="noLocationFound">Kein Standort gefunden. Schalten Sie den Ortungsdienst ein.</string>
+    <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal.</string>
+>>>>>>> feature/3257-upload-gpstracks
 
 </resources>

@@ -18,7 +18,7 @@
     <string name="ok">OK</string>
 	<string name="ignore">Ignore</string>
 	<string name="alwaysIgnore"> Always Ignore</string>
-	
+
     <!-- Strings Content Description ImageButtons -->
     <string name="returnToActualPosition">My Position</string>
     <string name="returnToCamera">Camera</string>
@@ -98,6 +98,7 @@
     <string name="upload_to_openstreetmap_progress">Download for %s in progress</string>
     <string name="upload_to_openstreetmap_success">Changes successfully uploaded</string>
     <string name="upload_to_openstreetmap_error">Upload failed</string>
+    <string name="upload_gpstracks_text">"Recorded GPS Tracks: "</string>
 
     <!-- for gallery -->
     <string name="gallery_sec">"%s now"</string>
@@ -114,6 +115,8 @@
     <string name="empty"> </string>
     <string name="noCamSupported">Sorry, your device has no supported camera</string>
     <string name="noLocationFound">No Location found. Turn on location service </string>
+    <string name="noCamSupported">Sorry, your device has no supported camera.</string>
+    <string name="noLocationFound">No Location found. Turn on location service.</string>
     <string name="retry">Cannot find the right Tag. Try Again.</string>
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
     <string name="badSensorCalibration">Please slowly rotate your phone around its axis 3 times. And/Or draw an eight shaped figure with your phone </string>

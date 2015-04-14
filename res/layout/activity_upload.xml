@@ -28,7 +28,7 @@
         </RelativeLayout>
 
         <ProgressBar
-            android:id="@+id/upload_progress"
+            android:id="@+id/upload_progress_elements"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,8 +39,53 @@
             android:indeterminate="false"
             android:visibility="invisible" />
 
+        <RelativeLayout
+            android:id="@+id/upload_gpx_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/upload_progress_elements"
+            android:layout_centerHorizontal="true" >
+
+            <TextView
+                android:id="@+id/upload_gpstracks_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/upload_gpstracks_text" />
+
+            <TextView
+                android:id="@+id/upload_gpstracks_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/upload_gpstracks_text"
+                android:text="" />
+        </RelativeLayout>
+
         <ProgressBar
-            android:id="@+id/upload_indetermine_progress"
+            android:id="@+id/upload_progress_tracks"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/upload_gpx_layout"
+            android:layout_margin="20dp"
+            android:indeterminate="false"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/upload_indetermine_progress_tracks"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/upload_gpx_layout"
+            android:layout_margin="20dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/upload_indetermine_progress_elements"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,12 +97,23 @@
             android:visibility="invisible" />
 
         <Button
+            android:id="@+id/upload_upload_button"
+            style="@style/DefaultButtonText"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/upload_progress_tracks"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="45dp"
+            android:background="@drawable/login_button_bg"
+            android:onClick="onClickUpload"
+            android:text="@string/UploadButton" />
+
+        <Button
             android:id="@+id/upload_cancle_button"
             style="@style/DefaultButtonText"
             android:layout_width="180dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/uploadComment"
-            android:layout_marginTop="10dp"
+            android:layout_below="@+id/upload_progress_tracks"
             android:layout_centerHorizontal="true"
             android:background="@drawable/login_button_bg"
             android:onClick="onClickCancel"
@@ -108,4 +164,5 @@
             android:text="@string/UploadButton" />
 
     </RelativeLayout>
+
 </ScrollView>
