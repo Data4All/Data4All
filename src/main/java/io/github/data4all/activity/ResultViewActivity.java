@@ -417,8 +417,10 @@ public class ResultViewActivity extends AbstractActivity implements
 			}
             ClassifiedValue classi = classifiedMap.get(value);
             classifiedValue = classi;
-            keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
-            endList = Tagging.addUnclassifiedValue(element, endList, keyList, res);
+            if(classi != null){
+            	keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
+            	endList = Tagging.addUnclassifiedValue(element, endList, keyList, res);
+            }
             
         }
         
@@ -701,8 +703,7 @@ public class ResultViewActivity extends AbstractActivity implements
             LastChoiceHandler.getInstance().save(this); 
             
             
-        	this.addOsmElementToDB(element);
-            askForGalleryDelete();
+        	askForGalleryDelete();
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
