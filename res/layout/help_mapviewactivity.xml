@@ -72,10 +72,13 @@
             android:id="@+id/help_id2"
             style="?android:attr/textAppearanceLarge"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content" 
             android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
             android:background="@drawable/cam_border"
             android:contentDescription="@string/help_mapviewactivity_description_edgeswipe"
+            android:src="@drawable/tut_swipeleft"
+            android:scaleType="fitXY"
             android:gravity="center" />
 
         <TextView
