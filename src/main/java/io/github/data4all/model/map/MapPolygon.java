@@ -337,11 +337,13 @@ public class MapPolygon extends Polygon {
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        // if (MapUtil.getBoundingBoxForPointList(geoPointList)
-        // .getDiagonalLengthInMeters() < 250 || scaleFactor < 1) {
-        super.setPoints(geoPointList);
-        mapView.invalidate();
-        // }
+        if ((MapUtil.getBoundingBoxForPointList(geoPointList)
+                .getDiagonalLengthInMeters() > 1 && scaleFactor < 1)
+                || (MapUtil.getBoundingBoxForPointList(geoPointList)
+                        .getDiagonalLengthInMeters() < 10000 && scaleFactor > 1)) {
+            super.setPoints(geoPointList);
+            mapView.invalidate();
+        }
     }
 
     /**
