@@ -844,7 +844,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 // ignore exception
             }
 
-            final Map<Tag, String> tagMap = this.getTagMap(tagIDs);
+            final Map<Tag, String> tagMap = this.getTagMap(id);
             dataElement.addTags(tagMap);
 
             cursor.close();
