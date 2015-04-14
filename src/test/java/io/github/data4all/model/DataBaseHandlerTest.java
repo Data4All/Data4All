@@ -280,14 +280,19 @@ public class DataBaseHandlerTest {
         Node node = new Node(1, 30.123456, 40.1234567);
 
         Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
-        Tag tag1 = Tags.getTagWithId(1);
-        tagMap.put(tag1, "Hollywood");
-        Tag tag2 = Tags.getTagWithId(20);
-        tagMap.put(tag2, "113");
-        Tag tag3 = Tags.getTagWithId(76);
-        tagMap.put(tag3, "04229");
+        final Tag tag1 = Tags.getTagWithId(1);
+        final Tag tag2 = Tags.getTagWithId(20);
+        final Tag tag3 = Tags.getTagWithId(76);
+        final Tag tag4 = Tags.getTagWithId(98);
+        final String value1 = "Hollywood";
+        final String value2 = "113";
+        final String value3 = "04229";
+        final String value4 = "Los Angeles";
+        tagMap.put(tag1, value1);
+        tagMap.put(tag2, value2);
+        tagMap.put(tag3, value3);
 
-        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
+        final ArrayList<Integer> tagIDs = new ArrayList<Integer>();
         tagIDs.add(tag1.getId());
         tagIDs.add(tag2.getId());
         tagIDs.add(tag3.getId());
@@ -297,8 +302,7 @@ public class DataBaseHandlerTest {
         Node rNode = (Node) dbHandler.getDataElement(node.getOsmId());
         assertEquals(3, dbHandler.getTagMapCount(node.getOsmId()));
 
-        Tag tag4 = Tags.getTagWithId(98);
-        tagMap.put(tag4, "Los Angeles");
+        tagMap.put(tag4, value4);
         tagIDs.add(tag4.getId());
 
         node.setTags(tagMap);
@@ -308,9 +312,10 @@ public class DataBaseHandlerTest {
         assertEquals(4, dbHandler.getTagMap(node.getOsmId()).size());
         assertEquals(4, rNode.getTags().size());
         
-        assertTrue(rNode.hasTag(tag1, "Hollywood"));
-        assertTrue(rNode.hasTag(tag2, "113"));
-        assertTrue(rNode.hasTag(tag3, "Los Angeles"));
+        assertTrue(rNode.hasTag(tag1, value1));
+        assertTrue(rNode.hasTag(tag2, value2));
+        assertTrue(rNode.hasTag(tag3, value3));
+        assertTrue(rNode.hasTag(tag4, value4));
 
         node.getTags().clear();
 
@@ -386,7 +391,6 @@ public class DataBaseHandlerTest {
         assertEquals(0, dbHandler.getTrackPointCount());
     }
 
-    @Ignore
     @Test
     public void testTrackCRUD() throws JSONException {
         Location loc1 = new Location("User");
