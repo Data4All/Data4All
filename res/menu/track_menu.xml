@@ -4,7 +4,7 @@
         android:id="@+id/toggleButton"
         android:checkable="true"
         android:icon="@drawable/ic_toggle"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/recordTrack"/>
 
 </menu>
