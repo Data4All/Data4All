@@ -16,19 +16,16 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.util.HelpOverlay;
 import io.github.data4all.util.TrackUtil;
-
-import java.util.List;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -116,12 +113,19 @@ public abstract class AbstractActivity extends Activity {
 
         // set a notification to Status Bar
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+     
+        Intent notificationIntent = new Intent(this, MapViewActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
         final Notification.Builder mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_logo_white)
                 .setOngoing(true)
                 .setContentTitle(getString(R.string.statusNotificationHeadline))
                 .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
                 .setContentText(getString(R.string.statusNotification));
+
         notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
 
         trackUtil = new TrackUtil(getApplicationContext());
