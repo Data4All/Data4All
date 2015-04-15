@@ -25,7 +25,7 @@ import org.apache.http.entity.mime.MultipartEntity;
  * {@link CallbackOutputStream} to provide a callback for the progress of
  * reading from its String content.
  * 
- * @author fkirchge
+ * @author tbrose, fkirchge
  */
 public final class MultiCallbackEntry extends MultipartEntity {
     

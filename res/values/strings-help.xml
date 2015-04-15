@@ -16,6 +16,10 @@
     <string name="help_showpictureactivity_deletepoint">Remove unnecessary points</string>
     <string name="help_showpictureactivity_movepoint">Correct wrong points</string>
     <string name="help_showpictureactivity_choosetool">Choose the Tool</string>
+    <string name="help_showpictureactivity_point">Point</string>
+    <string name="help_showpictureactivity_way">Way</string>
+    <string name="help_showpictureactivity_area">Area</string>
+    <string name="help_showpictureactivity_house">rectangular Building</string>
     <string name="help_showpictureactivity_description_draw">Image, which shows a finger on the screen drawing a figure</string>
     <string name="help_showpictureactivity_description_delete">Image, which shows a finger on the screen clicking a point</string>
     <string name="help_showpictureactivity_description_move">Image, which shows a finger on the screen moving a point</string>

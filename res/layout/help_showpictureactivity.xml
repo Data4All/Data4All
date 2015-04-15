@@ -13,19 +13,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_help_text"
             android:contentDescription="@string/help_showpictureactivity_description_draw"
-              android:src="@drawable/tut_drawing_figure"
+            android:gravity="center"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:gravity="center" />
+            android:src="@drawable/tut_drawing_figure" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id1"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:layout_marginBottom="5dp"
             android:padding="5dp"
             android:text="@string/help_showpictureactivity_draw"
             android:textSize="20sp"
@@ -42,19 +44,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_help_text"
             android:contentDescription="@string/help_showpictureactivity_description_delete"
-              android:src="@drawable/tut_delete_point"
+            android:gravity="center"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:gravity="center" />
+            android:src="@drawable/tut_delete_point" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id2"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:layout_marginBottom="5dp"
             android:padding="5dp"
             android:text="@string/help_showpictureactivity_deletepoint"
             android:textSize="20sp"
@@ -71,31 +75,126 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_help_text"
             android:contentDescription="@string/help_showpictureactivity_description_move"
-              android:src="@drawable/tut_move_point"
+            android:gravity="center"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:gravity="center" />
+            android:src="@drawable/tut_move_point" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id3"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:layout_marginBottom="5dp"
             android:padding="5dp"
             android:text="@string/help_showpictureactivity_movepoint"
             android:textSize="20sp"
             android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" >
+
+            <ImageView
+                android:id="@+id/help_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_point" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/help_1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/help_2"
+                android:background="@drawable/bg_help_text"
+                android:padding="5dp"
+                android:text="@string/help_showpictureactivity_point"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/help_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/help_1"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/ic_way" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/help_2"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/help_1"
+                android:background="@drawable/bg_help_text"
+                android:padding="5dp"
+                android:text="@string/help_showpictureactivity_way"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/help_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/help_2"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/ic_area" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/help_3"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/help_3"
+                android:background="@drawable/bg_help_text"
+                android:padding="5dp"
+                android:text="@string/help_showpictureactivity_area"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/help_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/help_3"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/ic_house" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/help_4"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/help_4"
+                android:background="@drawable/bg_help_text"
+                android:padding="5dp"
+                android:text="@string/help_showpictureactivity_house"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/bg_help_text"
             android:layout_marginBottom="60dp"
+            android:background="@drawable/bg_help_text"
             android:padding="5dp"
             android:text="@string/help_showpictureactivity_choosetool"
             android:textSize="20sp"

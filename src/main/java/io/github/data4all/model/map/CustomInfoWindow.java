@@ -262,40 +262,16 @@ public class CustomInfoWindow extends BasicInfoWindow implements
                 && !element.getTags().values().isEmpty()) {
             Log.i(TAG, element.getTags().toString());
             final Tag tag = (Tag) element.getTags().keySet().toArray()[0];
-            final String key = tag.getKey();
             final String value = element.getTags().get(tag);
             Log.i(TAG, tag.toString());
-            overlay.setTitle(activity.getString(tag.getNameRessource()));
+            overlay.setTitle(tag.getNamedKey(activity));
             final Resources resources = activity.getResources();
-            if (Tagging.isClassifiedTag(
-                    activity.getString(tag.getNameRessource()), resources)) {
-                overlay.setSubDescription(this.getLocalizedName(activity, key, value));
-            } else {
+            final String classifiedValue = tag.getNamedValue(activity, value);
+            if (classifiedValue == null) {
                 overlay.setSubDescription(element.getTags().get(tag));
+            } else {
+                overlay.setSubDescription(tag.getNamedValue(activity, value));
             }
-        }
-    }
-
-    /**
-     * Get the localized name of the element to show in the InfoWindow.
-     * 
-     * @param context
-     *            the context of the application
-     * @param key
-     *            the tag key
-     * @param value
-     *            the tag value
-     * @return the localized name
-     */
-    public String getLocalizedName(Context context, String key, String value) {
-        final Resources resources = context.getResources();
-        final String s = "name_" + key + "_" + value;
-        int id = resources.getIdentifier(s.replace(":", "_"), "string",
-                context.getPackageName());
-        if (id == 0) {
-            return null;
-        } else {
-            return resources.getString(id);
         }
     }
 

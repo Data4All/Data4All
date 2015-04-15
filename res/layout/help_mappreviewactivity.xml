@@ -13,18 +13,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_help_text"
             android:contentDescription="@string/help_mappreviewactivity_description_select"
-            android:src="@drawable/tut_click_object"
+            android:gravity="center"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:gravity="center" />
+            android:src="@drawable/tut_click_object" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id0"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="5dp"
+            android:padding="5dp"
             android:text="@string/help_mappreviewactivity_edit"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -40,18 +44,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_help_text"
             android:contentDescription="@string/help_mappreviewactivity_description_move"
-              android:src="@drawable/tut_move_object"
+            android:gravity="center"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:gravity="center" />
+            android:src="@drawable/tut_move_object" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id1"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="5dp"
+            android:padding="5dp"
             android:text="@string/help_mappreviewactivity_move"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -67,18 +75,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_help_text"
             android:contentDescription="@string/help_mappreviewactivity_description_rotate"
-              android:src="@drawable/tut_rotation"
+            android:gravity="center"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:gravity="center" />
+            android:src="@drawable/tut_rotation" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id2"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="5dp"
+            android:padding="5dp"
             android:text="@string/help_mappreviewactivity_rotate"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -94,18 +106,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_help_text"
             android:contentDescription="@string/help_mappreviewactivity_description_zoom"
-              android:src="@drawable/tut_scaling"
+            android:gravity="center"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:gravity="center" />
+            android:src="@drawable/tut_scaling" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/help_id3"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="5dp"
+            android:padding="5dp"
             android:text="@string/help_mappreviewactivity_zoom"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -115,8 +131,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/bg_help_text"
             android:gravity="center"
-            android:paddingBottom="30dp"
+            android:padding="5dp"
             android:text="@string/help_mappreviewactivity_accept"
             android:textSize="20sp"
             android:textStyle="bold" />

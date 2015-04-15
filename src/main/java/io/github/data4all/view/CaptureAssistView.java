@@ -64,7 +64,7 @@ public class CaptureAssistView extends View {
     private int mMeasuredWidth;
     private int mMeasuredHeight;
     private float horizontalViewAngle, verticalViewAngle;
-    private float horizondegree = 86;
+    private float horizondegree = 87.5f;
     private DeviceOrientation deviceOrientation;
     private boolean skylook;
     private boolean visible;

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -74,7 +75,7 @@ public class Tagging {
      * @param res The Ressource
      * @return The String Array with the right ressource name
      */
-    public static String[] getArrayKeys(int type, Resources res) {
+    public static String[] getArrayKeys(int type, Context context) {
     	if(getKeys(type) == null){
     		final String [] list = new String [0];
     		return list;
@@ -84,11 +85,11 @@ public class Tagging {
     		Log.i(TAG, "tags" + tags.toString());
         final String[] array = new String[tags.size()];
         for (int i = 0; i < tags.size(); i++) {
-        	array[i] = res.getString(tags.get(i).getNameRessource());
+        	array[i] = tags.get(i).getNamedKey(context);
         	
         }
 
-        return LastChoiceHandler.addLastChoiceForType(type,array,res);
+        return LastChoiceHandler.addLastChoiceForType(type,array,context.getResources());
     	}
     }
     /**
@@ -97,10 +98,10 @@ public class Tagging {
      * @param res The Ressource
      * @return A Map with the translated Tags and the Tag
      */
-    public static Map<String, ClassifiedTag> getMapKeys(int type, Resources res) {
+    public static Map<String, ClassifiedTag> getMapKeys(int type, Context context) {
         final Map<String, ClassifiedTag> map = new HashMap<String, ClassifiedTag>();
         for (int i = 0; i < getKeys(type).size(); i++) {
-            map.put(res.getString(getKeys(type).get(i).getNameRessource()),
+            map.put(getKeys(type).get(i).getNamedKey(context),
                     (ClassifiedTag) getKeys(type).get(i));
         }
         return map;
@@ -112,13 +113,13 @@ public class Tagging {
      * @return a Map with the unclassifiedMaps and their translated String
      */
     public static Map<String, Tag> getUnclassifiedMapKeys(
-             Resources res) {
+             Context context) {
         final Map<String, Tag> map = new LinkedHashMap<String, Tag>();
         final List <Tag> list = new ArrayList<Tag>();
         list.addAll(Tags.getAllAddressTags());
         list.addAll(Tags.getAllContactTags());
         for (Tag tag : list) {
-			map.put(res.getString(tag.getNameRessource()), tag);
+			map.put(tag.getNamedKey(context), tag);
 		}
         return map;
     }
@@ -215,15 +216,14 @@ public class Tagging {
      */
 
     public static Map<String, ClassifiedValue> classifiedValueMap(
-            List<ClassifiedValue> list, Resources res, boolean international) {
+            List<ClassifiedValue> list, Context context, boolean international) {
         Map<String, ClassifiedValue> map;
         map = new HashMap<String, ClassifiedValue>();
         for (int i = 0; i < list.size(); i++) {
             if (international) {
                 map.put(list.get(i).getValue(), list.get(i));
             } else {
-                map.put(res.getString(list.get(i).getNameRessource()),
-                        list.get(i));
+                map.put(list.get(i).getLocalizedName(context), list.get(i));
             }
         }
         return map;
@@ -237,10 +237,10 @@ public class Tagging {
      * @return The Array with the String of the ClassifiedValues 
      */
     public static List<String> ClassifiedValueList(List<ClassifiedValue> list,
-            Resources res) {
+            Context context) {
         List<String> listValue = new ArrayList<String>();
         for (int i = 0; i < list.size(); i++) {
-            listValue.add(res.getString(list.get(i).getNameRessource()));
+            listValue.add(list.get(i).getLocalizedName(context));
         }
         return listValue;
     }
@@ -281,10 +281,10 @@ public class Tagging {
      * @param res The Ressource
      * @return An Array of Strings
      */
-    public static String [] TagsToStringRes (List<Tag> list, Resources res){
+    public static String [] TagsToStringRes (List<Tag> list, Context context){
     	 String[] resList = new String[list.size()];
     	for (int i = 0; i < list.size(); i++) {
-			resList [i] = res.getString(list.get(i).getNameRessource());
+			resList [i] = list.get(i).getNamedKey(context);
 		}
 		return resList;
     	
@@ -297,15 +297,15 @@ public class Tagging {
      * @param element The Abstract Data Element
      * @return The keyList with the new Values
      */
-    public static List <String> getUnclassifiedTags(ClassifiedValue value, Resources res, List <String> keyList, AbstractDataElement element){
+    public static List <String> getUnclassifiedTags(ClassifiedValue value, Context context, List <String> keyList, AbstractDataElement element){
     	List <Tag> tagList = new ArrayList<Tag>();
     	tagList.addAll(Tags.getAllAddressTags());
     	tagList.addAll(Tags.getAllContactTags());
     	List <Boolean> booleanList = new ArrayList<Boolean>();
     	booleanList = value.getAllUnclassifiedBooleans();
     	for (int i = 0; i < booleanList.size(); i++) {
-			if(booleanList.get(i) && !compareStrings(res.getString(tagList.get(i).getNameRessource()) ,keyList) ){
-				keyList.add(res.getString(tagList.get(i).getNameRessource()));
+			if(booleanList.get(i) && !compareStrings(tagList.get(i).getNamedKey(context) ,keyList) ){
+				keyList.add(tagList.get(i).getNamedKey(context));
 			}
 		}
     	return keyList;
@@ -370,11 +370,11 @@ public class Tagging {
     	return false;
     }
     
-    public static List <String> addUnclassifiedValue(AbstractDataElement element, List<String> endList, List<String> keyList,  Resources res) {
+    public static List <String> addUnclassifiedValue(AbstractDataElement element, List<String> endList, List<String> keyList, Context context) {
     	List <String> tags = new ArrayList<String>();
     	List<Tag> tagKeys = new ArrayList<Tag>();
     	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
-            tags.add(res.getString(entry.getKey().getNameRessource()));
+            tags.add(entry.getKey().getNamedKey(context));
             tagKeys.add(entry.getKey());
    	 	}     
 		for (int i = 1; i < keyList.size(); i++) {
