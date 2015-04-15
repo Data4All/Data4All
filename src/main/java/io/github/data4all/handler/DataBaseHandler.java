@@ -51,6 +51,7 @@ import android.location.Location;
  * 
  * @author Kristin Dahnken
  * @author fkirchge
+ * @author sbrede
  * 
  */
 public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR

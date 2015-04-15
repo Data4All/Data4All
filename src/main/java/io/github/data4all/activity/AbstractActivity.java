@@ -52,9 +52,10 @@ import android.widget.CheckBox;
  * 
  * @author Andre Koch
  * @author tbrose
+ * @author sbrede
  * @CreationDate 10.01.2015
- * @LastUpdate 27.02.2015
- * @version 1.3
+ * @LastUpdate 03.04.2015
+ * @version 1.4
  * 
  */
 
