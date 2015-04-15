@@ -156,9 +156,9 @@ public class ResultViewActivity extends AbstractActivity implements
         listView = (ListView) this.findViewById(R.id.listViewResultView);
         res = getResources();
         tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
-                res);
+                this);
         Log.i(TAG, "tagMap " + tagMap);
-        mapTag = Tagging.getUnclassifiedMapKeys(res);
+        mapTag = Tagging.getUnclassifiedMapKeys(this);
         classifiedValue = null;
         /**if (!Tagging.getAllNonSelectedTags(element.getTags(),
                 classifiedValue).isEmpty()) {
@@ -298,7 +298,7 @@ public class ResultViewActivity extends AbstractActivity implements
           alertDialog.setTitle(R.string.SelectTag);
           final CharSequence[] showArray;
           showArray = Tagging.getArrayKeys(
-                  getIntent().getExtras().getInt("TYPE_DEF"), res);
+                  getIntent().getExtras().getInt("TYPE_DEF"), this);
           alertDialog.setItems(showArray, new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int which) {
@@ -362,20 +362,10 @@ public class ResultViewActivity extends AbstractActivity implements
             if (Tagging.isClassifiedTag(getString(tagKey.getNameRessource()),
                     res)) {
                 try {
-                	keyList.add(res.getString(tagKey.getNameRessource()));
-                    endList.add(getString((Integer) R.string.class
-                            .getDeclaredField(
-                                    "name_"
-                                            + tagKey.getKey()
-                                            + "_"
-                                            + element.getTags().get(tagKey)
-                                                    .replaceAll(":", "_")).get(
-                                    null)));
+                        keyList.add(tagKey.getNamedKey(this));
+                        endList.add(tagKey.getNamedValue(this, element
+                                .getTags().get(tagKey).replaceAll(":", "_")));
                 } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "", e);
-                } catch (IllegalAccessException e) {
-                    Log.e(TAG, "", e);
-                } catch (NoSuchFieldException e) {
                     Log.e(TAG, "", e);
                 }
             } 
@@ -388,7 +378,7 @@ public class ResultViewActivity extends AbstractActivity implements
         	Log.i(TAG, "Tag1 " + keyList.get(0));
         	Log.i(TAG, "Tag " + tagMap.get(keyList.get(0)));
         	classifiedMap = Tagging.classifiedValueMap(tagMap.get(keyList.get(0))
-                    .getClassifiedValues(), res, false);
+                    .getClassifiedValues(), this, false);
         	Log.i(TAG, classifiedMap.toString());
         	Tag tagKey = null;
         	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
@@ -397,29 +387,17 @@ public class ResultViewActivity extends AbstractActivity implements
         	 }     
             String value = null;
 			try {
-				value = getString((Integer) R.string.class
-				        .getDeclaredField(
-				                "name_"
-				                        + tagKey.getKey()
-				                        + "_"
-				                        + element.getTags().get(tagKey)
-				                                .replaceAll(":", "_")).get(
-				                null));
+				value = tagKey.getNamedValue(this, element
+                        .getTags().get(tagKey).replaceAll(":", "_"));
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             ClassifiedValue classi = classifiedMap.get(value);
             classifiedValue = classi;
             if(classi != null){
-            	keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
-            	endList = Tagging.addUnclassifiedValue(element, endList, keyList, res);
+            	keyList = Tagging.getUnclassifiedTags(classi, this, keyList, element);
+            	endList = Tagging.addUnclassifiedValue(element, endList, keyList, this);
             }
             
         }
@@ -454,9 +432,9 @@ public class ResultViewActivity extends AbstractActivity implements
     	dialog.setTitle(R.string.SelectTag);
     	final CharSequence[] showArray;
     	final ArrayList <String> arrayList = (ArrayList<String>) Tagging.ClassifiedValueList(tagMap.get(selectedString)
-                .getClassifiedValues(), res);
+                .getClassifiedValues(), this);
         classifiedMap = Tagging.classifiedValueMap(tagMap.get(selectedString)
-                .getClassifiedValues(), res, false);
+                .getClassifiedValues(), this, false);
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(
                 this,android.R.layout.simple_list_item_1, arrayList){
             @Override

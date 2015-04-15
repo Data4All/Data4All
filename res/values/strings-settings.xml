@@ -33,4 +33,7 @@
     <string name="pref_moving_animation_title">Move object on preview map</string>
     <string name="pref_moving_animation_summary">How should the moving of objects in the preview map be working?</string>
     <string name="pref_moving_animation_dialog_title">Moving animation</string>
+    
+    <string name="pref_english_tags_key" translatable="false">PREF_ENGLISH_TAGS</string>
+    <string name="pref_english_tags_title">Show tags always in english</string>
 </resources>

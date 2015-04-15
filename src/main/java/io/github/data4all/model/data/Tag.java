@@ -18,7 +18,12 @@ package io.github.data4all.model.data;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 
-import java.util.Arrays;
+import java.util.Locale;
+
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.preference.PreferenceManager;
 
 /**
  * This class represents a predefined osm tag. The name and hint for a specific
@@ -143,7 +148,79 @@ public class Tag {
     @Override
     public String toString() {
         return "key: " + key + " nameRessource: " + nameResource
-                + " hintRessource: " + hintResource +" type: " + type;
+                + " hintRessource: " + hintResource + " type: " + type;
+    }
+
+    /**
+     * Get the localized name of the value.
+     * 
+     * @author tbrose
+     * @param context
+     *            the context of the application
+     * @param value
+     *            the tag value
+     * @return the localized name
+     */
+    public String getNamedValue(Context context, String value) {
+        final String prefKey =
+                context.getString(R.string.pref_english_tags_key);
+        final boolean englishName =
+        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                prefKey, false);
+        final Resources res = context.getResources();
+
+        final String name = "name_" + key + "_" + value;
+        Log.d(LOG_TAG, name);
+        final int identifier =
+                res.getIdentifier(name, "string", context.getPackageName());
+
+        return getLocalisedString(context, identifier, englishName);
+    }
+
+    /**
+     * Get the localized name of this tag key.
+     * 
+     * @author tbrose
+     * @param context
+     *            the context of the application
+     * @return the localized name
+     */
+    public String getNamedKey(Context context) {
+        final String prefKey =
+                context.getString(R.string.pref_english_tags_key);
+        final boolean englishName =
+        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                prefKey, false);
+        return getLocalisedString(context, getNameRessource(), englishName);
+    }
+
+    public static String getLocalisedString(Context context, int id,
+            boolean english) {
+        String result = null;
+
+        if (id != 0) {
+            final Resources res = context.getResources();
+            Configuration conf = null;
+            Locale currentLocale = null;
+
+            if (english) {
+                conf = res.getConfiguration();
+                currentLocale = conf.locale;
+                conf.locale = Locale.ENGLISH;
+                res.updateConfiguration(res.getConfiguration(),
+                        res.getDisplayMetrics());
+            }
+
+            result = res.getString(id);
+
+            if (english) {
+                conf.locale = currentLocale;
+                res.updateConfiguration(res.getConfiguration(),
+                        res.getDisplayMetrics());
+            }
+        }
+        Log.d(LOG_TAG, "Result: " + result + " id: " + id);
+        return result;
     }
 
     public String getLastValue() {
