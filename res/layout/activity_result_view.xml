@@ -28,9 +28,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/mapviewResult"
+        android:layout_below="@+id/buttonClassifiedTag"
         android:layout_marginTop="10dp"  >
 
     </ListView>
+
+    <Button
+        android:id="@+id/buttonClassifiedTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/mapviewResult"
+         android:layout_marginTop="10dp" 
+         android:background="@android:color/background_dark"
+         android:textColor="@android:color/white"
+        android:text="@string/SelectTag" />
 
 </RelativeLayout>

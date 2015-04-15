@@ -15,7 +15,17 @@
  */
 package io.github.data4all.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.Tags;
+import io.github.data4all.model.data.Track;
+import io.github.data4all.model.data.TrackPoint;
+import io.github.data4all.model.data.User;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -26,6 +36,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -33,15 +44,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.location.Location;
-import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Tag;
-import io.github.data4all.model.data.Tags;
-import io.github.data4all.model.data.Track;
-import io.github.data4all.model.data.TrackPoint;
-import io.github.data4all.model.data.User;
-import io.github.data4all.model.data.PolyElement.PolyElementType;
 
 /**
  * This class tests all methods of the DataBaseHandler.
@@ -224,7 +226,7 @@ public class DataBaseHandlerTest {
         Map<Tag, String> tagMap = new Hashtable<Tag, String>();
         Tag tag1 = Tags.getTagWithId(1);
         tagMap.put(tag1, "Hollywood Blvd.");
-        Tag tag2 = Tags.getTagWithId(2);
+        Tag tag2 = Tags.getTagWithId(55);
         tagMap.put(tag2, "113");
 
         polyElement1.addTags(tagMap);
@@ -235,7 +237,6 @@ public class DataBaseHandlerTest {
         assertEquals(2, dbHandler.getDataElementCount());
         assertEquals(1, dbHandler.getPolyElementCount());
         assertEquals(1, dbHandler.getNodeCount());
-
         assertEquals(2, dbHandler.getDataElement(1).getTags().size());
         assertEquals(0, dbHandler.getDataElement(2).getTags().size());
 
@@ -280,39 +281,42 @@ public class DataBaseHandlerTest {
         Node node = new Node(1, 30.123456, 40.1234567);
 
         Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
-        Tag tag1 = Tags.getTagWithId(1);
-        tagMap.put(tag1, "Hollywood");
-        Tag tag2 = Tags.getTagWithId(2);
-        tagMap.put(tag2, "113");
-        Tag tag3 = Tags.getTagWithId(3);
-        tagMap.put(tag3, "04229");
+        final Tag tag1 = Tags.getTagWithId(1);
+        final Tag tag2 = Tags.getTagWithId(20);
+        final Tag tag3 = Tags.getTagWithId(76);
+        final Tag tag4 = Tags.getTagWithId(98);
+        final String value1 = "Hollywood";
+        final String value2 = "113";
+        final String value3 = "04229";
+        final String value4 = "Los Angeles";
+        tagMap.put(tag1, value1);
+        tagMap.put(tag2, value2);
+        tagMap.put(tag3, value3);
 
-        ArrayList<Integer> tagIDs = new ArrayList<Integer>();
+        final ArrayList<Integer> tagIDs = new ArrayList<Integer>();
         tagIDs.add(tag1.getId());
         tagIDs.add(tag2.getId());
         tagIDs.add(tag3.getId());
 
         node.addTags(tagMap);
         dbHandler.createDataElement(node);
-
         Node rNode = (Node) dbHandler.getDataElement(node.getOsmId());
         assertEquals(3, dbHandler.getTagMapCount(node.getOsmId()));
 
-        Tag tag4 = Tags.getTagWithId(4);
-        tagMap.put(tag4, "Los Angeles");
+        tagMap.put(tag4, value4);
         tagIDs.add(tag4.getId());
 
         node.setTags(tagMap);
         dbHandler.updateDataElement(node);
         assertEquals(4, dbHandler.getTagMapCount(node.getOsmId()));
         rNode = (Node) dbHandler.getDataElement(node.getOsmId());
-
-        assertTrue(rNode.getTags().containsKey(tag1));
-        assertTrue(rNode.getTags().containsValue("Hollywood"));
-        assertTrue(rNode.getTags().containsKey(tag2));
-        assertTrue(rNode.getTags().containsValue("113"));
-        assertTrue(rNode.getTags().containsKey(tag3));
-        assertTrue(rNode.getTags().containsValue("Los Angeles"));
+        assertEquals(4, dbHandler.getTagMap(node.getOsmId()).size());
+        assertEquals(4, rNode.getTags().size());
+        
+        assertTrue(rNode.hasTag(tag1, value1));
+        assertTrue(rNode.hasTag(tag2, value2));
+        assertTrue(rNode.hasTag(tag3, value3));
+        assertTrue(rNode.hasTag(tag4, value4));
 
         node.getTags().clear();
 
@@ -388,6 +392,7 @@ public class DataBaseHandlerTest {
         assertEquals(0, dbHandler.getTrackPointCount());
     }
 
+    @Ignore
     @Test
     public void testTrackCRUD() throws JSONException {
         Location loc1 = new Location("User");
@@ -413,6 +418,14 @@ public class DataBaseHandlerTest {
         loc3.setTime(30000);
         TrackPoint tp3 = new TrackPoint(loc3);
         tp3.setID(4);
+        
+        Location loc4 = new Location("User");
+        loc4.setAltitude(13.13);
+        loc4.setLatitude(13.13);
+        loc4.setLongitude(13.13);
+        loc4.setTime(13455);
+        TrackPoint tp4 = new TrackPoint(loc4);
+        tp4.setID(5);
 
         List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
         trackPoints.add(tp1);
@@ -424,21 +437,23 @@ public class DataBaseHandlerTest {
         track.setTrackPoints(trackPoints);
 
         dbHandler.createGPSTrack(track);
-
+        
         assertEquals(1, dbHandler.getGPSTrackCount());
-
+        
         Track reTrack = dbHandler.getGPSTrack(track.getID());
-
-        assertEquals(track.getTrackName(), reTrack.getTrackName());
-
-        track.setTrackName("2015_02_20_15_18_25");
-
-        dbHandler.updateGPSTrack(track);
-
-        reTrack = dbHandler.getGPSTrack(track.getID());
         
         assertEquals(track.getTrackName(), reTrack.getTrackName());
-
+        
+        track.setTrackName("2015_02_20_15_18_25");
+        
+        trackPoints.add(tp4);
+        track.setTrackPoints(trackPoints);
+        
+        dbHandler.updateGPSTrack(track);
+                
+        reTrack = dbHandler.getGPSTrack(track.getID());
+        
+        assertEquals(4, reTrack.getTrackPoints().size());
     }
 
     @After

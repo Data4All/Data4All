@@ -3,9 +3,8 @@
     android:layout_height="wrap_content" >
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="462dp" >
 
         <RelativeLayout
             android:id="@+id/upload_count_layout"
@@ -29,7 +28,7 @@
         </RelativeLayout>
 
         <ProgressBar
-            android:id="@+id/upload_progress"
+            android:id="@+id/upload_progress_elements"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +40,7 @@
             android:visibility="invisible" />
 
         <ProgressBar
-            android:id="@+id/upload_indetermine_progress"
+            android:id="@+id/upload_indetermine_progress_elements"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,14 +51,90 @@
             android:indeterminate="true"
             android:visibility="invisible" />
 
+        <RelativeLayout
+            android:id="@+id/upload_gpx_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/upload_progress_elements"
+            android:layout_centerHorizontal="true" >
+
+            <TextView
+                android:id="@+id/upload_gpstracks_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/upload_gpstracks_text" />
+
+            <TextView
+                android:id="@+id/upload_gpstracks_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/upload_gpstracks_text"
+                android:text="" />
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/upload_progress_tracks"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/upload_gpx_layout"
+            android:layout_margin="20dp"
+            android:indeterminate="false"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/upload_indetermine_progress_tracks"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/upload_gpx_layout"
+            android:layout_margin="20dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/upload_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="@string/upload_caption"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <io.github.data4all.view.D4AMapView
+            android:id="@+id/mapviewupload"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/upload_caption"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="10dp" >
+        </io.github.data4all.view.D4AMapView>
+
+        <EditText
+            android:id="@+id/uploadComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/upload_progress_tracks"
+            android:layout_centerHorizontal="true"
+            android:ems="10"
+            android:hint="@string/upload_comment" />
+
         <Button
             android:id="@+id/upload_upload_button"
             style="@style/DefaultButtonText"
             android:layout_width="180dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/upload_progress"
+            android:layout_below="@+id/uploadComment"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/login_button_bg"
             android:onClick="onClickUpload"
             android:text="@string/UploadButton" />
@@ -69,31 +144,13 @@
             style="@style/DefaultButtonText"
             android:layout_width="180dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/upload_progress"
+            android:layout_below="@+id/uploadComment"
             android:layout_centerHorizontal="true"
             android:background="@drawable/login_button_bg"
             android:onClick="onClickCancel"
             android:text="@string/CancelButton"
             android:visibility="gone" />
-
-        <io.github.data4all.view.D4AMapView
-            android:id="@+id/mapviewupload"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_below="@+id/upload_caption"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="40dp"
-            android:layout_marginTop="46dp" >
-        </io.github.data4all.view.D4AMapView>
-
-        <TextView
-            android:id="@+id/upload_caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp"
-            android:text="@string/upload_caption"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
     </RelativeLayout>
+
 </ScrollView>

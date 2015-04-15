@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="help_mapviewactivity_changecard">Ansicht\nwechseln</string>
+    <string name="help_mapviewactivity_centermap">Karte\nzentrieren</string>
+    <string name="help_mapviewactivity_welcome">Willkommen\nbei\nData4All</string>
+    <string name="help_mapviewactivity_poi">Markiere einen Punkt</string>
+    <string name="help_mapviewactivity_takepicture">Markiere auf einem Foto</string>
+    <string name="help_mapviewactivity_gallery">Betrachte noch nicht getaggte\nBilder in der Galerie</string>
+    <string name="help_mapviewactivity_description_edgeswipe">Bild, welches einen Finger auf dem Bildschirm zeigt, der vom linken Rand nach rechts wischt</string>
+
+    <string name="help_cameraactivity_gallery">Entscheide, ob du jetzt\noder später taggen möchtest</string>
+    <string name="help_cameraactivity_description_swipe">Bild, welches einen Finger auf dem Bildschirm zeigt, der nach links und rechts wischt</string>
+
+    <string name="help_showpictureactivity_draw">Zeichne das Objekt ein</string>
+    <string name="help_showpictureactivity_deletepoint">Entferne überflüssige Punkte</string>
+    <string name="help_showpictureactivity_movepoint">Korrigiere falsche Punkte</string>
+    <string name="help_showpictureactivity_choosetool">Wähle das Werkzeug</string>
+    <string name="help_showpictureactivity_point">Punkt</string>
+    <string name="help_showpictureactivity_way">Weg</string>
+    <string name="help_showpictureactivity_area">Fläche</string>
+    <string name="help_showpictureactivity_house">rechteckiges Gebäude</string>
+    <string name="help_showpictureactivity_description_draw">Bild, welches einen Finger auf dem Bildschirm zeigt, der eine Figur zeichnet</string>
+    <string name="help_showpictureactivity_description_delete">Bild, welches einen Finger auf dem Bildschirm zeigt, der einen Punkt anklickt</string>
+    <string name="help_showpictureactivity_description_move">Bild, welches einen Finger auf dem Bildschirm zeigt, der einen Punkt verschiebt</string>
+    
+    <string name="help_mappreviewactivity_edit">Bearbeite das Objekt, falls\nes nicht korrekt ist</string>
+    <string name="help_mappreviewactivity_move">Verschiebe das Objekt</string>
+    <string name="help_mappreviewactivity_rotate">Drehe das Objekt</string>
+    <string name="help_mappreviewactivity_zoom">Passe die Größe an</string>
+    <string name="help_mappreviewactivity_accept">Bestätige das Objekt</string>
+    <string name="help_mappreviewactivity_description_select">Bild, welches einen Finger auf dem Bildschirm zeigt, der das Objekt anklickt</string>
+    <string name="help_mappreviewactivity_description_move">Bild, welches einen Finger auf dem Bildschirm zeigt, der verschiebt</string>
+    <string name="help_mappreviewactivity_description_rotate">Bild, welches zwei Finger auf dem Bildschirm zeigt, die drehen</string>
+    <string name="help_mappreviewactivity_description_zoom">Bild, welches drei Finger auf dem Bildschirm zeigt, die zoomen</string>
+    
+    <string name="help_resultviewactivity_backtomap">Zurück\nzur\nKarte</string>
+    <string name="help_resultviewactivity_backtocam">Zurück\nzur\nKamera</string>
+    <string name="help_resultviewactivity_addtags">Ändere bestehende Tags\noder füge neue hinzu</string>
+</resources>

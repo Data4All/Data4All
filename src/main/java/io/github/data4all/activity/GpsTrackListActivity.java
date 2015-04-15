@@ -16,14 +16,14 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.util.ListAdapter;
+import io.github.data4all.util.TrackUtil;
 
 import java.util.List;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,6 +41,8 @@ public class GpsTrackListActivity extends AbstractActivity {
 
     private ArrayAdapter<Track> trackItemArrayAdapter;
     private List<Track> trackList;
+    private TrackUtil trackUtil;
+    private ListView trackListView;
 
     /*
      * (non-Javadoc)
@@ -52,18 +54,9 @@ public class GpsTrackListActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracklist_view);
 
-        // Find the ListView resource.
-        final ListView trackListView = (ListView) findViewById(R.id.trackListView);
+        trackUtil = new TrackUtil(this.getApplicationContext());
 
-        // Get saved tracks
-        getTracks();
-
-        // Get the ListAdapter
-        trackItemArrayAdapter = new ListAdapter(getApplicationContext(),
-                R.layout.gps_row_item, trackList);
-
-        // Set the new adapter to this view
-        trackListView.setAdapter(trackItemArrayAdapter);
+        trackListView = (ListView) findViewById(R.id.trackListView);
 
         // Set listener for clicking
         trackListView.setOnItemClickListener(new OnItemClickListener() {
@@ -74,6 +67,29 @@ public class GpsTrackListActivity extends AbstractActivity {
                 startActivity(intent);
             }
         });
+
+        // Set the view from an empty List
+        trackListView.setEmptyView(findViewById(R.id.emptyList));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Get saved tracks
+        getTracks();
+
+        // Get the ListAdapter
+        trackItemArrayAdapter =
+                new ListAdapter(getApplicationContext(), R.layout.gps_row_item,
+                        trackList);
+
+        // Set the new adapter to this view
+        trackListView.setAdapter(trackItemArrayAdapter);
     }
 
     /**
@@ -87,8 +103,8 @@ public class GpsTrackListActivity extends AbstractActivity {
      * @return Intent The resulting intent with extras
      */
     private Intent prepareIntent(ListView trackListView, int position) {
-        Intent intent = new Intent(getApplicationContext(),
-                TrackDetailsActivity.class);
+        Intent intent =
+                new Intent(getApplicationContext(), TrackDetailsActivity.class);
         Track track = (Track) trackListView.getAdapter().getItem(position);
 
         // Add name, id and number of trackpoints to intent
@@ -103,13 +119,15 @@ public class GpsTrackListActivity extends AbstractActivity {
      * Get all Tracks from Database.
      */
     private void getTracks() {
-        DataBaseHandler db = new DataBaseHandler(this);
-        trackList = db.getAllGPSTracks();
-        db.close();
+        trackList = trackUtil.getTracks();
     }
 
-    /* (non-Javadoc)
-     * @see io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android.content.Intent)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.github.data4all.activity.AbstractActivity#onWorkflowFinished(android
+     * .content.Intent)
      */
     @Override
     protected void onWorkflowFinished(Intent data) {

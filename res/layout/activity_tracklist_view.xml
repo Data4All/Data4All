@@ -9,5 +9,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
     </ListView>
+    
+    <TextView
+    android:id="@+id/emptyList"
+    android:text="@string/emptyList"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    />
 
 </LinearLayout>

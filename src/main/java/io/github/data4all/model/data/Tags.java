@@ -15,14 +15,18 @@
  */
 package io.github.data4all.model.data;
 
-import static io.github.data4all.model.data.Tag.AREA_TAG;
-import static io.github.data4all.model.data.Tag.BUILDING_TAG;
-import static io.github.data4all.model.data.Tag.NODE_TAG;
-import static io.github.data4all.model.data.Tag.WAY_TAG;
+import io.github.data4all.Data4AllApplication;
+import io.github.data4all.R;
+import io.github.data4all.logger.Log;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.text.InputType;
 
@@ -35,6 +39,20 @@ import android.text.InputType;
  *
  */
 public final class Tags {
+
+    /**
+     * Logger.
+     */
+    public static final String LOG_TAG = Tags.class.getSimpleName();
+    /**
+     * Resource to the key properties.
+     */
+    public static final int RESOURCE_TAG_KEYS = R.raw.tag_keys;
+
+    /**
+     * Resource to the value properties.
+     */
+    public static final int RESOURCE_TAG_VALUES = R.raw.tag_values;
 
     /**
      * list of all classified and unclassified tags.
@@ -51,76 +69,131 @@ public final class Tags {
      */
     public static final List<Tag> CONTACT_TAG_LIST = new ArrayList<Tag>();
 
+    /**
+     * Private constructor.
+     */
     private Tags() {
 
+    }
+
+    /**
+     * Reads all Tags from the properties.
+     * 
+     * @throws IOException
+     */
+    private static void readTags() throws IOException {
+        for (int id : readKeys().keySet()) {
+            final String key = readKeys().get(id);
+            TAG_LIST.add(createClassifiedTag(id, key));
+        }
+    }
+
+    /**
+     * Creates a new {@link ClassifiedTag} object loades all
+     * {@link ClassifiedValue} refering to the {@link ClassifiedTag} from the
+     * properties.
+     * 
+     * @param id
+     *            id of the {@link ClassifiedTag}.
+     * @param key
+     *            key of the {@link ClassifiedTag}.
+     * @return {@link Tag} object
+     * @throws IOException
+     */
+    private static Tag createClassifiedTag(int id, String key)
+            throws IOException {
+        final List<ClassifiedValue> classifiedValues =
+                new LinkedList<ClassifiedValue>();
+        for (String[] s : readValues()) {
+            if (s.length == 16 && s[2].equals(Integer.toString(id))) {
+                final ClassifiedValue cv =
+                        new ClassifiedValue(Integer.parseInt(s[0]), key, s[1]);
+                cv.setCanBeNode(Boolean.parseBoolean(s[3]));
+                cv.setCanBeWay(Boolean.parseBoolean(s[4]));
+                cv.setCanBeArea(Boolean.parseBoolean(s[5]));
+                cv.setCanBeBuilding(Boolean.parseBoolean(s[6]));
+                cv.setHasAddrStreet(Boolean.parseBoolean(s[7]));
+                cv.setHasAddrHousnumber(Boolean.parseBoolean(s[8]));
+                cv.setHasAddrPostcode(Boolean.parseBoolean(s[9]));
+                cv.setHasAddrCity(Boolean.parseBoolean(s[10]));
+                cv.setHasAddrCountry(Boolean.parseBoolean(s[11]));
+                cv.setHasContactPhone(Boolean.parseBoolean(s[12]));
+                cv.setHasContactFax(Boolean.parseBoolean(s[13]));
+                cv.setHasContactWebsite(Boolean.parseBoolean(s[14]));
+                cv.setHasContactEmail(Boolean.parseBoolean(s[15]));
+                classifiedValues.add(cv);
+            }
+        }
+        return new ClassifiedTag(id, key, -1, classifiedValues);
+    }
+
+    /**
+     * Reads all key from the file /res/raw/tag_keys.txt.
+     * 
+     * @return {@link Map} with the id of the key and the value.
+     * @throws IOException
+     */
+    private static Map<Integer, String> readKeys() throws IOException {
+        final BufferedReader reader =
+                new BufferedReader(new InputStreamReader(
+                        Data4AllApplication.context.getResources()
+                                .openRawResource(RESOURCE_TAG_KEYS)));
+        final Map<Integer, String> keys = new HashMap<Integer, String>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] key;
+            key = line.split(",");
+            keys.put(Integer.parseInt(key[0]), key[1]);
+        }
+        reader.close();
+        return keys;
+    }
+
+    /**
+     * Reads all values from the file /res/raw/tag_values.txt.
+     * 
+     * @return {@link List} of values.
+     * @throws IOException
+     */
+    private static List<String[]> readValues() throws IOException {
+        final List<String[]> values = new ArrayList<String[]>();
+        final BufferedReader reader =
+                new BufferedReader(new InputStreamReader(
+                        Data4AllApplication.context.getResources()
+                                .openRawResource(RESOURCE_TAG_VALUES)));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] value;
+            value = line.split(",");
+            values.add(value);
+        }
+        reader.close();
+        return values;
     }
 
     /**
      * Returns a Tag with the passed id.
      * 
      * @param id
-     *            The ID of the Tag
+     *            The ID of the Tag.
      * @return tag object
      */
     public static Tag getTagWithId(int id) {
         for (Tag t : TAG_LIST) {
-            if (t.getId() == id ) {
+            if (t.getId() == id) {
                 return t;
             }
-        }
-        return null;
-    }
-
-    /**
-     * returns an ArrayList containing all address tags.
-     */
-    public static List<Tag> getAllAddressTags() {
-        return ADDRESS_TAG_LIST;
-    }
-
-    /**
-     * returns an ArrayList containing all classified and unclassified tags
-     * which are relevant for relation objects.
-     * 
-     * @return tagList
-     */
-    public static List<Tag> getAllAreaTags() {
-        final List<Tag> result = new ArrayList<Tag>();
-        for (Tag t : TAG_LIST) {
             if (t instanceof ClassifiedTag) {
-                final int[] osmObjects = t.getOsmObjects();
-                if (osmObjects.length > 0) {
-                    for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == Tag.AREA_TAG) {
-                            result.add(t);
-                        }
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.getId() == id) {
+                        return t;
                     }
                 }
             }
         }
-        return result;
-    }
-
-    /**
-     * Returns all classified tags.
-     * 
-     * @return list of all classified tags
-     */
-    public static List<ClassifiedTag> getAllClassifiedTags() {
-        final List<ClassifiedTag> result = new ArrayList<ClassifiedTag>();
-        for (Tag t : TAG_LIST) {
-            if (t instanceof ClassifiedTag) {
-                result.add((ClassifiedTag) t);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * returns an ArrayList containing all contact tags.
-     */
-    public static List<Tag> getAllContactTags() {
-        return CONTACT_TAG_LIST;
+        Log.d(LOG_TAG, "getTagWithId() could not find tag with id: " + id);
+        return null;
     }
 
     /**
@@ -132,15 +205,73 @@ public final class Tags {
     public static List<Tag> getAllNodeTags() {
         final List<Tag> result = new ArrayList<Tag>();
         for (Tag t : TAG_LIST) {
+            final List<ClassifiedValue> classifiedValues =
+                    new ArrayList<ClassifiedValue>();
             if (t instanceof ClassifiedTag) {
-                final int[] osmObjects = t.getOsmObjects();
-                if (osmObjects.length > 0) {
-                    for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == Tag.NODE_TAG) {
-                            result.add(t);
-                        }
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.canBeNode()) {
+                        classifiedValues.add(v);
                     }
                 }
+            }
+            if (!classifiedValues.isEmpty()) {
+                result.add(new ClassifiedTag(t.getId(), t.getKey(),
+                        t.getType(), classifiedValues));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * returns an ArrayList containing all classified and unclassified tags
+     * which are relevant for way objects.
+     * 
+     * @return tagList
+     */
+    public static List<Tag> getAllWayTags() {
+        final List<Tag> result = new ArrayList<Tag>();
+        for (Tag t : TAG_LIST) {
+            final List<ClassifiedValue> classifiedValues =
+                    new ArrayList<ClassifiedValue>();
+            if (t instanceof ClassifiedTag) {
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.canBeWay()) {
+                        classifiedValues.add(v);
+                    }
+                }
+            }
+            if (!classifiedValues.isEmpty()) {
+                result.add(new ClassifiedTag(t.getId(), t.getKey(),
+                        t.getType(), classifiedValues));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * returns an ArrayList containing all classified and unclassified tags
+     * which are relevant for relation objects.
+     * 
+     * @return tagList
+     */
+    public static List<Tag> getAllAreaTags() {
+        final List<Tag> result = new ArrayList<Tag>();
+        for (Tag t : TAG_LIST) {
+            final List<ClassifiedValue> classifiedValues =
+                    new ArrayList<ClassifiedValue>();
+            if (t instanceof ClassifiedTag) {
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.canBeArea()) {
+                        classifiedValues.add(v);
+                    }
+                }
+            }
+            if (!classifiedValues.isEmpty()) {
+                result.add(new ClassifiedTag(t.getId(), t.getKey(),
+                        t.getType(), classifiedValues));
             }
         }
         return result;
@@ -155,15 +286,19 @@ public final class Tags {
     public static List<Tag> getAllBuildingTags() {
         final List<Tag> result = new ArrayList<Tag>();
         for (Tag t : TAG_LIST) {
+            final List<ClassifiedValue> classifiedValues =
+                    new ArrayList<ClassifiedValue>();
             if (t instanceof ClassifiedTag) {
-                final int[] osmObjects = t.getOsmObjects();
-                if (osmObjects.length > 0) {
-                    for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == Tag.BUILDING_TAG) {
-                            result.add(t);
-                        }
+                for (ClassifiedValue v : ((ClassifiedTag) t)
+                        .getClassifiedValues()) {
+                    if (v.canBeBuilding()) {
+                        classifiedValues.add(v);
                     }
                 }
+            }
+            if (!classifiedValues.isEmpty()) {
+                result.add(new ClassifiedTag(t.getId(), t.getKey(),
+                        t.getType(), classifiedValues));
             }
         }
         return result;
@@ -179,183 +314,95 @@ public final class Tags {
     }
 
     /**
-     * returns an ArrayList containing all classified and unclassified tags
-     * which are relevant for way objects.
+     * Returns all classified tags.
      * 
-     * @return tagList
+     * @return list of all classified tags
      */
-    public static List<Tag> getAllWayTags() {
-        final List<Tag> result = new ArrayList<Tag>();
+    public static List<ClassifiedTag> getAllClassifiedTags() {
+        final List<ClassifiedTag> ct = new ArrayList<ClassifiedTag>();
         for (Tag t : TAG_LIST) {
             if (t instanceof ClassifiedTag) {
-                final int[] osmObjects = t.getOsmObjects();
-                if (osmObjects.length > 0) {
-                    for (int i = 0; i < osmObjects.length; i++) {
-                        if (osmObjects[i] == Tag.WAY_TAG) {
-                            result.add(t);
-                        }
-                    }
-                }
+                ct.add((ClassifiedTag) t);
             }
         }
-        return result;
+        return ct;
+    }
+
+    /**
+     * method to print list of tags in the log for debug purpose.
+     * 
+     * @param tags
+     *            list of {@link Tag} objects.
+     */
+    public static void printTags(List<Tag> tags) {
+        for (Tag t : tags) {
+            if (t instanceof ClassifiedTag) {
+                final ClassifiedTag ct = (ClassifiedTag) t;
+                for (ClassifiedValue v : ct.getClassifiedValues()) {
+                    Log.d("TAG", "classified: " + " key : " + v.getKey()
+                            + " value: " + v.getValue());
+                }
+            } else {
+                Log.d("TAG", "else");
+            }
+        }
     }
 
     /**
      * fills the ADDRESS_TAG_LIST ArrayList with address tags.
      */
     static {
-        ADDRESS_TAG_LIST.add(new Tag(1, "addr:street",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, WAY_TAG, BUILDING_TAG,
-                AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(2, "addr:housenumber",
-                InputType.TYPE_CLASS_NUMBER, NODE_TAG, WAY_TAG, BUILDING_TAG,
-                AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(3, "addr:postcode",
-                InputType.TYPE_CLASS_NUMBER, NODE_TAG, WAY_TAG, BUILDING_TAG,
-                AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(4, "addr:city", InputType.TYPE_CLASS_TEXT,
-                NODE_TAG, WAY_TAG, BUILDING_TAG, AREA_TAG));
-        ADDRESS_TAG_LIST.add(new Tag(5, "addr:country",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, WAY_TAG, BUILDING_TAG,
-                AREA_TAG));
+        ADDRESS_TAG_LIST.add(new Tag(401, "addr:street",
+                InputType.TYPE_CLASS_TEXT));
+        ADDRESS_TAG_LIST.add(new Tag(402, "addr:housenumber",
+                InputType.TYPE_CLASS_TEXT));
+        ADDRESS_TAG_LIST.add(new Tag(403, "addr:postcode",
+                InputType.TYPE_CLASS_NUMBER));
+        ADDRESS_TAG_LIST.add(new Tag(404, "addr:city",
+                InputType.TYPE_CLASS_TEXT));
+        ADDRESS_TAG_LIST.add(new Tag(405, "addr:country",
+                InputType.TYPE_CLASS_TEXT));
     }
 
     /**
      * fills the CONTACT_TAG_LIST ArrayList with contact tags.
      */
     static {
-        CONTACT_TAG_LIST.add(new Tag(6, "contact:phone",
-                InputType.TYPE_CLASS_PHONE, NODE_TAG, BUILDING_TAG));
-        CONTACT_TAG_LIST.add(new Tag(7, "contact:fax",
-                InputType.TYPE_CLASS_PHONE, NODE_TAG, BUILDING_TAG));
-        CONTACT_TAG_LIST.add(new Tag(8, "contact:website",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, BUILDING_TAG));
-        CONTACT_TAG_LIST.add(new Tag(9, "contact:email",
-                InputType.TYPE_CLASS_TEXT, NODE_TAG, BUILDING_TAG));
+        CONTACT_TAG_LIST.add(new Tag(406, "contact:phone",
+                InputType.TYPE_CLASS_PHONE));
+        CONTACT_TAG_LIST.add(new Tag(407, "contact:fax",
+                InputType.TYPE_CLASS_PHONE));
+        CONTACT_TAG_LIST.add(new Tag(408, "contact:website",
+                InputType.TYPE_CLASS_TEXT));
+        CONTACT_TAG_LIST.add(new Tag(409, "contact:email",
+                InputType.TYPE_CLASS_TEXT));
     }
 
     /**
-     * fills the tagList ArrayList with the unclassified tags. Tags: contact and
-     * address tags.
+     * returns an ArrayList containing all address tags.
      */
-    static {
-        TAG_LIST.addAll(ADDRESS_TAG_LIST);
-        TAG_LIST.addAll(CONTACT_TAG_LIST);
-    }
-
-    static {
-        // classified tag: highway
-        final String highway = "highway";
-        final List<ClassifiedValue> highwayValues = new LinkedList<ClassifiedValue>();
-        highwayValues.add(new ClassifiedValue(101, highway, "residential"));
-        highwayValues.add(new ClassifiedValue(102, highway, "service"));
-        highwayValues.add(new ClassifiedValue(103, highway, "track"));
-        highwayValues.add(new ClassifiedValue(104, highway, "footway"));
-        highwayValues.add(new ClassifiedValue(105, highway, "path"));
-        highwayValues.add(new ClassifiedValue(106, highway, "motorway"));
-        highwayValues.add(new ClassifiedValue(106, highway, "road"));
-        TAG_LIST.add(new ClassifiedTag(10, "highway", -1, highwayValues,
-                WAY_TAG));
-
+    public static List<Tag> getAllAddressTags() {
+        return ADDRESS_TAG_LIST;
     }
 
     /**
-     * Creates the ClassifiedTag "barrier" and adds predefined ClassifiedValues.
-     * Values: fence, wall, gate, bollard, citywall (ordered by frequency).
+     * returns an ArrayList containing all contact tags.
      */
-    static {
-        final String barrier = "barrier";
-        final List<ClassifiedValue> barrierValues = new LinkedList<ClassifiedValue>();
-        barrierValues.add(new ClassifiedValue(107, barrier, "fence"));
-        barrierValues.add(new ClassifiedValue(108, barrier, "wall"));
-        barrierValues.add(new ClassifiedValue(109, barrier, "gate"));
-        barrierValues.add(new ClassifiedValue(110, barrier, "bollard"));
-        barrierValues.add(new ClassifiedValue(111, barrier, "citywall"));
-        TAG_LIST.add(new ClassifiedTag(11, "barrier", -1, barrierValues,
-                NODE_TAG, WAY_TAG, AREA_TAG));
-
+    public static List<Tag> getAllContactTags() {
+        return CONTACT_TAG_LIST;
     }
 
     /**
-     * Creates the ClassifiedTag "amenity" and adds predefined ClassifiedValues.
-     * Values: parking, school, restaurant, bench, fuel, bank, fast_food, cafe,
-     * pharmacy, hospital, post_office, pub, public_building, toilets, bar,
-     * fire_station, police, library, university, college, marketplace, taxi,
-     * cinema, embassy, water_point (ordered by frequency).
+     * Reads the tags from the properties.
      */
     static {
-        final String amenity = "amenity";
-        final List<ClassifiedValue> amenityValues = new LinkedList<ClassifiedValue>();
-        amenityValues.add(new ClassifiedValue(112, amenity, "parking"));
-        amenityValues.add(new ClassifiedValue(113, amenity, "school"));
-        amenityValues.add(new ClassifiedValue(114, amenity, "restaurant"));
-        amenityValues.add(new ClassifiedValue(115, amenity, "bench"));
-        amenityValues.add(new ClassifiedValue(116, amenity, "fuel"));
-        amenityValues.add(new ClassifiedValue(117, amenity, "bank"));
-        amenityValues.add(new ClassifiedValue(118, amenity, "fast_food"));
-        amenityValues.add(new ClassifiedValue(119, amenity, "cafe"));
-        amenityValues.add(new ClassifiedValue(120, amenity, "pharmacy"));
-        amenityValues.add(new ClassifiedValue(121, amenity, "hospital"));
-        amenityValues.add(new ClassifiedValue(122, amenity, "post_office"));
-        amenityValues.add(new ClassifiedValue(123, amenity, "pub"));
-        amenityValues.add(new ClassifiedValue(124, amenity, "public_building"));
-        amenityValues.add(new ClassifiedValue(125, amenity, "toilets"));
-        amenityValues.add(new ClassifiedValue(126, amenity, "bar"));
-        amenityValues.add(new ClassifiedValue(127, amenity, "fire_station"));
-        amenityValues.add(new ClassifiedValue(128, amenity, "police"));
-        amenityValues.add(new ClassifiedValue(129, amenity, "library"));
-        amenityValues.add(new ClassifiedValue(130, amenity, "university"));
-        amenityValues.add(new ClassifiedValue(131, amenity, "college"));
-        amenityValues.add(new ClassifiedValue(132, amenity, "marketplace"));
-        amenityValues.add(new ClassifiedValue(133, amenity, "taxi"));
-        amenityValues.add(new ClassifiedValue(134, amenity, "cinema"));
-        amenityValues.add(new ClassifiedValue(135, amenity, "embassy"));
-        amenityValues.add(new ClassifiedValue(136, amenity, "water_point"));
-        TAG_LIST.add(new ClassifiedTag(12, "amenity", -1, amenityValues,
-                new int[] { NODE_TAG, BUILDING_TAG }));
-
+        try {
+            TAG_LIST.addAll(ADDRESS_TAG_LIST);
+            TAG_LIST.addAll(CONTACT_TAG_LIST);
+            readTags();
+        } catch (IOException e) {
+            Log.e("Tags", "IOException:", e);
+        }
     }
-
-    /**
-     * Creates the ClassifiedTag "building" and adds predefined
-     * ClassifiedValues. Values: house, residential, garage, apartments,
-     * industrial, commercial, retail (ordered by frequency).
-     */
-    static {
-        final String building = "building";
-        final List<ClassifiedValue> buildingValues = new LinkedList<ClassifiedValue>();
-        buildingValues.add(new ClassifiedValue(137, building, "house"));
-        buildingValues.add(new ClassifiedValue(138, building, "residential"));
-        buildingValues.add(new ClassifiedValue(139, building, "garage"));
-        buildingValues.add(new ClassifiedValue(140, building, "apartments"));
-        buildingValues.add(new ClassifiedValue(141, building, "industrial"));
-        buildingValues.add(new ClassifiedValue(142, building, "commercial"));
-        buildingValues.add(new ClassifiedValue(143, building, "retail"));
-        TAG_LIST.add(new ClassifiedTag(13, "building", -1, buildingValues,
-                new int[] { BUILDING_TAG }));
-    }
-
-    /**
-     * Creates the ClassifiedTag "landuse" and adds predefined ClassifiedValues.
-     * Values: forest, residential, grass, farmland, industrial, commercial,
-     * construction, military (ordered by frequency).
-     */
-    static {
-        final String landuse = "landuse";
-        final List<ClassifiedValue> landuseValues = new LinkedList<ClassifiedValue>();
-        landuseValues.add(new ClassifiedValue(144, landuse, "forest"));
-        landuseValues.add(new ClassifiedValue(145, landuse, "residential"));
-        landuseValues.add(new ClassifiedValue(146, landuse, "grass"));
-        landuseValues.add(new ClassifiedValue(147, landuse, "farmland"));
-        landuseValues.add(new ClassifiedValue(148, landuse, "industrial"));
-        landuseValues.add(new ClassifiedValue(149, landuse, "commercial"));
-        landuseValues.add(new ClassifiedValue(150, landuse, "construction"));
-        landuseValues.add(new ClassifiedValue(151, landuse, "military"));
-        TAG_LIST.add(new ClassifiedTag(14, "landuse", -1, landuseValues,
-                new int[] { AREA_TAG }));
-    }
-    
-   
 
 }

@@ -104,11 +104,14 @@ public class LoginActivity extends AbstractActivity {
                     passwordfield
                             .setTransformationMethod(PasswordTransformationMethod
                                     .getInstance());
+                    passwordfield.setSelection(passwordfield.length());
+                    
                 } else {
                     // hide password
                     passwordfield
                             .setTransformationMethod(HideReturnsTransformationMethod
                                     .getInstance());
+                    passwordfield.setSelection(passwordfield.length());
                 }
             }
         });
@@ -132,7 +135,7 @@ public class LoginActivity extends AbstractActivity {
     private boolean isLoggedIn() {
         final DataBaseHandler database = new DataBaseHandler(this);
         final List<User> users = database.getAllUser();
-        Log.i(TAG, "" + users.size());
+        Log.i(TAG, "isLoggedIn() number of user in database: " + users.size());
         database.close();
         return !users.isEmpty();
     }

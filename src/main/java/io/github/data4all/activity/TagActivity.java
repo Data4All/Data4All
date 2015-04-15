@@ -22,6 +22,7 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.util.Gallery;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
 
@@ -136,15 +137,17 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
                 .findViewById(R.id.speech);
         speechStart.setOnClickListener(this);
         array = Tagging.getArrayKeys(
-                getIntent().getExtras().getInt("TYPE_DEF"), res);
+                getIntent().getExtras().getInt("TYPE_DEF"), this);
         tagMap = Tagging.getMapKeys(getIntent().getExtras().getInt("TYPE_DEF"),
-                res);
+                this);
         alertDialog.setItems(array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 key = (String) array[which];
                 //jump in ResultviewActivity, when lastChoice is selected
-                if("Last Choice".equalsIgnoreCase(key)) {
-                    map=LastChoiceHandler.getInstance()
+                String lastChoice = getString(R.string.name_lastchoice) ;
+                if(lastChoice.equalsIgnoreCase(key)) {
+                    
+                	map=LastChoiceHandler.getInstance()
                             .getLastChoice(getIntent()
                             .getExtras().getInt("TYPE_DEF"));
                     redirectToResultView();
@@ -180,10 +183,10 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
      * 
      */
     private void createAlertDialogValue() {
-        array = Tagging.ClassifiedValueList(tagMap.get(key)
-                .getClassifiedValues(), res);
+       // array = Tagging.ClassifiedValueList(tagMap.get(key)
+       //         .getClassifiedValues(), res);
         final Map<String, ClassifiedValue> classifiedMap = Tagging
-                .classifiedValueMap(tagMap.get(key).getClassifiedValues(), res,
+                .classifiedValueMap(tagMap.get(key).getClassifiedValues(), this,
                         false);
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 TagActivity.this);
@@ -362,11 +365,11 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         finish.setOnClickListener(this);
         next.setOnClickListener(this);
 
-        if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
+    /**    if (Tagging.isContactTags(Tags.getAllContactTags().get(0)
                 .getOsmObjects(), getIntent().getExtras().getInt("TYPE_DEF"))
                 && first) {
             layout.addView(next);
-        }
+        }*/
         layout.addView(finish);
 
         final InputMethodManager imm = (InputMethodManager) this
@@ -404,6 +407,12 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         final Intent intent = new Intent(this, ResultViewActivity.class);
         intent.putExtra(OSM, element);
         intent.putExtra("TYPE_DEF", getIntent().getExtras().getInt("TYPE_DEF"));
+        
+        if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
+            intent.putExtra(Gallery.GALLERY_ID_EXTRA,
+                    getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
+        }
+        
         startActivityForResult(intent);
     }
 }

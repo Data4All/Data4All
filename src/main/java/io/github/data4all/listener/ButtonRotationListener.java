@@ -71,10 +71,28 @@ public class ButtonRotationListener extends OrientationEventListener {
     public void onOrientationChanged(int orientation) {
         final int newOrientation = ((orientation + 45) % 360) / 90;
         if (newOrientation != currentOrientation) {
-            Log.d("BLUB", "New orientation: " + newOrientation);
+            Log.d("ButtonRotationListener", "New orientation: " + newOrientation);
             rotate(currentOrientation, newOrientation);
             currentOrientation = newOrientation;
         }
+    }
+
+    /**
+     * @return The current orientation
+     */
+    public int getCurrentOrientation() {
+        return currentOrientation;
+    }
+
+    /**
+     * @return The current rotation in degrees
+     */
+    public int getCurrentRotation() {
+        return toDegree(currentOrientation);
+    }
+
+    private int toDegree(int orientation) {
+        return (3 - ((orientation + 3) % 4)) * 90;
     }
 
     /**
@@ -127,14 +145,14 @@ public class ButtonRotationListener extends OrientationEventListener {
                             view.setRotation(0f);
                             backRotating = false;
                             view.animate()
-                                    .rotation((3 - ((to + 3) % 4)) * 90)
+                                    .rotation(toDegree(to))
                                     .setInterpolator(
                                             new DecelerateInterpolator())
                                     .setDuration(400).start();
                         }
                     }).start();
         } else {
-            view.animate().rotation((3 - ((to + 3) % 4)) * 90)
+            view.animate().rotation(toDegree(to))
                     .setInterpolator(new DecelerateInterpolator())
                     .setDuration(500).start();
         }

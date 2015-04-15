@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/toggleButton"
+        android:checkable="true"
+        android:icon="@drawable/ic_toggle"
+        android:showAsAction="always"
+        android:title="@string/recordTrack"/>
+
+</menu>

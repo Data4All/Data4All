@@ -16,11 +16,11 @@
 package io.github.data4all.service;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.TrackUtil;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +36,7 @@ import android.widget.Toast;
 /**
  * A service for listening for location changes.
  * 
- * @author konermann
+ * @author konermann, dahnken
  * 
  */
 public class GPSservice extends Service implements LocationListener {
@@ -48,7 +48,6 @@ public class GPSservice extends Service implements LocationListener {
     private LocationManager lmgr;
     private WakeLock wakeLock;
 
-    private DataBaseHandler dbHandler;
     /*
      * the minimum of time after we get a new locationupdate in ms.
      */
@@ -58,19 +57,18 @@ public class GPSservice extends Service implements LocationListener {
      */
     private static final float MIN_DISTANCE = 0;
 
+    private TrackUtil trackUtil;
     private Track track;
 
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate()");
-        dbHandler = new DataBaseHandler(this.getApplicationContext());
         // wakelock, so the cpu is never shut down and is able to track at all
         // time
         final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
-        // dbHandler.createTrack(track);
 
         lmgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -85,7 +83,7 @@ public class GPSservice extends Service implements LocationListener {
             lmgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                     MIN_TIME, MIN_DISTANCE, this);
         }
-
+        trackUtil = new TrackUtil(getApplicationContext());
     }
 
     /*
@@ -95,10 +93,6 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // new track is initialized and gets timestamp.
-        // Does not contain any trackpoints yet
-        track = new Track();
-
         Log.d(TAG, "onStartCommand");
         return START_STICKY;
     }
@@ -115,6 +109,10 @@ public class GPSservice extends Service implements LocationListener {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
 
+        if (track != null && !track.isFinished()) {
+            trackUtil.updateTrack(track);
+        }
+
         wakeLock.release();
 
     }
@@ -128,42 +126,36 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location loc) {
+        track = trackUtil.getLastTrack();
         if (loc != null) {
             Optimizer.putLoc(loc);
         }
 
         if (track != null) {
+
             final Location tp = Optimizer.currentBestLoc();
 
             final TrackPoint last = track.getLastTrackPoint();
 
+            Location lastKnownLoc = new Location("lastTrackPoint");
+
+            if (last != null) {
+                lastKnownLoc.setAltitude(last.getAlt());
+                lastKnownLoc.setLatitude(last.getLat());
+                lastKnownLoc.setLongitude(last.getLon());
+            }
+
+            final float distanceCovered = lastKnownLoc.distanceTo(tp);
+
             // check if new Location is already stored
-            if (last != null && tp != null && this.sameTrackPoints(last, tp)) {
-                track.addTrackPoint(tp);
-                // After ten trackpoints updateDatabase
-                if ((track.getTrackPoints().size() % 10) == 0) {
-                    // dbHandler.updateTrack(track);
-                }
+            if (distanceCovered >= 5.0) {
+                // track.addTrackPoint(tp);
+                trackUtil.addPointToTrack(track, tp);
+
+                trackUtil.updateTrack(track);
+
             }
         }
-    }
-
-    /**
-     * Easy comparison of two TrackPoints. Only compares longitude and latitude.
-     * 
-     * @param point1
-     *            The first trackpoint
-     * @param point2
-     *            The second trackpoint
-     * @return true if lon and lat of the trackpoints are the same, else false
-     */
-    private boolean sameTrackPoints(TrackPoint point1, Location loc) {
-        final TrackPoint point2 = new TrackPoint(loc);
-        if (point1.getLat() == point2.getLat()
-                && point1.getLon() == point2.getLon()) {
-            return true;
-        }
-        return false;
     }
 
     /*
@@ -185,17 +177,7 @@ public class GPSservice extends Service implements LocationListener {
      */
     @Override
     public void onProviderEnabled(String provider) {
-        if (track == null) {
-            // start new track
-            track = new Track();
-            // dbHandler.createTrack(track);
-        } else {
-            // overrides old track with null and start a new track everytime gps
-            // is enabled
-            track = null;
-            track = new Track();
-            // dbHandler.createTrack(track);
-        }
+
     }
 
     /*
@@ -208,21 +190,9 @@ public class GPSservice extends Service implements LocationListener {
     public void onProviderDisabled(String provider) {
         // Remove registration for location updates
         lmgr.removeUpdates(this);
-        if (track != null) {
-            if (track.getTrackPoints().isEmpty()) {
-                // track does not contain any trackpoints and gps is not
-                // available,
-                // so clear track
-                // dbHandler.deleteTrack(track);
-                track = null;
-            } else {
-                // Track with trackpoints exist, so save it to database
-                // dbHandler.updateTrack(track);
-                // override current track with null
-                track = null;
-            }
-        }
-        // TODO localization
+        trackUtil.updateTrack(track);
+        trackUtil.deleteEmptyTracks();
+
         Toast.makeText(getBaseContext(), R.string.noLocationFound,
                 Toast.LENGTH_LONG).show();
     }

@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayoutResultView"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/buttonResult"
+        style="@style/imageButtonOkay"
+        android:contentDescription="@string/returnToActualPosition" />
+
+    
+    <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/buttonResultToCamera"
+        style="@style/imageButtonReturnToCamera"
+        android:contentDescription="@string/returnToCamera" />
+    <Button
+        android:id="@+id/buttonClassifiedTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/buttonResult"
+        android:layout_toRightOf="@+id/buttonResultToCamera"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignTop="@+id/buttonResult"
+        android:background="@android:color/background_dark"
+        android:textColor="@android:color/white" 
+        android:text="@string/SelectTag"/>
+
+    <ListView
+        android:id="@+id/listViewResultView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@+id/mapviewResult"
+        android:layout_alignRight="@+id/buttonClassifiedTag"
+        android:layout_below="@+id/buttonResult"
+        android:layout_marginBottom="10dp"
+        
+        android:layout_toRightOf="@+id/mapviewResult">
+
+    </ListView>
+
+    <io.github.data4all.view.D4AMapView
+        android:id="@+id/mapviewResult"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignLeft="@+id/buttonClassifiedTag"
+        android:layout_below="@+id/buttonResultToCamera"
+        android:layout_marginRight="10dp"        
+        android:layout_marginTop="17dp" >
+    </io.github.data4all.view.D4AMapView>
+
+</RelativeLayout>

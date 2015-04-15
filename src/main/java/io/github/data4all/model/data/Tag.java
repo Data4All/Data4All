@@ -18,7 +18,12 @@ package io.github.data4all.model.data;
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 
-import java.util.Arrays;
+import java.util.Locale;
+
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.preference.PreferenceManager;
 
 /**
  * This class represents a predefined osm tag. The name and hint for a specific
@@ -47,12 +52,12 @@ public class Tag {
     /**
      * nameRessource defines the displayed name/value in the tagging activity.
      */
-    private int nameRessource;
+    private int nameResource;
 
     /**
      * hintRessource defines the displayed hint/value in the tagging activity.
      */
-    private int hintRessource;
+    private int hintResource;
 
     /**
      * type defines if the tagging activity should display a keyboard or a
@@ -61,23 +66,9 @@ public class Tag {
     private int type;
 
     /**
-     * store the last Tag value e.g the last value for addr:street.  
+     * store the last Tag value e.g the last value for addr:street.
      */
     private String lastValue;
-
-    /**
-     * constant values to define which osmObject the tag refers to.
-     */
-    public static final int NODE_TAG = 1;
-    public static final int WAY_TAG = 2;
-    public static final int BUILDING_TAG = 3;
-    public static final int AREA_TAG = 4;
-
-    /**
-     * define to which osm objects the tag refers.
-     */
-    private int[] osmObjects;
-    
 
     /**
      * Constructor to create nameRessource and hintRessource from the key.
@@ -88,19 +79,19 @@ public class Tag {
      *            The Key of the Tag.
      * @param type
      *            The InputType method.
-     * @param osmObjects
-     *            The osm Objects the Tag refers to.
      */
-    public Tag(int id, String key, int type, int... osmObjects) {
+    public Tag(int id, String key, int type) {
         this.id = id;
         this.key = key;
         this.type = type;
         try {
-            this.nameRessource = (Integer) R.string.class.getDeclaredField(
-                    "name_" + key.replaceAll(":", "_")).get(null);
+            this.nameResource =
+                    (Integer) R.string.class.getDeclaredField(
+                            "name_" + key.replaceAll(":", "_")).get(null);
             if (type != -1) {
-                this.hintRessource = (Integer) R.string.class.getDeclaredField(
-                        "hint_" + key.replaceAll(":", "_")).get(null);
+                this.hintResource =
+                        (Integer) R.string.class.getDeclaredField(
+                                "hint_" + key.replaceAll(":", "_")).get(null);
             }
         } catch (IllegalArgumentException e) {
             Log.e(LOG_TAG, "IllegalArgumentException", e);
@@ -109,12 +100,10 @@ public class Tag {
         } catch (NoSuchFieldException e) {
             Log.e(LOG_TAG, "NoSuchFieldException", e);
         }
-
-        this.setOsmObjects(osmObjects);
     }
 
     public int getHintRessource() {
-        return hintRessource;
+        return hintResource;
     }
 
     public int getId() {
@@ -126,11 +115,7 @@ public class Tag {
     }
 
     public int getNameRessource() {
-        return nameRessource;
-    }
-
-    public int[] getOsmObjects() {
-        return osmObjects;
+        return nameResource;
     }
 
     public int getType() {
@@ -138,7 +123,7 @@ public class Tag {
     }
 
     public void setHintRessource(int hintRessource) {
-        this.hintRessource = hintRessource;
+        this.hintResource = hintRessource;
     }
 
     public void setId(int id) {
@@ -150,11 +135,7 @@ public class Tag {
     }
 
     public void setNameRessource(int nameRessource) {
-        this.nameRessource = nameRessource;
-    }
-
-    public void setOsmObjects(int[] osmObjects) {
-        this.osmObjects = osmObjects;
+        this.nameResource = nameRessource;
     }
 
     public void setType(int type) {
@@ -166,9 +147,80 @@ public class Tag {
      */
     @Override
     public String toString() {
-        return "key: " + key + " nameRessource: " + nameRessource
-                + " hintRessource: " + hintRessource + " osmObjects: "
-                + "type:" + type + Arrays.toString(osmObjects);
+        return "key: " + key + " nameRessource: " + nameResource
+                + " hintRessource: " + hintResource + " type: " + type;
+    }
+
+    /**
+     * Get the localized name of the value.
+     * 
+     * @author tbrose
+     * @param context
+     *            the context of the application
+     * @param value
+     *            the tag value
+     * @return the localized name
+     */
+    public String getNamedValue(Context context, String value) {
+        final String prefKey =
+                context.getString(R.string.pref_english_tags_key);
+        final boolean englishName =
+        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                prefKey, false);
+        final Resources res = context.getResources();
+
+        final String name = "name_" + key + "_" + value;
+        Log.d(LOG_TAG, name);
+        final int identifier =
+                res.getIdentifier(name, "string", context.getPackageName());
+
+        return getLocalisedString(context, identifier, englishName);
+    }
+
+    /**
+     * Get the localized name of this tag key.
+     * 
+     * @author tbrose
+     * @param context
+     *            the context of the application
+     * @return the localized name
+     */
+    public String getNamedKey(Context context) {
+        final String prefKey =
+                context.getString(R.string.pref_english_tags_key);
+        final boolean englishName =
+        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                prefKey, false);
+        return getLocalisedString(context, getNameRessource(), englishName);
+    }
+
+    public static String getLocalisedString(Context context, int id,
+            boolean english) {
+        String result = null;
+
+        if (id != 0) {
+            final Resources res = context.getResources();
+            Configuration conf = null;
+            Locale currentLocale = null;
+
+            if (english) {
+                conf = res.getConfiguration();
+                currentLocale = conf.locale;
+                conf.locale = Locale.ENGLISH;
+                res.updateConfiguration(res.getConfiguration(),
+                        res.getDisplayMetrics());
+            }
+
+            result = res.getString(id);
+
+            if (english) {
+                conf.locale = currentLocale;
+                res.updateConfiguration(res.getConfiguration(),
+                        res.getDisplayMetrics());
+            }
+        }
+        Log.d(LOG_TAG, "Result: " + result + " id: " + id);
+        return result;
     }
 
     public String getLastValue() {
@@ -178,9 +230,4 @@ public class Tag {
     public void setLastValue(String lastValue) {
         this.lastValue = lastValue;
     }
-
-
-    
-
 }
-

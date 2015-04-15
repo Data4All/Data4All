@@ -222,11 +222,10 @@ public class TrackTest {
         track.addTrackPoint(bloc);
         track.addTrackPoint(cloc);
 
-        String expected = track.getTrackName() + "\n";
+        String expected = "ID: -1" + '\n' + track.getTrackName() + "\n" + "finished: false" + '\n';
         for (TrackPoint tp : track.getTrackPoints()) {
             String tmp = tp.toString();
             expected += tmp + "\n";
-
         }
         String actual = track.toString();
         assertTrue("Should be " + expected + " but was " + actual,
@@ -272,6 +271,8 @@ public class TrackTest {
         track.addTrackPoint(aloc);
         track.addTrackPoint(bloc);
         track.addTrackPoint(cloc);
+        track.setDescription("description of this track");
+        track.setTags("tag1,tag2,tag3");
 
         track.writeToParcel(newParcel, 0);
 
@@ -279,6 +280,8 @@ public class TrackTest {
         Track deParcelTrack = Track.CREATOR.createFromParcel(newParcel);
 
         assertEquals(track.getTrackName(), deParcelTrack.getTrackName());
+        assertEquals(track.getDescription(), deParcelTrack.getDescription());
+        assertEquals(track.getTags(), deParcelTrack.getTags());
 
         List<TrackPoint> tp = track.getTrackPoints();
         List<TrackPoint> tpParcel = deParcelTrack.getTrackPoints();

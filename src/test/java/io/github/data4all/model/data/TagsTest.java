@@ -38,7 +38,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllNodeTags() {
-        assertEquals(2, Tags.getAllNodeTags().size());
+        assertEquals(9, Tags.getAllNodeTags().size());
     }
 
     /**
@@ -47,7 +47,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllWayTags() {
-        assertEquals(2, Tags.getAllWayTags().size());
+        assertEquals(5, Tags.getAllWayTags().size());
     }
 
     /**
@@ -56,7 +56,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllRelationTags() {
-        assertEquals(2, Tags.getAllBuildingTags().size());
+        assertEquals(4, Tags.getAllBuildingTags().size());
     }
 
     /**
@@ -65,7 +65,7 @@ public class TagsTest {
      */
     @Test
     public void test_getAllAreaTags() {
-        assertEquals(2, Tags.getAllAreaTags().size());
+        assertEquals(5, Tags.getAllAreaTags().size());
     }
 
     /**
@@ -92,6 +92,7 @@ public class TagsTest {
      */
     @Test
     public void test_getTagWithId() {
-        assertEquals("addr:street", Tags.getTagWithId(1).getKey());
+        assertEquals("landuse", Tags.getTagWithId(501).getKey());
+        assertEquals("amenity", Tags.getTagWithId(22).getKey());
     }
 }

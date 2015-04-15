@@ -58,23 +58,39 @@ public class Track implements Parcelable {
     private String trackName;
 
     /**
+     * The description of the tag which the user can add.
+     */
+    private String description = "a";
+
+    /**
+     * The tags of the track which the user can add, tags are comma seperated.
+     */
+    private String tags = "b";
+
+    /**
      * saves a list of TrackPoints.
      */
     private final List<TrackPoint> tracklist;
 
     /**
+     * Flag that indicates if this track is currently active
+     */
+    private boolean finished;
+
+    /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
+    public static final Parcelable.Creator<Track> CREATOR =
+            new Parcelable.Creator<Track>() {
 
-        public Track createFromParcel(Parcel in) {
-            return new Track(in);
-        }
+                public Track createFromParcel(Parcel in) {
+                    return new Track(in);
+                }
 
-        public Track[] newArray(int size) {
-            return new Track[size];
-        }
-    };
+                public Track[] newArray(int size) {
+                    return new Track[size];
+                }
+            };
 
     /**
      * Constructor to create a Track from a parcel.
@@ -86,6 +102,9 @@ public class Track implements Parcelable {
         tracklist = new ArrayList<TrackPoint>();
         in.readTypedList(tracklist, TrackPoint.CREATOR);
         trackName = in.readString();
+        description = in.readString();
+        tags = in.readString();
+        finished = (in.readInt() == 0) ? false : true;
     }
 
     /**
@@ -95,7 +114,7 @@ public class Track implements Parcelable {
     public Track() {
         this.tracklist = new ArrayList<TrackPoint>();
         this.trackName = this.getTimeStamp();
-        Log.d(TAG, "New Track with name: " + trackName + " created.");
+        this.finished = false;
     }
 
     public String getTrackName() {
@@ -113,9 +132,40 @@ public class Track implements Parcelable {
     public void setID(long id) {
         this.id = id;
     }
+    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 
     private String getTimeStamp() {
         return new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+    }
+
+    public void setStatus(boolean status) {
+        this.finished = status;
+    }
+
+    /**
+     * Finish a track and set the flag to true
+     */
+    public void finishTrack() {
+        setStatus(true);
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 
     /**
@@ -125,9 +175,11 @@ public class Track implements Parcelable {
      *            The Location
      */
     public void addTrackPoint(final Location location) {
-        if (location != null) {
-            tracklist.add(new TrackPoint(location));
-            Log.d(TAG, "Added TrackPoint: " + location.toString());
+        if (!isFinished()) {
+            if (location != null) {
+                tracklist.add(new TrackPoint(location));
+                Log.d(TAG, "Added TrackPoint: " + location.toString());
+            }
         }
     }
 
@@ -140,6 +192,7 @@ public class Track implements Parcelable {
      * another list of TrackPoints to it.
      * 
      * @param trackPoints
+     * @param trackPoints
      *            the given list of TrackPoints
      */
     public void setTrackPoints(List<TrackPoint> trackPoints) {
@@ -148,7 +201,7 @@ public class Track implements Parcelable {
     }
 
     /**
-     * Returns the latest TrakPoint from this track.
+     * Returns the latest TrackPoint from this track.
      * 
      * @return trackpoint The latest TrackPoint in the list
      */
@@ -167,7 +220,9 @@ public class Track implements Parcelable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
+        sb.append("ID: " + id + '\n');
         sb.append(trackName + '\n');
+        sb.append("finished: " + finished + '\n');
         for (TrackPoint loc : tracklist) {
             sb.append(loc.toString() + '\n');
         }
@@ -196,5 +251,9 @@ public class Track implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(tracklist);
         dest.writeString(trackName);
+        dest.writeString(description);
+        dest.writeString(tags);
+        dest.writeInt(finished ? 1 : 0);
     }
+
 }

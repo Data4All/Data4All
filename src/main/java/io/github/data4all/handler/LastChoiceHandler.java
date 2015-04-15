@@ -1,5 +1,6 @@
 package io.github.data4all.handler;
 
+import io.github.data4all.R;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Tag;
 
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 
 /**
  * this class represent the lastChoice from a category.</br>
@@ -23,6 +26,8 @@ import android.content.Context;
 public class LastChoiceHandler {
 
     private static LastChoiceHandler handler;
+    
+    private static final String TAG = "LastChoiceHandler";
     
     // The map were the last selected Tag are saved with his type 
     private Map<Integer, Map<Tag, String>> typWithLastchoice;
@@ -43,9 +48,11 @@ public class LastChoiceHandler {
      * @param lastChoice
      */
     public void setLastChoice(int typ, Map<Tag, String> lastChoice) {
+    	Log.i(TAG, "element.getTAgs" + lastChoice.toString());
         Map<Tag, String> lastChoiceCopie = sortMap(lastChoice);
 
         typWithLastchoice.put(typ, lastChoiceCopie);
+        Log.i(TAG, "map " + typWithLastchoice.toString());
     }
 
     /**
@@ -143,14 +150,16 @@ public class LastChoiceHandler {
      * @param array e.g list of classifiedtTag
      * @return either a list of classifiedTag with lastChoice or a list of classifiedTag without lastChoice
      */
-    public static String[] addLastChoiceForType(int type, String[] array) {
+    public static String[] addLastChoiceForType(int type, String[] array,Resources res) {
+    	
         if (LastChoiceHandler.hasLastChoice(type)) {
            final String[] arrayCopy = new String[array.length + 1];
 
             for (int i = 0; i < array.length; i++) {
                 arrayCopy[i] = array[i];
             }
-            arrayCopy[array.length] = "Last Choice";
+            String lastChoice = res.getString(R.string.name_lastchoice) ;
+            arrayCopy[array.length] = lastChoice;
             return arrayCopy;
         }
         return array;

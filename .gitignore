@@ -50,3 +50,4 @@ tmp/
 # PDT-specific
 .buildpath
 /.classpath
+*.classpath

@@ -77,19 +77,25 @@ public abstract class AbstractDataElement implements Parcelable {
     public void addOrUpdateTag(final Tag tag, final String value) {
         this.tags.put(tag, value);
     }
-    
+
     /**
      * Removes an existing tag of the DataElement
      * 
-     * @param tag the Tag to remove
-     * 	
+     * @param tag
+     *            the Tag to remove
+     * 
      */
     public void removeTag(final Tag tag) {
-    	this.tags.remove(tag);
+        this.tags.remove(tag);
     }
 
-    
-    
+    /**
+     * Removes all Tags
+     */
+    public void clearTags() {
+        this.tags.clear();
+    }
+
     /**
      * Add the tags of the DataElement.
      * 
@@ -113,11 +119,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * @return unmodifiable collection of tags
      */
     public Map<Tag, String> getTags() {
-        if (!tags.isEmpty()) {
-            return tags;
-        } else {
-            return tags;
-        }
+        return tags;
     }
 
     /**
@@ -198,9 +200,40 @@ public abstract class AbstractDataElement implements Parcelable {
         dest.writeLong(osmId);
         dest.writeInt(tags.size());
         for (Tag t : tags.keySet()) {
-            dest.writeInt(t.getId());
-            dest.writeString(tags.get(t));
+            if (t != null) {
+                dest.writeInt(t.getId());
+                dest.writeString(tags.get(t));
+            }
         }
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (osmId ^ (osmId >>> 32));
+        result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AbstractDataElement) {
+            if (((AbstractDataElement) obj).getOsmId() == this.osmId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
