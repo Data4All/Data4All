@@ -23,6 +23,7 @@ import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Overlay;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
@@ -174,9 +175,12 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             mapController.animateTo(MapUtil.getCenterFromOsmElement(element));
             break;
         case R.id.switch_maps:
+            List<Overlay> list = new ArrayList<Overlay>();
+            list.addAll(mapView.getOverlays());
             switchMaps();
             mapView.getOverlays().clear();
-            this.setUpOverlays();
+            mapView.getOverlays().addAll(list);
+            mapView.postInvalidate();
             break;
         case R.id.okay:
             this.accept();
