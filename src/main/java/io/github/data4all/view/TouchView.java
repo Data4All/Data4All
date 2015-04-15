@@ -424,7 +424,7 @@ public class TouchView extends View {
 				if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
 					Log.d("", "Point is on a Line");
 					polygon.add(i + 1, p);
-					redoUndo.add(p, add, i + 1);
+					redoUndo.add(p, add, i+1);
 					lookUpPoint = p;
 					isOnLine = true;
 					return true;
@@ -676,14 +676,15 @@ public class TouchView extends View {
 	 */
 	public void redo() {
 		final String action = redoUndo.getAction();
-		final int location = redoUndo.getLocation();
+		int location = redoUndo.getLocation();
 		Point point = redoUndo.redo();
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if (action.equals(add)) {
-			newPolygon.add(point);
-			if(interpreter instanceof BuildingMotionInterpreter){
+			newPolygon.add(location,point);
+			if(interpreter instanceof BuildingMotionInterpreter && redoUndo.getCurrent()== 3){
+				location = redoUndo.getLocation();
 				point = redoUndo.redo();
-				newPolygon.add(point);
+				newPolygon.add(location,point);
 			}
 		}
 		if (action.equals(delete)) {
@@ -714,10 +715,10 @@ public class TouchView extends View {
 		Point point = redoUndo.undo();
 		final String action = redoUndo.getAction();
 		final int location = redoUndo.getLocation();
-		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
+		Log.d(this.getClass().getSimpleName(), action + " LOCATION: " + location);
 		if (action.equals(add)) {
 			newPolygon.remove(point);
-			if(interpreter instanceof BuildingMotionInterpreter){
+			if(interpreter instanceof BuildingMotionInterpreter && redoUndo.getCurrent()== 3){
 				point = redoUndo.undo();
 				newPolygon.remove(point);
 			}
