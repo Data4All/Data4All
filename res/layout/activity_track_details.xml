@@ -57,7 +57,7 @@
         android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
+    <!-- <Button
         android:id="@+id/buttonDeleteTrack"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -65,9 +65,19 @@
         android:layout_below="@+id/buttonUploadTrack"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:text="@string/delete" />
+        android:text="@string/delete" /> -->
+    
+    <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/buttonUploadTrack"
+            style="@style/imageButtonUpload"
+            android:contentDescription="@string/UploadButton" />
+    
+    <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/buttonDeleteTrack"
+            style="@style/imageButtonDelete"
+            android:contentDescription="@string/delete" />
 
-    <Button
+    <!-- <Button
         android:id="@+id/buttonUploadTrack"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -75,6 +85,6 @@
         android:layout_below="@+id/textViewTrackPointCount"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="@string/UploadButton" />
+        android:text="@string/UploadButton" /> -->
 
 </RelativeLayout>

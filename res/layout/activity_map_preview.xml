@@ -43,7 +43,7 @@
         android:background="@null"
         android:contentDescription="@string/noDescription"
         android:padding="0dp"
-        android:src="@drawable/ic_area" />
+        android:src="@drawable/ic_angle" />
 
     <io.github.data4all.widged.CustomImageButton
         android:id="@+id/okay"
