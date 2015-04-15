@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 /**
@@ -39,8 +40,8 @@ public class TrackDetailsActivity extends AbstractActivity implements
     private TextView trackDetails;
     private TextView trackId;
     private TextView trackPointCount;
-    private Button deleteButton;
-    private Button uploadButton;
+    private ImageButton deleteButton;
+    private ImageButton uploadButton;
 
     /*
      * (non-Javadoc)
@@ -96,8 +97,8 @@ public class TrackDetailsActivity extends AbstractActivity implements
      */
     private void addButtonListener() {
 
-        deleteButton = (Button) findViewById(R.id.buttonDeleteTrack);
-        uploadButton = (Button) findViewById(R.id.buttonUploadTrack);
+        deleteButton = (ImageButton) findViewById(R.id.buttonDeleteTrack);
+        uploadButton = (ImageButton) findViewById(R.id.buttonUploadTrack);
         deleteButton.setOnClickListener(this);
         uploadButton.setOnClickListener(this);
     }

@@ -20,6 +20,7 @@ import io.github.data4all.model.data.Track;
 import io.github.data4all.util.ListAdapter;
 import io.github.data4all.util.TrackUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -56,6 +57,8 @@ public class GpsTrackListActivity extends AbstractActivity {
 
         // Find the ListView resource.
         final ListView trackListView = (ListView) findViewById(R.id.trackListView);
+        
+        trackList = new ArrayList<Track>();
 
         // Get saved tracks
         getTracks();
@@ -76,6 +79,8 @@ public class GpsTrackListActivity extends AbstractActivity {
                 startActivity(intent);
             }
         });
+        
+        trackListView.setEmptyView(findViewById(R.id.emptyList));
     }
 
     /**
