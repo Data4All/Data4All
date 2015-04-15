@@ -126,13 +126,16 @@ public class UploadElementsService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getIntExtra(ACTION, 0) == UPLOAD) {
-            Log.d(TAG, "upload element service started");
             final ResultReceiver receiver = intent.getParcelableExtra(HANDLER);
+            final String comment = intent.getStringExtra(CHANGESET_COMMENT);
             final DataBaseHandler db = new DataBaseHandler(this);
-            final User user = db.getAllUser().get(0);
+            final List<User> users = db.getAllUser();
             db.close();
-            this.uploadElems(receiver, user);
-            stopNext = false;
+            if (users != null && !users.isEmpty()) {
+                final User user = users.get(0);
+                this.uploadElems(receiver, user,comment);
+                stopNext = false;
+            }
         }
     }
 

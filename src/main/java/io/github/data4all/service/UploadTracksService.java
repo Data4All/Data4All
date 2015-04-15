@@ -20,6 +20,7 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.User;
+import io.github.data4all.task.TrackParserTask;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
 import io.github.data4all.util.upload.CloseableUpload;
@@ -141,28 +142,30 @@ public class UploadTracksService extends IntentService {
                 db.close();
             }
 
-            //if (!stopNext) {
-                // for (Track t : gpsTracks) {
-                // TrackParserTask trackParser = new TrackParserTask(t);
-                // String gpxTrack = trackParser.parseTrack(t);
-                // Log.d(TAG, "parsed track with id: " + t.getID()
-                // + " track name: " + t.getTrackName());
-                // Log.d(TAG, "xml: " + gpxTrack.replaceAll("\n", ""));
-                // }
-            // }
             if (!stopNext) {
-                String track = GpxTrackUtil.longTrack();
-                String description = "dies ist die beschreibung";
-                String tags = "tag1, tag2, tag3, tag4";
-                String visibility = "public";
-                currentMaxProgress = track.length();
-                send(receiver, MAX_PROGRESS, currentMaxProgress);
-                CloseableUpload upload;
+                for (Track t : gpsTracks) {
+                    TrackParserTask trackParser = new TrackParserTask(t);
+                    String track = trackParser.parseTrack(t);
+                    Log.d(TAG, "parsed track with id: " + t.getID()
+                            + " track name: " + t.getTrackName());
+                    Log.d(TAG, "xml: " + track.replaceAll("\n", ""));
 
-                upload =
-                        GpxTrackUtil.upload(this, user, track, description,
-                                tags, visibility, new MyCallback(receiver));
-                upload.upload();
+                    if (!stopNext) {
+                        //String track = GpxTrackUtil.testTrack();
+                        String description = "dies ist die beschreibung";
+                        String tags = "tag1, tag2, tag3, tag4";
+                        String visibility = "public";
+                        currentMaxProgress = track.length();
+                        send(receiver, MAX_PROGRESS, currentMaxProgress);
+                        CloseableUpload upload;
+
+                        upload =
+                                GpxTrackUtil.upload(this, user, track,
+                                        description, tags, visibility,
+                                        new MyCallback(receiver));
+                        upload.upload();
+                    }
+                }
             }
             if (!stopNext) {
                 this.stopForeground(SUCCESS);

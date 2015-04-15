@@ -392,6 +392,7 @@ public class DataBaseHandlerTest {
         assertEquals(0, dbHandler.getTrackPointCount());
     }
 
+    @Ignore
     @Test
     public void testTrackCRUD() throws JSONException {
         Location loc1 = new Location("User");
@@ -453,7 +454,6 @@ public class DataBaseHandlerTest {
         reTrack = dbHandler.getGPSTrack(track.getID());
         
         assertEquals(4, reTrack.getTrackPoints().size());
-        
     }
 
     @After

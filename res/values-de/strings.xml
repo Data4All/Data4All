@@ -16,8 +16,8 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="ok">OK</string>
-	<string name="ignore">Ignorieren</string>
-	<string name="alwaysIgnore"> Immer Ignorieren</string>
+    <string name="ignore">Ignorieren</string>
+    <string name="alwaysIgnore"> Immer Ignorieren</string>
 
     <!-- Strings Content Description ImageButtons -->
     <string name="returnToActualPosition">Meine Position</string>
@@ -33,10 +33,10 @@
     <string name="drawBuilding">Zeichne ein Gebäude </string>
     <string name="redo">Wiederherstellen</string>
     <string name="undo">Rückgängig machen</string>
-    
+
     <!-- infoBubble -->
     <string name="delete">Löschen</string>
-    <string name="edit">Bearbeiten</string>   
+    <string name="edit">Bearbeiten</string>
 
     <!-- dialogs -->
     <string name="deleteDialog">Wollen Sie dieses Objekt wirklich löschen?</string>
@@ -70,7 +70,6 @@
     <string name="login_access_dialog_title">Zugriff verweigert</string>
     <string name="login_access_dialog_mes">Benutzername oder Passwort nicht korrekt.</string>
 
-
     <!-- for tags -->
     <string name="SelectTag">Passenden Tag auswählen</string>
     <string name="AddAddress">Adresse hinzufügen</string>
@@ -81,8 +80,7 @@
     <string name="fax">Fax</string>
     <string name="website">Website</string>
     <string name="email">Email</string>
-    
-        
+
     <!-- lastChoice -->
     <string name="name_lastchoice">Letzte Wahl</string>
 
@@ -99,7 +97,7 @@
     <string name="upload_to_openstreetmap_success">Änderungen erfolgreich hochgeladen</string>
     <string name="upload_to_openstreetmap_error">Hochladen fehlgeschlagen</string>
 
-     <!-- track list and details -->
+    <!-- track list and details -->
     <string name="list_tracks">Tracks</string>
     <string name="track_id">Track ID:</string>
     <string name="trackpoints">Trackpunkte:</string>
@@ -113,33 +111,27 @@
     <string name="gallery_hours">"%s Stunden"</string>
     <string name="gallery_yesterday">"%1$s gestern %2$s"</string>
     <string name="gallery_delete_all">Alle löschen</string>
-
     <string name="upload_gpstracks_text">"Aufgenommene GPS Tracks: "</string>
 
     <!-- other -->
     <string name="sensor_warning"> Sensoren Warnungen zeigen</string>
-    <string name="empty"> </string>
+    <string name="empty"></string>
     <string name="augmented_reality">Augmented Reality zeigen</string>
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
-
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>
     <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal</string>
     <string name="noSensorData">Keine Sensordaten verfügbar, versuchen Sie den Vorgang von der Karte aus zu wiederholen.</string>
-
-    
     <string name="badSensorCalibration">Bitte rotieren Sie ihr Smartphone langsam 3 mal um jede Achse. Und/Oder zeichnen Sie eine Acht mit ihren Smartphone. </string>
     <string name="badSensorCalibrationTitle">Sensoren brauchen Rekalibrierung.</string>
     <string name="badAcceleometerCalibrationTitle">Accelerometer braucht Rekalibrierung.</string>
     <string name="badMagnetometerCalibrationTitle">Magnetometer braucht Rekalibrierung.</string>
     <string name="goodSensorCalibrationTitle">Sensoren sind okay.</string>
-    
     <string name="statusNotificationHeadline">Data4All läuft noch</string>
     <string name="statusNotification">Die Data4All App läuft noch auf dem System.</string>
-    
     <string name="show_pwd">Passwort anzeigen</string>
     <string name="title_activity_about">Über diese Aktivität</string>
     <string name="hello_world">Hallo Welt!</string>
-      
+
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Folgt uns auf Facebook</a></string>
     <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Folgt uns auf Twitter</a></string>
@@ -150,23 +142,16 @@
     <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Lizenzen</a></string>
     <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
     <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
-    
+
     <!-- credits / about -->
     <string name="aboutText">Wir sind ein kleines Team von Bachelorstudenten der Universität Bremen. 
         Ihr könnt mehr über uns und dieses Projekt auf den folgenden Seiten herausfinden: </string>
     <string name="githubFollow">Data4All ist ein Open Source Projekt und somit kann jeder mitmachen und dieses 
-        Projekt gemeinsam mit uns weiterentwickeln: </string> 
-
-
+        Projekt gemeinsam mit uns weiterentwickeln: </string>
     <string name="deleteTagsResultview">Möchten sie diesen Tag löschen ?</string>
     <string name="maybe">Verwerfen</string>
-
     <string name="underlyingLicenses">Auf den folgenden Links findet ihr die Lizenzen, denen diese Anwendung 
         unterliegt.</string>
     <string name="librariesUsed">Zusätzlich wurden die folgenden Bibliotheken in dieser Anwendung benutzt.</string>
-
-    <string name="noLocationFound">Kein Standort gefunden. Schalten Sie den Ortungsdienst ein.</string>
-    <string name="retry">Keinen passenden Tag gefunden. Versuchen Sie es nochmal.</string>
->>>>>>> feature/3257-upload-gpstracks
 
 </resources>
