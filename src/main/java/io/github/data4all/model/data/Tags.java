@@ -355,7 +355,7 @@ public final class Tags {
         ADDRESS_TAG_LIST.add(new Tag(401, "addr:street",
                 InputType.TYPE_CLASS_TEXT));
         ADDRESS_TAG_LIST.add(new Tag(402, "addr:housenumber",
-                InputType.TYPE_CLASS_NUMBER));
+                InputType.TYPE_CLASS_TEXT));
         ADDRESS_TAG_LIST.add(new Tag(403, "addr:postcode",
                 InputType.TYPE_CLASS_NUMBER));
         ADDRESS_TAG_LIST.add(new Tag(404, "addr:city",
