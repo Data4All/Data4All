@@ -127,6 +127,11 @@ public class TrackUtil {
         db.close();
     }
 
+    
+    /**
+     * Returns a List of all Tracks from Database.
+     * @return trackList
+     */
     public List<Track> getTracks() {
         DataBaseHandler db = new DataBaseHandler(
                 context.getApplicationContext());
@@ -160,6 +165,12 @@ public class TrackUtil {
         return null;
     }
 
+    
+    /**
+     * Return the number of {@link TrackPoint} of a {@link Track}.
+     * @param track The {@link Track}
+     * @return size The number of {@link TrackPoint}
+     */
     public int getTrackSize(Track track) {
         int size = track.getTrackPoints().size();
         return size;

@@ -76,6 +76,9 @@ public class GpsTrackListActivity extends AbstractActivity {
                 startActivity(intent);
             }
         });
+        
+        // Set the view from an empty List
+        trackListView.setEmptyView(findViewById(R.id.emptyList));
     }
 
     /**

@@ -51,6 +51,7 @@ import android.location.Location;
  * 
  * @author Kristin Dahnken
  * @author fkirchge
+ * @author sbrede
  * 
  */
 public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
@@ -1577,8 +1578,10 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.getCount() <= 0) {
+            cursor.close();
             return false;
         }
+        cursor.close();
         return true;
     }
 

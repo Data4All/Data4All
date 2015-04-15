@@ -30,6 +30,7 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
@@ -56,6 +57,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     // The OsmElement which should be added
     private AbstractDataElement element;
+
+    private List<Node> saveElement;
 
     /**
      * Standard Constructor
@@ -186,7 +189,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             this.accept();
             break;
         case R.id.rect:
-            this.startRectangularPreview();
+            this.startRectangularPreview((ImageButton) v);
             break;
         default:
             break;
@@ -240,13 +243,24 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     /*
      * Starts new MapPreview with now rectangular Object
      */
-    private void startRectangularPreview() {
+    private void startRectangularPreview(ImageButton btn) {
         if (element instanceof PolyElement) {
             PolyElement rect = (PolyElement) element;
-            if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect
-                    .getNodes()))) {
+            if (saveElement == null) {
+                btn.setImageResource(R.drawable.ic_undo);
+                saveElement = new ArrayList<Node>();
+                saveElement.addAll(rect.getNodes());
+                if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect
+                        .getNodes()))) {
+                    mapView.getOverlays().clear();
+                    this.setUpOverlays();
+                }
+            } else {
+                btn.setImageResource(R.drawable.ic_area);
+                rect.replaceNodes(saveElement);
                 mapView.getOverlays().clear();
                 this.setUpOverlays();
+                saveElement = null;
             }
         }
     }

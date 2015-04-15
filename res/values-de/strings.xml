@@ -116,6 +116,7 @@
     <!-- other -->
     <string name="sensor_warning"> Sensoren Warnungen zeigen</string>
     <string name="empty"></string>
+    <string name="emptyList"> Die Liste ist leer </string>
     <string name="augmented_reality">Augmented Reality zeigen</string>
     <string name="noCamSupported">Es wurde keine unterstützte Kamera auf dem Gerät gefunden</string>
     <string name="noLocationFound">"Kein Standort gefunden. Schalten Sie den Ortungsdienst ein </string>

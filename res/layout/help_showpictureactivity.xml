@@ -1,0 +1,105 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/help_id1"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/help_showpictureactivity_description_draw"
+              android:src="@drawable/tut_drawing_figure"
+            android:scaleType="fitXY"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/help_id1"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_help_text"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"
+            android:text="@string/help_showpictureactivity_draw"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/help_id2"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/help_showpictureactivity_description_delete"
+              android:src="@drawable/tut_delete_point"
+            android:scaleType="fitXY"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/help_id2"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_help_text"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"
+            android:text="@string/help_showpictureactivity_deletepoint"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/help_id3"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/help_showpictureactivity_description_move"
+              android:src="@drawable/tut_move_point"
+            android:scaleType="fitXY"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/help_id3"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_help_text"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"
+            android:text="@string/help_showpictureactivity_movepoint"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_help_text"
+            android:layout_marginBottom="60dp"
+            android:padding="5dp"
+            android:text="@string/help_showpictureactivity_choosetool"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</RelativeLayout>
