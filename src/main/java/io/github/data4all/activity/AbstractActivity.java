@@ -19,6 +19,7 @@ import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
+import io.github.data4all.util.HelpOverlay;
 import io.github.data4all.util.TrackUtil;
 
 import java.util.List;
@@ -70,6 +71,8 @@ public abstract class AbstractActivity extends Activity {
 
     public static final int RESULT_FINISH = 9998;
 
+    private HelpOverlay overlay;
+
     private static final int NOTIFICATION_EX = 1;
 
     private NotificationManager notificationManager;
@@ -105,6 +108,7 @@ public abstract class AbstractActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.initHelp();
 
         // Count up on each Activity which is create
         counter++;
@@ -120,6 +124,14 @@ public abstract class AbstractActivity extends Activity {
         notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
 
         trackUtil = new TrackUtil(getApplicationContext());
+    }
+
+    /**
+     * Initiate the help-layout for the activity.
+     */
+    private void initHelp() {
+        overlay = new HelpOverlay(this);
+        overlay.showOnFirstTime();
     }
 
     /*
@@ -148,6 +160,12 @@ public abstract class AbstractActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actionbar, menu);
+
+        // Remove the menu item if there is no overlay for this activity
+        if (!overlay.hasHelpOverlay()) {
+            menu.removeItem(R.id.action_help);
+        }
+
         final ActionBar bar = getActionBar();
         if (bar != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -182,7 +200,7 @@ public abstract class AbstractActivity extends Activity {
             status = true;
             break;
         case R.id.action_help:
-            // TODO set help activity here
+            overlay.show();
             status = true;
             break;
         case R.id.list_tracks:
