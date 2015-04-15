@@ -123,9 +123,7 @@ public class TrackDetailsActivity extends AbstractActivity implements
         switch (v.getId()) {
         case R.id.buttonDeleteTrack:
             deleteTrack(Long.valueOf(trackId.getText().toString()));//getIntent().getLongExtra("id", -1));
-            Intent listActivity = new Intent(getApplicationContext(),
-                    GpsTrackListActivity.class);
-            startActivity(listActivity);
+            this.finish();
             break;
         case R.id.buttonUploadTrack:
             startActivity(new Intent(this, LoginActivity.class));
