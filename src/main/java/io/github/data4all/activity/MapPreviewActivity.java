@@ -256,7 +256,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                     this.setUpOverlays();
                 }
             } else {
-                btn.setImageResource(R.drawable.ic_area);
+                btn.setImageResource(R.drawable.ic_angle);
                 rect.replaceNodes(saveElement);
                 mapView.getOverlays().clear();
                 this.setUpOverlays();
