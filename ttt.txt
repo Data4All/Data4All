@@ -1,0 +1,124 @@
+04-20 01:34:08.734: W/ApplicationPackageManager(10760): getCSCPackageItemText()
+04-20 01:34:08.734: I/PersonaManager(10760): getPersonaService() name persona_policy
+04-20 01:34:08.814: I/dalvikvm(10760): DexOpt: access denied from Lorg/slf4j/LoggerFactory; to field Lorg/slf4j/impl/StaticLoggerBinder;.SINGLETON
+04-20 01:34:08.814: W/dalvikvm(10760): VFY: unable to resolve static field 11087 (SINGLETON) in Lorg/slf4j/impl/StaticLoggerBinder;
+04-20 01:34:08.814: I/dalvikvm(10760): DexOpt: access denied from Lorg/slf4j/LoggerFactory; to field Lorg/slf4j/impl/StaticLoggerBinder;.SINGLETON
+04-20 01:34:08.814: W/dalvikvm(10760): VFY: unable to resolve static field 11087 (SINGLETON) in Lorg/slf4j/impl/StaticLoggerBinder;
+04-20 01:34:08.834: W/System.err(10760): log4j:WARN No appenders could be found for logger (org.osmdroid.views.MapView).
+04-20 01:34:08.834: W/System.err(10760): log4j:WARN Please initialize the log4j system properly.
+04-20 01:34:08.925: I/dalvikvm-heap(10760): Grow heap (frag case) to 30.153MB for 7813512-byte allocation
+04-20 01:34:08.985: I/DATA4ALL-MapActivity(10760): Activate Multi Touch Controls
+04-20 01:34:08.985: I/DATA4ALL-MapActivity(10760): Set minimal Zoomlevel to 10
+04-20 01:34:08.985: I/DATA4ALL-MapActivity(10760): Set maximal Zoomlevel to 22
+04-20 01:34:08.985: I/DATA4ALL-MapActivity(10760): Set Maptilesource to mapbox.streets
+04-20 01:34:08.995: I/DATA4ALL-MapActivity(10760): Set Zoomlevel to 22
+04-20 01:34:08.995: I/DATA4ALL-MapActivity(10760): Set Mapcenter to 53039057,8819524,0
+04-20 01:34:09.775: I/DATA4ALL-DataBaseHandler(10760): 0 data elements were retrieved from the database.
+04-20 01:34:09.775: I/DATA4ALL-D4AMapView(10760): Add Node with Coordinates 53039057,8819524,0
+04-20 01:34:09.825: I/DATA4ALL-D4AMapView(10760): Set Node Points to 53039057,8819524,0
+04-20 01:34:09.825: I/DATA4ALL-MapPreviewActivity(10760): Added User Location Overlay to the map
+04-20 01:34:09.845: I/DATA4ALL-MapActivity(10760): Set Mapcenter to 53039057,8819524,0
+04-20 01:34:09.916: I/Adreno-EGL(10760): <qeglDrvAPI_eglInitialize:381>: EGL 1.4 QUALCOMM build:  (CL3869936)
+04-20 01:34:09.916: I/Adreno-EGL(10760): OpenGL ES Shader Compiler Version: 17.01.11.SPL
+04-20 01:34:09.916: I/Adreno-EGL(10760): Build Date: 01/17/14 Fri
+04-20 01:34:09.916: I/Adreno-EGL(10760): Local Branch: 
+04-20 01:34:09.916: I/Adreno-EGL(10760): Remote Branch: 
+04-20 01:34:09.916: I/Adreno-EGL(10760): Local Patches: 
+04-20 01:34:09.916: I/Adreno-EGL(10760): Reconstruct Branch: 
+04-20 01:34:10.756: I/dalvikvm-heap(10760): Grow heap (frag case) to 31.076MB for 262160-byte allocation
+04-20 01:34:11.027: I/dalvikvm-heap(10760): Grow heap (frag case) to 31.633MB for 262160-byte allocation
+04-20 01:34:12.999: I/DATA4ALL-MapPreviewActivity(10760): Set intent extra TYPE_DEF to 1
+04-20 01:34:12.999: I/DATA4ALL-MapPreviewActivity(10760): Set Intent Extra OSM_ELEMENT Node with Coordinates 53039057,8819524,0
+04-20 01:34:13.029: I/DATA4ALL-MapActivity(10760): Set actual Center Latitude: 53.039057
+04-20 01:34:13.029: I/DATA4ALL-MapActivity(10760): Set actual Center Longitude: 8.819524
+04-20 01:34:13.029: I/DATA4ALL-MapActivity(10760): Set actual Zoom Level: 22
+04-20 01:34:13.029: I/DATA4ALL-MapActivity(10760): Set actual MapTileSource: mapbox.streets
+04-20 01:34:13.139: W/ApplicationPackageManager(10760): getCSCPackageItemText()
+04-20 01:34:13.239: I/DATA4ALL-D4AMapView(10760): Add Node with Coordinates 53039057,8819524,0
+04-20 01:34:13.259: I/DATA4ALL-D4AMapView(10760): Set Node Points to 53039057,8819524,0
+04-20 01:34:13.259: I/DATA4ALL-ResultViewActivity(10760): map ready
+04-20 01:34:13.569: I/DATA4ALL-ResultViewActivity(10760): tagMap {Automaten=key: vending nameRessource: 2131361991 hintRessource: 0 type: -1, Gebäude=key: building nameRessource: 2131361930 hintRessource: 0 type: -1, Absperrung=key: barrier nameRessource: 2131361855 hintRessource: 0 type: -1, Wasserweg=key: waterway nameRessource: 2131361847 hintRessource: 0 type: -1, Einkaufsmöglichkeiten=key: shop nameRessource: 2131362007 hintRessource: 0 type: -1, Verkehrsweg=key: highway nameRessource: 2131361824 hintRessource: 0 type: -1, Einrichtung=key: amenity nameRessource: 2131361873 hintRessource: 0 type: -1, Freizeit=key: leisure nameRessource: 2131361976 hintRessource: 0 type: -1, Landnutzung=key: landuse nameRessource: 2131361955 hintRessource: 0 type: -1}
+04-20 01:34:13.579: I/Tagging(10760): tags[key: vending nameRessource: 2131361991 hintRessource: 0 type: -1, key: shop nameRessource: 2131362007 hintRessource: 0 type: -1, key: barrier nameRessource: 2131361855 hintRessource: 0 type: -1, key: building nameRessource: 2131361930 hintRessource: 0 type: -1, key: leisure nameRessource: 2131361976 hintRessource: 0 type: -1, key: waterway nameRessource: 2131361847 hintRessource: 0 type: -1, key: landuse nameRessource: 2131361955 hintRessource: 0 type: -1, key: amenity nameRessource: 2131361873 hintRessource: 0 type: -1, key: highway nameRessource: 2131361824 hintRessource: 0 type: -1]
+04-20 01:34:13.619: I/DATA4ALL-ResultViewActivity(10760): ClassifiedTagValue
+04-20 01:34:14.420: I/DATA4ALL-DataBaseHandler(10760): 0 GPS tracks were retrieved from the database.
+04-20 01:34:14.430: I/DATA4ALL-MapActivity(10760): Save actual zoom level: 22
+04-20 01:34:14.430: I/DATA4ALL-MapActivity(10760): Save actual Center Latitude: 53.039057
+04-20 01:34:14.430: I/DATA4ALL-MapActivity(10760): Save actual Center Longitude: 8.819524
+04-20 01:34:14.430: I/DATA4ALL-MapActivity(10760): Save actual Maptilesource: mapbox.streets
+04-20 01:34:15.691: E/ViewRootImpl(10760): sendUserActionEvent() mView == null
+04-20 01:34:16.582: I/DATA4ALL-ResultViewActivity(10760): Value apartments
+04-20 01:34:16.582: I/DATA4ALL-ResultViewActivity(10760): key: building nameRessource: 2131361930 hintRessource: 0 type: -1
+04-20 01:34:16.582: I/DATA4ALL-ResultViewActivity(10760): MAP{}
+04-20 01:34:16.582: I/Tagging(10760): adasdasd{}
+04-20 01:34:16.582: I/Tagging(10760): io.github.data4all.model.data.ClassifiedValue@430fe180
+04-20 01:34:16.582: I/Tagging(10760): {}
+04-20 01:34:16.592: I/DATA4ALL-ResultViewActivity(10760): KeyLIST[Gebäude]
+04-20 01:34:16.592: I/DATA4ALL-ResultViewActivity(10760): Tag1 Gebäude
+04-20 01:34:16.602: I/DATA4ALL-ResultViewActivity(10760): Tag key: building nameRessource: 2131361930 hintRessource: 0 type: -1
+04-20 01:34:16.602: I/DATA4ALL-ResultViewActivity(10760): {Konstruktion=io.github.data4all.model.data.ClassifiedValue@430ed500, Garage=io.github.data4all.model.data.ClassifiedValue@430fe858, Service=io.github.data4all.model.data.ClassifiedValue@430ef390, Wohngebäude=io.github.data4all.model.data.ClassifiedValue@43100060, Industrie=io.github.data4all.model.data.ClassifiedValue@430fb3a8, Unbekannt=io.github.data4all.model.data.ClassifiedValue@430e92c8, Schule=io.github.data4all.model.data.ClassifiedValue@430f2760, Kirche=io.github.data4all.model.data.ClassifiedValue@430efa68, Wohnhaus=io.github.data4all.model.data.ClassifiedValue@43106420, Kabine=io.github.data4all.model.data.ClassifiedValue@430eb1a8, Einfamilienhaus=io.github.data4all.model.data.ClassifiedValue@430f43f8, Wohnungen=io.github.data4all.model.data.ClassifiedValue@430fe180, Manufaktur=io.github.data4all.model.data.ClassifiedValue@430ec010, Speicher=io.github.data4all.model.data.ClassifiedValue@430ede38, Geschäft=io.github.data4all.model.data.ClassifiedValue@430f3ac0, Stall=io.github.data4all.model.data.ClassifiedValue@430f0b50, Hütte=io.github.data4all.model.data.ClassifiedValue@430fd850, Lager=io.github.data4all.model.data.ClassifiedValue@430f1b90, Bauernhof=io.github.data4all.model.data.ClassifiedValue@430ec698, Gewächshaus=io.github.data4all.model.data.ClassifiedValue@430eea08, Garagenkomplex=io.github.data4all.model.data.ClassifiedValue@430f4ad0, Dach=io.github.data4all.model.data.ClassifiedValue@430f5448, Einzelhandel=io.github.data4all.model.data.ClassifiedValue@430f1208, Häuserreihe=io.github.data4all.model.data.ClassifiedValue@430f2ea0}
+04-20 01:34:16.602: I/DATA4ALL-ResultViewActivity(10760): ClassifiedTagValueWohnungen
+04-20 01:34:16.642: E/ViewRootImpl(10760): sendUserActionEvent() mView == null
+04-20 01:34:17.393: I/MotionRecognitionManager(10760):   .unregisterListener : / listener count = 0->0,  
+04-20 01:34:17.953: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:17.983: I/DATA4ALL-DataBaseHandler(10760): Address 0 has been added.
+04-20 01:34:18.134: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:18.284: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:18.444: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:18.584: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:18.744: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:18.894: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:19.074: I/TagSuggestion(10760): Robert-Koch-Straße 93 28277 Bremen Deutschland
+04-20 01:34:19.215: W/dalvikvm(10760): threadid=1: thread exiting with uncaught exception (group=0x418bcda0)
+04-20 01:34:19.215: E/ACRA(10760): ACRA caught a NotFoundException exception for io.github.data4all. Building report.
+04-20 01:34:19.245: I/ACRA(10760): READ_LOGS granted! ACRA can include LogCat and DropBox data.
+04-20 01:34:19.265: I/ACRA(10760): Sending file 1429486459000-approved.stacktrace
+04-20 01:34:19.555: E/AndroidRuntime(10760): FATAL EXCEPTION: main
+04-20 01:34:19.555: E/AndroidRuntime(10760): Process: io.github.data4all, PID: 10760
+04-20 01:34:19.555: E/AndroidRuntime(10760): android.content.res.Resources$NotFoundException: Resource ID #0x7f0e0044 type #0x12 is not valid
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.content.res.Resources.loadXmlResourceParser(Resources.java:3270)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.content.res.Resources.getLayout(Resources.java:1852)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:396)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.ArrayAdapter.createViewFromResource(ArrayAdapter.java:371)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.ArrayAdapter.getView(ArrayAdapter.java:362)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.AbsListView.obtainView(AbsListView.java:2715)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.ListView.measureHeightOfChildren(ListView.java:1274)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.ListView.onMeasure(ListView.java:1186)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.View.measure(View.java:17387)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5352)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1410)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.LinearLayout.measureVertical(LinearLayout.java:695)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.LinearLayout.onMeasure(LinearLayout.java:588)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.View.measure(View.java:17387)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5352)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1410)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.LinearLayout.measureVertical(LinearLayout.java:695)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.LinearLayout.onMeasure(LinearLayout.java:588)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.View.measure(View.java:17387)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5352)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.FrameLayout.onMeasure(FrameLayout.java:310)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.View.measure(View.java:17387)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5352)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.FrameLayout.onMeasure(FrameLayout.java:310)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.View.measure(View.java:17387)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:5352)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.widget.FrameLayout.onMeasure(FrameLayout.java:310)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at com.android.internal.policy.impl.PhoneWindow$DecorView.onMeasure(PhoneWindow.java:2533)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.View.measure(View.java:17387)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewRootImpl.performMeasure(ViewRootImpl.java:2213)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewRootImpl.measureHierarchy(ViewRootImpl.java:1327)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewRootImpl.performTraversals(ViewRootImpl.java:1549)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewRootImpl.doTraversal(ViewRootImpl.java:1236)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.ViewRootImpl$TraversalRunnable.run(ViewRootImpl.java:6471)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:803)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.Choreographer.doCallbacks(Choreographer.java:603)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.Choreographer.doFrame(Choreographer.java:573)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:789)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.os.Handler.handleCallback(Handler.java:733)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.os.Handler.dispatchMessage(Handler.java:95)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.os.Looper.loop(Looper.java:157)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at android.app.ActivityThread.main(ActivityThread.java:5356)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at java.lang.reflect.Method.invokeNative(Native Method)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at java.lang.reflect.Method.invoke(Method.java:515)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:1265)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1081)
+04-20 01:34:19.555: E/AndroidRuntime(10760): 	at dalvik.system.NativeStart.main(Native Method)

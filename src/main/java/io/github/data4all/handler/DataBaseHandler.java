@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -1320,12 +1321,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
 		values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
 
+
 		if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
 			count += db.update(TABLE_GPSTRACK, values, KEY_INCID + "=?",
 					new String[] { String.valueOf(track.getID()) });
 		} else {
 			db.insert(TABLE_GPSTRACK, null, values);
 		}
+
 
 		return count;
 	}

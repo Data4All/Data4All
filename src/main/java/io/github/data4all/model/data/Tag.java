@@ -153,5 +153,4 @@ public class Tag {
     public void setLastValue(String lastValue) {
         this.lastValue = lastValue;
     }
-
 }

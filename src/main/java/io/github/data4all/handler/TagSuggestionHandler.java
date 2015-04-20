@@ -16,14 +16,17 @@ import java.util.Set;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -53,7 +56,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	private static final String TAG = "TagSuggestion";
 
 	//represent the list of all suggestions Addresses
-	private static Set<Addresse> addressList = new LinkedHashSet<Addresse>();
+	private Set<Addresse> addressList = new LinkedHashSet<Addresse>();
 
 	public Context context;
 
@@ -82,51 +85,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 					+ location.getLongitude() + "&zoom=18&addressdetails=1");
 
 			JSONObject address = jsonObj.getJSONObject("address");
-			
-			
-			if(!address.has("house_number")&&
-                    address.has("postcode")&&
-                    address.has("road")&&
-                    address.has("city")&&
-                    address.has("country")) {
-                postCode = address.getString("postcode");
-                road = address.getString("road");
-                city = address.getString("city");
-                country = address.getString("country");
-                
-            } else if(!address.has("house_number")&&
-                    !address.has("road")&&
-                    address.has("postcode")&&
-                    address.has("city")&&
-                    address.has("country")) {
-                postCode = address.getString("postcode");
-                city = address.getString("city");
-                country = address.getString("country");
-            } else if(!address.has("house_number")&&
-                    !address.has("postcode")&&
-                    !address.has("road")&&
-                    address.has("city")&&
-                    address.has("country")) {
-                city = address.getString("city");
-                country = address.getString("country");    
-            } else if(address.has("house_number") && 
-			        address.has("postcode")&&
-			        address.has("road")&&
-			        address.has("city")&&
-		            address.has("country")) {    
-			    addresseNr = address.getString("house_number");
-                postCode = address.getString("postcode");
-                road = address.getString("road");
-                city = address.getString("city");
-                country = address.getString("country");
-			} 
-			
 			Addresse addresse = new Addresse();
-			addresse.setAddresseNr(addresseNr);
-			addresse.setRoad(road);
-			addresse.setCity(city);
-			addresse.setPostCode(postCode);
-			addresse.setCountry(country);
+			addresse.setAddresseNr(getJsonValue(address, "house_number"));
+			addresse.setRoad(getJsonValue(address, "road"));
+			addresse.setCity(getJsonValue(address, "city"));
+			addresse.setPostCode(getJsonValue(address,"postcode"));
+			addresse.setCountry(getJsonValue(address, "country"));
 			Log.i(TAG, addresse.getFullAddress());
 			return addresse;
 		} catch (Exception e) {
@@ -134,6 +98,14 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		}
 
 		return null;
+	}
+	
+	public String getJsonValue(JSONObject jsonObject,String key){
+	    try{
+	    return jsonObject.getString(key);
+	    }catch(Exception e){
+	        return "";
+	    }
 	}
 
 	public static JSONObject getJSONfromURL(String url) {
@@ -148,7 +120,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 			HttpClient httpclient = new DefaultHttpClient();
 			httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT,
 					System.getProperty("http.agent"));
-			HttpPost httppost = new HttpPost(url);
+			HttpGet httppost = new HttpGet(url);
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 			is = entity.getContent();
@@ -185,15 +157,15 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
 
 	// list of location
-	static List<Location> locations = new LinkedList<Location>();
+	 Set<Location> locations = new LinkedHashSet<Location>();
 	// current location
-	static Location current = null;
+	 Location current = null;
 
 	/**
 	 * 
 	 * @return a list of location nearby of the current location
 	 */
-	private static List<Location> locationSuggestions() {
+	private Set<Location> locationSuggestions() {
 		if (current == null) {
 			current = Optimizer.currentBestLoc();
 		} else {
@@ -201,16 +173,19 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 				return locations;
 			}
 		}
-		
+		if(current==null){
+		    return locations;
+		}
 		locations.clear();
 		locations.add(current);
-		while (locations.size() < 5) {
-			Location location = getLocation(current.getLongitude(),
-					current.getLatitude(), 50);
-			if (!locationsExist(locations, location)) {
-				locations.add(location);
-			 }
-		}
+		locations.addAll(getNearestLocations(current));
+//		while (locations.size() < 5) {
+//			Location location = getLocation(current.getLongitude(),
+//					current.getLatitude(), 30);
+//			if (!locationsExist(locations, location)) {
+//				locations.add(location);
+//			 }
+//		}
 		return locations;
 	}
 
@@ -221,7 +196,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	 * @param location
 	 * @return
 	 */
-	private static boolean locationsExist(List<Location> locations,
+	private static boolean locationsExist(Set<Location> locations,
 			Location location) {
 		for (Location l : locations) {
 			if (l.getLatitude() == location.getLatitude()
@@ -288,11 +263,13 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 				if (isneu) {
 					db.insertOrUpdateAddressInDb(location,
 							addr.getAddresseNr(), addr.getRoad(),
-							addr.getRoad(), addr.getCity(), addr.getCountry());
+							addr.getPostCode(), addr.getCity(), addr.getCountry());
 				}
-				addressListTemp.add(addr);
+				addressListTemp.add(addr); 
+				
 			}
 		}
+		db.close();
 		if (!addressListTemp.isEmpty()) {
 			addressList.clear();
 			addressList.addAll(addressListTemp);
@@ -306,7 +283,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	/**
 	 * @return get a list of addresses
 	 */
-	public static Set<Addresse> getAddressList() {
+	public Set<Addresse> getAddressList() {
 		return addressList;
 	}
 
@@ -331,5 +308,59 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 		this.view = addressSuggestionView;
 	}
 	
+	public List<Location> getNearestLocations(Location location){
+	    List<Location> locations=new LinkedList<Location>();
+	    try {
+	        double boundingbox[]=getBoundingBox(location.getLatitude(), location.getLongitude(), 0.030);
+	        StringBuilder url=new StringBuilder("http://overpass-api.de/api/interpreter?data=[out:json];");
+	        StringBuilder param=new StringBuilder("");
+	        param.append("node(").append(boundingbox[0]).append(",").append(boundingbox[1]).append(",");
+	        param.append(boundingbox[2]).append(",").append(boundingbox[3]).append(");out;");
+	       String urlParam= url.toString()+Uri.encode(param.toString(),"UTF-8");
+            JSONObject jsonObj = getJSONfromURL(urlParam);
+
+            JSONArray elements = jsonObj.getJSONArray("elements");
+            int index=0;
+            while(!elements.isNull(index)){
+                JSONObject obj=elements.getJSONObject(index);
+                String lat=getJsonValue(obj, "lat");
+                String lon=getJsonValue(obj, "lon");
+                if(!lat.isEmpty() && !lon.isEmpty()){
+                    Location loc=new Location("");
+                    loc.setLatitude(Double.valueOf(lat));
+                    loc.setLongitude(Double.valueOf(lon));
+                    locations.add(loc);
+                }
+                index++;
+            }
+            return locations;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	    return locations;
+	}
+	   public static double[] getBoundingBox(double lat,double lon,double radius){
+	        double result[]=new double[4];
+	        
+	        
+	        double R = 6371;  // earth radius in km
+
+
+	        double x1 = lon - Math.toDegrees(radius/R/Math.cos(Math.toRadians(lat)));
+
+	        double x2 = lon + Math.toDegrees(radius/R/Math.cos(Math.toRadians(lat)));
+
+	        double y1 = lat + Math.toDegrees(radius/R);
+
+	        double y2 = lat - Math.toDegrees(radius/R);
+	        
+	        result[0]=y2;//s
+	        result[1]=x1;//w
+	        result[2]=y1;//n
+	        result[3]=x2;//e
+	        
+	       
+	        return result;
+	    }
 
 }

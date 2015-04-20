@@ -79,7 +79,6 @@ public class ClassifiedValue {
     private boolean hasContactFax;
     private boolean hasContactWebsite;
     private boolean hasContactEmail;
-     
 
     /**
      * Constructor to create nameRessource and hintRessource from the key.
@@ -110,21 +109,22 @@ public class ClassifiedValue {
         }
     }
 
-    public List <Boolean> getAllUnclassifiedBooleans(){
-    	List <Boolean> booleanList = new ArrayList<Boolean>();
-    	booleanList.add(hasAddrStreet);
-    	booleanList.add(hasAddrHousnumber);
-    	booleanList.add(hasAddrPostcode);
-    	booleanList.add(hasAddrCity);
-    	booleanList.add(hasAddrCountry);
-    	booleanList.add(hasContactPhone);
-    	booleanList.add(hasContactFax);
-    	booleanList.add(hasContactWebsite);
-    	booleanList.add(hasContactEmail);
-    	
-    	return booleanList;
-    	
+    public List<Boolean> getAllUnclassifiedBooleans() {
+        final List<Boolean> booleanList = new ArrayList<Boolean>();
+        booleanList.add(hasAddrStreet);
+        booleanList.add(hasAddrHousnumber);
+        booleanList.add(hasAddrPostcode);
+        booleanList.add(hasAddrCity);
+        booleanList.add(hasAddrCountry);
+        booleanList.add(hasContactPhone);
+        booleanList.add(hasContactFax);
+        booleanList.add(hasContactWebsite);
+        booleanList.add(hasContactEmail);
+
+        return booleanList;
+
     }
+
     public int getId() {
         return id;
     }
@@ -159,7 +159,7 @@ public class ClassifiedValue {
 
     public String getLocalizedName(Context context) {
         Resources resources = context.getResources();
-        int id =
+        final int id =
                 resources.getIdentifier("name_" + getKey().replace(":", "_"),
                         "string", context.getPackageName());
 

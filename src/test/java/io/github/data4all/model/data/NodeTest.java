@@ -118,9 +118,10 @@ public class NodeTest {
     @Test
     public void test_getTagWithKey() {
         Map<Tag, String> tags = new LinkedHashMap<Tag, String>();
-        tags.put(Tags.getTagWithId(10), "motorway");
+        tags.put(Tags.getTagWithId(10), "orchard");
+        System.out.println(Tags.getTagWithId(10));
         testNode.addTags(tags);
-        assertEquals("motorway",
+        assertEquals("orchard",
                 testNode.getTagValueWithKey(Tags.getTagWithId(10)));
     }
 

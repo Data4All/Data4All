@@ -219,7 +219,6 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             }
         });
-       
         final ImageButton resultButton =
                 (ImageButton) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
@@ -311,8 +310,19 @@ public class ResultViewActivity extends AbstractActivity implements
               @Override
               public void onClick(DialogInterface dialog, int which) {
                   final String key = (String) showArray[which];
-                  Log.i(TAG, tagMap.get(key).getKey());
-                  ResultViewActivity.this.changeClassifiedTag(key);
+                  String lastChoice = getString(R.string.name_lastchoice) ;
+                  if(lastChoice.equalsIgnoreCase(key)) {
+                      
+                  	element.setTags(LastChoiceHandler.getInstance()
+                              .getLastChoice(getIntent()
+                              .getExtras().getInt("TYPE_DEF")));
+                  	Log.i(TAG, "TAGSSSSSSLASTCHOICE" + element.getTags().toString());
+                  	ResultViewActivity.this.output();
+                      
+                  }else {
+                	  ResultViewActivity.this.changeClassifiedTag(key);
+                  }
+
               }
           });
           alertDialog.setCancelable(false);
@@ -355,10 +365,11 @@ public class ResultViewActivity extends AbstractActivity implements
             if(entry.getKey() != null){
             final Tag tagKey = entry.getKey();
             tagList.add(tagKey);
-            keyList.add(res.getString(tagKey.getNameRessource()));
+            
             if (Tagging.isClassifiedTag(getString(tagKey.getNameRessource()),
                     res)) {
                 try {
+                	keyList.add(res.getString(tagKey.getNameRessource()));
                     endList.add(getString((Integer) R.string.class
                             .getDeclaredField(
                                     "name_"
@@ -374,9 +385,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 } catch (NoSuchFieldException e) {
                     Log.e(TAG, "", e);
                 }
-            } else {
-                endList.add(element.getTags().get(tagKey));
-            }
+            } 
 
             }
         }
@@ -415,7 +424,10 @@ public class ResultViewActivity extends AbstractActivity implements
 			}
             ClassifiedValue classi = classifiedMap.get(value);
             classifiedValue = classi;
-            keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
+            if(classi != null){
+            	keyList = Tagging.getUnclassifiedTags(classi, res, keyList, element);
+            	endList = Tagging.addUnclassifiedValue(element, endList, keyList, res);
+            }
             
         }
         
@@ -434,6 +446,8 @@ public class ResultViewActivity extends AbstractActivity implements
         addressSuggestionView.addKeyMapEntry(res,classifiedValue);
         addressSuggestionView.setListview(listView);
         addressSuggestionView.setKeyList(keyList);
+        addressSuggestionView.setElement(element);
+        addressSuggestionView.setMapTag(mapTag);
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this); */
@@ -627,7 +641,8 @@ public class ResultViewActivity extends AbstractActivity implements
         Log.i(TAG, "VALUE: " + map.toString());
         for(Entry<Tag,String> entry : map.entrySet()){
         	Tag tag1 = entry.getKey();
-        	if(tag1.getKey().equals(tag.getKey())){
+          
+           if(tag1.getKey().equals(tag.getKey())){
         		Log.i(TAG, "true");
         		text.setText(map.get(tag1));
         		text.setSelection(text.getText().length()-1);
@@ -699,42 +714,12 @@ public class ResultViewActivity extends AbstractActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.buttonResult:
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    ResultViewActivity.this);
-            Log.i(TAG, element.getTags().toString());
-            builder.setMessage(R.string.resultViewAlertDialogMessage);
-            final Intent intent = new Intent(this, LoginActivity.class);
-            builder.setPositiveButton(R.string.yes,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            addOsmElementToDB(element);
-                            startActivityForResult(intent);
-                        }
-                    });
-            builder.setNegativeButton(R.string.maybe,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                        	
-                            setResult(RESULT_OK);
-                            finishWorkflow(null);
-                        }
-                    });
-            builder.setNeutralButton(R.string.no, 
-            		new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					addOsmElementToDB(element);
-                    setResult(RESULT_OK);
-                    finishWorkflow(null);
-                    
-				}
-			});
-            alert = builder.create();
-            alert.show();
-        	// createAlertDialogResult();
-            this.addOsmElementToDB(element);
-            askForGalleryDelete();
+        	LastChoiceHandler.getInstance().setLastChoice(
+                    getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
+            LastChoiceHandler.getInstance().save(this); 
+            
+            
+        	askForGalleryDelete();
             break;
         case R.id.buttonResultToCamera:
             this.addOsmElementToDB(element);
@@ -814,6 +799,8 @@ public class ResultViewActivity extends AbstractActivity implements
     	final AlertDialog.Builder builder = new AlertDialog.Builder(
                 ResultViewActivity.this);
         builder.setMessage(R.string.resultViewAlertDialogMessage);
+        
+        
         final Intent intent = new Intent(this, LoginActivity.class);
         builder.setPositiveButton(R.string.yes,
                 new DialogInterface.OnClickListener() {
@@ -833,7 +820,7 @@ public class ResultViewActivity extends AbstractActivity implements
         		new DialogInterface.OnClickListener() {
 			
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onClick(DialogInterface dialog, int which) {				
 				addOsmElementToDB(element);
                 setResult(RESULT_OK);
                 finishWorkflow(null);
@@ -841,7 +828,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 
 			}
 		});
-        alert = builder.create();
+        alert = builder.show();
         alert.show();
 
     }

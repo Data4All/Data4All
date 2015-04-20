@@ -369,5 +369,25 @@ public class Tagging {
 		}
     	return false;
     }
+    
+    public static List <String> addUnclassifiedValue(AbstractDataElement element, List<String> endList, List<String> keyList,  Resources res) {
+    	List <String> tags = new ArrayList<String>();
+    	List<Tag> tagKeys = new ArrayList<Tag>();
+    	for (Entry<Tag,String> entry : element.getTags().entrySet()) {
+            tags.add(res.getString(entry.getKey().getNameRessource()));
+            tagKeys.add(entry.getKey());
+   	 	}     
+		for (int i = 1; i < keyList.size(); i++) {
+			if(tags.contains(keyList.get(i))){
+				
+				endList.add(element.getTags().get(tagKeys.get(tags.indexOf(keyList.get(i)))));
+			} else {
+				endList.add("");
+			}
+		
+		}
+		return endList;
+    	
+    }
 
 }
