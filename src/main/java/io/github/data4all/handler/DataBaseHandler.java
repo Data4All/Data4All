@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.github.data4all.AddressSuggestion.Addresse;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
@@ -38,7 +39,6 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
-import io.github.data4all.suggestion.Addresse;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

@@ -15,7 +15,7 @@
  */
 package io.github.data4all.model;
 
-import io.github.data4all.suggestion.AddressSuggestionView;
+import io.github.data4all.AddressSuggestion.AddressSuggestionView;
 
 import java.util.List;
 
@@ -101,7 +101,11 @@ public class TwoColumnAdapter extends BaseAdapter {
         return twoLineListItem;
     }
 
-
+   
+    /**
+     * TODO: Steeve
+     * @param suggestionView
+     */
 	public void setSuggestionView(AddressSuggestionView suggestionView) {
 		this.suggestionView = suggestionView;
 	}

@@ -16,6 +16,7 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.AddressSuggestion.AddressSuggestionView;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
@@ -25,7 +26,6 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.network.MapBoxTileSourceV4;
-import io.github.data4all.suggestion.AddressSuggestionView;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
@@ -440,6 +440,9 @@ public class ResultViewActivity extends AbstractActivity implements
         resultButton.setText(endList.get(0));
         Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
         endList.remove(0);
+        /*
+         * TODO: Steeve
+         */
         TwoColumnAdapter twoColumnAdapter = new TwoColumnAdapter(this, keyList, endList);
         twoColumnAdapter.setSuggestionView(addressSuggestionView);
 		listView.setAdapter(twoColumnAdapter);

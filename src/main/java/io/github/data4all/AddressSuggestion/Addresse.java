@@ -1,4 +1,4 @@
-package io.github.data4all.suggestion;
+package io.github.data4all.AddressSuggestion;
 
 import java.io.Serializable;
 

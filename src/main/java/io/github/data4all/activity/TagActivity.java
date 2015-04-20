@@ -16,6 +16,8 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
+import io.github.data4all.AddressSuggestion.AddressSuggestionView;
+import io.github.data4all.AddressSuggestion.Addresse;
 import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -23,8 +25,6 @@ import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
-import io.github.data4all.suggestion.AddressSuggestionView;
-import io.github.data4all.suggestion.Addresse;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
