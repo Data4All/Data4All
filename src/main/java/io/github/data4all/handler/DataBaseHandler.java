@@ -27,13 +27,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.github.data4all.AddressSuggestion.Addresse;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
@@ -1704,7 +1704,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 		values.put(POSTCODE, postCode);
 		values.put(CITY, city);
 		values.put(COUNTRY, country);
-		Addresse addressFromDb = getAddressFromDb(location);
+		Address addressFromDb = getAddressFromDb(location);
 		if (addressFromDb == null) {
 			
 			     db.insert(TABLE_ADDRESSE, null, values);
@@ -1724,7 +1724,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 	 * @param location
 	 * @return
 	 */
-	public Addresse getAddressFromDb(Location location) {
+	public Address getAddressFromDb(Location location) {
 		final SQLiteDatabase db = getReadableDatabase();
 
 		String query = "SELECT " + ADDRESSID + ", " + HOUSENUMBER + " , " + ROAD + " , "
@@ -1749,7 +1749,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 			postCode = cursor.getString(3);
 			city = cursor.getString(4);
 			country = cursor.getString(5);
-			Addresse address = new Addresse();
+			Address address = new Address();
 			address.setAddressId(addressId);
 			address.setAddresseNr(houseNumber);
 			address.setRoad(road);

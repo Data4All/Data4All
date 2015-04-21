@@ -1,4 +1,4 @@
-package io.github.data4all.AddressSuggestion;
+package io.github.data4all.model.data;
 
 import java.io.Serializable;
 
@@ -9,16 +9,16 @@ import java.io.Serializable;
  * @author Steeve
  *
  */
-public class Addresse implements Serializable {
+public class Address implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = -6836778014617785812L;
 
-    // attribute to store a house_number
+    // attribute to save a house_number
     private String addresseNr = "";
-    // attribute to store a road
+    // attribute to save a road
     private String road = "";
     // attribute to save a city
     private String city = "";
@@ -31,7 +31,6 @@ public class Addresse implements Serializable {
     private int addressId;
 
     // all getter and setter method
-
     public void setAddressId(int addressId) {
         this.addressId = addressId;
     }
@@ -119,7 +118,7 @@ public class Addresse implements Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        return getFullAddress().equals(((Addresse) o).getFullAddress());
+        return getFullAddress().equals(((Address) o).getFullAddress());
     }
 
     @Override

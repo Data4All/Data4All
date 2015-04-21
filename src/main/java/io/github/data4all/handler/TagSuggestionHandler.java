@@ -1,8 +1,8 @@
 package io.github.data4all.handler;
 
-import io.github.data4all.AddressSuggestion.AddressSuggestionView;
-import io.github.data4all.AddressSuggestion.Addresse;
+import io.github.data4all.model.data.Address;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.view.AddressSuggestionView;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
@@ -44,7 +43,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     private static final String TAG = "TagSuggestion";
 
     // represent the list of all suggestions Addresses
-    private Set<Addresse> addressList = new LinkedHashSet<Addresse>();
+    private Set<Address> addressList = new LinkedHashSet<Address>();
 
     public Context context;
 
@@ -70,7 +69,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @param location
      * @return
      */
-    public Addresse getAddress(Location location) {
+    public Address getAddress(Location location) {
         try {
             JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
                     + location.getLatitude()
@@ -78,7 +77,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
                     + location.getLongitude() + "&zoom=18&addressdetails=1");
 
             JSONObject address = jsonObj.getJSONObject("address");
-            Addresse addresse = new Addresse();
+            Address addresse = new Address();
             addresse.setAddresseNr(getJsonValue(address, "house_number"));
             addresse.setRoad(getJsonValue(address, "road"));
             addresse.setCity(getJsonValue(address, "city"));
@@ -186,57 +185,15 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         return locations;
     }
 
-    /**
-     * check if a location exist
-     * 
-     * @param locations
-     * @param location
-     * @return
-     * 
-     *         private static boolean locationsExist(Set<Location> locations,
-     *         Location location) { for (Location l : locations) { if
-     *         (l.getLatitude() == location.getLatitude() && l.getLongitude() ==
-     *         location.getLongitude()) { return true; } } return false; }
-     */
-
-    /**
-     * this method generate random locations nearby a given Location
-     * 
-     * @param x0
-     *            longitude
-     * @param y0
-     *            Latitude
-     * @param radius
-     * @return location
-     * 
-     *         public static Location getLocation(double x0, double y0, int
-     *         radius) { Location l = new Location(""); Random random = new
-     *         Random();
-     * 
-     *         // Convert radius from meters to degrees double radiusInDegrees =
-     *         radius / 111000f;
-     * 
-     *         double u = random.nextDouble(); double v = random.nextDouble();
-     *         double w = radiusInDegrees * Math.sqrt(u); double t = 2 * Math.PI
-     *         * v; double x = w * Math.cos(t); double y = w * Math.sin(t);
-     * 
-     *         // Adjust the x-coordinate for the shrinking of the east-west
-     *         distances double new_x = x / Math.cos(y0);
-     * 
-     *         double foundLongitude = new_x + x0; double foundLatitude = y +
-     *         y0; System.out.println("Longitude: " + foundLongitude +
-     *         "  Latitude: " + foundLatitude); l.setLatitude(foundLatitude);
-     *         l.setLongitude(foundLongitude); return l; }
-     */
-
+    
     /**
      * get a list of addresses
      */
     public void getlistOfSuggestionAddress() {
-        Set<Addresse> addressListTemp = new LinkedHashSet<Addresse>();
+        Set<Address> addressListTemp = new LinkedHashSet<Address>();
         DataBaseHandler db = new DataBaseHandler(context);
         for (Location location : locationSuggestions()) {
-            Addresse addr = db.getAddressFromDb(location);
+            Address addr = db.getAddressFromDb(location);
             boolean isneu = false;
             // when an address is not in database, then load address from
             // nominatim
@@ -272,7 +229,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     /**
      * @return get a list of addresses
      */
-    public Set<Addresse> getAddressList() {
+    public Set<Address> getAddressList() {
         return addressList;
     }
 
