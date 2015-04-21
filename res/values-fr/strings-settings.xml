@@ -7,8 +7,8 @@
     <string name="pref_bodyheight_dialog_message">S\'il vous plait donnez votre taille en cm:</string>
     
     <string name="pref_currentuser_title">Utilisateur actuelle</string>
-    <string name="pref_currentuser_dialog_title">Se deconnecter</string>
-    <string name="pref_currentuser_dialog_message">Voulez vous vraiment vous deconnecter?</string>
+    <string name="pref_currentuser_dialog_title">Se déconnecter</string>
+    <string name="pref_currentuser_dialog_message">Voulez vous vraiment vous déconnecter?</string>
     <string name="pref_currentuser_null">Ne pas se connecter</string>
     
     <string name="pref_pointsize_title">grandeur actuelle des points</string>
@@ -24,5 +24,5 @@
     
     <string name="pref_moving_animation_title">Deplacer l\'object sur la carte</string>
     <string name="pref_moving_animation_summary"> Voulez vous deplacer la carte ou l\'object sur la carte?</string>
-    <string name="pref_moving_animation_dialog_title">Voulez vous une animation?</string>
+    <string name="pref_moving_animation_dialog_title">Animation mobile</string>
 </resources>
