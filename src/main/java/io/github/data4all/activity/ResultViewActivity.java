@@ -16,7 +16,6 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.AddressSuggestion.AddressSuggestionView;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
@@ -29,6 +28,7 @@ import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
+import io.github.data4all.view.AddressSuggestionView;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;

@@ -15,7 +15,7 @@
  */
 package io.github.data4all.model;
 
-import io.github.data4all.AddressSuggestion.AddressSuggestionView;
+import io.github.data4all.view.AddressSuggestionView;
 
 import java.util.List;
 
