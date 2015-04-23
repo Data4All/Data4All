@@ -24,13 +24,13 @@
     <string name="returnToCamera">Camera</string>
     <string name="pointOfInterest">Point particulier</string>
     <string name="switchMaps">Changer les cartes</string>
-    <string name="upload_data">Telecharger</string>
+    <string name="upload_data">Télécharger</string>
     <string name="startUpScreen">Écran d\'accueil</string>
     <string name="noDescription"></string>
-    <string name="drawWay">Dessine une voie</string>
-    <string name="drawPoint">Dessine un point</string>
-    <string name="drawArea">Dessine une surface </string>
-    <string name="drawBuilding">Dessine un bâtiment </string>
+    <string name="drawWay">Déssine une voie</string>
+    <string name="drawPoint">Déssine un point</string>
+    <string name="drawArea">Déssine une surface </string>
+    <string name="drawBuilding">Déssine un bâtiment </string>
     <string name="redo">Restaurer</string>
     <string name="undo">Revenir en arrière</string>
     
@@ -49,7 +49,7 @@
 
     <!-- for network -->
     <string name="no_network_title">Connexion internet insdiponible</string>
-    <string name="no_network_message">Connectez votre appareil à internet</string>
+    <string name="no_network_message">Connectez vous au réseau Wi-Fi ou activez les données mobiles</string>
 
     <!-- for login -->
     <string name="usernameHint">Nom d\'utilisateur</string>
@@ -59,7 +59,7 @@
     <string name="registerButton">S\'inscrire maintenant</string>
     <string name="osmLogo">Open-Street-Map Logo</string>
     <string name="login_alertdialog_nonetwork_title">Réseau indisponible</string>
-    <string name="login_alertdialog_nonetwork_message">Connectez votre appareil à internet</string>
+    <string name="login_alertdialog_nonetwork_message">Connectez vous au réseau Wi-Fi ou activez les données mobiles</string>
     <string name="login_alertdialog_error">Erreur</string>
     <string name="login_alertdialog_accessdenied_title">Accès refusé</string>
     <string name="login_alertdialog_accessdenied_message">Le nom de l\'utilisateur où le mot de passe n\'est pas correct</string>
@@ -119,20 +119,20 @@
     <string name="empty"> </string>
     <string name="augmented_reality">Augmenter la réalité</string>
     <string name="noCamSupported"> Désolé mais votre appareil n\'est pas prise en charge par la camera </string>
-    <string name="noLocationFound">"Aucun emplacement trouve. Activer votre service de localisation </string>
+    <string name="noLocationFound">"Aucun emplacement trouvé. Activer votre service de localisation </string>
     <string name="retry">Aucune balise correspondante n\'a été trouvé. Recommencer à nouveau</string>
     <string name="noSensorData">Les informations sur les capteurs sont actuellement insdisponible, Recommencer à nouveau depuis la carte.</string>
 
     
-    <string name="badSensorCalibration">S\'il vous plait tourner vote téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+    <string name="badSensorCalibration">S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
         un huit avec votre téléphone. </string>
-    <string name="badSensorCalibrationTitle">Les Capteurs doivent être recalibrer.</string>
+    <string name="badSensorCalibrationTitle">Les capteurs doivent être recalibrer.</string>
     <string name="badAcceleometerCalibrationTitle">Accéleromètre doit être recalibrer.</string>
     <string name="badMagnetometerCalibrationTitle">Magnétomètre doit être recalibrer.</string>
     <string name="goodSensorCalibrationTitle">Capteurs okay.</string>
     
     <string name="statusNotificationHeadline">Data4All est encore en cours</string>
-    <string name="statusNotification">Die Data4All App est encore en cours dans le système.</string>
+    <string name="statusNotification">Data4All est encore en cours dans le système.</string>
     
     <string name="show_pwd">afficher le mot de passe</string>
     <string name="title_activity_about">À propos de cette Activitée</string>

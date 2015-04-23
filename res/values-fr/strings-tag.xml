@@ -6,13 +6,13 @@
 
     <!-- address tags -->
     <string name="name_addr_street">Rue</string>
-    <string name="name_addr_housenumber">Num�ro de la maison</string>
+    <string name="name_addr_housenumber">Numéro de la maison</string>
     <string name="name_addr_postcode">Code postal</string>
     <string name="name_addr_city">Ville</string>
     <string name="name_addr_country">Pays</string>
 
     <!-- contact tags -->
-    <string name="name_contact_phone">Numero de t�l�phone.</string>
+    <string name="name_contact_phone">Numero de téléphone.</string>
     <string name="name_contact_fax">Numero de Fax.</string>
     <string name="name_contact_website">Site Web</string>
     <string name="name_contact_email">Adresse e-mail</string>
@@ -20,26 +20,26 @@
     <!-- classified tag highway -->
     <string name="name_highway">Voie de circulation</string>
     <!-- classified values highway -->
-    <string name="name_highway_residential">R�sidentiel</string>
+    <string name="name_highway_residential">Résidentiel</string>
     <string name="name_highway_service">Voie d\'accès</string>
     <string name="name_highway_track">Chemin à travers les champs</string>
     <string name="name_highway_unclassified">Iconnue</string>
     <string name="name_highway_footway">Trottoir</string>
     <string name="name_highway_tertiary">Route secondaire</string>
-    <string name="name_highway_path">Itin�raire</string>
+    <string name="name_highway_path">Itinéraire</string>
     <string name="name_highway_secondary">Route de Campagne</string>
-    <string name="name_highway_primary">Route d�partementale</string>
-    <string name="name_highway_bus_stop">Arr�t de Bus</string>
-    <string name="name_highway_crossing">Passage clout�</string>
-    <string name="name_highway_turning_circle">Rue latt�rale</string>
+    <string name="name_highway_primary">Route départementale</string>
+    <string name="name_highway_bus_stop">Arrêt de Bus</string>
+    <string name="name_highway_crossing">Passage clouté</string>
+    <string name="name_highway_turning_circle">Rue lattérale</string>
     <string name="name_highway_cycleway">Piste cyclable</string>
     <string name="name_highway_traffic_signals">Feux de Signalisation</string>
-    <string name="name_highway_trunk">Rue puissante</string>
-    <string name="name_highway_living_street">Rue r�sidentielle</string>
+    <string name="name_highway_trunk">Axe lourd</string>
+    <string name="name_highway_living_street">Rue résidentielle</string>
     <string name="name_highway_motorway">Autoroute</string>
     <string name="name_highway_steps">Escalier</string>
-    <string name="name_highway_motorway_link">Bretelle d\'acces à l\'autoroute</string>
-    <string name="name_highway_street_lamp">R�verb�re</string>
+    <string name="name_highway_motorway_link">Bretelle d\'accès à l\'autoroute</string>
+    <string name="name_highway_street_lamp">Réverbère</string>
     <string name="name_highway_pedestrian">Chemin, Lieu, voie pour pietons</string>
     <string name="name_highway_road">Rue</string>
 
@@ -51,8 +51,8 @@
     <string name="name_waterway_ditch">Fosse de drainage</string>
     <string name="name_waterway_riverbank">Rive</string>
     <string name="name_waterway_dam">grand Barrage</string>
-    <string name="name_waterway_weir">p�tit Barrage</string>
-    <string name="name_waterway_lock_gate">Porte d\'�cluse</string>
+    <string name="name_waterway_weir">Pétit Barrage</string>
+    <string name="name_waterway_lock_gate">Porte d\'écluse</string>
 
     <!-- classified tag barrier -->
     <string name="name_barrier">Barrage</string>
@@ -64,19 +64,19 @@
     <string name="name_barrier_bollard">Poteau</string>
     <string name="name_barrier_lift_gate">Barrière</string>
     <string name="name_barrier_retaining_wall">Mur de soutenance</string>
-    <string name="name_barrier_stile">Style de Cl�ture</string>
+    <string name="name_barrier_stile">Style de Clôture</string>
     <string name="name_barrier_cycle_barrier">Barrière pour Vélos</string>
     <string name="name_barrier_entrance">Vide</string>
     <string name="name_barrier_block">Barrière</string>
     <string name="name_barrier_kerb">Pierre de bordure</string>
     <string name="name_barrier_toll_booth">Péage </string>
-    <string name="name_barrier_cattle_grid">Grille de b�tail</string>
+    <string name="name_barrier_cattle_grid">Grille de bétail</string>
     <string name="name_barrier_kissing_gate">Construstion en acier semi-circulaire</string>
     <string name="name_barrier_city_wall">Mur de Ville</string>
     <string name="name_barrier_ditch">Fossé</string>
 
     <!-- classified tag amenity -->
-    <string name="name_amenity">Am�nagement </string>
+    <string name="name_amenity">Aménagement </string>
     <!-- classified values amenity -->
     <string name="name_amenity_parking">Aire de stationnement</string>
     <string name="name_amenity_place_of_worship">Lieu de culte</string>
@@ -87,9 +87,9 @@
     <string name="name_amenity_bank">Banque</string>
     <string name="name_amenity_post_box">Boite aux lettres</string>
     <string name="name_amenity_fast_food">Restauration rapide</string>
-    <string name="name_amenity_cafe">Caf�</string>
-    <string name="name_amenity_grave_yard">Cimeti�re</string>
-    <string name="name_amenity_recycling">Am�nagement pour recyclage</string>
+    <string name="name_amenity_cafe">Café</string>
+    <string name="name_amenity_grave_yard">Cimetière</string>
+    <string name="name_amenity_recycling">Aménagement pour recyclage</string>
     <string name="name_amenity_kindergarten">Jardin</string>
     <string name="name_amenity_pharmacy">Phamarcie</string>
     <string name="name_amenity_hospital">Hospital</string>
@@ -98,9 +98,9 @@
     <string name="name_amenity_waste_basket">Boite à ordures</string>
     <string name="name_amenity_pub">Bistrot</string>
     <string name="name_amenity_toilets">Toilettes</string>
-    <string name="name_amenity_public_building">B�timent public</string>
+    <string name="name_amenity_public_building">Bâtiment public</string>
     <string name="name_amenity_shelter">Abri</string>
-    <string name="name_amenity_telephone">T�l�phone</string>
+    <string name="name_amenity_telephone">Téléphone</string>
     <string name="name_amenity_drinking_water">Lieu pour boire de l\'eau</string>
     <string name="name_amenity_atm">Distributeur automatique de billets </string>
     <string name="name_amenity_bar">Bar</string>
@@ -108,7 +108,7 @@
     <string name="name_amenity_police">Police</string>
     <string name="name_amenity_townhall">Mairie</string>
     <string name="name_amenity_parking_space">Place de stationnement</string>
-    <string name="name_amenity_hunting_stand">Aff�t perch�</string>
+    <string name="name_amenity_hunting_stand">Affût perché</string>
     <string name="name_amenity_vending_machine">Distributeur automatique</string>
     <string name="name_amenity_fountain">Fontaine</string>
     <string name="name_amenity_library">Librairie</string>
@@ -117,26 +117,26 @@
     <string name="name_amenity_university">Université</string>
     <string name="name_amenity_social_facility">Institution sociale</string>
     <string name="name_amenity_car_wash">Laverie de voitures</string>
-    <string name="name_amenity_college">École sup�rieure(polytechnique)</string>
-    <string name="name_amenity_bus_station">Arr�t de bus</string>
-    <string name="name_amenity_marketplace">March�</string>
+    <string name="name_amenity_college">École supérieure(polytechnique)</string>
+    <string name="name_amenity_bus_station">Arrêt de bus</string>
+    <string name="name_amenity_marketplace">Marché</string>
     <string name="name_amenity_dentist">Dentiste</string>
     <string name="name_amenity_waste_disposal">Lieu de traitement des ordures</string>
     <string name="name_amenity_community_centre">Centre communautaire</string>
-    <string name="name_amenity_theatre">Th�atre,Opera</string>
+    <string name="name_amenity_theatre">Théatre,Opera</string>
     <string name="name_amenity_taxi">Taxi</string>
     <string name="name_amenity_cinema">Cinema</string>
-    <string name="name_amenity_parking_entrance">l\'entr�e du parking</string>
+    <string name="name_amenity_parking_entrance">Entrée de parking</string>
     <string name="name_amenity_clinic">Clinique</string>
     <string name="name_amenity_bicycle_rental">Service de location de voitures</string>
-    <string name="name_amenity_veterinary">Cabinet pour v�t�rinaire</string>
+    <string name="name_amenity_veterinary">Cabinet pour vétérinaire</string>
     <string name="name_amenity_fire_hydrant">Bouche d\'incendie</string>
     <string name="name_amenity_courthouse">Tribunal</string>
     <string name="name_amenity_embassy">Ambassade</string>
     <string name="name_amenity_water_point">Abreuvoir</string>
 
     <!-- classified tag building -->
-    <string name="name_building">B�timents</string>
+    <string name="name_building">Bâtiment</string>
     <!-- classified values building -->
     <string name="name_building_house">Maison</string>
     <string name="name_building_residential">Immeuble d\'habitation</string>
@@ -148,11 +148,11 @@
     <string name="name_building_garages">Garages</string>
     <string name="name_building_detached">Maison individuelle</string>
     <string name="name_building_commercial">Magasin</string>
-    <string name="name_building_terrace">Rang�e de maisons</string>
-    <string name="name_building_school">�cole</string>
-    <string name="name_building_shed">Entrep�t</string>
-    <string name="name_building_retail">Commerce de d�tail</string>
-    <string name="name_building_farm_auxiliary">�table </string>
+    <string name="name_building_terrace">Rangée de maisons</string>
+    <string name="name_building_school">École</string>
+    <string name="name_building_shed">Entrepôt</string>
+    <string name="name_building_retail">Commerce de détail</string>
+    <string name="name_building_farm_auxiliary">Étabe </string>
     <string name="name_building_church">Eglise</string>
     <string name="name_building_service">Service</string>
     <string name="name_building_greenhouse">Serre</string>
@@ -166,17 +166,17 @@
     <!-- classified tag landuse -->
     <string name="name_landuse">L\'utilisation des terres</string>
     <!-- classified values landuse -->
-    <string name="name_landuse_forest">For�t</string>
-    <string name="name_landuse_residential">Zone r�sidentielle</string>
+    <string name="name_landuse_forest">Forêt</string>
+    <string name="name_landuse_residential">Zone résidentielle</string>
     <string name="name_landuse_grass">Pelouse </string>
     <string name="name_landuse_farmland">Terrain agricole</string>
     <string name="name_landuse_meadow">Prairie</string>
-    <string name="name_landuse_farm">P�turage </string>
+    <string name="name_landuse_farm">Pâturage </string>
     <string name="name_landuse_farmyard">Terre labourable </string>
     <string name="name_landuse_industrial">Zone indistruelle</string>
     <string name="name_landuse_reservoir">Reservoir </string>
     <string name="name_landuse_orchard">Verger</string>
-    <string name="name_landuse_cemetery">Cimeti�re</string>
+    <string name="name_landuse_cemetery">Cimetière</string>
     <string name="name_landuse_vineyard">Vignoble</string>
     <string name="name_landuse_allotments">Jardinet </string>
     <string name="name_landuse_commercial">Zone artisanale</string>
@@ -208,49 +208,49 @@
     <!-- classified tag vending -->
     <string name="name_vending">Distributeur automatique</string>
     <!-- classified values vending -->
-    <string name="name_vending_cigarettes">Distributeur automatique de Cigarettes</string>
+    <string name="name_vending_cigarettes">Distributeur automatique de cigarettes</string>
     <string name="name_vending_parking_tickets">Distributeur automatique de billets de stationnement</string>
     <string name="name_vending_excrement_bags">Distributeur de sacs pour ramasser la merde du chien</string>
-    <string name="name_vending_public_transport_tickets">Distributeur automatique de billets de ticket</string>
+    <string name="name_vending_public_transport_tickets">Distributeur automatique de billets de transport</string>
     <string name="name_vending_drinks">Distributeur automatique de boissons</string>
     <string name="name_vending_sweets">Distributeur automatique de fiandises</string>
-    <string name="name_vending_parcel_pickup">Rammassage de coulis</string>
-    <string name="name_vending_parcel_mail_in">Envoie de coulis</string>
-    <string name="name_vending_condoms">Distributeur automatique de pr�servatifs</string>
+    <string name="name_vending_parcel_pickup">Endroit pour récuperer des coulis</string>
+    <string name="name_vending_parcel_mail_in">Endroit pour envoyer des coulis</string>
+    <string name="name_vending_condoms">Distributeur automatique de préservatifs</string>
     <string name="name_vending_stamps">Distributeur automatique de timbres</string>
     <string name="name_vending_news_paper">Distributeur automatique de journaux</string>
     <string name="name_vending_bicycle_tube">Distributeur automatique de tuyeaux pour vélos</string>
     <string name="name_vending_food">Distributeur automatique de casse-croutte</string>
-    <string name="name_vending_fuel">Distributeur automatique d\'essence</string>
+    <string name="name_vending_fuel">Distributeur automatique de carburant</string>
     <string name="name_vending_yes">Inconnu</string>
 
     <!-- classified tag shop -->
-    <string name="name_shop">Magasins</string>
+    <string name="name_shop">Boutique</string>
     <!-- classified values shop -->
     <string name="name_shop_supermarket">Super marché</string>
     <string name="name_shop_convenience">Petits magasins</string>
-    <string name="name_shop_clothes">Magasin de v�tements</string>
+    <string name="name_shop_clothes">Boutique de vêtements</string>
     <string name="name_shop_bakery">Boulangerie</string>
     <string name="name_shop_hairdresser">Salon de Coiffure</string>
-    <string name="name_shop_car_repair">Atelier de reparation des voitures</string>
+    <string name="name_shop_car_repair">Atelier de réparation des voitures</string>
     <string name="name_shop_car">Maison de vente de Voitures</string>
     <string name="name_shop_kiosk">Kiosque</string>
-    <string name="name_shop_doityourself">March� de la construction</string>
+    <string name="name_shop_doityourself">Marché de la construction</string>
     <string name="name_shop_yes">Iconnue</string>
-    <string name="name_shop_butcher">Boucher</string>
+    <string name="name_shop_butcher">Boucherie</string>
     <string name="name_shop_florist">Fleuriste</string>
     <string name="name_shop_mall">Centre commercial</string>
     <string name="name_shop_furniture">Maison d\'ameublement</string>
-    <string name="name_shop_bicycle">Magasin de V�los</string>
-    <string name="name_shop_alcohol">Magasin d\'alcool</string>
+    <string name="name_shop_bicycle">Boutique de Vélos</string>
+    <string name="name_shop_alcohol">Boutique d\'alcool</string>
     <string name="name_shop_books">Librairie</string>
-    <string name="name_shop_shoes">Magasin de chaussures</string>
-    <string name="name_shop_electronics">Magasin d\' appareils �lectroniques</string>
+    <string name="name_shop_shoes">Boutique de chaussures</string>
+    <string name="name_shop_electronics">Boutique d\' appareils électroniques</string>
     <string name="name_shop_department_store">Magasin</string>
     <string name="name_shop_hardware">Quincaillerie</string>
     <string name="name_shop_jewelry">Bijouterie</string>
     <string name="name_shop_optician">Opticien</string>
-    <string name="name_shop_mobile_phone">Magasins de t�l�phones</string>
+    <string name="name_shop_mobile_phone">Boutique de téléphones</string>
 
     <!-- hints: -->
 
@@ -272,44 +272,44 @@
 
 
     <!-- description classified values highway -->
-    <string name="description_highway_residential">Routes dans des zones r�sidentielles ou acc�dant à des zones r�sidentielles.</string>
-    <string name="description_highway_service">Utilis� pour acc�der à un b�timent, une station-service sur autoroute, une plage, un camping, une zone industrielle ou une zone d\'activit�.</string>
+    <string name="description_highway_residential">Routes dans des zones résidentielles ou accédant à des zones résidentielles.</string>
+    <string name="description_highway_service">Utilisé pour accéder à un bâtiment, une station-service sur autoroute, une plage, un camping, une zone industrielle ou une zone d\'activité.</string>
     <string name="description_highway_track">Piste pour un usage agricole, de manière typique un chemin à travers champs, un chemin forestier, etc.</string>
-    <string name="description_highway_unclassified">Route bitum�e non-class�e, mais d\'acc�s public et non-r�sidentielle.</string>
-    <string name="description_highway_footway">D�igne un chemin exclusivement/majoritairement pour les pi�tons.</string>
-    <string name="description_highway_tertiary">Route r�liant des villages.</string>
-    <string name="description_highway_path">Un chemin g�n�rique.</string>
-    <string name="description_highway_secondary">Une route r�liant des villes.</string>
-    <string name="description_highway_primary">Une route principale r�liant de grandes villes.</string>
-    <string name="description_highway_bus_stop">D�signe un arr�t de bus des transports publics.</string>
-    <string name="description_highway_crossing">Les pi�tons peuvent traverser la rue ici (par exemple passage pi�tons).</string>
-    <string name="description_highway_turning_circle">Une zone �largie permettant aux v�hicules de manoeuvrer plus facilement.</string>
-    <string name="description_highway_cycleway">Pour les pistes s�par�es des routes principales, et d�sign�es principalement ou exclusivement à l\'usage des bicyclettes.</string>
-    <string name="description_highway_traffic_signals">Un feu de circulation permettant la r�gulation du trafic routier.</string>
+    <string name="description_highway_unclassified">Route bitumée non-classée, mais d\'accès public et non-résidentielle.</string>
+    <string name="description_highway_footway">Désigne un chemin exclusivement/majoritairement pour les piétons.</string>
+    <string name="description_highway_tertiary">Route réliant des villages.</string>
+    <string name="description_highway_path">Un chemin générique.</string>
+    <string name="description_highway_secondary">Une route réliant des villes.</string>
+    <string name="description_highway_primary">Une route principale réliant de grandes villes.</string>
+    <string name="description_highway_bus_stop">Désigne un arrêt de bus des transports publics.</string>
+    <string name="description_highway_crossing">Les piétons peuvent traverser la rue ici (par exemple passage piétons).</string>
+    <string name="description_highway_turning_circle">Une zone élargie permettant aux véhicules de manoeuvrer plus facilement.</string>
+    <string name="description_highway_cycleway">Pour les pistes séparées des routes principales, et désignées principalement ou exclusivement à l\'usage des bicyclettes.</string>
+    <string name="description_highway_traffic_signals">Un feu de circulation permettant la régulation du trafic routier.</string>
     <string name="description_highway_trunk">Routes importante, qui ne sont pas des autoroutes.</string>
-    <string name="description_highway_living_street">Zone de rencontre - Routes r�sidentielles, mais avec une r�glementation différente, comme une limite de vitesse plus basse.</string>
-    <string name="description_highway_motorway">Ce sont des routes à forte capacit� pr�vues pour faire circuler à grande vitesse des véhicules motorisés, et ce avec un maximum de vitesse. </string>
-    <string name="description_highway_steps">Escaliers sur le chemin des pi�tons.</string>
-    <string name="description_highway_motorway_link">Les routes r�liant les autoroutes au reste du r�seau.</string>
-    <string name="description_highway_street_lamp">Un poteau simple avec un ou plusieurs feux pour �clairer la rue.</string>
-    <string name="description_highway_pedestrian">Pour des rues exclusivement pi�tonnes (souvent des rues commercantes).</string>
-    <string name="description_highway_road">Route dont on ne conna�t pas la classification.</string>
+    <string name="description_highway_living_street">Zone de rencontre - Routes résidentielles, mais avec une réglementation différente, comme une limite de vitesse plus basse.</string>
+    <string name="description_highway_motorway">Ce sont des routes à forte capacité prévues pour faire circuler à grande vitesse des véhicules motorisés, et ce avec un maximum de vitesse. </string>
+    <string name="description_highway_steps">Escaliers sur le chemin des piétons.</string>
+    <string name="description_highway_motorway_link">Les routes réliant les autoroutes au reste du réseau.</string>
+    <string name="description_highway_street_lamp">Un poteau simple avec un ou plusieurs feux pour éclairer la rue.</string>
+    <string name="description_highway_pedestrian">Pour des rues exclusivement piétonnes (souvent des rues commercantes).</string>
+    <string name="description_highway_road">Route dont on ne connait pas la classification.</string>
 
     <!-- description classified values waterway -->
-    <string name="description_waterway_stream">Une voie d\'eau naturelle trop �troite pour �tre consid�r� comme une rivi�re. Vous pouvez probablement sauter.</string>
-    <string name="description_waterway_river">Rivi�re</string>
-    <string name="description_waterway_ditch">Foss�. Petit cours d\'eau artificiel de drainage, souvent pr�sent le long des routes ou en bordure des champs.</string>
-    <string name="description_waterway_riverbank">Drain. Cours d\'eau artificiel utilis� pour �vacuer les eaux pluviales,les eaux grises ou cours d\'eau canalis�.</string>
+    <string name="description_waterway_stream">Une voie d\'eau naturelle trop étroite pour être considéré comme une rivière. Vous pouvez probablement sauter.</string>
+    <string name="description_waterway_river">Rivière</string>
+    <string name="description_waterway_ditch">Fossé. Petit cours d\'eau artificiel de drainage, souvent présent le long des routes ou en bordure des champs.</string>
+    <string name="description_waterway_riverbank">Drain. Cours d\'eau artificiel utilisé pour évacuer les eaux pluviales,les eaux grises ou cours d\'eau canalisé.</string>
     <string name="description_waterway_dam">Un mur construit en travers un cours d\'eau pour retenir l\'eau. Normalement l\'eau ne passe pas par dessus un barrage.</string>
-    <string name="description_waterway_weir">Un petit barrage construit en travers une rivi�re, parfois à des fins industrielles. L\'eau peut passer par dessus le barrage.</string>
-    <string name="description_waterway_lock_gate">Porte d\'�cluse.</string>
+    <string name="description_waterway_weir">Un petit barrage construit en travers une rivière, parfois à des fins industrielles. L\'eau peut passer par dessus le barrage.</string>
+    <string name="description_waterway_lock_gate">Porte d\'écluse.</string>
 
     <!-- description classified values barrier -->
     <string name="description_barrier_fence"></string>
-    <string name="description_barrier_wall">C\'est une structure ind�pendante, créée pour restreindre ou empêcher le mouvement au-delà d\'une limite, fabriquée généralement en briques</string>
-    <string name="description_barrier_gate">Partie contig�e à un mur ou une clôture qui peut être ouverte pour permettre le passage : barrière, portail.</string>
+    <string name="description_barrier_wall">C\'est une structure indépendante, créée pour restreindre ou empêcher le mouvement au-delà d\'une limite, fabriquée généralement en briques</string>
+    <string name="description_barrier_gate">Partie contigüe à un mur ou une clôture qui peut être ouverte pour permettre le passage : barrière, portail.</string>
     <string name="description_barrier_hedge">C\'est une association d\'arbustes ou d\'arbres généralement plantés et entretenus pour former une clôture.</string>
-    <string name="description_barrier_bollard">Obstacle (Poteau, borne) destin�emp�cher acc�s rtains véhicules.</string>
+    <string name="description_barrier_bollard">Obstacle (Poteau, borne) destiné à empêcher accès à certains véhicules.</string>
     <string name="description_barrier_lift_gate">C\'est un poteau pivote qui bloque l\'accès des véhicules à travers un point contrôlé.</string>
     <string name="description_barrier_retaining_wall">C\'est une structure qui retient le sol ou la roche d\'un bâtiment. Les murs de soutènement préviennent  les mouvement de décente ou l\’érosion et fournissent un support pour les changements de niveaux verticaux ou quasi-verticaux.</string>
     <string name="description_barrier_stile">C\'est une structure qui offre aux gens un passage sur une frontière par des escaliers, des échelles ou des espaces étroits.</string>
@@ -333,7 +333,7 @@
     <string name="description_amenity_bank">Banque.</string>
     <string name="description_amenity_post_box">Utilisé pour marquer l\'emplacement d\'une boîte aux lettres.</string>
     <string name="description_amenity_fast_food">Est un endroit pour la restauration rapide.</string>
-    <string name="description_amenity_cafe">Endroit où on peut commander du café.</string>
+    <string name="description_amenity_cafe">Endroit où vous pouvez commander du café.</string>
     <string name="description_amenity_grave_yard">Pour signaler les lieux où les gens, ou quelques fois les animaux sont enterrés.</string>
     <string name="description_amenity_recycling">C\'est un nœud ou un polygone pour marquer les points de collecte en vue de recyclage et valorisation.</string>
     <string name="description_amenity_kindergarten">Lieu d\'accueil de très jeunes enfants pour les préparer à l\'enseignement élémentaire (pré-scolaire).</string>
@@ -349,13 +349,13 @@
     <string name="description_amenity_telephone">Désigne un téléphone public.</string>
     <string name="description_amenity_drinking_water">Désigne l\'emplacement d\'un robinet ou autre accès à de l\'eau potable.</string>
     <string name="description_amenity_atm">Désigne un appareil qui donne accès aux transactions financières</string>
-    <string name="description_amenity_bar">Désigne un lieu ou on peut boire des boissons alcoolisées.</string>
+    <string name="description_amenity_bar">Désigne un lieu où vous pouvez boire des boissons alcoolisées.</string>
     <string name="description_amenity_fire_station">Désigne l\'emplacement d\'une caserne de pompiers.</string>
     <string name="description_amenity_police">Désigne un poste ou commissariat de police.</string>
     <string name="description_amenity_townhall">Désigne un bâtiment où l\'administration d\'une ville est située.</string>
     <string name="description_amenity_parking_space">Désigne un emplacement particulier au sein d\'un parking.</string>
     <string name="description_amenity_vending_machine">Désgine une machine qui  vend des marchandises, billets, etc.</string>
-    <string name="description_amenity_fountain">Désigne Une fontaine à fonction décorative / sculpturale / récréative. </string>
+    <string name="description_amenity_fountain">Désigne une fontaine à fonction décorative / sculpturale / récréative. </string>
     <string name="description_amenity_library">Désigne une bibliothèque.</string>
     <string name="description_amenity_swimming_pool">Désigne un lieu pou nager.</string>
     <string name="description_amenity_doctors">C\'est un endroit où on peut obtenir des soins médicaux.</string>
@@ -364,7 +364,7 @@
     <string name="description_amenity_car_wash">C\'est un lieu où l\'on peut laver sa voiture.</string>
     <string name="description_amenity_college">Collège</string>
     <string name="description_amenity_bus_station">C\'est un endroit où des chauffeurs de bus peuvent s\'arrêter pour prendre des passagers.</string>
-    <string name="description_amenity_marketplace">C\' endroit où l\'on peut acheter des biens de consommation (nourriture, vêtements, bibelots).</string>
+    <string name="description_amenity_marketplace">C\'est un endroit où l\'on peut acheter des biens de consommation (nourriture, vêtements, bibelots).</string>
     <string name="description_amenity_dentist">Désigne le bâtiment d\'un dentiste.</string>
     <string name="description_amenity_waste_disposal">Désigne un lieu utilisé pour le traitement des déchets.</string>
     <string name="description_amenity_community_centre">Salle de fêtes, salle d\'association, etc.</string>
@@ -384,7 +384,7 @@
     <string name="description_building_house">Maison individuelle habituellement occupée par une famille.</string>
     <string name="description_building_residential">Bâtiment residentiel</string>
     <string name="description_building_garage">Signale un garage privé à propriétaire ou utilisateur unique.</string>
-    <string name="description_building_apartments">C\'est un bâtiment disposés en logements individuels, souvent à des étages différents.Ils peuvent également avoir des points de vente au rez de chaussée.</string>
+    <string name="description_building_apartments">C\'est un bâtiment disposés en logements individuels, souvent à des étages différents. Ils peuvent également avoir des points de vente au rez de chaussée.</string>
     <string name="description_building_hut">Un petit abri</string>
     <string name="description_building_industrial">Un bâtiment où certains processus industriels ont lieu.</string>
     <string name="description_building_roof">Pour saisir les toitures ouvertes sur au moins deux côtés.</string>
@@ -464,7 +464,7 @@
     <!-- description classified values shop -->
     <string name="description_shop_supermarket">Grand magasin d\'alimentation et divers.</string>
     <string name="description_shop_convenience">Épicerie ou supérette: petit commerce de proximité qui vend quelques produits que l\'on trouve dans les supermarchés.</string>
-    <string name="description_shop_clothes">Magasin de vetements.</string>
+    <string name="description_shop_clothes">Magasin de vêtements.</string>
     <string name="description_shop_bakery">Boulangerie ou pâtisserie. Point de fabrication et de vente de pain.</string>
     <string name="description_shop_hairdresser">Est un lieu où vous pouvez vous faire couper les cheveux.</string>
     <string name="description_shop_car_repair">Magasin/service réparant les véhicules.</string>

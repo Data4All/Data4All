@@ -4,25 +4,25 @@
     <string name="pref_bodyheight_title">Taille</string>
     <string name="pref_bodyheight_summary">Entrez votre taille</string>
     <string name="pref_bodyheight_dialog_title">Entrez votre taille</string>
-    <string name="pref_bodyheight_dialog_message">S\'il vous plait donnez votre taille en cm:</string>
+    <string name="pref_bodyheight_dialog_message">S\'il vous plait entrez votre taille en cm:</string>
     
     <string name="pref_currentuser_title">Utilisateur actuelle</string>
     <string name="pref_currentuser_dialog_title">Se déconnecter</string>
     <string name="pref_currentuser_dialog_message">Voulez vous vraiment vous déconnecter?</string>
     <string name="pref_currentuser_null">Ne pas se connecter</string>
     
-    <string name="pref_pointsize_title">grandeur actuelle des points</string>
-    <string name="pref_pointsize_dialog_title">Grandeur des points</string>
-    <string name="pref_pointsize_dialog_message">S\'il vous plait donnez une nouvelle taille aux points.</string>   
+    <string name="pref_pointsize_title">Taille actuelle des points</string>
+    <string name="pref_pointsize_dialog_title">Taille des points</string>
+    <string name="pref_pointsize_dialog_message">S\'il vous plait définissez une nouvelle taille pour le point.</string>   
     <string name="auto_rotate_title">Orientation automatique de la carte</string>
 
-    <string name="pref_gallery_deletemode_title">Suppression standard de la galerie</string>
+    <string name="pref_gallery_deletemode_title">Suppression de la galerie</string>
     <string name="pref_gallery_deletemode_summary">Voulez vous supprimer la photo après avoir terminé?</string>
-    <string name="pref_gallery_deletemode_dialog_title">Processus de suppression</string>
+    <string name="pref_gallery_deletemode_dialog_title">Supprimer l\'action</string>
     
-    <string name="pref_gallery_deletemode_default">Question</string>
+    <string name="pref_gallery_deletemode_default">Démander</string>
     
-    <string name="pref_moving_animation_title">Deplacer l\'object sur la carte</string>
-    <string name="pref_moving_animation_summary"> Voulez vous deplacer la carte ou l\'object sur la carte?</string>
+    <string name="pref_moving_animation_title">Déplacer l\'object sur l\'apercu de la carte</string>
+    <string name="pref_moving_animation_summary"> Comment devrait fonctionner le déplacement d\'objets dans la carte de prévisualisation?</string>
     <string name="pref_moving_animation_dialog_title">Animation mobile</string>
 </resources>
