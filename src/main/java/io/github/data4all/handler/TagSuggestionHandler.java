@@ -262,7 +262,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         List<Location> locations = new LinkedList<Location>();
         try {
             double boundingbox[] = getBoundingBox(location.getLatitude(),
-                    location.getLongitude(), 0.030);
+                    location.getLongitude(), 0.010);
             StringBuilder url = new StringBuilder(
                     "http://overpass-api.de/api/interpreter?data=[out:json];");
             StringBuilder param = new StringBuilder("");

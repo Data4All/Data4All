@@ -184,12 +184,12 @@ public class AddressSuggestionView implements OnClickListener,
     public void onClick(View arg0) {
         Button selectAddress = (Button) arg0;
         TagSuggestionHandler handler = new TagSuggestionHandler();
-
+        handler.execute();
         // load addresses when user click of the button selectAddress
         if (selectAddress.getText().equals(btnSelectAddress.getText())) {
             handler.setContext(this.context);
             handler.setView(this);
-            handler.execute();
+            handler.getAddressList();
         }
 
     }
@@ -352,7 +352,7 @@ public class AddressSuggestionView implements OnClickListener,
         booleanList = value.getAllUnclassifiedBooleans();
 
         for (int i = 0; i < booleanList.size(); i++) {
-            if (booleanList.get(i)
+            if (booleanList.get(i) 
                     && !keyMapView.containsValue(res.getString(tagList.get(i)
                             .getNameRessource()))) {
                 Tag tag = tagList.get(i);
