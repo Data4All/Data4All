@@ -17,7 +17,9 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
@@ -25,6 +27,7 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.SpeechRecognition;
 import io.github.data4all.util.Tagging;
+import io.github.data4all.view.AddressSuggestionView;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -58,6 +61,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +98,10 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
     private AbstractDataElement element;
     // The Ressource
     private Resources res;
+    
+    AddressSuggestionView addressView;
+    Spinner addressSugestionSpinner;
+    
 
     /**
      * Called when the activity is first created.
@@ -329,7 +337,13 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
 
     public void createDialog(List<Tag> arrayList, String title,
             final Boolean first1) {
-
+        
+        /*if(addressView==null){
+        addressView = new AddressSuggestionView(context);
+        
+        } */ 
+        
+        
         dialog1 = new Dialog(this);
         dialog1.setCancelable(false);
         dialog1.setContentView(R.layout.dialog_dynamic);
@@ -343,16 +357,49 @@ public class TagActivity extends AbstractActivity implements OnClickListener {
         next.setId(R.id.buttonNext);
         finish.setId(R.id.buttonFinish);
         first = first1;
+       /* TagSuggestionHandler.startAdresseCollector();
+        if(TagSuggestionHandler.getAddressList()!=null && !TagSuggestionHandler.getAddressList().isEmpty() && first){
+        	addressView.setAddresses(TagSuggestionHandler.getAddressList());
+        	addressView.fillSpinner(this);
+        	if(addressSugestionSpinner==null){
+        		addressSugestionSpinner=addressView.getSpinner();
+        	    layout.addView(addressSugestionSpinner);
+        	}
+        	
+        }
+        Addresse bestAddress = addressView.getBestAddresse();
+        if(bestAddress!=null){
+        	addressSugestionSpinner.setSelection(addressView.getDataAdapter().getPosition(bestAddress.getFullAddress()));
+        	addressView.getDataAdapter().notifyDataSetChanged();
+        }*/
         edit = new ArrayList<EditText>();
         for (int i = 0; i < arrayList.size(); i++) {
             final EditText text = new EditText(this);
             final Tag tag = arrayList.get(i);
             //check if a tag has a lastvalue(e.g street, country, etc...)
-            if (tag.getLastValue() != null) {
-                text.setText(tag.getLastValue());
-            } else {
-                text.setHint(tag.getHintRessource());
+            text.setHint(tag.getHintRessource());
+           
+			/*if(tag!=null && tag.getId()==1 ){
+               text.setText(bestAddress==null?"":bestAddress.getRoad());
+               addressView.setRoad(text);
             }
+            else if(tag!=null && tag.getId()==2){
+            	text.setText(bestAddress==null?"":bestAddress.getAddresseNr());
+                addressView.setHouseNumber(text);
+            }else if(tag!=null && tag.getId()==3 ){
+            	text.setText(bestAddress==null?"":bestAddress.getPostCode());
+                addressView.setPostCode(text);
+            }else if(tag!=null && tag.getId()==4 ){
+            	text.setText(bestAddress==null?"":bestAddress.getCity());
+                addressView.setCity(text);
+            }
+            else if(tag!=null && tag.getId()==5 ){
+            	text.setText(bestAddress==null?"":bestAddress.getCountry());
+                addressView.setCountry(text);
+            }*/
+            /*else if (tag.getLastValue() != null) {
+                text.setText(tag.getLastValue());
+            }*/
             text.setHintTextColor(Color.GRAY);
             text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));

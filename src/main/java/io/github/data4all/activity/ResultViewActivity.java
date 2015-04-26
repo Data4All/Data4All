@@ -28,6 +28,7 @@ import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
+import io.github.data4all.view.AddressSuggestionView;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
@@ -131,6 +132,7 @@ public class ResultViewActivity extends AbstractActivity implements
     private View viewFooter;
     
     private String type = "TYPE_DEF";
+    AddressSuggestionView addressSuggestionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,10 +181,15 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             });
         }*/
-
+        Button addressSuggestions = (Button)this.findViewById(R.id.buttonAddressSuggestions);
+        addressSuggestionView=new AddressSuggestionView(this, this, addressSuggestions);
+        
         if(element.getTags().isEmpty()){
-        	Log.i(TAG, "Add Tag");
+        	addressSuggestions.setVisibility(1);
         	addClassifiedTag();
+        	
+        }else {
+        	addressSuggestions.setVisibility(0);
         }
         this.output();
         listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -411,9 +418,20 @@ public class ResultViewActivity extends AbstractActivity implements
         resultButton.setText(endList.get(0));
         Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
         endList.remove(0);
-        listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
-
-
+        /*
+         * TODO: Steeve
+         */
+        TwoColumnAdapter twoColumnAdapter = new TwoColumnAdapter(this, keyList, endList);
+        twoColumnAdapter.setSuggestionView(addressSuggestionView);
+		listView.setAdapter(twoColumnAdapter);
+        addressSuggestionView.addKeyMapEntry(res,classifiedValue);
+        addressSuggestionView.setListview(listView);
+        addressSuggestionView.setKeyList(keyList);
+        addressSuggestionView.setElement(element);
+        addressSuggestionView.setMapTag(mapTag);
+       /** LastChoiceHandler.getInstance().setLastChoice(
+                getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
+        LastChoiceHandler.getInstance().save(this); */
     }
 
     /**
@@ -604,7 +622,8 @@ public class ResultViewActivity extends AbstractActivity implements
         Log.i(TAG, "VALUE: " + map.toString());
         for(Entry<Tag,String> entry : map.entrySet()){
         	Tag tag1 = entry.getKey();
-        	if(tag1.getKey().equals(tag.getKey())){
+          
+           if(tag1.getKey().equals(tag.getKey())){
         		Log.i(TAG, "true");
         		text.setText(map.get(tag1));
         		text.setSelection(text.getText().length()-1);
@@ -792,7 +811,6 @@ public class ResultViewActivity extends AbstractActivity implements
 		});
         alert = builder.show();
         alert.show();
-        
 
     }
     /**
@@ -854,7 +872,4 @@ public class ResultViewActivity extends AbstractActivity implements
     protected void onWorkflowFinished(Intent data) {
         finishWorkflow(data);
     }
-    
-    
-
 }

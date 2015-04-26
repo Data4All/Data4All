@@ -21,6 +21,18 @@
         android:id="@+id/buttonResultToCamera"
         style="@style/imageButtonReturnToCamera"
         android:contentDescription="@string/returnToCamera" />
+    
+    <Button
+        android:id="@+id/buttonAddressSuggestions"
+       android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+         android:layout_below="@+id/mapviewResult"
+        android:background="@android:color/background_dark"
+        android:textColor="@android:color/white" 
+        android:text="@string/selectAddress"/>
 
     <ListView
         android:id="@+id/listViewResultView"
@@ -39,10 +51,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/mapviewResult"
+         android:layout_below="@+id/buttonAddressSuggestions"
          android:layout_marginTop="10dp" 
          android:background="@android:color/background_dark"
          android:textColor="@android:color/white"
         android:text="@string/SelectTag" />
 
+       <!--android:layout_below="@+id/mapviewResult"-->
 </RelativeLayout>

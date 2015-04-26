@@ -85,6 +85,7 @@
     
       <!-- lastchoice -->
     <string name="name_lastchoice">Last Choice</string>
+    <string name="selectAddress">select Address</string>
 
     <!-- for upload -->
     <string name="upload_success">Successfully uploaded</string>

@@ -18,6 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.GalleryListAdapter;
@@ -245,6 +246,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // load lastChoice from database
         LastChoiceHandler.load(db);
         db.close();
+        //set context of tagsuggestionhandler
+        TagSuggestionHandler.setContext(this);
 
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");

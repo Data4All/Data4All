@@ -15,6 +15,20 @@
         style="@style/imageButtonReturnToCamera"
         android:contentDescription="@string/returnToCamera" />
     <Button
+        android:id="@+id/buttonAddressSuggestions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/buttonResult"
+        android:layout_toRightOf="@+id/buttonResultToCamera"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignTop="@+id/buttonResult"
+        android:background="@android:color/background_dark"
+        android:textColor="@android:color/white" 
+        android:text="@string/SelectTag"/>
+    
+    
+    <Button
         android:id="@+id/buttonClassifiedTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
