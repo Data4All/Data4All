@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/help_id1"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_help_text"
+        android:contentDescription="@string/help_cameraactivity_description_swipe"
+        android:gravity="center"
+        android:padding="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/tut_left_right" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/help_id1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bg_help_text"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/help_cameraactivity_gallery"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

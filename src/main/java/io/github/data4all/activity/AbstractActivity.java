@@ -16,18 +16,16 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
+import io.github.data4all.util.HelpOverlay;
 import io.github.data4all.util.TrackUtil;
-
-import java.util.List;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,6 +40,8 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * Global activity for all children activities.
@@ -51,9 +51,10 @@ import android.widget.CheckBox;
  * 
  * @author Andre Koch
  * @author tbrose
+ * @author sbrede
  * @CreationDate 10.01.2015
- * @LastUpdate 27.02.2015
- * @version 1.3
+ * @LastUpdate 15.04.2015
+ * @version 1.4
  * 
  */
 
@@ -69,6 +70,8 @@ public abstract class AbstractActivity extends Activity {
     public static final int WORKFLOW_CODE = 9999;
 
     public static final int RESULT_FINISH = 9998;
+
+    private HelpOverlay overlay;
 
     private static final int NOTIFICATION_EX = 1;
 
@@ -105,21 +108,37 @@ public abstract class AbstractActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.initHelp();
 
         // Count up on each Activity which is create
         counter++;
 
         // set a notification to Status Bar
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+     
+        Intent notificationIntent = new Intent(this, MapViewActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
         final Notification.Builder mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_logo_white)
                 .setOngoing(true)
                 .setContentTitle(getString(R.string.statusNotificationHeadline))
                 .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
                 .setContentText(getString(R.string.statusNotification));
+
         notificationManager.notify(NOTIFICATION_EX, mBuilder.build());
 
         trackUtil = new TrackUtil(getApplicationContext());
+    }
+
+    /**
+     * Initiate the help-layout for the activity.
+     */
+    private void initHelp() {
+        overlay = new HelpOverlay(this);
+        overlay.showOnFirstTime();
     }
 
     /*
@@ -148,6 +167,12 @@ public abstract class AbstractActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actionbar, menu);
+
+        // Remove the menu item if there is no overlay for this activity
+        if (!overlay.hasHelpOverlay()) {
+            menu.removeItem(R.id.action_help);
+        }
+
         final ActionBar bar = getActionBar();
         if (bar != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -182,7 +207,7 @@ public abstract class AbstractActivity extends Activity {
             status = true;
             break;
         case R.id.action_help:
-            // TODO set help activity here
+            overlay.show();
             status = true;
             break;
         case R.id.list_tracks:
@@ -237,11 +262,11 @@ public abstract class AbstractActivity extends Activity {
                 recordActive = true;
                 startTrack();
             } else {
-                Log.d("AbstractActivity", "stop a track without dialog");
-                isChecked = false;
-                changeIconOfRecordButton(item, isChecked);
-                recordActive = false;
-                stopTrack();
+                 Log.d("AbstractActivity", "stop a track without dialog");
+                 isChecked = false;
+                 changeIconOfRecordButton(item, isChecked);
+                 recordActive = false;
+                 stopDialog(item);
             }
         }
     }
@@ -277,6 +302,7 @@ public abstract class AbstractActivity extends Activity {
         LayoutInflater adbInflater = LayoutInflater.from(this);
         View mLayout = adbInflater.inflate(R.layout.checkbox, null);
         dontShowAgain = (CheckBox) mLayout.findViewById(R.id.skip);
+
         adb.setView(mLayout);
         adb.setTitle(R.string.recordTrack);
         adb.setMessage(R.string.startRecordTrack);
@@ -336,28 +362,28 @@ public abstract class AbstractActivity extends Activity {
      * @author sbrede
      */
     private void stopDialog(final MenuItem item) {
+        
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View view = factory.inflate(R.layout.edit_track_name, null);
+
+        final EditText txtName = (EditText) view.findViewById(R.id.editTracknameText);//new EditText(this);
+        txtName.setHint(trackUtil.getLastTrack().getTrackName());
+        
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        LayoutInflater adbInflater = LayoutInflater.from(this);
-        View mLayout = adbInflater.inflate(R.layout.checkbox, null);
-        dontShowAgain = (CheckBox) mLayout.findViewById(R.id.skip);
-        adb.setView(mLayout);
+        adb.setView(view);
         adb.setTitle(R.string.stopTrack);
         adb.setMessage(R.string.stopRecordTrack);
         adb.setPositiveButton(R.string.yes,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences settings = getSharedPreferences(
-                                SHARED_PREFS, 0);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putBoolean("skipStopDialog",
-                                dontShowAgain.isChecked());
-                        // Commit the edits!
-                        editor.commit();
+
                         isChecked = false;
                         changeIconOfRecordButton(item, isChecked);
                         recordActive = false;
 
-                        stopTrack();
+                        String trackName = txtName.getText().toString();
+                        Log.e("AbstractActivity", trackName);
+                        stopTrack(trackName);
                         Log.d("AbstractActivity", "stop a track with dialog");
                         return;
                     }
@@ -366,13 +392,7 @@ public abstract class AbstractActivity extends Activity {
         adb.setNegativeButton(R.string.no,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences settings = getSharedPreferences(
-                                SHARED_PREFS, 0);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putBoolean("skipStopDialog",
-                                dontShowAgain.isChecked());
-                        // Commit the edits!
-                        editor.commit();
+
                         isChecked = true;
                         recordActive = true;
                         changeIconOfRecordButton(item, isChecked);
@@ -380,22 +400,38 @@ public abstract class AbstractActivity extends Activity {
                         return;
                     }
                 });
-        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
-        boolean skipDialog = settings.getBoolean("skipStopDialog", false);
-        if (!skipDialog) {
-            adb.show();
-        }
+
+        adb.show();
 
     }
 
+    /**
+     * Start a new track
+     * @author sbrede
+     */
     private void startTrack() {
         trackUtil.startNewTrack();
     }
 
-    private void stopTrack() {
-        Track track = trackUtil.getLastTrack();
-        if (track != null) {
-            trackUtil.saveTrack(track);
+    /**
+     * Stop a track and rename it if "name" is not null
+     * 
+     * @author sbrede
+     * 
+     * @param name
+     */
+    private void stopTrack(String name) {
+        if (name.isEmpty()) {
+            Track track = trackUtil.getLastTrack();
+            if (track != null) {
+                trackUtil.saveTrack(track);
+            }
+        } else {
+            Track track = trackUtil.getLastTrack();
+            track.setTrackName(name);
+            if (track != null) {
+                trackUtil.saveTrack(track);
+            }
         }
     }
 

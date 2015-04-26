@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.data4all"
-    android:versionCode="3"
-    android:versionName="1.1" >
+    android:versionCode="5"
+    android:versionName="1.2.1" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -56,13 +56,16 @@
             android:name=".activity.TagActivity"
             android:theme="@android:style/Theme.Holo.Dialog.MinWidth" />
         <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.UploadActivity" />
+        <activity
+            android:name=".activity.UploadActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.GpsTrackListActivity"
             android:label="Track List" />
         <activity android:name=".activity.TrackDetailsActivity" />
 
-        <service android:name=".service.UploadService" />
+        <service android:name=".service.UploadElementsService" />
+        <service android:name=".service.UploadTracksService" />
         <service
             android:name=".service.GPSservice"
             android:label="GPS Service" >

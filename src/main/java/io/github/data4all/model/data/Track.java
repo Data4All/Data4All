@@ -58,6 +58,16 @@ public class Track implements Parcelable {
     private String trackName;
 
     /**
+     * The description of the tag which the user can add.
+     */
+    private String description = "a";
+
+    /**
+     * The tags of the track which the user can add, tags are comma seperated.
+     */
+    private String tags = "b";
+
+    /**
      * saves a list of TrackPoints.
      */
     private final List<TrackPoint> tracklist;
@@ -70,16 +80,17 @@ public class Track implements Parcelable {
     /**
      * Methods to write and restore a Parcel.
      */
-    public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
+    public static final Parcelable.Creator<Track> CREATOR =
+            new Parcelable.Creator<Track>() {
 
-        public Track createFromParcel(Parcel in) {
-            return new Track(in);
-        }
+                public Track createFromParcel(Parcel in) {
+                    return new Track(in);
+                }
 
-        public Track[] newArray(int size) {
-            return new Track[size];
-        }
-    };
+                public Track[] newArray(int size) {
+                    return new Track[size];
+                }
+            };
 
     /**
      * Constructor to create a Track from a parcel.
@@ -91,6 +102,8 @@ public class Track implements Parcelable {
         tracklist = new ArrayList<TrackPoint>();
         in.readTypedList(tracklist, TrackPoint.CREATOR);
         trackName = in.readString();
+        description = in.readString();
+        tags = in.readString();
         finished = (in.readInt() == 0) ? false : true;
     }
 
@@ -118,6 +131,22 @@ public class Track implements Parcelable {
 
     public void setID(long id) {
         this.id = id;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     private String getTimeStamp() {
@@ -162,6 +191,7 @@ public class Track implements Parcelable {
      * Clears the list of TrackPoints belonging to this track and appends
      * another list of TrackPoints to it.
      * 
+     * @param trackPoints
      * @param trackPoints
      *            the given list of TrackPoints
      */
@@ -221,6 +251,9 @@ public class Track implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(tracklist);
         dest.writeString(trackName);
+        dest.writeString(description);
+        dest.writeString(tags);
         dest.writeInt(finished ? 1 : 0);
     }
+
 }

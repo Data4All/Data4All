@@ -115,8 +115,6 @@ public class ShowPictureActivity extends AbstractActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         // remove title and status bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -124,6 +122,11 @@ public class ShowPictureActivity extends AbstractActivity {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        
+        // It is important to call the super method after the window-features
+        // are requested
+        super.onCreate(savedInstanceState);
+
 
         setContentView(R.layout.activity_picture);
 

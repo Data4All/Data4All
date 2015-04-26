@@ -10,7 +10,9 @@ import java.io.InputStreamReader;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -37,15 +39,13 @@ import android.util.Log;
  */
 public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
-    // object for AddressSuggestion View
-    private AddressSuggestionView view;
 
     private static final String TAG = "TagSuggestion";
 
     // represent the list of all suggestions Addresses
-    private Set<Address> addressList = new LinkedHashSet<Address>();
+    public static Queue<Address> addressList = new LinkedList<Address>();
 
-    public Context context;
+    public static Context context;
 
     // list of locations
     Set<Location> locations = new LinkedHashSet<Location>();
@@ -173,8 +173,8 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
             return locations;
         }
         locations.clear();
-        locations.add(current);
         locations.addAll(getNearestLocations(current));
+        locations.add(current);
         // while (locations.size() < 5) {
         // Location location = getLocation(current.getLongitude(),
         // current.getLatitude(), 30);
@@ -189,8 +189,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     /**
      * get a list of addresses
      */
-    public void getlistOfSuggestionAddress() {
-        Set<Address> addressListTemp = new LinkedHashSet<Address>();
+    public synchronized void getlistOfSuggestionAddress() {
         DataBaseHandler db = new DataBaseHandler(context);
         for (Location location : locationSuggestions()) {
             Address addr = db.getAddressFromDb(location);
@@ -201,7 +200,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
                 addr = getAddress(location);
                 isneu = true;
             }
-            if (addr != null && !addressListTemp.contains(addr)) {
+            if (addr != null && !addressList.contains(addr)) {
                 // when a address was already in database, then update this
                 // address
                 // when not so insert this address in database
@@ -211,48 +210,35 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
                             addr.getPostCode(), addr.getCity(),
                             addr.getCountry());
                 }
-                addressListTemp.add(addr);
+                addressList.add(addr);
+                if(addressList.size()>10){
+                	addressList.remove();
+                }
 
             }
         }
         db.close();
-        if (!addressListTemp.isEmpty()) {
-            addressList.clear();
-            addressList.addAll(addressListTemp);
-        }
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+    public static void setContext(Context context) {
+    	TagSuggestionHandler.context = context;
     }
 
     /**
      * @return get a list of addresses
      */
-    public Set<Address> getAddressList() {
+    public Queue<Address> getAddressList() {
         return addressList;
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected synchronized String doInBackground(String... params) {
         getlistOfSuggestionAddress();
 
         return "";
     }
 
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-        if (!addressList.isEmpty()) {
-            view.setAddresses(addressList);
-            view.fillDialog();
-            view.show();
-        }
-    }
 
-    public void setView(AddressSuggestionView addressSuggestionView) {
-        this.view = addressSuggestionView;
-    }
 
     /**
      * @param location
@@ -262,7 +248,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         List<Location> locations = new LinkedList<Location>();
         try {
             double boundingbox[] = getBoundingBox(location.getLatitude(),
-                    location.getLongitude(), 0.010);
+                    location.getLongitude(), 0.020);
             StringBuilder url = new StringBuilder(
                     "http://overpass-api.de/api/interpreter?data=[out:json];");
             StringBuilder param = new StringBuilder("");

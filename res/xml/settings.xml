@@ -27,11 +27,16 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="augmented_reality"
-        android:title="@string/augmented_reality" />
+        android:title="@string/pref_augmented_reality" />
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="sensor_warning"
-        android:title="@string/sensor_warning" />
+        android:title="@string/pref_sensor_warning" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/pref_english_tags_key"
+        android:title="@string/pref_english_tags_title" />
 
     <ListPreference
         android:defaultValue="@string/pref_gallery_deletemode_default"

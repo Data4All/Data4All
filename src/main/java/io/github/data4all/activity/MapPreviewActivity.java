@@ -23,12 +23,14 @@ import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Overlay;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
@@ -55,6 +57,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     // The OsmElement which should be added
     private AbstractDataElement element;
+
+    private List<Node> saveElement;
 
     /**
      * Standard Constructor
@@ -174,15 +178,18 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             mapController.animateTo(MapUtil.getCenterFromOsmElement(element));
             break;
         case R.id.switch_maps:
+            List<Overlay> list = new ArrayList<Overlay>();
+            list.addAll(mapView.getOverlays());
             switchMaps();
             mapView.getOverlays().clear();
-            this.setUpOverlays();
+            mapView.getOverlays().addAll(list);
+            mapView.postInvalidate();
             break;
         case R.id.okay:
             this.accept();
             break;
         case R.id.rect:
-            this.startRectangularPreview();
+            this.startRectangularPreview((ImageButton) v);
             break;
         default:
             break;
@@ -236,13 +243,24 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     /*
      * Starts new MapPreview with now rectangular Object
      */
-    private void startRectangularPreview() {
+    private void startRectangularPreview(ImageButton btn) {
         if (element instanceof PolyElement) {
             PolyElement rect = (PolyElement) element;
-            if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect
-                    .getNodes()))) {
+            if (saveElement == null) {
+                btn.setImageResource(R.drawable.ic_undo);
+                saveElement = new ArrayList<Node>();
+                saveElement.addAll(rect.getNodes());
+                if (rect.replaceNodes(MathUtil.transformIntoRectangle(rect
+                        .getNodes()))) {
+                    mapView.getOverlays().clear();
+                    this.setUpOverlays();
+                }
+            } else {
+                btn.setImageResource(R.drawable.ic_angle);
+                rect.replaceNodes(saveElement);
                 mapView.getOverlays().clear();
                 this.setUpOverlays();
+                saveElement = null;
             }
         }
     }

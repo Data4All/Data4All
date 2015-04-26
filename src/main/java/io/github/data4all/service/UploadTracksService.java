@@ -16,19 +16,17 @@
 package io.github.data4all.service;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.User;
+import io.github.data4all.task.TrackParserTask;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.upload.Callback;
-import io.github.data4all.util.upload.ChangesetUtil;
-import io.github.data4all.util.upload.CloseableCloseRequest;
-import io.github.data4all.util.upload.CloseableRequest;
 import io.github.data4all.util.upload.CloseableUpload;
+import io.github.data4all.util.upload.GpxTrackUtil;
 import io.github.data4all.util.upload.HttpCloseable;
 
-import java.io.File;
 import java.util.List;
 
 import android.app.IntentService;
@@ -40,37 +38,31 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 
 /**
- * Service to upload objects to the OSM API.
+ * Service to upload gpx tracks to the OSM API.
  * 
- * @author tbrose
+ * @author tbrose, fkirchge
  */
-public class UploadService extends IntentService {
-
-    /**
-     * The comment for the changeset to open.
-     */
-    public static final String CHANGESET_COMMENT =
-            "User-triggered upload via App";
-
-    /**
-     * The id of the foreground notification.
-     */
-    private static final int NOTIFICATION_ID = 201;
+public class UploadTracksService extends IntentService {
 
     /**
      * Logger.
      */
-    private static final String TAG = UploadService.class.getSimpleName();
+    private static final String TAG = UploadTracksService.class.getSimpleName();
+
+    /**
+     * The id of the foreground notification.
+     */
+    private static final int NOTIFICATION_ID = 202;
 
     /**
      * Key/Message for handling intent extras.
      */
     public static final String ACTION =
-            "io.github.data4all.service.UploadService:ACTION";
+            "io.github.data4all.service.UploadTracksService:ACTION";
     public static final String HANDLER =
-            "io.github.data4all.service.UploadService:HANDLER";
+            "io.github.data4all.service.UploadTracksService:HANDLER";
     public static final String MESSAGE =
-            "io.github.data4all.service.UploadService:MESSAGE";
+            "io.github.data4all.service.UploadTracksService:MESSAGE";
 
     /**
      * Codes to identify different events.
@@ -95,8 +87,8 @@ public class UploadService extends IntentService {
      * @param name
      *            Used to name the worker thread, important only for debugging
      */
-    public UploadService() {
-        super(UploadService.class.getSimpleName());
+    public UploadTracksService() {
+        super(UploadTracksService.class.getSimpleName());
     }
 
     /*
@@ -108,7 +100,7 @@ public class UploadService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getIntExtra(ACTION, 0) == CANCLE) {
-            Log.d("UploadService", "stopping...");
+            Log.d(TAG, "stopping upload service for osm elements...");
             stopNext = true;
             if (currentConnection != null) {
                 currentConnection.stop();
@@ -125,66 +117,59 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getIntExtra(ACTION, 0) == UPLOAD) {
+            Log.d(TAG, "upload track service started");
             final ResultReceiver receiver = intent.getParcelableExtra(HANDLER);
-            final String comment = intent.getStringExtra(CHANGESET_COMMENT);
             final DataBaseHandler db = new DataBaseHandler(this);
-            final List<User> users = db.getAllUser();
+            final User user = db.getAllUser().get(0);
             db.close();
-            if (users != null && !users.isEmpty()) {
-                final User user = users.get(0);
-                this.uploadElems(receiver, user,comment);
-                stopNext = false;
-            }
+            this.uploadGpsTracks(receiver, user);
+            stopNext = false;
         }
     }
 
     /**
-     * Requests a new Changeset ID from the OSM API, parses the OSM elements
-     * from the Database and starts the upload.
+     * Uploads all in the database stored {@link Track} objects to the OSM API.
      * 
-     * @param receiver
-     *            The ResultReceiver instance
      * @param user
-     *            The User to the data from
      */
-    private void uploadElems(final ResultReceiver receiver, final User user, final String comment) {
+    private void uploadGpsTracks(final ResultReceiver receiver, User user) {
         try {
             this.startForeground(user);
-            int requestId = 0;
+            List<Track> gpsTracks = null;
             if (!stopNext) {
-                // Request the changesetId
-                final CloseableRequest request =
-                        ChangesetUtil.requestId(user, comment);
-                this.currentConnection = request;
-                requestId = request.request();
+                final DataBaseHandler db = new DataBaseHandler(this);
+                gpsTracks = db.getAllGPSTracks();
+                db.close();
             }
 
-            String changesetXml = null;
             if (!stopNext) {
-                changesetXml = ChangesetUtil.getChangesetXml(this, requestId);
-                Log.d(TAG, changesetXml.replaceAll("\n", ""));
-            }
-            if (!stopNext) {
-                // Upload the changeset
-                currentMaxProgress = changesetXml.length();
-                send(receiver, MAX_PROGRESS, currentMaxProgress);
-                final CloseableUpload upload =
-                        ChangesetUtil.upload(user, requestId, changesetXml,
-                                new MyCallback(receiver));
-                this.currentConnection = upload;
-                upload.upload();
-            }
-            if (!stopNext) {
-                // Close the changeset
-                final CloseableCloseRequest closeId =
-                        ChangesetUtil.closeId(user, requestId);
-                this.currentConnection = closeId;
-                closeId.request();
+                for (Track t : gpsTracks) {
+                    TrackParserTask trackParser = new TrackParserTask(t);
+                    String track = trackParser.parseTrack(t);
+                    Log.d(TAG, "parsed track with id: " + t.getID()
+                            + " track name: " + t.getTrackName());
+                    Log.d(TAG, "xml: " + track.replaceAll("\n", ""));
+
+                    if (!stopNext) {
+                        //String track = GpxTrackUtil.testTrack();
+                        String description = "dies ist die beschreibung";
+                        String tags = "tag1, tag2, tag3, tag4";
+                        String visibility = "public";
+                        currentMaxProgress = track.length();
+                        send(receiver, MAX_PROGRESS, currentMaxProgress);
+                        CloseableUpload upload;
+
+                        upload =
+                                GpxTrackUtil.upload(this, user, track,
+                                        description, tags, visibility,
+                                        new MyCallback(receiver));
+                        upload.upload();
+                    }
+                }
             }
             if (!stopNext) {
                 this.stopForeground(SUCCESS);
                 send(receiver, SUCCESS, (Bundle) null);
-                deleteImages();
             }
         } catch (OsmException e) {
             Log.e(TAG, "", e);
@@ -194,23 +179,6 @@ public class UploadService extends IntentService {
         if (stopNext) {
             this.stopForeground(CANCLE);
         }
-    }
-
-    /**
-     * Deletes all images in the "Data4All" folder, where the 'single-mode'
-     * images where saved.
-     */
-    private static void deleteImages() {
-        final File folder = CapturePictureHandler.getImageFolder();
-        final File[] images = folder.listFiles();
-
-        if (images != null) {
-            for (File image : images) {
-                image.delete();
-            }
-        }
-
-        folder.delete();
     }
 
     /**
@@ -369,7 +337,7 @@ public class UploadService extends IntentService {
         @Override
         public void callback(Integer t) {
             send(receiver, CURRENT_PROGRESS, t);
-            UploadService.this.updateForeground(t);
+            UploadTracksService.this.updateForeground(t);
         }
 
         /*

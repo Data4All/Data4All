@@ -136,9 +136,7 @@ public class AddressSuggestionView implements OnClickListener,
      * @param activity
      */
     public void fillDialog() {
-        if (addresses == null || addresses.isEmpty()) {
-            return;
-        }
+    	this.addresses=new LinkedHashSet<Address>(TagSuggestionHandler.addressList);
 
         final Set<String> fullAdresses = new TreeSet<String>(
         // sort fullAddresses
@@ -150,7 +148,7 @@ public class AddressSuggestionView implements OnClickListener,
                 });
 
         // add all addresses in fullAddresses
-        for (Address a : addresses) {
+        for (Address a : this.addresses) {
             if (!fullAdresses.contains(a.getFullAddress())) {
                 fullAdresses.add(a.getFullAddress());
             }
@@ -183,13 +181,15 @@ public class AddressSuggestionView implements OnClickListener,
     @Override
     public void onClick(View arg0) {
         Button selectAddress = (Button) arg0;
-        TagSuggestionHandler handler = new TagSuggestionHandler();
-        handler.execute();
+        //handler.execute();
         // load addresses when user click of the button selectAddress
         if (selectAddress.getText().equals(btnSelectAddress.getText())) {
-            handler.setContext(this.context);
-            handler.setView(this);
-            handler.getAddressList();
+        	if(TagSuggestionHandler.addressList.isEmpty()){
+        		
+        	}else{
+        	fillDialog();
+        	show();
+        	}
         }
 
     }

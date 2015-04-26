@@ -22,6 +22,7 @@ import io.github.data4all.R;
 import io.github.data4all.logger.Log;
 import android.content.Context;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 
 /**
  * This class represents a classified value. A classified tag can contain one or
@@ -158,16 +159,18 @@ public class ClassifiedValue {
     }
 
     public String getLocalizedName(Context context) {
+        final String prefKey =
+                context.getString(R.string.pref_english_tags_key);
+        final boolean englishName =
+                PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(prefKey, false);
+
         Resources resources = context.getResources();
         final int id =
-                resources.getIdentifier("name_" + getKey().replace(":", "_"),
-                        "string", context.getPackageName());
+                resources.getIdentifier("name_" + getKey().replace(":", "_")
+                        + "_" + value, "string", context.getPackageName());
 
-        if (id == 0) {
-            return null;
-        } else {
-            return resources.getString(id);
-        }
+        return Tag.getLocalisedString(context, id, englishName);
     }
 
     public boolean canBeNode() {
