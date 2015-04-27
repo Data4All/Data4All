@@ -429,6 +429,9 @@ public class ResultViewActivity extends AbstractActivity implements
         addressSuggestionView.setKeyList(keyList);
         addressSuggestionView.setElement(element);
         addressSuggestionView.setMapTag(mapTag);
+        if (getIntent().hasExtra("ADDRESSSUGESTION")){
+        	addressSuggestionView.setAlternative(getIntent().getStringArrayExtra("ADDRESSSUGESTION"));
+        }
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this); */

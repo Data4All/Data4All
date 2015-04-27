@@ -190,6 +190,8 @@ public class ShowPictureActivity extends AbstractActivity {
                     getIntent().getExtras().getParcelable(
                             CapturePictureHandler.TRANSFORM_BEAN);
             intent.putExtra(LOCATION, transformBean.getLocation());
+            Log.i("##transformbeanadd####",transformBean.getAddresslist().size()+"addres");
+         
         }
 
         if (extras != null
@@ -279,7 +281,14 @@ public class ShowPictureActivity extends AbstractActivity {
             // create an abstract data element from the given data and pass it
             // to the next activity
             final AbstractDataElement osmElement = touchView.create();
+            osmElement.setAddressSugestion(transformBean.getAddresslist());
             intent.putExtra(OSM_ELEMENT, osmElement);
+            
+            String[] fullAdresseList = transformBean.getFullAdresseList();
+            if(fullAdresseList!=null){
+			intent.putExtra("ADDRESSSUGESTION", fullAdresseList);
+            }
+            
             startActivityForResult(intent);
         }
     }

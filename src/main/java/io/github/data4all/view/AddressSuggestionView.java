@@ -9,6 +9,7 @@ import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -18,6 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -26,6 +30,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -136,7 +141,12 @@ public class AddressSuggestionView implements OnClickListener,
      * @param activity
      */
     public void fillDialog() {
-    	this.addresses=new LinkedHashSet<Address>(TagSuggestionHandler.addressList);
+    	if(alternative==null || alternative.length==0){
+    		this.addresses=new LinkedHashSet<Address>(TagSuggestionHandler.addressList);
+    		Log.i("####Standart ist ktiv###", TagSuggestionHandler.addressList.size()+"");
+    	}else{
+    		Log.i("####alternative###", Arrays.toString(alternative));
+    	}
 
         final Set<String> fullAdresses = new TreeSet<String>(
         // sort fullAddresses
@@ -353,7 +363,7 @@ public class AddressSuggestionView implements OnClickListener,
 
         for (int i = 0; i < booleanList.size(); i++) {
             if (booleanList.get(i) 
-                    && !keyMapView.containsValue(res.getString(tagList.get(i)
+                    && tagList.size()>i &&!keyMapView.containsValue(res.getString(tagList.get(i)
                             .getNameRessource()))) {
                 Tag tag = tagList.get(i);
                 keyMapView.put(res.getString(tag.getNameRessource()),
@@ -386,5 +396,23 @@ public class AddressSuggestionView implements OnClickListener,
         }
 
     }
+    String [] alternative;
+	public void setAlternative(String[] stringArrayExtra) {
+		this.alternative=stringArrayExtra;
+		for (String jsonAdresse : stringArrayExtra) {
+			try {
+				JSONObject json=new JSONObject(jsonAdresse);
+				Address ad=new Address();
+				ad.setAddresseNr(TagSuggestionHandler.getJsonValue(json,"addresseNr"));
+				ad.setRoad(TagSuggestionHandler.getJsonValue(json,"road"));
+				ad.setRoad(TagSuggestionHandler.getJsonValue(json,"city"));
+				addresses.add(ad);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
 
 }
