@@ -1,8 +1,22 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.handler;
 
 import io.github.data4all.model.data.Address;
 import io.github.data4all.util.Optimizer;
-import io.github.data4all.view.AddressSuggestionView;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -12,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,9 +61,15 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     public static Context context;
 
     // list of locations
-    Set<Location> locations = new LinkedHashSet<Location>();
+   private Set<Location> locations = new LinkedHashSet<Location>();
     // current location
-    Location current = null;
+    private Location current;
+    
+    /** constants for earth radius in km. */
+    private static final double R = 6371;
+    
+    /** constant for array length*/
+    private static final int ARRAY_LENGTH = 4;
 
     /**
      * 
@@ -60,7 +79,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         if (Optimizer.currentBestLoc() == null) {
             return "";
         }
-        return getAddress(Optimizer.currentBestLoc()).getFullAddress();
+        return this.getAddress(Optimizer.currentBestLoc()).getFullAddress();
     }
 
     /**
@@ -78,11 +97,11 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
             JSONObject address = jsonObj.getJSONObject("address");
             Address addresse = new Address();
-            addresse.setAddresseNr(getJsonValue(address, "house_number"));
-            addresse.setRoad(getJsonValue(address, "road"));
-            addresse.setCity(getJsonValue(address, "city"));
-            addresse.setPostCode(getJsonValue(address, "postcode"));
-            addresse.setCountry(getJsonValue(address, "country"));
+            addresse.setAddresseNr(this.getJsonValue(address, "house_number"));
+            addresse.setRoad(this.getJsonValue(address, "road"));
+            addresse.setCity(this.getJsonValue(address, "city"));
+            addresse.setPostCode(this.getJsonValue(address, "postcode"));
+            addresse.setCountry(this.getJsonValue(address, "country"));
             Log.i(TAG, addresse.getFullAddress());
             return addresse;
         } catch (Exception e) {
@@ -92,8 +111,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         return null;
     }
 
-    /**
-     * 
+     /**
      * @param jsonObject
      * @param key
      * @return the value of a jsonObject
@@ -107,7 +125,6 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * 
      * @param url
      * @return the JSONObject from an url
      */
@@ -173,15 +190,9 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
             return locations;
         }
         locations.clear();
-        locations.addAll(getNearestLocations(current));
+        locations.addAll(this.getNearestLocations(current));
         locations.add(current);
-        // while (locations.size() < 5) {
-        // Location location = getLocation(current.getLongitude(),
-        // current.getLatitude(), 30);
-        // if (!locationsExist(locations, location)) {
-        // locations.add(location);
-        // }
-        // }
+       
         return locations;
     }
 
@@ -191,13 +202,13 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      */
     public synchronized void getlistOfSuggestionAddress() {
         DataBaseHandler db = new DataBaseHandler(context);
-        for (Location location : locationSuggestions()) {
+        for (Location location : this.locationSuggestions()) {
             Address addr = db.getAddressFromDb(location);
             boolean isneu = false;
             // when an address is not in database, then load address from
             // nominatim
             if (addr == null) {
-                addr = getAddress(location);
+                addr = this.getAddress(location);
                 isneu = true;
             }
             if (addr != null && !addressList.contains(addr)) {
@@ -211,7 +222,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
                             addr.getCountry());
                 }
                 addressList.add(addr);
-                if(addressList.size()>10){
+                if (addressList.size() > 5) {
                 	addressList.remove();
                 }
 
@@ -233,7 +244,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
     @Override
     protected synchronized String doInBackground(String... params) {
-        getlistOfSuggestionAddress();
+        this.getlistOfSuggestionAddress();
 
         return "";
     }
@@ -291,23 +302,22 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @return a boundingBox
      */
     public static double[] getBoundingBox(double lat, double lon, double radius) {
-        double result[] = new double[4];
+        double result[] = new double[ARRAY_LENGTH];
 
-        double R = 6371; // earth radius in km
-        double x1 = lon
+        final double x1 = lon
                 - Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
 
-        double x2 = lon
+        final double x2 = lon
                 + Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
 
-        double y1 = lat + Math.toDegrees(radius / R);
+        final double y1 = lat + Math.toDegrees(radius / R);
 
-        double y2 = lat - Math.toDegrees(radius / R);
+        final double y2 = lat - Math.toDegrees(radius / R);
 
-        result[0] = y2;// s
-        result[1] = x1;// w
-        result[2] = y1;// n
-        result[3] = x2;// e
+        result[0] = y2; // s
+        result[1] = x1; // w
+        result[2] = y1; // n
+        result[3] = x2; // e
         return result;
     }
 

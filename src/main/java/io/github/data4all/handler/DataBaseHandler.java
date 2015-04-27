@@ -1712,14 +1712,14 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 		values.put(POSTCODE, postCode);
 		values.put(CITY, city);
 		values.put(COUNTRY, country);
-		Address addressFromDb = getAddressFromDb(location);
+		final Address addressFromDb = getAddressFromDb(location);
 		if (addressFromDb == null) {
 			
 			     db.insert(TABLE_ADDRESSE, null, values);
-		}else {
+		} else {
 			
 			        db.update(TABLE_ADDRESSE, values, ADDRESSID + "=?",
-					new String[] { String.valueOf(addressFromDb.getAddressId()) });
+					new String[] {String.valueOf(addressFromDb.getAddressId()) });
 		}
 
 		Log.i(TAG, "Address " + rowID + " has been added.");
@@ -1735,7 +1735,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 	public Address getAddressFromDb(Location location) {
 		final SQLiteDatabase db = getReadableDatabase();
 
-		String query = "SELECT " + ADDRESSID + ", " + HOUSENUMBER + " , " + ROAD + " , "
+		final String query = "SELECT " + ADDRESSID + ", " + HOUSENUMBER + " , " + ROAD + " , "
 				+ POSTCODE + " , " + CITY + " , " + COUNTRY + " FROM "
 				+ TABLE_ADDRESSE + " WHERE " + LAT + " = "
 				+ location.getLatitude() + " AND " + LONG + " = "

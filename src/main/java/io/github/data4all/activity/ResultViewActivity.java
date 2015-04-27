@@ -132,7 +132,7 @@ public class ResultViewActivity extends AbstractActivity implements
     private View viewFooter;
     
     private String type = "TYPE_DEF";
-    AddressSuggestionView addressSuggestionView;
+    private AddressSuggestionView addressSuggestionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,14 +181,14 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             });
         }*/
-        Button addressSuggestions = (Button)this.findViewById(R.id.buttonAddressSuggestions);
-        addressSuggestionView=new AddressSuggestionView(this, this, addressSuggestions);
+        final Button addressSuggestions = (Button)this.findViewById(R.id.buttonAddressSuggestions);
+        addressSuggestionView = new AddressSuggestionView(this, this, addressSuggestions);
         
-        if(element.getTags().isEmpty()){
+        if (element.getTags().isEmpty()) {
         	addressSuggestions.setVisibility(1);
-        	addClassifiedTag();
+        	this.addClassifiedTag();
         	
-        }else {
+        } else {
         	addressSuggestions.setVisibility(0);
         }
         this.output();
@@ -418,13 +418,11 @@ public class ResultViewActivity extends AbstractActivity implements
         resultButton.setText(endList.get(0));
         Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
         endList.remove(0);
-        /*
-         * TODO: Steeve
-         */
-        TwoColumnAdapter twoColumnAdapter = new TwoColumnAdapter(this, keyList, endList);
+        //TODO: Steeve
+        final TwoColumnAdapter twoColumnAdapter = new TwoColumnAdapter(this, keyList, endList);
         twoColumnAdapter.setSuggestionView(addressSuggestionView);
 		listView.setAdapter(twoColumnAdapter);
-        addressSuggestionView.addKeyMapEntry(res,classifiedValue);
+        addressSuggestionView.addKeyMapEntry(res, classifiedValue);
         addressSuggestionView.setListview(listView);
         addressSuggestionView.setKeyList(keyList);
         addressSuggestionView.setElement(element);

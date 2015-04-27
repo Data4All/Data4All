@@ -38,7 +38,7 @@ public class TwoColumnAdapter extends BaseAdapter {
     private Context context;
     private List<String> listKey;
     private List<String> listValue;
-    AddressSuggestionView suggestionView;
+    private AddressSuggestionView suggestionView;
 
     /**
      * Default Constructor.
@@ -95,17 +95,12 @@ public class TwoColumnAdapter extends BaseAdapter {
         } else {
         text2.setText("");	
         }
-        if(suggestionView!=null){
-           suggestionView.registriereTwoLineListItem(listKey.get(position),text1,text2);
+        if (suggestionView != null) {
+           suggestionView.registriereTwoLineListItem(listKey.get(position), text1, text2);
         }
         return twoLineListItem;
     }
 
-   
-    /**
-     * TODO: Steeve
-     * @param suggestionView
-     */
 	public void setSuggestionView(AddressSuggestionView suggestionView) {
 		this.suggestionView = suggestionView;
 	}

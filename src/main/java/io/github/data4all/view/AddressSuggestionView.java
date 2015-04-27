@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.view;
 
 import io.github.data4all.R;
@@ -65,7 +80,7 @@ public class AddressSuggestionView implements OnClickListener,
     //this array will be used to save addresses
     private String[] array;
 
-    Map<String, Integer> keyMapView = new HashMap<String, Integer>();
+    private Map<String, Integer> keyMapView = new HashMap<String, Integer>();
 
     // the button which load addresses
     private Button btnSelectAddress;
@@ -73,19 +88,20 @@ public class AddressSuggestionView implements OnClickListener,
     private Activity activity;
 
     // The Dialog which show a list of suggestion addresses
-    AlertDialog alert;
+    private AlertDialog alert;
 
     // listView of all Addresses
     private ListView listView;
     // The OSM Element
     private AbstractDataElement element;
     // The Map with the String and the Tag
-    Map<String, Tag> mapTag;
+    private Map<String, Tag> mapTag;
 
-    final AlertDialog.Builder alertDialog;
+    private AlertDialog.Builder alertDialog;
     private ArrayAdapter<String> adapter;
     private List<String> keyList;
-
+    private final int ARRAY_LENGTH = 5;
+ 
     /**
      * get the bestAddress with the best location
      * 
@@ -98,14 +114,16 @@ public class AddressSuggestionView implements OnClickListener,
     /**
      * Default constructor for AddressSuggestionView
      * 
+     * @param activity
      * @param context
+     * @param button
      */
     public AddressSuggestionView(Activity activity, Context context,
             Button button) {
         this.setContext(context);
         this.activity = activity;
         this.btnSelectAddress = button;
-        array = new String[5];
+        array = new String[ARRAY_LENGTH];
         btnSelectAddress.setOnClickListener(this);
         alertDialog = new AlertDialog.Builder(activity,
                 android.R.style.Theme_Holo_Dialog_MinWidth);
@@ -118,25 +136,12 @@ public class AddressSuggestionView implements OnClickListener,
     }
 
     /**
-     * 
-     * @param addresses
-     */
-    public void setAddresses(Set<Address> addresses) {
-        this.addresses.clear();
-        this.addresses.addAll(addresses);
-        if (!this.addresses.isEmpty()) {
-            // set best address an first position
-            bestAdresse = addresses.iterator().next();
-        }
-    }
-
-    /**
      * filled dialog with a list of addresses
      * 
      * @param activity
      */
     public void fillDialog() {
-    	this.addresses=new LinkedHashSet<Address>(TagSuggestionHandler.addressList);
+    	this.addresses = new LinkedHashSet<Address>(TagSuggestionHandler.addressList);
 
         final Set<String> fullAdresses = new TreeSet<String>(
         // sort fullAddresses
@@ -180,37 +185,33 @@ public class AddressSuggestionView implements OnClickListener,
 
     @Override
     public void onClick(View arg0) {
-        Button selectAddress = (Button) arg0;
-        //handler.execute();
+       final Button selectAddress = (Button) arg0;
         // load addresses when user click of the button selectAddress
         if (selectAddress.getText().equals(btnSelectAddress.getText())) {
-        	if(TagSuggestionHandler.addressList.isEmpty()){
-        		
-        	}else{
-        	fillDialog();
-        	show();
-        	}
+        	this.fillDialog();
+        	this.show();
+        	
         }
 
     }
 
     @Override
     public void onClick(DialogInterface arg0, int which) {
-        final String value = (String) array[which];
+        final String value = array[which];
         Address selectedAddress = getSelectedAddress(value);
 
         if (selectedAddress != null) {
-            setValue(road, selectedAddress.getRoad(), 401);
-            setValue(houseNumber, selectedAddress.getAddresseNr(), 402);
-            setValue(postCode, selectedAddress.getPostCode(), 403);
-            setValue(city, selectedAddress.getCity(), 404);
-            setValue(country, selectedAddress.getCountry(), 405);
+            this.setValue(road, selectedAddress.getRoad(), 401);
+            this.setValue(houseNumber, selectedAddress.getAddresseNr(), 402);
+            this.setValue(postCode, selectedAddress.getPostCode(), 403);
+            this.setValue(city, selectedAddress.getCity(), 404);
+            this.setValue(country, selectedAddress.getCountry(), 405);
         } else {
-            setValue(road, "", 401);
-            setValue(houseNumber, "", 402);
-            setValue(postCode, "", 403);
-            setValue(city, "", 404);
-            setValue(country, "", 405);
+            this.setValue(road, "", 401);
+            this.setValue(houseNumber, "", 402);
+            this.setValue(postCode, "", 403);
+            this.setValue(city, "", 404);
+            this.setValue(country, "", 405);
         }
         alert.dismiss();
     }
@@ -233,47 +234,22 @@ public class AddressSuggestionView implements OnClickListener,
 
     }
 
-    /**
-     * set road
-     * 
-     * @param road
-     */
     public void setRoad(TextView road) {
         this.road = road;
     }
 
-    /**
-     * set house_number
-     * 
-     * @param houseNumber
-     */
     public void setHouseNumber(TextView houseNumber) {
         this.houseNumber = houseNumber;
     }
 
-    /**
-     * set postCode
-     * 
-     * @param postCode
-     */
     public void setPostCode(TextView postCode) {
         this.postCode = postCode;
     }
 
-    /**
-     * set city
-     * 
-     * @param city
-     */
     public void setCity(TextView city) {
         this.city = city;
     }
 
-    /**
-     * set country
-     * 
-     * @param country
-     */
     public void setCountry(TextView country) {
         this.country = country;
     }
@@ -289,7 +265,6 @@ public class AddressSuggestionView implements OnClickListener,
         adapter = new ArrayAdapter<String>(context,
                 R.layout.view_adress_suggestions, array);
         alertDialog.setAdapter(adapter, this);
-        // adapter.addAll(array);
         adapter.notifyDataSetChanged();
         alert = alertDialog.create();
 
@@ -346,7 +321,7 @@ public class AddressSuggestionView implements OnClickListener,
         if (value == null) {
             return;
         }
-        List<Tag> tagList = new LinkedList<Tag>();
+       final List<Tag> tagList = new LinkedList<Tag>();
         tagList.addAll(Tags.getAllAddressTags());
         List<Boolean> booleanList = new ArrayList<Boolean>();
         booleanList = value.getAllUnclassifiedBooleans();
@@ -386,5 +361,9 @@ public class AddressSuggestionView implements OnClickListener,
         }
 
     }
+
+	public Map<String, Tag> getMapTag() {
+		return mapTag;
+	}
 
 }
