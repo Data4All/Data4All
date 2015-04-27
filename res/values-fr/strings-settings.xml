@@ -25,4 +25,11 @@
     <string name="pref_moving_animation_title">Déplacer l\'object sur l\'apercu de la carte</string>
     <string name="pref_moving_animation_summary"> Comment devrait fonctionner le déplacement d\'objets dans la carte de prévisualisation?</string>
     <string name="pref_moving_animation_dialog_title">Animation mobile</string>
+    
+    <string name="pref_sensor_warning">afficher l\'alarme des Capteurs</string>
+    
+    <string name="pref_augmented_reality">Afficher la réalité augmentée</string>
+    <string name="pref_augmented_reality_summary">Les objets qui ont déjà été cartographiés seront visible dans l\'appareil photo</string>
+
+    <string name="pref_english_tags_title">Afficher les balises en anglais</string>
 </resources>
