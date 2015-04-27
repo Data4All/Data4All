@@ -71,9 +71,6 @@ public class AddressSuggestionView implements OnClickListener,
     // textView for country
     private TextView country;
 
-    // the current best address
-    private Address bestAdresse;
-
     // context for AddressSuggestionview
     private Context context;
 
@@ -101,15 +98,13 @@ public class AddressSuggestionView implements OnClickListener,
     private ArrayAdapter<String> adapter;
     private List<String> keyList;
     private final int ARRAY_LENGTH = 5;
+    private final int ROAD_ID = 401;
+    private final int HOUSE_NUMBER_ID = 402 ;
+    private final int POSTCODE_ID = 403 ;
+    private final int CITY_ID = 404;
+    private final int COUNTRY_ID = 405;
  
-    /**
-     * get the bestAddress with the best location
-     * 
-     * @return bestAdresse
-     */
-    public Address getBestAddresse() {
-        return bestAdresse;
-    }
+  
 
     /**
      * Default constructor for AddressSuggestionView
@@ -198,20 +193,20 @@ public class AddressSuggestionView implements OnClickListener,
     @Override
     public void onClick(DialogInterface arg0, int which) {
         final String value = array[which];
-        Address selectedAddress = getSelectedAddress(value);
+        final Address selectedAddress = getSelectedAddress(value);
 
         if (selectedAddress != null) {
-            this.setValue(road, selectedAddress.getRoad(), 401);
-            this.setValue(houseNumber, selectedAddress.getAddresseNr(), 402);
-            this.setValue(postCode, selectedAddress.getPostCode(), 403);
-            this.setValue(city, selectedAddress.getCity(), 404);
-            this.setValue(country, selectedAddress.getCountry(), 405);
+            this.setValue(road, selectedAddress.getRoad(), ROAD_ID);
+            this.setValue(houseNumber, selectedAddress.getAddresseNr(), HOUSE_NUMBER_ID);
+            this.setValue(postCode, selectedAddress.getPostCode(), POSTCODE_ID);
+            this.setValue(city, selectedAddress.getCity(), CITY_ID);
+            this.setValue(country, selectedAddress.getCountry(), COUNTRY_ID);
         } else {
-            this.setValue(road, "", 401);
-            this.setValue(houseNumber, "", 402);
-            this.setValue(postCode, "", 403);
-            this.setValue(city, "", 404);
-            this.setValue(country, "", 405);
+            this.setValue(road, "", ROAD_ID);
+            this.setValue(houseNumber, "", HOUSE_NUMBER_ID);
+            this.setValue(postCode, "", POSTCODE_ID);
+            this.setValue(city, "",  CITY_ID);
+            this.setValue(country, "", COUNTRY_ID);
         }
         alert.dismiss();
     }
@@ -316,7 +311,12 @@ public class AddressSuggestionView implements OnClickListener,
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
-
+ 
+    /**
+     * Gives a list of tags(e.g street, postCode,country) for each ClassifiedValue 
+     * @param res the Resource
+     * @param value the classifiedValue
+     */
     public void addKeyMapEntry(Resources res, ClassifiedValue value) {
         if (value == null) {
             return;
@@ -337,7 +337,13 @@ public class AddressSuggestionView implements OnClickListener,
         }
     }
 
-    public void registriereTwoLineListItem(String key, TextView text1,
+    /**
+     * saved two line list item
+     * @param key 
+     * @param text1 for a tag
+     * @param text2 value of a tag
+     */
+    public void savedTwoLineListItem(String key, TextView text1,
             TextView text2) {
         Integer tagid = keyMapView.get(key);
         if (tagid == null) {

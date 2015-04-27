@@ -96,7 +96,7 @@ public class TwoColumnAdapter extends BaseAdapter {
         text2.setText("");	
         }
         if (suggestionView != null) {
-           suggestionView.registriereTwoLineListItem(listKey.get(position), text1, text2);
+           suggestionView.savedTwoLineListItem(listKey.get(position), text1, text2);
         }
         return twoLineListItem;
     }

@@ -90,13 +90,13 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      */
     public Address getAddress(Location location) {
         try {
-            JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
+            final JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
                     + location.getLatitude()
                     + "&lon="
                     + location.getLongitude() + "&zoom=18&addressdetails=1");
 
-            JSONObject address = jsonObj.getJSONObject("address");
-            Address addresse = new Address();
+            final JSONObject address = jsonObj.getJSONObject("address");
+            final Address addresse = new Address();
             addresse.setAddresseNr(this.getJsonValue(address, "house_number"));
             addresse.setRoad(this.getJsonValue(address, "road"));
             addresse.setCity(this.getJsonValue(address, "city"));
@@ -137,12 +137,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
         // http post
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+           final HttpClient httpclient = new DefaultHttpClient();
             httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT,
                     System.getProperty("http.agent"));
-            HttpGet httppost = new HttpGet(url);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity entity = response.getEntity();
+           final HttpGet httppost = new HttpGet(url);
+            final HttpResponse response = httpclient.execute(httppost);
+            final HttpEntity entity = response.getEntity();
             is = entity.getContent();
 
         } catch (Exception e) {
@@ -151,7 +151,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
         // convert response to string
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(
                     is, "utf-8"), 8);
             StringBuilder sb = new StringBuilder();
             String line = null;
