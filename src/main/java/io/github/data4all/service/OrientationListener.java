@@ -143,8 +143,9 @@ public class OrientationListener extends Service implements SensorEventListener 
         // when the 2 sensors data are available
         if (mGravity != null && mGeomagnetic != null) {
 
-            final boolean success = SensorManager.getRotationMatrix(mR, mI,
-                    mGravity, mGeomagnetic);
+            final boolean success =
+                    SensorManager.getRotationMatrix(mR, mI, mGravity,
+                            mGeomagnetic);
 
             if (success) {
                 SensorManager.getOrientation(mR, orientation);
@@ -153,9 +154,10 @@ public class OrientationListener extends Service implements SensorEventListener 
 
                     // saving the new model with the orientation in the
                     // RingBuffer
-                    deviceOrientation = new DeviceOrientation(orientation[0],
-                            orientation[1], orientation[LAST_INDEX],
-                            System.currentTimeMillis());
+                    deviceOrientation =
+                            new DeviceOrientation(orientation[0],
+                                    orientation[1], orientation[LAST_INDEX],
+                                    System.currentTimeMillis());
                     Optimizer.putDevOrient(deviceOrientation);
 
                     if (horizonListener != null) {
@@ -220,14 +222,13 @@ public class OrientationListener extends Service implements SensorEventListener 
                 magOk = true;
             }
         }
-        checkAccuracy();
+        this.checkAccuracy();
         /*
-         * Creates a new Intent containing a Uri object
-         * BROADCAST_ACTION is a custom Intent action
+         * Creates a new Intent containing a Uri object BROADCAST_ACTION is a
+         * custom Intent action
          */
-        Intent localIntent =
- new Intent(BROADCAST_CAMERA)
-                // Puts the status into the Intent
+        final Intent localIntent = new Intent(BROADCAST_CAMERA)
+        // Puts the status into the Intent
                 .putExtra(INTENT_CAMERA_UPDATE, true);
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);

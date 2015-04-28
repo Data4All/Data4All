@@ -363,7 +363,7 @@ public abstract class MapActivity extends AbstractActivity {
             // switch to Satellite Map
         } else {
             if (mapView.getZoomLevel() > MAXIMAL_SATELLITE_ZOOM_LEVEL) {
-                setZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
+                this.setZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
             }
             mapView.setMaxZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
             this.setMapTileSource(satMap);

@@ -15,18 +15,12 @@
  */
 package io.github.data4all.listener;
 
-import io.github.data4all.logger.Log;
-
-import java.util.Iterator;
 import java.util.List;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 
@@ -36,9 +30,9 @@ import android.view.animation.TranslateAnimation;
  * 
  * @author vkochno
  */
-public class ButtonAnimationListener{
-	
-	private boolean isAway;
+public class ButtonAnimationListener {
+
+    private boolean isAway;
 
     /**
      * The list of views to animate.
@@ -58,41 +52,53 @@ public class ButtonAnimationListener{
     }
 
     public void onRotate() {
-    	if(!isAway){
-    	for(int i = 0; i < viewsToAnimate.size()-1;i++){
-    	ObjectAnimator mover = ObjectAnimator.ofFloat(viewsToAnimate.get(i), "translationX", 0, 1500);
-    	mover.start();
-    	
-    	}
-    	ObjectAnimator ra = ObjectAnimator.ofFloat(viewsToAnimate.get(viewsToAnimate.size()-1), "rotation", 0f, 180.0f);
-    	ra.start();
-    	isAway = true;
-    	}else{
-    		for(int i = 0; i < viewsToAnimate.size()-1;i++){
-    	    	ObjectAnimator mover = ObjectAnimator.ofFloat(viewsToAnimate.get(i), "translationX", 1500, 0);
-    	    	mover.start();
-    	}
-    		ObjectAnimator ra = ObjectAnimator.ofFloat(viewsToAnimate.get(viewsToAnimate.size()-1), "rotation", 180.0f, 0.0f);
-        	ra.start();
-    		isAway = false;
+        if (!isAway) {
+            for (int i = 0; i < viewsToAnimate.size() - 1; i++) {
+                final ObjectAnimator mover =
+                        ObjectAnimator.ofFloat(viewsToAnimate.get(i),
+                                "translationX", 0, 1500);
+                mover.start();
+
+            }
+            final ObjectAnimator ra =
+                    ObjectAnimator.ofFloat(
+                            viewsToAnimate.get(viewsToAnimate.size() - 1),
+                            "rotation", 0f, 180.0f);
+            ra.start();
+            isAway = true;
+        } else {
+            for (int i = 0; i < viewsToAnimate.size() - 1; i++) {
+                final ObjectAnimator mover =
+                        ObjectAnimator.ofFloat(viewsToAnimate.get(i),
+                                "translationX", 1500, 0);
+                mover.start();
+            }
+            final ObjectAnimator ra =
+                    ObjectAnimator.ofFloat(
+                            viewsToAnimate.get(viewsToAnimate.size() - 1),
+                            "rotation", 180.0f, 0.0f);
+            ra.start();
+            isAway = false;
+        }
+
     }
-    	
-    }
-    
+
     public void onRotat() {
-    	RotateAnimation ra = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-    	TranslateAnimation animation = new TranslateAnimation(0, 1500,0, 0);
-    	AnimationSet set = new AnimationSet(true);
-    	set.addAnimation(ra);
-    	set.addAnimation(animation);
-    	set.setFillAfter(true);
-    	set.setDuration(1000);
-    	for(View v:viewsToAnimate){
-    		v.startAnimation(set);
-    	}
+        final RotateAnimation ra =
+                new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
+                        0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        TranslateAnimation animation = new TranslateAnimation(0, 1500, 0, 0);
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(ra);
+        set.addAnimation(animation);
+        set.setFillAfter(true);
+        set.setDuration(1000);
+        for (View v : viewsToAnimate) {
+            v.startAnimation(set);
+        }
     }
-    
-    public boolean isAway(){
-    	return isAway;
+
+    public boolean isAway() {
+        return isAway;
     }
 }

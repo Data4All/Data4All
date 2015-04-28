@@ -15,32 +15,26 @@
  */
 package io.github.data4all.model.map;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.ClassifiedTag;
-import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.MathUtil;
-import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
