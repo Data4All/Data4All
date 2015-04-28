@@ -15,16 +15,15 @@
  */
 package io.github.data4all.util;
 
+import io.github.data4all.logger.Log;
+
 import java.util.Locale;
 
-import io.github.data4all.activity.AbstractActivity;
-import io.github.data4all.logger.Log;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
