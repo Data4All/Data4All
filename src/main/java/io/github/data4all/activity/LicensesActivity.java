@@ -1,7 +1,21 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -9,6 +23,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+/**
+ * This Class represents the LicensesActivity.
+ * @author Kristin Dahnken
+ * 
+ */
 public class LicensesActivity extends AbstractActivity {
 
     @Override
@@ -18,19 +37,19 @@ public class LicensesActivity extends AbstractActivity {
         
         getActionBar().hide();
         
-        TextView osmCopyright = (TextView) findViewById(R.id.linkToOSMCopyright);
+        final TextView osmCopyright = (TextView) findViewById(R.id.linkToOSMCopyright);
         osmCopyright.setMovementMethod(LinkMovementMethod.getInstance());
         
-        TextView mapboxTOS = (TextView) findViewById(R.id.linkToMapboxTOS);
+        final TextView mapboxTOS = (TextView) findViewById(R.id.linkToMapboxTOS);
         mapboxTOS.setMovementMethod(LinkMovementMethod.getInstance());
         
-        TextView apacheLicense = (TextView) findViewById(R.id.linkToApacheLicense);
+        final TextView apacheLicense = (TextView) findViewById(R.id.linkToApacheLicense);
         apacheLicense.setMovementMethod(LinkMovementMethod.getInstance());
         
-        TextView osmdroid = (TextView) findViewById(R.id.linkToOSMDroidWiki);
+        final TextView osmdroid = (TextView) findViewById(R.id.linkToOSMDroidWiki);
         osmdroid.setMovementMethod(LinkMovementMethod.getInstance());
         
-        TextView osmbonuspack = (TextView) findViewById(R.id.linkToOSMBonusPack);
+        final TextView osmbonuspack = (TextView) findViewById(R.id.linkToOSMBonusPack);
         osmbonuspack.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
@@ -46,7 +65,7 @@ public class LicensesActivity extends AbstractActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        final int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
         }

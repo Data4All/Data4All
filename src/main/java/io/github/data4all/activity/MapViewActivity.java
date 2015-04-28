@@ -153,7 +153,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final MenuInflater inflater = getMenuInflater();
         // Add record button only in this activity
         inflater.inflate(R.menu.track_menu, menu);
-        boolean result = super.onCreateOptionsMenu(menu);
+        final boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
         
         return result;
@@ -239,7 +239,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         myLocationOverlay.enableFollowLocation();
 
         // add osmElements from the database to the map
-        DataBaseHandler db = new DataBaseHandler(this);
+        final DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
         // load lastChoice from database

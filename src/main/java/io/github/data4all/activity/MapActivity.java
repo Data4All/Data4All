@@ -42,7 +42,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-/** 
+/**
  * Super Class for all Map Activities.
  * 
  * @author Oliver Schwartz
@@ -132,7 +132,7 @@ public abstract class MapActivity extends AbstractActivity {
     protected static final String OSM_MAP_NAME = "mapbox.streets";
 
     protected CacheManager cacheManager;
-    
+
     protected ButtonRotationListener listener;
 
     /**
@@ -153,17 +153,19 @@ public abstract class MapActivity extends AbstractActivity {
         mapView = (D4AMapView) this.findViewById(R.id.mapview);
         // Set ImageView for Loading Screen
         view = (ImageView) findViewById(R.id.imageView1);
-        
+
         MapBoxTileSourceV4.retrieveMapBoxAuthKey(this);
 
         // Add Satellite Map TileSource
-        satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_SATELLITE_ZOOM_LEVEL);
+        satMap =
+                new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                        MAXIMAL_SATELLITE_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(satMap);
 
         // Add OSM Map TileSource
-        osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
-                MAXIMAL_OSM_ZOOM_LEVEL);
+        osmMap =
+                new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
+                        MAXIMAL_OSM_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(osmMap);
         mapTileSource = osmMap;
 
@@ -224,12 +226,12 @@ public abstract class MapActivity extends AbstractActivity {
                 actualZoomLevel, actualZoomLevel);
 
     }
-    
+
     protected boolean getAutoRotate() {
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        return (prefs.getBoolean("auto_rotate", true));
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("auto_rotate", true);
     }
 
     /*
@@ -256,17 +258,18 @@ public abstract class MapActivity extends AbstractActivity {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.app.Activity#onResume()
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        if (!getAutoRotate()) {
+        if (!this.getAutoRotate()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             listener.enable();
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -300,10 +303,12 @@ public abstract class MapActivity extends AbstractActivity {
      * @return the actual position
      **/
     protected IGeoPoint getMyLocation() {
-        final LocationManager locationManager = (LocationManager) this
-                .getSystemService(Context.LOCATION_SERVICE);
-        final Location currentLocation = locationManager
-                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        final LocationManager locationManager =
+                (LocationManager) this
+                        .getSystemService(Context.LOCATION_SERVICE);
+        final Location currentLocation =
+                locationManager
+                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (currentLocation != null) {
             return new GeoPoint(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
@@ -379,8 +384,8 @@ public abstract class MapActivity extends AbstractActivity {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            //this.downloadMapTiles();
-            //this.setUpLoadingScreen();
+            // this.downloadMapTiles();
+            // this.setUpLoadingScreen();
         }
 
     }
@@ -394,8 +399,9 @@ public abstract class MapActivity extends AbstractActivity {
     private void loadState(Bundle savedInstanceState) {
         if (savedInstanceState != null
                 && savedInstanceState.getSerializable(ZOOM_LEVEL_NAME) != null) {
-            actualZoomLevel = (Integer) savedInstanceState
-                    .getSerializable(ZOOM_LEVEL_NAME);
+            actualZoomLevel =
+                    (Integer) savedInstanceState
+                            .getSerializable(ZOOM_LEVEL_NAME);
         } else {
             actualZoomLevel = DEFAULT_ZOOM_LEVEL;
         }
@@ -410,11 +416,12 @@ public abstract class MapActivity extends AbstractActivity {
         }
         if (savedInstanceState != null
                 && savedInstanceState.getSerializable(M_T_P) != null) {
-            final String mTS = (String) savedInstanceState
-                    .getSerializable(M_T_P);
+            final String mTS =
+                    (String) savedInstanceState.getSerializable(M_T_P);
             if (mTS.equals(SAT_MAP_NAME)) {
                 mapTileSource = satMap;
-                final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
+                final ImageButton bt =
+                        (ImageButton) findViewById(R.id.switch_maps);
                 bt.setImageResource(R.drawable.ic_map);
             }
         } else {

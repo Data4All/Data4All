@@ -86,7 +86,7 @@ public class LoginActivity extends AbstractActivity {
             this.progress = findViewById(R.id.progress);
             // get the show/hide password Checkbox
             this.mCbShowPwd = (CheckBox) findViewById(R.id.cbShowPwd);
-            setPasswortCheckBoxListener(mCbShowPwd, osmPass);
+            this.setPasswortCheckBoxListener(mCbShowPwd, osmPass);
         }
     }
 
@@ -124,7 +124,7 @@ public class LoginActivity extends AbstractActivity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.upload_data);
+        final MenuItem item = menu.findItem(R.id.upload_data);
         item.setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }
