@@ -1335,9 +1335,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 final Track track = new Track();
                 final List<Long> trackPointIDs = new ArrayList<Long>();
                 try {
-                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
-                            + cursor.getString(0) + " cursor.getString(1): "
-                            + cursor.getString(1) + " cursor.getString(2): " +cursor.getString(2));
+//                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
+//                            + cursor.getString(0) + " cursor.getString(1): "
+//                            + cursor.getString(1) + " cursor.getString(2): " +cursor.getString(2));
                     final JSONObject json = new JSONObject(cursor.getString(2));
                     final JSONArray jArray = json
                             .optJSONArray("trackpointarray");

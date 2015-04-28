@@ -16,7 +16,6 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.util.ListAdapter;
 import io.github.data4all.util.TrackUtil;
@@ -120,6 +119,7 @@ public class GpsTrackListActivity extends AbstractActivity {
      */
     private void getTracks() {
         trackList = trackUtil.getTracks();
+        
     }
 
     /*

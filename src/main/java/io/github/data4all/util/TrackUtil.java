@@ -16,7 +16,7 @@ public class TrackUtil {
 
     private Context context;
 
-    private static final String TAG = "TrackUtilBla";
+    private static final String TAG = "TrackUtil";
 
     public TrackUtil(Context ctx) {
         this.context = ctx;

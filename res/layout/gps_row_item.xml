@@ -10,24 +10,25 @@
         android:id="@+id/gps_item"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:hint="@string/track_id"
         android:textColor="#000"
-        android:textSize="25sp"
-        android:textStyle="normal" >
-
-    </TextView>
+        android:textSize="23sp"
+        android:textStyle="normal" />
 
     <TextView
         android:id="@+id/gps_description"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:hint="@string/track_no_description"
-        android:textColor="#000" />
+        android:textColor="@android:color/tertiary_text_dark"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/gps_tags"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:hint="@string/track_no_tags"
-        android:textColor="#000" />
+        android:textColor="@color/camera_cross"
+        android:textSize="16sp" />
 
 </LinearLayout>
