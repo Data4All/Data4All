@@ -2,17 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/gps_item"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="center_horizontal"
-        android:padding="10dip"
         android:textColor="#000"
-        android:textSize="16sp"
-        android:textStyle="bold" >
+        android:textSize="25sp"
+        android:textStyle="normal" >
+
     </TextView>
+
+    <TextView
+        android:id="@+id/gps_description"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:hint="@string/track_no_description"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/gps_tags"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:hint="@string/track_no_tags"
+        android:textColor="#000" />
 
 </LinearLayout>

@@ -51,6 +51,8 @@ public class ListAdapter extends ArrayAdapter<Track> {
 
             holder = new TrackHolder();
             holder.name = (TextView) v.findViewById(R.id.gps_item);
+            holder.description = (TextView) v.findViewById(R.id.gps_description);
+            holder.tags = (TextView) v.findViewById(R.id.gps_tags);
 
             v.setTag(holder);
         } else {
@@ -59,6 +61,8 @@ public class ListAdapter extends ArrayAdapter<Track> {
 
         Track track = trackList.get(position);
         holder.name.setText(track.getTrackName());
+        holder.description.setText(track.getDescription());
+        holder.tags.setText(track.getTags());
 
         return v;
 
@@ -71,5 +75,7 @@ public class ListAdapter extends ArrayAdapter<Track> {
      */
     static class TrackHolder {
         TextView name;
+        TextView description;
+        TextView tags;
     }
 }
