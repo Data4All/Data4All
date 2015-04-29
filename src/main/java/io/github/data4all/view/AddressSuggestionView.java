@@ -344,7 +344,7 @@ public class AddressSuggestionView implements OnClickListener,
 		booleanList = value.getAllUnclassifiedBooleans();
 
 		for (int i = 0; i < booleanList.size(); i++) {
-			if (booleanList.get(i)
+			if (booleanList.get(i) &&  tagList.size()>i
 					&& !keyMapView.containsValue(res.getString(tagList.get(i)
 							.getNameRessource()))) {
 				Tag tag = tagList.get(i);
