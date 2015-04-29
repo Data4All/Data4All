@@ -53,7 +53,7 @@ import android.location.Location;
  * @author Kristin Dahnken
  * @author fkirchge
  * @author sbrede
- * 
+ * @author steeve
  */
 public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
@@ -1694,7 +1694,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
 	/**
 	 * insert or update an address in database
-	 * @param location
+	 * @param location 
 	 * @param addressNr
 	 * @param road
 	 * @param postCode
@@ -1728,9 +1728,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
 	
 	/**
-	 * get a address from database based on location
+	 * get an address from database based on location
 	 * @param location
-	 * @return
+	 * @return an address
 	 */
 	public Address getAddressFromDb(Location location) {
 		final SQLiteDatabase db = getReadableDatabase();

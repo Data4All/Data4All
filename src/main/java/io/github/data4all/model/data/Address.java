@@ -40,10 +40,10 @@ public class Address implements Serializable {
     // attribute to store a postCode
     private String postCode = "";
 
-    // id of one address
+    // id of an address
     private int addressId;
 
-    // all getter and setter method
+    // all getter and setter methods
     public void setAddressId(int addressId) {
         this.addressId = addressId;
     }
