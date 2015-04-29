@@ -34,7 +34,8 @@
     <string name="pref_moving_animation_summary">How should the moving of objects in the preview map be working?</string>
     <string name="pref_moving_animation_dialog_title">Moving animation</string>
     
-    <string name="pref_sensor_warning">Show Sensor Warning</string>
+    <string name="pref_sensor_warning">Show Sensor Warning</string> 
+    <string name="pref_sensor_warning_summary">Shows the warnings of the sensors and if the sensor need recalibration. Warnings can be ignored by unchecking the checkbox.</string>
     
     <string name="pref_augmented_reality">Show Augmented Reality</string>    
     <string name="pref_augmented_reality_summary"> Already mapped objects will be visualized in the camera</string>

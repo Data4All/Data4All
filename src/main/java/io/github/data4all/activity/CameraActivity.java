@@ -23,23 +23,16 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.service.OrientationListener;
 import io.github.data4all.service.OrientationListener.HorizonListener;
 import io.github.data4all.service.OrientationListener.LocalBinder;
-import io.github.data4all.util.HorizonCalculationUtil;
-import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
 import io.github.data4all.util.upload.Callback;
 import io.github.data4all.view.AutoFocusCrossHair;
 import io.github.data4all.view.CameraPreview;
-import io.github.data4all.view.TouchView;
 import io.github.data4all.view.CaptureAssistView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-
-import android.R.color;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Activity;
+
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -53,9 +46,7 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ShutterCallback;
-import android.hardware.Camera.Size;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -68,7 +59,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -135,9 +125,6 @@ public class CameraActivity extends AbstractActivity {
     private CaptureAssistView cameraAssistView;
 
     private ImageButton btnCStatus;
-    // runs without a timer by reposting this handler at the end of the runnable
-    private boolean setUpComplete = false;
-    long startTime = 0;
 
     // Broadcast receiver for receiving status updates from the IntentService
     private class CalibrationReceiver extends BroadcastReceiver {
@@ -182,7 +169,7 @@ public class CameraActivity extends AbstractActivity {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        
+
         // It is important to call the super method after the window-features
         // are requested
         super.onCreate(savedInstanceState);
@@ -246,12 +233,10 @@ public class CameraActivity extends AbstractActivity {
         buttons.add(btnCStatus);
         listener = new ButtonRotationListener(this, buttons);
 
-        cameraAssistView =
-                (CaptureAssistView) findViewById(R.id.cameraAssistView);
+        cameraAssistView = (CaptureAssistView) findViewById(R.id.cameraAssistView);
 
         // Set the Focus animation
-        mAutoFocusCrossHair =
-                (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
+        mAutoFocusCrossHair = (AutoFocusCrossHair) findViewById(R.id.af_crosshair);
         AbstractActivity.addNavBarMargin(getResources(), btnCapture);
         AbstractActivity.addNavBarMargin(getResources(), btnCStatus);
 
@@ -268,8 +253,7 @@ public class CameraActivity extends AbstractActivity {
         this.setLayout();
         if (this.isDeviceSupportCamera()) {
             try {
-                cameraPreview =
-                        (CameraPreview) findViewById(R.id.cameraPreview);
+                cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
 
                 mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 cameraPreview.setCamera(mCamera);
@@ -294,7 +278,6 @@ public class CameraActivity extends AbstractActivity {
         bindService(intent, orientationListenerConnection,
                 Context.BIND_AUTO_CREATE);
         this.startService(intent);
-        setUpComplete = true;
     }
 
     @Override
@@ -314,51 +297,70 @@ public class CameraActivity extends AbstractActivity {
         listener.disable();
 
         stopService(new Intent(this, OrientationListener.class));
-        setUpComplete = false;
+    }
+
+    private AlphaAnimation createAnimation(final View v) {
+        AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+        anim.setDuration(3000);
+        anim.setStartOffset(3000);
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                v.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                v.setVisibility(View.INVISIBLE);
+                v.setClickable(false);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return anim;
     }
 
     private void updateCalibrationStatus() {
         switch (OrientationListener.CALIBRATION_STATUS) {
         case OrientationListener.CALIBRATION_OK:
             this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_okay);
-            AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
-            anim.setDuration(3000);
-            anim.setStartOffset(3000);
-            anim.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    btnCStatus.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    btnCStatus.setVisibility(View.INVISIBLE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            this.btnCStatus.startAnimation(anim);
-            this.btnCStatus.setClickable(false);
+            this.btnCStatus.startAnimation(createAnimation(btnCStatus));
             break;
         case OrientationListener.CALIBRATION_BROKEN_ALL:
             this.btnCStatus.setImageResource(R.drawable.ic_sensorstatus_fail);
-            this.btnCStatus.setVisibility(View.VISIBLE);
-            this.btnCStatus.setClickable(true);
+            if (!getWarning() || ignore) {
+                this.btnCStatus.startAnimation(createAnimation(btnCStatus));
+            } else {
+                this.btnCStatus.setVisibility(View.VISIBLE);
+                this.btnCStatus.setClickable(true);
+            }
             break;
-        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER:
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_0:
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_1:
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_2:
             this.btnCStatus
                     .setImageResource(R.drawable.ic_sensorstatus_warning);
-            this.btnCStatus.setVisibility(View.VISIBLE);
-            this.btnCStatus.setClickable(true);
+            if (!getWarning() || ignore) {
+                this.btnCStatus.startAnimation(createAnimation(btnCStatus));
+            } else {
+                this.btnCStatus.setVisibility(View.VISIBLE);
+                this.btnCStatus.setClickable(true);
+            }
             break;
-        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER:
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_0:
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_1:
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_2:
             this.btnCStatus
                     .setImageResource(R.drawable.ic_sensorstatus_warning);
-            this.btnCStatus.setVisibility(View.VISIBLE);
-            this.btnCStatus.setClickable(true);
+            if (!getWarning() || ignore) {
+                this.btnCStatus.startAnimation(createAnimation(btnCStatus));
+            } else {
+                this.btnCStatus.setVisibility(View.VISIBLE);
+                this.btnCStatus.setClickable(true);
+            }
             break;
         }
 
@@ -564,23 +566,38 @@ public class CameraActivity extends AbstractActivity {
         // set title
         switch (OrientationListener.CALIBRATION_STATUS) {
         case OrientationListener.CALIBRATION_OK:
-            alertDialogBuilder.setTitle(R.string.goodSensorCalibrationTitle);
+            alertDialogBuilder.setTitle(R.string.goodSensorCalibrationTitle).setMessage(R.string.goodSensorCalibration);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ALL:
-            alertDialogBuilder.setTitle(R.string.badSensorCalibrationTitle);
+            alertDialogBuilder.setTitle(R.string.badSensorCalibrationTitle).setMessage(R.string.badSensorCalibration);
             break;
-        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER:
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_0:
             alertDialogBuilder
-                    .setTitle(R.string.badAcceleometerCalibrationTitle);
+                    .setTitle(R.string.badAcceleometerCalibrationTitle).setMessage(R.string.badSensorCalibrationA0);
             break;
-        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER:
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_1:
             alertDialogBuilder
-                    .setTitle(R.string.badMagnetometerCalibrationTitle);
+                    .setTitle(R.string.badAcceleometerCalibrationTitle).setMessage(R.string.badSensorCalibrationA1);
             break;
+        case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_2:
+            alertDialogBuilder
+                    .setTitle(R.string.badAcceleometerCalibrationTitle).setMessage(R.string.badSensorCalibrationA2);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_0:
+            alertDialogBuilder
+                    .setTitle(R.string.badMagnetometerCalibrationTitle).setMessage(R.string.badSensorCalibrationM0);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_1:
+            alertDialogBuilder
+                    .setTitle(R.string.badMagnetometerCalibrationTitle).setMessage(R.string.badSensorCalibrationM1);
+            break;
+        case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_2:
+            alertDialogBuilder
+                    .setTitle(R.string.badMagnetometerCalibrationTitle).setMessage(R.string.badSensorCalibrationM2);
+            break;        
         }
         // set dialog message
         alertDialogBuilder
-                .setMessage(R.string.badSensorCalibration)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
@@ -611,15 +628,15 @@ public class CameraActivity extends AbstractActivity {
 
     private boolean getWarning() {
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-        final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
         return (prefs.getBoolean("sensor_warning", true));
     }
 
     private void setWarning(boolean show) {
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-        final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
         prefs.edit().putBoolean("sensor_warning", show).commit();
     }
 
@@ -631,10 +648,10 @@ public class CameraActivity extends AbstractActivity {
 
         if (orientationListener != null) {
             final Camera.Parameters params = mCamera.getParameters();
-            final float horizontalViewAngle =
-                    (float) Math.toRadians(params.getVerticalViewAngle());
-            final float verticalViewAngle =
-                    (float) Math.toRadians(params.getHorizontalViewAngle());
+            final float horizontalViewAngle = (float) Math.toRadians(params
+                    .getVerticalViewAngle());
+            final float verticalViewAngle = (float) Math.toRadians(params
+                    .getHorizontalViewAngle());
             cameraAssistView.setInformations(horizontalViewAngle,
                     verticalViewAngle,
                     orientationListener.getDeviceOrientation());
@@ -650,33 +667,30 @@ public class CameraActivity extends AbstractActivity {
     }
 
     /** Defines callbacks for the orientation service, passed to bindService() */
-    private ServiceConnection orientationListenerConnection =
-            new ServiceConnection() {
+    private ServiceConnection orientationListenerConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+
+            // LocalService instance
+            LocalBinder binder = (LocalBinder) service;
+            orientationListener = binder.getService();
+            orientationBound = true;
+            HorizonListener horizonListener = new OrientationListener.HorizonListener() {
 
                 @Override
-                public void onServiceConnected(ComponentName className,
-                        IBinder service) {
-
-                    // LocalService instance
-                    LocalBinder binder = (LocalBinder) service;
-                    orientationListener = binder.getService();
-                    orientationBound = true;
-                    HorizonListener horizonListener =
-                            new OrientationListener.HorizonListener() {
-
-                                @Override
-                                public void makeHorizon(boolean state) {
-                                    updateCameraAssistView();
-                                }
-
-                            };
-                    orientationListener.setHorizonListener(horizonListener);
+                public void makeHorizon(boolean state) {
+                    updateCameraAssistView();
                 }
 
-                @Override
-                public void onServiceDisconnected(ComponentName arg0) {
-                    orientationBound = false;
-                }
             };
+            orientationListener.setHorizonListener(horizonListener);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            orientationBound = false;
+        }
+    };
 
 }
