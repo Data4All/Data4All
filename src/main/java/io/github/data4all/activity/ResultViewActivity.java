@@ -181,6 +181,7 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             });
         }*/
+        //  @author : Steeve
         final Button addressSuggestions = (Button)this.findViewById(R.id.buttonAddressSuggestions);
         addressSuggestionView = new AddressSuggestionView(this, this, addressSuggestions);
         
@@ -191,6 +192,8 @@ public class ResultViewActivity extends AbstractActivity implements
         } else {
         	addressSuggestions.setVisibility(0);
         }
+ //-------------------------------------------------------------------------------------------------------------       
+        
         this.output();
         listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
