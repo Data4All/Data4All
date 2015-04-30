@@ -339,7 +339,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                 getReadableDatabase().rawQuery(
                         "SELECT COUNT(1) FROM " + TABLE_DATAELEMENT, null);
         cursor.moveToNext();
-        final int count = cursor.getInt(1);
+        final int count = cursor.getInt(0);
         cursor.close();
         return count;
     }
@@ -376,9 +376,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         // Read all DataElements
         while (elementCursor.moveToNext()) {
             AbstractDataElement element = null;
-            final int elementId = elementCursor.getInt(1);
+            final int elementId = elementCursor.getInt(0);
             final Class<? extends AbstractDataElement> elementClass =
-                    getElementClass(elementCursor.getInt(2));
+                    getElementClass(elementCursor.getInt(1));
 
             if (elementClass == Node.class) {
                 final Cursor nodeCursor =
@@ -387,8 +387,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                                 + KEY_DATAELEMENT + "=" + elementId, null);
                 if (nodeCursor.moveToNext()) {
                     element =
-                            new Node(elementId, nodeCursor.getDouble(1),
-                                    nodeCursor.getDouble(2));
+                            new Node(elementId, nodeCursor.getDouble(0),
+                                    nodeCursor.getDouble(1));
                 }
                 nodeCursor.close();
             } else if (elementClass == PolyElement.class) {
@@ -398,7 +398,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                                 + "=" + elementId, null);
                 if (polyCursor.moveToNext()) {
                     final PolyElementType type =
-                            PolyElementType.fromId(polyCursor.getInt(1));
+                            PolyElementType.fromId(polyCursor.getInt(0));
                     PolyElement polyElement = new PolyElement(elementId, type);
 
                     final Cursor nodeCursor =
@@ -407,9 +407,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                                     + " WHERE " + KEY_DATAELEMENT + "="
                                     + elementId, null);
                     while (nodeCursor.moveToNext()) {
-                        polyElement.addNode(new Node(nodeCursor.getLong(1),
-                                nodeCursor.getDouble(2), nodeCursor
-                                        .getDouble(3)));
+                        polyElement.addNode(new Node(nodeCursor.getLong(0),
+                                nodeCursor.getDouble(1), nodeCursor
+                                        .getDouble(2)));
                     }
                     nodeCursor.close();
                 }
@@ -418,7 +418,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             } else {
                 throw new IllegalStateException("Unknown subtype of "
                         + AbstractDataElement.class.getSimpleName() + ": id="
-                        + elementCursor.getInt(2));
+                        + elementCursor.getInt(1));
             }
 
             if (element == null) {
@@ -519,7 +519,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         final Cursor cursor = getReadableDatabase().rawQuery(query, null);
 
         while (cursor.moveToNext()) {
-            tagMap.put(Tags.getTagWithId(cursor.getInt(1)), cursor.getString(2));
+            tagMap.put(Tags.getTagWithId(cursor.getInt(0)), cursor.getString(1));
         }
 
         cursor.close();
