@@ -278,6 +278,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             List<Node> polyNodes = poly.getNodes();
             final long finalId = nextId + polyNodes.size();
             for (Node node : polyNodes) {
+                node.setOsmId(nextId);
+                
                 final ContentValues nodeValues = new ContentValues(4);
                 nodeValues.put(KEY_OSMID, nextId++);
                 nodeValues.put(KEY_DATAELEMENT, finalId);
@@ -300,6 +302,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
 
         // Add the DataElement
+        dataElement.setOsmId(nextId);
+        
         final ContentValues elementValues = new ContentValues(2);
         elementValues.put(KEY_OSMID, nextId);
         elementValues.put(KEY_TYPE, getElementType(dataElement));
@@ -412,6 +416,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                                         .getDouble(2)));
                     }
                     nodeCursor.close();
+                    element = polyElement;
                 }
                 polyCursor.close();
 

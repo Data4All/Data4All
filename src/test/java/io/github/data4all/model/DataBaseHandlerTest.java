@@ -74,22 +74,70 @@ public class DataBaseHandlerTest {
     }
 
     @Test
-    public void testDataElementCRUD() throws JSONException {
+    public void getDataElementCount_empty_zeroSize() {
+        assertEquals(0, dbHandler.getDataElementCount());
+    }
+
+    @Test
+    public void getDataElementCount_oneNode_oneSize() {
+        dbHandler.createDataElement(new Node(0, 0, 0));
+        assertEquals(1, dbHandler.getDataElementCount());
+    }
+
+    @Test
+    public void getDataElementCount_onePolyElement_oneSize() {
+        PolyElement polyElement = new PolyElement(0, PolyElementType.WAY);
+        polyElement.addNode(new Node(0, 0, 0));
+        polyElement.addNode(new Node(0, 0, 0));
+        dbHandler.createDataElement(polyElement);
+        assertEquals(1, dbHandler.getDataElementCount());
+    }
+
+    @Test
+    public void getDataElementCount_oneNodeAndOnePolyElement_twoSize() {
+        dbHandler.createDataElement(new Node(0, 0, 0));
+        PolyElement polyElement = new PolyElement(0, PolyElementType.WAY);
+        polyElement.addNode(new Node(0, 0, 0));
+        polyElement.addNode(new Node(0, 0, 0));
+        dbHandler.createDataElement(polyElement);
+        assertEquals(2, dbHandler.getDataElementCount());
+    }
+
+    @Test
+    public void createDataElement_insertNode_rightElementSaved() {
         final double lat = 1.2;
         final double lon = 3.4;
-        assertEquals(0, dbHandler.getDataElementCount());
-        Node toInsert = new Node(-1, lat, lon);
-        toInsert.addOrUpdateTag(Tags.getTagWithId(27), "FOO");
-        dbHandler.createDataElement(toInsert);
-        assertEquals(1, dbHandler.getDataElementCount());
-        List<AbstractDataElement> elements = dbHandler.getAllDataElements();
-        assertEquals(1, elements.size());
-        AbstractDataElement element = elements.get(0);
+        dbHandler.createDataElement(new Node(1, lat, lon));
+
+        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
         assertEquals(Node.class, element.getClass());
+
         Node node = (Node) element;
         assertEquals(lat, node.getLat(), 1e-10);
         assertEquals(lon, node.getLon(), 1e-10);
-        assertEquals("FOO", node.getTagValueWithKey(Tags.getTagWithId(27)));
+    }
+
+    @Test
+    public void createDataElement_insertPolyElement_rightElementSaved() {
+        final double lat = 1.2;
+        final double lon = 3.4;
+        final Node polyNode = new Node(1, lat, lon);
+        final PolyElementType type = PolyElementType.WAY;
+
+        PolyElement toInsert = new PolyElement(0, type);
+        toInsert.addNode(polyNode);
+        dbHandler.createDataElement(toInsert);
+
+        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        assertEquals(PolyElement.class, element.getClass());
+
+        PolyElement poly = (PolyElement) element;
+        assertEquals(type, poly.getType());
+        assertEquals(1, poly.getNodes().size());
+
+        Node node = poly.getNodes().get(0);
+        assertEquals(lat, node.getLat(), 1e-10);
+        assertEquals(lon, node.getLon(), 1e-10);
     }
 
     @Test
@@ -215,6 +263,7 @@ public class DataBaseHandlerTest {
 
     @After
     public void tearDown() {
+        dbHandler.deleteAllDataElements();
         dbHandler.close();
     }
 }
