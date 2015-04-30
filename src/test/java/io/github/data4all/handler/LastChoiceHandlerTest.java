@@ -91,18 +91,8 @@ public class LastChoiceHandlerTest {
         tagIDs.add(city.getId());
         tagIDs.add(tag.getId());
         tagIDs.add(country.getId());  
-        
-        dbhandler.createTagMap((long)1.0,lastChoice);
-        
-        dbhandler.getTagMap((long)1.0);
-        
-        assertTrue(dbhandler.getTagMap((long)1.0).containsKey(tag));
-        assertTrue(dbhandler.getTagMap((long)1.0).containsValue("Germany"));
-        assertTrue(dbhandler.getTagMap((long)1.0).containsKey(housenummer));
-        assertTrue(dbhandler.getTagMap((long)1.0).containsValue("bremen"));
-        assertTrue(dbhandler.getTagMap((long)1.0).containsKey(postCode));
-       
-        
+
+        // TODO
     }
     
     
