@@ -18,11 +18,15 @@ package io.github.data4all.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.data4all.Data4AllApplication;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.Point;
@@ -38,6 +42,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.Paint.Align;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -61,6 +67,7 @@ public class CaptureAssistView extends View {
     private Paint cameraStopPaint;
     private Paint invalidRegionPaint;
     private Paint paint;
+    private Paint textPaint;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
     private float horizontalViewAngle, verticalViewAngle;
@@ -71,9 +78,11 @@ public class CaptureAssistView extends View {
     private boolean informationSet;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
-    private List<PolyElement> polyElements;
+    private List<AbstractDataElement> dataElements;
+    private List<Node> pointsOfInterest;
     private TransformationParamBean tps;
     private PointToCoordsTransformUtil util;
+    private double rotateDegree;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
@@ -137,7 +146,8 @@ public class CaptureAssistView extends View {
 
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(getContext());
-        this.polyElements = db.getAllPolyElements();
+        this.dataElements = db.getAllDataElements();
+        this.pointsOfInterest = db.getAllNode();
         db.close();
 
         Resources r = this.getResources();
@@ -155,6 +165,11 @@ public class CaptureAssistView extends View {
         paint.setColor(Color.BLUE);
         paint.setAlpha(64);
         paint.setStyle(Paint.Style.FILL);
+
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.BLACK);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setTextAlign(Align.CENTER);
 
         this.tps = new TransformationParamBean(getDeviceHeight(),
                 horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
@@ -200,7 +215,7 @@ public class CaptureAssistView extends View {
                             verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
                             (float) Math.toRadians(horizondegree),
                             deviceOrientation);
-
+            this.rotateDegree = returnValues.getRotateDegree();
             this.skylook = returnValues.isSkylook();
             this.visible = returnValues.isVisible();
             this.points = returnValues.getPoints();
@@ -229,17 +244,85 @@ public class CaptureAssistView extends View {
         if (informationSet && getAugmented()) {
             tps.setPhotoHeight(mMeasuredHeight);
             tps.setPhotoWidth(mMeasuredWidth);
-            for (PolyElement iter : polyElements) {
+            Point center;
+            int i = 0;
+            for (AbstractDataElement iter : ab) {
                 if (iter.getType() == PolyElementType.AREA
                         || iter.getType() == PolyElementType.BUILDING) {
                     this.points = util.calculateNodesToPoint(iter.getNodes(),
                             tps, deviceOrientation);
                     Path path = getPath();
                     canvas.drawPath(path, paint);
+                    center = getCenter(points);
+                    String value = "null";
+                    Log.i("TEST","TAGSISZE:  "+ iter.getTags().size());
+                    if (!iter.getTags().keySet().isEmpty()
+                            && !iter.getTags().values().isEmpty()) {
+                    final Tag tag = (Tag) iter.getTags().keySet().toArray()[0];
+                    final String test = tag.getNamedValue(Data4AllApplication.context, iter.getTags().get(tag));                   
+                           value = test;}
+                    
+                    float j = 30;
+                    float distance = (float) util.calculateDistance(tps,
+                            deviceOrientation, center);
+                    if (distance < 10) {
+                        j = j + 5 * (10 - distance);
+                    }
+                    textPaint.setTextSize(j);
+                    canvas.rotate((float) Math.toDegrees(rotateDegree),
+                            center.getX(), center.getY());
+                    canvas.drawText(value, center.getX(), center.getY(),
+                            textPaint);
+                    canvas.rotate((float) -Math.toDegrees(rotateDegree),
+                            center.getX(), center.getY());
+
+                    Log.i("TEST", "Coordinates: " + i);
+
+                    Log.i("TEST", value);
+                    i++;
+                    
                 }
-            }
+            }/*
+            for (Node iter : pointsOfInterest) {
+                Point point = util.calculateNodeToPoint(iter, tps,
+                        deviceOrientation);
+                String text = "Some Text";
+                float j = 30;
+                float distance = (float) util.calculateDistance(tps,
+                        deviceOrientation, point);
+                if (distance < 10) {
+                    j = j + 5 * (10 - distance);
+                }
+                textPaint.setTextSize(j);
+                canvas.rotate((float) Math.toDegrees(rotateDegree),
+                        point.getX(), point.getY());
+                canvas.drawText(text, point.getX(), point.getY(), textPaint);
+                canvas.rotate((float) -Math.toDegrees(rotateDegree),
+                        point.getX(), point.getY());
+                Log.i("TEST", "Coordinates: " + i);
+                i++;
+            }*/
         }
         canvas.restore();
+    }
+
+    /**
+     * calculates the Center of a list of Points
+     * 
+     * @param points
+     *            a List of Points
+     * @return a Point
+     */
+    public static Point getCenter(List<Point> points) {
+        int i = 0;
+        float x = 0;
+        float y = 0;
+        for (Point iter : points) {
+            x += iter.getX();
+            y += iter.getY();
+            i += 1;
+        }
+        return new Point(x / i, y / i);
     }
 
     protected boolean getAugmented() {

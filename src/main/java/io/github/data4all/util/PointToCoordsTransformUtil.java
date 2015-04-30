@@ -24,7 +24,6 @@ import io.github.data4all.model.drawing.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * This class uses the orientation of the phone, the pixel of the drawn points
  * and the camera parameters to calculate the distance between the phone and the
@@ -47,8 +46,8 @@ public class PointToCoordsTransformUtil {
     /**
      * 2 Vectors for the x- and the y-axe
      */
-    private static final double[] xaxe = {1,0,0,};
-    private static final double[] yaxe = {0,1,0,};
+    private static final double[] xaxe = { 1, 0, 0, };
+    private static final double[] yaxe = { 0, 1, 0, };
 
     public PointToCoordsTransformUtil() {
     }
@@ -246,16 +245,32 @@ public class PointToCoordsTransformUtil {
      */
     public List<Point> calculateNodesToPoint(List<Node> nodes,
             TransformationParamBean tps, DeviceOrientation deviceOrientation) {
-        this.tps = tps;
-        this.deviceOrientation = deviceOrientation;
         final List<Point> points = new ArrayList<Point>();
         for (Node node : nodes) {
-            final double[] coord = MathUtil.calculateCoordFromGPS(
-                    tps.getLocation(), node);
-            final Point point = coordToPixel(coord);
-            points.add(point);
+            points.add(calculateNodeToPoint(node, tps, deviceOrientation));
         }
         return points;
+    }
+
+    /**
+     * Transfers GPSPoints to Points on the Display
+     * 
+     * @param nodes
+     *            a GeoPoint
+     * @param tps
+     *            Transformationparambean
+     * @param deviceOrientation
+     *            the Orientation of the device
+     * @return List of Points a List of Points to draw on Device
+     */
+    public Point calculateNodeToPoint(Node node, TransformationParamBean tps,
+            DeviceOrientation deviceOrientation) {
+        this.tps = tps;
+        this.deviceOrientation = deviceOrientation;
+        final double[] coord = MathUtil.calculateCoordFromGPS(
+                tps.getLocation(), node);
+        return coordToPixel(coord);
+
     }
 
     /**
@@ -337,6 +352,12 @@ public class PointToCoordsTransformUtil {
         Log.i(TAG, "Coordinates: " + coord[0] + " ; " + coord[1]);
 
         return coord;
+    }
+
+    public double calculateDistance(TransformationParamBean tps,
+            DeviceOrientation deviceOrientation, Point point) {
+        double[] coord = calculateCoordFromPoint(tps, deviceOrientation, point);
+        return Math.sqrt(coord[0] * coord[0] + coord[1] * coord[1]);
     }
 
 }
