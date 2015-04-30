@@ -38,12 +38,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Paint.Align;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -68,10 +72,14 @@ public class CaptureAssistView extends View {
     private Paint invalidRegionPaint;
     private Paint paint;
     private Paint textPaint;
+    private Paint poiPaint;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
+    private int augMinTextSize = 20;
+    private int augMaxTextSize = 100;
     private float horizontalViewAngle, verticalViewAngle;
     private float horizondegree = 87.5f;
+    private float maxDistance = 100;
     private DeviceOrientation deviceOrientation;
     private boolean skylook;
     private boolean visible;
@@ -79,10 +87,11 @@ public class CaptureAssistView extends View {
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
     private List<AbstractDataElement> dataElements;
-    private List<Node> pointsOfInterest;
     private TransformationParamBean tps;
     private PointToCoordsTransformUtil util;
     private double rotateDegree;
+    private Bitmap POIbitmap;
+    private Matrix matrix;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
@@ -147,7 +156,6 @@ public class CaptureAssistView extends View {
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(getContext());
         this.dataElements = db.getAllDataElements();
-        this.pointsOfInterest = db.getAllNode();
         db.close();
 
         Resources r = this.getResources();
@@ -170,6 +178,16 @@ public class CaptureAssistView extends View {
         textPaint.setColor(Color.BLACK);
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextAlign(Align.CENTER);
+
+        poiPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        poiPaint.setColor(Color.BLUE);
+        poiPaint.setStyle(Paint.Style.FILL);
+        poiPaint.setTextAlign(Align.CENTER);
+
+        BitmapDrawable bitmapDraw = (BitmapDrawable) r
+                .getDrawable(R.drawable.ic_setpoint_blue);
+        POIbitmap = bitmapDraw.getBitmap();
+        matrix = new Matrix();
 
         this.tps = new TransformationParamBean(getDeviceHeight(),
                 horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
@@ -241,70 +259,80 @@ public class CaptureAssistView extends View {
                         cameraStopPaint);
             }
         }
+        // Draws the augmented Reality including the Infotext
         if (informationSet && getAugmented()) {
             tps.setPhotoHeight(mMeasuredHeight);
             tps.setPhotoWidth(mMeasuredWidth);
-            Point center;
-            int i = 0;
-            for (AbstractDataElement iter : ab) {
-                if (iter.getType() == PolyElementType.AREA
-                        || iter.getType() == PolyElementType.BUILDING) {
-                    this.points = util.calculateNodesToPoint(iter.getNodes(),
-                            tps, deviceOrientation);
-                    Path path = getPath();
-                    canvas.drawPath(path, paint);
-                    center = getCenter(points);
-                    String value = "null";
-                    Log.i("TEST","TAGSISZE:  "+ iter.getTags().size());
+            Point center = null;
+            float distance = maxDistance +1;
+            Boolean isWay = false;
+            for (AbstractDataElement iter : dataElements) {
+                // Check if it's an instance of a PolyElement
+                if (iter instanceof PolyElement) {
+                    PolyElement poly = (PolyElement) iter;
+                    // Draw Mapped Object on Canvas
+                    if (poly.getType() == PolyElementType.AREA
+                            || poly.getType() == PolyElementType.BUILDING) {
+                        this.points = util.calculateNodesToPoint(
+                                poly.getNodes(), tps, deviceOrientation);
+                        center = getCenter(points);
+                        distance = (float) util.calculateDistance(tps,
+                                deviceOrientation, center);
+                        if (distance < maxDistance) {
+                            Path path = getPath();
+                            canvas.drawPath(path, paint);
+                        }
+                    } else {
+                        isWay = true;
+                    }
+                } else {
+                    // Draw PointOfInterest
+                    Node node = (Node) iter;
+                    center = util.calculateNodeToPoint(node, tps,
+                            deviceOrientation);
+                    distance = (float) util.calculateDistance(tps,
+                            deviceOrientation, center);
+                    if (distance < maxDistance) {
+                        canvas.rotate((float) Math.toDegrees(rotateDegree),
+                                center.getX(), center.getY());
+                        //Resize BitMap for different distances
+                        float scale = (float) (1.2 / (distance / 6 + 1));
+                        matrix.postScale(scale, scale);
+                        Bitmap bitmap = Bitmap.createBitmap(POIbitmap, 0, 0, POIbitmap.getWidth(),
+                                POIbitmap.getHeight(), matrix, false);
+                        canvas.drawBitmap(bitmap, center.getX(), center.getY(),
+                                poiPaint);
+                        canvas.rotate((float) Math.toDegrees(-rotateDegree),
+                                center.getX(), center.getY());
+                    }
+                }
+                // Write InfoText
+                if (!isWay && distance < maxDistance) {
+                    String value = "";
+                    // get String for Infotext
                     if (!iter.getTags().keySet().isEmpty()
                             && !iter.getTags().values().isEmpty()) {
-                    final Tag tag = (Tag) iter.getTags().keySet().toArray()[0];
-                    final String test = tag.getNamedValue(Data4AllApplication.context, iter.getTags().get(tag));                   
-                           value = test;}
-                    
-                    float j = 30;
-                    float distance = (float) util.calculateDistance(tps,
-                            deviceOrientation, center);
-                    if (distance < 10) {
-                        j = j + 5 * (10 - distance);
+                        final Tag tag = (Tag) iter.getTags().keySet().toArray()[0];
+                        value = tag.getNamedValue(Data4AllApplication.context,
+                                iter.getTags().get(tag));
                     }
-                    textPaint.setTextSize(j);
+                    // alter TextSize for different distances
+                    textPaint
+                            .setTextSize(((augMaxTextSize - augMinTextSize) / (distance / 4 + 1))
+                                    + augMinTextSize);
                     canvas.rotate((float) Math.toDegrees(rotateDegree),
                             center.getX(), center.getY());
                     canvas.drawText(value, center.getX(), center.getY(),
                             textPaint);
                     canvas.rotate((float) -Math.toDegrees(rotateDegree),
                             center.getX(), center.getY());
-
-                    Log.i("TEST", "Coordinates: " + i);
-
-                    Log.i("TEST", value);
-                    i++;
-                    
                 }
-            }/*
-            for (Node iter : pointsOfInterest) {
-                Point point = util.calculateNodeToPoint(iter, tps,
-                        deviceOrientation);
-                String text = "Some Text";
-                float j = 30;
-                float distance = (float) util.calculateDistance(tps,
-                        deviceOrientation, point);
-                if (distance < 10) {
-                    j = j + 5 * (10 - distance);
-                }
-                textPaint.setTextSize(j);
-                canvas.rotate((float) Math.toDegrees(rotateDegree),
-                        point.getX(), point.getY());
-                canvas.drawText(text, point.getX(), point.getY(), textPaint);
-                canvas.rotate((float) -Math.toDegrees(rotateDegree),
-                        point.getX(), point.getY());
-                Log.i("TEST", "Coordinates: " + i);
-                i++;
-            }*/
+                isWay = false;
+            }
         }
         canvas.restore();
     }
+
 
     /**
      * calculates the Center of a list of Points
