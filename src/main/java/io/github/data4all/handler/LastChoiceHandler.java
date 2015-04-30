@@ -103,7 +103,7 @@ public final class LastChoiceHandler {
     public static void load(DataBaseHandler db) {
         final LastChoiceHandler handler = getInstance();
         for (int i = 1; i <= 4; i++) {
-            final Map<Tag, String> tagMap = db.getLastChoiceId(i);
+            final Map<Tag, String> tagMap = db.getLastChoice(i);
             if (tagMap != null && !tagMap.isEmpty()) {
                 handler.setLastChoice(i, tagMap);
             }

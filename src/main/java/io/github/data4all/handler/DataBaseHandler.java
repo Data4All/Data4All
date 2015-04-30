@@ -785,7 +785,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @param category
      * @return
      */
-    public Map<Tag, String> getLastChoiceId(int category) {
+    public Map<Tag, String> getLastChoice(int category) {
         throw new RuntimeException(); // TODO
     }
 
