@@ -17,13 +17,18 @@ package io.github.data4all.handler;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.model.data.PolyElement.PolyElementType;
 import io.github.data4all.model.data.Tag;
+import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,59 +54,44 @@ import android.location.Location;
  */
 public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
-    /**
-     * 
-     */
     private static final String SELECT_ALL = "SELECT * FROM ";
 
     private static final String TAG = "DataBaseHandler";
 
     // Database Version
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     // Database Name
     private static final String DATABASE_NAME = "Data4AllDB";
 
     // Table Names
-    private static final String TABLE_NODE = "nodes";
-    private static final String TABLE_DATAELEMENT = "dataelements";
-    private static final String TABLE_TAGMAP = "tagmap";
-    private static final String TABLE_POLYELEMENT = "polyelements";
     private static final String TABLE_USER = "users";
-    private static final String TABLE_WAY = "ways";
+    private static final String TABLE_DATAELEMENT = "dataelements";
+    private static final String TABLE_POLYELEMENT = "polyelements";
+    private static final String TABLE_NODE = "nodes";
+    private static final String TABLE_TAGMAP = "tagmap";
+    private static final String TABLE_LASTCHOICE = "lastChoice";
     private static final String TABLE_GPSTRACK = "gpstracks";
     private static final String TABLE_TRACKPOINT = "trackpoints";
-    private static final String TABLE_LASTCHOICE = "lastChoice";
+
+    // User Column Names
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_TOKEN = "token";
+    private static final String KEY_TOKENSECRET = "tokensecret";
 
     // General Column Names
     private static final String KEY_OSMID = "osmid";
     private static final String KEY_INCID = "incid";
-
-    // DataElement Column Names
-    private static final String KEY_TAGIDS = "tagids";
+    private static final String KEY_TYPE = "type";
+    private static final String KEY_DATAELEMENT = "element";
 
     // Node Column Names
     private static final String KEY_LAT = "lat";
     private static final String KEY_LON = "lon";
 
     // TagMap Column Names
-    private static final String KEY_ID = "id";
-    private static final String KEY_DATAELEMENT = "element";
     private static final String KEY_TAGID = "tagid";
     private static final String KEY_VALUE = "value";
-
-    // LastChoice Column names
-    private static final String TAG_IDS = "tagIds";
-    private static final String TYPE = "type";
-
-    // PolyElement Column Names
-    private static final String KEY_TYPE = "type";
-    private static final String KEY_NODEIDS = "nodeids";
-
-    // User Column Names
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_TOKEN = "token";
-    private static final String KEY_TOKENSECRET = "tokensecret";
 
     // GPS Track Column Names
     private static final String KEY_TRACKNAME = "trackname";
@@ -145,8 +135,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                         + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
                         + " TEXT)";
         final String CREATE_LASTCHOICE_TABLE =
-                "CREATE TABLE " + TABLE_LASTCHOICE + " (" + TYPE + " INTEGER,"
-                        + KEY_TAGID + " INTEGER," + KEY_VALUE + " TEXT)";
+                "CREATE TABLE " + TABLE_LASTCHOICE + " (" + KEY_TYPE
+                        + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
+                        + " TEXT)";
 
         final String CREATE_GPSTRACK_TABLE =
                 "CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_INCID
@@ -266,7 +257,58 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            will be taken.
      */
     public void createDataElement(AbstractDataElement dataElement) {
-        throw new RuntimeException(); // TODO
+        final SQLiteDatabase db = getWritableDatabase();
+        long nextId = getNextId();
+
+        if (dataElement instanceof Node) {
+            final Node node = (Node) dataElement;
+
+            // Add the Node
+            final ContentValues nodeValues = new ContentValues(4);
+            nodeValues.put(KEY_OSMID, nextId);
+            nodeValues.put(KEY_DATAELEMENT, nextId);
+            nodeValues.put(KEY_LAT, node.getLat());
+            nodeValues.put(KEY_LON, node.getLon());
+
+            db.insert(TABLE_NODE, null, nodeValues);
+        } else if (dataElement instanceof PolyElement) {
+            final PolyElement poly = (PolyElement) dataElement;
+
+            // Add the Nodes of the PolyElement
+            List<Node> polyNodes = poly.getNodes();
+            final long finalId = nextId + polyNodes.size();
+            for (Node node : polyNodes) {
+                final ContentValues nodeValues = new ContentValues(4);
+                nodeValues.put(KEY_OSMID, nextId++);
+                nodeValues.put(KEY_DATAELEMENT, finalId);
+                nodeValues.put(KEY_LAT, node.getLat());
+                nodeValues.put(KEY_LON, node.getLon());
+
+                db.insert(TABLE_NODE, null, nodeValues);
+            }
+
+            // Add the PolyElement
+            final ContentValues polyValues = new ContentValues(2);
+            polyValues.put(KEY_OSMID, nextId);
+            polyValues.put(KEY_TYPE, poly.getType().getId());
+
+            db.insert(TABLE_POLYELEMENT, null, polyValues);
+        } else {
+            throw new IllegalArgumentException("Unknown subtype of "
+                    + AbstractDataElement.class.getSimpleName() + ": "
+                    + dataElement.getClass().getName());
+        }
+
+        // Add the DataElement
+        final ContentValues elementValues = new ContentValues(2);
+        elementValues.put(KEY_OSMID, nextId);
+        elementValues.put(KEY_TYPE, getElementType(dataElement));
+        db.insert(TABLE_DATAELEMENT, null, elementValues);
+
+        // Add the Tags
+        final ContentValues tagInitial = new ContentValues(1);
+        tagInitial.put(KEY_DATAELEMENT, nextId);
+        putTags(TABLE_TAGMAP, tagInitial, dataElement.getTags());
     }
 
     /**
@@ -277,7 +319,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      *            deleted.
      */
     public void deleteDataElement(AbstractDataElement dataElement) {
-        throw new RuntimeException(); // TODO
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final String isId = "=" + dataElement.getOsmId();
+        db.delete(TABLE_TAGMAP, KEY_DATAELEMENT + isId, null);
+        db.delete(TABLE_NODE, KEY_DATAELEMENT + isId, null);
+        db.delete(TABLE_POLYELEMENT, KEY_OSMID + isId, null);
+        db.delete(TABLE_DATAELEMENT, KEY_OSMID + isId, null);
     }
 
     /**
@@ -287,7 +335,13 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @return the number of data elements.
      */
     public int getDataElementCount() {
-        throw new RuntimeException(); // TODO
+        final Cursor cursor =
+                getReadableDatabase().rawQuery(
+                        "SELECT COUNT(1) FROM " + TABLE_DATAELEMENT, null);
+        cursor.moveToNext();
+        final int count = cursor.getInt(1);
+        cursor.close();
+        return count;
     }
 
     /**
@@ -300,7 +354,9 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @return the number of rows that have been updated.
      */
     public void updateDataElement(AbstractDataElement dataElement) {
-        throw new RuntimeException(); // TODO
+        // Maybe there is an intelligent way to do this ...
+        deleteDataElement(dataElement);
+        createDataElement(dataElement);
     }
 
     /**
@@ -310,18 +366,191 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @return a list of data elements.
      */
     public List<AbstractDataElement> getAllDataElements() {
-        throw new RuntimeException(); // TODO
+        List<AbstractDataElement> elements =
+                new ArrayList<AbstractDataElement>();
+
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor elementCursor =
+                db.rawQuery(SELECT_ALL + TABLE_DATAELEMENT, null);
+
+        // Read all DataElements
+        while (elementCursor.moveToNext()) {
+            AbstractDataElement element = null;
+            final int elementId = elementCursor.getInt(1);
+            final Class<? extends AbstractDataElement> elementClass =
+                    getElementClass(elementCursor.getInt(2));
+
+            if (elementClass == Node.class) {
+                final Cursor nodeCursor =
+                        db.rawQuery("SELECT " + KEY_LAT + "," + KEY_LON
+                                + " from " + TABLE_NODE + " WHERE "
+                                + KEY_DATAELEMENT + "=" + elementId, null);
+                if (nodeCursor.moveToNext()) {
+                    element =
+                            new Node(elementId, nodeCursor.getDouble(1),
+                                    nodeCursor.getDouble(2));
+                }
+                nodeCursor.close();
+            } else if (elementClass == PolyElement.class) {
+                final Cursor polyCursor =
+                        db.rawQuery("SELECT " + KEY_TYPE + " from "
+                                + TABLE_POLYELEMENT + " WHERE " + KEY_OSMID
+                                + "=" + elementId, null);
+                if (polyCursor.moveToNext()) {
+                    final PolyElementType type =
+                            PolyElementType.fromId(polyCursor.getInt(1));
+                    PolyElement polyElement = new PolyElement(elementId, type);
+
+                    final Cursor nodeCursor =
+                            db.rawQuery("SELECT " + KEY_OSMID + "," + KEY_LAT
+                                    + "," + KEY_LON + " from " + TABLE_NODE
+                                    + " WHERE " + KEY_DATAELEMENT + "="
+                                    + elementId, null);
+                    while (nodeCursor.moveToNext()) {
+                        polyElement.addNode(new Node(nodeCursor.getLong(1),
+                                nodeCursor.getDouble(2), nodeCursor
+                                        .getDouble(3)));
+                    }
+                    nodeCursor.close();
+                }
+                polyCursor.close();
+
+            } else {
+                throw new IllegalStateException("Unknown subtype of "
+                        + AbstractDataElement.class.getSimpleName() + ": id="
+                        + elementCursor.getInt(2));
+            }
+
+            if (element == null) {
+                throw new IllegalStateException(
+                        AbstractDataElement.class.getSimpleName()
+                                + " with the id " + elementId
+                                + " cannot be read");
+            } else {
+                Map<Tag, String> tags =
+                        buildTags("SELECT " + KEY_TAGID + "," + KEY_VALUE
+                                + " FROM " + TABLE_TAGMAP + " WHERE "
+                                + KEY_DATAELEMENT + "=" + elementId);
+                element.setTags(tags);
+                elements.add(element);
+            }
+        }
+
+        elementCursor.close();
+
+        return elements;
     }
 
     /**
      * This method deletes all entries of the {@link AbstractDataElement} table.
      */
     public void deleteAllDataElements() {
-        throw new RuntimeException(); // TODO
+        final SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_TAGMAP, null, null);
+        db.delete(TABLE_NODE, null, null);
+        db.delete(TABLE_POLYELEMENT, null, null);
+        db.delete(TABLE_DATAELEMENT, null, null);
     }
 
+    /**
+     * Returns the last ID used for DataElements.
+     * 
+     * @author tbrose
+     * 
+     * @return the last used ID.
+     */
+    private long getNextId() {
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor =
+                db.rawQuery("SELECT " + KEY_OSMID + " FROM "
+                        + TABLE_DATAELEMENT + " order by " + KEY_OSMID
+                        + " DESC limit 1", null);
+        long lastId = 0;
+        if (cursor.moveToNext()) {
+            lastId = cursor.getLong(0);
+            Log.d(TAG, "LAST ID: " + lastId);
+        }
+        cursor.close();
+        return lastId + 1;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param element
+     * @return
+     */
+    private static int getElementType(AbstractDataElement element) {
+        if (element instanceof PolyElement) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * TODO
+     * 
+     * @param elementType
+     * @return
+     */
+    private static Class<? extends AbstractDataElement> getElementClass(
+            int elementType) {
+        if (elementType == 1) {
+            return PolyElement.class;
+        } else {
+            return Node.class;
+        }
+    }
+
+    /**
+     * Executes the query and builds a tagMap from the result of the query.
+     * 
+     * In the result the first column needs to be the tagId and the second
+     * column needs to be the value.
+     * 
+     * @param query
+     *            Well formed SQL query
+     * @return The received tagMap
+     */
     private Map<Tag, String> buildTags(String query) {
-        return null;
+        final Map<Tag, String> tagMap = new LinkedHashMap<Tag, String>();
+        final Cursor cursor = getReadableDatabase().rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            tagMap.put(Tags.getTagWithId(cursor.getInt(1)), cursor.getString(2));
+        }
+
+        cursor.close();
+        Log.i(TAG, tagMap.size() + " tags were retrieved from the database.");
+        return tagMap;
+    }
+
+    /**
+     * Executes an insert for each tag-pair of the given map.
+     * 
+     * @param table
+     *            The table to insert to
+     * @param initialValues
+     *            The initial content values for each insertion
+     * @param tagMap
+     *            The tags to be saved
+     */
+    private void putTags(String table, ContentValues initialValues,
+            Map<Tag, String> tagMap) {
+        final SQLiteDatabase db = getWritableDatabase();
+
+        final ContentValues values = new ContentValues();
+        values.putAll(initialValues);
+
+        for (Map.Entry<Tag, String> tag : tagMap.entrySet()) {
+            values.put(KEY_TAGID, tag.getKey().getId());
+            values.put(KEY_VALUE, tag.getValue());
+
+            db.insert(table, null, values);
+        }
+        Log.i(TAG, "Tags has been added.");
     }
 
     // -------------------------------------------------------------------------
@@ -777,27 +1006,29 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // -------------------------------------------------------------------------
     // lastChoice
     /**
-     * get lastchoice from a Type(node,track,area,building).
+     * get lastchoice from a Type(node,track,area,building). TODO
      * 
-     * @author Steeve
      * @author tbrose
      * 
      * @param category
      * @return
      */
     public Map<Tag, String> getLastChoice(int category) {
-        throw new RuntimeException(); // TODO
+        return buildTags("SELECT " + KEY_TAGID + "," + KEY_VALUE + " FROM "
+                + TABLE_LASTCHOICE + " WHERE " + KEY_TYPE + "=" + category);
     }
 
     /**
-     * insert a lastchoice for a given Type
+     * insert a lastchoice for a given Type. TODO
+     * 
+     * @author tbrose
      * 
      * @param category
-     * @param tagIds
-     * @return
-     * @author Steeve
+     * @param tags
      */
     public void setLastChoice(int category, Map<Tag, String> tags) {
-        throw new RuntimeException(); // TODO
+        final ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_TYPE, category);
+        putTags(TABLE_LASTCHOICE, categoryValue, tags);
     }
 }
