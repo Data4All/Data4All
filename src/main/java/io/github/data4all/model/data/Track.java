@@ -132,7 +132,7 @@ public class Track implements Parcelable {
     public void setID(long id) {
         this.id = id;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -161,7 +161,7 @@ public class Track implements Parcelable {
      * Finish a track and set the flag to true
      */
     public void finishTrack() {
-        setStatus(true);
+        this.setStatus(true);
     }
 
     public boolean isFinished() {
@@ -175,11 +175,9 @@ public class Track implements Parcelable {
      *            The Location
      */
     public void addTrackPoint(final Location location) {
-        if (!isFinished()) {
-            if (location != null) {
-                tracklist.add(new TrackPoint(location));
-                Log.d(TAG, "Added TrackPoint: " + location.toString());
-            }
+        if (!this.isFinished() && location != null) {
+            tracklist.add(new TrackPoint(location));
+            Log.d(TAG, "Added TrackPoint: " + location.toString());
         }
     }
 
@@ -191,7 +189,6 @@ public class Track implements Parcelable {
      * Clears the list of TrackPoints belonging to this track and appends
      * another list of TrackPoints to it.
      * 
-     * @param trackPoints
      * @param trackPoints
      *            the given list of TrackPoints
      */

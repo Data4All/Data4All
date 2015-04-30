@@ -133,7 +133,7 @@ public class UploadElementsService extends IntentService {
             db.close();
             if (users != null && !users.isEmpty()) {
                 final User user = users.get(0);
-                this.uploadElems(receiver, user,comment);
+                this.uploadElems(receiver, user, comment);
                 stopNext = false;
             }
         }
@@ -148,7 +148,8 @@ public class UploadElementsService extends IntentService {
      * @param user
      *            The User to the data from
      */
-    private void uploadElems(final ResultReceiver receiver, final User user, final String comment) {
+    private void uploadElems(final ResultReceiver receiver, final User user,
+            final String comment) {
         try {
             this.startForeground(user);
             int requestId = 0;

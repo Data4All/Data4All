@@ -15,16 +15,6 @@
  */
 package io.github.data4all.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.osmdroid.DefaultResourceProxyImpl;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.util.BoundingBoxE6;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Overlay;
-
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.listener.ButtonRotationListener;
@@ -35,6 +25,17 @@ import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.MathUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Overlay;
+
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -42,7 +43,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ZoomControls;
-import android.widget.ZoomButtonsController;
 
 /**
  * Activity to show an Osm_Element on a Preview Map.
@@ -142,7 +142,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         listener = new ButtonRotationListener(this, buttons);
 
         if (element instanceof PolyElement) {
-            PolyElement elem = (PolyElement) element;
+            final PolyElement elem = (PolyElement) element;
             if (elem.getNodes().size() != 5
                     || elem.getType().equals(PolyElement.PolyElementType.WAY)) {
                 rect.setClickable(false);
@@ -245,7 +245,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
      */
     private void startRectangularPreview(ImageButton btn) {
         if (element instanceof PolyElement) {
-            PolyElement rect = (PolyElement) element;
+            final PolyElement rect = (PolyElement) element;
             if (saveElement == null) {
                 btn.setImageResource(R.drawable.ic_undo);
                 saveElement = new ArrayList<Node>();

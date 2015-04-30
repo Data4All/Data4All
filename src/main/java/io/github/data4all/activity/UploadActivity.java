@@ -33,7 +33,6 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 
-import android.R.menu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;

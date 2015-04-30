@@ -21,10 +21,7 @@ import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.Tag;
-import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
 
 import org.osmdroid.DefaultResourceProxyImpl;
@@ -33,7 +30,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Point;
