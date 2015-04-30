@@ -125,26 +125,29 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // Table creation
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String CREATE_DATAELEMENTS_TABLE =
-                "CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_OSMID
-                        + " INTEGER PRIMARY KEY," + KEY_TAGIDS + " TEXT" + ")";
-        final String CREATE_NODES_TABLE =
-                "CREATE TABLE " + TABLE_NODE + " (" + KEY_OSMID
-                        + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
-                        + KEY_LON + " REAL" + ")";
-        final String CREATE_TAGMAP_TABLE =
-                "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_ID
-                        + " INTEGER PRIMARY KEY," + KEY_DATAELEMENT
-                        + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
-                        + " TEXT" + ")";
-        final String CREATE_POLYELEMENT_TABLE =
-                "CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
-                        + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
-                        + KEY_NODEIDS + " TEXT" + ")";
         final String CREATE_USERS_TABLE =
                 "CREATE TABLE " + TABLE_USER + " (" + KEY_USERNAME
                         + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
                         + KEY_TOKENSECRET + " TEXT" + ")";
+
+        final String CREATE_DATAELEMENTS_TABLE =
+                "CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY, " + KEY_TYPE + " INTEGER)";
+        final String CREATE_POLYELEMENT_TABLE =
+                "CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_TYPE + " INTEGER)";
+        final String CREATE_NODES_TABLE =
+                "CREATE TABLE " + TABLE_NODE + " (" + KEY_OSMID
+                        + " INTEGER PRIMARY KEY," + KEY_DATAELEMENT
+                        + " INTEGER," + KEY_LAT + " REAL," + KEY_LON + " REAL)";
+        final String CREATE_TAGMAP_TABLE =
+                "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_DATAELEMENT
+                        + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
+                        + " TEXT)";
+        final String CREATE_LASTCHOICE_TABLE =
+                "CREATE TABLE " + TABLE_LASTCHOICE + " (" + TYPE + " INTEGER,"
+                        + KEY_TAGID + " INTEGER," + KEY_VALUE + " TEXT)";
+
         final String CREATE_GPSTRACK_TABLE =
                 "CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_INCID
                         + " INTEGER PRIMARY KEY," + KEY_TRACKNAME + " TEXT,"
@@ -156,20 +159,16 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                         + KEY_LON + " REAL," + KEY_ALT + " REAL," + KEY_TIME
                         + " REAL" + ")";
 
-        // create table lastChoice
-        final String CREATE_LASTCHOICE_TABLE =
-                "CREATE TABLE " + TABLE_LASTCHOICE + " (" + TYPE + " INTEGER,"
-                        + KEY_TAGID + " INTEGER," + KEY_VALUE + " TEXT" + ")";
+        db.execSQL(CREATE_USERS_TABLE);
 
         db.execSQL(CREATE_DATAELEMENTS_TABLE);
+        db.execSQL(CREATE_POLYELEMENT_TABLE);
         db.execSQL(CREATE_NODES_TABLE);
         db.execSQL(CREATE_TAGMAP_TABLE);
-        db.execSQL(CREATE_POLYELEMENT_TABLE);
-        db.execSQL(CREATE_USERS_TABLE);
+        db.execSQL(CREATE_LASTCHOICE_TABLE);
+
         db.execSQL(CREATE_GPSTRACK_TABLE);
         db.execSQL(CREATE_TRACKPOINT_TABLE);
-        // Lastchoice
-        db.execSQL(CREATE_LASTCHOICE_TABLE);
 
         Log.i(TAG, "Tables have been created.");
     }
@@ -177,17 +176,19 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // Database handling on upgrade
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop tables that already exist
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAGMAP);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WAY);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NODE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATAELEMENT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POLYELEMENT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GPSTRACK);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRACKPOINT);
+        final String drop = "DROP TABLE IF EXISTS ";
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LASTCHOICE);
+        // Drop tables that already exist
+        db.execSQL(drop + TABLE_USER);
+
+        db.execSQL(drop + TABLE_DATAELEMENT);
+        db.execSQL(drop + TABLE_POLYELEMENT);
+        db.execSQL(drop + TABLE_NODE);
+        db.execSQL(drop + TABLE_TAGMAP);
+        db.execSQL(drop + TABLE_LASTCHOICE);
+
+        db.execSQL(drop + TABLE_GPSTRACK);
+        db.execSQL(drop + TABLE_TRACKPOINT);
 
         Log.i(TAG, "Tables have been dropped and will be recreated.");
 
@@ -318,7 +319,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     public void deleteAllDataElements() {
         throw new RuntimeException(); // TODO
     }
-    
+
     private Map<Tag, String> buildTags(String query) {
         return null;
     }
