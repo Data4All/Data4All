@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.github.data4all.handler.CopyOfDataBaseHandler;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -45,6 +46,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.location.Location;
+import android.text.style.EasyEditSpan;
 
 /**
  * This class tests all methods of the DataBaseHandler.
@@ -73,7 +75,21 @@ public class DataBaseHandlerTest {
 
     @Test
     public void testDataElementCRUD() throws JSONException {
-        // TODO
+        final double lat = 1.2;
+        final double lon = 3.4;
+        assertEquals(0, dbHandler.getDataElementCount());
+        Node toInsert = new Node(-1, lat, lon);
+        toInsert.addOrUpdateTag(Tags.getTagWithId(27), "FOO");
+        dbHandler.createDataElement(toInsert);
+        assertEquals(1, dbHandler.getDataElementCount());
+        List<AbstractDataElement> elements = dbHandler.getAllDataElements();
+        assertEquals(1, elements.size());
+        AbstractDataElement element = elements.get(0);
+        assertEquals(Node.class, element.getClass());
+        Node node = (Node) element;
+        assertEquals(lat, node.getLat(), 1e-10);
+        assertEquals(lon, node.getLon(), 1e-10);
+        assertEquals("FOO", node.getTagValueWithKey(Tags.getTagWithId(27)));
     }
 
     @Test
