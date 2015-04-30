@@ -18,6 +18,7 @@ package io.github.data4all.view;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import io.github.data4all.Data4AllApplication;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
@@ -38,16 +39,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.Paint.Align;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -91,7 +88,6 @@ public class CaptureAssistView extends View {
     private PointToCoordsTransformUtil util;
     private double rotateDegree;
     private Bitmap POIbitmap;
-    private Matrix matrix;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
@@ -178,6 +174,7 @@ public class CaptureAssistView extends View {
         textPaint.setColor(Color.BLACK);
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextAlign(Align.CENTER);
+        //textPaint.setShadowLayer(5.0f, 10.0f, 10.0f, Color.WHITE);
 
         poiPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         poiPaint.setColor(Color.BLUE);
@@ -187,7 +184,6 @@ public class CaptureAssistView extends View {
         BitmapDrawable bitmapDraw = (BitmapDrawable) r
                 .getDrawable(R.drawable.ic_setpoint_blue);
         POIbitmap = bitmapDraw.getBitmap();
-        matrix = new Matrix();
 
         this.tps = new TransformationParamBean(getDeviceHeight(),
                 horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
@@ -296,12 +292,10 @@ public class CaptureAssistView extends View {
                         canvas.rotate((float) Math.toDegrees(rotateDegree),
                                 center.getX(), center.getY());
                         //Resize BitMap for different distances
-                        float scale = (float) (1.2 / (distance / 6 + 1));
-                        matrix.postScale(scale, scale);
-                        Bitmap bitmap = Bitmap.createBitmap(POIbitmap, 0, 0, POIbitmap.getWidth(),
-                                POIbitmap.getHeight(), matrix, false);
+                        float scale = (float) (1.2 / (distance / 6 + 1) + 0.1);
+                        Bitmap bitmap = Bitmap.createScaledBitmap(POIbitmap, (int) (scale * POIbitmap.getWidth()), (int) (scale*POIbitmap.getHeight()), true);
                         canvas.drawBitmap(bitmap, center.getX(), center.getY(),
-                                poiPaint);
+                                    poiPaint);
                         canvas.rotate((float) Math.toDegrees(-rotateDegree),
                                 center.getX(), center.getY());
                     }
