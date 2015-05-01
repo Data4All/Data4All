@@ -27,21 +27,15 @@ import io.github.data4all.model.data.TrackPoint;
 import io.github.data4all.model.data.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Location;
 
 /**
  * This class handles all database requests for the OSM objects that have to be
@@ -109,10 +103,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String KEY_TOKENSECRET = "tokensecret";
 
     // General Column Names
-    private static final String KEY_OSMID = "osmid";
-    private static final String KEY_INCID = "incid";
+    private static final String KEY_ID = "id";
     private static final String KEY_TYPE = "type";
-    private static final String KEY_DATAELEMENT = "element";
+    private static final String KEY_ELEMENT = "element";
 
     // Node Column Names
     private static final String KEY_LAT = "lat";
@@ -124,8 +117,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     // GPS Track Column Names
     private static final String KEY_TRACKNAME = "trackname";
-    private static final String KEY_TRACKPOINTS = "trackpointids";
-    private static final String FLAG_FINISHED = "finished";
+    private static final String KEY_FINISHED = "finished";
+    private static final String KEY_DESCRIPTION = "description";
+    private static final String KEY_TAGS = "tags";
 
     // GPS Trackpoint Column Names
     private static final String KEY_ALT = "altitude";
@@ -145,30 +139,28 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_USER + " (" + KEY_USERNAME
-                + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
-                + KEY_TOKENSECRET + " TEXT" + ")");
+                + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT," + KEY_TOKENSECRET
+                + " TEXT" + ")");
 
-        db.execSQL("CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_OSMID
+        db.execSQL("CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_ID
                 + " INTEGER PRIMARY KEY, " + KEY_TYPE + " INTEGER)");
-        db.execSQL("CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
+        db.execSQL("CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_ID
                 + " INTEGER PRIMARY KEY," + KEY_TYPE + " INTEGER)");
-        db.execSQL("CREATE TABLE " + TABLE_NODE + " (" + KEY_OSMID
-                + " INTEGER PRIMARY KEY," + KEY_DATAELEMENT
-                + " INTEGER," + KEY_LAT + " REAL," + KEY_LON + " REAL)");
-        db.execSQL("CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_DATAELEMENT
-                + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
-                + " TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_NODE + " (" + KEY_ID
+                + " INTEGER PRIMARY KEY," + KEY_ELEMENT + " INTEGER," + KEY_LAT
+                + " REAL," + KEY_LON + " REAL)");
+        db.execSQL("CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_ELEMENT
+                + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE + " TEXT)");
         db.execSQL("CREATE TABLE " + TABLE_LASTCHOICE + " (" + KEY_TYPE
-                + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
-                + " TEXT)");
+                + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE + " TEXT)");
 
-        db.execSQL("CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_INCID
+        db.execSQL("CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_ID
                 + " INTEGER PRIMARY KEY," + KEY_TRACKNAME + " TEXT,"
-                + KEY_TRACKPOINTS + " TEXT," + FLAG_FINISHED
-                + " INTEGER" + ")");
-        db.execSQL("CREATE TABLE " + TABLE_TRACKPOINT + " (" + KEY_INCID
-                + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
-                + KEY_LON + " REAL," + KEY_ALT + " REAL," + KEY_TIME
+                + KEY_DESCRIPTION + " TEXT," + KEY_TAGS + " TEXT,"
+                + KEY_FINISHED + " BOOLEAN" + ")");
+        db.execSQL("CREATE TABLE " + TABLE_TRACKPOINT + " (" + KEY_ID
+                + " INTEGER PRIMARY KEY," + KEY_ELEMENT + " INTEGER," + KEY_LAT
+                + " REAL," + KEY_LON + " REAL," + KEY_ALT + " REAL," + KEY_TIME
                 + " REAL" + ")");
 
         Log.i(TAG, "Tables have been created.");
@@ -270,15 +262,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public void createDataElement(AbstractDataElement dataElement) {
         final SQLiteDatabase db = getWritableDatabase();
-        long nextId = this.getNextId();
+        long nextId = this.getNextId(TABLE_DATAELEMENT, KEY_ID);
 
         if (dataElement instanceof Node) {
             final Node node = (Node) dataElement;
 
             // Add the Node
             final ContentValues nodeValues = new ContentValues(4);
-            nodeValues.put(KEY_OSMID, nextId);
-            nodeValues.put(KEY_DATAELEMENT, nextId);
+            nodeValues.put(KEY_ID, nextId);
+            nodeValues.put(KEY_ELEMENT, nextId);
             nodeValues.put(KEY_LAT, node.getLat());
             nodeValues.put(KEY_LON, node.getLon());
 
@@ -289,22 +281,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             // Add the Nodes of the PolyElement
             final List<Node> polyNodes = poly.getNodes();
             final long finalId = nextId + polyNodes.size();
-            for (Node node : polyNodes) {
-                node.setOsmId(nextId);
-
-                final ContentValues nodeValues = new ContentValues(4);
-                nodeValues.put(KEY_OSMID, nextId);
-                nodeValues.put(KEY_DATAELEMENT, finalId);
-                nodeValues.put(KEY_LAT, node.getLat());
-                nodeValues.put(KEY_LON, node.getLon());
-
-                db.insert(TABLE_NODE, null, nodeValues);
-                nextId++;
-            }
-
+            insertPolyNodes(db, polyNodes, nextId, finalId);
+            nextId = finalId;
             // Add the PolyElement
             final ContentValues polyValues = new ContentValues(1 + 1);
-            polyValues.put(KEY_OSMID, nextId);
+            polyValues.put(KEY_ID, nextId);
             polyValues.put(KEY_TYPE, poly.getType().getId());
 
             db.insert(TABLE_POLYELEMENT, null, polyValues);
@@ -318,15 +299,37 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         dataElement.setOsmId(nextId);
 
         final ContentValues elementValues = new ContentValues(1 + 1);
-        elementValues.put(KEY_OSMID, nextId);
+        elementValues.put(KEY_ID, nextId);
         elementValues
                 .put(KEY_TYPE, DataElementType.fromElement(dataElement).id);
         db.insert(TABLE_DATAELEMENT, null, elementValues);
 
         // Add the Tags
         final ContentValues tagInitial = new ContentValues(1);
-        tagInitial.put(KEY_DATAELEMENT, nextId);
+        tagInitial.put(KEY_ELEMENT, nextId);
         this.putTags(TABLE_TAGMAP, tagInitial, dataElement.getTags());
+    }
+
+    /**
+     * @param db
+     * @param nextId
+     * @param polyNodes
+     * @param finalId
+     */
+    private static void insertPolyNodes(final SQLiteDatabase db,
+            final List<Node> polyNodes, long nextId, final long finalId) {
+        for (Node node : polyNodes) {
+            node.setOsmId(nextId);
+
+            final ContentValues nodeValues = new ContentValues(4);
+            nodeValues.put(KEY_ID, nextId);
+            nodeValues.put(KEY_ELEMENT, finalId);
+            nodeValues.put(KEY_LAT, node.getLat());
+            nodeValues.put(KEY_LON, node.getLon());
+
+            db.insert(TABLE_NODE, null, nodeValues);
+            nextId++;
+        }
     }
 
     /**
@@ -342,10 +345,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final SQLiteDatabase db = getWritableDatabase();
 
         final String isId = "=" + dataElement.getOsmId();
-        db.delete(TABLE_TAGMAP, KEY_DATAELEMENT + isId, null);
-        db.delete(TABLE_NODE, KEY_DATAELEMENT + isId, null);
-        db.delete(TABLE_POLYELEMENT, KEY_OSMID + isId, null);
-        db.delete(TABLE_DATAELEMENT, KEY_OSMID + isId, null);
+        db.delete(TABLE_TAGMAP, KEY_ELEMENT + isId, null);
+        db.delete(TABLE_NODE, KEY_ELEMENT + isId, null);
+        db.delete(TABLE_POLYELEMENT, KEY_ID + isId, null);
+        db.delete(TABLE_DATAELEMENT, KEY_ID + isId, null);
     }
 
     /**
@@ -409,7 +412,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             if (elementClass == DataElementType.NODE) {
                 final Cursor nodeCursor =
                         db.rawQuery(SELECT + KEY_LAT + "," + KEY_LON + FROM
-                                + TABLE_NODE + WHERE + KEY_DATAELEMENT + "="
+                                + TABLE_NODE + WHERE + KEY_ELEMENT + "="
                                 + elementId, null);
                 if (nodeCursor.moveToNext()) {
                     element =
@@ -420,7 +423,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } else if (elementClass == DataElementType.POLYELEMENT) {
                 final Cursor polyCursor =
                         db.rawQuery(SELECT + KEY_TYPE + FROM
-                                + TABLE_POLYELEMENT + WHERE + KEY_OSMID + "="
+                                + TABLE_POLYELEMENT + WHERE + KEY_ID + "="
                                 + elementId, null);
                 if (polyCursor.moveToNext()) {
                     final PolyElementType type =
@@ -447,7 +450,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } else {
                 final Map<Tag, String> tags =
                         this.buildTags(SELECT + KEY_TAGID + "," + KEY_VALUE
-                                + FROM + TABLE_TAGMAP + WHERE + KEY_DATAELEMENT
+                                + FROM + TABLE_TAGMAP + WHERE + KEY_ELEMENT
                                 + "=" + elementId);
                 element.setTags(tags);
                 elements.add(element);
@@ -473,8 +476,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static void addPolyElementNodes(final SQLiteDatabase db,
             final int elementId, final PolyElement polyElement) {
         final Cursor nodeCursor =
-                db.rawQuery(SELECT + KEY_OSMID + "," + KEY_LAT + "," + KEY_LON
-                        + FROM + TABLE_NODE + WHERE + KEY_DATAELEMENT + "="
+                db.rawQuery(SELECT + KEY_ID + "," + KEY_LAT + "," + KEY_LON
+                        + FROM + TABLE_NODE + WHERE + KEY_ELEMENT + "="
                         + elementId, null);
         while (nodeCursor.moveToNext()) {
             polyElement.addNode(new Node(nodeCursor.getLong(0), nodeCursor
@@ -503,13 +506,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * 
      * @author tbrose
      * 
-     * @return the last used ID.
+     * @param table
+     *            The table to receive the next id from
+     * @param key
+     *            The name of the id column
+     * 
+     * @return the last used ID plus one
      */
-    private long getNextId() {
+    private long getNextId(String table, String key) {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor =
-                db.rawQuery(SELECT + KEY_OSMID + FROM + TABLE_DATAELEMENT
-                        + " order by " + KEY_OSMID + " DESC limit 1", null);
+                db.rawQuery(SELECT + key + FROM + table + " order by " + key
+                        + " DESC limit 1", null);
         long lastId = 0;
         if (cursor.moveToNext()) {
             lastId = cursor.getLong(0);
@@ -578,34 +586,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param track
      *            the {@link Track} object from which the data will be taken.
      */
-    public long createGPSTrack(Track track) {
-
+    public void createGPSTrack(Track track) {
         final SQLiteDatabase db = getWritableDatabase();
-        final ContentValues values = new ContentValues();
 
-        if (track.getID() != -1) {
-            values.put(KEY_INCID, track.getID());
+        final long nextTrackId = this.getNextId(TABLE_GPSTRACK, KEY_ID);
+        track.setID(nextTrackId);
+        final ContentValues trackValues = this.valuesForTrack(track);
+        db.insert(TABLE_GPSTRACK, null, trackValues);
+
+        long nextPointId = this.getNextId(TABLE_TRACKPOINT, KEY_ID);
+        for (TrackPoint tp : track.getTrackPoints()) {
+            tp.setID(nextPointId);
+            db.insert(TABLE_TRACKPOINT, null,
+                    this.valuesForTrackpoint(nextTrackId, tp));
+            nextPointId++;
         }
-        values.put(KEY_TRACKNAME, track.getTrackName());
-
-        final List<Long> trackPointIDs =
-                this.createTrackPoints(track.getTrackPoints());
-
-        final JSONObject json = new JSONObject();
-        try {
-            json.put("trackpointarray", new JSONArray(trackPointIDs));
-        } catch (JSONException e) {
-            // ignore exception
-        }
-        final String arrayList = json.toString();
-
-        values.put(KEY_TRACKPOINTS, arrayList);
-        values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
-
-        final long rowID = db.insert(TABLE_GPSTRACK, null, values);
-        Log.d(TAG, "New Track with name: " + track.getTrackName() + " created.");
-        Log.i(TAG, "GPSTrack " + rowID + " has been added.");
-        return rowID;
     }
 
     /**
@@ -616,44 +611,41 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the id of the desired GPS track.
      * @return a {@link Track} object for the desired GPS track.
      */
-    public Track getGPSTrack(long id) { // NOSONAR
-
+    public Track getGPSTrack(long id) {
         final SQLiteDatabase db = getReadableDatabase();
+        Track track = null;
 
-        final Track track = new Track();
+        final String select = SELECT_ALL + TABLE_GPSTRACK + WHERE + KEY_ID;
+        final Cursor cursor = db.rawQuery(select + "=" + id, null);
 
-        final Cursor cursor =
-                db.query(TABLE_GPSTRACK, new String[] { KEY_INCID,
-                        KEY_TRACKNAME, KEY_TRACKPOINTS, FLAG_FINISHED, },
-                        KEY_INCID + "=?", new String[] { String.valueOf(id) },
-                        null, null, null, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor.moveToNext()) {
+            // KEY_ID KEY_TRACKNAME KEY_DESCRIPTION KEY_TAGS FLAG_FINISHED
+            track = new Track();
             track.setID(cursor.getLong(0));
             track.setTrackName(cursor.getString(1));
+            track.setDescription(cursor.getString(2));
+            track.setTags(cursor.getString(3));
+            track.setStatus(cursor.getInt(4) != 0);
 
-            final List<Long> trackPointIDs = new ArrayList<Long>();
-            try {
-                final JSONObject json = new JSONObject(cursor.getString(2));
-                final JSONArray jArray = json.optJSONArray("trackpointarray");
-
-                for (int i = 0; i < jArray.length(); i++) {
-                    final long trackPointID = jArray.optInt(i);
-                    trackPointIDs.add(trackPointID);
-                }
-            } catch (JSONException e) {
-                // ignore exception
-            }
-
+            final Cursor pointCursor =
+                    db.rawQuery(SELECT_ALL + TABLE_TRACKPOINT + WHERE
+                            + KEY_ELEMENT + "=" + id + " order by " + KEY_TIME
+                            + " ASC", null);
             final List<TrackPoint> trackPoints =
-                    this.getTrackPoints(trackPointIDs);
+                    new ArrayList<TrackPoint>(pointCursor.getCount());
+            while (pointCursor.moveToNext()) {
+                final TrackPoint point =
+                        new TrackPoint(pointCursor.getDouble(2),
+                                pointCursor.getDouble(3),
+                                pointCursor.getDouble(4),
+                                pointCursor.getLong(5));
+                point.setID(pointCursor.getLong(0));
+                trackPoints.add(point);
+            }
+            pointCursor.close();
             track.setTrackPoints(trackPoints);
-
-            boolean finishflag = cursor.getInt(3) > 0;
-            track.setStatus(finishflag);
-
-            cursor.close();
         }
+        cursor.close();
         return track;
     }
 
@@ -664,18 +656,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      *            the {@link Track} object whose data should be deleted.
      */
     public void deleteGPSTrack(Track track) {
-
         final SQLiteDatabase db = getWritableDatabase();
+        final String isId = "=" + track.getID();
 
-        db.delete(TABLE_GPSTRACK, KEY_INCID + "=?",
-                new String[] { String.valueOf(track.getID()) });
-
-        final List<Long> trackPointIDs = new ArrayList<Long>();
-
-        for (TrackPoint trackpoint : track.getTrackPoints()) {
-            trackPointIDs.add(trackpoint.getID());
-        }
-        this.deleteTrackPoints(trackPointIDs);
+        db.delete(TABLE_GPSTRACK, KEY_ID + isId, null);
+        db.delete(TABLE_TRACKPOINT, KEY_ELEMENT + isId, null);
     }
 
     /**
@@ -685,13 +670,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return the number of GPS tracks.
      */
     public int getGPSTrackCount() {
-
-        final SQLiteDatabase db = getReadableDatabase();
-
-        final Cursor cursor = db.rawQuery(SELECT_ALL + TABLE_GPSTRACK, null);
-        final int count = cursor.getCount();
+        final Cursor cursor =
+                getReadableDatabase().rawQuery(
+                        "SELECT COUNT(1) FROM " + TABLE_GPSTRACK, null);
+        cursor.moveToNext();
+        final int count = cursor.getInt(0);
         cursor.close();
-
         return count;
     }
 
@@ -701,52 +685,32 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * 
      * @param track
      *            the {@link Track} object for which the data should be updated.
-     * @return the number of rows that have been updated.
      */
-    public int updateGPSTrack(Track track) {
-
+    public void updateGPSTrack(Track track) {
         final SQLiteDatabase db = getWritableDatabase();
-        final ContentValues values = new ContentValues();
+        final Cursor exists =
+                db.rawQuery("SELECT 1 FROM " + TABLE_GPSTRACK + WHERE + KEY_ID
+                        + "=" + track.getID(), null);
 
-        int count = 0;
+        if (exists.moveToNext()) {
 
-        final List<Long> currentTrackPointIDs = new ArrayList<Long>();
+            db.update(TABLE_GPSTRACK, this.valuesForTrack(track), "WHERE "
+                    + KEY_ID + "=" + track.getID(), null);
 
-        for (TrackPoint point : track.getTrackPoints()) {
-            if (point.getID() != -1) {
-                currentTrackPointIDs.add(point.getID());
+            long nextPointId = this.getNextId(TABLE_TRACKPOINT, KEY_ID);
+            for (TrackPoint tp : track.getTrackPoints()) {
+                if (tp.getID() == TrackPoint.NO_ID) {
+                    tp.setID(nextPointId);
+                    db.insert(TABLE_TRACKPOINT, null,
+                            this.valuesForTrackpoint(track.getID(), tp));
+                    nextPointId++;
+                }
             }
-        }
-
-        final List<Long> addedTrackPointIDs =
-                this.updateTrackPoints(track.getTrackPoints());
-
-        currentTrackPointIDs.addAll(addedTrackPointIDs);
-        Collections.sort(currentTrackPointIDs);
-
-        final JSONObject json = new JSONObject();
-        try {
-            json.put("trackpointarray", new JSONArray(currentTrackPointIDs));
-        } catch (JSONException e) {
-            // ignore exception
-        }
-        final String arrayList = json.toString();
-
-        values.put(KEY_TRACKNAME, track.getTrackName());
-
-        values.put(KEY_TRACKPOINTS, arrayList);
-
-        values.put(FLAG_FINISHED, (track.isFinished() ? 1 : 0));
-
-        if (this.checkIfRecordExists(TABLE_GPSTRACK, KEY_INCID, track.getID())) {
-            count +=
-                    db.update(TABLE_GPSTRACK, values, KEY_INCID + "=?",
-                            new String[] { String.valueOf(track.getID()) });
         } else {
-            db.insert(TABLE_GPSTRACK, null, values);
+            Log.i(TAG, "Attemped to update a track that does not exists");
         }
-
-        return count;
+        exists.close();
+        throw new RuntimeException(); // TODO
     }
 
     /**
@@ -756,53 +720,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return a list of GPS tracks.
      */
     public List<Track> getAllGPSTracks() {
+        final String query = "SELECT " + KEY_ID + " FROM " + TABLE_GPSTRACK;
+        final Cursor cursor = getReadableDatabase().rawQuery(query, null);
+        final List<Track> tracks = new ArrayList<Track>(cursor.getCount());
 
-        final List<Track> gpsTracks = new ArrayList<Track>();
-
-        final SQLiteDatabase db = getReadableDatabase();
-        final Cursor cursor = db.rawQuery(SELECT_ALL + TABLE_GPSTRACK, null);
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-
-                final Track track = new Track();
-                final List<Long> trackPointIDs = new ArrayList<Long>();
-                try {
-                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
-                            + cursor.getString(0) + " cursor.getString(1): "
-                            + cursor.getString(1) + " cursor.getString(2): "
-                            + cursor.getString(2));
-                    final JSONObject json = new JSONObject(cursor.getString(2));
-                    final JSONArray jArray =
-                            json.optJSONArray("trackpointarray");
-
-                    for (int i = 0; i < jArray.length(); i++) {
-                        final long id = jArray.optInt(i);
-                        trackPointIDs.add(id);
-                    }
-                } catch (JSONException e) {
-                    // ignore exception
-                }
-
-                final List<TrackPoint> trackPoints =
-                        this.getTrackPoints(trackPointIDs);
-                track.setTrackPoints(trackPoints);
-
-                boolean finishflag = cursor.getInt(3) > 0;
-                track.setStatus(finishflag);
-
-                long trackID = cursor.getLong(0);
-                track.setID(trackID);
-                String trackName = cursor.getString(1);
-                track.setTrackName(trackName);
-
-                gpsTracks.add(track);
-            }
+        while (cursor.moveToNext()) {
+            tracks.add(this.getGPSTrack(cursor.getInt(0)));
         }
         cursor.close();
-        Log.i(TAG, gpsTracks.size()
-                + " GPS tracks were retrieved from the database.");
-        return gpsTracks;
+        return tracks;
     }
 
     /**
@@ -811,211 +737,28 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void deleteAllGPSTracks() {
         final SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_GPSTRACK, null, null);
-        deleteAllTrackPoints();
-    }
-
-    // -------------------------------------------------------------------------
-    // TRACKPOINT CRUD
-
-    /**
-     * This method creates and stores new trackpoints in the database. The data
-     * is taken from the {@link TrackPoint} objects that are passed to the
-     * method.
-     * 
-     * @param trackPoints
-     *            the {@link List} from which the trackpoints will be taken.
-     */
-    public List<Long> createTrackPoints(List<TrackPoint> trackPoints) {
-
-        final SQLiteDatabase db = getWritableDatabase();
-
-        final ContentValues values = new ContentValues();
-
-        List<Long> trackPointIDs = new ArrayList<Long>();
-
-        for (TrackPoint point : trackPoints) {
-            // if (point.getID() != -1) {
-            // values.put(KEY_INCID, point.getID());
-            // }
-            values.put(KEY_LAT, point.getLat());
-            values.put(KEY_LON, point.getLon());
-            values.put(KEY_ALT, point.getAlt());
-            values.put(KEY_TIME, point.getTime());
-            long rowID = db.insert(TABLE_TRACKPOINT, null, values);
-            trackPointIDs.add(rowID);
-            Log.i(TAG, "TrackPoint " + rowID + " has been added.");
-        }
-        return trackPointIDs;
-    }
-
-    /**
-     * This method returns the data for specific trackpoints stored in the
-     * database and creates a list of corresponding {@link TrackPoint} objects.
-     * 
-     * @param trackPointIDs
-     *            the ids of the desired trackpoints.
-     * @return a {@link List} of the desired trackpoints.
-     */
-    public List<TrackPoint> getTrackPoints(List<Long> trackPointIDs) {
-
-        final SQLiteDatabase db = getReadableDatabase();
-
-        final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
-
-        for (long id : trackPointIDs) {
-            final Cursor cursor =
-                    db.query(TABLE_TRACKPOINT, new String[] { KEY_INCID,
-                            KEY_LAT, KEY_LON, KEY_ALT, KEY_TIME, }, KEY_INCID
-                            + "=?", new String[] { String.valueOf(id) }, null,
-                            null, null, null);
-
-            final Location loc = new Location("provider");
-            if (cursor != null && cursor.moveToFirst()) {
-                loc.setLatitude(cursor.getDouble(1));
-                loc.setLongitude(cursor.getDouble(2));
-                loc.setAltitude(cursor.getDouble(3));
-                loc.setTime(cursor.getLong(4));
-            }
-
-            final TrackPoint point = new TrackPoint(loc);
-            point.setID(id);
-
-            trackPoints.add(point);
-            cursor.close();
-        }
-        return trackPoints;
-    }
-
-    /**
-     * This method deletes specific trackpoints from the database.
-     * 
-     * @param trackPointIDs
-     *            the ids of the trackpoints that should be deleted.
-     */
-    public void deleteTrackPoints(List<Long> trackPointIDs) {
-        final SQLiteDatabase db = getWritableDatabase();
-
-        for (long id : trackPointIDs) {
-            db.delete(TABLE_TRACKPOINT, KEY_INCID + "=?",
-                    new String[] { String.valueOf(id) });
-        }
-    }
-
-    /**
-     * This method returns the number of trackpoints currently stored in the
-     * database.
-     * 
-     * @return the number of trackpoints
-     */
-    public int getTrackPointCount() {
-        final SQLiteDatabase db = getReadableDatabase();
-
-        final Cursor cursor = db.rawQuery(SELECT_ALL + TABLE_TRACKPOINT, null);
-        final int count = cursor.getCount();
-        cursor.close();
-
-        return count;
-    }
-
-    /**
-     * This method updates the data for specific trackpoints stored in the
-     * database.
-     * 
-     * @param trackPoints
-     *            a list of {@link TrackPoint}s that should be updated.
-     * @return the number of rows that have been updated.
-     */
-    public List<Long> updateTrackPoints(List<TrackPoint> trackPoints) {
-        final SQLiteDatabase db = getWritableDatabase();
-
-        final ContentValues values = new ContentValues();
-
-        List<Long> trackPointIDs = new ArrayList<Long>();
-
-        for (TrackPoint point : trackPoints) {
-            values.put(KEY_LAT, point.getLat());
-            values.put(KEY_LON, point.getLon());
-            values.put(KEY_ALT, point.getAlt());
-            values.put(KEY_TIME, point.getTime());
-
-            if (this.checkIfRecordExists(TABLE_TRACKPOINT, KEY_INCID,
-                    point.getID())) {
-                db.update(TABLE_TRACKPOINT, values, KEY_INCID + "=?",
-                        new String[] { String.valueOf(point.getID()) });
-            } else {
-                long insertedID = db.insert(TABLE_TRACKPOINT, null, values);
-                trackPointIDs.add(insertedID);
-            }
-        }
-        return trackPointIDs;
-    }
-
-    /**
-     * This method returns a list of all trackpoints stored in the database and
-     * creates corresponding {@link TrackPoint} objects.
-     * 
-     * @return a list of trackpoints.
-     */
-    public List<TrackPoint> getAllTrackPoints() {
-        final List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
-
-        final SQLiteDatabase db = getReadableDatabase();
-        final Cursor cursor = db.rawQuery(SELECT_ALL + TABLE_TRACKPOINT, null);
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-
-                final Location loc = new Location("provider");
-                loc.setLatitude(cursor.getDouble(1));
-                loc.setLongitude(cursor.getDouble(2));
-                loc.setAltitude(cursor.getDouble(3));
-                loc.setTime(cursor.getLong(4));
-
-                final TrackPoint point = new TrackPoint(loc);
-                point.setID(cursor.getLong(0));
-                trackPoints.add(point);
-            }
-        }
-        Log.i(TAG, trackPoints.size()
-                + " track points were retrieved from the database.");
-        return trackPoints;
-    }
-
-    /**
-     * This method deletes all entries of the {@link TrackPoint} table.
-     */
-    public void deleteAllTrackPoints() {
-        final SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_TRACKPOINT, null, null);
     }
 
-    // ---auxiliary functions---------------------------------------------------
+    private ContentValues valuesForTrack(Track track) {
+        final ContentValues values = new ContentValues();
+        values.put(KEY_ID, track.getID());
+        values.put(KEY_TRACKNAME, track.getTrackName());
+        values.put(KEY_DESCRIPTION, track.getDescription());
+        values.put(KEY_TAGS, track.getTags());
+        values.put(KEY_FINISHED, track.isFinished());
+        return values;
+    }
 
-    /**
-     * This method checks if a given record exists in a table.
-     * 
-     * @param tableName
-     *            the name of the table.
-     * @param field
-     *            the column that will be searched.
-     * @param value
-     *            the given record.
-     * @return true if the given record exists, false otherwise.
-     */
-    private boolean checkIfRecordExists(String tableName, String field,
-            long value) {
-
-        final SQLiteDatabase db = getReadableDatabase();
-        final String query =
-                SELECT_ALL + tableName + WHERE + field + " = " + value;
-        final Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor.getCount() <= 0) {
-            cursor.close();
-            return false;
-        }
-        cursor.close();
-        return true;
+    private ContentValues valuesForTrackpoint(long trackId, TrackPoint tp) {
+        final ContentValues pointValues = new ContentValues();
+        pointValues.put(KEY_ID, tp.getID());
+        pointValues.put(KEY_ELEMENT, trackId);
+        pointValues.put(KEY_LAT, tp.getLat());
+        pointValues.put(KEY_LON, tp.getLon());
+        pointValues.put(KEY_ALT, tp.getAlt());
+        pointValues.put(KEY_TIME, tp.getTime());
+        return pointValues;
     }
 
     // -------------------------------------------------------------------------
@@ -1029,7 +772,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return
      */
     public Map<Tag, String> getLastChoice(int category) {
-        return buildTags(SELECT + KEY_TAGID + "," + KEY_VALUE + " FROM "
+        return this.buildTags(SELECT + KEY_TAGID + "," + KEY_VALUE + " FROM "
                 + TABLE_LASTCHOICE + WHERE + KEY_TYPE + "=" + category);
     }
 
@@ -1044,6 +787,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void setLastChoice(int category, Map<Tag, String> tags) {
         final ContentValues categoryValue = new ContentValues();
         categoryValue.put(KEY_TYPE, category);
-        putTags(TABLE_LASTCHOICE, categoryValue, tags);
+        this.putTags(TABLE_LASTCHOICE, categoryValue, tags);
     }
 }
