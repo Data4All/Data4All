@@ -218,6 +218,92 @@ public class DataBaseHandlerTest {
     }
 
     @Test
+    public void deleteAllDataElements_empty_emptyAfterwards() {
+        dbHandler.deleteAllDataElements();
+        assertEquals(0, dbHandler.getDataElementCount());
+    }
+
+    @Test
+    public void deleteAllDataElements_notEmpty_emptyAfterwards() {
+        final Node node = new Node(0, 0, 0);
+        dbHandler.createDataElement(node);
+        dbHandler.createDataElement(node);
+        dbHandler.createDataElement(node);
+
+        dbHandler.deleteAllDataElements();
+        assertEquals(0, dbHandler.getDataElementCount());
+    }
+
+    // ///////////////////////////////////////////////
+    // ///////////////////////////////////////////////
+
+    @Test
+    public void getGPSTrackCount_empty_zeroSize() {
+        assertEquals(0, dbHandler.getGPSTrackCount());
+    }
+
+    @Test
+    public void getGPSTrackCount_oneEmptyTrack_oneSize() {
+        dbHandler.createGPSTrack(new Track());
+        assertEquals(1, dbHandler.getGPSTrackCount());
+    }
+
+    @Test
+    public void getGPSTrackCount_oneNotEmptyTrack_oneSize() {
+        final Track track = new Track();
+        track.setTrackPoints(Arrays.asList(new TrackPoint(0, 0, 0, 0),
+                new TrackPoint(0, 0, 0, 1)));
+        dbHandler.createGPSTrack(track);
+        assertEquals(1, dbHandler.getGPSTrackCount());
+    }
+
+    @Test
+    public void createGPSTrack_insertTrack_rightTrackSaved() {
+        final Track toInsert = new Track();
+        toInsert.setTrackName("FOO");
+        toInsert.setDescription("BAR");
+        toInsert.setTags("FOO, BAR, 42");
+        toInsert.finishTrack();
+
+        dbHandler.createGPSTrack(toInsert);
+
+        final Track track = dbHandler.getGPSTrack(toInsert.getID());
+
+        assertEquals(toInsert.getID(), track.getID());
+        assertEquals(toInsert.getTrackName(), track.getTrackName());
+        assertEquals(toInsert.getDescription(), track.getDescription());
+        assertEquals(toInsert.getTags(), track.getTags());
+        assertEquals(toInsert.isFinished(), track.isFinished());
+    }
+
+    @Test
+    public void createGPSTrack_insertTrack_rightTrackPointsSaved() {
+        final Track toInsert = new Track();
+        toInsert.setTrackPoints(Arrays.asList(new TrackPoint(0, 0, 0, 0),
+                new TrackPoint(0, 0, 0, 1)));
+        
+        dbHandler.createGPSTrack(toInsert);
+
+        final Track track = dbHandler.getGPSTrack(toInsert.getID());
+
+        final List<TrackPoint> insertedPoints = toInsert.getTrackPoints();
+        final List<TrackPoint> readPoints = track.getTrackPoints();
+        assertEquals(insertedPoints.size(), readPoints.size());
+        
+        for (int i = 0; i < insertedPoints.size(); i++) {
+            final TrackPoint insertedPoint = insertedPoints.get(i);
+            final TrackPoint readPoint = readPoints.get(i);
+
+            assertEquals(insertedPoint.getID(), readPoint.getID());
+            assertEquals(insertedPoint.getLat(), readPoint.getLat(), 1e-10);
+            assertEquals(insertedPoint.getLon(), readPoint.getLon(), 1e-10);
+            assertEquals(insertedPoint.getAlt(), readPoint.getAlt(), 1e-10);
+            assertEquals(insertedPoint.getTime(), readPoint.getTime());
+        }
+    }
+
+    @Test
+    @Ignore
     public void testTrackPointCRUD() {
         Location loc1 = new Location("provider");
         loc1.setAltitude(10.10);
@@ -341,6 +427,7 @@ public class DataBaseHandlerTest {
     @After
     public void tearDown() {
         dbHandler.deleteAllDataElements();
+        dbHandler.deleteAllGPSTracks();
         dbHandler.close();
     }
 }
