@@ -50,18 +50,47 @@ import android.location.Location;
  * @author Kristin Dahnken
  * @author fkirchge
  * @author sbrede
- * 
+ * @author tbrose
  */
-public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
+public class DataBaseHandler extends SQLiteOpenHelper {
+    private static enum DataElementType {
+        NODE(0, Node.class), POLYELEMENT(1, PolyElement.class);
 
+        private final int id;
+        private Class<? extends AbstractDataElement> clazz;
+
+        private DataElementType(int id,
+                Class<? extends AbstractDataElement> clazz) {
+            this.id = id;
+            this.clazz = clazz;
+        }
+
+        private static DataElementType fromId(int id) {
+            for (DataElementType type : values()) {
+                if (type.id == id) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        private static DataElementType fromElement(AbstractDataElement element) {
+            for (DataElementType type : values()) {
+                if (type.clazz == element.getClass()) {
+                    return type;
+                }
+            }
+            return null;
+        }
+    }
+
+    private static final String WHERE = " WHERE ";
+    private static final String FROM = " FROM ";
+    private static final String SELECT = "SELECT ";
     private static final String SELECT_ALL = "SELECT * FROM ";
 
     private static final String TAG = "DataBaseHandler";
-
-    // Database Version
     private static final int DATABASE_VERSION = 5;
-
-    // Database Name
     private static final String DATABASE_NAME = "Data4AllDB";
 
     // Table Names
@@ -115,51 +144,32 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     // Table creation
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String CREATE_USERS_TABLE =
-                "CREATE TABLE " + TABLE_USER + " (" + KEY_USERNAME
-                        + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
-                        + KEY_TOKENSECRET + " TEXT" + ")";
+        db.execSQL("CREATE TABLE " + TABLE_USER + " (" + KEY_USERNAME
+                + " TEXT PRIMARY KEY," + KEY_TOKEN + " TEXT,"
+                + KEY_TOKENSECRET + " TEXT" + ")");
 
-        final String CREATE_DATAELEMENTS_TABLE =
-                "CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_OSMID
-                        + " INTEGER PRIMARY KEY, " + KEY_TYPE + " INTEGER)";
-        final String CREATE_POLYELEMENT_TABLE =
-                "CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
-                        + " INTEGER PRIMARY KEY," + KEY_TYPE + " INTEGER)";
-        final String CREATE_NODES_TABLE =
-                "CREATE TABLE " + TABLE_NODE + " (" + KEY_OSMID
-                        + " INTEGER PRIMARY KEY," + KEY_DATAELEMENT
-                        + " INTEGER," + KEY_LAT + " REAL," + KEY_LON + " REAL)";
-        final String CREATE_TAGMAP_TABLE =
-                "CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_DATAELEMENT
-                        + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
-                        + " TEXT)";
-        final String CREATE_LASTCHOICE_TABLE =
-                "CREATE TABLE " + TABLE_LASTCHOICE + " (" + KEY_TYPE
-                        + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
-                        + " TEXT)";
+        db.execSQL("CREATE TABLE " + TABLE_DATAELEMENT + " (" + KEY_OSMID
+                + " INTEGER PRIMARY KEY, " + KEY_TYPE + " INTEGER)");
+        db.execSQL("CREATE TABLE " + TABLE_POLYELEMENT + " (" + KEY_OSMID
+                + " INTEGER PRIMARY KEY," + KEY_TYPE + " INTEGER)");
+        db.execSQL("CREATE TABLE " + TABLE_NODE + " (" + KEY_OSMID
+                + " INTEGER PRIMARY KEY," + KEY_DATAELEMENT
+                + " INTEGER," + KEY_LAT + " REAL," + KEY_LON + " REAL)");
+        db.execSQL("CREATE TABLE " + TABLE_TAGMAP + " (" + KEY_DATAELEMENT
+                + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
+                + " TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_LASTCHOICE + " (" + KEY_TYPE
+                + " INTEGER," + KEY_TAGID + " INTEGER," + KEY_VALUE
+                + " TEXT)");
 
-        final String CREATE_GPSTRACK_TABLE =
-                "CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_INCID
-                        + " INTEGER PRIMARY KEY," + KEY_TRACKNAME + " TEXT,"
-                        + KEY_TRACKPOINTS + " TEXT," + FLAG_FINISHED
-                        + " INTEGER" + ")";
-        final String CREATE_TRACKPOINT_TABLE =
-                "CREATE TABLE " + TABLE_TRACKPOINT + " (" + KEY_INCID
-                        + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
-                        + KEY_LON + " REAL," + KEY_ALT + " REAL," + KEY_TIME
-                        + " REAL" + ")";
-
-        db.execSQL(CREATE_USERS_TABLE);
-
-        db.execSQL(CREATE_DATAELEMENTS_TABLE);
-        db.execSQL(CREATE_POLYELEMENT_TABLE);
-        db.execSQL(CREATE_NODES_TABLE);
-        db.execSQL(CREATE_TAGMAP_TABLE);
-        db.execSQL(CREATE_LASTCHOICE_TABLE);
-
-        db.execSQL(CREATE_GPSTRACK_TABLE);
-        db.execSQL(CREATE_TRACKPOINT_TABLE);
+        db.execSQL("CREATE TABLE " + TABLE_GPSTRACK + " (" + KEY_INCID
+                + " INTEGER PRIMARY KEY," + KEY_TRACKNAME + " TEXT,"
+                + KEY_TRACKPOINTS + " TEXT," + FLAG_FINISHED
+                + " INTEGER" + ")");
+        db.execSQL("CREATE TABLE " + TABLE_TRACKPOINT + " (" + KEY_INCID
+                + " INTEGER PRIMARY KEY," + KEY_LAT + " REAL,"
+                + KEY_LON + " REAL," + KEY_ALT + " REAL," + KEY_TIME
+                + " REAL" + ")");
 
         Log.i(TAG, "Tables have been created.");
     }
@@ -236,7 +246,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             while (cursor.moveToNext()) {
                 final User user =
                         new User(cursor.getString(0), cursor.getString(1),
-                                cursor.getString(2));
+                                cursor.getString(1 + 1));
                 users.add(user);
             }
         }
@@ -252,13 +262,15 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * data is taken from the {@link AbstractDataElement} object that is passed
      * to the method.
      * 
+     * @author tbrose
+     * 
      * @param dataElement
      *            the {@link AbstractDataElement} object from which the data
      *            will be taken.
      */
     public void createDataElement(AbstractDataElement dataElement) {
         final SQLiteDatabase db = getWritableDatabase();
-        long nextId = getNextId();
+        long nextId = this.getNextId();
 
         if (dataElement instanceof Node) {
             final Node node = (Node) dataElement;
@@ -275,22 +287,23 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
             final PolyElement poly = (PolyElement) dataElement;
 
             // Add the Nodes of the PolyElement
-            List<Node> polyNodes = poly.getNodes();
+            final List<Node> polyNodes = poly.getNodes();
             final long finalId = nextId + polyNodes.size();
             for (Node node : polyNodes) {
                 node.setOsmId(nextId);
-                
+
                 final ContentValues nodeValues = new ContentValues(4);
-                nodeValues.put(KEY_OSMID, nextId++);
+                nodeValues.put(KEY_OSMID, nextId);
                 nodeValues.put(KEY_DATAELEMENT, finalId);
                 nodeValues.put(KEY_LAT, node.getLat());
                 nodeValues.put(KEY_LON, node.getLon());
 
                 db.insert(TABLE_NODE, null, nodeValues);
+                nextId++;
             }
 
             // Add the PolyElement
-            final ContentValues polyValues = new ContentValues(2);
+            final ContentValues polyValues = new ContentValues(1 + 1);
             polyValues.put(KEY_OSMID, nextId);
             polyValues.put(KEY_TYPE, poly.getType().getId());
 
@@ -303,20 +316,23 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         // Add the DataElement
         dataElement.setOsmId(nextId);
-        
-        final ContentValues elementValues = new ContentValues(2);
+
+        final ContentValues elementValues = new ContentValues(1 + 1);
         elementValues.put(KEY_OSMID, nextId);
-        elementValues.put(KEY_TYPE, getElementType(dataElement));
+        elementValues
+                .put(KEY_TYPE, DataElementType.fromElement(dataElement).id);
         db.insert(TABLE_DATAELEMENT, null, elementValues);
 
         // Add the Tags
         final ContentValues tagInitial = new ContentValues(1);
         tagInitial.put(KEY_DATAELEMENT, nextId);
-        putTags(TABLE_TAGMAP, tagInitial, dataElement.getTags());
+        this.putTags(TABLE_TAGMAP, tagInitial, dataElement.getTags());
     }
 
     /**
      * This method deletes a specific data element from the database.
+     * 
+     * @author tbrose
      * 
      * @param dataElement
      *            the {@link AbstractDataElement} object whose data should be
@@ -336,6 +352,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method returns the number of data elements currently stored in the
      * database.
      * 
+     * @author tbrose
+     * 
      * @return the number of data elements.
      */
     public int getDataElementCount() {
@@ -352,6 +370,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * This method updates the data for a specific data element stored in the
      * database.
      * 
+     * @author tbrose
+     * 
      * @param dataElement
      *            the {@link AbstractDataElement} object for which the data
      *            should be updated.
@@ -359,18 +379,20 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      */
     public void updateDataElement(AbstractDataElement dataElement) {
         // Maybe there is an intelligent way to do this ...
-        deleteDataElement(dataElement);
-        createDataElement(dataElement);
+        this.deleteDataElement(dataElement);
+        this.createDataElement(dataElement);
     }
 
     /**
      * This method returns a list of all data elements stored in the database
      * and creates corresponding {@link AbstractDataElement} objects.
      * 
+     * @author tbrose
+     * 
      * @return a list of data elements.
      */
     public List<AbstractDataElement> getAllDataElements() {
-        List<AbstractDataElement> elements =
+        final List<AbstractDataElement> elements =
                 new ArrayList<AbstractDataElement>();
 
         final SQLiteDatabase db = getReadableDatabase();
@@ -381,41 +403,32 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         while (elementCursor.moveToNext()) {
             AbstractDataElement element = null;
             final int elementId = elementCursor.getInt(0);
-            final Class<? extends AbstractDataElement> elementClass =
-                    getElementClass(elementCursor.getInt(1));
+            final DataElementType elementClass =
+                    DataElementType.fromId(elementCursor.getInt(1));
 
-            if (elementClass == Node.class) {
+            if (elementClass == DataElementType.NODE) {
                 final Cursor nodeCursor =
-                        db.rawQuery("SELECT " + KEY_LAT + "," + KEY_LON
-                                + " from " + TABLE_NODE + " WHERE "
-                                + KEY_DATAELEMENT + "=" + elementId, null);
+                        db.rawQuery(SELECT + KEY_LAT + "," + KEY_LON + FROM
+                                + TABLE_NODE + WHERE + KEY_DATAELEMENT + "="
+                                + elementId, null);
                 if (nodeCursor.moveToNext()) {
                     element =
                             new Node(elementId, nodeCursor.getDouble(0),
                                     nodeCursor.getDouble(1));
                 }
                 nodeCursor.close();
-            } else if (elementClass == PolyElement.class) {
+            } else if (elementClass == DataElementType.POLYELEMENT) {
                 final Cursor polyCursor =
-                        db.rawQuery("SELECT " + KEY_TYPE + " from "
-                                + TABLE_POLYELEMENT + " WHERE " + KEY_OSMID
-                                + "=" + elementId, null);
+                        db.rawQuery(SELECT + KEY_TYPE + FROM
+                                + TABLE_POLYELEMENT + WHERE + KEY_OSMID + "="
+                                + elementId, null);
                 if (polyCursor.moveToNext()) {
                     final PolyElementType type =
                             PolyElementType.fromId(polyCursor.getInt(0));
-                    PolyElement polyElement = new PolyElement(elementId, type);
+                    final PolyElement polyElement =
+                            new PolyElement(elementId, type);
 
-                    final Cursor nodeCursor =
-                            db.rawQuery("SELECT " + KEY_OSMID + "," + KEY_LAT
-                                    + "," + KEY_LON + " from " + TABLE_NODE
-                                    + " WHERE " + KEY_DATAELEMENT + "="
-                                    + elementId, null);
-                    while (nodeCursor.moveToNext()) {
-                        polyElement.addNode(new Node(nodeCursor.getLong(0),
-                                nodeCursor.getDouble(1), nodeCursor
-                                        .getDouble(2)));
-                    }
-                    nodeCursor.close();
+                    addPolyElementNodes(db, elementId, polyElement);
                     element = polyElement;
                 }
                 polyCursor.close();
@@ -432,22 +445,49 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
                                 + " with the id " + elementId
                                 + " cannot be read");
             } else {
-                Map<Tag, String> tags =
-                        buildTags("SELECT " + KEY_TAGID + "," + KEY_VALUE
-                                + " FROM " + TABLE_TAGMAP + " WHERE "
-                                + KEY_DATAELEMENT + "=" + elementId);
+                final Map<Tag, String> tags =
+                        this.buildTags(SELECT + KEY_TAGID + "," + KEY_VALUE
+                                + FROM + TABLE_TAGMAP + WHERE + KEY_DATAELEMENT
+                                + "=" + elementId);
                 element.setTags(tags);
                 elements.add(element);
             }
         }
 
         elementCursor.close();
-
         return elements;
     }
 
     /**
+     * Adds all saved nodes for the given id to given PolyElement.
+     * 
+     * @author tbrose
+     * 
+     * @param db
+     *            The database to read from
+     * @param elementId
+     *            The osmId of the element
+     * @param polyElement
+     *            The element where the nodes will be added to
+     */
+    private static void addPolyElementNodes(final SQLiteDatabase db,
+            final int elementId, final PolyElement polyElement) {
+        final Cursor nodeCursor =
+                db.rawQuery(SELECT + KEY_OSMID + "," + KEY_LAT + "," + KEY_LON
+                        + FROM + TABLE_NODE + WHERE + KEY_DATAELEMENT + "="
+                        + elementId, null);
+        while (nodeCursor.moveToNext()) {
+            polyElement.addNode(new Node(nodeCursor.getLong(0), nodeCursor
+                    .getDouble(1), nodeCursor.getDouble(1 + 1)));
+        }
+        nodeCursor.close();
+    }
+
+    /**
      * This method deletes all entries of the {@link AbstractDataElement} table.
+     * 
+     * @author tbrose
+     * 
      */
     public void deleteAllDataElements() {
         final SQLiteDatabase db = getWritableDatabase();
@@ -459,7 +499,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     }
 
     /**
-     * Returns the last ID used for DataElements.
+     * Returns the last ID used for DataElements plus one.
      * 
      * @author tbrose
      * 
@@ -468,9 +508,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
     private long getNextId() {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor =
-                db.rawQuery("SELECT " + KEY_OSMID + " FROM "
-                        + TABLE_DATAELEMENT + " order by " + KEY_OSMID
-                        + " DESC limit 1", null);
+                db.rawQuery(SELECT + KEY_OSMID + FROM + TABLE_DATAELEMENT
+                        + " order by " + KEY_OSMID + " DESC limit 1", null);
         long lastId = 0;
         if (cursor.moveToNext()) {
             lastId = cursor.getLong(0);
@@ -478,35 +517,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
         }
         cursor.close();
         return lastId + 1;
-    }
-
-    /**
-     * TODO
-     * 
-     * @param element
-     * @return
-     */
-    private static int getElementType(AbstractDataElement element) {
-        if (element instanceof PolyElement) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * TODO
-     * 
-     * @param elementType
-     * @return
-     */
-    private static Class<? extends AbstractDataElement> getElementClass(
-            int elementType) {
-        if (elementType == 1) {
-            return PolyElement.class;
-        } else {
-            return Node.class;
-        }
     }
 
     /**
@@ -555,7 +565,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
             db.insert(table, null, values);
         }
-        Log.i(TAG, "Tags has been added.");
+        Log.i(TAG, "Tags have been added.");
     }
 
     // -------------------------------------------------------------------------
@@ -997,7 +1007,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
         final SQLiteDatabase db = getReadableDatabase();
         final String query =
-                SELECT_ALL + tableName + " WHERE " + field + " = " + value;
+                SELECT_ALL + tableName + WHERE + field + " = " + value;
         final Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.getCount() <= 0) {
@@ -1019,8 +1029,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
      * @return
      */
     public Map<Tag, String> getLastChoice(int category) {
-        return buildTags("SELECT " + KEY_TAGID + "," + KEY_VALUE + " FROM "
-                + TABLE_LASTCHOICE + " WHERE " + KEY_TYPE + "=" + category);
+        return buildTags(SELECT + KEY_TAGID + "," + KEY_VALUE + " FROM "
+                + TABLE_LASTCHOICE + WHERE + KEY_TYPE + "=" + category);
     }
 
     /**
