@@ -17,7 +17,6 @@ package io.github.data4all.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import io.github.data4all.handler.CopyOfDataBaseHandler;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
@@ -27,13 +26,11 @@ import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
-import io.github.data4all.model.data.User;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.junit.After;
@@ -46,7 +43,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.location.Location;
-import android.text.style.EasyEditSpan;
 
 /**
  * This class tests all methods of the DataBaseHandler.
@@ -65,7 +61,6 @@ public class DataBaseHandlerTest {
     @Before
     public void setUp() {
         dbHandler = new DataBaseHandler(Robolectric.application);
-        System.out.println("Setup done.");
     }
 
     @Test
@@ -138,6 +133,88 @@ public class DataBaseHandlerTest {
         Node node = poly.getNodes().get(0);
         assertEquals(lat, node.getLat(), 1e-10);
         assertEquals(lon, node.getLon(), 1e-10);
+    }
+
+    @Test
+    public void createDataElement_insertElementWithTags_rightTagsSaved() {
+        final Node toInsert = new Node(1, 1.2, 3.4);
+        toInsert.addOrUpdateTag(Tags.getTagWithId(19), "FOO");
+        toInsert.addOrUpdateTag(Tags.getTagWithId(20), "BAR");
+        dbHandler.createDataElement(toInsert);
+
+        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        assertEquals(toInsert.getTags().size(), element.getTags().size());
+        for (Entry<Tag, String> entry : toInsert.getTags().entrySet()) {
+            assertTrue(element.getTags().containsKey(entry.getKey()));
+            assertEquals(entry.getValue(),
+                    element.getTagValueWithKey(entry.getKey()));
+        }
+    }
+
+    @Test
+    public void updateDataElement_updateNode_rightElementSaved() {
+        final double lat = 1.2;
+        final double lon = 3.4;
+        Node toUpdate = new Node(1, 12, 23);
+        dbHandler.createDataElement(toUpdate);
+        toUpdate = new Node(toUpdate.getOsmId(), lat, lon);
+        dbHandler.updateDataElement(toUpdate);
+
+        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        assertEquals(Node.class, element.getClass());
+
+        Node node = (Node) element;
+        assertEquals(lat, node.getLat(), 1e-10);
+        assertEquals(lon, node.getLon(), 1e-10);
+    }
+
+    @Test
+    public void updateDataElement_updatePolyElement_rightElementSaved() {
+        final double lat = 1.2;
+        final double lon = 3.4;
+        final Node polyNode = new Node(1, 12, 23);
+        final PolyElementType type = PolyElementType.WAY;
+
+        PolyElement toUpdate = new PolyElement(0, PolyElementType.AREA);
+        toUpdate.addNode(polyNode);
+        toUpdate.addNode(polyNode);
+        dbHandler.createDataElement(toUpdate);
+
+        toUpdate.setType(type);
+        toUpdate.replaceNodes(Arrays.asList(new Node(1, lat, lon)));
+        dbHandler.updateDataElement(toUpdate);
+
+        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        assertEquals(PolyElement.class, element.getClass());
+
+        PolyElement poly = (PolyElement) element;
+        assertEquals(type, poly.getType());
+        assertEquals(1, poly.getNodes().size());
+
+        Node node = poly.getNodes().get(0);
+        assertEquals(lat, node.getLat(), 1e-10);
+        assertEquals(lon, node.getLon(), 1e-10);
+    }
+
+    @Test
+    public void updateDataElement_updateElementWithTags_rightTagsSaved() {
+        final Node toUpdate = new Node(1, 1.2, 3.4);
+        toUpdate.addOrUpdateTag(Tags.getTagWithId(19), "FOO");
+        toUpdate.addOrUpdateTag(Tags.getTagWithId(20), "BAR");
+        dbHandler.createDataElement(toUpdate);
+
+        toUpdate.clearTags();
+        toUpdate.addOrUpdateTag(Tags.getTagWithId(97), "FOO2");
+        toUpdate.addOrUpdateTag(Tags.getTagWithId(98), "BAR2");
+        dbHandler.updateDataElement(toUpdate);
+
+        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        assertEquals(toUpdate.getTags().size(), element.getTags().size());
+        for (Entry<Tag, String> entry : toUpdate.getTags().entrySet()) {
+            assertTrue(element.getTags().containsKey(entry.getKey()));
+            assertEquals(entry.getValue(),
+                    element.getTagValueWithKey(entry.getKey()));
+        }
     }
 
     @Test
