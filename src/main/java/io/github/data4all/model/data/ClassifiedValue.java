@@ -31,7 +31,7 @@ import android.preference.PreferenceManager;
  * @author fkirchge
  *
  */
-public class ClassifiedValue {
+public class ClassifiedValue implements Localizeable{
 
     /**
      * The log-tag for this class.
