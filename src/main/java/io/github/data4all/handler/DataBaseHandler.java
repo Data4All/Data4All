@@ -47,6 +47,12 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author tbrose
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
+    /**
+     * The DataElementType is used by the DatabaseHandler internally to map a
+     * sub-type of DataElement to an integer and vice versa.
+     * 
+     * @author tbrose
+     */
     private static enum DataElementType {
         NODE(0, Node.class), POLYELEMENT(1, PolyElement.class);
 
@@ -219,7 +225,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void deleteUser(User user) {
         final SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(TABLE_USER, KEY_USERNAME + "='" + user.getUsername() + "'", null);
+        db.delete(TABLE_USER, KEY_USERNAME + "='" + user.getUsername() + "'",
+                null);
     }
 
     /**
@@ -268,7 +275,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             final Node node = (Node) dataElement;
 
             // Add the Node
-            final ContentValues nodeValues = new ContentValues(4);
+            final ContentValues nodeValues = new ContentValues();
             nodeValues.put(KEY_ID, nextId);
             nodeValues.put(KEY_ELEMENT, nextId);
             nodeValues.put(KEY_LAT, node.getLat());
@@ -284,7 +291,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             insertPolyNodes(db, polyNodes, nextId, finalId);
             nextId = finalId;
             // Add the PolyElement
-            final ContentValues polyValues = new ContentValues(1 + 1);
+            final ContentValues polyValues = new ContentValues();
             polyValues.put(KEY_ID, nextId);
             polyValues.put(KEY_TYPE, poly.getType().getId());
 
@@ -298,23 +305,34 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         // Add the DataElement
         dataElement.setOsmId(nextId);
 
-        final ContentValues elementValues = new ContentValues(1 + 1);
+        final ContentValues elementValues = new ContentValues();
         elementValues.put(KEY_ID, nextId);
         elementValues
                 .put(KEY_TYPE, DataElementType.fromElement(dataElement).id);
         db.insert(TABLE_DATAELEMENT, null, elementValues);
 
         // Add the Tags
-        final ContentValues tagInitial = new ContentValues(1);
+        final ContentValues tagInitial = new ContentValues();
         tagInitial.put(KEY_ELEMENT, nextId);
         this.putTags(TABLE_TAGMAP, tagInitial, dataElement.getTags());
     }
 
     /**
+     * Inserts all the given Nodes of the PolyElement with the id
+     * {@code finalId} in the given database. The first Node was inserted with
+     * the id {@code startId} and then the id is incrementing till
+     * {@code finalId - 1}.
+     * 
+     * @author tbrose
+     * 
      * @param db
-     * @param nextId
+     *            The database to insert to
      * @param polyNodes
+     *            A list of all Nodes to insert
+     * @param nextId
+     *            The first id for the nodes
      * @param finalId
+     *            The id of the PolyElement
      */
     private static void insertPolyNodes(final SQLiteDatabase db,
             final List<Node> polyNodes, long startId, final long finalId) {
@@ -322,7 +340,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         for (Node node : polyNodes) {
             node.setOsmId(nextId);
 
-            final ContentValues nodeValues = new ContentValues(4);
+            final ContentValues nodeValues = new ContentValues();
             nodeValues.put(KEY_ID, nextId);
             nodeValues.put(KEY_ELEMENT, finalId);
             nodeValues.put(KEY_LAT, node.getLat());
@@ -491,7 +509,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * This method deletes all entries of the {@link AbstractDataElement} table.
      * 
      * @author tbrose
-     * 
      */
     public void deleteAllDataElements() {
         final SQLiteDatabase db = getWritableDatabase();
@@ -502,30 +519,37 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.delete(TABLE_DATAELEMENT, null, null);
     }
 
+    // -------------------------------------------------------------------------
+    // lastChoice
+
     /**
-     * Returns the last ID used for DataElements plus one.
+     * Returns the saved tagMap for the given category.
      * 
      * @author tbrose
      * 
-     * @param table
-     *            The table to receive the next id from
-     * @param key
-     *            The name of the id column
-     * 
-     * @return the last used ID plus one
+     * @param category
+     *            The category of the last choice
+     * @return The last tags for this category
      */
-    private long getNextId(String table, String key) {
-        final SQLiteDatabase db = getReadableDatabase();
-        final Cursor cursor =
-                db.rawQuery(SELECT + key + FROM + table + " order by " + key
-                        + " DESC limit 1", null);
-        long lastId = 0;
-        if (cursor.moveToNext()) {
-            lastId = cursor.getLong(0);
-            Log.d(TAG, "LAST ID: " + lastId);
-        }
-        cursor.close();
-        return lastId + 1;
+    public Map<Tag, String> getLastChoice(int category) {
+        return this.buildTags(SELECT + KEY_TAGID + "," + KEY_VALUE + " FROM "
+                + TABLE_LASTCHOICE + WHERE + KEY_TYPE + "=" + category);
+    }
+
+    /**
+     * Saves the given tagMap for the given category.
+     * 
+     * @author tbrose
+     * 
+     * @param category
+     *            The category of the last choice
+     * @param tags
+     *            The last tags for this category
+     */
+    public void setLastChoice(int category, Map<Tag, String> tags) {
+        final ContentValues categoryValue = new ContentValues();
+        categoryValue.put(KEY_TYPE, category);
+        this.putTags(TABLE_LASTCHOICE, categoryValue, tags);
     }
 
     /**
@@ -533,6 +557,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * 
      * In the result the first column needs to be the tagId and the second
      * column needs to be the value.
+     * 
+     * @author tbrose
      * 
      * @param query
      *            Well formed SQL query
@@ -553,6 +579,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Executes an insert for each tag-pair of the given map.
+     * 
+     * @author tbrose
      * 
      * @param table
      *            The table to insert to
@@ -584,6 +612,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * This method creates and stores a new GPS track in the database. The data
      * is taken from the {@link Track} object that is passed to the method.
      * 
+     * @author tbrose
+     * 
      * @param track
      *            the {@link Track} object from which the data will be taken.
      */
@@ -606,6 +636,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /**
      * This method returns the data for a specific GPS track stored in the
      * database and creates the corresponding {@link Track} object.
+     * 
+     * @author tbrose
      * 
      * @param id
      *            the id of the desired GPS track.
@@ -652,6 +684,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /**
      * This method deletes a specific GPS track from the database.
      * 
+     * @author tbrose
+     * 
      * @param track
      *            the {@link Track} object whose data should be deleted.
      */
@@ -666,6 +700,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /**
      * This method returns the number of GPS tracks currently stored in the
      * database.
+     * 
+     * @author tbrose
      * 
      * @return the number of GPS tracks.
      */
@@ -683,6 +719,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * This method updates the data for a specific GPS track stored in the
      * database.
      * 
+     * @author tbrose
+     * 
      * @param track
      *            the {@link Track} object for which the data should be updated.
      */
@@ -694,8 +732,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         if (exists.moveToNext()) {
 
-            db.update(TABLE_GPSTRACK, valuesForTrack(track), KEY_ID
-                    + "=" + track.getID(), null);
+            db.update(TABLE_GPSTRACK, valuesForTrack(track), KEY_ID + "="
+                    + track.getID(), null);
 
             long nextPointId = this.getNextId(TABLE_TRACKPOINT, KEY_ID);
             for (TrackPoint tp : track.getTrackPoints()) {
@@ -716,6 +754,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * This method returns a list of all GPS tracks stored in the database and
      * creates corresponding {@link Track} objects.
      * 
+     * @author tbrose
+     * 
      * @return a list of GPS tracks.
      */
     public List<Track> getAllGPSTracks() {
@@ -732,6 +772,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * This method deletes all entries of the {@link Track} table.
+     * 
+     * @author tbrose
      */
     public void deleteAllGPSTracks() {
         final SQLiteDatabase db = getWritableDatabase();
@@ -739,6 +781,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.delete(TABLE_TRACKPOINT, null, null);
     }
 
+    /**
+     * Creates the ContentValues for the given Track.
+     * 
+     * @author tbrose
+     * 
+     * @param track
+     *            The Track to read the values from
+     * @return A ContentValues object for inserting into the database holding
+     *         the given data
+     */
     private static ContentValues valuesForTrack(Track track) {
         final ContentValues values = new ContentValues();
         values.put(KEY_ID, track.getID());
@@ -749,6 +801,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return values;
     }
 
+    /**
+     * Creates the ContentValues for the given TrackPoint with the elementId set
+     * to {@code trackId}.
+     * 
+     * @author tbrose
+     * 
+     * @param trackId
+     *            The id of the track of the given TrackPoint
+     * @param tp
+     *            The TrackPoint to read the values from
+     * @return A ContentValues object for inserting into the database holding
+     *         the given data
+     */
     private static ContentValues valuesForPoint(long trackId, TrackPoint tp) {
         final ContentValues pointValues = new ContentValues();
         pointValues.put(KEY_ID, tp.getID());
@@ -760,32 +825,29 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return pointValues;
     }
 
-    // -------------------------------------------------------------------------
-    // lastChoice
     /**
-     * get lastchoice from a Type(node,track,area,building). TODO
+     * Returns the last ID used for DataElements plus one.
      * 
      * @author tbrose
      * 
-     * @param category
-     * @return
-     */
-    public Map<Tag, String> getLastChoice(int category) {
-        return this.buildTags(SELECT + KEY_TAGID + "," + KEY_VALUE + " FROM "
-                + TABLE_LASTCHOICE + WHERE + KEY_TYPE + "=" + category);
-    }
-
-    /**
-     * insert a lastchoice for a given Type. TODO
+     * @param table
+     *            The table to receive the next id from
+     * @param key
+     *            The name of the id column
      * 
-     * @author tbrose
-     * 
-     * @param category
-     * @param tags
+     * @return the last used ID plus one
      */
-    public void setLastChoice(int category, Map<Tag, String> tags) {
-        final ContentValues categoryValue = new ContentValues();
-        categoryValue.put(KEY_TYPE, category);
-        this.putTags(TABLE_LASTCHOICE, categoryValue, tags);
+    private long getNextId(String table, String key) {
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor =
+                db.rawQuery(SELECT + key + FROM + table + " order by " + key
+                        + " DESC limit 1", null);
+        long lastId = 0;
+        if (cursor.moveToNext()) {
+            lastId = cursor.getLong(0);
+            Log.d(TAG, "LAST ID: " + lastId);
+        }
+        cursor.close();
+        return lastId + 1;
     }
 }
