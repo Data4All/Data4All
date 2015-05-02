@@ -90,7 +90,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String SELECT_ALL = "SELECT * FROM ";
 
     private static final String TAG = "DataBaseHandler";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "Data4AllDB";
 
     // Table Names
