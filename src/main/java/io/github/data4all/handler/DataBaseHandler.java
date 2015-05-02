@@ -219,7 +219,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void deleteUser(User user) {
         final SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(TABLE_USER, KEY_USERNAME + "=" + user.getUsername(), null);
+        db.delete(TABLE_USER, KEY_USERNAME + "='" + user.getUsername() + "'", null);
     }
 
     /**
@@ -317,7 +317,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param finalId
      */
     private static void insertPolyNodes(final SQLiteDatabase db,
-            final List<Node> polyNodes, long nextId, final long finalId) {
+            final List<Node> polyNodes, long startId, final long finalId) {
+        long nextId = startId;
         for (Node node : polyNodes) {
             node.setOsmId(nextId);
 
@@ -591,14 +592,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         final long nextTrackId = this.getNextId(TABLE_GPSTRACK, KEY_ID);
         track.setID(nextTrackId);
-        final ContentValues trackValues = this.valuesForTrack(track);
+        final ContentValues trackValues = valuesForTrack(track);
         db.insert(TABLE_GPSTRACK, null, trackValues);
 
         long nextPointId = this.getNextId(TABLE_TRACKPOINT, KEY_ID);
         for (TrackPoint tp : track.getTrackPoints()) {
             tp.setID(nextPointId);
-            db.insert(TABLE_TRACKPOINT, null,
-                    this.valuesForTrackpoint(nextTrackId, tp));
+            db.insert(TABLE_TRACKPOINT, null, valuesForPoint(nextTrackId, tp));
             nextPointId++;
         }
     }
@@ -694,15 +694,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         if (exists.moveToNext()) {
 
-            db.update(TABLE_GPSTRACK, this.valuesForTrack(track), "WHERE "
-                    + KEY_ID + "=" + track.getID(), null);
+            db.update(TABLE_GPSTRACK, valuesForTrack(track), KEY_ID
+                    + "=" + track.getID(), null);
 
             long nextPointId = this.getNextId(TABLE_TRACKPOINT, KEY_ID);
             for (TrackPoint tp : track.getTrackPoints()) {
                 if (tp.getID() == TrackPoint.NO_ID) {
                     tp.setID(nextPointId);
                     db.insert(TABLE_TRACKPOINT, null,
-                            this.valuesForTrackpoint(track.getID(), tp));
+                            valuesForPoint(track.getID(), tp));
                     nextPointId++;
                 }
             }
@@ -710,7 +710,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             Log.i(TAG, "Attemped to update a track that does not exists");
         }
         exists.close();
-        throw new RuntimeException(); // TODO
     }
 
     /**
@@ -740,7 +739,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.delete(TABLE_TRACKPOINT, null, null);
     }
 
-    private ContentValues valuesForTrack(Track track) {
+    private static ContentValues valuesForTrack(Track track) {
         final ContentValues values = new ContentValues();
         values.put(KEY_ID, track.getID());
         values.put(KEY_TRACKNAME, track.getTrackName());
@@ -750,7 +749,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return values;
     }
 
-    private ContentValues valuesForTrackpoint(long trackId, TrackPoint tp) {
+    private static ContentValues valuesForPoint(long trackId, TrackPoint tp) {
         final ContentValues pointValues = new ContentValues();
         pointValues.put(KEY_ID, tp.getID());
         pointValues.put(KEY_ELEMENT, trackId);

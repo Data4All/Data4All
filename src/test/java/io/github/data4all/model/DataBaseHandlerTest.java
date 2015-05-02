@@ -26,23 +26,20 @@ import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
+import io.github.data4all.model.data.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import android.location.Location;
 
 /**
  * This class tests all methods of the DataBaseHandler.
@@ -64,9 +61,39 @@ public class DataBaseHandlerTest {
     }
 
     @Test
-    public void testUserCRUD() {
-        // TODO
+    public void getUserSize_empty_zeroSize() {
+        assertEquals(0, dbHandler.getAllUser().size());
     }
+
+    @Test
+    public void getUserSize_oneUser_oneSize() {
+        dbHandler.createUser(new User("foo", "bar", "42"));
+        assertEquals(1, dbHandler.getAllUser().size());
+    }
+
+    @Test
+    public void createUser_insertUser_rightUserSaved() {
+        final User toInsert = new User("foo", "bar", "42");
+        dbHandler.createUser(toInsert);
+
+        User user = dbHandler.getAllUser().get(0);
+
+        assertEquals(toInsert.getUsername(), user.getUsername());
+        assertEquals(toInsert.getOAuthToken(), user.getOAuthToken());
+        assertEquals(toInsert.getOauthTokenSecret(), user.getOauthTokenSecret());
+    }
+
+    @Test
+    public void deleteUser_userWasSaved_userIsDeleted() {
+        final User toDelete = new User("foo", "bar", "42");
+        dbHandler.createUser(toDelete);
+        dbHandler.deleteUser(toDelete);
+
+        assertEquals(0, dbHandler.getAllUser().size());
+    }
+
+    // ///////////////////////////////////////////////
+    // ///////////////////////////////////////////////
 
     @Test
     public void getDataElementCount_empty_zeroSize() {
@@ -281,7 +308,7 @@ public class DataBaseHandlerTest {
         final Track toInsert = new Track();
         toInsert.setTrackPoints(Arrays.asList(new TrackPoint(0, 0, 0, 0),
                 new TrackPoint(0, 0, 0, 1)));
-        
+
         dbHandler.createGPSTrack(toInsert);
 
         final Track track = dbHandler.getGPSTrack(toInsert.getID());
@@ -289,7 +316,7 @@ public class DataBaseHandlerTest {
         final List<TrackPoint> insertedPoints = toInsert.getTrackPoints();
         final List<TrackPoint> readPoints = track.getTrackPoints();
         assertEquals(insertedPoints.size(), readPoints.size());
-        
+
         for (int i = 0; i < insertedPoints.size(); i++) {
             final TrackPoint insertedPoint = insertedPoints.get(i);
             final TrackPoint readPoint = readPoints.get(i);
@@ -303,131 +330,87 @@ public class DataBaseHandlerTest {
     }
 
     @Test
-    @Ignore
-    public void testTrackPointCRUD() {
-        Location loc1 = new Location("provider");
-        loc1.setAltitude(10.10);
-        loc1.setLatitude(10.10);
-        loc1.setLongitude(10.10);
-        loc1.setTime(10000);
-        TrackPoint tp1 = new TrackPoint(loc1);
-        tp1.setID(1);
+    public void updateGPSTrack_updateTrack_rightTrackSaved() {
+        final Track toUpdate = new Track();
+        toUpdate.setTrackName("oof");
+        toUpdate.setDescription("rab");
+        toUpdate.setTags("24 ,rab ,oof");
 
-        Location loc2 = new Location("provider");
-        loc2.setAltitude(11.11);
-        loc2.setLatitude(11.11);
-        loc2.setLongitude(11.11);
-        loc2.setTime(20000);
-        TrackPoint tp2 = new TrackPoint(loc2);
-        tp2.setID(2);
+        dbHandler.createGPSTrack(toUpdate);
 
-        Location loc3 = new Location("provider");
-        loc3.setAltitude(12.12);
-        loc3.setLatitude(12.12);
-        loc3.setLongitude(12.12);
-        loc3.setTime(30000);
-        TrackPoint tp3 = new TrackPoint(loc3);
-        tp3.setID(3);
+        toUpdate.setTrackName("FOO");
+        toUpdate.setDescription("BAR");
+        toUpdate.setTags("FOO, BAR, 42");
+        toUpdate.finishTrack();
+        dbHandler.updateGPSTrack(toUpdate);
 
-        List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
-        trackPoints.add(tp1);
-        trackPoints.add(tp2);
-        trackPoints.add(tp3);
+        final Track track = dbHandler.getGPSTrack(toUpdate.getID());
 
-        dbHandler.createTrackPoints(trackPoints);
-
-        List<Long> trackPointIDs = new ArrayList<Long>();
-        trackPointIDs.add(tp1.getID());
-        trackPointIDs.add(tp2.getID());
-        trackPointIDs.add(tp3.getID());
-
-        trackPoints = dbHandler.getTrackPoints(trackPointIDs);
-
-        assertEquals(10.10, trackPoints.get(0).getAlt(), 0.0);
-        assertEquals(11.11, trackPoints.get(1).getLat(), 0.0);
-        assertEquals(12.12, trackPoints.get(2).getLon(), 0.0);
-
-        assertEquals(3, dbHandler.getTrackPointCount());
-
-        trackPointIDs.remove(2);
-        trackPointIDs.remove(1);
-        dbHandler.deleteTrackPoints(trackPointIDs);
-
-        assertEquals(2, dbHandler.getTrackPointCount());
-
-        dbHandler.deleteAllTrackPoints();
-
-        assertEquals(0, dbHandler.getTrackPointCount());
+        assertEquals(toUpdate.getID(), track.getID());
+        assertEquals(toUpdate.getTrackName(), track.getTrackName());
+        assertEquals(toUpdate.getDescription(), track.getDescription());
+        assertEquals(toUpdate.getTags(), track.getTags());
+        assertEquals(toUpdate.isFinished(), track.isFinished());
     }
 
-    @Ignore
     @Test
-    public void testTrackCRUD() throws JSONException {
-        Location loc1 = new Location("User");
-        loc1.setAltitude(10.10);
-        loc1.setLatitude(10.10);
-        loc1.setLongitude(10.10);
-        loc1.setTime(10000);
-        TrackPoint tp1 = new TrackPoint(loc1);
-        tp1.setID(2);
+    public void updateGPSTrack_updateTrack_rightTrackPointsSaved() {
+        final Track toUpdate = new Track();
+        List<TrackPoint> points = new ArrayList<TrackPoint>();
+        points.add(new TrackPoint(0, 0, 0, 0));
+        points.add(new TrackPoint(0, 0, 0, 1));
+        toUpdate.setTrackPoints(points);
 
-        Location loc2 = new Location("User");
-        loc2.setAltitude(11.11);
-        loc2.setLatitude(11.11);
-        loc2.setLongitude(11.11);
-        loc2.setTime(20000);
-        TrackPoint tp2 = new TrackPoint(loc2);
-        tp2.setID(3);
+        dbHandler.createGPSTrack(toUpdate);
 
-        Location loc3 = new Location("User");
-        loc3.setAltitude(12.12);
-        loc3.setLatitude(12.12);
-        loc3.setLongitude(12.12);
-        loc3.setTime(30000);
-        TrackPoint tp3 = new TrackPoint(loc3);
-        tp3.setID(4);
+        points.add(new TrackPoint(1, 1, 1, 2));
+        points.add(new TrackPoint(2, 2, 2, 3));
+        toUpdate.setTrackPoints(points);
 
-        Location loc4 = new Location("User");
-        loc4.setAltitude(13.13);
-        loc4.setLatitude(13.13);
-        loc4.setLongitude(13.13);
-        loc4.setTime(13455);
-        TrackPoint tp4 = new TrackPoint(loc4);
-        tp4.setID(5);
+        dbHandler.updateGPSTrack(toUpdate);
 
-        List<TrackPoint> trackPoints = new ArrayList<TrackPoint>();
-        trackPoints.add(tp1);
-        trackPoints.add(tp2);
-        trackPoints.add(tp3);
+        final Track track = dbHandler.getGPSTrack(toUpdate.getID());
 
-        Track track = new Track();
-        track.setID(1);
-        track.setTrackPoints(trackPoints);
+        final List<TrackPoint> insertedPoints = toUpdate.getTrackPoints();
+        final List<TrackPoint> readPoints = track.getTrackPoints();
+        assertEquals(insertedPoints.size(), readPoints.size());
 
+        for (int i = 0; i < insertedPoints.size(); i++) {
+            final TrackPoint insertedPoint = insertedPoints.get(i);
+            final TrackPoint readPoint = readPoints.get(i);
+
+            assertEquals(insertedPoint.getID(), readPoint.getID());
+            assertEquals(insertedPoint.getLat(), readPoint.getLat(), 1e-10);
+            assertEquals(insertedPoint.getLon(), readPoint.getLon(), 1e-10);
+            assertEquals(insertedPoint.getAlt(), readPoint.getAlt(), 1e-10);
+            assertEquals(insertedPoint.getTime(), readPoint.getTime());
+        }
+    }
+
+    @Test
+    public void deleteAllGPSTracks_empty_emptyAfterwards() {
+        dbHandler.deleteAllGPSTracks();
+        assertEquals(0, dbHandler.getGPSTrackCount());
+    }
+
+    @Test
+    public void deleteAllGPSTracks_notEmpty_emptyAfterwards() {
+        final Track track = new Track();
+        dbHandler.createGPSTrack(track);
+        dbHandler.createGPSTrack(track);
         dbHandler.createGPSTrack(track);
 
-        assertEquals(1, dbHandler.getGPSTrackCount());
-
-        Track reTrack = dbHandler.getGPSTrack(track.getID());
-
-        assertEquals(track.getTrackName(), reTrack.getTrackName());
-
-        track.setTrackName("2015_02_20_15_18_25");
-
-        trackPoints.add(tp4);
-        track.setTrackPoints(trackPoints);
-
-        dbHandler.updateGPSTrack(track);
-
-        reTrack = dbHandler.getGPSTrack(track.getID());
-
-        assertEquals(4, reTrack.getTrackPoints().size());
+        dbHandler.deleteAllGPSTracks();
+        assertEquals(0, dbHandler.getGPSTrackCount());
     }
 
     @After
     public void tearDown() {
         dbHandler.deleteAllDataElements();
         dbHandler.deleteAllGPSTracks();
+        for (User user : dbHandler.getAllUser()) {
+            dbHandler.deleteUser(user);
+        }
         dbHandler.close();
     }
 }
