@@ -405,7 +405,9 @@ public class AddressSuggestionView implements OnClickListener,
 				Address ad=new Address();
 				ad.setAddresseNr(TagSuggestionHandler.getJsonValue(json,"addresseNr"));
 				ad.setRoad(TagSuggestionHandler.getJsonValue(json,"road"));
-				ad.setRoad(TagSuggestionHandler.getJsonValue(json,"city"));
+				ad.setPostCode(TagSuggestionHandler.getJsonValue(json,"postcode"));
+				ad.setCity(TagSuggestionHandler.getJsonValue(json,"city"));
+				ad.setCountry(TagSuggestionHandler.getJsonValue(json,"country"));
 				addresses.add(ad);
 			} catch (JSONException e) {
 				e.printStackTrace();

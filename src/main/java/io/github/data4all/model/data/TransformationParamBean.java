@@ -85,7 +85,7 @@ public class TransformationParamBean implements Parcelable {
         this.photoHeight = photoHeight;
         this.photoWidth = photoWidth;
         this.location = location;
-        TagSuggestionHandler.ladeBeanAddresse(this);
+        new TagSuggestionHandler().ladeBeanAddresse(this);
         
     }
 
@@ -105,7 +105,7 @@ public class TransformationParamBean implements Parcelable {
             location = new Location(in.readString());
             location.setLatitude(in.readDouble());
             location.setLongitude(in.readDouble());
-            TagSuggestionHandler.ladeBeanAddresse(this);
+            new TagSuggestionHandler().ladeBeanAddresse(this);
         }
     }
 

@@ -332,15 +332,14 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 	}
 	public TransformationParamBean transformationParamBean;
 
-	public static void ladeBeanAddresse(
+	public void ladeBeanAddresse(
 			TransformationParamBean transformationParamBean) {
 		if (transformationParamBean.getLocation() != null) {
-			TagSuggestionHandler handler = new TagSuggestionHandler();
-			handler.transformationParamBean=transformationParamBean;
-			handler.setCurrent(transformationParamBean.getLocation());
-			handler.setWithAlternateSavingMap(true);
-			handler.setAlternativeQueue(transformationParamBean.getAddresslist());
-			handler.execute();
+			this.transformationParamBean=transformationParamBean;
+			setCurrent(transformationParamBean.getLocation());
+			setWithAlternateSavingMap(true);
+			setAlternativeQueue(transformationParamBean.getAddresslist());
+			execute();
 		}
 
 	}
