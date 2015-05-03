@@ -1,12 +1,14 @@
 package io.github.data4all.view;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.LocationWrapper;
 import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.util.Optimizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,6 +33,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -48,7 +52,7 @@ public class AddressSuggestionView implements OnClickListener,
         android.view.View.OnClickListener {
 
     // Proposed List of all addresses
-    private Set<Address> addresses = new LinkedHashSet<Address>();
+    private Queue<Address> addresses = new LinkedList<Address>();
 
     // textView for road
     private TextView road;
@@ -61,13 +65,10 @@ public class AddressSuggestionView implements OnClickListener,
     // textView for country
     private TextView country;
 
-    // the current best address
-    private Address bestAdresse;
-
     // context for AddressSuggestionview
     private Context context;
 
-    //this array will be used to save addresses
+    // this array will be used to save addresses
     private String[] array;
 
     Map<String, Integer> keyMapView = new HashMap<String, Integer>();
@@ -92,15 +93,6 @@ public class AddressSuggestionView implements OnClickListener,
     private List<String> keyList;
 
     /**
-     * get the bestAddress with the best location
-     * 
-     * @return bestAdresse
-     */
-    public Address getBestAddresse() {
-        return bestAdresse;
-    }
-
-    /**
      * Default constructor for AddressSuggestionView
      * 
      * @param context
@@ -123,30 +115,29 @@ public class AddressSuggestionView implements OnClickListener,
     }
 
     /**
-     * 
-     * @param addresses
-     */
-    public void setAddresses(Set<Address> addresses) {
-        this.addresses.clear();
-        this.addresses.addAll(addresses);
-        if (!this.addresses.isEmpty()) {
-            // set best address an first position
-            bestAdresse = addresses.iterator().next();
-        }
-    }
-
-    /**
      * filled dialog with a list of addresses
      * 
      * @param activity
      */
     public void fillDialog() {
-    	if(alternative==null || alternative.length==0){
-    		this.addresses=new LinkedHashSet<Address>(TagSuggestionHandler.addressList);
-    		Log.i("####Standart ist ktiv###", TagSuggestionHandler.addressList.size()+"");
-    	}else{
-    		Log.i("####alternative###", Arrays.toString(alternative));
-    	}
+        if (location != null) {
+            Queue<? extends Address> address = TagSuggestionHandler.get(location);
+            if (address != null) {
+            this.addresses = new LinkedList<Address>(
+                    address);
+            }
+        }
+        if (this.addresses == null || this.addresses.isEmpty()) {
+            Queue<? extends Address> currentAdresses = TagSuggestionHandler
+                    .get(Optimizer.currentBestLoc());
+            if (currentAdresses != null) {
+                this.addresses = new LinkedList<Address>(currentAdresses);
+            }
+            if (this.addresses == null || this.addresses.isEmpty()) {
+                array = new String[] { "Currently no possibility avalaible" };
+                return;
+            }
+        }
 
         final Set<String> fullAdresses = new TreeSet<String>(
         // sort fullAddresses
@@ -174,8 +165,8 @@ public class AddressSuggestionView implements OnClickListener,
     }
 
     /**
-     * @param fullAddress 
-     *                   is road + house_number + postCode + city + country 
+     * @param fullAddress
+     *            is road + house_number + postCode + city + country
      * @return a selected Address
      */
     public Address getSelectedAddress(String fullAddress) {
@@ -191,15 +182,11 @@ public class AddressSuggestionView implements OnClickListener,
     @Override
     public void onClick(View arg0) {
         Button selectAddress = (Button) arg0;
-        //handler.execute();
+        // handler.execute();
         // load addresses when user click of the button selectAddress
         if (selectAddress.getText().equals(btnSelectAddress.getText())) {
-        	if(TagSuggestionHandler.addressList.isEmpty()){
-        		
-        	}else{
-        	fillDialog();
-        	show();
-        	}
+            fillDialog();
+            show();
         }
 
     }
@@ -231,8 +218,8 @@ public class AddressSuggestionView implements OnClickListener,
      *            for an address
      * @param value
      * @param id
-     *            represents the id of a
-     *            tag(e.g :street,house_number,road,city,country)
+     *            represents the id of a tag(e.g
+     *            :street,house_number,road,city,country)
      */
     private void setValue(TextView textview, String value, int id) {
         if (textview != null && value != null) {
@@ -323,14 +310,15 @@ public class AddressSuggestionView implements OnClickListener,
     public void setListview(ListView listView) {
         this.listView = listView;
     }
-    
+
     public ListView getListView() {
         return listView;
     }
-    
+
     public List<String> getKeyList() {
         return keyList;
     }
+
     public void setKeyList(List<String> keyList) {
         this.keyList = keyList;
     }
@@ -343,7 +331,7 @@ public class AddressSuggestionView implements OnClickListener,
         this.mapTag = mapTag;
 
     }
-   
+
     public Activity getActivity() {
         return activity;
     }
@@ -362,8 +350,9 @@ public class AddressSuggestionView implements OnClickListener,
         booleanList = value.getAllUnclassifiedBooleans();
 
         for (int i = 0; i < booleanList.size(); i++) {
-            if (booleanList.get(i) 
-                    && tagList.size()>i &&!keyMapView.containsValue(res.getString(tagList.get(i)
+            if (booleanList.get(i)
+                    && tagList.size() > i
+                    && !keyMapView.containsValue(res.getString(tagList.get(i)
                             .getNameRessource()))) {
                 Tag tag = tagList.get(i);
                 keyMapView.put(res.getString(tag.getNameRessource()),
@@ -396,25 +385,20 @@ public class AddressSuggestionView implements OnClickListener,
         }
 
     }
-    String [] alternative;
-	public void setAlternative(String[] stringArrayExtra) {
-		this.alternative=stringArrayExtra;
-		for (String jsonAdresse : stringArrayExtra) {
-			try {
-				JSONObject json=new JSONObject(jsonAdresse);
-				Address ad=new Address();
-				ad.setAddresseNr(TagSuggestionHandler.getJsonValue(json,"addresseNr"));
-				ad.setRoad(TagSuggestionHandler.getJsonValue(json,"road"));
-				ad.setPostCode(TagSuggestionHandler.getJsonValue(json,"postcode"));
-				ad.setCity(TagSuggestionHandler.getJsonValue(json,"city"));
-				ad.setCountry(TagSuggestionHandler.getJsonValue(json,"country"));
-				addresses.add(ad);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		
-	}
+
+    private Location location;
+
+    public void setLocation(Location l) {
+        if (l == null) {
+            this.location = Optimizer.currentBestLoc();
+        } else {
+            this.location = l;
+        }
+
+        if (this.location != null && TagSuggestionHandler.get(location) == null) {
+            TagSuggestionHandler handler = new TagSuggestionHandler();
+            handler.setCurrent(this.location);
+        }
+    }
 
 }
