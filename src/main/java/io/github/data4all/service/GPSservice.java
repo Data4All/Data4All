@@ -130,7 +130,6 @@ public class GPSservice extends Service implements LocationListener {
         track = trackUtil.getLastTrack();
         if (loc != null) {
             Optimizer.putLoc(loc);
-            
         }
 
         if (track != null) {

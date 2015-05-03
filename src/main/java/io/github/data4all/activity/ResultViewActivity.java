@@ -18,11 +18,14 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.util.Gallery;
@@ -52,6 +55,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.preference.PreferenceManager;
@@ -145,6 +149,7 @@ public class ResultViewActivity extends AbstractActivity implements
         setContentView(R.layout.activity_result_view);
         mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
+        
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
@@ -430,11 +435,32 @@ public class ResultViewActivity extends AbstractActivity implements
         addressSuggestionView.setKeyList(keyList);
         addressSuggestionView.setElement(element);
         addressSuggestionView.setMapTag(mapTag);
+        addressSuggestionView.setLocation(getLocationFromElement());
+        
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this); */
     }
-
+    
+    public Location getLocationFromElement(){
+        Location location=null ;
+        if (element instanceof PolyElement) {
+            PolyElement elem = (PolyElement) element;
+            
+            if( elem.getFirstNode() != null) {
+                location = new Location("");
+                location.setLatitude(elem.getFirstNode().getLat());
+                location.setLongitude(elem.getFirstNode().getLon());
+            }
+        } else {
+            
+            Node elem = (Node) element;
+            location = new Location(""); 
+            location.setLatitude(elem.getLat());
+            location.setLongitude(elem.getLon());
+        }
+        return location;
+    }
     /**
      * Changes the Classified Tags with the selected String and saves the new
      * one

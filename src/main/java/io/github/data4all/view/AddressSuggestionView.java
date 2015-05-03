@@ -22,16 +22,23 @@ import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.util.LocationWrapper;
+import io.github.data4all.util.Optimizer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,6 +48,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -49,13 +58,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * this class represents the view of all addresses suggestion
+ * this class represents the view of all suggestions addresses
  * 
  * @author Steeve
  *
  */
 public class AddressSuggestionView implements OnClickListener,
-		android.view.View.OnClickListener {
+        android.view.View.OnClickListener {
 
 	// Proposed List of addresses
 	private Set<Address> addresses = new LinkedHashSet<Address>();
@@ -141,8 +150,24 @@ public class AddressSuggestionView implements OnClickListener,
 	 * @param activity
 	 */
 	public void fillDialog() {
-		this.addresses = new LinkedHashSet<Address>(
-				TagSuggestionHandler.addressList);
+        if (location != null) {
+            Queue<? extends Address> address = TagSuggestionHandler.get(location);
+            if (address != null) {
+            this.addresses = new LinkedHashSet<Address>(
+                    address);
+            }
+        }
+        if (this.addresses == null || this.addresses.isEmpty()) {
+            Queue<? extends Address> currentAdresses = TagSuggestionHandler
+                    .get(Optimizer.currentBestLoc());
+            if (currentAdresses != null) {
+                this.addresses = new LinkedHashSet<Address>(currentAdresses);
+            }
+            if (this.addresses == null || this.addresses.isEmpty()) {
+                array = new String[] { "Currently no possibility avalaible" };
+                return;
+            }
+        }
 
 		final Set<String> fullAdresses = new TreeSet<String>(
 		// sort fullAddresses
@@ -386,5 +411,15 @@ public class AddressSuggestionView implements OnClickListener,
 		}
 
 	}
+
+    private Location location;
+
+    public void setLocation(Location l) {
+        if (l == null) {
+            this.location = Optimizer.currentBestLoc();
+        } else {
+            this.location = l;
+        }
+    }
 
 }

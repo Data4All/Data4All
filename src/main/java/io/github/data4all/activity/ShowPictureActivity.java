@@ -190,6 +190,7 @@ public class ShowPictureActivity extends AbstractActivity {
                     getIntent().getExtras().getParcelable(
                             CapturePictureHandler.TRANSFORM_BEAN);
             intent.putExtra(LOCATION, transformBean.getLocation());
+         
         }
 
         if (extras != null
@@ -280,6 +281,7 @@ public class ShowPictureActivity extends AbstractActivity {
             // to the next activity
             final AbstractDataElement osmElement = touchView.create();
             intent.putExtra(OSM_ELEMENT, osmElement);
+        
             startActivityForResult(intent);
         }
     }

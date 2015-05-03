@@ -17,6 +17,7 @@ package io.github.data4all.model.data;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Queue;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -235,5 +236,5 @@ public abstract class AbstractDataElement implements Parcelable {
         }
         return false;
     }
-
+  
 }

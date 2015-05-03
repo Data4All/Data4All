@@ -15,12 +15,15 @@
  */
 package io.github.data4all.model.data;
 
+import io.github.data4all.handler.TagSuggestionHandler;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.Parcel;
@@ -42,7 +45,7 @@ public class TransformationParamBean implements Parcelable {
     private int photoWidth;
     private int photoHeight;
     private Location location;
-
+    
     /**
      * CREATOR that generates instances of {@link TransformationParamBean} from
      * a Parcel.
@@ -80,6 +83,7 @@ public class TransformationParamBean implements Parcelable {
         this.photoHeight = photoHeight;
         this.photoWidth = photoWidth;
         this.location = location;
+        
     }
 
     /**
@@ -208,5 +212,7 @@ public class TransformationParamBean implements Parcelable {
         return new TransformationParamBean(json.getDouble(0),
                 json.getDouble(1), json.getDouble(2), json.getInt(3),
                 json.getInt(4), location);
+        
     }
+
 }
