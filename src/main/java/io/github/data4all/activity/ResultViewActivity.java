@@ -18,6 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -52,6 +53,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.preference.PreferenceManager;
@@ -145,6 +147,7 @@ public class ResultViewActivity extends AbstractActivity implements
         setContentView(R.layout.activity_result_view);
         mapView = (D4AMapView) this.findViewById(R.id.mapviewResult);
         element = getIntent().getParcelableExtra("OSM_ELEMENT");
+        
         mapView.setTileSource(osmMap);
         mapController = (MapController) this.mapView.getController();
         mapController.setCenter(MapUtil.getCenterFromOsmElement(element));
@@ -429,8 +432,10 @@ public class ResultViewActivity extends AbstractActivity implements
         addressSuggestionView.setKeyList(keyList);
         addressSuggestionView.setElement(element);
         addressSuggestionView.setMapTag(mapTag);
-        if (getIntent().hasExtra("ADDRESSSUGESTION")){
-        	addressSuggestionView.setAlternative(getIntent().getStringArrayExtra("ADDRESSSUGESTION"));
+        if (getIntent().hasExtra("LOCATION")){
+            final Location l = (Location) getIntent().getParcelableExtra(
+                    "LOCATION");
+            addressSuggestionView.setLocation(l);
         }
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
