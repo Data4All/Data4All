@@ -381,7 +381,6 @@ public abstract class AbstractActivity extends Activity {
                         recordActive = false;
 
                         String trackName = txtName.getText().toString();
-                        Log.e("AbstractActivity", trackName);
                         stopTrack(trackName);
                         Log.d("AbstractActivity", "stop a track with dialog");
                         return;

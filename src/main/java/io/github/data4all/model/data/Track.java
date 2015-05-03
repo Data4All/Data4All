@@ -60,12 +60,12 @@ public class Track implements Parcelable {
     /**
      * The description of the tag which the user can add.
      */
-    private String description = "a";
+    private String description;
 
     /**
      * The tags of the track which the user can add, tags are comma seperated.
      */
-    private String tags = "b";
+    private String tags;
 
     /**
      * saves a list of TrackPoints.

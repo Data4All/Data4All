@@ -102,6 +102,10 @@
     <string name="track_id">Track ID:</string>
     <string name="trackpoints">Trackpunkte:</string>
     <string name="trackname">Name:</string>
+        <string name="track_description">Beschreibung:</string>
+    <string name="track_tags">Tags:</string>
+    <string name="track_no_description">Keine Beschreibung verfügbar</string>
+    <string name="track_no_tags">Keine Tags verfügbar</string>
 
     <!-- for gallery -->
     <string name="gallery_sec">"%s gerade"</string>

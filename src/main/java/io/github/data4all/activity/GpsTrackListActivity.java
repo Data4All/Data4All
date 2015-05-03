@@ -119,6 +119,7 @@ public class GpsTrackListActivity extends AbstractActivity {
      */
     private void getTracks() {
         trackList = trackUtil.getTracks();
+        
     }
 
     /*
