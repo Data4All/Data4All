@@ -46,8 +46,6 @@ public class TransformationParamBean implements Parcelable {
     private int photoHeight;
     private Location location;
     
-	private Queue<Address>addresslist=new LinkedList<Address>();
-	private String[] fullAddresslist;
     /**
      * CREATOR that generates instances of {@link TransformationParamBean} from
      * a Parcel.
