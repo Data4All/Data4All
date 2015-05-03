@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="help_mapviewactivity_changecard">Changer \nde vue</string>
+    <string name="help_mapviewactivity_centermap">Centrer \nla carte</string>
+    <string name="help_mapviewactivity_welcome">Bienvenue sur \ndata4all</string>
+    <string name="help_mapviewactivity_poi">Marquer un point</string>
+    <string name="help_mapviewactivity_takepicture">Dessiner sur une Photo</string>
+    <string name="help_mapviewactivity_gallery">Voir les photos qui n\'ont pas encore été marqués dans la galerie</string>
+    <string name="help_mapviewactivity_description_edgeswipe">Image montrant un doigt sur l\'écran qui éfface à partir du bord gauche vers la droite</string>
+
+    <string name="help_cameraactivity_gallery">Décidez si vous souhaitez marquer maintenant ou plus tard</string>
+    <string name="help_cameraactivity_description_swipe">Image qui montre un doigt sur l\'écran balayant vers la gauche et vers la droite</string>
+
+    <string name="help_showpictureactivity_draw">Dessiner l\'object</string>
+    <string name="help_showpictureactivity_deletepoint">Retirer les points superflus</string>
+    <string name="help_showpictureactivity_movepoint">Corriger les mauvais points</string>
+    <string name="help_showpictureactivity_choosetool">Choisir un outil</string>
+    <string name="help_showpictureactivity_point">Point</string>
+    <string name="help_showpictureactivity_way">Chemin</string>
+    <string name="help_showpictureactivity_area">Surface</string>
+    <string name="help_showpictureactivity_house">Bâtiment rectangulaire</string>
+    <string name="help_showpictureactivity_description_draw">Image montrant un doigt sur l\'écran qui déssine une figure</string>
+    <string name="help_showpictureactivity_description_delete">Image montrant un doigt sur l\'écran qui clique sur un point</string>
+    <string name="help_showpictureactivity_description_move">Image qui montre un doigt sur l\écran qui déplace un point</string>
+    
+    <string name="help_mappreviewactivity_edit">Modifier l\'objet s\'il n\'est pas correct</string>
+    <string name="help_mappreviewactivity_move">Déplacer l\'object</string>
+    <string name="help_mappreviewactivity_rotate">Faire tourner l\'object</string>
+    <string name="help_mappreviewactivity_zoom">Ajuster la taille</string>
+    <string name="help_mappreviewactivity_accept">Confirmer l\'object</string>
+    <string name="help_mappreviewactivity_description_select">Image qui montre un doigt sur l\'écran entrain de cliquez sur un objet</string>
+    <string name="help_mappreviewactivity_description_move">Image qui montre un doigt sur l\'écran, indiquant un déplacement</string>
+    <string name="help_mappreviewactivity_description_rotate">Image qui montre deux doigts sur l\'écran, indiquant un mouvement de rotation</string>
+    <string name="help_mappreviewactivity_description_zoom">Image qui montre trois doigts sur l\'écran démandant d\'effectuer un zoom </string>
+    
+    <string name="help_resultviewactivity_backtomap">Retour à\nla \ncarte</string>
+    <string name="help_resultviewactivity_backtocam">Retour à\nla \nCamera</string>
+    <string name="help_resultviewactivity_addtags">Changer les balises existantes \nou alors ajouter de nouvelles </string>
+</resources>
