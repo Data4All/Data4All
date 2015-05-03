@@ -35,6 +35,7 @@ import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.MathUtil;
+import io.github.data4all.util.Optimizer;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -140,7 +141,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         zoomControls.hide();
 
         listener = new ButtonRotationListener(this, buttons);
-
+        
+        Location location = Optimizer.currentBestLoc();
+        
+        
         if (element instanceof PolyElement) {
             PolyElement elem = (PolyElement) element;
             if (elem.getNodes().size() != 5
@@ -148,9 +152,20 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 rect.setClickable(false);
                 rect.setVisibility(View.GONE);
             }
+            if( elem.getFirstNode() != null) {
+                Location newLocation = new Location("");
+                newLocation.setLatitude(elem.getFirstNode().getLat());
+                newLocation.setLongitude(elem.getFirstNode().getLon());
+                location = newLocation;
+            }
         } else {
             rect.setClickable(false);
             rect.setVisibility(View.GONE);
+            Node elem = (Node) element;
+            Location newLocation = new Location(""); 
+            newLocation.setLatitude(elem.getLat());
+            newLocation.setLongitude(elem.getLon());
+            location = newLocation;
         }
 
     }
