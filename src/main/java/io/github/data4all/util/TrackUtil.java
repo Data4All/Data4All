@@ -46,9 +46,8 @@ public class TrackUtil {
         // TODO check for active tracks and close them
         db = new DataBaseHandler(context.getApplicationContext());
         Track track = new Track();
-        long trackID = db.createGPSTrack(track);
-        track.setID(trackID);
-        Log.d(TAG, "Starting a new track. ID: " + trackID);
+        db.createGPSTrack(track);
+        Log.d(TAG, "Starting a new track. ID: " + track.getID());
         db.close();
         return track;
     }

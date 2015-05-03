@@ -763,48 +763,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final Cursor cursor = getReadableDatabase().rawQuery(query, null);
         final List<Track> tracks = new ArrayList<Track>(cursor.getCount());
 
-        final List<Track> gpsTracks = new ArrayList<Track>();
-
-        final SQLiteDatabase db = getReadableDatabase();
-        final Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GPSTRACK,
-                null);
-
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-
-                final Track track = new Track();
-                final List<Long> trackPointIDs = new ArrayList<Long>();
-                try {
-                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
-                            + cursor.getString(0) + " cursor.getString(1): "
-                            + cursor.getString(1) + " cursor.getString(2): " +cursor.getString(2));
-                    final JSONObject json = new JSONObject(cursor.getString(2));
-                    final JSONArray jArray = json
-                            .optJSONArray("trackpointarray");
-
-                    for (int i = 0; i < jArray.length(); i++) {
-                        final long id = jArray.optInt(i);
-                        trackPointIDs.add(id);
-                    }
-                } catch (JSONException e) {
-                    // ignore exception
-                }
-
-                final List<TrackPoint> trackPoints = this
-                        .getTrackPoints(trackPointIDs);
-                track.setTrackPoints(trackPoints);
-
-                boolean finishflag = cursor.getInt(3) > 0;
-                track.setStatus(finishflag);
-
-                long trackID = cursor.getLong(0);
-                track.setID(trackID);
-                String trackName = cursor.getString(1);
-                track.setTrackName(trackName);
-
-                gpsTracks.add(track);
-            }
+        while (cursor.moveToNext()) {
+            tracks.add(this.getGPSTrack(cursor.getInt(0)));
         }
         cursor.close();
         return tracks;

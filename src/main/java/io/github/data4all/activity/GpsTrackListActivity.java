@@ -110,6 +110,8 @@ public class GpsTrackListActivity extends AbstractActivity {
         intent.putExtra("name", track.getTrackName());
         intent.putExtra("trackpoints", track.getTrackPoints().size());
         intent.putExtra("id", track.getID());
+        intent.putExtra("description", track.getDescription());
+        intent.putExtra("tags", track.getTags());
 
         return intent;
     }

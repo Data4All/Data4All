@@ -17,11 +17,16 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.util.TrackUtil;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -33,14 +38,22 @@ import android.widget.TextView;
  */
 public class TrackDetailsActivity extends AbstractActivity implements
         OnClickListener {
-    
+
     private TrackUtil trackUtil;
 
     private TextView trackDetails;
     private TextView trackId;
     private TextView trackPointCount;
+
+    private TextView trackDescription;
+    private TextView trackTags;
+
     private ImageButton deleteButton;
     private ImageButton uploadButton;
+
+    private ImageButton editNameButton;
+    private ImageButton editTagsButton;
+    private ImageButton editDescriptionButton;
 
     /*
      * (non-Javadoc)
@@ -51,7 +64,7 @@ public class TrackDetailsActivity extends AbstractActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_details);
-        
+
         trackUtil = new TrackUtil(this.getApplicationContext());
 
         setFields();
@@ -68,12 +81,16 @@ public class TrackDetailsActivity extends AbstractActivity implements
         trackDetails = (TextView) findViewById(R.id.textViewTrackDetails);
         trackId = (TextView) findViewById(R.id.textViewTrackId);
         trackPointCount = (TextView) findViewById(R.id.textViewTrackPointCount);
+        trackDescription = (TextView) findViewById(R.id.textViewTrackDescription);
+        trackTags = (TextView) findViewById(R.id.textViewTrackTags);
 
         Intent intent = getIntent();
         trackDetails.setText(intent.getStringExtra("name"));
         trackId.setText(Long.toString(intent.getLongExtra("id", -1)));
         trackPointCount.setText(Integer.toString(intent.getIntExtra(
                 "trackpoints", -1)));
+        trackDescription.setText(intent.getStringExtra("description"));
+        trackTags.setText(intent.getStringExtra("tags"));
 
     }
 
@@ -96,10 +113,18 @@ public class TrackDetailsActivity extends AbstractActivity implements
      */
     private void addButtonListener() {
 
+        editNameButton = (ImageButton) findViewById(R.id.buttonEditTrackName);
+        editTagsButton = (ImageButton) findViewById(R.id.buttonEditTrackTags);
+        editDescriptionButton = (ImageButton) findViewById(R.id.buttonEditTrackDescription);
         deleteButton = (ImageButton) findViewById(R.id.buttonDeleteTrack);
         uploadButton = (ImageButton) findViewById(R.id.buttonUploadTrack);
+
+        editNameButton.setOnClickListener(this);
+        editTagsButton.setOnClickListener(this);
+        editDescriptionButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
         uploadButton.setOnClickListener(this);
+
     }
 
     /**
@@ -122,16 +147,151 @@ public class TrackDetailsActivity extends AbstractActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.buttonDeleteTrack:
-            deleteTrack(Long.valueOf(trackId.getText().toString()));//getIntent().getLongExtra("id", -1));
+            deleteTrack(Long.valueOf(trackId.getText().toString()));// getIntent().getLongExtra("id",
+                                                                    // -1));
             this.finish();
             break;
         case R.id.buttonUploadTrack:
             startActivity(new Intent(this, LoginActivity.class));
             break;
+        case R.id.buttonEditTrackName:
+            editNameDialog();
+            break;
+        case R.id.buttonEditTrackTags:
+            editTagDialog();
+            break;
+        case R.id.buttonEditTrackDescription:
+            editDescriptionDialog();
+            break;
         default:
             break;
         }
 
+    }
+
+    private void editDescriptionDialog() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View view = factory.inflate(
+                R.layout.dialog_edit_track_description, null);
+
+        final EditText txtDescription = (EditText) view
+                .findViewById(R.id.editTrackDescriptionText);
+        txtDescription.setHint(trackDescription.getText());
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setView(view);
+        adb.setTitle(R.string.editTrackDescription);
+        adb.setPositiveButton(R.string.save,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Track track = trackUtil.loadTrack(getIntent()
+                                .getLongExtra("id", -1));
+                        track.setDescription(txtDescription.getText()
+                                .toString());
+                        trackUtil.updateTrack(track);
+                        refreshActivity(track);
+                        return;
+                    }
+                });
+
+        adb.setNegativeButton(R.string.CancelButton,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        return;
+                    }
+                });
+
+        adb.show();
+
+    }
+
+    private void editTagDialog() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View view = factory
+                .inflate(R.layout.dialog_edit_track_tags, null);
+
+        final EditText txtTags = (EditText) view
+                .findViewById(R.id.editTrackTagsText);
+        txtTags.setHint(trackTags.getText());
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setView(view);
+        adb.setTitle(R.string.editTrackTags);
+        adb.setMessage(R.string.hint_edit_track_tags);
+        adb.setPositiveButton(R.string.save,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Track track = trackUtil.loadTrack(getIntent()
+                                .getLongExtra("id", -1));
+                        track.setTags(txtTags.getText().toString());
+                        trackUtil.updateTrack(track);
+                        refreshActivity(track);
+                        return;
+                    }
+                });
+
+        adb.setNegativeButton(R.string.CancelButton,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        return;
+                    }
+                });
+
+        adb.show();
+
+    }
+
+    private void editNameDialog() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View view = factory.inflate(R.layout.edit_track_name, null);
+
+        final EditText txtName = (EditText) view
+                .findViewById(R.id.editTracknameText);
+        txtName.setHint(trackDetails.getText());
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setView(view);
+        adb.setTitle(R.string.editTrackName);
+        adb.setPositiveButton(R.string.save,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Track track = trackUtil.loadTrack(getIntent()
+                                .getLongExtra("id", -1));
+                        track.setTrackName(txtName.getText().toString());
+                        trackUtil.updateTrack(track);
+                        refreshActivity(track);
+                        return;
+                    }
+                });
+
+        adb.setNegativeButton(R.string.CancelButton,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        return;
+                    }
+                });
+
+        adb.show();
+
+    }
+
+    private void refreshActivity(Track track) {
+        Intent intent = getIntent();
+        intent.putExtra("name", track.getTrackName());
+        intent.putExtra("trackpoints", track.getTrackPoints().size());
+        intent.putExtra("id", track.getID());
+        intent.putExtra("description", track.getDescription());
+        intent.putExtra("tags", track.getTags());
+
+        finish();
+
+        startActivity(intent);
     }
 
 }
