@@ -143,9 +143,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
         listener = new ButtonRotationListener(this, buttons);
         
-        Location location = null;
-        
-        
         if (element instanceof PolyElement) {
             PolyElement elem = (PolyElement) element;
             if (elem.getNodes().size() != 5
@@ -153,24 +150,11 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 rect.setClickable(false);
                 rect.setVisibility(View.GONE);
             }
-            if( elem.getFirstNode() != null) {
-                Location newLocation = new Location("");
-                newLocation.setLatitude(elem.getFirstNode().getLat());
-                newLocation.setLongitude(elem.getFirstNode().getLon());
-                location = newLocation;
-            }
         } else {
             rect.setClickable(false);
             rect.setVisibility(View.GONE);
-            Node elem = (Node) element;
-            Location newLocation = new Location(""); 
-            newLocation.setLatitude(elem.getLat());
-            newLocation.setLongitude(elem.getLon());
-            location = newLocation;
         }
-        if(location != null) {
-            new TagSuggestionHandler().setCurrent(location);
-        }
+        
 
     }
 
@@ -250,6 +234,27 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.getClass().getSimpleName() + " with Coordinates "
                 + element.toString());
         intent.putExtra(OSM, element);
+        
+        
+        Location location = null ;
+        if (element instanceof PolyElement) {
+            PolyElement elem = (PolyElement) element;
+            
+            if( elem.getFirstNode() != null) {
+                location = new Location("");
+                location.setLatitude(elem.getFirstNode().getLat());
+                location.setLongitude(elem.getFirstNode().getLon());
+            }
+        } else {
+            
+            Node elem = (Node) element;
+            location = new Location(""); 
+            location.setLatitude(elem.getLat());
+            location.setLongitude(elem.getLon());
+        }
+        if(location != null) {
+            new TagSuggestionHandler().setCurrent(location);
+        }
 
         if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
