@@ -236,15 +236,5 @@ public abstract class AbstractDataElement implements Parcelable {
         }
         return false;
     }
-    
-    Queue<Address> addresslist;
-	public void setAddressSugestion(Queue<Address> addresslist) {
-		this.addresslist=addresslist;
-	}
-
-	public Queue<Address> getAddresslist() {
-		return addresslist;
-	}
-	
-
+  
 }
