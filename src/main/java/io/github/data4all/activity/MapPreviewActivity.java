@@ -15,23 +15,8 @@
  */
 package io.github.data4all.activity;
 
-import io.github.data4all.R;
-import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.handler.TagSuggestionHandler;
-import io.github.data4all.listener.ButtonRotationListener;
-import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Address;
-import io.github.data4all.model.data.Node;
-import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.util.Gallery;
-import io.github.data4all.util.MapUtil;
-import io.github.data4all.util.MathUtil;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
@@ -40,6 +25,18 @@ import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Overlay;
 
+import io.github.data4all.R;
+import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
+import io.github.data4all.listener.ButtonRotationListener;
+import io.github.data4all.logger.Log;
+import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
+import io.github.data4all.util.Gallery;
+import io.github.data4all.util.MapUtil;
+import io.github.data4all.util.MathUtil;
+import io.github.data4all.util.Optimizer;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -47,6 +44,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ZoomControls;
+import android.widget.ZoomButtonsController;
 
 /**
  * Activity to show an Osm_Element on a Preview Map.
@@ -144,7 +142,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         zoomControls.hide();
 
         listener = new ButtonRotationListener(this, buttons);
-
+        
+        Location location = null;
+        
+        
         if (element instanceof PolyElement) {
             PolyElement elem = (PolyElement) element;
             if (elem.getNodes().size() != 5
@@ -152,9 +153,23 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 rect.setClickable(false);
                 rect.setVisibility(View.GONE);
             }
+            if( elem.getFirstNode() != null) {
+                Location newLocation = new Location("");
+                newLocation.setLatitude(elem.getFirstNode().getLat());
+                newLocation.setLongitude(elem.getFirstNode().getLon());
+                location = newLocation;
+            }
         } else {
             rect.setClickable(false);
             rect.setVisibility(View.GONE);
+            Node elem = (Node) element;
+            Location newLocation = new Location(""); 
+            newLocation.setLatitude(elem.getLat());
+            newLocation.setLongitude(elem.getLon());
+            location = newLocation;
+        }
+        if(location != null) {
+            new TagSuggestionHandler().setCurrent(location);
         }
 
     }
@@ -199,6 +214,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             break;
         }
     }
+
     private void setUpOverlays() {
         if (getIntent().hasExtra("LOCATION")) {
             final Location l = (Location) getIntent().getParcelableExtra(
@@ -209,10 +225,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                     .getDrawable(ResourceProxy.bitmap.person));
             m.setInfoWindow(null);
             mapView.getOverlays().add(m);
-            //-------------------------Steeve--------------------------------------------------
-            TagSuggestionHandler handler=new TagSuggestionHandler();
-            handler.setCurrent(l);
-            //---------------------------------------------------------------------------------
         }
         final DataBaseHandler db = new DataBaseHandler(this);
         final List<AbstractDataElement> list = db.getAllDataElements();
@@ -242,11 +254,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
                     getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
-        }
-        if (getIntent().hasExtra("LOCATION")) {
-            final Location l = (Location) getIntent().getParcelableExtra(
-                    "LOCATION");
-            intent.putExtra("LOCATION", l);
         }
 
         startActivityForResult(intent);

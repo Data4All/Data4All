@@ -130,8 +130,6 @@ public class GPSservice extends Service implements LocationListener {
         track = trackUtil.getLastTrack();
         if (loc != null) {
             Optimizer.putLoc(loc);
-            TagSuggestionHandler handler = new TagSuggestionHandler();
-            handler.setCurrent(loc);
         }
 
         if (track != null) {

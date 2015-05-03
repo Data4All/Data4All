@@ -394,11 +394,6 @@ public class AddressSuggestionView implements OnClickListener,
         } else {
             this.location = l;
         }
-
-        if (this.location != null && TagSuggestionHandler.get(location) == null) {
-            TagSuggestionHandler handler = new TagSuggestionHandler();
-            handler.setCurrent(this.location);
-        }
     }
 
 }

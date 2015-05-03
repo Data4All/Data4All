@@ -24,6 +24,8 @@ import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.util.Gallery;
@@ -432,16 +434,32 @@ public class ResultViewActivity extends AbstractActivity implements
         addressSuggestionView.setKeyList(keyList);
         addressSuggestionView.setElement(element);
         addressSuggestionView.setMapTag(mapTag);
-        if (getIntent().hasExtra("LOCATION")){
-            final Location l = (Location) getIntent().getParcelableExtra(
-                    "LOCATION");
-            addressSuggestionView.setLocation(l);
-        }
+        addressSuggestionView.setLocation(getLocationFromElement());
+        
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this); */
     }
-
+    
+    public Location getLocationFromElement(){
+        Location location=null ;
+        if (element instanceof PolyElement) {
+            PolyElement elem = (PolyElement) element;
+            
+            if( elem.getFirstNode() != null) {
+                location = new Location("");
+                location.setLatitude(elem.getFirstNode().getLat());
+                location.setLongitude(elem.getFirstNode().getLon());
+            }
+        } else {
+            
+            Node elem = (Node) element;
+            location = new Location(""); 
+            location.setLatitude(elem.getLat());
+            location.setLongitude(elem.getLon());
+        }
+        return location;
+    }
     /**
      * Changes the Classified Tags with the selected String and saves the new
      * one
