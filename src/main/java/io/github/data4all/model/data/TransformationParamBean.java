@@ -85,7 +85,7 @@ public class TransformationParamBean implements Parcelable {
         this.photoHeight = photoHeight;
         this.photoWidth = photoWidth;
         this.location = location;
-        new TagSuggestionHandler().ladeBeanAddresse(this);
+        new TagSuggestionHandler().setCurrent(this.location);;
         
     }
 
@@ -105,7 +105,7 @@ public class TransformationParamBean implements Parcelable {
             location = new Location(in.readString());
             location.setLatitude(in.readDouble());
             location.setLongitude(in.readDouble());
-            new TagSuggestionHandler().ladeBeanAddresse(this);
+            new TagSuggestionHandler().setCurrent(this.location);
         }
     }
 
@@ -218,26 +218,5 @@ public class TransformationParamBean implements Parcelable {
                 json.getInt(4), location);
         
     }
-    public Queue<Address> getAddresslist() {
-		return addresslist;
-	}
-    public String[] getFullAdresseList(){
-    	if(addresslist==null){
-    		return null;
-    	}
-    	fullAddresslist=new String[addresslist.size()];
-    	int i=0;
-    	for (Address address : addresslist) {
-    		
-			fullAddresslist[i]=address.toJson();
-			i++;
-		}
-    	return fullAddresslist;
-    }
-
-
-	public void setAddresslist(Queue<Address> addresslist) {
-		this.addresslist = addresslist;
-	}
 
 }
