@@ -307,7 +307,7 @@ public class AddressSuggestionView implements OnClickListener,
 		alertDialog.setAdapter(adapter, this);
 		adapter.notifyDataSetChanged();
 		alert = alertDialog.create();
-
+        alert.setCanceledOnTouchOutside(true);
 		alert.setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(DialogInterface dialog, int keyCode,
