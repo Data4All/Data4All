@@ -4,32 +4,26 @@
     <string name="pref_bodyheight_title">Körpergröße</string>
     <string name="pref_bodyheight_summary">Setzen sie Ihre Körpergröße</string>
     <string name="pref_bodyheight_dialog_title">Setzen sie Ihre Körpergröße</string>
-    <string name="pref_bodyheight_dialog_message">Bitte geben Sie ihre Körpergröße in cm an:</string>
-    
+    <string name="pref_bodyheight_dialog_message">Ihre Körpergröße ist notwendig um die Höhe ihres Smartphones zu schätzen und damit die Entfernung eines Objektes zu berechnen.\n \nIhre Körpergröße in cm: </string>
     <string name="pref_currentuser_title">Aktueller Benutzer</string>
     <string name="pref_currentuser_dialog_title">Ausloggen</string>
     <string name="pref_currentuser_dialog_message">Möchten Sie sich wirklich ausloggen?</string>
     <string name="pref_currentuser_null">Nicht eingeloggt</string>
-    
-      <string name="pref_pointsize_title">Aktuelle Punktgröße</string>
+    <string name="pref_pointsize_title">Punktgröße beim Zeichnen</string>
     <string name="pref_pointsize_dialog_title">Punktgröße</string>
-    <string name="pref_pointsize_dialog_message">Bitte geben sie die neue Punktgröße an.</string>   
+    <string name="pref_pointsize_dialog_message">Wie groß sollen die Punkte beim zeichnen dargestellt werden? \n \n \nBitte geben sie die neue Punktgröße an (0 &#8211; 9):</string>
     <string name="auto_rotate_title">Automatische Kartenorientierung</string>
-
     <string name="pref_gallery_deletemode_title">Standard Galerie Löschvorgang</string>
     <string name="pref_gallery_deletemode_summary">Soll das Bild nach dem Taggen gelöscht werden?</string>
     <string name="pref_gallery_deletemode_dialog_title">Standard Löschvorgang</string>
-    
     <string name="pref_gallery_deletemode_default">Frage</string>
-    
     <string name="pref_moving_animation_title">Verschieben in der Vorschaukarte</string>
     <string name="pref_moving_animation_summary">Soll die Karte oder das Objekt beim Verschieben auf der Vorschaukarte verschoben werden?</string>
     <string name="pref_moving_animation_dialog_title">Wie soll verschoben werden?</string>
-    
-    <string name="pref_sensor_warning">Zeige Warnungen für die Senoren</string>
-    
-    <string name="pref_augmented_reality">Zeige Augmented Reality</string>
-    <string name="pref_augmented_reality_summary">Bereits gemappte Objekte werden in der Kamera visualisiert</string>
+    <string name="pref_sensor_warning">Sensorenwarnung</string>
+    <string name="pref_sensor_warning_summary">Anzeigen wenn Sensor(en) ungenau</string>
+    <string name="pref_augmented_reality">Augmented Reality</string>
+    <string name="pref_augmented_reality_summary">Bereits gemappte Objekte live im Kamerabild darstellen</string>
+    <string name="pref_english_tags_title">Tags in Englisch</string>
 
-    <string name="pref_english_tags_title">Tags immer in Englisch anzeigen</string>
 </resources>
