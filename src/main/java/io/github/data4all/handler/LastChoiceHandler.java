@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -86,15 +85,10 @@ public final class LastChoiceHandler {
         final DataBaseHandler db = new DataBaseHandler(context);
         for (Map.Entry<Integer, Map<Tag, String>> entry : typWithLastchoice
                 .entrySet()) {
-            final Integer kategorie = entry.getKey();
-            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                final List<Integer> ids = new LinkedList<Integer>();
-                for (Map.Entry<Tag, String> entry1 : entry.getValue()
-                        .entrySet()) {
-                    // only one element in map
-                    ids.add(entry1.getKey().getId());
-                }
-                db.insertOrUpdateLastChoice(kategorie, ids);
+            final int category = entry.getKey();
+            final Map<Tag, String> tags = entry.getValue();
+            if (tags != null && !tags.isEmpty()) {
+                db.setLastChoice(category, tags);
             }
         }
         db.close();
@@ -109,13 +103,7 @@ public final class LastChoiceHandler {
     public static void load(DataBaseHandler db) {
         final LastChoiceHandler handler = getInstance();
         for (int i = 1; i <= 4; i++) {
-
-            final List<Integer> lastChoiceKey = db.getLastChoiceId(i);
-            if (lastChoiceKey == null) {
-                continue;
-            }
-
-            final Map<Tag, String> tagMap = db.getTagMap(lastChoiceKey);
+            final Map<Tag, String> tagMap = db.getLastChoice(i);
             if (tagMap != null && !tagMap.isEmpty()) {
                 handler.setLastChoice(i, tagMap);
             }
@@ -188,7 +176,7 @@ public final class LastChoiceHandler {
      * 
      */
     private static Comparator<Tag> getagMapComparator() {
-        Comparator<Tag> comparator = new Comparator<Tag>() {
+        return new Comparator<Tag>() {
 
             @Override
             public int compare(Tag lhs, Tag rhs) {
@@ -211,7 +199,6 @@ public final class LastChoiceHandler {
             }
 
         };
-        return comparator;
     }
 
     /**

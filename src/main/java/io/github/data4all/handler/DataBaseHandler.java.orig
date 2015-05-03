@@ -763,6 +763,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         final Cursor cursor = getReadableDatabase().rawQuery(query, null);
         final List<Track> tracks = new ArrayList<Track>(cursor.getCount());
 
+<<<<<<< HEAD
         final List<Track> gpsTracks = new ArrayList<Track>();
 
         final SQLiteDatabase db = getReadableDatabase();
@@ -776,9 +777,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 final Track track = new Track();
                 final List<Long> trackPointIDs = new ArrayList<Long>();
                 try {
-                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
-                            + cursor.getString(0) + " cursor.getString(1): "
-                            + cursor.getString(1) + " cursor.getString(2): " +cursor.getString(2));
+//                    Log.d(TAG, "getAllGPSTracks: cursor.getString(0): "
+//                            + cursor.getString(0) + " cursor.getString(1): "
+//                            + cursor.getString(1) + " cursor.getString(2): " +cursor.getString(2));
                     final JSONObject json = new JSONObject(cursor.getString(2));
                     final JSONArray jArray = json
                             .optJSONArray("trackpointarray");
@@ -805,6 +806,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                 gpsTracks.add(track);
             }
+=======
+        while (cursor.moveToNext()) {
+            tracks.add(this.getGPSTrack(cursor.getInt(0)));
+>>>>>>> feature/3512-database-refactoring
         }
         cursor.close();
         return tracks;
