@@ -199,7 +199,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             break;
         }
     }
-    Queue<Address> addrsugestions=new LinkedList<Address>();
     private void setUpOverlays() {
         if (getIntent().hasExtra("LOCATION")) {
             final Location l = (Location) getIntent().getParcelableExtra(
@@ -210,11 +209,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                     .getDrawable(ResourceProxy.bitmap.person));
             m.setInfoWindow(null);
             mapView.getOverlays().add(m);
+            //-------------------------Steeve--------------------------------------------------
             TagSuggestionHandler handler=new TagSuggestionHandler();
-            handler.setWithAlternateSavingMap(true);
             handler.setCurrent(l);
-            handler.setAlternativeQueue(addrsugestions);
-            handler.execute();
+            //---------------------------------------------------------------------------------
         }
         final DataBaseHandler db = new DataBaseHandler(this);
         final List<AbstractDataElement> list = db.getAllDataElements();
@@ -245,8 +243,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
                     getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));
         }
-        if (addrsugestions!=null && !addrsugestions.isEmpty()){
-        	intent.putExtra("ADDRESSSUGESTION",TagSuggestionHandler.getFullAdresseList(addrsugestions));
+        if (getIntent().hasExtra("LOCATION")) {
+            final Location l = (Location) getIntent().getParcelableExtra(
+                    "LOCATION");
+            intent.putExtra("LOCATION", l);
         }
 
         startActivityForResult(intent);
