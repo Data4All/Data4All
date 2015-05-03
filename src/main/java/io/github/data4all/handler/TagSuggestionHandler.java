@@ -2,6 +2,7 @@ package io.github.data4all.handler;
 
 import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.TransformationParamBean;
+import io.github.data4all.util.LocationWrapper;
 import io.github.data4all.util.Optimizer;
 
 import java.io.BufferedReader;

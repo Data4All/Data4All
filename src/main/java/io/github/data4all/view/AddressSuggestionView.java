@@ -1,13 +1,13 @@
 package io.github.data4all.view;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.LocationWrapper;
 import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
+import io.github.data4all.util.LocationWrapper;
 import io.github.data4all.util.Optimizer;
 
 import java.util.ArrayList;
