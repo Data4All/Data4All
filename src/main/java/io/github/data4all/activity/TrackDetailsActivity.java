@@ -168,6 +168,8 @@ public class TrackDetailsActivity extends AbstractActivity implements
         }
 
     }
+    
+    //TODO docs
 
     private void editDescriptionDialog() {
         LayoutInflater factory = LayoutInflater.from(this);
