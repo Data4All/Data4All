@@ -190,7 +190,6 @@ public class Track implements Parcelable {
     public List<GeoPoint> getTrackGeoPoints() {
         List<GeoPoint> geoList = new ArrayList<GeoPoint>();
         for (TrackPoint trackP : tracklist) {
-            Log.i("x" + TAG, tracklist.toString());
             GeoPoint gp = new GeoPoint(trackP.getLat(), trackP.getLon());
             geoList.add(gp);
         }

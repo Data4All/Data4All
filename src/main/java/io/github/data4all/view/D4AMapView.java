@@ -322,7 +322,7 @@ public class D4AMapView extends MapView {
      *            List of all tracks
      */
     public void addGPSTracksToMap(AbstractActivity ctx, List<Track> list) {
-        updateTrackOnMap(ctx, null);
+
         if (viewTrack() && list != null && !list.isEmpty()) {
             for (Track track : list) {
                 if (track != null && track.isFinished()) {
@@ -330,10 +330,6 @@ public class D4AMapView extends MapView {
                 }
             }
         }
-    }
-    
-    public void updateTrackOnMap(AbstractActivity ctx, Track track) {
-        Log.d("x" + TAG, this.getOverlays().toString());
     }
 
     public void addGPSTrackToMap(AbstractActivity ctx, Track track) {
@@ -350,6 +346,8 @@ public class D4AMapView extends MapView {
 
             this.getOverlays().add(trackPath);
             this.postInvalidate();
+            Log.d(TAG, "postinvalidate()");
+            
         }
 
     }

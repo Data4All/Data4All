@@ -26,6 +26,7 @@ import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.service.GPSservice;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.TrackUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,11 @@ import java.util.List;
 import org.osmdroid.util.GeoPoint;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -64,6 +68,20 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private ListView drawer;
 
     private GalleryListAdapter drawerAdapter;
+    
+    private TrackUtil trackUtil;
+
+    private final BroadcastReceiver TrackChangeReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.d(TAG,
+                    "received broadcast with: " + intent.getLongExtra("id", -1)
+                            + "from: " + context.toString());
+            updateTrackInView(intent.getLongExtra("id", -1));
+        }
+    };
 
     /**
      * Default constructor.
@@ -118,7 +136,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
         // Setup the rotation listener
         final List<View> buttons = new ArrayList<View>();
-        
+
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
@@ -129,7 +147,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
         buttons.add(findViewById(id));
-        
+
         id = R.id.to_camera;
         final ImageButton camera = (ImageButton) findViewById(id);
         camera.setOnClickListener(this);
@@ -141,6 +159,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         buttons.add(findViewById(id));
 
         listener = new ButtonRotationListener(this, buttons);
+        
+        trackUtil=new TrackUtil(this);
+
+        registerReceiver(TrackChangeReceiver, new IntentFilter(
+                "trackpoint_updated"));
 
     }
 
@@ -156,7 +179,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         inflater.inflate(R.menu.track_menu, menu);
         final boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
-        
+
         return result;
     }
 
@@ -236,7 +259,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
+
         myLocationOverlay.enableFollowLocation();
 
         // add osmElements from the database to the map
@@ -282,9 +305,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
                     .show();
         } else {
             final Intent intent = new Intent(this, MapPreviewActivity.class);
-            final Node poi =
-                    new Node(-1, myPosition.getLatitude(),
-                            myPosition.getLongitude());
+            final Node poi = new Node(-1, myPosition.getLatitude(),
+                    myPosition.getLongitude());
 
             // Set Type Definition for Intent to Node
             Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
@@ -342,5 +364,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Stop the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
+    }
+
+    public void updateTrackInView(long id) {
+        Track track = trackUtil.loadTrack(id);
+        mapView.addGPSTrackToMap(this, track);
+        // mapView.updateTrackOnMap(this, id);
     }
 }
