@@ -38,7 +38,9 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -310,16 +312,21 @@ public class D4AMapView extends MapView {
 
     }
 
+    /**
+     * Adds a polyline which shows the tracks, if they are finished
+     * @param ctx Context
+     * @param list List of all tracks
+     */
     public void addGPSTracksToMap(AbstractActivity ctx, List<Track> list) {
-        if (list != null && !list.isEmpty()) {
+        if (viewTrack() && list != null && !list.isEmpty()) {
             for (Track track : list) {
-                if (track != null) {
+                if (track != null && track.isFinished()) {
                     final Polyline trackPath = new MapTrack(ctx, this, track);
-                    
+
                     Log.i(TAG, "Set Path Points to " + track.toString());
                     trackPath.setPoints(track.getTrackGeoPoints());
-                    
-                    Log.i(TAG, "Set Path Color to " + Color.YELLOW);
+
+                    Log.i(TAG, "Set Path Color to " + Color.MAGENTA);
                     trackPath.setColor(Color.MAGENTA);
                     Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
                     trackPath.setWidth(4.0f);
@@ -329,6 +336,16 @@ public class D4AMapView extends MapView {
                 }
             }
         }
+    }
+
+    /**
+     * @return true if tracks should be viewed in the map
+     */
+    private boolean viewTrack() {
+        PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getContext());
+        return (prefs.getBoolean("view_tracks", false));
     }
 
 }

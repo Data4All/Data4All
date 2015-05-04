@@ -33,4 +33,6 @@
     <string name="pref_augmented_reality_summary">Bereits gemappte Objekte werden in der Kamera visualisiert</string>
 
     <string name="pref_english_tags_title">Tags immer in Englisch anzeigen</string>
+    
+    <string name="pref_view_tracks">Zeige Tracks in der Karte</string>
 </resources>

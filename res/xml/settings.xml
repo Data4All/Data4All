@@ -34,6 +34,10 @@
         android:key="sensor_warning"
         android:title="@string/pref_sensor_warning"
         android:summary="@string/pref_sensor_warning_summary" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="view_tracks"
+        android:title="@string/pref_view_tracks" />
 
     <CheckBoxPreference
         android:defaultValue="false"

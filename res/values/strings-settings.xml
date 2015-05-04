@@ -40,6 +40,8 @@
     <string name="pref_augmented_reality">Show Augmented Reality</string>    
     <string name="pref_augmented_reality_summary"> Already mapped objects will be visualized in the camera</string>
 
+    <string name="pref_view_tracks">Show tracks in map</string>
+    
     <string name="pref_english_tags_key" translatable="false">PREF_ENGLISH_TAGS</string>
     <string name="pref_english_tags_title">Show tags always in english</string>
 </resources>
