@@ -18,7 +18,6 @@ package io.github.data4all.view;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import io.github.data4all.Data4AllApplication;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
@@ -69,7 +68,6 @@ public class CaptureAssistView extends View {
     private Paint invalidRegionPaint;
     private Paint paint;
     private Paint textPaint;
-    private Paint textPaintWhite;
     private Paint poiPaint;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
@@ -88,7 +86,7 @@ public class CaptureAssistView extends View {
     private TransformationParamBean tps;
     private PointToCoordsTransformUtil util;
     private double rotateDegree;
-    private Bitmap POIbitmap;
+    private Bitmap poiBitmap;
 
     HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
@@ -143,18 +141,15 @@ public class CaptureAssistView extends View {
     private void initView() {
         setFocusable(true);
         Log.d(TAG, "initViewIsCalled");
-
         // initialise variables for the first time.
         this.mMeasuredWidth = getMeasuredWidth();
         this.mMeasuredHeight = getMeasuredHeight();
         this.skylook = false;
         this.visible = true;
-
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(getContext());
         this.dataElements = db.getAllDataElements();
         db.close();
-
         Resources r = this.getResources();
 
         cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -171,11 +166,6 @@ public class CaptureAssistView extends View {
         paint.setAlpha(64);
         paint.setStyle(Paint.Style.FILL);
 
-        textPaintWhite = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaintWhite.setColor(Color.BLACK);
-        textPaintWhite.setStyle(Paint.Style.FILL);
-        textPaintWhite.setTextAlign(Align.CENTER);
-        
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.BLACK);
         textPaint.setStyle(Paint.Style.FILL);
@@ -189,7 +179,7 @@ public class CaptureAssistView extends View {
 
         BitmapDrawable bitmapDraw = (BitmapDrawable) r
                 .getDrawable(R.drawable.ic_setpoint_blue);
-        POIbitmap = bitmapDraw.getBitmap();
+        poiBitmap = bitmapDraw.getBitmap();
 
         this.tps = new TransformationParamBean(getDeviceHeight(),
                 horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
@@ -266,7 +256,7 @@ public class CaptureAssistView extends View {
             tps.setPhotoHeight(mMeasuredHeight);
             tps.setPhotoWidth(mMeasuredWidth);
             Point center = null;
-            float distance = maxDistance +1;
+            float distance = maxDistance + 1;
             Boolean isWay = false;
             for (AbstractDataElement iter : dataElements) {
                 // Check if it's an instance of a PolyElement
@@ -297,11 +287,13 @@ public class CaptureAssistView extends View {
                     if (distance < maxDistance) {
                         canvas.rotate((float) Math.toDegrees(rotateDegree),
                                 center.getX(), center.getY());
-                        //Resize BitMap for different distances
+                        // Resize BitMap for different distances
                         float scale = (float) (1.2 / (distance / 6 + 1) + 0.1);
-                        Bitmap bitmap = Bitmap.createScaledBitmap(POIbitmap, (int) (scale * POIbitmap.getWidth()), (int) (scale*POIbitmap.getHeight()), true);
+                        Bitmap bitmap = Bitmap.createScaledBitmap(poiBitmap,
+                                (int) (scale * poiBitmap.getWidth()),
+                                (int) (scale * poiBitmap.getHeight()), true);
                         canvas.drawBitmap(bitmap, center.getX(), center.getY(),
-                                    poiPaint);
+                                poiPaint);
                         canvas.rotate((float) Math.toDegrees(-rotateDegree),
                                 center.getX(), center.getY());
                     }
@@ -333,7 +325,6 @@ public class CaptureAssistView extends View {
         canvas.restore();
     }
 
-
     /**
      * calculates the Center of a list of Points
      * 
@@ -364,11 +355,13 @@ public class CaptureAssistView extends View {
      * Reads the height of the device in condition of the bodyheight from the
      * preferences.
      * 
-     * If the preference is empty or not set the default value is stored.
+     * @author tbrose
+     * 
+     *         If the preference is empty or not set the default value is
+     *         stored.
      * 
      * @return The height of the device or {@code 0} if the preference is not
      *         set or empty
-     * @author tbrose
      */
     private double getDeviceHeight() {
         final SharedPreferences prefs = PreferenceManager
@@ -415,11 +408,11 @@ public class CaptureAssistView extends View {
     /**
      * Testing if a point is over the horizont (red marked area)
      * 
+     * @author vkochno & burghardt
+     * 
      * @param point
      *            point to be testet
      * @return result true if the point is in the red marked area
-     * 
-     * @author vkochno & burghardt
      */
     public boolean overHorizont(Point point) {
         if (point.getX() < 0 || point.getX() > mMeasuredWidth
