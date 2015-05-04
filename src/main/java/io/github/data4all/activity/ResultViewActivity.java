@@ -171,6 +171,7 @@ public class ResultViewActivity extends AbstractActivity implements
 				
 			}
 		});
+        // The LongClick Listener for removing unclassified Tags
         listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
@@ -202,6 +203,9 @@ public class ResultViewActivity extends AbstractActivity implements
         }
     }
     
+    /**
+     * This Method fills the List of Unclassified tags
+     */
     private void output(){
         endList = new LinkedList<String>();
         keyList = new LinkedList<String>();
@@ -218,6 +222,9 @@ public class ResultViewActivity extends AbstractActivity implements
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
     }
     
+    /**
+     * This Method shows an AlertDialog with all TagKeys which are important for the tagged Element
+     */
     private void addClassifiedTag(){
     	// The AlertDialog settings
     	final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
@@ -270,7 +277,10 @@ public class ResultViewActivity extends AbstractActivity implements
         alert.show();   
         
     }
-    
+    /**
+     * Changes the ClassifiedValue with an Dialog with all Values of the Classified Tag
+     * 
+     */
     private void changeClassifiedValue(){
     	// The Dialog settings
     	final Dialog dialog = new Dialog(ResultViewActivity.this,
@@ -355,14 +365,17 @@ public class ResultViewActivity extends AbstractActivity implements
                 	addClassifiedTag();                   
                     return true;
                 }
-                return true;
+                return false;
             }
         });
         
         dialog.show();
     }
     
-    
+    /**
+     * Shows an AlertDialog where you can change the Unclassified Tag
+     * @param position the Position in the ListView
+     */
     private void changeUnclassifiedTag(final int position){
     	final EditText input = new EditText(this);
     	input.setText(element.getTagValueWithKey(unclassifiedTags.get(position)));

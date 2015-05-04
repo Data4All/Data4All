@@ -121,7 +121,15 @@ public class Tagging {
 		}
     	return keyList;
     }
-    
+    /**
+     * This Method put all unclassified Value in a List of Strings
+     * 
+     * @param element the Abstract DataElement
+     * @param endList The List with all String Values of the unclassified Tags
+     * @param unclassifiedTags The List with all Tag Values of unclassified Tags
+     * @param context The Context
+     * @return The final List of all String Values 
+     */
     public static List <String> addUnclassifiedValue(AbstractDataElement element, List<String> endList, List<Tag> unclassifiedTags, Context context) {
     	for (int i = 0; i < unclassifiedTags.size(); i++) {
 			if(element.getTags().containsKey(unclassifiedTags.get(i))){
@@ -133,7 +141,6 @@ public class Tagging {
 		return endList;
     	
     }
-    
     private static boolean compareStrings(String key, List<String> list){
     	for (String string : list) {
 			if(string.equals(key)){
@@ -142,7 +149,11 @@ public class Tagging {
 		}
     	return false;
     }
- 
+    /**
+     * This Method gives the Classified Tag
+     * @param element The Abstract Data Element
+     * @return The Classified Tag of the Element
+     */
     public static ClassifiedTag getClassifiedTagKey(AbstractDataElement element){
     	if(!element.getTags().isEmpty()){
     		return (ClassifiedTag) element.getTags().keySet().toArray()[0];
@@ -150,6 +161,12 @@ public class Tagging {
     	return null;    	
     }
     
+    /**
+     * Gets the Classified Value of an Element
+     * @param element The Abstract Data Element
+     * @param tag The Classified Tag
+     * @return The Classified Value Object
+     */
     public static ClassifiedValue getClassifiedValue(AbstractDataElement element, ClassifiedTag tag){
     	String value = element.getTags().get(tag);
     	List<ClassifiedValue> classifiedValues = tag.getClassifiedValues();
