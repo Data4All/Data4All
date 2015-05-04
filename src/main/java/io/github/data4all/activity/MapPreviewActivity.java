@@ -235,29 +235,29 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.getClass().getSimpleName() + " with Coordinates "
                 + element.toString());
         intent.putExtra(OSM, element);
-        
-        
-       //set longitude and latitude for OsmElement
-        //-----------------------Steeve----------------------------------------------
+
+        // set longitude and latitude for OsmElement
+        // -----------------------Steeve----------------------------------------------
         if (element instanceof PolyElement) {
-           final PolyElement elem = (PolyElement) element;
-            
+            final PolyElement elem = (PolyElement) element;
+
             if (elem.getFirstNode() != null) {
                 location = new Location("");
                 location.setLatitude(elem.getFirstNode().getLat());
                 location.setLongitude(elem.getFirstNode().getLon());
             }
         } else {
-            
-         final Node elem = (Node) element;
-            location = new Location(""); 
+
+            final Node elem = (Node) element;
+            location = new Location("");
             location.setLatitude(elem.getLat());
             location.setLongitude(elem.getLon());
         }
         if (location != null) {
-            new TagSuggestionHandler().setCurrent(location);
+            intent.putExtra(ShowPictureActivity.CURRENT_ORIENTATION_EXTRA,
+                    location);
         }
-     //-----------------------------------------------------------------------------------
+        // -----------------------------------------------------------------------------------
         if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
                     getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));

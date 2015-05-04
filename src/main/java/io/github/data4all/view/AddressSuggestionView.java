@@ -27,6 +27,7 @@ import io.github.data4all.util.Optimizer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -325,7 +326,6 @@ public class AddressSuggestionView implements OnClickListener,
         adapter = new ArrayAdapter<String>(context,
                 R.layout.view_adress_suggestions, array);
         alertDialog.setAdapter(adapter, this);
-        adapter.notifyDataSetChanged();
         alert = alertDialog.create();
         alert.setCanceledOnTouchOutside(true);
         alert.setOnKeyListener(new OnKeyListener() {
@@ -339,6 +339,7 @@ public class AddressSuggestionView implements OnClickListener,
                 return true;
             }
         });
+        adapter.notifyDataSetChanged();
         alert.getWindow().setBackgroundDrawable(
                 new ColorDrawable(android.graphics.Color.TRANSPARENT));
         alert.show();
@@ -386,12 +387,13 @@ public class AddressSuggestionView implements OnClickListener,
      */
     public void savedTwoLineListItem(String key, TextView text2) {
         final Integer tagid = keyMapView.get(key);
+       
         if (tagid == null) {
             return;
         }
         if (tagid.intValue() == ROAD_ID) {
             road = text2;
-
+            
         }
         if (tagid.intValue() == HOUSE_NUMBER_ID) {
             houseNumber = text2;
@@ -405,8 +407,8 @@ public class AddressSuggestionView implements OnClickListener,
         if (tagid.intValue() == COUNTRY_ID) {
             country = text2;
         }
-
-    }
+        
+    } 
 
      public void setLocation(Location l) {
         if (l == null) {
