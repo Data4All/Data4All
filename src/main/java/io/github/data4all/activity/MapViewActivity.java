@@ -23,6 +23,7 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.GalleryListAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.service.GPSservice;
 import io.github.data4all.util.Optimizer;
 
@@ -241,6 +242,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // add osmElements from the database to the map
         final DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
+        List<Track> trackList = db.getAllGPSTracks();
+        mapView.addGPSTracksToMap(this, trackList);
         mapView.addOsmElementsToMap(this, list);
         // load lastChoice from database
         LastChoiceHandler.load(db);
