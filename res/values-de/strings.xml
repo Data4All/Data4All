@@ -18,6 +18,7 @@
     <string name="ok">OK</string>
     <string name="ignore">Ignorieren</string>
     <string name="alwaysIgnore"> Immer Ignorieren</string>
+    <string name="save">Speichern</string>
 
     <!-- Strings Content Description ImageButtons -->
     <string name="returnToActualPosition">Meine Position</string>
@@ -46,6 +47,11 @@
     <string name="stopRecordTrack">Wollen Sie den aktuellen Track stoppen und speichern?</string>
     <string name="deleteImage">Bild löschen</string>
     <string name="deleteImageText">Soll das Bild aus der Galerie gelöscht werden?</string>
+    
+    <string name="editTrackName">"Name bearbeiten"</string>
+    <string name="editTrackTags">"Tags bearbeiten"</string>
+    <string name="editTrackDescription">"Beschreibung bearbeiten"</string>
+    <string name="hint_edit_track_tags">"Tags müssen mit einem Komma getrennt sein"</string>
 
     <!-- for network -->
     <string name="no_network_title">Kein Internet verfügbar</string>
