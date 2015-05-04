@@ -60,7 +60,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private AbstractDataElement element;
 
     private List<Node> saveElement;
-    
+
     private Location location;
 
     /**
@@ -143,7 +143,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         zoomControls.hide();
 
         listener = new ButtonRotationListener(this, buttons);
-        
+
         if (element instanceof PolyElement) {
             PolyElement elem = (PolyElement) element;
             if (elem.getNodes().size() != 5
@@ -155,7 +155,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             rect.setClickable(false);
             rect.setVisibility(View.GONE);
         }
-        
 
     }
 
@@ -220,7 +219,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     }
 
     /*
-     * Starts new Tagactivity with Osm Object and Type Definition in the Intent
+     * Starts new ResultViewActivity with elememt and Type Definition in the
+     * Intent.
+     * 
+     * @author Oliver Schwartz, Steeve
      */
     private void accept() {
         final Intent intent = new Intent(this, ResultViewActivity.class);
@@ -237,17 +239,14 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         intent.putExtra(OSM, element);
 
         // set longitude and latitude for OsmElement
-        // -----------------------Steeve----------------------------------------------
         if (element instanceof PolyElement) {
             final PolyElement elem = (PolyElement) element;
-
             if (elem.getFirstNode() != null) {
                 location = new Location("");
                 location.setLatitude(elem.getFirstNode().getLat());
                 location.setLongitude(elem.getFirstNode().getLon());
             }
-        } else {
-
+        } else if (element instanceof Node) {
             final Node elem = (Node) element;
             location = new Location("");
             location.setLatitude(elem.getLat());
@@ -257,7 +256,6 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             intent.putExtra(ShowPictureActivity.CURRENT_ORIENTATION_EXTRA,
                     location);
         }
-        // -----------------------------------------------------------------------------------
         if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
                     getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));

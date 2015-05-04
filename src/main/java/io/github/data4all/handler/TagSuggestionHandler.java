@@ -17,7 +17,6 @@ package io.github.data4all.handler;
 
 import io.github.data4all.model.data.Address;
 import io.github.data4all.util.LocationWrapper;
-import io.github.data4all.util.Optimizer;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -47,8 +46,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 /**
- * this class represent values for unclassifiedTag. e.g country:usa. these
- * values are determined based on Reverse Geocoding
+ * This class represent values for unclassifiedTag. e.g country:usa. these
+ * values are determined based on Reverse Geocoding. It uses the API of
+ * nominatim.
  * 
  * @author Steeve
  *
@@ -67,7 +67,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     // current location
     private Location current;
 
-    private static int MAX_OFADDRESSES = 10;
+    private final static int MAX_OFADDRESSES = 10;
 
     // The Map with a location and a list of addresses
     private static Map<LocationWrapper, Queue<Address>> locationSuggestions = new HashMap<LocationWrapper, Queue<Address>>();
@@ -76,10 +76,9 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @param location
      * @return an address based on latitude and longitude (Reverse Geocoding)
      */
-     public Address getAddress(Location location) {
+    public Address getAddress(Location location) {
         try {
-            final JSONObject jsonObj = getJSONfromURL(
-                    "http://nominatim.openstreetmap.org/reverse?format=json&lat="
+            final JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
                     + location.getLatitude()
                     + "&lon="
                     + location.getLongitude() + "&zoom=18&addressdetails=1");
@@ -122,7 +121,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @param url
      * @return the JSONObject from an url
      */
-     public static JSONObject getJSONfromURL(String url) {
+    public static JSONObject getJSONfromURL(String url) {
 
         // initialize
         InputStream is = null;
@@ -165,28 +164,25 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
             Log.e("log_tag", "Error parsing data [" + e.getMessage() + "] "
                     + address);
         }
-
         return jObject;
     }
 
     /**
-     * @return a list of locations nearby the current location
+     * Get a list of locations near by the current location.
+     * 
+     * @return a list of locations near by the current location
      */
     private Set<Location> locationSuggestions() {
-        if (current == null) {
-            current = Optimizer.currentBestLoc();
-            if (current == null) {
-                return locations;
-            }
+        if (current != null) {
+            locations.clear();
+            locations.addAll(this.getNearestLocations(current));
+            locations.add(current);
         }
-        locations.clear();
-        locations.addAll(this.getNearestLocations(current));
-        locations.add(current);
         return locations;
     }
 
     /**
-     * get a list of addresses
+     * Get a list of addresses.
      */
     public synchronized void getlistOfSuggestionAddress() {
         if (current == null) {
@@ -208,40 +204,40 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
         for (Location location : this.locationSuggestions()) {
             Address addr = db.getAddressFromDb(location);
-            boolean isneu = false;
+            boolean isnew = false;
             // when an address is not in database, then load address from
             // nominatim api
             if (addr == null) {
                 addr = this.getAddress(location);
-                isneu = true;
+                isnew = true;
             }
-            this.addNewAdressTolist(db, location, addr, isneu, adresses);
+            this.addNewAdressToList(db, location, addr, isnew, adresses);
         }
         db.close();
 
     }
 
     /**
-     * add a new address in database and to the list.
+     * Add a new address to the database and to the list.
      * 
      * @param db
      *            database
      * @param location
-     *            of an address
+     *            location of an address
      * @param addr
      *            address
-     * @param isneu
-     *            to check if this address was already in database
+     * @param isnew
+     *            boolean to check if this address was already in database
      * @param address
      *            the list of addresses
      */
-    private void addNewAdressTolist(DataBaseHandler db, Location location,
-            Address addr, boolean isneu, Queue<Address> address) {
+    private void addNewAdressToList(DataBaseHandler db, Location location,
+            Address addr, boolean isnew, Queue<Address> address) {
         if (addr != null && !address.contains(addr)) {
             // when a address was already in database, then update this
             // address
             // when not so insert this address in database
-            if (isneu) {
+            if (isnew) {
                 db.insertOrUpdateAddressInDb(location, addr.getAddresseNr(),
                         addr.getRoad(), addr.getPostCode(), addr.getCity(),
                         addr.getCountry());
@@ -255,6 +251,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
+     * Get the list of all addresses.
      * 
      * @return a list of addresses
      */
@@ -270,9 +267,10 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
+     * Get a list of locations near by the given location.
      * 
      * @param location
-     * @return locations nearby a given Location
+     * @return locations near by a given Location
      */
     public List<Location> getNearestLocations(Location location) {
         final List<Location> locations = new LinkedList<Location>();
@@ -311,27 +309,25 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
+     * Get a bounding box of the location.
      * 
      * @param lat
-     *            latitude
+     *            latitude of the location
      * @param lon
-     *            longitude
+     *            longitude of the location
      * @param radius
-     *            which helps to find a location
+     *            distance to bounds from location
      * @return a boundingBox
      */
     public static double[] getBoundingBox(double lat, double lon, double radius) {
         final double result[] = new double[4];
-
         final double R = 6371; // earth radius in km
         final double x1 = lon
                 - Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
-
         final double x2 = lon
                 + Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
 
         final double y1 = lat + Math.toDegrees(radius / R);
-
         final double y2 = lat - Math.toDegrees(radius / R);
 
         result[0] = y2; // s
@@ -342,10 +338,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * calculates the distance between two locations
+     * Calculates the distance between two locations.
      * 
      * @param location1
+     *            first location
      * @param location2
+     *            second location
      * @return the distance between two locations
      */
     public static float distFrom(Location location1, Location location2) {
@@ -365,10 +363,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
+     * Set the current location.
+     * 
      * @param current
-     *            for the current location
+     *            the current location
      */
-     public void setCurrent(Location current) {
+    public void setCurrent(Location current) {
         this.current = current;
         if (current != null) {
             execute();
@@ -376,9 +376,10 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
+     * Get a list of addresses for a given location.
      * 
      * @param location
-     * @return a list of addresses for an given location
+     * @return a list of addresses for a given location
      */
     public static Queue<? extends Address> get(Location location) {
         for (Map.Entry<LocationWrapper, Queue<Address>> list : locationSuggestions

@@ -19,18 +19,17 @@ import java.io.Serializable;
 
 /**
  * This class contains all the informations about an Address e.g road,
- * house_number, postCode, city, country
+ * house_number, postCode, city, country.
  * 
  * @author Steeve
  *
  */
 public class Address implements Serializable {
 
-    
     private static final long serialVersionUID = -6836778014617785812L;
 
     // attribute to save a house_number
-    private String addresseNr = "";
+    private String addressNr = "";
     // attribute to save a road
     private String road = "";
     // attribute to save a city
@@ -48,8 +47,8 @@ public class Address implements Serializable {
         this.addressId = addressId;
     }
 
-    public void setAddresseNr(String addresseNr) {
-        this.addresseNr = addresseNr;
+    public void setAddresseNr(String addressNr) {
+        this.addressNr = addressNr;
     }
 
     public void setRoad(String road) {
@@ -89,16 +88,18 @@ public class Address implements Serializable {
     }
 
     public String getAddresseNr() {
-        return addresseNr;
+        return addressNr;
     }
 
     /**
-     * get a full address
+     * Get a full address.
+     * 
      * @return road + addresseNr + postCode + city + country
      */
     public String getFullAddress() {
-        return this.getRoad() + " " + this.getAddresseNr() + " " + this.getPostCode() + " "
-                + this.getCity() + " " + this.getCountry();
+        return this.getRoad() + " " + this.getAddresseNr() + " "
+                + this.getPostCode() + " " + this.getCity() + " "
+                + this.getCountry();
     }
 
     @Override
