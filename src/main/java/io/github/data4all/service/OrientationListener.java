@@ -83,12 +83,16 @@ public class OrientationListener extends Service implements SensorEventListener 
     public final static String INTENT_CAMERA_UPDATE = "update";
     // Calibration needed
     public final static int CALIBRATION_BROKEN_ALL = 300;
-    public final static int CALIBRATION_BROKEN_ACCELEROMETER = 200;
-    public final static int CALIBRATION_BROKEN_MAGNETOMETER = 201;
+    public final static int CALIBRATION_BROKEN_ACCELEROMETER_0 = 200;
+    public final static int CALIBRATION_BROKEN_ACCELEROMETER_1 = 201;
+    public final static int CALIBRATION_BROKEN_ACCELEROMETER_2 = 202;
+    public final static int CALIBRATION_BROKEN_MAGNETOMETER_0 = 210;
+    public final static int CALIBRATION_BROKEN_MAGNETOMETER_1 = 211;
+    public final static int CALIBRATION_BROKEN_MAGNETOMETER_2 = 212;
     public final static int CALIBRATION_OK = 100;
     public static int CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
-    private boolean accOk = false;
-    private boolean magOk = false;
+    private int accOk = 0;
+    private int magOk = 0;
 
     @Override
     public void onCreate() {
@@ -198,13 +202,13 @@ public class OrientationListener extends Service implements SensorEventListener 
                         + " has now the accuracy of " + accuracy
                         + " it needs recalibration!");
 
-                accOk = false;
+                accOk = accuracy;
             } else {
 
                 Log.d(TAG, "The sensor: " + sensor.getName()
                         + " has now the accuracy of " + accuracy
                         + " App ready to use!");
-                accOk = true;
+                accOk = accuracy;
             }
         }
         if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
@@ -213,13 +217,13 @@ public class OrientationListener extends Service implements SensorEventListener 
                         + " has now the accuracy of " + accuracy
                         + " it needs recalibration!");
 
-                magOk = false;
+                magOk = accuracy;
             } else {
 
                 Log.d(TAG, "The sensor: " + sensor.getName()
                         + " has now the accuracy of " + accuracy
                         + " App ready to use!");
-                magOk = true;
+                magOk = accuracy;
             }
         }
         this.checkAccuracy();
@@ -227,6 +231,7 @@ public class OrientationListener extends Service implements SensorEventListener 
          * Creates a new Intent containing a Uri object BROADCAST_ACTION is a
          * custom Intent action
          */
+
         final Intent localIntent = new Intent(BROADCAST_CAMERA)
         // Puts the status into the Intent
                 .putExtra(INTENT_CAMERA_UPDATE, true);
@@ -235,15 +240,37 @@ public class OrientationListener extends Service implements SensorEventListener 
     }
 
     private void checkAccuracy() {
-        if (accOk) {
-            if (magOk) {
+        if (accOk == 3) {
+            if (magOk == 3) {
                 CALIBRATION_STATUS = CALIBRATION_OK;
             } else {
-                CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER;
+                switch (magOk) {
+                case 0:
+                    CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER_0;
+                    break;
+                case 1:
+                    CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER_1;
+                    break;
+                case 2:
+                    CALIBRATION_STATUS = CALIBRATION_BROKEN_MAGNETOMETER_2;
+                    break;
+                }
+
             }
         } else {
-            if (magOk) {
-                CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER;
+            if (magOk == 3) {
+                switch (accOk) {
+                case 0:
+                    CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER_0;
+                    break;
+                case 1:
+                    CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER_1;
+                    break;
+                case 2:
+                    CALIBRATION_STATUS = CALIBRATION_BROKEN_ACCELEROMETER_2;
+                    break;
+                }
+
             } else {
                 CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
             }
