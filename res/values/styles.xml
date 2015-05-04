@@ -72,13 +72,13 @@
     </style>
 
     <style name="imageButtonReturnToCamera" parent="imageButtonStyle">
-         <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:src">@drawable/ic_cam</item>
     </style>
-    
+
     <style name="imageButtonSwitchMaps" parent="imageButtonStyle">
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:layout_alignParentRight">true</item>
@@ -202,7 +202,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
     </style>
-    
+
     <style name="imageButtonUpload" parent="imageButtonStyle">
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentRight">false</item>
@@ -210,13 +210,19 @@
         <item name="android:layout_marginLeft">65dp</item>
         <item name="android:src">@drawable/ic_upload</item>
     </style>
-    
+
     <style name="imageButtonDelete" parent="imageButtonStyle">
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_marginTop">300dp</item>
         <item name="android:layout_marginRight">65dp</item>
         <item name="android:src">@drawable/ic_trash</item>
+    </style>
+
+    <style name="imageButtonEditTrackField" parent="imageButtonStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:src">@drawable/ic_edit</item>
     </style>
 
 </resources>

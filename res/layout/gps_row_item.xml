@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/gps_item"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="center_horizontal"
-        android:padding="10dip"
+        android:hint="@string/track_id"
         android:textColor="#000"
-        android:textSize="16sp"
-        android:textStyle="bold" >
-    </TextView>
+        android:textSize="23sp"
+        android:textStyle="normal" />
+
+    <TextView
+        android:id="@+id/gps_description"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:hint="@string/track_no_description"
+        android:textColor="@android:color/tertiary_text_dark"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/gps_tags"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:hint="@string/track_no_tags"
+        android:textColor="@color/camera_cross"
+        android:textSize="16sp" />
 
 </LinearLayout>
