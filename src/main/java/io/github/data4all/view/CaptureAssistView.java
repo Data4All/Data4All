@@ -69,6 +69,7 @@ public class CaptureAssistView extends View {
     private Paint invalidRegionPaint;
     private Paint paint;
     private Paint textPaint;
+    private Paint textPaintWhite;
     private Paint poiPaint;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
@@ -170,11 +171,16 @@ public class CaptureAssistView extends View {
         paint.setAlpha(64);
         paint.setStyle(Paint.Style.FILL);
 
+        textPaintWhite = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaintWhite.setColor(Color.BLACK);
+        textPaintWhite.setStyle(Paint.Style.FILL);
+        textPaintWhite.setTextAlign(Align.CENTER);
+        
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.BLACK);
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextAlign(Align.CENTER);
-        //textPaint.setShadowLayer(5.0f, 10.0f, 10.0f, Color.WHITE);
+        textPaint.setShadowLayer(1.0f, 1.0f, 1.0f, Color.WHITE);
 
         poiPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         poiPaint.setColor(Color.BLUE);
