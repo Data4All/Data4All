@@ -15,15 +15,12 @@
  */
 package io.github.data4all.model;
 
-import io.github.data4all.model.data.TransformationParamBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 

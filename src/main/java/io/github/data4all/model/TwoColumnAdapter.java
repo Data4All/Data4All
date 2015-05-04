@@ -90,13 +90,13 @@ public class TwoColumnAdapter extends BaseAdapter {
         final TextView text2 = twoLineListItem.getText2();
 
         text1.setText(listKey.get(position));
-        if(listValue.size() > position){
+        if (listValue.size() > position) {
         text2.setText(listValue.get(position));
         } else {
         text2.setText("");	
         }
         if (suggestionView != null) {
-           suggestionView.savedTwoLineListItem(listKey.get(position), text1, text2);
+           suggestionView.savedTwoLineListItem(listKey.get(position), text2);
         }
         return twoLineListItem;
     }

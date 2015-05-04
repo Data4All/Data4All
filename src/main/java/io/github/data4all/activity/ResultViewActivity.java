@@ -18,7 +18,6 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
-import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
 import io.github.data4all.model.data.AbstractDataElement;
@@ -35,7 +34,6 @@ import io.github.data4all.view.AddressSuggestionView;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,25 +45,21 @@ import org.osmdroid.views.MapController;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -76,13 +70,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.view.ViewGroup;;
 
 /**
  * View after Drawing and Tagging
  * 
  * @author Maurice Boyke
- *
+ * @author Steeve
  */
 public class ResultViewActivity extends AbstractActivity implements
         OnClickListener {
@@ -184,8 +177,8 @@ public class ResultViewActivity extends AbstractActivity implements
                 }
             });
         }*/
-        //  @author : Steeve
-        final Button addressSuggestions = (Button)this.findViewById(R.id.buttonAddressSuggestions);
+
+        final Button addressSuggestions = (Button) this.findViewById(R.id.buttonAddressSuggestions);
         addressSuggestionView = new AddressSuggestionView(this, this, addressSuggestions);
         
         if (element.getTags().isEmpty()) {
@@ -195,7 +188,7 @@ public class ResultViewActivity extends AbstractActivity implements
         } else {
         	addressSuggestions.setVisibility(0);
         }
- //-------------------------------------------------------------------------------------------------------------       
+     
         
         this.output();
         listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -424,7 +417,7 @@ public class ResultViewActivity extends AbstractActivity implements
         resultButton.setText(endList.get(0));
         Log.i(TAG, "ClassifiedTagValue" + endList.get(0));
         endList.remove(0);
-        //TODO: Steeve
+        
         final TwoColumnAdapter twoColumnAdapter = new TwoColumnAdapter(this, keyList, endList);
         twoColumnAdapter.setSuggestionView(addressSuggestionView);
 		listView.setAdapter(twoColumnAdapter);
@@ -434,7 +427,7 @@ public class ResultViewActivity extends AbstractActivity implements
         addressSuggestionView.setElement(element);
         addressSuggestionView.setMapTag(mapTag);
         addressSuggestionView.setLocation(getLocationFromElement());
-        
+
        /** LastChoiceHandler.getInstance().setLastChoice(
                 getIntent().getExtras().getInt("TYPE_DEF"), element.getTags());
         LastChoiceHandler.getInstance().save(this); */
@@ -444,19 +437,19 @@ public class ResultViewActivity extends AbstractActivity implements
      * 
      * @return the location of dataElement
      */
-    public Location getLocationFromElement(){
-        Location location=null ;
+     public Location getLocationFromElement() {
+        Location location = null;
         if (element instanceof PolyElement) {
-            PolyElement elem = (PolyElement) element;
+            final PolyElement elem = (PolyElement) element;
             
-            if( elem.getFirstNode() != null) {
+            if (elem.getFirstNode() != null) {
                 location = new Location("");
                 location.setLatitude(elem.getFirstNode().getLat());
                 location.setLongitude(elem.getFirstNode().getLon());
             }
         } else {
             
-            Node elem = (Node) element;
+          final  Node elem = (Node) element;
             location = new Location(""); 
             location.setLatitude(elem.getLat());
             location.setLongitude(elem.getLon());

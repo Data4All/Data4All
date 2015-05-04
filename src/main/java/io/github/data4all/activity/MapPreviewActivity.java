@@ -61,7 +61,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
 
     private List<Node> saveElement;
     
-    private Location location = null ;
+    private Location location;
 
     /**
      * Standard Constructor
@@ -240,21 +240,21 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
        //set longitude and latitude for OsmElement
         //-----------------------Steeve----------------------------------------------
         if (element instanceof PolyElement) {
-            PolyElement elem = (PolyElement) element;
+           final PolyElement elem = (PolyElement) element;
             
-            if( elem.getFirstNode() != null) {
+            if (elem.getFirstNode() != null) {
                 location = new Location("");
                 location.setLatitude(elem.getFirstNode().getLat());
                 location.setLongitude(elem.getFirstNode().getLon());
             }
         } else {
             
-            Node elem = (Node) element;
+         final Node elem = (Node) element;
             location = new Location(""); 
             location.setLatitude(elem.getLat());
             location.setLongitude(elem.getLon());
         }
-        if(location != null) {
+        if (location != null) {
             new TagSuggestionHandler().setCurrent(location);
         }
      //-----------------------------------------------------------------------------------

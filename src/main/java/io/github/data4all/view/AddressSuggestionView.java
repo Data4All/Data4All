@@ -80,6 +80,7 @@ public class AddressSuggestionView implements OnClickListener,
     // will be used to save addresses
     private String[] array;
 
+    // the map with the string and integer
     private Map<String, Integer> keyMapView = new HashMap<String, Integer>();
 
     // the button which load addresses
@@ -100,19 +101,20 @@ public class AddressSuggestionView implements OnClickListener,
     private AlertDialog.Builder alertDialog;
     private ArrayAdapter<String> adapter;
     private List<String> keyList;
+    private Location location;
 
-    private final int MAXNUMBER_OFADDRESSES = 5;
+    private static final int MAXNUMBER_OFADDRESSES = 5;
 
     // id of road
-    private final int ROAD_ID = 401;
+    private static final int ROAD_ID = 401;
     // id of house_number
-    private final int HOUSE_NUMBER_ID = 402;
+    private static final int HOUSE_NUMBER_ID = 402;
     // id of postCode
-    private final int POSTCODE_ID = 403;
+    private static  final int POSTCODE_ID = 403;
     // id of city
-    private final int CITY_ID = 404;
+    private static final int CITY_ID = 404;
     // id of country
-    private final int COUNTRY_ID = 405;
+    private static final int COUNTRY_ID = 405;
 
     /**
      * Default constructor for AddressSuggestionView
@@ -145,20 +147,20 @@ public class AddressSuggestionView implements OnClickListener,
      */
     public void fillDialog() {
         if (location != null) {
-            Queue<? extends Address> address = TagSuggestionHandler
+            final Queue<? extends Address> address = TagSuggestionHandler
                     .get(location);
             if (address != null) {
                 this.addresses = new LinkedHashSet<Address>(address);
             }
         }
         if (this.addresses == null || this.addresses.isEmpty()) {
-            Queue<? extends Address> currentAdresses = TagSuggestionHandler
+            final Queue<? extends Address> currentAdresses = TagSuggestionHandler
                     .get(Optimizer.currentBestLoc());
             if (currentAdresses != null) {
                 this.addresses = new LinkedHashSet<Address>(currentAdresses);
             }
             if (this.addresses == null || this.addresses.isEmpty()) {
-                array = new String[] { "Currently no possibility avalaible" };
+                array = new String[] {"Currently no possibility avalaible"};
                 return;
             }
         }
@@ -189,11 +191,12 @@ public class AddressSuggestionView implements OnClickListener,
     }
 
     /**
+     * 
      * @param fullAddress
      *            is road + house_number + postCode + city + country
      * @return a selected Address
      */
-    public Address getSelectedAddress(String fullAddress) {
+     public Address getSelectedAddress(String fullAddress) {
 
         for (Address a : addresses) {
             if (a.getFullAddress().equalsIgnoreCase(fullAddress)) {
@@ -218,7 +221,7 @@ public class AddressSuggestionView implements OnClickListener,
     @Override
     public void onClick(DialogInterface arg0, int which) {
         final String value = array[which];
-        final Address selectedAddress = getSelectedAddress(value);
+        final Address selectedAddress = this.getSelectedAddress(value);
 
         if (selectedAddress != null) {
             this.setValue(road, selectedAddress.getRoad(), ROAD_ID);
@@ -251,7 +254,6 @@ public class AddressSuggestionView implements OnClickListener,
             Tags.getTagWithId(id).setLastValue(value);
             element.addOrUpdateTag(Tags.getTagWithId(id), value);
         }
-
     }
 
     // all setter and getter methods
@@ -366,7 +368,7 @@ public class AddressSuggestionView implements OnClickListener,
                     && tagList.size() > i
                     && !keyMapView.containsValue(res.getString(tagList.get(i)
                             .getNameRessource()))) {
-                Tag tag = tagList.get(i);
+                final Tag tag = tagList.get(i);
                 keyMapView.put(res.getString(tag.getNameRessource()),
                         tag.getId());
             }
@@ -382,8 +384,8 @@ public class AddressSuggestionView implements OnClickListener,
      * @param text2
      *            value of a tag
      */
-    public void savedTwoLineListItem(String key, TextView text1, TextView text2) {
-        Integer tagid = keyMapView.get(key);
+    public void savedTwoLineListItem(String key, TextView text2) {
+        final Integer tagid = keyMapView.get(key);
         if (tagid == null) {
             return;
         }
@@ -406,12 +408,7 @@ public class AddressSuggestionView implements OnClickListener,
 
     }
 
-    private Location location;
-
-    /**
-     * @param l location
-     */
-    public void setLocation(Location l) {
+     public void setLocation(Location l) {
         if (l == null) {
             this.location = Optimizer.currentBestLoc();
         } else {

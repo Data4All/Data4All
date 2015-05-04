@@ -58,34 +58,37 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     private static final String TAG = "TagSuggestion";
 
     // represent the list of all suggestions Addresses
-    public static Queue<Address> addressList = new LinkedList<Address>();
+    private static Queue<Address> addressList = new LinkedList<Address>();
 
-    public static Context context;
+    private static Context context;
 
     // list of locations
-    Set<Location> locations = new LinkedHashSet<Location>();
+    private Set<Location> locations = new LinkedHashSet<Location>();
     // current location
-    Location current = null;
+    private Location current;
+
+    private static int MAX_OFADDRESSES = 10;
 
     // The Map with a location and a list of addresses
-    public static Map<LocationWrapper, Queue<Address>> locationSuggestions = new HashMap<LocationWrapper, Queue<Address>>();
+    private static Map<LocationWrapper, Queue<Address>> locationSuggestions = new HashMap<LocationWrapper, Queue<Address>>();
 
     /**
      * @param location
      * @return an address based on latitude and longitude (Reverse Geocoding)
      */
-    public Address getAddress(Location location) {
+     public Address getAddress(Location location) {
         try {
-            JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
+            final JSONObject jsonObj = getJSONfromURL(
+                    "http://nominatim.openstreetmap.org/reverse?format=json&lat="
                     + location.getLatitude()
                     + "&lon="
                     + location.getLongitude() + "&zoom=18&addressdetails=1");
 
-            JSONObject address = jsonObj.getJSONObject("address");
-            Address addresse = new Address();
+            final JSONObject address = jsonObj.getJSONObject("address");
+            final Address addresse = new Address();
             addresse.setAddresseNr(getJsonValue(address, "house_number"));
             addresse.setRoad(getJsonValue(address, "road"));
-            if(!jsonObj.has("road")) {
+            if (!jsonObj.has("road")) {
                 addresse.setRoad(getJsonValue(address, "pedestrian"));
             }
             addresse.setCity(getJsonValue(address, "city"));
@@ -119,7 +122,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @param url
      * @return the JSONObject from an url
      */
-    public static JSONObject getJSONfromURL(String url) {
+     public static JSONObject getJSONfromURL(String url) {
 
         // initialize
         InputStream is = null;
@@ -128,12 +131,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
         // http post
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            final HttpClient httpclient = new DefaultHttpClient();
             httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT,
                     System.getProperty("http.agent"));
-            HttpGet httppost = new HttpGet(url);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity entity = response.getEntity();
+            final HttpGet httppost = new HttpGet(url);
+            final HttpResponse response = httpclient.execute(httppost);
+            final HttpEntity entity = response.getEntity();
             is = entity.getContent();
 
         } catch (Exception e) {
@@ -142,8 +145,8 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
         // convert response to string
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "utf-8"), 8);
+            final BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is, "utf-8"), 8);
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
@@ -177,7 +180,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
             }
         }
         locations.clear();
-        locations.addAll(getNearestLocations(current));
+        locations.addAll(this.getNearestLocations(current));
         locations.add(current);
         return locations;
     }
@@ -189,30 +192,30 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         if (current == null) {
             return;
         }
-        DataBaseHandler db = new DataBaseHandler(context);
+        final DataBaseHandler db = new DataBaseHandler(context);
 
         Queue<Address> adresses = TagSuggestionHandler.locationSuggestions
                 .get(new LocationWrapper(current));
         if (adresses == null || adresses.isEmpty()) {
             adresses = new LinkedList<Address>();
         } else {
-            if (adresses.size() >= 10) {
+            if (adresses.size() >= MAX_OFADDRESSES) {
                 return;
             }
         }
         TagSuggestionHandler.locationSuggestions.put(new LocationWrapper(
                 current), adresses);
 
-        for (Location location : locationSuggestions()) {
+        for (Location location : this.locationSuggestions()) {
             Address addr = db.getAddressFromDb(location);
             boolean isneu = false;
             // when an address is not in database, then load address from
             // nominatim api
             if (addr == null) {
-                addr = getAddress(location);
+                addr = this.getAddress(location);
                 isneu = true;
             }
-            addNewAdressTolist(db, location, addr, isneu, adresses);
+            this.addNewAdressTolist(db, location, addr, isneu, adresses);
         }
         db.close();
 
@@ -252,6 +255,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
+     * 
      * @return a list of addresses
      */
     public Queue<Address> getAddressList() {
@@ -260,19 +264,20 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
     @Override
     protected synchronized String doInBackground(String... params) {
-        getlistOfSuggestionAddress();
+        this.getlistOfSuggestionAddress();
 
         return "";
     }
 
     /**
+     * 
      * @param location
      * @return locations nearby a given Location
      */
     public List<Location> getNearestLocations(Location location) {
-        List<Location> locations = new LinkedList<Location>();
+        final List<Location> locations = new LinkedList<Location>();
         try {
-            double boundingbox[] = getBoundingBox(location.getLatitude(),
+            final double boundingbox[] = getBoundingBox(location.getLatitude(),
                     location.getLongitude(), 0.020);
             StringBuilder url = new StringBuilder(
                     "http://overpass-api.de/api/interpreter?data=[out:json];");
@@ -281,17 +286,17 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
                     .append(boundingbox[1]).append(",");
             param.append(boundingbox[2]).append(",").append(boundingbox[3])
                     .append(");out;");
-            String urlParam = url.toString()
+            final String urlParam = url.toString()
                     + Uri.encode(param.toString(), "UTF-8");
-            JSONObject jsonObj = getJSONfromURL(urlParam);
-            JSONArray elements = jsonObj.getJSONArray("elements");
+            final JSONObject jsonObj = getJSONfromURL(urlParam);
+            final JSONArray elements = jsonObj.getJSONArray("elements");
             int index = 0;
             while (!elements.isNull(index)) {
-                JSONObject obj = elements.getJSONObject(index);
-                String lat = getJsonValue(obj, "lat");
-                String lon = getJsonValue(obj, "lon");
+                final JSONObject obj = elements.getJSONObject(index);
+                final String lat = getJsonValue(obj, "lat");
+                final String lon = getJsonValue(obj, "lon");
                 if (!lat.isEmpty() && !lon.isEmpty()) {
-                    Location loc = new Location("");
+                    final Location loc = new Location("");
                     loc.setLatitude(Double.valueOf(lat));
                     loc.setLongitude(Double.valueOf(lon));
                     locations.add(loc);
@@ -316,7 +321,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @return a boundingBox
      */
     public static double[] getBoundingBox(double lat, double lon, double radius) {
-        double result[] = new double[4];
+        final double result[] = new double[4];
 
         final double R = 6371; // earth radius in km
         final double x1 = lon
@@ -329,10 +334,10 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
         final double y2 = lat - Math.toDegrees(radius / R);
 
-        result[0] = y2;// s
-        result[1] = x1;// w
-        result[2] = y1;// n
-        result[3] = x2;// e
+        result[0] = y2; // s
+        result[1] = x1; // w
+        result[2] = y1; // n
+        result[3] = x2; // e
         return result;
     }
 
@@ -360,11 +365,10 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * 
      * @param current
      *            for the current location
      */
-    public void setCurrent(Location current) {
+     public void setCurrent(Location current) {
         this.current = current;
         if (current != null) {
             execute();
@@ -384,7 +388,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
                 return list.getValue();
             }
         }
-        
+
         for (Map.Entry<LocationWrapper, Queue<Address>> list : locationSuggestions
                 .entrySet()) {
             final LocationWrapper key = list.getKey();
