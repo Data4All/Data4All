@@ -295,10 +295,10 @@ public class CaptureAssistView extends View {
                                 center.getX(), center.getY());
                         // Resize BitMap for different distances
                         float scale = (float) (1.2 / (distance / 6 + 1) + 0.1);
-                        bitmap = Bitmap.createScaledBitmap(poiBitmap,
+                        Bitmap scaledBitmap = Bitmap.createScaledBitmap(poiBitmap,
                                 (int) (scale * poiBitmap.getWidth()),
                                 (int) (scale * poiBitmap.getHeight()), true);
-                        canvas.drawBitmap(bitmap, center.getX(), center.getY(),
+                        canvas.drawBitmap(scaledBitmap, center.getX(), center.getY(),
                                 poiPaint);
                         canvas.rotate((float) Math.toDegrees(-rotateDegree),
                                 center.getX(), center.getY());
@@ -421,21 +421,20 @@ public class CaptureAssistView extends View {
      * @return result true if the point is in the red marked area
      */
     public boolean overHorizont(Point point) {
-        if (point.getX() < 0 || point.getX() > mMeasuredWidth
-                || point.getY() < 0 || point.getY() > mMeasuredHeight) {
-            return true;
-        }
         if (bitmap == null) {
             this.setDrawingCacheEnabled(true);
             bitmap = Bitmap.createBitmap(this.getDrawingCache());
             this.setDrawingCacheEnabled(false);
         }
-        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT
-                || bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint
-                        .getColor()) {
-            return false;
+        if (point.getX() < 0 || point.getX() > mMeasuredWidth
+                || point.getY() < 0 || point.getY() > mMeasuredHeight) {
+            return true;
         }
-        return true;
+        int pixel = bitmap.getPixel((int) point.getX(), (int) point.getY());
+        if ( pixel == invalidRegionPaint.getColor() ) {
+            return true;
+        }
+        return false;
     }
 
     public boolean isSkylook() {
