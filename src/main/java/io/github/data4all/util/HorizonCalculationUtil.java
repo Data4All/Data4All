@@ -45,8 +45,8 @@ public class HorizonCalculationUtil {
     /**
      * 2 Vectors for the x- and the y-axe
      */
-    private static final double[] xaxe = { 1, 0, 0, };
-    private static final double[] yaxe = { 0, 1, 0, };
+    private static final double[] xaxis = { 1, 0, 0, };
+    private static final double[] yaxis = { 0, 1, 0, };
 
     /**
      * calculates the horizon for the display of the device.
@@ -79,10 +79,10 @@ public class HorizonCalculationUtil {
         final double[] vector = { 0, 0, -1, };
         // rotate around y-axe with roll
         final double roll = -deviceOrientation.getRoll();
-        double[] vector2 = MathUtil.rotate(vector, yaxe, roll);
+        double[] vector2 = MathUtil.rotate(vector, yaxis, roll);
         // rotate around x-axe with pitch
         final double pitch = deviceOrientation.getPitch();
-        double[] vector3 = MathUtil.rotate(vector2, xaxe, pitch);
+        double[] vector3 = MathUtil.rotate(vector2, xaxis, pitch);
         // calculate angle between vector and z-axis and subtract from
         // maxhorizon.
         final double angle = maxhorizon - Math.acos(-vector3[2]);
@@ -120,8 +120,8 @@ public class HorizonCalculationUtil {
                 maxHeight, verticalViewAngle);
 
         // calculation of the gradiants
-        vector2 = MathUtil.rotate(xaxe, xaxe, pitch);
-        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+        vector2 = MathUtil.rotate(xaxis, xaxis, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxis, -roll);
         // calculate the pitch- and roll-angles.
         horizonPitch = Math.atan(vector3[1] / (vector3[2]));
         horizonRoll = Math.atan(vector3[0] / (vector3[2]));
@@ -129,8 +129,8 @@ public class HorizonCalculationUtil {
                 maxWidth, horizontalViewAngle);
         float ygradiant = MathUtil.calculatePixelFromAngle(horizonPitch,
                 maxHeight, verticalViewAngle);
-        vector2 = MathUtil.rotate(yaxe, xaxe, pitch);
-        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
+        vector2 = MathUtil.rotate(yaxis, xaxis, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxis, -roll);
         // calculate the pitch- and roll-angles.
         horizonPitch = Math.atan(vector3[1] / (vector3[2]));
         horizonRoll = Math.atan(vector3[0] / (vector3[2]));

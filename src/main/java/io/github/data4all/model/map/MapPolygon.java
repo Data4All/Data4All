@@ -355,8 +355,8 @@ public class MapPolygon extends Polygon {
         final int yEndPo2 = (int) event.getY(1);
 
         // get the rotation angle
-        final double delta_xEnd = (xEndPo1 - xEndPo2);
-        final double delta_yEnd = (yEndPo1 - yEndPo2);
+        final double delta_xEnd = xEndPo1 - xEndPo2;
+        final double delta_yEnd = yEndPo1 - yEndPo2;
         final double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
 
         final double delta_xStart = startPos.get(0).x - startPos.get(1).x;
@@ -394,7 +394,8 @@ public class MapPolygon extends Polygon {
      * of this system.
      */
     public void saveGeoPoints() {
-        double lat = 0, lon = 0;
+        double lat = 0;
+        double lon = 0;
         int i = 0;
         for (GeoPoint geoPoint : this.getPoints()) {
             lat += geoPoint.getLatitude();
@@ -460,7 +461,7 @@ public class MapPolygon extends Polygon {
                     (int) event.getX(), (int) event.getY());
             final int distToCent = position.distanceTo(MapUtil
                     .getCenterFromOsmElement(element));
-            return (distToCent < TOLERANCE);
+            return distToCent < TOLERANCE;
         }
     }
 
