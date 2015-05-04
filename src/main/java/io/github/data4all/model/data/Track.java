@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.osmdroid.util.GeoPoint;
+
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Parcel;
@@ -183,6 +185,16 @@ public class Track implements Parcelable {
 
     public List<TrackPoint> getTrackPoints() {
         return new ArrayList<TrackPoint>(tracklist);
+    }
+    
+    public List<GeoPoint> getTrackGeoPoints() {
+        List<GeoPoint> geoList = new ArrayList<GeoPoint>();
+        for (TrackPoint trackP : tracklist) {
+            Log.i("x" + TAG, tracklist.toString());
+            GeoPoint gp = new GeoPoint(trackP.getLat(), trackP.getLon());
+            geoList.add(gp);
+        }
+        return geoList;
     }
 
     /**

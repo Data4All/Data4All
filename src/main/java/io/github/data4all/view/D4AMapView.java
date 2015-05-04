@@ -22,9 +22,11 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
+import io.github.data4all.model.map.MapTrack;
 
 import java.util.List;
 
@@ -306,6 +308,27 @@ public class D4AMapView extends MapView {
     public void setScrollable(boolean scrollable) {
         this.scrollable = scrollable;
 
+    }
+
+    public void addGPSTracksToMap(AbstractActivity ctx, List<Track> list) {
+        if (list != null && !list.isEmpty()) {
+            for (Track track : list) {
+                if (track != null) {
+                    final Polyline trackPath = new MapTrack(ctx, this, track);
+                    
+                    Log.i(TAG, "Set Path Points to " + track.toString());
+                    trackPath.setPoints(track.getTrackGeoPoints());
+                    
+                    Log.i(TAG, "Set Path Color to " + Color.YELLOW);
+                    trackPath.setColor(Color.MAGENTA);
+                    Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
+                    trackPath.setWidth(4.0f);
+
+                    this.getOverlays().add(trackPath);
+                    this.postInvalidate();
+                }
+            }
+        }
     }
 
 }
