@@ -16,13 +16,16 @@
 package io.github.data4all.view;
 
 import io.github.data4all.R;
+import io.github.data4all.activity.ResultViewActivity;
 import io.github.data4all.handler.TagSuggestionHandler;
+import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.upload.Callback;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -87,7 +90,7 @@ public class AddressSuggestionView implements OnClickListener,
     // the button which load addresses
     private Button btnSelectAddress;
 
-    private Activity activity;
+    private ResultViewActivity activity;
 
     // The Dialog which show a list of suggestion addresses
     private AlertDialog alert;
@@ -111,11 +114,13 @@ public class AddressSuggestionView implements OnClickListener,
     // id of house_number
     private static final int HOUSE_NUMBER_ID = 402;
     // id of postCode
-    private static  final int POSTCODE_ID = 403;
+    private static final int POSTCODE_ID = 403;
     // id of city
     private static final int CITY_ID = 404;
     // id of country
     private static final int COUNTRY_ID = 405;
+
+    private Callback<Void> onAddressSelect;
 
     /**
      * Default constructor for AddressSuggestionView
@@ -124,9 +129,9 @@ public class AddressSuggestionView implements OnClickListener,
      * @param context
      * @param button
      */
-    public AddressSuggestionView(Activity activity, Context context,
-            Button button) {
-        this.setContext(context);
+    public AddressSuggestionView(ResultViewActivity activity, Button button, Callback<Void> onAddressSelect) {
+        this.onAddressSelect = onAddressSelect;
+        this.setContext(activity);
         this.activity = activity;
         this.btnSelectAddress = button;
         array = new String[MAXNUMBER_OFADDRESSES];
@@ -147,23 +152,14 @@ public class AddressSuggestionView implements OnClickListener,
      * @param activity
      */
     public void fillDialog() {
-        if (location != null) {
-            final Queue<? extends Address> address = TagSuggestionHandler
-                    .get(location);
-            if (address != null) {
-                this.addresses = new LinkedHashSet<Address>(address);
-            }
+        final List<Address> currentAdresses = TagSuggestionHandler
+                .getLastSuggestions();
+        if (currentAdresses != null) {
+            this.addresses = new LinkedHashSet<Address>(currentAdresses);
         }
         if (this.addresses == null || this.addresses.isEmpty()) {
-            final Queue<? extends Address> currentAdresses = TagSuggestionHandler
-                    .get(Optimizer.currentBestLoc());
-            if (currentAdresses != null) {
-                this.addresses = new LinkedHashSet<Address>(currentAdresses);
-            }
-            if (this.addresses == null || this.addresses.isEmpty()) {
-                array = new String[] {"Currently no possibility avalaible"};
-                return;
-            }
+            array = new String[] { "Currently no possibility avalaible" };
+            return;
         }
 
         final Set<String> fullAdresses = new TreeSet<String>(
@@ -197,7 +193,7 @@ public class AddressSuggestionView implements OnClickListener,
      *            is road + house_number + postCode + city + country
      * @return a selected Address
      */
-     public Address getSelectedAddress(String fullAddress) {
+    public Address getSelectedAddress(String fullAddress) {
 
         for (Address a : addresses) {
             if (a.getFullAddress().equalsIgnoreCase(fullAddress)) {
@@ -238,6 +234,7 @@ public class AddressSuggestionView implements OnClickListener,
             this.setValue(city, "", CITY_ID);
             this.setValue(country, "", COUNTRY_ID);
         }
+        onAddressSelect.callback(null);
         alert.dismiss();
     }
 
@@ -315,7 +312,7 @@ public class AddressSuggestionView implements OnClickListener,
         return activity;
     }
 
-    public void setActivity(Activity activity) {
+    public void setActivity(ResultViewActivity activity) {
         this.activity = activity;
     }
 
@@ -361,8 +358,7 @@ public class AddressSuggestionView implements OnClickListener,
         }
         final List<Tag> tagList = new LinkedList<Tag>();
         tagList.addAll(Tags.getAllAddressTags());
-        List<Boolean> booleanList = new ArrayList<Boolean>();
-        booleanList = value.getAllUnclassifiedBooleans();
+        List<Boolean> booleanList = value.getAllUnclassifiedBooleans();
 
         for (int i = 0; i < booleanList.size(); i++) {
             if (booleanList.get(i)
@@ -387,13 +383,13 @@ public class AddressSuggestionView implements OnClickListener,
      */
     public void savedTwoLineListItem(String key, TextView text2) {
         final Integer tagid = keyMapView.get(key);
-       
+
         if (tagid == null) {
             return;
         }
         if (tagid.intValue() == ROAD_ID) {
             road = text2;
-            
+
         }
         if (tagid.intValue() == HOUSE_NUMBER_ID) {
             houseNumber = text2;
@@ -407,10 +403,10 @@ public class AddressSuggestionView implements OnClickListener,
         if (tagid.intValue() == COUNTRY_ID) {
             country = text2;
         }
-        
-    } 
 
-     public void setLocation(Location l) {
+    }
+
+    public void setLocation(Location l) {
         if (l == null) {
             this.location = Optimizer.currentBestLoc();
         } else {

@@ -1,0 +1,26 @@
+05-04 17:40:04.727: E/dalvikvm(25507): >>>>> Normal User
+05-04 17:40:04.727: E/dalvikvm(25507): >>>>> io.github.data4all [ userId:0 | appId:10260 ]
+05-04 17:40:09.431: E/ViewRootImpl(25507): sendUserActionEvent() mView == null
+05-04 17:40:35.587: E/ViewRootImpl(25507): sendUserActionEvent() mView == null
+05-04 17:40:40.241: E/ViewRootImpl(25507): sendUserActionEvent() mView == null
+05-04 17:40:40.942: E/ACRA(25507): ACRA caught a NullPointerException exception for io.github.data4all. Building report.
+05-04 17:40:41.052: E/AndroidRuntime(25507): FATAL EXCEPTION: main
+05-04 17:40:41.052: E/AndroidRuntime(25507): Process: io.github.data4all, PID: 25507
+05-04 17:40:41.052: E/AndroidRuntime(25507): java.lang.NullPointerException
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at io.github.data4all.view.AddressSuggestionView.addKeyMapEntry(AddressSuggestionView.java:370)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at io.github.data4all.activity.ResultViewActivity.output(ResultViewActivity.java:245)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at io.github.data4all.activity.ResultViewActivity.access$3(ResultViewActivity.java:225)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at io.github.data4all.activity.ResultViewActivity$6.onItemClick(ResultViewActivity.java:380)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.widget.AdapterView.performItemClick(AdapterView.java:308)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.widget.AbsListView.performItemClick(AbsListView.java:1478)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.widget.AbsListView$PerformClick.run(AbsListView.java:3480)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.widget.AbsListView$3.run(AbsListView.java:4823)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.os.Handler.handleCallback(Handler.java:733)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.os.Handler.dispatchMessage(Handler.java:95)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.os.Looper.loop(Looper.java:157)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at android.app.ActivityThread.main(ActivityThread.java:5356)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at java.lang.reflect.Method.invokeNative(Native Method)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at java.lang.reflect.Method.invoke(Method.java:515)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:1265)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1081)
+05-04 17:40:41.052: E/AndroidRuntime(25507): 	at dalvik.system.NativeStart.main(Native Method)

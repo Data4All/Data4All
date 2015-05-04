@@ -35,6 +35,7 @@ import org.osmdroid.util.GeoPoint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -246,8 +247,6 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // load lastChoice from database
         LastChoiceHandler.load(db);
         db.close();
-        //set context of tagsuggestionhandler
-        TagSuggestionHandler.setContext(this);
 
         // Start the GPS tracking
         Log.i(TAG, "Start GPSService");
@@ -281,6 +280,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
+            final Location location = new Location("overlay");
+            location.setLatitude(myPosition.getLatitude());
+            location.setLongitude(myPosition.getLongitude());
+            TagSuggestionHandler.setLocation(location);
+            
+            
             final Intent intent = new Intent(this, MapPreviewActivity.class);
             final Node poi =
                     new Node(-1, myPosition.getLatitude(),

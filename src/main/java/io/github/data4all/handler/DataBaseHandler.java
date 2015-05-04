@@ -17,7 +17,6 @@ package io.github.data4all.handler;
 
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -75,17 +74,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 	private static final String TABLE_GPSTRACK = "gpstracks";
 	private static final String TABLE_TRACKPOINT = "trackpoints";
 	private static final String TABLE_LASTCHOICE = "lastChoice";
-	private static final String TABLE_ADDRESSE = "addresse";
-
-	// addresse column Names
-	private static final String ADDRESSID = "addressId";
-	private static final String LONG = "longitude";
-	private static final String LAT = "lattitude";
-	private static final String HOUSENUMBER = "addresseNr";
-	private static final String ROAD = "road";
-	private static final String CITY = "city";
-	private static final String POSTCODE = "postcode";
-	private static final String COUNTRY = "country";
 
 	// General Column Names
 	private static final String KEY_OSMID = "osmid";
@@ -171,13 +159,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 		final String CREATE_LASTCHOICE_TABLE = "CREATE TABLE "
 				+ TABLE_LASTCHOICE + " (" + TAG_IDS + " TEXT," + TYPE
 				+ " INTEGER" + ")";
-
-		// create table address
-		final String CREATE_ADRESSE_TABLE = "CREATE TABLE " + TABLE_ADDRESSE
-				+ " (" + ADDRESSID + " INTERGER PRIMARY KEY," + LAT + " REAL,"
-				+ LONG + " REAL," + HOUSENUMBER + " TEXT," + ROAD + " TEXT,"
-				+ POSTCODE + " TEXT," + CITY + " TEXT," + COUNTRY + " TEXT"
-				+ ")";
 		db.execSQL(CREATE_DATAELEMENTS_TABLE);
 		db.execSQL(CREATE_NODES_TABLE);
 		db.execSQL(CREATE_TAGMAP_TABLE);
@@ -187,8 +168,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 		db.execSQL(CREATE_TRACKPOINT_TABLE);
 		// Lastchoice
 		db.execSQL(CREATE_LASTCHOICE_TABLE);
-		// address
-		db.execSQL(CREATE_ADRESSE_TABLE);
 		Log.i(TAG, "Tables have been created.");
 	}
 
@@ -206,7 +185,6 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRACKPOINT);
 
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LASTCHOICE);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADDRESSE);
 		Log.i(TAG, "Tables have been dropped and will be recreated.");
 
 		// Recreate tables
@@ -1687,90 +1665,5 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 			}
 		}
 		return builder.toString();
-	}
-
-	// --------------------------------------------------------------------------------------
-	// ---------------------------Address----------------------------------------------------
-
-	/**
-	 * insert or update an address in database
-	 * @param location of an address
-	 * @param addressNr is for a house_number
-	 * @param road
-	 * @param postCode
-	 * @param city
-	 * @param country
-	 */
-	public void insertOrUpdateAddressInDb(Location location, String addressNr,
-			String road, String postCode, String city, String country) {
-		final SQLiteDatabase db = getReadableDatabase();
-		final ContentValues values = new ContentValues();
-		values.put(LAT, location.getLatitude());
-		values.put(LONG, location.getLongitude());
-		values.put(HOUSENUMBER, addressNr);
-		values.put(ROAD, road);
-		values.put(POSTCODE, postCode);
-		values.put(CITY, city);
-		values.put(COUNTRY, country);
-		final Address addressFromDb = getAddressFromDb(location);
-		if (addressFromDb == null) {
-			
-			     db.insert(TABLE_ADDRESSE, null, values);
-		} else {
-			
-			        db.update(TABLE_ADDRESSE, values, ADDRESSID + "=?",
-					new String[] {String.valueOf(addressFromDb.getAddressId()) });
-		}
-
-		Log.i(TAG, "Address " + rowID + " has been added.");
-
-	}
-
-	
-	/**
-	 * get an address from database based on location
-	 * @param location of an address
-	 * @return an address
-	 */
-	public Address getAddressFromDb(Location location) {
-		final SQLiteDatabase db = getReadableDatabase();
-
-		final String query = "SELECT " + ADDRESSID + ", " + HOUSENUMBER + " , " + ROAD + " , "
-				+ POSTCODE + " , " + CITY + " , " + COUNTRY + " FROM "
-				+ TABLE_ADDRESSE + " WHERE " + LAT + " = "
-				+ location.getLatitude() + " AND " + LONG + " = "
-				+ location.getLongitude();
-
-		final Cursor cursor = db.rawQuery(query, null);
-
-		int addressId = 0;
-		String houseNumber = "";
-		String postCode = "";
-		String road = "";
-		String city = "";
-		String country = "";
-
-		if (cursor != null && cursor.moveToFirst()) {
-			addressId = cursor.getInt(0);
-			houseNumber = cursor.getString(1);
-			road = cursor.getString(2);
-			postCode = cursor.getString(3);
-			city = cursor.getString(4);
-			country = cursor.getString(5);
-			final Address address = new Address();
-			address.setAddressId(addressId);
-			address.setAddresseNr(houseNumber);
-			address.setRoad(road);
-			address.setPostCode(postCode);
-			address.setCity(city);
-			address.setCountry(country);
-			cursor.close();
-			return address;
-
-		}
-
-		cursor.close();
-		
-		return null;
 	}
 }

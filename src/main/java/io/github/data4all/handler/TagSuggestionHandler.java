@@ -16,18 +16,15 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.model.data.Address;
-import io.github.data4all.util.LocationWrapper;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,10 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
 /**
@@ -53,30 +48,78 @@ import android.util.Log;
  * @author Steeve
  *
  */
-public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
+public class TagSuggestionHandler {
+
+    /**
+     * earth radius in km
+     */
+    private static final int EARTH_RADIUS = 6371;
 
     private static final String TAG = "TagSuggestion";
 
-    // represent the list of all suggestions Addresses
-    private static Queue<Address> addressList = new LinkedList<Address>();
+    public static final Map<Location, Address> cache = new LinkedHashMap<Location, Address>();
 
-    private static Context context;
+    private static Location location;
 
-    // list of locations
-    private Set<Location> locations = new LinkedHashSet<Location>();
-    // current location
-    private Location current;
+    private static List<Address> lastSuggestions;
 
-    private final static int MAX_OFADDRESSES = 10;
+    private static int id = 0;
 
-    // The Map with a location and a list of addresses
-    private static Map<LocationWrapper, Queue<Address>> locationSuggestions = new HashMap<LocationWrapper, Queue<Address>>();
+    public static List<Address> getLastSuggestions() {
+        return lastSuggestions;
+    }
+
+    public static void setLocation(Location location) {
+        Log.i(TAG, "setLocation: " + location);
+        TagSuggestionHandler.location = location;
+        final int myId = ++id;
+        new Thread(new Runnable() {
+            public void run() {
+                lastSuggestions = null;
+                List<Address> suggestions = getSuggestion();
+                if (myId == id) {
+                    lastSuggestions = suggestions;
+                    Log.i(TAG, "suggestions set");
+                }
+            }
+        }).start();
+    }
+
+    private static List<Address> getSuggestion() {
+        List<Location> near = getNearestLocations(location);
+        near.add(location);
+        Log.i(TAG, "getSuggestion: " + near.size());
+        List<Address> result = new ArrayList<Address>(near.size());
+        for (int i = 0; i < Math.min(near.size(), 10); i++) {
+            Location location = near.get(i);
+            Address address = getCached(location);
+            if (address == null) {
+                address = getAddress(location);
+            }
+            Log.i(TAG, "getSuggestion addressNull: " + (address == null));
+            if (address != null) {
+                cache.put(location, address);
+                result.add(address);
+            }
+        }
+        return result;
+    }
+
+    private static Address getCached(Location loc) {
+        for (Location l : cache.keySet()) {
+            if (Math.abs(l.getLatitude() - loc.getLatitude()) < 1e-5
+                    && Math.abs(l.getLongitude() - loc.getLongitude()) < 1e-5) {
+                return cache.get(l);
+            }
+        }
+        return null;
+    }
 
     /**
      * @param location
      * @return an address based on latitude and longitude (Reverse Geocoding)
      */
-    public Address getAddress(Location location) {
+    private static Address getAddress(Location location) {
         try {
             final JSONObject jsonObj = getJSONfromURL("http://nominatim.openstreetmap.org/reverse?format=json&lat="
                     + location.getLatitude()
@@ -87,13 +130,13 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
             final Address addresse = new Address();
             addresse.setAddresseNr(getJsonValue(address, "house_number"));
             addresse.setRoad(getJsonValue(address, "road"));
-            if (!jsonObj.has("road")) {
+            if (getJsonValue(jsonObj, "road") == null) {
                 addresse.setRoad(getJsonValue(address, "pedestrian"));
             }
             addresse.setCity(getJsonValue(address, "city"));
             addresse.setPostCode(getJsonValue(address, "postcode"));
             addresse.setCountry(getJsonValue(address, "country"));
-            Log.i(TAG, addresse.getFullAddress());
+            Log.i(TAG, "getAddress: " + addresse.getFullAddress());
             return addresse;
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,7 +151,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @param key
      * @return the value of a jsonObject
      */
-    public static String getJsonValue(JSONObject jsonObject, String key) {
+    private static String getJsonValue(JSONObject jsonObject, String key) {
         try {
             return jsonObject.getString(key);
         } catch (Exception e) {
@@ -121,7 +164,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      * @param url
      * @return the JSONObject from an url
      */
-    public static JSONObject getJSONfromURL(String url) {
+    private static JSONObject getJSONfromURL(String url) {
 
         // initialize
         InputStream is = null;
@@ -168,111 +211,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * Get a list of locations near by the current location.
-     * 
-     * @return a list of locations near by the current location
-     */
-    private Set<Location> locationSuggestions() {
-        if (current != null) {
-            locations.clear();
-            locations.addAll(this.getNearestLocations(current));
-            locations.add(current);
-        }
-        return locations;
-    }
-
-    /**
-     * Get a list of addresses.
-     */
-    public synchronized void getlistOfSuggestionAddress() {
-        if (current == null) {
-            return;
-        }
-        final DataBaseHandler db = new DataBaseHandler(context);
-
-        Queue<Address> adresses = TagSuggestionHandler.locationSuggestions
-                .get(new LocationWrapper(current));
-        if (adresses == null || adresses.isEmpty()) {
-            adresses = new LinkedList<Address>();
-        } else {
-            if (adresses.size() >= MAX_OFADDRESSES) {
-                return;
-            }
-        }
-        TagSuggestionHandler.locationSuggestions.put(new LocationWrapper(
-                current), adresses);
-
-        for (Location location : this.locationSuggestions()) {
-            Address addr = db.getAddressFromDb(location);
-            boolean isnew = false;
-            // when an address is not in database, then load address from
-            // nominatim api
-            if (addr == null) {
-                addr = this.getAddress(location);
-                isnew = true;
-            }
-            this.addNewAdressToList(db, location, addr, isnew, adresses);
-        }
-        db.close();
-
-    }
-
-    /**
-     * Add a new address to the database and to the list.
-     * 
-     * @param db
-     *            database
-     * @param location
-     *            location of an address
-     * @param addr
-     *            address
-     * @param isnew
-     *            boolean to check if this address was already in database
-     * @param address
-     *            the list of addresses
-     */
-    private void addNewAdressToList(DataBaseHandler db, Location location,
-            Address addr, boolean isnew, Queue<Address> address) {
-        if (addr != null && !address.contains(addr)) {
-            // when a address was already in database, then update this
-            // address
-            // when not so insert this address in database
-            if (isnew) {
-                db.insertOrUpdateAddressInDb(location, addr.getAddresseNr(),
-                        addr.getRoad(), addr.getPostCode(), addr.getCity(),
-                        addr.getCountry());
-            }
-            address.add(addr);
-        }
-    }
-
-    public static void setContext(Context context) {
-        TagSuggestionHandler.context = context;
-    }
-
-    /**
-     * Get the list of all addresses.
-     * 
-     * @return a list of addresses
-     */
-    public Queue<Address> getAddressList() {
-        return addressList;
-    }
-
-    @Override
-    protected synchronized String doInBackground(String... params) {
-        this.getlistOfSuggestionAddress();
-
-        return "";
-    }
-
-    /**
      * Get a list of locations near by the given location.
      * 
      * @param location
      * @return locations near by a given Location
      */
-    public List<Location> getNearestLocations(Location location) {
+    private static List<Location> getNearestLocations(Location location) {
         final List<Location> locations = new LinkedList<Location>();
         try {
             final double boundingbox[] = getBoundingBox(location.getLatitude(),
@@ -301,9 +245,10 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
                 }
                 index++;
             }
-            return locations;
+
+            Log.i(TAG, "getNear: " + index);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i(TAG, "getNear: ", e);
         }
         return locations;
     }
@@ -319,86 +264,16 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
      *            distance to bounds from location
      * @return a boundingBox
      */
-    public static double[] getBoundingBox(double lat, double lon, double radius) {
+    private static double[] getBoundingBox(double lat, double lon, double radius) {
         final double result[] = new double[4];
-        final double R = 6371; // earth radius in km
-        final double x1 = lon
-                - Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
-        final double x2 = lon
-                + Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
-
-        final double y1 = lat + Math.toDegrees(radius / R);
-        final double y2 = lat - Math.toDegrees(radius / R);
-
-        result[0] = y2; // s
-        result[1] = x1; // w
-        result[2] = y1; // n
-        result[3] = x2; // e
+        result[0] = lat - Math.toDegrees(radius / (double) EARTH_RADIUS); // s
+        result[1] = lon
+                - Math.toDegrees(radius / (double) EARTH_RADIUS
+                        / Math.cos(Math.toRadians(lat))); // w
+        result[2] = lat + Math.toDegrees(radius / (double) EARTH_RADIUS); // n
+        result[3] = lon
+                + Math.toDegrees(radius / (double) EARTH_RADIUS
+                        / Math.cos(Math.toRadians(lat))); // e
         return result;
-    }
-
-    /**
-     * Calculates the distance between two locations.
-     * 
-     * @param location1
-     *            first location
-     * @param location2
-     *            second location
-     * @return the distance between two locations
-     */
-    public static float distFrom(Location location1, Location location2) {
-        final double earthRadius = 6371000; // meters
-        final double dLat = Math.toRadians(location2.getLatitude()
-                - location1.getLatitude());
-        final double dLng = Math.toRadians(location2.getLongitude()
-                - location1.getLongitude());
-        final double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(location1.getLatitude()))
-                * Math.cos(Math.toRadians(location2.getLatitude()))
-                * Math.sin(dLng / 2) * Math.sin(dLng / 2);
-        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        final float dist = (float) (earthRadius * c);
-
-        return Math.abs(dist);
-    }
-
-    /**
-     * Set the current location.
-     * 
-     * @param current
-     *            the current location
-     */
-    public void setCurrent(Location current) {
-        this.current = current;
-        if (current != null) {
-            execute();
-        }
-    }
-
-    /**
-     * Get a list of addresses for a given location.
-     * 
-     * @param location
-     * @return a list of addresses for a given location
-     */
-    public static Queue<? extends Address> get(Location location) {
-        for (Map.Entry<LocationWrapper, Queue<Address>> list : locationSuggestions
-                .entrySet()) {
-            final LocationWrapper key = list.getKey();
-            if (key.equals(location)) {
-                return list.getValue();
-            }
-        }
-
-        for (Map.Entry<LocationWrapper, Queue<Address>> list : locationSuggestions
-                .entrySet()) {
-            final LocationWrapper key = list.getKey();
-            if (distFrom(key.getLocation(), location) <= 20) {
-                locationSuggestions.put(new LocationWrapper(location),
-                        list.getValue());
-                return list.getValue();
-            }
-        }
-        return null;
     }
 }
