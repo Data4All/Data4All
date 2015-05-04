@@ -27,8 +27,8 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="augmented_reality"
-        android:title="@string/pref_augmented_reality"
-        android:summary="@string/pref_augmented_reality_summary" />
+        android:title="@string/pref_augmented_reality" 
+        android:summary="@string/pref_augmented_reality_summary"/> 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="sensor_warning"
