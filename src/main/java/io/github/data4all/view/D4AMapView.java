@@ -27,6 +27,7 @@ import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
 import io.github.data4all.model.map.MapTrack;
+import io.github.data4all.util.TrackUtil;
 
 import java.util.List;
 
@@ -314,28 +315,43 @@ public class D4AMapView extends MapView {
 
     /**
      * Adds a polyline which shows the tracks, if they are finished
-     * @param ctx Context
-     * @param list List of all tracks
+     * 
+     * @param ctx
+     *            Context
+     * @param list
+     *            List of all tracks
      */
     public void addGPSTracksToMap(AbstractActivity ctx, List<Track> list) {
+        updateTrackOnMap(ctx, null);
         if (viewTrack() && list != null && !list.isEmpty()) {
             for (Track track : list) {
                 if (track != null && track.isFinished()) {
-                    final Polyline trackPath = new MapTrack(ctx, this, track);
-
-                    Log.i(TAG, "Set Path Points to " + track.toString());
-                    trackPath.setPoints(track.getTrackGeoPoints());
-
-                    Log.i(TAG, "Set Path Color to " + Color.MAGENTA);
-                    trackPath.setColor(Color.MAGENTA);
-                    Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
-                    trackPath.setWidth(4.0f);
-
-                    this.getOverlays().add(trackPath);
-                    this.postInvalidate();
+                    addGPSTrackToMap(ctx, track);
                 }
             }
         }
+    }
+    
+    public void updateTrackOnMap(AbstractActivity ctx, Track track) {
+        Log.d("x" + TAG, this.getOverlays().toString());
+    }
+
+    public void addGPSTrackToMap(AbstractActivity ctx, Track track) {
+        if (track != null && !track.getTrackPoints().isEmpty()) {
+            final Polyline trackPath = new MapTrack(ctx, this, track);
+
+            Log.i(TAG, "Set Path Points to " + track.toString());
+            trackPath.setPoints(track.getTrackGeoPoints());
+
+            Log.i(TAG, "Set Path Color to " + Color.MAGENTA);
+            trackPath.setColor(Color.MAGENTA);
+            Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
+            trackPath.setWidth(4.0f);
+
+            this.getOverlays().add(trackPath);
+            this.postInvalidate();
+        }
+
     }
 
     /**
