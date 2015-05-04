@@ -4,7 +4,7 @@
     <string name="pref_bodyheight_title">Körpergröße</string>
     <string name="pref_bodyheight_summary">Setzen sie Ihre Körpergröße</string>
     <string name="pref_bodyheight_dialog_title">Setzen sie Ihre Körpergröße</string>
-    <string name="pref_bodyheight_dialog_message">Ihre Körpergröße ist notwendig um die Höhe ihres Smartphones zu schätzen und damit die Entfernung eines Objektes zu berechnen.\n \nIhre Körpergröße in cm: </string>
+    <string name="pref_bodyheight_dialog_message">Ihre Körpergröße ist notwendig um damit die Entfernung eines Objektes zu berechnen.\n \nIhre Körpergröße in cm: </string>
     <string name="pref_currentuser_title">Aktueller Benutzer</string>
     <string name="pref_currentuser_dialog_title">Ausloggen</string>
     <string name="pref_currentuser_dialog_message">Möchten Sie sich wirklich ausloggen?</string>
@@ -21,10 +21,11 @@
     <string name="pref_moving_animation_summary">Soll die Karte oder das Objekt beim Verschieben auf der Vorschaukarte verschoben werden?</string>
     <string name="pref_moving_animation_dialog_title">Wie soll verschoben werden?</string>
     
-    <string name="pref_sensor_warning">Zeige Warnungen für die Senoren</string>
-    <string name="pref_sensor_warning_summary">Die Warnungen für die Sensoren zeigen an, ob ein Sensor Rekalibrierung benötigt. Mit Deaktivierung der Checkbox werden diese Warnung ignoriert.</string>
+    <string name="pref_sensor_warning">Warnungen für die Sensoren</string>
+    <string name="pref_sensor_warning_summary">Anzeigen ob ein Sensor Rekalibrierung benötigt.</string>
     
-    <string name="pref_augmented_reality">Zeige Augmented Reality</string>
-    <string name="pref_augmented_reality_summary">Bereits gemappte Objekte werden in der Kamera visualisiert</string>
-
+    <string name="pref_augmented_reality">Augmented Reality</string>
+    <string name="pref_augmented_reality_summary">Bereits gemappte Objekte werden im Kamerabild visualisiert</string>
+    
+  	<string name="pref_english_tags_title">Tags in Englisch</string>
 </resources>
