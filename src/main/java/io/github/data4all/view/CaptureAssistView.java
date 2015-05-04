@@ -73,7 +73,8 @@ public class CaptureAssistView extends View {
     private int mMeasuredHeight;
     private int augMinTextSize = 20;
     private int augMaxTextSize = 100;
-    private float horizontalViewAngle, verticalViewAngle;
+    private float horizontalViewAngle;
+    private float verticalViewAngle;
     private float horizondegree = 87.5f;
     private float maxDistance = 100;
     private DeviceOrientation deviceOrientation;
@@ -87,8 +88,7 @@ public class CaptureAssistView extends View {
     private PointToCoordsTransformUtil util;
     private double rotateDegree;
     private Bitmap poiBitmap;
-
-    HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
+    private HorizonCalculationUtil horizonCalculationUtil;
 
     private static final String TAG = CaptureAssistView.class.getSimpleName();
 
@@ -125,7 +125,9 @@ public class CaptureAssistView extends View {
      *            Contextclass for global information about an application
      *            environment
      * @param attrs
+     *          AttributeSet
      * @param defStyle
+     *          defStyle
      * 
      */
     public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
@@ -186,6 +188,7 @@ public class CaptureAssistView extends View {
                 mMeasuredHeight, Optimizer.currentBestLoc());
 
         util = new PointToCoordsTransformUtil();
+        horizonCalculationUtil = new HorizonCalculationUtil();
     }
 
     /**
@@ -193,8 +196,11 @@ public class CaptureAssistView extends View {
      * drawings.
      * 
      * @param horizontalViewAngle
-     * @param maxRoll
+     *          maxCameraAngle
+     * @param verticalViewAngle
+     *          maxCameraAngle
      * @param deviceOrientation
+     *          the deviceOrientation
      */
     public void setInformations(float horizontalViewAngle,
             float verticalViewAngle, DeviceOrientation deviceOrientation) {
@@ -289,7 +295,7 @@ public class CaptureAssistView extends View {
                                 center.getX(), center.getY());
                         // Resize BitMap for different distances
                         float scale = (float) (1.2 / (distance / 6 + 1) + 0.1);
-                        Bitmap bitmap = Bitmap.createScaledBitmap(poiBitmap,
+                        bitmap = Bitmap.createScaledBitmap(poiBitmap,
                                 (int) (scale * poiBitmap.getWidth()),
                                 (int) (scale * poiBitmap.getHeight()), true);
                         canvas.drawBitmap(bitmap, center.getX(), center.getY(),
@@ -348,7 +354,7 @@ public class CaptureAssistView extends View {
         PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
         final SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(getContext());
-        return (prefs.getBoolean("augmented_reality", false));
+        return prefs.getBoolean("augmented_reality", false);
     }
 
     /**
@@ -424,11 +430,9 @@ public class CaptureAssistView extends View {
             bitmap = Bitmap.createBitmap(this.getDrawingCache());
             this.setDrawingCacheEnabled(false);
         }
-        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT) {
-            return false;
-        }
-        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint
-                .getColor()) {
+        if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT
+                || bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint
+                        .getColor()) {
             return false;
         }
         return true;

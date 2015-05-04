@@ -55,7 +55,7 @@ public class MapMarker extends Marker {
     private long timeStart;
 
     // True when the edit mode is active.
-    private boolean active = false;
+    private boolean active;
 
     // the maximum time difference between action_down and action_up, so that
     // the mode will be changed
@@ -76,8 +76,8 @@ public class MapMarker extends Marker {
     /**
      * Start values for moving.
      */
-    private int xStart = 0;
-    private int yStart = 0;
+    private int xStart;
+    private int yStart;
 
     /**
      * Projection of the mapView.
