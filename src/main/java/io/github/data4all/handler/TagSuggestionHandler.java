@@ -16,14 +16,12 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.model.data.Address;
-import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.util.LocationWrapper;
 import io.github.data4all.util.Optimizer;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -49,8 +47,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 /**
- * this class represent values for unclassifiedTag. e.g country:usa. these values
- * are determined based on Reverse Geocoding
+ * this class represent values for unclassifiedTag. e.g country:usa. these
+ * values are determined based on Reverse Geocoding
  * 
  * @author Steeve
  *
@@ -69,13 +67,12 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     // current location
     Location current = null;
 
+    // The Map with a location and a list of addresses
     public static Map<LocationWrapper, Queue<Address>> locationSuggestions = new HashMap<LocationWrapper, Queue<Address>>();
 
     /**
-     * get a address based on latitude and longitude(nominatim api)
-     * 
      * @param location
-     * @return
+     * @return an address based on latitude and longitude (Reverse Geocoding)
      */
     public Address getAddress(Location location) {
         try {
@@ -88,6 +85,9 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
             Address addresse = new Address();
             addresse.setAddresseNr(getJsonValue(address, "house_number"));
             addresse.setRoad(getJsonValue(address, "road"));
+            if(!jsonObj.has("road")) {
+                addresse.setRoad(getJsonValue(address, "pedestrian"));
+            }
             addresse.setCity(getJsonValue(address, "city"));
             addresse.setPostCode(getJsonValue(address, "postcode"));
             addresse.setCountry(getJsonValue(address, "country"));
@@ -167,7 +167,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * @return a list of locations nearby of the current location
+     * @return a list of locations nearby the current location
      */
     private Set<Location> locationSuggestions() {
         if (current == null) {
@@ -207,7 +207,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
             Address addr = db.getAddressFromDb(location);
             boolean isneu = false;
             // when an address is not in database, then load address from
-            // nominatim
+            // nominatim api
             if (addr == null) {
                 addr = getAddress(location);
                 isneu = true;
@@ -218,6 +218,20 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
     }
 
+    /**
+     * add a new address in database and to the list.
+     * 
+     * @param db
+     *            database
+     * @param location
+     *            of an address
+     * @param addr
+     *            address
+     * @param isneu
+     *            to check if this address was already in database
+     * @param address
+     *            the list of addresses
+     */
     private void addNewAdressTolist(DataBaseHandler db, Location location,
             Address addr, boolean isneu, Queue<Address> address) {
         if (addr != null && !address.contains(addr)) {
@@ -238,7 +252,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * @return get a list of addresses
+     * @return a list of addresses
      */
     public Queue<Address> getAddressList() {
         return addressList;
@@ -253,7 +267,7 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
 
     /**
      * @param location
-     * @return a locations nearby a given Location
+     * @return locations nearby a given Location
      */
     public List<Location> getNearestLocations(Location location) {
         List<Location> locations = new LinkedList<Location>();
@@ -304,16 +318,16 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
     public static double[] getBoundingBox(double lat, double lon, double radius) {
         double result[] = new double[4];
 
-        double R = 6371; // earth radius in km
-        double x1 = lon
+        final double R = 6371; // earth radius in km
+        final double x1 = lon
                 - Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
 
-        double x2 = lon
+        final double x2 = lon
                 + Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
 
-        double y1 = lat + Math.toDegrees(radius / R);
+        final double y1 = lat + Math.toDegrees(radius / R);
 
-        double y2 = lat - Math.toDegrees(radius / R);
+        final double y2 = lat - Math.toDegrees(radius / R);
 
         result[0] = y2;// s
         result[1] = x1;// w
@@ -322,20 +336,34 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         return result;
     }
 
+    /**
+     * calculates the distance between two locations
+     * 
+     * @param location1
+     * @param location2
+     * @return the distance between two locations
+     */
     public static float distFrom(Location location1, Location location2) {
-        double earthRadius = 6371000; // meters
-        double dLat = Math.toRadians(location2.getLatitude() - location1.getLatitude());
-        double dLng = Math.toRadians(location2.getLongitude() - location1.getLongitude());
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+        final double earthRadius = 6371000; // meters
+        final double dLat = Math.toRadians(location2.getLatitude()
+                - location1.getLatitude());
+        final double dLng = Math.toRadians(location2.getLongitude()
+                - location1.getLongitude());
+        final double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
                 + Math.cos(Math.toRadians(location1.getLatitude()))
-                * Math.cos(Math.toRadians(location2.getLatitude())) * Math.sin(dLng / 2)
-                * Math.sin(dLng / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        float dist = (float) (earthRadius * c);
+                * Math.cos(Math.toRadians(location2.getLatitude()))
+                * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        final float dist = (float) (earthRadius * c);
 
         return Math.abs(dist);
     }
 
+    /**
+     * 
+     * @param current
+     *            for the current location
+     */
     public void setCurrent(Location current) {
         this.current = current;
         if (current != null) {
@@ -343,10 +371,15 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         }
     }
 
+    /**
+     * 
+     * @param location
+     * @return a list of addresses for an given location
+     */
     public static Queue<? extends Address> get(Location location) {
         for (Map.Entry<LocationWrapper, Queue<Address>> list : locationSuggestions
                 .entrySet()) {
-            LocationWrapper key = list.getKey();
+            final LocationWrapper key = list.getKey();
             if (key.equals(location)) {
                 return list.getValue();
             }
@@ -354,9 +387,10 @@ public class TagSuggestionHandler extends AsyncTask<String, Void, String> {
         
         for (Map.Entry<LocationWrapper, Queue<Address>> list : locationSuggestions
                 .entrySet()) {
-            LocationWrapper key = list.getKey();
+            final LocationWrapper key = list.getKey();
             if (distFrom(key.getLocation(), location) <= 20) {
-                locationSuggestions.put(new LocationWrapper(location), list.getValue());
+                locationSuggestions.put(new LocationWrapper(location),
+                        list.getValue());
                 return list.getValue();
             }
         }

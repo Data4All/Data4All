@@ -15,16 +15,6 @@
  */
 package io.github.data4all.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.osmdroid.DefaultResourceProxyImpl;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.util.BoundingBoxE6;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Overlay;
-
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.TagSuggestionHandler;
@@ -36,7 +26,17 @@ import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.MathUtil;
-import io.github.data4all.util.Optimizer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Overlay;
+
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -44,7 +44,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ZoomControls;
-import android.widget.ZoomButtonsController;
 
 /**
  * Activity to show an Osm_Element on a Preview Map.
@@ -61,6 +60,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private AbstractDataElement element;
 
     private List<Node> saveElement;
+    
+    private Location location = null ;
 
     /**
      * Standard Constructor
@@ -236,7 +237,8 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         intent.putExtra(OSM, element);
         
         
-        Location location = null ;
+       //set longitude and latitude for OsmElement
+        //-----------------------Steeve----------------------------------------------
         if (element instanceof PolyElement) {
             PolyElement elem = (PolyElement) element;
             
@@ -255,7 +257,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         if(location != null) {
             new TagSuggestionHandler().setCurrent(location);
         }
-
+     //-----------------------------------------------------------------------------------
         if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
                     getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));

@@ -17,11 +17,8 @@ package io.github.data4all.model.data;
 
 import java.io.Serializable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
- * This class contains all the informations of an Address e.g road,
+ * This class contains all the informations about an Address e.g road,
  * house_number, postCode, city, country
  * 
  * @author Steeve
@@ -46,7 +43,7 @@ public class Address implements Serializable {
     // id of an address
     private int addressId;
 
-    // all getter and setter methods
+    // all setter and getter methods
     public void setAddressId(int addressId) {
         this.addressId = addressId;
     }
@@ -112,23 +109,5 @@ public class Address implements Serializable {
     @Override
     public int hashCode() {
         return this.getFullAddress().hashCode();
-    }
-    
-    /**
-     * 
-     * @return 
-     */
-    public String toJson(){
-    	JSONObject json=new JSONObject();
-    	try {
-			json.put("addresseNr", addresseNr);
-			json.put("road", road);
-			json.put("city", city);
-			json.put("postcode", postCode);
-			json.put("country",country);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-    	return json.toString();
     }
 }

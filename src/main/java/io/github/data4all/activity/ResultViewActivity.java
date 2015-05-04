@@ -129,8 +129,6 @@ public class ResultViewActivity extends AbstractActivity implements
  
     private ClassifiedValue classifiedValue;
     
-    public static String tmp;
-
     private Map<Tag, String> map = new LinkedHashMap<Tag, String>();
     
     private View viewFooter;
@@ -442,6 +440,10 @@ public class ResultViewActivity extends AbstractActivity implements
         LastChoiceHandler.getInstance().save(this); */
     }
     
+    /**
+     * 
+     * @return the location of dataElement
+     */
     public Location getLocationFromElement(){
         Location location=null ;
         if (element instanceof PolyElement) {

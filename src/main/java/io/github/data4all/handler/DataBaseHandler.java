@@ -1617,7 +1617,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 	public List<Integer> getLastChoiceId(Integer kategorie) {
 
 		final SQLiteDatabase db = getReadableDatabase();
-		String query = "SELECT " + TAG_IDS + " FROM " + TABLE_LASTCHOICE
+		final String query = "SELECT " + TAG_IDS + " FROM " + TABLE_LASTCHOICE
 				+ " WHERE " + TYPE + " = " + kategorie;
 		final Cursor cursor = db.rawQuery(query, null);
 		String tagIds = null;
@@ -1629,8 +1629,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 		if (tagIds == null) {
 			return null;
 		}
-		List<Integer> result = new LinkedList<Integer>();
-		String[] ids = tagIds.split(",");
+		final List<Integer> result = new LinkedList<Integer>();
+		final String[] ids = tagIds.split(",");
 		for (String id : ids) {
 			result.add(Integer.valueOf(id));
 		}
@@ -1649,16 +1649,16 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 	public void insertOrUpdateLastChoice(Integer kategorie, List<Integer> tagIds) {
 		final SQLiteDatabase db = getReadableDatabase();
 		final ContentValues values = new ContentValues();
-		if (getLastChoiceId(kategorie) == null) {
+		if (this.getLastChoiceId(kategorie) == null) {
 			values.put(KEY_TAGID, kategorie);
-			values.put(KEY_VALUE, join(tagIds, ","));
-			rowID = db.insert(TABLE_TAGMAP, null, values);
+			values.put(KEY_VALUE, this.join(tagIds, ","));
+			db.insert(TABLE_TAGMAP, null, values);
 		} else {
 			values.put(KEY_TAGID, kategorie);
 			values.put(KEY_VALUE, join(tagIds, ","));
 			// update lastchoice set TYPE=kategorie, TAG_IDS=tagIds where
 			// TYPE=kategorie
-			rowID = db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
+			db.update(TABLE_TAGMAP, values, KEY_TAGID + "=?",
 					new String[] { String.valueOf(kategorie) });
 
 		}
@@ -1677,7 +1677,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 		if (elements == null || elements.isEmpty()) {
 			return null;
 		}
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		for (Iterator<Integer> iterator = elements.iterator(); iterator
 				.hasNext();) {
 			Integer integer = (Integer) iterator.next();
@@ -1694,8 +1694,8 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 
 	/**
 	 * insert or update an address in database
-	 * @param location 
-	 * @param addressNr
+	 * @param location of an address
+	 * @param addressNr is for a house_number
 	 * @param road
 	 * @param postCode
 	 * @param city
@@ -1729,7 +1729,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 	
 	/**
 	 * get an address from database based on location
-	 * @param location
+	 * @param location of an address
 	 * @return an address
 	 */
 	public Address getAddressFromDb(Location location) {
@@ -1757,7 +1757,7 @@ public class DataBaseHandler extends SQLiteOpenHelper { // NOSONAR
 			postCode = cursor.getString(3);
 			city = cursor.getString(4);
 			country = cursor.getString(5);
-			Address address = new Address();
+			final Address address = new Address();
 			address.setAddressId(addressId);
 			address.setAddresseNr(houseNumber);
 			address.setRoad(road);

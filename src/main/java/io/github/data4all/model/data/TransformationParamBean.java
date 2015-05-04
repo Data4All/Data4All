@@ -15,12 +15,8 @@
  */
 package io.github.data4all.model.data;
 
-import io.github.data4all.handler.TagSuggestionHandler;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import org.json.JSONArray;
 import org.json.JSONException;

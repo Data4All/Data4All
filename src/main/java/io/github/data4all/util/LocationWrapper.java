@@ -2,12 +2,24 @@ package io.github.data4all.util;
 
 import android.location.Location;
 
+/**
+ * this class helps to compare locations
+ * @author Steeve
+ *
+ */
 public class LocationWrapper {
 
-    Location location;
+    
+    private Location location;
 
+    /**
+     * constructor for LocationWrapper
+     * 
+     * @param current
+     *            location
+     */
     public LocationWrapper(Location current) {
-        this.location=current;
+        this.location = current;
     }
 
     public Location getLocation() {
