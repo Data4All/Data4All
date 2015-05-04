@@ -55,7 +55,7 @@ public class MapMarker extends Marker {
     private long timeStart;
 
     // True when the edit mode is active.
-    private boolean active = false;
+    private boolean active;
 
     // the maximum time difference between action_down and action_up, so that
     // the mode will be changed
@@ -76,8 +76,8 @@ public class MapMarker extends Marker {
     /**
      * Start values for moving.
      */
-    private int xStart = 0;
-    private int yStart = 0;
+    private int xStart;
+    private int yStart;
 
     /**
      * Projection of the mapView.
@@ -116,7 +116,7 @@ public class MapMarker extends Marker {
         } else {
             mInfoWindow = null;
         }
-}
+    }
 
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
@@ -181,8 +181,8 @@ public class MapMarker extends Marker {
         final int xEnd = (int) event.getX();
         final int yEnd = (int) event.getY();
 
-        int x = xEnd - xStart;
-        int y = yEnd - yStart;
+        final int x = xEnd - xStart;
+        final int y = yEnd - yStart;
         pj = mapView.getProjection();
         Point marker = pj.toPixels(point, null);
         marker = new Point(marker.x + x, marker.y + y);
@@ -213,10 +213,13 @@ public class MapMarker extends Marker {
             active = false;
         }
         if (activity instanceof MapPreviewActivity) {
-            ZoomControls zoomControls = (ZoomControls) activity
+            final ZoomControls zoomControls = (ZoomControls) activity
                     .findViewById(R.id.zoomcontrols);
-            int v = active ? View.VISIBLE : View.GONE;
-            zoomControls.setVisibility(v);
+            if (active) {
+                zoomControls.setVisibility(View.VISIBLE);
+            } else {
+                zoomControls.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -233,9 +236,9 @@ public class MapMarker extends Marker {
     @Override
     protected boolean onMarkerClickDefault(Marker marker, MapView mapView) {
         if (!editable) {
-        marker.showInfoWindow();
-        mapView.getController().animateTo(marker.getPosition());
-        return true;
+            marker.showInfoWindow();
+            mapView.getController().animateTo(marker.getPosition());
+            return true;
         } else {
             return super.onMarkerClickDefault(marker, mapView);
         }

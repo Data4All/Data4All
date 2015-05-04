@@ -20,10 +20,11 @@
     <string name="pref_moving_animation_title">Verschieben in der Vorschaukarte</string>
     <string name="pref_moving_animation_summary">Soll die Karte oder das Objekt beim Verschieben auf der Vorschaukarte verschoben werden?</string>
     <string name="pref_moving_animation_dialog_title">Wie soll verschoben werden?</string>
-    <string name="pref_sensor_warning">Sensorenwarnung</string>
-    <string name="pref_sensor_warning_summary">Anzeigen wenn Sensor(en) ungenau</string>
-    <string name="pref_augmented_reality">Augmented Reality</string>
-    <string name="pref_augmented_reality_summary">Bereits gemappte Objekte live im Kamerabild darstellen</string>
-    <string name="pref_english_tags_title">Tags in Englisch</string>
+    
+    <string name="pref_sensor_warning">Zeige Warnungen für die Senoren</string>
+    <string name="pref_sensor_warning_summary">Die Warnungen für die Sensoren zeigen an, ob ein Sensor Rekalibrierung benötigt. Mit Deaktivierung der Checkbox werden diese Warnung ignoriert.</string>
+    
+    <string name="pref_augmented_reality">Zeige Augmented Reality</string>
+    <string name="pref_augmented_reality_summary">Bereits gemappte Objekte werden in der Kamera visualisiert</string>
 
 </resources>
