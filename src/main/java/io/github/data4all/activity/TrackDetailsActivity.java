@@ -140,7 +140,8 @@ public class TrackDetailsActivity extends AbstractActivity implements
      * @return true if it is finished
      */
     private boolean isRemovable(long id) {
-        return trackUtil.loadTrack(id).isFinished();
+        Track tr = trackUtil.loadTrack(id);
+        return (tr != null) ? tr.isFinished() : false;
     }
 
     /**
