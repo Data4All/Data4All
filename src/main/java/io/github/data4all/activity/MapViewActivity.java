@@ -68,9 +68,13 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private ListView drawer;
 
     private GalleryListAdapter drawerAdapter;
-    
+
     private TrackUtil trackUtil;
 
+    /**
+     * BroadcastReceiver to receive signal, if there was a change in the current
+     * track
+     */
     private final BroadcastReceiver TrackChangeReceiver = new BroadcastReceiver() {
 
         @Override
@@ -159,8 +163,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         buttons.add(findViewById(id));
 
         listener = new ButtonRotationListener(this, buttons);
-        
-        trackUtil=new TrackUtil(this);
+
+        trackUtil = new TrackUtil(this);
 
         registerReceiver(TrackChangeReceiver, new IntentFilter(
                 "trackpoint_updated"));
@@ -262,12 +266,13 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
         myLocationOverlay.enableFollowLocation();
 
-        // add osmElements from the database to the map
+        // add osmElements and tracks from the database to the map
         final DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
         List<Track> trackList = db.getAllGPSTracks();
         mapView.addGPSTracksToMap(this, trackList);
         mapView.addOsmElementsToMap(this, list);
+
         // load lastChoice from database
         LastChoiceHandler.load(db);
         db.close();
@@ -366,9 +371,15 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         stopService(new Intent(this, GPSservice.class));
     }
 
-    public void updateTrackInView(long id) {
+    /**
+     * Gets the track to corresponding id and calls {@link
+     * D4AMapView.addGPSTrackToMap()}
+     * 
+     * @param id
+     *            Id of a track
+     */
+    private void updateTrackInView(long id) {
         Track track = trackUtil.loadTrack(id);
         mapView.addGPSTrackToMap(this, track);
-        // mapView.updateTrackOnMap(this, id);
     }
 }

@@ -27,7 +27,6 @@ import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
 import io.github.data4all.model.map.MapTrack;
-import io.github.data4all.util.TrackUtil;
 
 import java.util.List;
 
@@ -315,7 +314,7 @@ public class D4AMapView extends MapView {
 
     /**
      * Adds a polyline which shows the tracks, if they are finished
-     * 
+     * @author sbrede
      * @param ctx
      *            Context
      * @param list
@@ -332,6 +331,13 @@ public class D4AMapView extends MapView {
         }
     }
 
+    /**
+     * Draw a given track as a polyline and adds it to the overlays
+     * @author sbollen
+     * @author sbrede
+     * @param ctx The context
+     * @param track The track which should be drawn
+     */
     public void addGPSTrackToMap(AbstractActivity ctx, Track track) {
         if (track != null && !track.getTrackPoints().isEmpty()) {
             final Polyline trackPath = new MapTrack(ctx, this, track);
@@ -346,14 +352,13 @@ public class D4AMapView extends MapView {
 
             this.getOverlays().add(trackPath);
             this.postInvalidate();
-            Log.d(TAG, "postinvalidate()");
-            
         }
 
     }
 
     /**
-     * @return true if tracks should be viewed in the map
+     * Checks setting if tracks should be viewed
+     * @return true if set
      */
     private boolean viewTrack() {
         PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
