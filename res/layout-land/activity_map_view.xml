@@ -59,6 +59,10 @@
             android:layout_marginRight="10dp"
             android:background="@null"
             android:src="@drawable/ic_cam" />
+        
+                 <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/update"
+            style="@style/imageButtonUpdate" />
 
         <ImageView
             android:id="@+id/imageView1"

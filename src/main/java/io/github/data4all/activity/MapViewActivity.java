@@ -25,6 +25,7 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.upload.ChangesetUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     private GalleryListAdapter drawerAdapter;
 
+    private static long lastTime;
+
     /**
      * Default constructor.
      */
@@ -79,6 +82,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        lastTime = System.currentTimeMillis();
         setContentView(R.layout.activity_map_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (ListView) findViewById(R.id.left_drawer);
@@ -117,7 +121,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
         // Setup the rotation listener
         final List<View> buttons = new ArrayList<View>();
-        
+
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
@@ -128,7 +132,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
         buttons.add(findViewById(id));
-        
+
         id = R.id.to_camera;
         final ImageButton camera = (ImageButton) findViewById(id);
         camera.setOnClickListener(this);
@@ -137,6 +141,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         id = R.id.new_point;
         final ImageButton newPoint = (ImageButton) findViewById(id);
         newPoint.setOnClickListener(this);
+        buttons.add(findViewById(id));
+
+        id = R.id.update;
+        final ImageButton update = (ImageButton) findViewById(id);
+        update.setOnClickListener(this);
+        update.setVisibility(View.GONE);
         buttons.add(findViewById(id));
 
         listener = new ButtonRotationListener(this, buttons);
@@ -155,7 +165,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         inflater.inflate(R.menu.track_menu, menu);
         boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
-        
+
         return result;
     }
 
@@ -201,6 +211,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         case R.id.new_point:
             this.createNewPOI();
             break;
+        case R.id.update:
+            mapView.getTileProvider().clearTileCache();
+            mapView.postInvalidate();
+            lastTime = System.currentTimeMillis();
+            final ImageButton update = (ImageButton) findViewById(R.id.update);
+            update.setVisibility(View.GONE);
         default:
             break;
         }
@@ -235,9 +251,20 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
-        myLocationOverlay.enableFollowLocation();
 
+        myLocationOverlay.enableFollowLocation();
+        try {
+            if (ChangesetUtil.getChangeSet(lastTime,
+                    mapView.getBoundingBox().getLonWestE6(),
+                    mapView.getBoundingBox().getLatSouthE6(),
+                    mapView.getBoundingBox().getLonEastE6(),
+                    mapView.getBoundingBox().getLatNorthE6()).request()) {
+                final ImageButton bt = (ImageButton) findViewById(R.id.update);
+                bt.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "" + e.toString());
+        }
         // add osmElements from the database to the map
         DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
@@ -279,9 +306,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
                     .show();
         } else {
             final Intent intent = new Intent(this, MapPreviewActivity.class);
-            final Node poi =
-                    new Node(-1, myPosition.getLatitude(),
-                            myPosition.getLongitude());
+            final Node poi = new Node(-1, myPosition.getLatitude(),
+                    myPosition.getLongitude());
 
             // Set Type Definition for Intent to Node
             Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);

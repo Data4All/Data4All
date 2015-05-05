@@ -25,6 +25,7 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.bing.BingMapTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -110,7 +111,7 @@ public abstract class MapActivity extends AbstractActivity {
     // Maximal Zoom Level
     protected static final int MAXIMAL_OSM_ZOOM_LEVEL = 22;
 
-    protected static final int MAXIMAL_SATELLITE_ZOOM_LEVEL = 18;
+    protected static final int MAXIMAL_SATELLITE_ZOOM_LEVEL = 20;
 
     // Default Stroke width
     protected static final float DEFAULT_STROKE_WIDTH = 3.0f;
@@ -123,6 +124,8 @@ public abstract class MapActivity extends AbstractActivity {
 
     // Default Satellite Map Tilesource
     protected MapBoxTileSourceV4 satMap;
+    
+    protected BingMapTileSource bingMap;
 
     protected static final String SAT_MAP_NAME = "mapbox.streets-satellite";
 
@@ -160,7 +163,13 @@ public abstract class MapActivity extends AbstractActivity {
         satMap = new MapBoxTileSourceV4(SAT_MAP_NAME, MINIMAL_ZOOM_LEVEL,
                 MAXIMAL_SATELLITE_ZOOM_LEVEL);
         TileSourceFactory.addTileSource(satMap);
+        
+        BingMapTileSource.retrieveBingKey(this);
+        bingMap = new BingMapTileSource(null);
+        bingMap.setStyle("AerialWithLabels");
+        TileSourceFactory.addTileSource(bingMap);
 
+        
         // Add OSM Map TileSource
         osmMap = new MapBoxTileSourceV4(OSM_MAP_NAME, MINIMAL_ZOOM_LEVEL,
                 MAXIMAL_OSM_ZOOM_LEVEL);
@@ -349,7 +358,7 @@ public abstract class MapActivity extends AbstractActivity {
     protected void switchMaps() {
         // switch to OSM Map
         final String mts = mapView.getTileProvider().getTileSource().name();
-        if (SAT_MAP_NAME.equals(mts)) {
+        if ("BingMap".equals(mts)) {
             this.setMapTileSource(osmMap);
             mapView.setMaxZoomLevel(MAXIMAL_OSM_ZOOM_LEVEL);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
@@ -361,7 +370,8 @@ public abstract class MapActivity extends AbstractActivity {
                 setZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
             }
             mapView.setMaxZoomLevel(MAXIMAL_SATELLITE_ZOOM_LEVEL);
-            this.setMapTileSource(satMap);
+            mapView.setMinZoomLevel(MINIMAL_ZOOM_LEVEL);
+            this.setMapTileSource(bingMap);
             final ImageButton bt = (ImageButton) findViewById(R.id.switch_maps);
             bt.setImageResource(R.drawable.ic_map);
             mapView.postInvalidate();
@@ -379,8 +389,6 @@ public abstract class MapActivity extends AbstractActivity {
             Log.i(TAG, "Set Maptilesource to " + src.name());
             mapTileSource = src;
             mapView.setTileSource(src);
-            //this.downloadMapTiles();
-            //this.setUpLoadingScreen();
         }
 
     }
@@ -430,7 +438,7 @@ public abstract class MapActivity extends AbstractActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.getTileProvider().clearTileCache();
+        //mapView.getTileProvider().clearTileCache();
     }
 
 }

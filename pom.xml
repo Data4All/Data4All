@@ -71,11 +71,7 @@
 			<artifactId>tls</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>obp</groupId>
-			<artifactId>osmbonuspack</artifactId>
-			<version>5.1</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
@@ -92,22 +88,31 @@
 			<artifactId>acra</artifactId>
 			<version>4.5.0</version>
 		</dependency>
+		<dependency>
+			<groupId>obp</groupId>
+			<artifactId>osmbonuspack</artifactId>
+			<version>5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osmdroid</groupId>
+			<artifactId>osmdroid-android</artifactId>
+			<version>4.3</version>
+		</dependency>
         <dependency>
-            <groupId>org.osmdroid</groupId>
-            <artifactId>osmdroid-android</artifactId>
-            <version>4.3</version>
+            <groupId>osm3p</groupId>
+            <artifactId>osmdroid-third-party</artifactId>
+            <version>4.2</version>
         </dependency>
-
-        <dependency>
-        	<groupId>commons-io</groupId>
-        	<artifactId>commons-io</artifactId>
-        	<version>2.4</version>
-        </dependency>
-        <dependency>
-        	<groupId>android</groupId>
-        	<artifactId>support_v4</artifactId>
-        	<version>22.0</version>
-        </dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>android</groupId>
+			<artifactId>support_v4</artifactId>
+			<version>22.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>

@@ -146,7 +146,9 @@
     <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Licenses</a></string>
     <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
     <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
-
+    <string name="linkToBingMap"><a href="https://www.microsoft.com/maps/product/terms.html">BingMap</a></string>
+    
+    
     <!-- credits / about / licenses -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
         You can find out more about us and this project on the following pages: </string>
