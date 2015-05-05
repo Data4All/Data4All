@@ -15,10 +15,11 @@
  */
 package io.github.data4all.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.drawing.Point;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class calculates the horizon for the display of the device.

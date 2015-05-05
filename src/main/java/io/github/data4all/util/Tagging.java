@@ -23,14 +23,9 @@ import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
 /**
