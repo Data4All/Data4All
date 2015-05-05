@@ -57,13 +57,13 @@ public class TagSuggestionHandler {
 
     private static final String TAG = "TagSuggestion";
 
-    //the map which contains the location and the corresponding address
+    // the map which contains the location and the corresponding address
     public static final Map<Location, Address> cache = new LinkedHashMap<Location, Address>();
 
-    //location
+    // location
     private static Location location;
 
-    //list of addresses
+    // list of addresses
     private static List<Address> lastSuggestions;
 
     private static int id = 0;
@@ -91,10 +91,11 @@ public class TagSuggestionHandler {
             }
         }).start();
     }
-    
+
     /**
-     * search locations nearby the current location
-     * and get for each locations found a corresponding address
+     * search locations nearby the current location and get for each locations
+     * found a corresponding address
+     * 
      * @return a list of addresses
      */
     private static List<Address> getSuggestion() {
@@ -119,7 +120,8 @@ public class TagSuggestionHandler {
 
     /**
      * 
-     * @param loc location
+     * @param loc
+     *            location
      * @return an address for an given location in cache
      */
     private static Address getCached(Location loc) {
@@ -145,14 +147,19 @@ public class TagSuggestionHandler {
 
             final JSONObject address = jsonObj.getJSONObject("address");
             final Address addresse = new Address();
-            addresse.setAddresseNr(getJsonValue(address, "house_number"));
-            addresse.setRoad(getJsonValue(address, "road"));
-            if (getJsonValue(jsonObj, "road") == null) {
+            if (!jsonObj.has("road") || getJsonValue(jsonObj, "road") == null) {
                 addresse.setRoad(getJsonValue(address, "pedestrian"));
+                addresse.setAddresseNr(getJsonValue(address, "house_number"));
+                addresse.setCity(getJsonValue(address, "city"));
+                addresse.setPostCode(getJsonValue(address, "postcode"));
+                addresse.setCountry(getJsonValue(address, "country"));
+            } else {
+                addresse.setAddresseNr(getJsonValue(address, "house_number"));
+                addresse.setRoad(getJsonValue(address, "road"));
+                addresse.setCity(getJsonValue(address, "city"));
+                addresse.setPostCode(getJsonValue(address, "postcode"));
+                addresse.setCountry(getJsonValue(address, "country"));
             }
-            addresse.setCity(getJsonValue(address, "city"));
-            addresse.setPostCode(getJsonValue(address, "postcode"));
-            addresse.setCountry(getJsonValue(address, "country"));
             Log.i(TAG, "getAddress: " + addresse.getFullAddress());
             return addresse;
         } catch (Exception e) {
