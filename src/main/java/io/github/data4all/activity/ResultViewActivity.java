@@ -25,46 +25,42 @@ import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Localizeable;
+import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.util.Gallery;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.Tagging;
+import io.github.data4all.util.upload.Callback;
+import io.github.data4all.view.AddressSuggestionView;
 import io.github.data4all.view.D4AMapView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -72,11 +68,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.view.ViewGroup;;
-
 /**
  * View after Drawing and Tagging
  * 
@@ -123,7 +116,9 @@ public class ResultViewActivity extends AbstractActivity implements
 	private Button changeClassifiedButton;
 	// The List of all unclassified Tags
 	private List<Tag> unclassifiedTags;
+	private Button addressSuggestions;
 
+	AddressSuggestionView addressSuggestionView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +151,22 @@ public class ResultViewActivity extends AbstractActivity implements
         changeClassifiedButton = (Button) this
                 .findViewById(R.id.buttonClassifiedTag);
         changeClassifiedButton.setOnClickListener(this);
+        
+        addressSuggestions = (Button) this
+                .findViewById(R.id.buttonAddressSuggestions);
+        addressSuggestionView = new AddressSuggestionView(this,
+                addressSuggestions, new Callback<Void>() {
+                    @Override
+                    public int interval() {
+                        return 0;
+                    }
+                    
+                    @Override
+                    public void callback(Void t) {
+                        output();
+                    }
+                });
+        
         final ImageButton resultButton =
                 (ImageButton) this.findViewById(R.id.buttonResult);
         resultButton.setOnClickListener(this);
@@ -199,7 +210,10 @@ public class ResultViewActivity extends AbstractActivity implements
 		});
         if(!element.getTags().isEmpty()){
         	Log.i(TAG, "taggt element");
+        	addressSuggestions.setVisibility(1);
         	output();
+        }else {
+            addressSuggestions.setVisibility(0);
         }
     }
     
@@ -220,6 +234,41 @@ public class ResultViewActivity extends AbstractActivity implements
         changeClassifiedButton.setText(classifiedValue.getLocalizedName(Data4AllApplication.context));
         Log.i(TAG, unclassifiedTags.toString());
         listView.setAdapter(new TwoColumnAdapter(this, keyList, endList));
+        final TwoColumnAdapter twoColumnAdapter = new TwoColumnAdapter(this,
+                keyList, endList);
+        twoColumnAdapter.setSuggestionView(addressSuggestionView);
+        twoColumnAdapter.notifyDataSetChanged();
+        listView.setAdapter(twoColumnAdapter);
+        
+        addressSuggestionView.addKeyMapEntry(getResources(), classifiedValue);
+        addressSuggestionView.setListview(listView);
+        addressSuggestionView.setKeyList(keyList);
+        addressSuggestionView.setElement(element);
+        addressSuggestionView.setLocation(getLocationFromElement());
+    }
+    
+    /**
+     * 
+     * @return the location of dataElement
+     */
+    public Location getLocationFromElement() {
+        Location location = null;
+        if (element instanceof PolyElement) {
+            final PolyElement elem = (PolyElement) element;
+
+            if (elem.getFirstNode() != null) {
+                location = new Location("");
+                location.setLatitude(elem.getFirstNode().getLat());
+                location.setLongitude(elem.getFirstNode().getLon());
+            }
+        } else {
+
+            final Node elem = (Node) element;
+            location = new Location("");
+            location.setLatitude(elem.getLat());
+            location.setLongitude(elem.getLon());
+        }
+        return location;
     }
     
     /**
@@ -316,6 +365,7 @@ public class ResultViewActivity extends AbstractActivity implements
 					ClassifiedTag classiTag = Tagging.getClassifiedTagKey(element);
 					element.removeTag(classiTag);
 					LinkedHashMap<Tag, String> map = new LinkedHashMap<Tag, String>();
+					Log.d("BLUB", "" + element.getTags());
 					map.putAll(element.getTags());
 					element.clearTags();
 					element.addOrUpdateTag(classifiedTag, classifiedValue.getValue());

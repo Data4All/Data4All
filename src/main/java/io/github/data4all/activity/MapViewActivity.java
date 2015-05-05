@@ -18,6 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.GalleryListAdapter;
@@ -35,6 +36,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
@@ -294,6 +296,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
+            final Location location = new Location("overlay");
+            location.setLatitude(myPosition.getLatitude());
+            location.setLongitude(myPosition.getLongitude());
+            TagSuggestionHandler.setLocation(location);
+            
+            
             final Intent intent = new Intent(this, MapPreviewActivity.class);
             final Node poi = new Node(-1, myPosition.getLatitude(),
                     myPosition.getLongitude());

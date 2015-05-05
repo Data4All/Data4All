@@ -16,6 +16,7 @@
 package io.github.data4all.service;
 
 import io.github.data4all.R;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
@@ -156,6 +157,7 @@ public class GPSservice extends Service implements LocationListener {
 
             }
         }
+        
     }
 
     /*

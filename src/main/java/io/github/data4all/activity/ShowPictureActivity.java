@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
@@ -186,6 +187,7 @@ public class ShowPictureActivity extends AbstractActivity {
                     getIntent().getExtras().getParcelable(
                             CapturePictureHandler.TRANSFORM_BEAN);
             intent.putExtra(LOCATION, transformBean.getLocation());
+            TagSuggestionHandler.setLocation(transformBean.getLocation());
         }
 
         if (extras != null
@@ -276,6 +278,7 @@ public class ShowPictureActivity extends AbstractActivity {
             // to the next activity
             final AbstractDataElement osmElement = touchView.create();
             intent.putExtra(OSM_ELEMENT, osmElement);
+        
             startActivityForResult(intent);
         }
     }

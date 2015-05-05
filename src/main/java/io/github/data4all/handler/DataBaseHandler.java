@@ -44,6 +44,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author Kristin Dahnken
  * @author fkirchge
  * @author sbrede
+ * @author steeve
  * @author tbrose
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
