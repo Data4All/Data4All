@@ -25,21 +25,30 @@ import io.github.data4all.model.GalleryListAdapter;
 import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
+import io.github.data4all.service.MapTileService;
+import io.github.data4all.service.OrientationListener;
 import io.github.data4all.util.Optimizer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.content.IntentFilter;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.content.LocalBroadcastManager;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -70,6 +79,27 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     private GalleryListAdapter drawerAdapter;
 
+    private static long lastTime;
+
+    ImageButton updateButton;
+    
+    // Broadcast receiver for receiving status updates from the IntentService
+    private class MapTileReceiver extends BroadcastReceiver {
+        // Prevents instantiation
+        private MapTileReceiver() {
+        }
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to
+        // receive
+
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.hasExtra(OrientationListener.INTENT_CAMERA_UPDATE)) {
+                showButton();
+            }
+        }
+    }
+
     /**
      * The preferences of the application for the shown-state.
      */
@@ -95,6 +125,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        lastTime =  new Date().getTime() - 2*60000;
         setContentView(R.layout.activity_map_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (ListView) findViewById(R.id.left_drawer);
@@ -155,10 +186,25 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         newPoint.setOnClickListener(this);
         buttons.add(findViewById(id));
 
+        id = R.id.update;
+        updateButton = (ImageButton) findViewById(id);
+        updateButton.setOnClickListener(this);
+        updateButton.setVisibility(View.INVISIBLE);
+        buttons.add(findViewById(id));
+
         listener = new ButtonRotationListener(this, buttons);
 
         // Dialog at first start to set the users height
         bodyheightdialog();
+        // The filter's action is BROADCAST_CAMERA
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                MapTileService.BROADCAST_MAP);
+        // Instantiates a new DownloadStateReceiver
+        MapTileReceiver mMapTileReceiver = new MapTileReceiver();
+        // Registers the DownloadStateReceiver and its intent filters
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMapTileReceiver, mStatusIntentFilter);
+
     }
 
     /*
@@ -219,6 +265,12 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         case R.id.new_point:
             this.createNewPOI();
             break;
+        case R.id.update:
+            mapView.getTileProvider().clearTileCache();
+            mapView.postInvalidate();
+            lastTime = new Date().getTime();
+            final ImageButton update = (ImageButton) findViewById(R.id.update);
+            update.setVisibility(View.INVISIBLE);
         default:
             break;
         }
@@ -268,7 +320,25 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
 
+        Intent mapTilesS = new Intent(this, MapTileService.class);
+        mapTilesS.putExtra(MapTileService.TIME, lastTime);
+        mapTilesS.putExtra(MapTileService.WEST, (double) mapView
+                .getBoundingBox().getLonWestE6());
+        mapTilesS.putExtra(MapTileService.SOUTH, (double) mapView
+                .getBoundingBox().getLatSouthE6());
+        mapTilesS.putExtra(MapTileService.EAST, (double) mapView
+                .getBoundingBox().getLonEastE6());
+        mapTilesS.putExtra(MapTileService.NORTH, (double) mapView
+                .getBoundingBox().getLatNorthE6());
+
+        Log.i(TAG, "Start MapTileService");
+        startService(mapTilesS);
         drawerAdapter.invalidate();
+    }
+
+    private void showButton() {
+        updateButton.setVisibility(View.VISIBLE);
+
     }
 
     /*
@@ -284,6 +354,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Disable Actual Location Overlay");
         myLocationOverlay.disableMyLocation();
         myLocationOverlay.disableFollowLocation();
+        stopService(new Intent(this, MapTileService.class));
     }
 
     /**
@@ -362,6 +433,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Stop the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
+        stopService(new Intent(this, MapTileService.class));
+        
     }
 
     /*
