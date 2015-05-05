@@ -156,7 +156,7 @@ public class AddressSuggestionView implements OnClickListener,
             this.addresses = new LinkedHashSet<Address>(currentAdresses);
         }
         if (this.addresses == null || this.addresses.isEmpty()) {
-            array = new String[] {String.valueOf(R.string.addressNoAvailable)};
+            array = new String[] {"no address avalaible"};
             return;
         }
 
