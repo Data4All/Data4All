@@ -16,7 +16,7 @@
 package io.github.data4all.util.upload;
 
 import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.OsmChangeParser;
 import io.github.data4all.util.oauth.exception.OsmException;
@@ -144,7 +144,7 @@ public final class ChangesetUtil {
     public static String getChangesetXml(Context context, int changesetId)
             throws OsmException {
         final DataBaseHandler db = new DataBaseHandler(context);
-        final List<AbstractDataElement> elems = db.getAllDataElements();
+        final List<DataElement> elems = db.getAllDataElements();
         db.close();
 
         final StringBuilder builder = new StringBuilder();
@@ -171,7 +171,7 @@ public final class ChangesetUtil {
      */
     public static boolean needToUpload(Context context) {
         final DataBaseHandler db = new DataBaseHandler(context);
-        final List<AbstractDataElement> elems = db.getAllDataElements();
+        final List<DataElement> elems = db.getAllDataElements();
         return !elems.isEmpty();
     }
 

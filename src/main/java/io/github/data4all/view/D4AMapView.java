@@ -18,7 +18,7 @@ package io.github.data4all.view;
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -133,9 +133,9 @@ public class D4AMapView extends MapView {
      *            the list of OsmElements which should be added to the map
      **/
     public void addOsmElementsToMap(AbstractActivity ctx,
-            List<AbstractDataElement> list) {
+            List<DataElement> list) {
         if (list != null && !list.isEmpty()) {
-            for (AbstractDataElement elem : list) {
+            for (DataElement elem : list) {
                 this.addOsmElementToMap(ctx, elem, false);
             }
         }
@@ -153,7 +153,7 @@ public class D4AMapView extends MapView {
      * 
      **/
     public void addOsmElementToMap(AbstractActivity ctx,
-            AbstractDataElement elem, boolean edit) {
+            DataElement elem, boolean edit) {
         if (elem != null) {
             // if the Element is a Node
             if (elem instanceof Node) {

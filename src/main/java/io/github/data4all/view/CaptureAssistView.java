@@ -20,7 +20,7 @@ import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -84,7 +84,7 @@ public class CaptureAssistView extends View {
     private boolean informationSet;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
-    private List<AbstractDataElement> dataElements;
+    private List<DataElement> dataElements;
     private TransformationParamBean tps;
     private PointToCoordsTransformUtil util;
     private double rotateDegree;
@@ -265,7 +265,7 @@ public class CaptureAssistView extends View {
             Point center = null;
             float distance = maxDistance + 1;
             Boolean isWay = false;
-            for (AbstractDataElement iter : dataElements) {
+            for (DataElement iter : dataElements) {
                 // Check if it's an instance of a PolyElement
                 if (iter instanceof PolyElement) {
                     PolyElement poly = (PolyElement) iter;

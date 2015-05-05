@@ -17,7 +17,7 @@ package io.github.data4all.view;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -51,7 +51,7 @@ import android.view.View;
  * interpreted polygons.<br/>
  * The shown polygon can be modified via deletion, {@link PointMover} or
  * {@link io.github.data4all.model.drawing.RedoUndo UndoRedo} and obtained as a
- * {@link AbstractDataElement}.
+ * {@link DataElement}.
  * 
  * 
  * @author tbrose
@@ -61,7 +61,7 @@ import android.view.View;
  * @see MotionInterpreter
  * @see UndoRedoListener
  * @see PointToCoordsTransformUtil
- * @see AbstractDataElement
+ * @see DataElement
  * @see PointMover
  */
 public class TouchView extends View {
@@ -782,7 +782,7 @@ public class TouchView extends View {
 	 *            create the element with the givin rotation
 	 * @return the created AbstractDataElement (with located nodes)
 	 */
-	public AbstractDataElement create() {
+	public DataElement create() {
 		return interpreter.create(polygon);
 	}
 

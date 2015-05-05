@@ -22,7 +22,7 @@ import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.GalleryListAdapter;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.service.GPSservice;
 import io.github.data4all.util.Optimizer;
@@ -258,7 +258,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
         // add osmElements from the database to the map
         final DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
+        List<DataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
         // load lastChoice from database
         LastChoiceHandler.load(db);
@@ -331,7 +331,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     protected void onWorkflowFinished(Intent data) {
         final DataBaseHandler db = new DataBaseHandler(this);
-        final List<AbstractDataElement> list = db.getAllDataElements();
+        final List<DataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
         db.close();
         mapView.postInvalidate();

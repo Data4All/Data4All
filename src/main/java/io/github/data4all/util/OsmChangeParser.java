@@ -16,7 +16,7 @@
 package io.github.data4all.util;
 
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -72,7 +72,7 @@ public final class OsmChangeParser {
      *            the changesetID required for the upload
      */
     public static void parseElements(Context context,
-            List<AbstractDataElement> elems, long changesetID) {
+            List<DataElement> elems, long changesetID) {
         try {
             final PrintWriter writer = new PrintWriter(new BufferedWriter(
                     new FileWriter(new File(context.getFilesDir()
@@ -96,13 +96,13 @@ public final class OsmChangeParser {
      * @param writer
      *            {@link PrintWriter} object.
      */
-    public static void parseElements(List<AbstractDataElement> elems,
+    public static void parseElements(List<DataElement> elems,
             long changesetID, PrintWriter writer) {
         final List<Node> nodes = new ArrayList<Node>();
         final List<PolyElement> ways = new ArrayList<PolyElement>();
         final List<PolyElement> relations = new ArrayList<PolyElement>();
 
-        for (AbstractDataElement osm : elems) { // NOSONAR
+        for (DataElement osm : elems) { // NOSONAR
             if (osm instanceof Node) {
                 nodes.add((Node) osm);
             }
@@ -128,7 +128,7 @@ public final class OsmChangeParser {
      *            the list of relations which should be uploaded
      */
     private static void handlePolyElement(
-            AbstractDataElement osm, // NOSONAR
+            DataElement osm, // NOSONAR
             List<Node> nodes, List<PolyElement> ways,
             List<PolyElement> relations) {
         final PolyElement poly = (PolyElement) osm;

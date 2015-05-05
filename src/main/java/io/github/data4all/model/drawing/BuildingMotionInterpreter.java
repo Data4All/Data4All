@@ -15,7 +15,7 @@
  */
 package io.github.data4all.model.drawing;
 
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -95,7 +95,7 @@ public class BuildingMotionInterpreter implements MotionInterpreter {
      *      int)
      */
     @Override
-    public AbstractDataElement create(List<Point> polygon) {
+    public DataElement create(List<Point> polygon) {
         final PolyElement element = new PolyElement(-1,
                 PolyElementType.BUILDING);
 

@@ -32,7 +32,7 @@ import android.os.Parcelable;
  * 
  * @author fkirchge
  */
-public class PolyElement extends AbstractDataElement {
+public class PolyElement extends DataElement {
 
     /**
      * type of the PolyElement.

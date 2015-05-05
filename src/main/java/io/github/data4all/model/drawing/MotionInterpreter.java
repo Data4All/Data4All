@@ -15,7 +15,7 @@
  */
 package io.github.data4all.model.drawing;
 
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public interface MotionInterpreter {
      *            the interpreted polygon
      * @return the created AbstractDataModel
      */
-    AbstractDataElement create(List<Point> polygon);
+    DataElement create(List<Point> polygon);
 
     /**
      * Interprets the given motion and apply it to the polygon<br/>

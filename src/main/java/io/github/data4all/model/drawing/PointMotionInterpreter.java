@@ -15,7 +15,7 @@
  */
 package io.github.data4all.model.drawing;
 
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.util.PointToCoordsTransformUtil;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class PointMotionInterpreter implements MotionInterpreter {
      *      int)
      */
     @Override
-    public AbstractDataElement create(List<Point> polygon) {
+    public DataElement create(List<Point> polygon) {
         // The list contains only one Node which then will be returned
         return pointTrans.transform(polygon).get(0);
     }

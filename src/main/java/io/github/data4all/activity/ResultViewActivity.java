@@ -21,7 +21,7 @@ import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.TwoColumnAdapter;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Localizeable;
@@ -96,7 +96,7 @@ public class ResultViewActivity extends AbstractActivity implements
     private MapController mapController;
 
     // The OSM Element
-    private AbstractDataElement element;
+    private DataElement element;
     // The Dialog
     private Dialog alert;
     // The Listview of the Activity
@@ -616,7 +616,7 @@ public class ResultViewActivity extends AbstractActivity implements
      * @param the
      *            Data Element to add
      **/
-    private void addOsmElementToDB(AbstractDataElement dataElement) {
+    private void addOsmElementToDB(DataElement dataElement) {
         final DataBaseHandler db = new DataBaseHandler(this);
         if (dataElement.getOsmId() == -1) {
             db.createDataElement(dataElement);
