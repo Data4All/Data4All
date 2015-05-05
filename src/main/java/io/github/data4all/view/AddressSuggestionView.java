@@ -107,6 +107,7 @@ public class AddressSuggestionView implements OnClickListener,
     private List<String> keyList;
     private Location location;
 
+    //maximum of addresses  allowed
     private static final int MAXNUMBER_OFADDRESSES = 5;
 
     // id of road
@@ -129,7 +130,8 @@ public class AddressSuggestionView implements OnClickListener,
      * @param context
      * @param button
      */
-    public AddressSuggestionView(ResultViewActivity activity, Button button, Callback<Void> onAddressSelect) {
+    public AddressSuggestionView(ResultViewActivity activity, Button button,
+            Callback<Void> onAddressSelect) {
         this.onAddressSelect = onAddressSelect;
         this.setContext(activity);
         this.activity = activity;
@@ -376,8 +378,6 @@ public class AddressSuggestionView implements OnClickListener,
      * saved two line list item
      * 
      * @param key
-     * @param text1
-     *            for a tag
      * @param text2
      *            value of a tag
      */
@@ -412,6 +412,10 @@ public class AddressSuggestionView implements OnClickListener,
         } else {
             this.location = l;
         }
+    }
+
+    public Location getLocation() {
+        return location;
     }
 
 }

@@ -57,10 +57,13 @@ public class TagSuggestionHandler {
 
     private static final String TAG = "TagSuggestion";
 
+    //the map which contains the location and the corresponding address
     public static final Map<Location, Address> cache = new LinkedHashMap<Location, Address>();
 
+    //location
     private static Location location;
 
+    //list of addresses
     private static List<Address> lastSuggestions;
 
     private static int id = 0;
@@ -69,6 +72,10 @@ public class TagSuggestionHandler {
         return lastSuggestions;
     }
 
+    /**
+     * 
+     * @param location
+     */
     public static void setLocation(Location location) {
         Log.i(TAG, "setLocation: " + location);
         TagSuggestionHandler.location = location;
@@ -84,7 +91,12 @@ public class TagSuggestionHandler {
             }
         }).start();
     }
-
+    
+    /**
+     * search locations nearby the current location
+     * and get for each locations found a corresponding address
+     * @return a list of addresses
+     */
     private static List<Address> getSuggestion() {
         List<Location> near = getNearestLocations(location);
         near.add(location);
@@ -105,6 +117,11 @@ public class TagSuggestionHandler {
         return result;
     }
 
+    /**
+     * 
+     * @param loc location
+     * @return an address for an given location in cache
+     */
     private static Address getCached(Location loc) {
         for (Location l : cache.keySet()) {
             if (Math.abs(l.getLatitude() - loc.getLatitude()) < 1e-5
