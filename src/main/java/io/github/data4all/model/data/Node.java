@@ -79,11 +79,6 @@ public class Node extends AbstractDataElement {
         lon = in.readDouble();
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     /**
      * Returns an integer as hashCode for Node objects.
      * 

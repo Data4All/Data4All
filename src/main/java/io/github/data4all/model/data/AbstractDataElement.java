@@ -46,7 +46,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * @param osmId
      *            id to identify the OpenStreetMap object, default value is -1
      */
-    public AbstractDataElement(final long osmId) {
+    protected AbstractDataElement(final long osmId) {
         this.setOsmId(osmId);
         this.tags = new LinkedHashMap<Tag, String>();
     }
@@ -185,6 +185,16 @@ public abstract class AbstractDataElement implements Parcelable {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Describing Contents.
+     * 
+     * @return 0
+     */
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     /**

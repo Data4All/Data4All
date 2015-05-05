@@ -250,16 +250,6 @@ public class PolyElement extends AbstractDataElement {
     }
 
     /**
-     * Describing Contents.
-     * 
-     * @return 0
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
      * Returns the first node of this PolyElement.
      * 
      * @return node
