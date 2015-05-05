@@ -369,6 +369,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Stop the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
+        unregisterReceiver(TrackChangeReceiver);
     }
 
     /**
