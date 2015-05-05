@@ -18,7 +18,6 @@ package io.github.data4all.view;
 import io.github.data4all.R;
 import io.github.data4all.activity.ResultViewActivity;
 import io.github.data4all.handler.TagSuggestionHandler;
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedValue;
@@ -27,15 +26,12 @@ import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.Optimizer;
 import io.github.data4all.util.upload.Callback;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -160,7 +156,7 @@ public class AddressSuggestionView implements OnClickListener,
             this.addresses = new LinkedHashSet<Address>(currentAdresses);
         }
         if (this.addresses == null || this.addresses.isEmpty()) {
-            array = new String[] { "Currently no possibility avalaible" };
+            array = new String[] {String.valueOf(R.string.addressNoAvailable)};
             return;
         }
 
