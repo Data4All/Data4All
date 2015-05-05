@@ -125,6 +125,20 @@ public class TrackDetailsActivity extends AbstractActivity implements
         deleteButton.setOnClickListener(this);
         uploadButton.setOnClickListener(this);
 
+        if (!isRemovable(getIntent().getLongExtra("id", -1))) {
+            uploadButton.setVisibility(View.INVISIBLE);
+            deleteButton.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    /**
+     * Checks if the track is finished
+     * @param id Id of the track
+     * @return true if it is finished
+     */
+    private boolean isRemovable(long id) {
+        return trackUtil.loadTrack(id).isFinished();
     }
 
     /**
@@ -168,8 +182,8 @@ public class TrackDetailsActivity extends AbstractActivity implements
         }
 
     }
-    
-    //TODO docs
+
+    // TODO docs
 
     private void editDescriptionDialog() {
         LayoutInflater factory = LayoutInflater.from(this);
