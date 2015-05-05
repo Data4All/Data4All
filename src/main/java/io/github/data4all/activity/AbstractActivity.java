@@ -41,7 +41,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 /**
  * Global activity for all children activities.

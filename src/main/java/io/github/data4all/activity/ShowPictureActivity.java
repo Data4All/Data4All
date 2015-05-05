@@ -47,10 +47,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -173,7 +169,7 @@ public class ShowPictureActivity extends AbstractActivity {
             }
         });
 
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
 
         if (extras != null
                 && getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {

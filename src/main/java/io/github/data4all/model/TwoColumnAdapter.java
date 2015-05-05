@@ -27,7 +27,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
-
 /**
  * this class is the TwoColumnAdapter.
  * 
@@ -78,10 +77,12 @@ public class TwoColumnAdapter extends BaseAdapter {
         TwoLineListItem twoLineListItem;
 
         if (convertView == null) {
-            final LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            twoLineListItem = (TwoLineListItem) inflater.inflate(
-                    android.R.layout.simple_list_item_2, null);
+            final LayoutInflater inflater =
+                    (LayoutInflater) context
+                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            twoLineListItem =
+                    (TwoLineListItem) inflater.inflate(
+                            android.R.layout.simple_list_item_2, null);
         } else {
             twoLineListItem = (TwoLineListItem) convertView;
         }
@@ -91,9 +92,9 @@ public class TwoColumnAdapter extends BaseAdapter {
 
         text1.setText(listKey.get(position));
         if (listValue.size() > position) {
-        text2.setText(listValue.get(position));
+            text2.setText(listValue.get(position));
         } else {
-        text2.setText("");	
+            text2.setText("");
         }
         if (suggestionView != null) {
            suggestionView.savedTwoLineListItem(listKey.get(position), text2);

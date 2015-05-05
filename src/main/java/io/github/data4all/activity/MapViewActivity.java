@@ -35,8 +35,10 @@ import org.osmdroid.util.GeoPoint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +49,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
@@ -65,6 +69,16 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private ListView drawer;
 
     private GalleryListAdapter drawerAdapter;
+
+    /**
+     * The preferences of the application for the shown-state.
+     */
+    private SharedPreferences prefs;
+
+    /**
+     * defines if its the first use of the app
+     */
+    private boolean firstUse = true;
 
     /**
      * Default constructor.
@@ -119,7 +133,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
         // Setup the rotation listener
         final List<View> buttons = new ArrayList<View>();
-        
+
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
@@ -130,7 +144,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
         buttons.add(findViewById(id));
-        
+
         id = R.id.to_camera;
         final ImageButton camera = (ImageButton) findViewById(id);
         camera.setOnClickListener(this);
@@ -143,6 +157,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
         listener = new ButtonRotationListener(this, buttons);
 
+        // Dialog at first start to set the users height
+        bodyheightdialog();
     }
 
     /*
@@ -155,9 +171,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final MenuInflater inflater = getMenuInflater();
         // Add record button only in this activity
         inflater.inflate(R.menu.track_menu, menu);
-        boolean result = super.onCreateOptionsMenu(menu);
+        final boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
-        
+
         return result;
     }
 
@@ -237,11 +253,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
+
         myLocationOverlay.enableFollowLocation();
 
         // add osmElements from the database to the map
-        DataBaseHandler db = new DataBaseHandler(this);
+        final DataBaseHandler db = new DataBaseHandler(this);
         List<AbstractDataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
         // load lastChoice from database
@@ -287,9 +303,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             
             
             final Intent intent = new Intent(this, MapPreviewActivity.class);
-            final Node poi =
-                    new Node(-1, myPosition.getLatitude(),
-                            myPosition.getLongitude());
+            final Node poi = new Node(-1, myPosition.getLatitude(),
+                    myPosition.getLongitude());
 
             // Set Type Definition for Intent to Node
             Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
@@ -347,5 +362,59 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Stop the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
+    }
+
+    /*
+     * Dialog at first start to set the users height
+     * 
+     * @author konerman
+     */
+    private void bodyheightdialog() {
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences userPrefs = getSharedPreferences("UserPrefs", 0);
+        firstUse = userPrefs.getBoolean("firstUse", true);
+
+        if (firstUse) {
+            RelativeLayout linearLayout = new RelativeLayout(this);
+            final NumberPicker numberPicker = new NumberPicker(this);
+            numberPicker.setMaxValue(250);
+            numberPicker.setMinValue(80);
+            numberPicker.setValue(180);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    50, 50);
+            RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            linearLayout.setLayoutParams(params);
+            linearLayout.addView(numberPicker, numPicerParams);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    this);
+            alertDialogBuilder.setTitle(R.string.pref_bodyheight_dialog_title);
+            alertDialogBuilder
+                    .setMessage(R.string.pref_bodyheight_dialog_message);
+            alertDialogBuilder.setView(linearLayout);
+            alertDialogBuilder.setCancelable(false).setPositiveButton(
+                    R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Log.d(TAG,
+                                    "set bodyheight to: "
+                                            + numberPicker.getValue());
+                            prefs.edit()
+                                    .putString(
+                                            "PREF_BODY_HEIGHT",
+                                            String.valueOf(numberPicker
+                                                    .getValue())).commit();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+            // set firstUse to false so this dialog is not shown again. ever.
+            userPrefs.edit().putBoolean("firstUse", false).commit();
+            firstUse = false;
+        }
     }
 }

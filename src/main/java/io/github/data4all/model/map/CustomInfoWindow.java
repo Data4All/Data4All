@@ -15,21 +15,19 @@
  */
 package io.github.data4all.model.map;
 
-import java.util.List;
-
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
-import io.github.data4all.activity.ResultViewActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
-import io.github.data4all.util.Tagging;
+
+import java.util.List;
 
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
 import org.osmdroid.bonuspack.overlays.InfoWindow;
@@ -39,7 +37,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -104,7 +101,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         this.activity = activity;
         this.element = element;
         this.overlay = overlay;
-        setInfo();
+        this.setInfo();
         int id = R.id.bubble_delete;
         final Button delete = (Button) mView.findViewById(id);
         delete.setOnClickListener(this);
@@ -153,8 +150,8 @@ public class CustomInfoWindow extends BasicInfoWindow implements
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.bubble_delete:
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    mMapView.getContext());
+            final AlertDialog.Builder builder =
+                    new AlertDialog.Builder(mMapView.getContext());
             builder.setMessage(activity.getString(R.string.deleteDialog))
                     .setPositiveButton(activity.getString(R.string.yes), this)
                     .setNegativeButton(activity.getString(R.string.no), this)
@@ -205,7 +202,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
      * Open InfoWindow for the last known OverlayWithIW
      **/
     public void left() {
-        List<Overlay> list = mMapView.getOverlays();
+        final List<Overlay> list = mMapView.getOverlays();
         int i = list.indexOf(overlay);
         Log.d(TAG, "LISTNUMBER " + i);
         Overlay next;
@@ -220,19 +217,19 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         if (next instanceof MapMarker) {
             ((MapMarker) next).showInfoWindow();
         } else {
-            CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
-                    .getInfoWindow();
-            GeoPoint position = MapUtil
-                    .getCenterFromOsmElement(nextWindow.element);
+            final CustomInfoWindow nextWindow =
+                    (CustomInfoWindow) ((OverlayWithIW) next).getInfoWindow();
+            final GeoPoint position =
+                    MapUtil.getCenterFromOsmElement(nextWindow.element);
             nextWindow.open(next, position, 0, 0);
         }
     }
-    
+
     /**
      * Open InfoWindow for the next known OverlayWithIW
      **/
     public void right() {
-        List<Overlay> list = mMapView.getOverlays();
+        final List<Overlay> list = mMapView.getOverlays();
         int i = list.indexOf(overlay);
         Overlay next;
         do {
@@ -246,14 +243,14 @@ public class CustomInfoWindow extends BasicInfoWindow implements
         if (next instanceof MapMarker) {
             ((MapMarker) next).showInfoWindow();
         } else {
-            CustomInfoWindow nextWindow = (CustomInfoWindow) ((OverlayWithIW) next)
-                    .getInfoWindow();
-            GeoPoint position = MapUtil
-                    .getCenterFromOsmElement(nextWindow.element);
+            final CustomInfoWindow nextWindow =
+                    (CustomInfoWindow) ((OverlayWithIW) next).getInfoWindow();
+            final GeoPoint position =
+                    MapUtil.getCenterFromOsmElement(nextWindow.element);
             nextWindow.open(next, position, 0, 0);
         }
     }
-    
+
     /**
      * Set the info of the MapPolyline for the InfoWindow.
      */
@@ -265,7 +262,6 @@ public class CustomInfoWindow extends BasicInfoWindow implements
             final String value = element.getTags().get(tag);
             Log.i(TAG, tag.toString());
             overlay.setTitle(tag.getNamedKey(activity));
-            final Resources resources = activity.getResources();
             final String classifiedValue = tag.getNamedValue(activity, value);
             if (classifiedValue == null) {
                 overlay.setSubDescription(element.getTags().get(tag));

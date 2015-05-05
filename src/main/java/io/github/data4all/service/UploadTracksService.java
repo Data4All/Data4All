@@ -144,17 +144,17 @@ public class UploadTracksService extends IntentService {
 
             if (!stopNext) {
                 for (Track t : gpsTracks) {
-                    TrackParserTask trackParser = new TrackParserTask(t);
-                    String track = trackParser.parseTrack(t);
+                    final TrackParserTask trackParser = new TrackParserTask(t);
+                    final String track = trackParser.parseTrack(t);
                     Log.d(TAG, "parsed track with id: " + t.getID()
                             + " track name: " + t.getTrackName());
                     Log.d(TAG, "xml: " + track.replaceAll("\n", ""));
 
                     if (!stopNext) {
                         //String track = GpxTrackUtil.testTrack();
-                        String description = "dies ist die beschreibung";
-                        String tags = "tag1, tag2, tag3, tag4";
-                        String visibility = "public";
+                        final String description = "dies ist die beschreibung";
+                        final String tags = "tag1, tag2, tag3, tag4";
+                        final String visibility = "public";
                         currentMaxProgress = track.length();
                         send(receiver, MAX_PROGRESS, currentMaxProgress);
                         CloseableUpload upload;

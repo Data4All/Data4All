@@ -5,40 +5,39 @@
     <string name="pref_bodyheight_title">Bodyheight</string>
     <string name="pref_bodyheight_summary">Set your bodyheight</string>
     <string name="pref_bodyheight_dialog_title">Set your bodyheight</string>
-    <string name="pref_bodyheight_dialog_message">Please enter the height in cm</string>
+    <string name="pref_bodyheight_dialog_message">Your bodyheight is crucial to calculate the distance of an object.\n \nPlease enter the height in cm</string>
 
     <integer name="pref_bodyheight_default">180</integer>
-    
+
     <string name="pref_currentuser_title">Current user</string>
-	<string name="pref_currentuser_dialog_title">Logout</string>
+    <string name="pref_currentuser_dialog_title">Logout</string>
     <string name="pref_currentuser_dialog_message">Do you want to logout?</string>
     <string name="pref_currentuser_null">Not logged in</string>
-    
-    <integer name="pref_pointsize_default">5</integer>
-    
-    <string name="pref_pointsize_key" translatable="false">PREF_POINT_SIZE</string>
-    <string name="pref_pointsize_title">Current Pointsize</string>
-    <string name="pref_pointsize_dialog_title">Pointsize</string>
-    <string name="pref_pointsize_dialog_message">Please set a new size for the point.</string>
-    <string name="auto_rotate_title">Auto-rotate Map</string>
 
+    <integer name="pref_pointsize_default">5</integer>
+
+    <string name="pref_pointsize_key" translatable="false">PREF_POINT_SIZE</string>
+    <string name="pref_pointsize_title">Pointsize</string>
+    <string name="pref_pointsize_dialog_title">Pointsize</string>
+    <string name="pref_pointsize_dialog_message">Please set a new size for a point when you draw an object (0 &#8211; 9).</string>
+    <string name="auto_rotate_title">Auto-rotate Map</string>
     <string name="pref_gallery_deletemode_key" translatable="false">PREF_GALLERY_DELETEMODE</string>
     <string name="pref_gallery_deletemode_title">Gallery default delete action</string>
     <string name="pref_gallery_deletemode_summary">Should the image be deleted afterwards?</string>
     <string name="pref_gallery_deletemode_dialog_title">Delete action</string>
-    
     <string name="pref_gallery_deletemode_default">ask</string>
-    
     <string name="pref_moving_animation_key" translatable="false">PREF_MOVING_ANIMATION</string>
     <string name="pref_moving_animation_title">Move object on preview map</string>
     <string name="pref_moving_animation_summary">How should the moving of objects in the preview map be working?</string>
     <string name="pref_moving_animation_dialog_title">Moving animation</string>
     
-    <string name="pref_sensor_warning">Show Sensor Warning</string>
+    <string name="pref_sensor_warning">Sensor Warnings</string> 
+    <string name="pref_sensor_warning_summary">Shows warnings of the sensors if a sensor needs recalibration.</string>
     
-    <string name="pref_augmented_reality">Show Augmented Reality</string>    
+    <string name="pref_augmented_reality">Augmented reality</string>    
     <string name="pref_augmented_reality_summary"> Already mapped objects will be visualized in the camera</string>
 
     <string name="pref_english_tags_key" translatable="false">PREF_ENGLISH_TAGS</string>
-    <string name="pref_english_tags_title">Show tags always in english</string>
+    <string name="pref_english_tags_title">Tags in english</string>
+
 </resources>

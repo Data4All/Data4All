@@ -72,7 +72,7 @@ public class ButtonRotationListener extends OrientationEventListener {
         final int newOrientation = ((orientation + 45) % 360) / 90;
         if (newOrientation != currentOrientation) {
             Log.d("ButtonRotationListener", "New orientation: " + newOrientation);
-            rotate(currentOrientation, newOrientation);
+            this.rotate(currentOrientation, newOrientation);
             currentOrientation = newOrientation;
         }
     }
@@ -88,7 +88,7 @@ public class ButtonRotationListener extends OrientationEventListener {
      * @return The current rotation in degrees
      */
     public int getCurrentRotation() {
-        return toDegree(currentOrientation);
+        return this.toDegree(currentOrientation);
     }
 
     private int toDegree(int orientation) {
@@ -105,7 +105,7 @@ public class ButtonRotationListener extends OrientationEventListener {
      */
     private void rotate(final int from, final int to) {
         for (View view : viewsToRotate) {
-            rotate(view, from, to);
+            this.rotate(view, from, to);
         }
     }
 
@@ -152,7 +152,7 @@ public class ButtonRotationListener extends OrientationEventListener {
                         }
                     }).start();
         } else {
-            view.animate().rotation(toDegree(to))
+            view.animate().rotation(this.toDegree(to))
                     .setInterpolator(new DecelerateInterpolator())
                     .setDuration(500).start();
         }

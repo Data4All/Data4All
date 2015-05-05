@@ -145,7 +145,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
         listener = new ButtonRotationListener(this, buttons);
 
         if (element instanceof PolyElement) {
-            PolyElement elem = (PolyElement) element;
+            final PolyElement elem = (PolyElement) element;
             if (elem.getNodes().size() != 5
                     || elem.getType().equals(PolyElement.PolyElementType.WAY)) {
                 rect.setClickable(false);
@@ -269,7 +269,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
      */
     private void startRectangularPreview(ImageButton btn) {
         if (element instanceof PolyElement) {
-            PolyElement rect = (PolyElement) element;
+            final PolyElement rect = (PolyElement) element;
             if (saveElement == null) {
                 btn.setImageResource(R.drawable.ic_undo);
                 saveElement = new ArrayList<Node>();

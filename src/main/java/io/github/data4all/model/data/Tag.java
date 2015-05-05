@@ -192,7 +192,7 @@ public class Tag {
         final boolean englishName =
         PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                 prefKey, false);
-        return getLocalisedString(context, getNameRessource(), englishName);
+        return this.getLocalisedString(context, getNameRessource(), englishName);
     }
 
     public static String getLocalisedString(Context context, int id,

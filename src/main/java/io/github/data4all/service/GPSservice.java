@@ -138,7 +138,7 @@ public class GPSservice extends Service implements LocationListener {
 
             final TrackPoint last = track.getLastTrackPoint();
 
-            Location lastKnownLoc = new Location("lastTrackPoint");
+            final Location lastKnownLoc = new Location("lastTrackPoint");
 
             if (last != null) {
                 lastKnownLoc.setAltitude(last.getAlt());
