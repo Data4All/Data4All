@@ -327,10 +327,10 @@ public final class ChangesetUtil {
         bbox.add(max_lon);
         bbox.add(max_lat);
 
-        String timeformat = "yyyy-MM-dd'T'HH:mm:ss.SZ";
+        String timeformat = "yyyy-MM-dd'T'HH:mm:ss.SZZZZZ";
         final SimpleDateFormat dateformat = new SimpleDateFormat(timeformat);
         httpParams.setParameter("bbox", bbox);
-        httpParams.setParameter("time", dateformat.format(new Date(time)));
+        httpParams.setParameter("time", dateformat.format(new Date(new Date().getTime() - 60000)));
         httpParams.setParameter("closed", true);
 
         httpGet.setParams(httpParams);

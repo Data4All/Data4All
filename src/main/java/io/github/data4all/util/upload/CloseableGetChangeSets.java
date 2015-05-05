@@ -27,7 +27,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
@@ -73,9 +72,10 @@ public class CloseableGetChangeSets implements HttpCloseable {
                 final InputStream is = response.getEntity().getContent();
                 final BufferedReader in =
                         new BufferedReader(new InputStreamReader(is));
-               //ignoring the first two lines of the response
-                in.readLine();
-                in.readLine();
+               //ignoring the first three lines of the response
+                Log.d("TEST", in.readLine());
+                Log.d("TEST", in.readLine());
+                Log.d("TEST", in.readLine());
                 if(in.readLine().equals(null)){
                     return true;
                 }
@@ -99,7 +99,7 @@ public class CloseableGetChangeSets implements HttpCloseable {
         } finally {
             this.httpClient.getConnectionManager().shutdown();
         }
-        return false;
+        return true;
     }
 
     /*

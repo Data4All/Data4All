@@ -48,7 +48,7 @@ import android.content.Context;
 public final class OsmChangeParser {
 
     private static final String TAG = "OsmChangeParser";
-    private static final String TIMEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SZ";
+    private static final String TIMEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SZZZZZ";
     private static final String TIMESTAMP = "\" timestamp=\"";
     private static final String CHANGESET = "\" changeset=\"";
     private static final String TAGKEY = "<tag k=\"";

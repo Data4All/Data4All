@@ -76,6 +76,9 @@
             android:name=".service.OrientationListener"
             android:enabled="true" />
 
+        <service
+            android:name=".service.MapTileService"
+            android:enabled="true" />
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about" >
