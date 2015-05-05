@@ -134,7 +134,9 @@ public class TrackDetailsActivity extends AbstractActivity implements
 
     /**
      * Checks if the track is finished
-     * @param id Id of the track
+     * 
+     * @param id
+     *            Id of the track
      * @return true if it is finished
      */
     private boolean isRemovable(long id) {
@@ -183,8 +185,10 @@ public class TrackDetailsActivity extends AbstractActivity implements
 
     }
 
-    // TODO docs
-
+    /**
+     * Start an {@link AlertDialog} to change the description of a track. After
+     * clicking positive button, update in database and refresh activity
+     */
     private void editDescriptionDialog() {
         LayoutInflater factory = LayoutInflater.from(this);
         final View view = factory.inflate(
@@ -214,7 +218,7 @@ public class TrackDetailsActivity extends AbstractActivity implements
         adb.setNegativeButton(R.string.CancelButton,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
+                        // do not save changes, return to activity
                         return;
                     }
                 });
@@ -223,6 +227,10 @@ public class TrackDetailsActivity extends AbstractActivity implements
 
     }
 
+    /**
+     * Start an {@link AlertDialog} to change the tags of a track. After
+     * clicking positive button, update in database and refresh activity
+     */
     private void editTagDialog() {
         LayoutInflater factory = LayoutInflater.from(this);
         final View view = factory
@@ -252,7 +260,7 @@ public class TrackDetailsActivity extends AbstractActivity implements
         adb.setNegativeButton(R.string.CancelButton,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
+                        // do not save changes, return to activity
                         return;
                     }
                 });
@@ -261,6 +269,10 @@ public class TrackDetailsActivity extends AbstractActivity implements
 
     }
 
+    /**
+     * Start an {@link AlertDialog} to change the name of a track. After
+     * clicking positive button, update in database and refresh activity
+     */
     private void editNameDialog() {
         LayoutInflater factory = LayoutInflater.from(this);
         final View view = factory.inflate(R.layout.edit_track_name, null);
@@ -288,7 +300,7 @@ public class TrackDetailsActivity extends AbstractActivity implements
         adb.setNegativeButton(R.string.CancelButton,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
+                        // do not save changes, return to activity
                         return;
                     }
                 });
@@ -297,6 +309,12 @@ public class TrackDetailsActivity extends AbstractActivity implements
 
     }
 
+    /**
+     * Finish the activity and restart it again with updated fields in intent
+     * 
+     * @param track
+     *            The updated track
+     */
     private void refreshActivity(Track track) {
         Intent intent = getIntent();
         intent.putExtra("name", track.getTrackName());
