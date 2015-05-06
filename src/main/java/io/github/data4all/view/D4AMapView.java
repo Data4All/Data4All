@@ -322,7 +322,7 @@ public class D4AMapView extends MapView {
      */
     public void addGPSTracksToMap(AbstractActivity ctx, List<Track> list) {
 
-        if (viewTrack() && list != null && !list.isEmpty()) {
+        if (list != null && !list.isEmpty()) {
             for (Track track : list) {
                 if (track != null && track.isFinished()) {
                     addGPSTrackToMap(ctx, track);
@@ -339,7 +339,7 @@ public class D4AMapView extends MapView {
      * @param track The track which should be drawn
      */
     public void addGPSTrackToMap(AbstractActivity ctx, Track track) {
-        if (track != null && !track.getTrackPoints().isEmpty()) {
+        if (viewTrack() && track != null && !track.getTrackPoints().isEmpty()) {
             final Polyline trackPath = new MapTrack(ctx, this, track);
 
             Log.i(TAG, "Set Path Points to " + track.toString());
