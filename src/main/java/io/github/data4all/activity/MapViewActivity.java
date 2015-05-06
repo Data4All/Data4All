@@ -24,10 +24,12 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.GalleryListAdapter;
 import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.service.GPSservice;
 import io.github.data4all.service.MapTileService;
 import io.github.data4all.service.OrientationListener;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.TrackUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,15 +42,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.content.IntentFilter;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.content.LocalBroadcastManager;
-
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -99,6 +99,24 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             }
         }
     }
+    
+    private TrackUtil trackUtil;
+
+    /**
+     * BroadcastReceiver to receive signal, if there was a change in the current
+     * track
+     */
+    private final BroadcastReceiver TrackChangeReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.d(TAG,
+                    "received broadcast with: " + intent.getLongExtra("id", -1)
+                            + "from: " + context.toString());
+            updateTrackInView(intent.getLongExtra("id", -1));
+        }
+    };
 
     /**
      * The preferences of the application for the shown-state.
@@ -193,6 +211,11 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         buttons.add(findViewById(id));
 
         listener = new ButtonRotationListener(this, buttons);
+        
+        trackUtil = new TrackUtil(this);
+
+        registerReceiver(TrackChangeReceiver, new IntentFilter(
+                "trackpoint_updated"));
 
         // Dialog at first start to set the users height
         bodyheightdialog();
@@ -311,6 +334,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // add osmElements from the database to the map
         final DataBaseHandler db = new DataBaseHandler(this);
         List<DataElement> list = db.getAllDataElements();
+        List<Track> trackList = db.getAllGPSTracks();
+        mapView.addGPSTracksToMap(this, trackList);
         mapView.addOsmElementsToMap(this, list);
         // load lastChoice from database
         LastChoiceHandler.load(db);
@@ -434,7 +459,20 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
         stopService(new Intent(this, MapTileService.class));
+        unregisterReceiver(TrackChangeReceiver);
         
+    }
+    
+    /**
+     * Gets the track to corresponding id and calls {@link
+     * D4AMapView.addGPSTrackToMap()}
+     * 
+     * @param id
+     *            Id of a track
+     */
+    private void updateTrackInView(long id) {
+        Track track = trackUtil.loadTrack(id);
+        mapView.addGPSTrackToMap(this, track);
     }
 
     /*

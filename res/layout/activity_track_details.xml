@@ -9,9 +9,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:text="@string/trackname"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textViewTrackDetails"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/textView1"
         android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textView2"
@@ -27,9 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView1"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:text="@string/track_id"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textViewTrackId"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/textView2"
         android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textView3"
@@ -45,9 +45,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView2"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:text="@string/trackpoints"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textViewTrackPointCount"
@@ -55,16 +55,97 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/textView3"
         android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="30dp"
+        android:text="@string/track_tags"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textViewTrackTags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView4"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:hint="@string/track_no_tags"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView4"
+        android:layout_marginTop="30dp"
+        android:text="@string/track_description"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textViewTrackDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView5"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp"
+        android:hint="@string/track_no_description"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/buttonUploadTrack"
+        style="@style/imageButtonUpload"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:layout_marginBottom="30dp"
+        android:contentDescription="@string/UploadButton" />
+
+    <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/buttonDeleteTrack"
+        style="@style/imageButtonDelete"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="false"
+        android:layout_marginBottom="30dp"
+        android:contentDescription="@string/delete" />
+
+    <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/buttonEditTrackName"
+        style="@style/imageButtonEditTrackField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="5dp"
+        android:contentDescription="@string/edit" />
     
     <io.github.data4all.widged.CustomImageButton
-            android:id="@+id/buttonUploadTrack"
-            style="@style/imageButtonUpload"
-            android:contentDescription="@string/UploadButton" />
+        android:id="@+id/buttonEditTrackTags"
+        style="@style/imageButtonEditTrackField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:layout_alignTop="@id/textView4"
+        android:layout_marginRight="5dp"
+        android:contentDescription="@string/edit" />
     
-    <io.github.data4all.widged.CustomImageButton
-            android:id="@+id/buttonDeleteTrack"
-            style="@style/imageButtonDelete"
-            android:contentDescription="@string/delete" />
+     <io.github.data4all.widged.CustomImageButton
+        android:id="@+id/buttonEditTrackDescription"
+        style="@style/imageButtonEditTrackField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:layout_alignTop="@id/textView5"
+        android:layout_marginRight="5dp"
+        android:contentDescription="@string/edit" />
 
 </RelativeLayout>

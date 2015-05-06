@@ -31,7 +31,7 @@ public class TrackUtil {
 
     private Context context;
 
-    private static final String TAG = "TrackUtility";
+    private static final String TAG = "TrackUtil";
 
     public TrackUtil(Context ctx) {
         this.context = ctx;
@@ -43,7 +43,6 @@ public class TrackUtil {
      * @return the track
      */
     public Track startNewTrack() {
-
         // TODO check for active tracks and close them
         db = new DataBaseHandler(context.getApplicationContext());
         Track track = new Track();
@@ -128,7 +127,7 @@ public class TrackUtil {
         }
         db.close();
     }
-    
+
     /**
      * Gets the track for a corresponding id and deletes this track from
      * database.
@@ -136,15 +135,16 @@ public class TrackUtil {
      * @param id
      */
     public void deleteTrack(long id) {
-        DataBaseHandler db = new DataBaseHandler(context.getApplicationContext());
+        DataBaseHandler db = new DataBaseHandler(
+                context.getApplicationContext());
         Track track = db.getGPSTrack(id);
         db.deleteGPSTrack(track);
         db.close();
     }
 
-    
     /**
      * Returns a List of all Tracks from Database.
+     * 
      * @return trackList
      */
     public List<Track> getTracks() {
@@ -164,26 +164,24 @@ public class TrackUtil {
     public Track getLastTrack() {
         db = new DataBaseHandler(context.getApplicationContext());
         List<Track> allGPSTracks = db.getAllGPSTracks();
-        Log.d(TAG, "TrackList" + allGPSTracks.toString());
+        db.close();
         if (!allGPSTracks.isEmpty()) {
             for (Track tr : allGPSTracks) {
                 if (!tr.isFinished()) {
-                    Log.d("TrackUtility", "Continue on last track with id: "
-                            + tr.getID());
-                    db.close();
+                    Log.d(TAG, "Continue on last track with id: " + tr.getID());
                     return tr;
                 }
             }
         }
-        Log.d("TrackUtility", "There is no last opened track.");
-        db.close();
+        Log.d(TAG, "There is no last opened track.");
         return null;
     }
 
-    
     /**
      * Return the number of {@link TrackPoint} of a {@link Track}.
-     * @param track The {@link Track}
+     * 
+     * @param track
+     *            The {@link Track}
      * @return size The number of {@link TrackPoint}
      */
     public int getTrackSize(Track track) {
