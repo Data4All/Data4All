@@ -298,6 +298,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             lastTime = new Date().getTime();
             final ImageButton update = (ImageButton) findViewById(R.id.update);
             update.setVisibility(View.INVISIBLE);
+            break;
         default:
             break;
         }
