@@ -202,10 +202,13 @@ public class TrackUtil {
      */
     public boolean sameTrackPoints(TrackPoint point1, Location loc) {
         final TrackPoint point2 = new TrackPoint(loc);
-        if (point1.getLat() == point2.getLat()
-                && point1.getLon() == point2.getLon()) {
+        int i = Double.compare(point1.getLat(), point2.getLat());
+        int j = Double.compare(point1.getLon(), point2.getLon());
+
+        if (i == 0 && j == 0) {
             return true;
         }
+
         return false;
     }
 }

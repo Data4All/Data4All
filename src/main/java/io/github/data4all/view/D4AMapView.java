@@ -22,9 +22,11 @@ import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.model.map.MapLine;
 import io.github.data4all.model.map.MapMarker;
 import io.github.data4all.model.map.MapPolygon;
+import io.github.data4all.model.map.MapTrack;
 
 import java.util.List;
 
@@ -36,7 +38,9 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -306,6 +310,61 @@ public class D4AMapView extends MapView {
     public void setScrollable(boolean scrollable) {
         this.scrollable = scrollable;
 
+    }
+
+    /**
+     * Adds a polyline which shows the tracks, if they are finished
+     * @author sbrede
+     * @param ctx
+     *            Context
+     * @param list
+     *            List of all tracks
+     */
+    public void addGPSTracksToMap(AbstractActivity ctx, List<Track> list) {
+
+        if (list != null && !list.isEmpty()) {
+            for (Track track : list) {
+                if (track != null && track.isFinished()) {
+                    addGPSTrackToMap(ctx, track);
+                }
+            }
+        }
+    }
+
+    /**
+     * Draw a given track as a polyline and adds it to the overlays
+     * @author sbollen
+     * @author sbrede
+     * @param ctx The context
+     * @param track The track which should be drawn
+     */
+    public void addGPSTrackToMap(AbstractActivity ctx, Track track) {
+        if (viewTrack() && track != null && !track.getTrackPoints().isEmpty()) {
+            final Polyline trackPath = new MapTrack(ctx, this, track);
+
+            Log.i(TAG, "Set Path Points to " + track.toString());
+            trackPath.setPoints(track.getTrackGeoPoints());
+
+            Log.i(TAG, "Set Path Color to " + Color.MAGENTA);
+            trackPath.setColor(Color.MAGENTA);
+            Log.i(TAG, "Set Path Width to " + DEFAULT_STROKE_WIDTH);
+            trackPath.setWidth(4.0f);
+
+            this.getOverlays().add(trackPath);
+            this.postInvalidate();
+        }
+
+    }
+
+    /**
+     * Checks setting if tracks should be viewed
+     * @return true if set
+     */
+    private boolean viewTrack() {
+        PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getContext());
+        return (prefs.getBoolean("view_tracks", false));
     }
 
 }
