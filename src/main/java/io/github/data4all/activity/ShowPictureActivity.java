@@ -22,7 +22,7 @@ import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.Gallery;
@@ -276,7 +276,7 @@ public class ShowPictureActivity extends AbstractActivity {
         } else {
             // create an abstract data element from the given data and pass it
             // to the next activity
-            final AbstractDataElement osmElement = touchView.create();
+            final DataElement osmElement = touchView.create();
             intent.putExtra(OSM_ELEMENT, osmElement);
         
             startActivityForResult(intent);

@@ -18,6 +18,7 @@
     <string name="ok">OK</string>
 	<string name="ignore">Ignore</string>
 	<string name="alwaysIgnore"> Always Ignore</string>
+	<string name="save">Save</string>
 
     <!-- Strings Content Description ImageButtons -->
     <string name="returnToActualPosition">My Position</string>
@@ -48,6 +49,13 @@
     <string name="stopRecordTrack">This will stop and save the current track. Proceed?</string>
     <string name="deleteImage">Delete image</string>
     <string name="deleteImageText">"Do you want to delete the taken image from the gallery?"</string>
+    
+    <string name="editTrackName">"Edit Name"</string>
+    <string name="editTrackTags">"Edit Tags"</string>
+    <string name="editTrackDescription">"Edit Description"</string>
+    <string name="hint_edit_track_tags">"Tags must be separated by a comma"</string>
+    
+    
 
     <!-- for network -->
     <string name="no_network_title">Network unavailable</string>
@@ -144,6 +152,10 @@
     <string name="track_id">Track ID:</string>
     <string name="trackpoints">Trackpoints:</string>
     <string name="trackname">Name:</string>
+    <string name="track_description">Description:</string>
+    <string name="track_tags">Tags:</string>
+    <string name="track_no_description">No description available</string>
+    <string name="track_no_tags">No tags available</string>
     
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Follow us on Facebook</a></string>
@@ -155,7 +167,9 @@
     <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Licenses</a></string>
     <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
     <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
-
+    <string name="linkToBingMap"><a href="https://www.microsoft.com/maps/product/terms.html">BingMap</a></string>
+    
+    
     <!-- credits / about / licenses -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
         You can find out more about us and this project on the following pages: </string>

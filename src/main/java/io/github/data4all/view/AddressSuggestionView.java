@@ -18,7 +18,7 @@ package io.github.data4all.view;
 import io.github.data4all.R;
 import io.github.data4all.activity.ResultViewActivity;
 import io.github.data4all.handler.TagSuggestionHandler;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
@@ -94,7 +94,7 @@ public class AddressSuggestionView implements OnClickListener,
     // listView of all Addresses
     private ListView listView;
     // The OSM Element
-    private AbstractDataElement element;
+    private DataElement element;
     // The Map with the String and the Tag
     private Map<String, Tag> mapTag;
 
@@ -102,6 +102,7 @@ public class AddressSuggestionView implements OnClickListener,
     private ArrayAdapter<String> adapter;
     private List<String> keyList;
     private Location location;
+    private Resources res;
 
     //maximum of addresses  allowed
     private static final int MAXNUMBER_OFADDRESSES = 5;
@@ -156,7 +157,7 @@ public class AddressSuggestionView implements OnClickListener,
             this.addresses = new LinkedHashSet<Address>(currentAdresses);
         }
         if (this.addresses == null || this.addresses.isEmpty()) {
-            array = new String[] {"no address avalaible"};
+            array = new String[] {activity.getResources().getString(R.string.addressNoAvailable)};
             return;
         }
 
@@ -293,7 +294,7 @@ public class AddressSuggestionView implements OnClickListener,
         this.keyList = keyList;
     }
 
-    public void setElement(AbstractDataElement element) {
+    public void setElement(DataElement element) {
         this.element = element;
     }
 

@@ -147,7 +147,7 @@ public class TagSuggestionHandler {
 
             final JSONObject address = jsonObj.getJSONObject("address");
             final Address addresse = new Address();
-            if (!jsonObj.has("road") || getJsonValue(jsonObj, "road") == null) {
+            if (!address.has("road") || getJsonValue(address, "road") == null) {
                 addresse.setRoad(getJsonValue(address, "pedestrian"));
                 addresse.setAddresseNr(getJsonValue(address, "house_number"));
                 addresse.setCity(getJsonValue(address, "city"));

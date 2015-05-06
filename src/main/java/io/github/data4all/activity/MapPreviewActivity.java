@@ -17,10 +17,9 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.Gallery;
@@ -57,7 +56,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private static final String TAG = "MapPreviewActivity";
 
     // The OsmElement which should be added
-    private AbstractDataElement element;
+    private DataElement element;
 
     private List<Node> saveElement;
 
@@ -211,7 +210,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             mapView.getOverlays().add(m);
         }
         final DataBaseHandler db = new DataBaseHandler(this);
-        final List<AbstractDataElement> list = db.getAllDataElements();
+        final List<DataElement> list = db.getAllDataElements();
         list.remove(element);
         mapView.addOsmElementsToMap(this, list);
         db.close();

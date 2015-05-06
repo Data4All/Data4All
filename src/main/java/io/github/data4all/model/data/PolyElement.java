@@ -32,7 +32,7 @@ import android.os.Parcelable;
  * 
  * @author fkirchge
  */
-public class PolyElement extends AbstractDataElement {
+public class PolyElement extends DataElement {
 
     /**
      * type of the PolyElement.
@@ -247,16 +247,6 @@ public class PolyElement extends AbstractDataElement {
                             + "equals newNode");
         }
         return false;
-    }
-
-    /**
-     * Describing Contents.
-     * 
-     * @return 0
-     */
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     /**

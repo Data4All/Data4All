@@ -15,25 +15,26 @@
  */
 package io.github.data4all.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.github.data4all.Data4AllApplication;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
+import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.Point;
 import io.github.data4all.util.HorizonCalculationUtil;
-import io.github.data4all.util.Optimizer;
 import io.github.data4all.util.HorizonCalculationUtil.ReturnValues;
+import io.github.data4all.util.Optimizer;
 import io.github.data4all.util.PointToCoordsTransformUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -41,8 +42,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Paint.Align;
+import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -83,7 +84,7 @@ public class CaptureAssistView extends View {
     private boolean informationSet;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
-    private List<AbstractDataElement> dataElements;
+    private List<DataElement> dataElements;
     private TransformationParamBean tps;
     private PointToCoordsTransformUtil util;
     private double rotateDegree;
@@ -264,7 +265,7 @@ public class CaptureAssistView extends View {
             Point center = null;
             float distance = maxDistance + 1;
             Boolean isWay = false;
-            for (AbstractDataElement iter : dataElements) {
+            for (DataElement iter : dataElements) {
                 // Check if it's an instance of a PolyElement
                 if (iter instanceof PolyElement) {
                     PolyElement poly = (PolyElement) iter;

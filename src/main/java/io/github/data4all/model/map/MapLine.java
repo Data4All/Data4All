@@ -20,7 +20,7 @@ import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
@@ -57,7 +57,7 @@ import android.widget.ZoomControls;
 public class MapLine extends Polyline {
 
     private static final String TAG = "MapLine";
-    private AbstractDataElement element;
+    private DataElement element;
     private D4AMapView mapView;
     private AbstractActivity activity;
     private boolean editable;
@@ -136,7 +136,7 @@ public class MapLine extends Polyline {
      * @param ele
      *            the associated OsmElement
      */
-    public MapLine(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
+    public MapLine(AbstractActivity ctx, D4AMapView mv, DataElement ele) {
         super(ctx);
         this.element = ele;
         this.activity = ctx;
