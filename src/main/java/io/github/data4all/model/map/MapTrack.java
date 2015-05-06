@@ -1,12 +1,10 @@
 package io.github.data4all.model.map;
 
-import org.osmdroid.bonuspack.overlays.Polyline;
-
 import io.github.data4all.activity.AbstractActivity;
-import io.github.data4all.activity.MapViewActivity;
-import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.view.D4AMapView;
+
+import org.osmdroid.bonuspack.overlays.Polyline;
 
 public class MapTrack extends Polyline{
     
