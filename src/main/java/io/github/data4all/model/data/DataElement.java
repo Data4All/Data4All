@@ -29,7 +29,7 @@ import android.os.Parcelable;
  * @author fkirchge
  *
  */
-public abstract class AbstractDataElement implements Parcelable {
+public class DataElement implements Parcelable {
     /**
      * osmId: Used for identifying the OpenStreetMap object, default value is
      * -1.
@@ -46,7 +46,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * @param osmId
      *            id to identify the OpenStreetMap object, default value is -1
      */
-    public AbstractDataElement(final long osmId) {
+    protected DataElement(final long osmId) {
         this.setOsmId(osmId);
         this.tags = new LinkedHashMap<Tag, String>();
     }
@@ -57,7 +57,7 @@ public abstract class AbstractDataElement implements Parcelable {
      * @param in
      *            The Parcel to read from
      */
-    protected AbstractDataElement(Parcel in) {
+    protected DataElement(Parcel in) {
         osmId = in.readLong();
         tags = new LinkedHashMap<Tag, String>();
         final int count = in.readInt();
@@ -188,6 +188,16 @@ public abstract class AbstractDataElement implements Parcelable {
     }
 
     /**
+     * Describing Contents.
+     * 
+     * @return 0
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
      * Writes the osmId and the tags to the given parcel.
      * 
      * @param dest
@@ -228,12 +238,12 @@ public abstract class AbstractDataElement implements Parcelable {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof AbstractDataElement) {
-            if (((AbstractDataElement) obj).getOsmId() == this.osmId) {
+        if (obj instanceof DataElement) {
+            if (((DataElement) obj).getOsmId() == this.osmId) {
                 return true;
             }
         }
         return false;
     }
-
+  
 }

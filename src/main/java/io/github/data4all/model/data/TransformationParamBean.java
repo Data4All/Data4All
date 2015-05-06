@@ -41,7 +41,7 @@ public class TransformationParamBean implements Parcelable {
     private int photoWidth;
     private int photoHeight;
     private Location location;
-
+    
     /**
      * CREATOR that generates instances of {@link TransformationParamBean} from
      * a Parcel.
@@ -79,6 +79,7 @@ public class TransformationParamBean implements Parcelable {
         this.photoHeight = photoHeight;
         this.photoWidth = photoWidth;
         this.location = location;
+        
     }
 
     /**
@@ -207,5 +208,7 @@ public class TransformationParamBean implements Parcelable {
         return new TransformationParamBean(json.getDouble(0),
                 json.getDouble(1), json.getDouble(2), json.getInt(3),
                 json.getInt(4), location);
+        
     }
+
 }

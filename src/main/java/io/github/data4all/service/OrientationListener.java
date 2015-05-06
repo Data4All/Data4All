@@ -79,17 +79,17 @@ public class OrientationListener extends Service implements SensorEventListener 
     // orientation values
     private float[] orientation = new float[ARRAYLENGTH];
 
-    public final static String BROADCAST_CAMERA = "broadcastToCamera";
-    public final static String INTENT_CAMERA_UPDATE = "update";
+    public static final String BROADCAST_CAMERA = "broadcastToCamera";
+    public static final String INTENT_CAMERA_UPDATE = "update";
     // Calibration needed
-    public final static int CALIBRATION_BROKEN_ALL = 300;
-    public final static int CALIBRATION_BROKEN_ACCELEROMETER_0 = 200;
-    public final static int CALIBRATION_BROKEN_ACCELEROMETER_1 = 201;
-    public final static int CALIBRATION_BROKEN_ACCELEROMETER_2 = 202;
-    public final static int CALIBRATION_BROKEN_MAGNETOMETER_0 = 210;
-    public final static int CALIBRATION_BROKEN_MAGNETOMETER_1 = 211;
-    public final static int CALIBRATION_BROKEN_MAGNETOMETER_2 = 212;
-    public final static int CALIBRATION_OK = 100;
+    public static final int CALIBRATION_BROKEN_ALL = 300;
+    public static final int CALIBRATION_BROKEN_ACCELEROMETER_0 = 200;
+    public static final int CALIBRATION_BROKEN_ACCELEROMETER_1 = 201;
+    public static final int CALIBRATION_BROKEN_ACCELEROMETER_2 = 202;
+    public static final int CALIBRATION_BROKEN_MAGNETOMETER_0 = 210;
+    public static final int CALIBRATION_BROKEN_MAGNETOMETER_1 = 211;
+    public static final int CALIBRATION_BROKEN_MAGNETOMETER_2 = 212;
+    public static final int CALIBRATION_OK = 100;
     public static int CALIBRATION_STATUS = CALIBRATION_BROKEN_ALL;
     private int accOk = 0;
     private int magOk = 0;

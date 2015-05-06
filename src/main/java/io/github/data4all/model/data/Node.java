@@ -26,7 +26,7 @@ import android.os.Parcelable;
  * @author fkirchge
  *
  */
-public class Node extends AbstractDataElement {
+public class Node extends DataElement {
 
     /**
      * Latitude of the Node.
@@ -77,11 +77,6 @@ public class Node extends AbstractDataElement {
         super(in);
         lat = in.readDouble();
         lon = in.readDouble();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     /**

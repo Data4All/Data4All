@@ -20,7 +20,7 @@ import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.view.D4AMapView;
 
@@ -49,7 +49,7 @@ public class MapMarker extends Marker {
     private static final String TAG = "MapMarker";
     private D4AMapView mapView;
     private AbstractActivity activity;
-    private AbstractDataElement element;
+    private DataElement element;
     private boolean editable;
     // start time for touch event action_down
     private long timeStart;
@@ -103,7 +103,7 @@ public class MapMarker extends Marker {
      *            the associated OsmElement
      */
     public MapMarker(AbstractActivity ctx, D4AMapView mv,
-            AbstractDataElement ele) {
+            DataElement ele) {
         super(mv, new DefaultResourceProxyImpl(mv.getContext()));
         this.element = ele;
         this.activity = ctx;
@@ -116,7 +116,7 @@ public class MapMarker extends Marker {
         } else {
             mInfoWindow = null;
         }
-}
+    }
 
     @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
@@ -181,8 +181,8 @@ public class MapMarker extends Marker {
         final int xEnd = (int) event.getX();
         final int yEnd = (int) event.getY();
 
-        int x = xEnd - xStart;
-        int y = yEnd - yStart;
+        final int x = xEnd - xStart;
+        final int y = yEnd - yStart;
         pj = mapView.getProjection();
         Point marker = pj.toPixels(point, null);
         marker = new Point(marker.x + x, marker.y + y);
@@ -213,10 +213,13 @@ public class MapMarker extends Marker {
             active = false;
         }
         if (activity instanceof MapPreviewActivity) {
-            ZoomControls zoomControls = (ZoomControls) activity
+            final ZoomControls zoomControls = (ZoomControls) activity
                     .findViewById(R.id.zoomcontrols);
-            int v = active ? View.VISIBLE : View.GONE;
-            zoomControls.setVisibility(v);
+            if (active) {
+                zoomControls.setVisibility(View.VISIBLE);
+            } else {
+                zoomControls.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -233,9 +236,9 @@ public class MapMarker extends Marker {
     @Override
     protected boolean onMarkerClickDefault(Marker marker, MapView mapView) {
         if (!editable) {
-        marker.showInfoWindow();
-        mapView.getController().animateTo(marker.getPosition());
-        return true;
+            marker.showInfoWindow();
+            mapView.getController().animateTo(marker.getPosition());
+            return true;
         } else {
             return super.onMarkerClickDefault(marker, mapView);
         }

@@ -46,8 +46,6 @@
             style="@style/imageButtonDrawArea"
             android:contentDescription="@string/drawArea"
             android:onClick="onClickArea" />
-        <!-- TODO building is not supported yet -->
-        <!-- <ImageButton -->
 
         <io.github.data4all.widged.CustomImageButton
             android:id="@+id/imageButton4"

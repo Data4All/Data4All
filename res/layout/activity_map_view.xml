@@ -36,6 +36,10 @@
             android:id="@+id/to_camera"
             style="@style/imageButtonToCamera"
             android:contentDescription="@string/returnToCamera" />
+        
+         <io.github.data4all.widged.CustomImageButton
+            android:id="@+id/update"
+            style="@style/imageButtonUpdate" />
 
         <ImageView
             android:id="@+id/imageView1"
