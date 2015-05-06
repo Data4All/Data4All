@@ -102,6 +102,7 @@ public class AddressSuggestionView implements OnClickListener,
     private ArrayAdapter<String> adapter;
     private List<String> keyList;
     private Location location;
+    private Resources res;
 
     //maximum of addresses  allowed
     private static final int MAXNUMBER_OFADDRESSES = 5;
@@ -156,7 +157,7 @@ public class AddressSuggestionView implements OnClickListener,
             this.addresses = new LinkedHashSet<Address>(currentAdresses);
         }
         if (this.addresses == null || this.addresses.isEmpty()) {
-            array = new String[] {"no address avalaible"};
+            array = new String[] {activity.getResources().getString(R.string.addressNoAvailable)};
             return;
         }
 

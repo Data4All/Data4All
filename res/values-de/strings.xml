@@ -84,7 +84,7 @@
     <!-- lastChoice -->
     <string name="name_lastchoice">Letzte Wahl</string>
     <string name="selectAddress">Adresse Auswählen</string>
-    <string name="addressNoAvailable">Adresse im moment nicht verfügbar aufgrund Ihre Internet Verbindung</string>
+    <string name="addressNoAvailable">Es konnte keine Adresse vorgeschlagen werden. Überprüfen Sie Ihre Internet Verbindung</string>
 
     <!-- for upload -->
     <string name="upload_success">Erfolgreich hochgeladen</string>

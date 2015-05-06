@@ -86,7 +86,7 @@
     <!-- lastChoice -->
     <string name="name_lastchoice">Dernier choix</string>
      <string name="selectAddress">Choisir une addresse</string>
-     <string name="addressNoAvailable">Addresse actuellement indisponible à cause de votre connexion internet </string>
+     <string name="addressNoAvailable">Aucune addresse n\'a été trouvé à cause de votre connexion internet </string>
 
     <!-- for upload -->
     <string name="upload_success">téléchargement réussi</string>
