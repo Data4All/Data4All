@@ -16,7 +16,6 @@
 package io.github.data4all.service;
 
 import io.github.data4all.R;
-import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
@@ -154,6 +153,11 @@ public class GPSservice extends Service implements LocationListener {
                 trackUtil.addPointToTrack(track, tp);
 
                 trackUtil.updateTrack(track);
+                
+                // send a broadcast to update mapview with current track
+                Intent i = new Intent("trackpoint_updated");
+                i.putExtra("id", track.getID());
+                sendBroadcast(i);
 
             }
         }

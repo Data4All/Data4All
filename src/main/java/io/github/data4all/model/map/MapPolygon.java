@@ -20,7 +20,7 @@ import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.MapUtil;
@@ -60,7 +60,7 @@ public class MapPolygon extends Polygon {
     private static final String TAG = "MapPolygon";
     private AbstractActivity activity;
     private D4AMapView mapView;
-    private AbstractDataElement element;
+    private DataElement element;
     private boolean editable;
     private boolean moveMap;
 
@@ -145,7 +145,7 @@ public class MapPolygon extends Polygon {
      *            the associated OsmElement
      */
     public MapPolygon(AbstractActivity ctx, D4AMapView mv,
-            AbstractDataElement ele) {
+            DataElement ele) {
         super(ctx);
         this.element = ele;
         this.activity = ctx;

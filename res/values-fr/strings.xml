@@ -150,6 +150,8 @@
     <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Licences Apache</a></string>
     <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
     <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
+    <string name="linkToBingMap"><a href="https://www.microsoft.com/maps/product/terms.html">BingMap</a></string>
+    
     
     <!-- credits / about -->
     <string name="aboutText">Nous sommes une pétite équipe d\'étudiants de premier cycle de l\'Université de Brême. 

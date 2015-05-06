@@ -13,10 +13,13 @@
     <string name="pref_pointsize_dialog_title">Punktgröße</string>
     <string name="pref_pointsize_dialog_message">Wie groß sollen die Punkte beim zeichnen dargestellt werden? \n \n \nBitte geben sie die neue Punktgröße an (0 &#8211; 9):</string>
     <string name="auto_rotate_title">Automatische Kartenorientierung</string>
+
     <string name="pref_gallery_deletemode_title">Standard Galerie Löschvorgang</string>
     <string name="pref_gallery_deletemode_summary">Soll das Bild nach dem Taggen gelöscht werden?</string>
     <string name="pref_gallery_deletemode_dialog_title">Standard Löschvorgang</string>
+    
     <string name="pref_gallery_deletemode_default">Frage</string>
+    
     <string name="pref_moving_animation_title">Verschieben in der Vorschaukarte</string>
     <string name="pref_moving_animation_summary">Soll die Karte oder das Objekt beim Verschieben auf der Vorschaukarte verschoben werden?</string>
     <string name="pref_moving_animation_dialog_title">Wie soll verschoben werden?</string>
@@ -26,6 +29,6 @@
     
     <string name="pref_augmented_reality">Augmented Reality</string>
     <string name="pref_augmented_reality_summary">Bereits gemappte Objekte werden im Kamerabild visualisiert</string>
-    
+    <string name="pref_view_tracks">Zeige Tracks in der Karte</string>
   	<string name="pref_english_tags_title">Tags in Englisch</string>
 </resources>

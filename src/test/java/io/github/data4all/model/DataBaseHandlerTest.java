@@ -18,7 +18,7 @@ package io.github.data4all.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -131,7 +131,7 @@ public class DataBaseHandlerTest {
         final double lon = 3.4;
         dbHandler.createDataElement(new Node(1, lat, lon));
 
-        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        DataElement element = dbHandler.getAllDataElements().get(0);
         assertEquals(Node.class, element.getClass());
 
         Node node = (Node) element;
@@ -150,7 +150,7 @@ public class DataBaseHandlerTest {
         toInsert.addNode(polyNode);
         dbHandler.createDataElement(toInsert);
 
-        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        DataElement element = dbHandler.getAllDataElements().get(0);
         assertEquals(PolyElement.class, element.getClass());
 
         PolyElement poly = (PolyElement) element;
@@ -169,7 +169,7 @@ public class DataBaseHandlerTest {
         toInsert.addOrUpdateTag(Tags.getTagWithId(20), "BAR");
         dbHandler.createDataElement(toInsert);
 
-        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        DataElement element = dbHandler.getAllDataElements().get(0);
         assertEquals(toInsert.getTags().size(), element.getTags().size());
         for (Entry<Tag, String> entry : toInsert.getTags().entrySet()) {
             assertTrue(element.getTags().containsKey(entry.getKey()));
@@ -187,7 +187,7 @@ public class DataBaseHandlerTest {
         toUpdate = new Node(toUpdate.getOsmId(), lat, lon);
         dbHandler.updateDataElement(toUpdate);
 
-        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        DataElement element = dbHandler.getAllDataElements().get(0);
         assertEquals(Node.class, element.getClass());
 
         Node node = (Node) element;
@@ -211,7 +211,7 @@ public class DataBaseHandlerTest {
         toUpdate.replaceNodes(Arrays.asList(new Node(1, lat, lon)));
         dbHandler.updateDataElement(toUpdate);
 
-        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        DataElement element = dbHandler.getAllDataElements().get(0);
         assertEquals(PolyElement.class, element.getClass());
 
         PolyElement poly = (PolyElement) element;
@@ -235,7 +235,7 @@ public class DataBaseHandlerTest {
         toUpdate.addOrUpdateTag(Tags.getTagWithId(98), "BAR2");
         dbHandler.updateDataElement(toUpdate);
 
-        AbstractDataElement element = dbHandler.getAllDataElements().get(0);
+        DataElement element = dbHandler.getAllDataElements().get(0);
         assertEquals(toUpdate.getTags().size(), element.getTags().size());
         for (Entry<Tag, String> entry : toUpdate.getTags().entrySet()) {
             assertTrue(element.getTags().containsKey(entry.getKey()));

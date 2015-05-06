@@ -20,7 +20,7 @@ import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.view.D4AMapView;
 
@@ -49,7 +49,7 @@ public class MapMarker extends Marker {
     private static final String TAG = "MapMarker";
     private D4AMapView mapView;
     private AbstractActivity activity;
-    private AbstractDataElement element;
+    private DataElement element;
     private boolean editable;
     // start time for touch event action_down
     private long timeStart;
@@ -103,7 +103,7 @@ public class MapMarker extends Marker {
      *            the associated OsmElement
      */
     public MapMarker(AbstractActivity ctx, D4AMapView mv,
-            AbstractDataElement ele) {
+            DataElement ele) {
         super(mv, new DefaultResourceProxyImpl(mv.getContext()));
         this.element = ele;
         this.activity = ctx;

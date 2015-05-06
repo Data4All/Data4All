@@ -16,21 +16,16 @@
 package io.github.data4all.util;
 
 import io.github.data4all.handler.LastChoiceHandler;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.ClassifiedTag;
 import io.github.data4all.model.data.ClassifiedValue;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
 /**
@@ -105,7 +100,7 @@ public class Tagging {
      * @param keyList The List of Strings in which they are stored
      * @return The keyList with the new Values
      */
-    public static List <String> getUnclassifiedTags(ClassifiedValue value, Context context, List <String> keyList, List <Tag> unclassifiedTags, AbstractDataElement element){
+    public static List <String> getUnclassifiedTags(ClassifiedValue value, Context context, List <String> keyList, List <Tag> unclassifiedTags, DataElement element){
     	List <Tag> tagList = new ArrayList<Tag>();
     	tagList.addAll(Tags.getAllAddressTags());
     	tagList.addAll(Tags.getAllContactTags());
@@ -130,7 +125,7 @@ public class Tagging {
      * @param context The Context
      * @return The final List of all String Values 
      */
-    public static List <String> addUnclassifiedValue(AbstractDataElement element, List<String> endList, List<Tag> unclassifiedTags, Context context) {
+    public static List <String> addUnclassifiedValue(DataElement element, List<String> endList, List<Tag> unclassifiedTags, Context context) {
     	for (int i = 0; i < unclassifiedTags.size(); i++) {
 			if(element.getTags().containsKey(unclassifiedTags.get(i))){
 				endList.add(element.getTagValueWithKey(unclassifiedTags.get(i)));
@@ -154,7 +149,7 @@ public class Tagging {
      * @param element The Abstract Data Element
      * @return The Classified Tag of the Element
      */
-    public static ClassifiedTag getClassifiedTagKey(AbstractDataElement element){
+    public static ClassifiedTag getClassifiedTagKey(DataElement element){
     	if(!element.getTags().isEmpty()){
     		return (ClassifiedTag) element.getTags().keySet().toArray()[0];
     	}
@@ -167,7 +162,7 @@ public class Tagging {
      * @param tag The Classified Tag
      * @return The Classified Value Object
      */
-    public static ClassifiedValue getClassifiedValue(AbstractDataElement element, ClassifiedTag tag){
+    public static ClassifiedValue getClassifiedValue(DataElement element, ClassifiedTag tag){
     	String value = element.getTags().get(tag);
     	List<ClassifiedValue> classifiedValues = tag.getClassifiedValues();
     	for (int i = 0; i < classifiedValues.size(); i++) {
