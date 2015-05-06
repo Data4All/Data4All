@@ -82,8 +82,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     private static long lastTime;
 
     ImageButton updateButton;
-    
+
     public static boolean UPDATECLICKABLE = false;
+
     // Broadcast receiver for receiving status updates from the IntentService
     private class MapTileReceiver extends BroadcastReceiver {
         // Prevents instantiation
@@ -100,7 +101,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             }
         }
     }
-    
+
     private TrackUtil trackUtil;
 
     /**
@@ -144,8 +145,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
-        lastTime =  new Date().getTime();
+
+        lastTime = new Date().getTime();
         setContentView(R.layout.activity_map_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (ListView) findViewById(R.id.left_drawer);
@@ -213,7 +214,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         buttons.add(findViewById(id));
 
         listener = new ButtonRotationListener(this, buttons);
-        
+
         trackUtil = new TrackUtil(this);
 
         registerReceiver(TrackChangeReceiver, new IntentFilter(
@@ -399,8 +400,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             location.setLatitude(myPosition.getLatitude());
             location.setLongitude(myPosition.getLongitude());
             TagSuggestionHandler.setLocation(location);
-            
-            
+
             final Intent intent = new Intent(this, MapPreviewActivity.class);
             final Node poi = new Node(-1, myPosition.getLatitude(),
                     myPosition.getLongitude());
@@ -463,9 +463,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         stopService(new Intent(this, GPSservice.class));
         stopService(new Intent(this, MapTileService.class));
         unregisterReceiver(TrackChangeReceiver);
-        
+
     }
-    
+
     /**
      * Gets the track to corresponding id and calls {@link
      * D4AMapView.addGPSTrackToMap()}

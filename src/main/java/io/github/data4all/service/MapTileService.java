@@ -98,7 +98,7 @@ public class MapTileService extends IntentService {
 
         if (intent != null) {
             long time = intent.getLongExtra(TIME, LASTTIME);
-            if (time - LASTTIME > 5*60000 || MapViewActivity.UPDATECLICKABLE) {
+            if (time - LASTTIME > 5 * 60000 || MapViewActivity.UPDATECLICKABLE) {
                 LASTTIME = time;
                 MapViewActivity.UPDATECLICKABLE = true;
                 double west = intent.getDoubleExtra(WEST, 0);

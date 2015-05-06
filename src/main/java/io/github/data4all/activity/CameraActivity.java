@@ -566,35 +566,43 @@ public class CameraActivity extends AbstractActivity {
         // set title
         switch (OrientationListener.CALIBRATION_STATUS) {
         case OrientationListener.CALIBRATION_OK:
-            alertDialogBuilder.setTitle(R.string.goodSensorCalibrationTitle).setMessage(R.string.goodSensorCalibration);
+            alertDialogBuilder.setTitle(R.string.goodSensorCalibrationTitle)
+                    .setMessage(R.string.goodSensorCalibration);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ALL:
-            alertDialogBuilder.setTitle(R.string.badSensorCalibrationTitle).setMessage(R.string.badSensorCalibration);
+            alertDialogBuilder.setTitle(R.string.badSensorCalibrationTitle)
+                    .setMessage(R.string.badSensorCalibration);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_0:
-            alertDialogBuilder
-                    .setTitle(R.string.badAcceleometerCalibrationTitle).setMessage(R.string.badSensorCalibrationA0);
+            alertDialogBuilder.setTitle(
+                    R.string.badAcceleometerCalibrationTitle).setMessage(
+                    R.string.badSensorCalibrationA0);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_1:
-            alertDialogBuilder
-                    .setTitle(R.string.badAcceleometerCalibrationTitle).setMessage(R.string.badSensorCalibrationA1);
+            alertDialogBuilder.setTitle(
+                    R.string.badAcceleometerCalibrationTitle).setMessage(
+                    R.string.badSensorCalibrationA1);
             break;
         case OrientationListener.CALIBRATION_BROKEN_ACCELEROMETER_2:
-            alertDialogBuilder
-                    .setTitle(R.string.badAcceleometerCalibrationTitle).setMessage(R.string.badSensorCalibrationA2);
+            alertDialogBuilder.setTitle(
+                    R.string.badAcceleometerCalibrationTitle).setMessage(
+                    R.string.badSensorCalibrationA2);
             break;
         case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_0:
-            alertDialogBuilder
-                    .setTitle(R.string.badMagnetometerCalibrationTitle).setMessage(R.string.badSensorCalibrationM0);
+            alertDialogBuilder.setTitle(
+                    R.string.badMagnetometerCalibrationTitle).setMessage(
+                    R.string.badSensorCalibrationM0);
             break;
         case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_1:
-            alertDialogBuilder
-                    .setTitle(R.string.badMagnetometerCalibrationTitle).setMessage(R.string.badSensorCalibrationM1);
+            alertDialogBuilder.setTitle(
+                    R.string.badMagnetometerCalibrationTitle).setMessage(
+                    R.string.badSensorCalibrationM1);
             break;
         case OrientationListener.CALIBRATION_BROKEN_MAGNETOMETER_2:
-            alertDialogBuilder
-                    .setTitle(R.string.badMagnetometerCalibrationTitle).setMessage(R.string.badSensorCalibrationM2);
-            break;        
+            alertDialogBuilder.setTitle(
+                    R.string.badMagnetometerCalibrationTitle).setMessage(
+                    R.string.badSensorCalibrationM2);
+            break;
         }
         // set dialog message
         alertDialogBuilder

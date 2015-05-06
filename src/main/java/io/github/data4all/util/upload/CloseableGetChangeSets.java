@@ -30,7 +30,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
- * This class provides  a get method of the changesets. 
+ * This class provides a get method of the changesets.
  * 
  * @author Richard
  */
@@ -70,17 +70,17 @@ public class CloseableGetChangeSets implements HttpCloseable {
             final int code = response.getStatusLine().getStatusCode();
             if (code == HttpStatus.SC_OK) {
                 final InputStream is = response.getEntity().getContent();
-                final BufferedReader in =
-                        new BufferedReader(new InputStreamReader(is));
-               //ignoring the first three lines of the response
+                final BufferedReader in = new BufferedReader(
+                        new InputStreamReader(is));
+                // ignoring the first three lines of the response
                 Log.d("TEST", in.readLine());
                 Log.d("TEST", in.readLine());
                 Log.d("TEST", in.readLine());
-                if(in.readLine().equals(null)){
+                if (in.readLine() == null) {
                     return true;
                 }
                 return false;
-                
+
             } else {
                 throw new OsmException("Wrong statusCode returned: " + code);
             }

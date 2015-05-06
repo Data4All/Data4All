@@ -315,7 +315,7 @@ public final class ChangesetUtil {
      * @return HttpGet with Params
      */
     private static HttpGet getChangesetGet(long time, double min_lon,
-            double min_lat, double max_lon, double max_lat)  {
+            double min_lat, double max_lon, double max_lat) {
         final OAuthParameters params = OAuthParameters.CURRENT;
         final HttpGet httpGet = new HttpGet(params.getScopeUrl()
                 + "api/0.6/changesets");
