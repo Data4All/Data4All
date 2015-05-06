@@ -153,9 +153,15 @@ public class GPSservice extends Service implements LocationListener {
                 trackUtil.addPointToTrack(track, tp);
 
                 trackUtil.updateTrack(track);
+                
+                // send a broadcast to update mapview with current track
+                Intent i = new Intent("trackpoint_updated");
+                i.putExtra("id", track.getID());
+                sendBroadcast(i);
 
             }
         }
+        
     }
 
     /*

@@ -108,7 +108,7 @@ public class RingBuffer<T> {
      * 
      * @return the array with all Data.
      */
-    public List getAll() {
+    public List<T> getAll() {
         return Arrays.asList(buffer);
     }
 

@@ -16,7 +16,7 @@
 package io.github.data4all.handler;
 
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -44,6 +44,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author Kristin Dahnken
  * @author fkirchge
  * @author sbrede
+ * @author steeve
  * @author tbrose
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
@@ -57,10 +58,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         NODE(0, Node.class), POLYELEMENT(1, PolyElement.class);
 
         private final int id;
-        private Class<? extends AbstractDataElement> clazz;
+        private Class<? extends DataElement> clazz;
 
         private DataElementType(int id,
-                Class<? extends AbstractDataElement> clazz) {
+                Class<? extends DataElement> clazz) {
             this.id = id;
             this.clazz = clazz;
         }
@@ -74,7 +75,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             return null;
         }
 
-        private static DataElementType fromElement(AbstractDataElement element) {
+        private static DataElementType fromElement(DataElement element) {
             for (DataElementType type : values()) {
                 if (type.clazz == element.getClass()) {
                     return type;
@@ -258,16 +259,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * This method creates and stores a new data element in the database. The
-     * data is taken from the {@link AbstractDataElement} object that is passed
+     * data is taken from the {@link DataElement} object that is passed
      * to the method.
      * 
      * @author tbrose
      * 
      * @param dataElement
-     *            the {@link AbstractDataElement} object from which the data
+     *            the {@link DataElement} object from which the data
      *            will be taken.
      */
-    public void createDataElement(AbstractDataElement dataElement) {
+    public void createDataElement(DataElement dataElement) {
         final SQLiteDatabase db = getWritableDatabase();
         long nextId = this.getNextId(TABLE_DATAELEMENT, KEY_ID);
 
@@ -298,7 +299,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.insert(TABLE_POLYELEMENT, null, polyValues);
         } else {
             throw new IllegalArgumentException("Unknown subtype of "
-                    + AbstractDataElement.class.getSimpleName() + ": "
+                    + DataElement.class.getSimpleName() + ": "
                     + dataElement.getClass().getName());
         }
 
@@ -357,10 +358,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @author tbrose
      * 
      * @param dataElement
-     *            the {@link AbstractDataElement} object whose data should be
+     *            the {@link DataElement} object whose data should be
      *            deleted.
      */
-    public void deleteDataElement(AbstractDataElement dataElement) {
+    public void deleteDataElement(DataElement dataElement) {
         final SQLiteDatabase db = getWritableDatabase();
 
         final String isId = "=" + dataElement.getOsmId();
@@ -395,11 +396,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @author tbrose
      * 
      * @param dataElement
-     *            the {@link AbstractDataElement} object for which the data
+     *            the {@link DataElement} object for which the data
      *            should be updated.
      * @return the number of rows that have been updated.
      */
-    public void updateDataElement(AbstractDataElement dataElement) {
+    public void updateDataElement(DataElement dataElement) {
         // Maybe there is an intelligent way to do this ...
         this.deleteDataElement(dataElement);
         this.createDataElement(dataElement);
@@ -407,15 +408,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * This method returns a list of all data elements stored in the database
-     * and creates corresponding {@link AbstractDataElement} objects.
+     * and creates corresponding {@link DataElement} objects.
      * 
      * @author tbrose
      * 
      * @return a list of data elements.
      */
-    public List<AbstractDataElement> getAllDataElements() {
-        final List<AbstractDataElement> elements =
-                new ArrayList<AbstractDataElement>();
+    public List<DataElement> getAllDataElements() {
+        final List<DataElement> elements =
+                new ArrayList<DataElement>();
 
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor elementCursor =
@@ -423,7 +424,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         // Read all DataElements
         while (elementCursor.moveToNext()) {
-            AbstractDataElement element = null;
+            DataElement element = null;
             final int elementId = elementCursor.getInt(0);
             final DataElementType elementClass =
                     DataElementType.fromId(elementCursor.getInt(1));
@@ -457,13 +458,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
             } else {
                 throw new IllegalStateException("Unknown subtype of "
-                        + AbstractDataElement.class.getSimpleName() + ": id="
+                        + DataElement.class.getSimpleName() + ": id="
                         + elementCursor.getInt(1));
             }
 
             if (element == null) {
                 throw new IllegalStateException(
-                        AbstractDataElement.class.getSimpleName()
+                        DataElement.class.getSimpleName()
                                 + " with the id " + elementId
                                 + " cannot be read");
             } else {
@@ -506,7 +507,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * This method deletes all entries of the {@link AbstractDataElement} table.
+     * This method deletes all entries of the {@link DataElement} table.
      * 
      * @author tbrose
      */

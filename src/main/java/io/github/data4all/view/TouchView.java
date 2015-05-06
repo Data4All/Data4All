@@ -17,7 +17,7 @@ package io.github.data4all.view;
 
 import io.github.data4all.R;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
 import io.github.data4all.model.drawing.BuildingMotionInterpreter;
 import io.github.data4all.model.drawing.DrawingMotion;
@@ -51,7 +51,7 @@ import android.view.View;
  * interpreted polygons.<br/>
  * The shown polygon can be modified via deletion, {@link PointMover} or
  * {@link io.github.data4all.model.drawing.RedoUndo UndoRedo} and obtained as a
- * {@link AbstractDataElement}.
+ * {@link DataElement}.
  * 
  * 
  * @author tbrose
@@ -61,7 +61,7 @@ import android.view.View;
  * @see MotionInterpreter
  * @see UndoRedoListener
  * @see PointToCoordsTransformUtil
- * @see AbstractDataElement
+ * @see DataElement
  * @see PointMover
  */
 public class TouchView extends View {
@@ -151,13 +151,13 @@ public class TouchView extends View {
 	/**
 	 * is the polygon activated
 	 */
-	private boolean polygonclicked;
+	private boolean polygonIsClick;
 
 	/**
 	 * The drawing size of a point (calculating with the density for same result
 	 * on each device)
 	 */
-	private int pointRadius = (int) (getPointsize() * getResources()
+	private int pointRadius = (int) (this.getPointsize() * getResources()
 			.getDisplayMetrics().density);
 
 	/**
@@ -177,10 +177,10 @@ public class TouchView extends View {
 	/**
 	 * Standard strings for actions
 	 */
-	static final String add = "ADD";
-	static final String delete = "DELETE";
-	static final String moveFrom = "MOVE_FROM";
-	static final String moveTo = "MOVE_TO";
+	private static final String add = "ADD";
+	private static final String delete = "DELETE";
+	private static final String moveFrom = "MOVE_FROM";
+	private static final String moveTo = "MOVE_TO";
 
 	/**
 	 * Simple constructor to use when creating a view from code.
@@ -273,6 +273,15 @@ public class TouchView extends View {
 		}
 	}
 
+	/**
+	 * Method to call all methods to check for redo,undo etc.
+	 */
+	private void checker() {
+		this.undoUseable();
+		this.redoUseable();
+		this.undoRedoListener.okUseable(this.hasEnoughNodes());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -281,10 +290,6 @@ public class TouchView extends View {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		final int action = event.getAction();
-		// TODO: dadurch wird jeglicher input Ã¼berm horizont verhindert. so
-		// auch
-		// das verschieben
-		// besser beim hinzufÃ¼gen von punkten Ã¼berprÃ¼fen?
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 			currentMotion = new DrawingMotion();
@@ -293,9 +298,7 @@ public class TouchView extends View {
 		case MotionEvent.ACTION_UP:
 			this.endMotion(event);
 			polygon = newPolygon;
-			this.undoUseable();
-			this.redoUseable();
-			this.undoRedoListener.okUseable(hasEnoughNodes());
+			checker();
 			break;
 		case MotionEvent.ACTION_MOVE:
 			this.moveMotion(event);
@@ -310,31 +313,26 @@ public class TouchView extends View {
 	private void startMotion(MotionEvent event) {
 		if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
 				.getY())))) {
-			this.lookUpPoint = lookUp(event.getX(), event.getY(),
+			this.lookUpPoint = this.lookUp(event.getX(), event.getY(),
 					pointTolerance);
-			if (!polygonclicked && lookUpPoint == null) {
-				addPointOnLine(new Point(event.getX(), event.getY()));
+			if (!polygonIsClick && lookUpPoint == null) {
+				this.addPointOnLine(new Point(event.getX(), event.getY()));
 			}
 			if (lookUpPoint != null) {
 
-				this.mover = movePoint(lookUpPoint);
+				this.mover = this.movePoint(lookUpPoint);
 				startPoint = lookUpPoint;
 				lookUpPoint = null;
-				if (!polygonclicked) {
+				if (!polygonIsClick) {
 					isDelete = true;
 				}
 			} else {
-
 				startPoint = new Point(event.getX(), event.getY());
 				movingPoint = startPoint;
-				if (!isOnLine && !polygonclicked) {
-					if (!insidePolygon(startPoint)) {
-						currentMotion.addPoint(event.getX(), event.getY());
-						newPolygon = interpreter.interprete(polygon,
-								currentMotion);
-					}
+				if (!isOnLine && !polygonIsClick && !insidePolygon(startPoint)) {
+					currentMotion.addPoint(event.getX(), event.getY());
+					newPolygon = interpreter.interprete(polygon, currentMotion);
 				}
-
 			}
 		}
 	}
@@ -342,8 +340,8 @@ public class TouchView extends View {
 	private void moveMotion(MotionEvent event) {
 		float offsetX = movingPoint.getX() - event.getX();
 		float offsetY = movingPoint.getY() - event.getY();
-		if (mover == null && polygonclicked) {
-			movePolygon(offsetX, offsetY);
+		if (mover == null && polygonIsClick) {
+			this.movePolygon(offsetX, offsetY);
 			movingPoint = new Point(event.getX(), event.getY());
 		} else if (!(cameraAssistView.overHorizont(new Point(event.getX(),
 				event.getY())))) {
@@ -356,7 +354,6 @@ public class TouchView extends View {
 							mover.getIdx());
 				}
 			} else {
-
 				if (Math.abs(offsetX) > 5 && Math.abs(offsetY) > 5) {
 					currentMotion.addPoint(event.getX(), event.getY());
 					newPolygon = interpreter.interprete(polygon, currentMotion);
@@ -371,7 +368,7 @@ public class TouchView extends View {
 			if (polygon.size() > 0 && mover == null
 					&& startPoint.getX() - event.getX() < 5
 					&& startPoint.getY() - event.getY() < 5) {
-				polygonclicked(insidePolygon(startPoint));
+				this.polygonclicked(this.insidePolygon(startPoint));
 			}
 
 			if (isDelete) {
@@ -390,13 +387,19 @@ public class TouchView extends View {
 		}
 	}
 
+	/**
+	 * Method to check or uncheck a polygon as clicked
+	 * 
+	 * @param clicked
+	 *            boolean if there was a click happend or not inside the polygon
+	 */
 	public void polygonclicked(boolean clicked) {
-		if (polygonclicked && clicked) {
-			polygonclicked = false;
-		} else if (!polygonclicked && clicked) {
-			polygonclicked = true;
+		if (polygonIsClick && clicked) {
+			polygonIsClick = false;
+		} else if (!polygonIsClick && clicked) {
+			polygonIsClick = true;
 		}
-		if (polygonclicked) {
+		if (polygonIsClick) {
 			areaPaint.setColor(Color.GREEN);
 			areaPaint.setAlpha(100);
 		} else {
@@ -406,7 +409,7 @@ public class TouchView extends View {
 	}
 
 	/**
-	 * Adds a Point on a line, if there is a line.</br>
+	 * Adds a Point on a line, if there is a line.
 	 * 
 	 * uses isOnALine() to validate that the Point is on a existing line
 	 * 
@@ -421,18 +424,19 @@ public class TouchView extends View {
 		final int tolerance = (int) (5 * getResources().getDisplayMetrics().density);
 		if (polygon.size() >= 3) {
 			for (int i = 0; i < polygon.size() - 1; i++) {
-				if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
+				if (this.isOnALine(polygon.get(i), polygon.get(i + 1), p,
+						tolerance)) {
 					Log.d("", "Point is on a Line");
 					polygon.add(i + 1, p);
-					redoUndo.add(p, add, i+1);
+					redoUndo.add(p, add, i + 1);
 					lookUpPoint = p;
 					isOnLine = true;
 					return true;
 				}
 			}
 			// check line between first and last point.
-			if (isOnALine(polygon.get(0), polygon.get(polygon.size() - 1), p,
-					tolerance)) {
+			if (this.isOnALine(polygon.get(0), polygon.get(polygon.size() - 1),
+					p, tolerance)) {
 				polygon.add(p);
 				redoUndo.add(p, add, polygon.size() - 1);
 				lookUpPoint = p;
@@ -460,8 +464,8 @@ public class TouchView extends View {
 	 * @return true if point C is on/near the Line between A and B
 	 */
 	private boolean isOnALine(Point a, Point b, Point c, double tolerance) {
-		final double distacbc = distance(a, c) + distance(b, c);
-		final double ergebnis = Math.abs(distacbc - distance(a, b));
+		final double distacbc = this.distance(a, c) + distance(b, c);
+		final double ergebnis = Math.abs(distacbc - this.distance(a, b));
 		if (ergebnis < tolerance) {
 			return true;
 		}
@@ -512,7 +516,8 @@ public class TouchView extends View {
 	 *
 	 */
 	private boolean insidePolygon(Point test) {
-		int i, j;
+		int i;
+		int j;
 		boolean result = false;
 		for (i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
 			if ((polygon.get(i).getY() > test.getY()) != (polygon.get(j).getY() > test
@@ -680,11 +685,12 @@ public class TouchView extends View {
 		Point point = redoUndo.redo();
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if (action.equals(add)) {
-			newPolygon.add(location,point);
-			if(interpreter instanceof BuildingMotionInterpreter && redoUndo.getCurrent()== 3){
+			newPolygon.add(location, point);
+			if (interpreter instanceof BuildingMotionInterpreter
+					&& redoUndo.getCurrent() == 3) {
 				location = redoUndo.getLocation();
 				point = redoUndo.redo();
-				newPolygon.add(location,point);
+				newPolygon.add(location, point);
 			}
 		}
 		if (action.equals(delete)) {
@@ -715,10 +721,12 @@ public class TouchView extends View {
 		Point point = redoUndo.undo();
 		final String action = redoUndo.getAction();
 		final int location = redoUndo.getLocation();
-		Log.d(this.getClass().getSimpleName(), action + " LOCATION: " + location);
+		Log.d(this.getClass().getSimpleName(), action + " LOCATION: "
+				+ location);
 		if (action.equals(add)) {
 			newPolygon.remove(point);
-			if(interpreter instanceof BuildingMotionInterpreter && redoUndo.getCurrent()== 3){
+			if (interpreter instanceof BuildingMotionInterpreter
+					&& redoUndo.getCurrent() == 3) {
 				point = redoUndo.undo();
 				newPolygon.remove(point);
 			}
@@ -774,7 +782,7 @@ public class TouchView extends View {
 	 *            create the element with the givin rotation
 	 * @return the created AbstractDataElement (with located nodes)
 	 */
-	public AbstractDataElement create() {
+	public DataElement create() {
 		return interpreter.create(polygon);
 	}
 
@@ -791,10 +799,10 @@ public class TouchView extends View {
 			this.undoUseable();
 			this.redoUseable();
 			this.undoRedoListener.okUseable(hasEnoughNodes());
-			if (polygonclicked) {
+			if (polygonIsClick) {
 				areaPaint.setColor(Color.BLUE);
 				areaPaint.setAlpha(100);
-				polygonclicked = false;
+				polygonIsClick = false;
 			}
 		}
 	}

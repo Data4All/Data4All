@@ -19,7 +19,7 @@ import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.util.Gallery;
@@ -56,9 +56,11 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     private static final String TAG = "MapPreviewActivity";
 
     // The OsmElement which should be added
-    private AbstractDataElement element;
+    private DataElement element;
 
     private List<Node> saveElement;
+
+    private Location location;
 
     /**
      * Standard Constructor
@@ -208,7 +210,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             mapView.getOverlays().add(m);
         }
         final DataBaseHandler db = new DataBaseHandler(this);
-        final List<AbstractDataElement> list = db.getAllDataElements();
+        final List<DataElement> list = db.getAllDataElements();
         list.remove(element);
         mapView.addOsmElementsToMap(this, list);
         db.close();
@@ -216,7 +218,10 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
     }
 
     /*
-     * Starts new Tagactivity with Osm Object and Type Definition in the Intent
+     * Starts new ResultViewActivity with elememt and Type Definition in the
+     * Intent.
+     * 
+     * @author Oliver Schwartz, Steeve
      */
     private void accept() {
         final Intent intent = new Intent(this, ResultViewActivity.class);
@@ -232,6 +237,24 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
                 + element.toString());
         intent.putExtra(OSM, element);
 
+        // set longitude and latitude for OsmElement
+        if (element instanceof PolyElement) {
+            final PolyElement elem = (PolyElement) element;
+            if (elem.getFirstNode() != null) {
+                location = new Location("");
+                location.setLatitude(elem.getFirstNode().getLat());
+                location.setLongitude(elem.getFirstNode().getLon());
+            }
+        } else if (element instanceof Node) {
+            final Node elem = (Node) element;
+            location = new Location("");
+            location.setLatitude(elem.getLat());
+            location.setLongitude(elem.getLon());
+        }
+        if (location != null) {
+            intent.putExtra(ShowPictureActivity.CURRENT_ORIENTATION_EXTRA,
+                    location);
+        }
         if (getIntent().hasExtra(Gallery.GALLERY_ID_EXTRA)) {
             intent.putExtra(Gallery.GALLERY_ID_EXTRA,
                     getIntent().getLongExtra(Gallery.GALLERY_ID_EXTRA, 0));

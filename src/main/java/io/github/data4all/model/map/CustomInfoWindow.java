@@ -20,7 +20,7 @@ import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 import io.github.data4all.model.data.PolyElement.PolyElementType;
@@ -39,7 +39,6 @@ import org.osmdroid.views.overlay.Overlay;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -77,7 +76,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
 
     private static final String TAG = "CustomInfoWindow";
 
-    protected AbstractDataElement element;
+    protected DataElement element;
     protected OverlayWithIW overlay;
     protected AbstractActivity activity;
 
@@ -94,7 +93,7 @@ public class CustomInfoWindow extends BasicInfoWindow implements
      * @param activity
      *            the context activity
      **/
-    public CustomInfoWindow(MapView mapView, AbstractDataElement element,
+    public CustomInfoWindow(MapView mapView, DataElement element,
             OverlayWithIW overlay, AbstractActivity activity) {
         super(R.layout.bonuspack_bubble, mapView);
 

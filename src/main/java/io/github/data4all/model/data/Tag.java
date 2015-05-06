@@ -67,6 +67,7 @@ public class Tag {
 
     /**
      * store the last Tag value e.g the last value for addr:street.
+     *  @author:Steeve
      */
     private String lastValue;
 
@@ -223,6 +224,10 @@ public class Tag {
         return result;
     }
 
+    /**
+     *  @author Steeve
+     * @return the last value
+     */
     public String getLastValue() {
         return lastValue;
     }

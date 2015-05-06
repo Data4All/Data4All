@@ -89,6 +89,8 @@
 
     <!-- lastChoice -->
     <string name="name_lastchoice">Letzte Wahl</string>
+    <string name="selectAddress">Adresse Auswählen</string>
+    <string name="addressNoAvailable">Adresse im moment nicht verfügbar aufgrund Ihre Internet Verbindung</string>
 
     <!-- for upload -->
     <string name="upload_success">Erfolgreich hochgeladen</string>
@@ -160,6 +162,7 @@
     <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Lizenzen</a></string>
     <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
     <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
+    <string name="linkToBingMap"><a href="https://www.microsoft.com/maps/product/terms.html">BingMap</a></string>
 
     <!-- credits / about -->
     <string name="aboutText">Wir sind ein kleines Team von Bachelorstudenten der Universität Bremen. 

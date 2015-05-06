@@ -15,11 +15,12 @@
  */
 package io.github.data4all.model.data;
 
+import io.github.data4all.R;
+import io.github.data4all.logger.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.data4all.R;
-import io.github.data4all.logger.Log;
 import android.content.Context;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
@@ -31,7 +32,7 @@ import android.preference.PreferenceManager;
  * @author fkirchge
  *
  */
-public class ClassifiedValue {
+public class ClassifiedValue implements Localizeable{
 
     /**
      * The log-tag for this class.
