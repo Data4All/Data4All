@@ -118,16 +118,29 @@
 
     <!-- other -->
     <string name="sensor_warning">Afficher les avertisseurs des Capteurs</string>
-    <string name="empty"> </string>
+    <string name="empty"></string>
     <string name="augmented_reality">Augmenter la réalité</string>
     <string name="noCamSupported"> Désolé mais votre appareil n\'est pas prise en charge par la camera </string>
     <string name="noLocationFound">"Aucun emplacement trouvé. Activer votre service de localisation </string>
     <string name="retry">Aucune balise correspondante n\'a été trouvé. Recommencer à nouveau</string>
     <string name="noSensorData">Les informations sur les capteurs sont actuellement insdisponible, Recommencer à nouveau depuis la carte.</string>
 
-    
+    <string name="goodSensorCalibration">Tout les capteurs ont ok. S\'il arrive qu\'un des capteurs ne fonctionne pas correctement, alors vous verrez soit un point d\'exclamation soit une croix rouge s\'afficher. Cliquez dessus pour obtenir des méthodes sur la calibration de ces capteurs. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
     <string name="badSensorCalibration">S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
-        un huit avec votre téléphone. </string>
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone . Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.   </string>
+    <string name="badSensorCalibrationM0">Le niveau de calibrage du magnétomètre se situe entre 0 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationM1"> Le niveau de calibrage du magnétomètre se situe entre 1 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationM2">Le niveau de calibrage du magnétomètre se situe entre 2 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationA0"> Le niveau de calibrage de l\'accéléromètre se situe entre 0 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationA1"> Le niveau de calibrage de l\'accéléromètre se situe entre 1 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationA2"> Le niveau de calibrage de l\'accéléromètre se situe entre 2 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    
     <string name="badSensorCalibrationTitle">Les capteurs doivent être recalibrer.</string>
     <string name="badAcceleometerCalibrationTitle">Accéleromètre doit être recalibrer.</string>
     <string name="badMagnetometerCalibrationTitle">Magnétomètre doit être recalibrer.</string>
