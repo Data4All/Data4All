@@ -330,7 +330,7 @@ public final class ChangesetUtil {
         String timeformat = "yyyy-MM-dd'T'HH:mm:ss.SZZZZZ";
         final SimpleDateFormat dateformat = new SimpleDateFormat(timeformat);
         httpParams.setParameter("bbox", bbox);
-        httpParams.setParameter("time", dateformat.format(new Date(new Date().getTime() - 60000)));
+        httpParams.setParameter("time", dateformat.format(new Date(time)));
         httpParams.setParameter("closed", true);
 
         httpGet.setParams(httpParams);

@@ -83,6 +83,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     ImageButton updateButton;
     
+    public static boolean UPDATECLICKABLE = false;
     // Broadcast receiver for receiving status updates from the IntentService
     private class MapTileReceiver extends BroadcastReceiver {
         // Prevents instantiation
@@ -143,7 +144,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lastTime =  new Date().getTime() - 2*60000;
+       
+        lastTime =  new Date().getTime();
         setContentView(R.layout.activity_map_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (ListView) findViewById(R.id.left_drawer);
@@ -291,6 +293,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         case R.id.update:
             mapView.getTileProvider().clearTileCache();
             mapView.postInvalidate();
+            UPDATECLICKABLE = false;
             lastTime = new Date().getTime();
             final ImageButton update = (ImageButton) findViewById(R.id.update);
             update.setVisibility(View.INVISIBLE);

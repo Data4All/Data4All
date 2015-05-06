@@ -16,6 +16,7 @@
 package io.github.data4all.service;
 
 import io.github.data4all.R;
+import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.handler.CapturePictureHandler;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
@@ -50,14 +51,14 @@ public class MapTileService extends IntentService {
 
     public final static String BROADCAST_MAP = "broadcastToMap";
     public final static String INTENT_UPDATE_TILES = "update";
-    
+
     public static String TIME = "Time";
     public static String WEST = "West";
     public static String SOUTH = "South";
     public static String EAST = "East";
     public static String NORTH = "North";
 
-    
+    public static long LASTTIME = 0;
     private static final String TAG = MapTileService.class.getSimpleName();
 
     /**
@@ -92,36 +93,41 @@ public class MapTileService extends IntentService {
         Log.i(TAG, "Handle Intent");
         doIntent(intent);
     }
-    
-    private void doIntent(Intent intent){
+
+    private void doIntent(Intent intent) {
 
         if (intent != null) {
-            long time = intent.getLongExtra(TIME, new Date().getTime() - 600000);
-            double west = intent.getDoubleExtra(WEST, 0);
-            double south = intent.getDoubleExtra(SOUTH, 0);
-            double east = intent.getDoubleExtra(EAST, 0);
-            double north = intent.getDoubleExtra(NORTH, 0);
-            try {
-                boolean empty = ChangesetUtil.getChangeSet(time, west, south, east, north).request();
-                        
-                Log.d(TAG, "Check ChangeSets empty:" + empty);
-                if (!empty) {
-                    /*
-                     * Creates a new Intent containing a Uri object BROADCAST_ACTION
-                     * is a custom Intent action
-                     */
+            long time = intent.getLongExtra(TIME, LASTTIME);
+            if (time - LASTTIME > 5*60000 || MapViewActivity.UPDATECLICKABLE) {
+                LASTTIME = time;
+                MapViewActivity.UPDATECLICKABLE = true;
+                double west = intent.getDoubleExtra(WEST, 0);
+                double south = intent.getDoubleExtra(SOUTH, 0);
+                double east = intent.getDoubleExtra(EAST, 0);
+                double north = intent.getDoubleExtra(NORTH, 0);
+                try {
+                    boolean empty = ChangesetUtil.getChangeSet(time, west,
+                            south, east, north).request();
 
-                    Log.d(TAG, "New ChangeSets available");
-                    Intent localIntent = new Intent(BROADCAST_MAP)
-                    // Puts the status into the Intent
-                            .putExtra(INTENT_UPDATE_TILES, true);
-                    // Broadcasts the Intent to receivers in this app.
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(
-                            localIntent);
+                    Log.d(TAG, "Check ChangeSets empty:" + empty);
+                    if (!empty) {
+                        /*
+                         * Creates a new Intent containing a Uri object
+                         * BROADCAST_ACTION is a custom Intent action
+                         */
+
+                        Log.d(TAG, "New ChangeSets available");
+                        Intent localIntent = new Intent(BROADCAST_MAP)
+                        // Puts the status into the Intent
+                                .putExtra(INTENT_UPDATE_TILES, true);
+                        // Broadcasts the Intent to receivers in this app.
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(
+                                localIntent);
+                    }
+                } catch (OsmException e) {
+                    Log.e(TAG, "" + e.toString());
                 }
-            } catch (OsmException e) {
-                Log.e(TAG, "" + e.toString());
             }
-        } 
+        }
     }
 }
