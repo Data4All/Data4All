@@ -16,6 +16,7 @@
 package io.github.data4all.view;
 
 import io.github.data4all.R;
+import io.github.data4all.activity.ShowPictureActivity;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.AbstractDataElement;
 import io.github.data4all.model.drawing.AreaMotionInterpreter;
@@ -37,13 +38,16 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.ImageView.ScaleType;
 
 /**
  * This TouchView listen to MotionEvents from the user, saves them into
@@ -66,6 +70,8 @@ import android.view.View;
  */
 public class TouchView extends View {
 
+	private static final String TAG = TouchView.class.getSimpleName();
+
 	/**
 	 * All types of interpretation that are provided by this {@link TouchView}.
 	 * 
@@ -74,6 +80,9 @@ public class TouchView extends View {
 	public static enum InterpretationType {
 		AREA, POINT, BUILDING, WAY;
 	}
+
+	private float scaleFactor = 1.0f;
+	private ScaleGestureDetector scaleGestureDetector;
 
 	/**
 	 * Mover to move a point
@@ -191,6 +200,8 @@ public class TouchView extends View {
 	 */
 	public TouchView(Context context) {
 		super(context);
+		scaleGestureDetector = new ScaleGestureDetector(context,
+				new ScaleListener());
 	}
 
 	/**
@@ -211,6 +222,8 @@ public class TouchView extends View {
 	 */
 	public TouchView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		scaleGestureDetector = new ScaleGestureDetector(context,
+				new ScaleListener());
 	}
 
 	/**
@@ -234,6 +247,8 @@ public class TouchView extends View {
 	 */
 	public TouchView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		scaleGestureDetector = new ScaleGestureDetector(context,
+				new ScaleListener());
 	}
 
 	/*
@@ -280,31 +295,78 @@ public class TouchView extends View {
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		final int action = event.getAction();
-		// TODO: dadurch wird jeglicher input Ã¼berm horizont verhindert. so
-		// auch
-		// das verschieben
-		// besser beim hinzufÃ¼gen von punkten Ã¼berprÃ¼fen?
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			currentMotion = new DrawingMotion();
-			this.startMotion(event);
-			break;
-		case MotionEvent.ACTION_UP:
-			this.endMotion(event);
-			polygon = newPolygon;
-			this.undoUseable();
-			this.redoUseable();
-			this.undoRedoListener.okUseable(hasEnoughNodes());
-			break;
-		case MotionEvent.ACTION_MOVE:
-			this.moveMotion(event);
-			postInvalidate();
-			break;
-		default:
-			Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
-		}
+		scaleGestureDetector.onTouchEvent(event);
+		
+		 // Pass our events to the scale gesture detector first.
+        boolean handled = scaleGestureDetector.onTouchEvent(event);
+
+        // If the scale gesture detector didn't handle the event,
+        // pass it to super.
+        if (!handled) {
+        	final int action = event.getAction();
+    		// TODO: dadurch wird jeglicher input Ã¼berm horizont verhindert. so
+    		// auch
+    		// das verschieben
+    		// besser beim hinzufÃ¼gen von punkten Ã¼berprÃ¼fen?
+    		switch (action) {
+    		case MotionEvent.ACTION_DOWN:
+    			currentMotion = new DrawingMotion();
+    			this.startMotion(event);
+    			break;
+    		case MotionEvent.ACTION_UP:
+    			this.endMotion(event);
+    			polygon = newPolygon;
+    			this.undoUseable();
+    			this.redoUseable();
+    			this.undoRedoListener.okUseable(hasEnoughNodes());
+    			break;
+    		case MotionEvent.ACTION_MOVE:
+    			this.moveMotion(event);
+    			postInvalidate();
+    			break;
+    		default:
+    			Log.e(this.getClass().getSimpleName(), "ERROR, no event found!");
+    		}
+        }
 		return true;
+	}
+
+	private class ScaleListener extends
+			ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+		float scale;
+
+		@Override
+		public boolean onScale(ScaleGestureDetector detector) {
+			
+			scaleFactor *= detector.getScaleFactor();
+			
+
+	        
+	        
+			Log.v(TAG, "scale "+scaleFactor);
+		
+			if(scaleFactor > 1.0f){
+				Matrix matrix = new Matrix(ShowPictureActivity.baseMatrix);
+				Log.v(TAG, "matrix "+matrix);
+				matrix.postScale(scale,scale);
+				Log.v(TAG, "matrix scaled "+matrix);
+				ShowPictureActivity.imageView.setScaleType(ScaleType.MATRIX);
+				ShowPictureActivity.imageView.setImageMatrix(matrix);
+			}else{
+				Log.d(TAG, "WUHU");
+				Matrix matrix = new Matrix(ShowPictureActivity.baseMatrix);
+				Log.v(TAG, "matrix "+matrix);
+				scale = 1.0f;
+				matrix.postScale(scale,scale);
+				Log.v(TAG, "matrix scaled "+matrix);
+				ShowPictureActivity.imageView.setScaleType(ScaleType.MATRIX);
+				ShowPictureActivity.imageView.setImageMatrix(matrix);
+			}
+			
+			return true;
+		}
+
 	}
 
 	private void startMotion(MotionEvent event) {
@@ -366,8 +428,8 @@ public class TouchView extends View {
 	}
 
 	private void endMotion(MotionEvent event) {
-		if (!(cameraAssistView.overHorizont(new Point(event.getX(), event
-				.getY())))) {
+		if (!(cameraAssistView.overHorizont(new Point(event.getX() / ss, event
+				.getY() / ss)))) {
 			if (polygon.size() > 0 && mover == null
 					&& startPoint.getX() - event.getX() < 5
 					&& startPoint.getY() - event.getY() < 5) {
@@ -424,7 +486,7 @@ public class TouchView extends View {
 				if (isOnALine(polygon.get(i), polygon.get(i + 1), p, tolerance)) {
 					Log.d("", "Point is on a Line");
 					polygon.add(i + 1, p);
-					redoUndo.add(p, add, i+1);
+					redoUndo.add(p, add, i + 1);
 					lookUpPoint = p;
 					isOnLine = true;
 					return true;
@@ -442,6 +504,47 @@ public class TouchView extends View {
 		}
 		isOnLine = false;
 		return false;
+	}
+
+	float ss;
+
+	public void scaleMul(float scale) {
+		Log.v(TAG, "MUL");
+		for (int i = 0; i < newPolygon.size(); ++i) {
+			Point old = newPolygon.get(i);
+			Log.v("SCALE", "POINT OLD:" + old.getX() + " " + old.getY());
+
+			Point temp = new Point(old.getX() * scale, old.getY() * scale);
+			Log.v("SCALE", "POINT SCALED:" + temp.getX() + " " + temp.getY());
+			newPolygon.set(i, temp);
+		}
+	}
+
+	float oldscale;
+
+	public void scale(float scale) {
+		for (int i = 0; i < newPolygon.size(); ++i) {
+			Point old = newPolygon.get(i);
+			Point temp = new Point(old.getX() / oldscale, old.getY() / oldscale);
+			Log.v(TAG, "POINT OLD:" + old.getX() + " " + old.getY());
+			Log.v(TAG, "POINT RESET:" + temp.getX() + " " + temp.getY());
+			
+			Point newest = new Point(temp.getX() * scale, temp.getY() * scale);
+			Log.v(TAG, "POINT SCALED:" + newest.getX() + " " + newest.getY());
+			oldscale = scale;
+			newPolygon.set(i, newest);
+		}
+	}
+
+	public void scaleDiv(float scale) {
+		for (int i = 0; i < newPolygon.size(); ++i) {
+			Point old = newPolygon.get(i);
+			Log.v("SCALE", "POINT OLD:" + old.getX() + " " + old.getY());
+
+			Point temp = new Point(old.getX() / scale, old.getY() / scale);
+			Log.v("SCALE", "POINT SCALED:" + temp.getX() + " " + temp.getY());
+			newPolygon.set(i, temp);
+		}
 	}
 
 	/**
@@ -680,11 +783,12 @@ public class TouchView extends View {
 		Point point = redoUndo.redo();
 		Log.d(this.getClass().getSimpleName(), action + "LOCATION: " + location);
 		if (action.equals(add)) {
-			newPolygon.add(location,point);
-			if(interpreter instanceof BuildingMotionInterpreter && redoUndo.getCurrent()== 3){
+			newPolygon.add(location, point);
+			if (interpreter instanceof BuildingMotionInterpreter
+					&& redoUndo.getCurrent() == 3) {
 				location = redoUndo.getLocation();
 				point = redoUndo.redo();
-				newPolygon.add(location,point);
+				newPolygon.add(location, point);
 			}
 		}
 		if (action.equals(delete)) {
@@ -715,10 +819,12 @@ public class TouchView extends View {
 		Point point = redoUndo.undo();
 		final String action = redoUndo.getAction();
 		final int location = redoUndo.getLocation();
-		Log.d(this.getClass().getSimpleName(), action + " LOCATION: " + location);
+		Log.d(this.getClass().getSimpleName(), action + " LOCATION: "
+				+ location);
 		if (action.equals(add)) {
 			newPolygon.remove(point);
-			if(interpreter instanceof BuildingMotionInterpreter && redoUndo.getCurrent()== 3){
+			if (interpreter instanceof BuildingMotionInterpreter
+					&& redoUndo.getCurrent() == 3) {
 				point = redoUndo.undo();
 				newPolygon.remove(point);
 			}

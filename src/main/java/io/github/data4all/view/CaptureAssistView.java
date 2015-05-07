@@ -73,22 +73,23 @@ public class CaptureAssistView extends View {
     private int mMeasuredHeight;
     private int augMinTextSize = 20;
     private int augMaxTextSize = 100;
-    private float horizontalViewAngle;
-    private float verticalViewAngle;
+    private float horizontalViewAngle, verticalViewAngle;
     private float horizondegree = 87.5f;
     private float maxDistance = 100;
     private DeviceOrientation deviceOrientation;
     private boolean skylook;
     private boolean visible;
     private boolean informationSet;
+    private boolean dirty;
     private List<Point> points = new ArrayList<Point>();
     private Bitmap bitmap;
     private List<AbstractDataElement> dataElements;
     private TransformationParamBean tps;
     private PointToCoordsTransformUtil util;
     private double rotateDegree;
-    private Bitmap poiBitmap;
-    private HorizonCalculationUtil horizonCalculationUtil;
+    private Bitmap POIbitmap;
+
+    HorizonCalculationUtil horizonCalculationUtil = new HorizonCalculationUtil();
 
     private static final String TAG = CaptureAssistView.class.getSimpleName();
 
@@ -100,8 +101,8 @@ public class CaptureAssistView extends View {
      *            environment
      */
     public CaptureAssistView(Context context) {
-        super(context);
-        initView();
+	super(context);
+	initView();
     }
 
     /**
@@ -114,8 +115,8 @@ public class CaptureAssistView extends View {
      * 
      */
     public CaptureAssistView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView();
+	super(context, attrs);
+	initView();
     }
 
     /**
@@ -125,14 +126,12 @@ public class CaptureAssistView extends View {
      *            Contextclass for global information about an application
      *            environment
      * @param attrs
-     *          AttributeSet
      * @param defStyle
-     *          defStyle
      * 
      */
     public CaptureAssistView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        initView();
+	super(context, attrs, defStyle);
+	initView();
     }
 
     /**
@@ -141,54 +140,56 @@ public class CaptureAssistView extends View {
      * camera is too far up in the sky.
      */
     private void initView() {
-        setFocusable(true);
-        Log.d(TAG, "initViewIsCalled");
-        // initialise variables for the first time.
-        this.mMeasuredWidth = getMeasuredWidth();
-        this.mMeasuredHeight = getMeasuredHeight();
-        this.skylook = false;
-        this.visible = true;
-        // add osmElements from the database to the map
-        DataBaseHandler db = new DataBaseHandler(getContext());
-        this.dataElements = db.getAllDataElements();
-        db.close();
-        Resources r = this.getResources();
+	setFocusable(true);
+	Log.d(TAG, "initViewIsCalled");
 
-        cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
-        cameraStopPaint.setStyle(Paint.Style.STROKE);
-        cameraStopPaint.setStrokeWidth(6);
+	// initialise variables for the first time.
+	this.mMeasuredWidth = getMeasuredWidth();
+	this.mMeasuredHeight = getMeasuredHeight();
+	this.skylook = false;
+	this.visible = true;
 
-        invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
-        invalidRegionPaint.setStyle(Paint.Style.FILL);
+	// add osmElements from the database to the map
+	DataBaseHandler db = new DataBaseHandler(getContext());
+	this.dataElements = db.getAllDataElements();
+	db.close();
 
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.BLUE);
-        paint.setAlpha(64);
-        paint.setStyle(Paint.Style.FILL);
+	Resources r = this.getResources();
 
-        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(Color.BLACK);
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setTextAlign(Align.CENTER);
-        textPaint.setShadowLayer(1.0f, 1.0f, 1.0f, Color.WHITE);
+	cameraStopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	cameraStopPaint.setColor(r.getColor(R.color.camera_stop_cross));
+	cameraStopPaint.setStyle(Paint.Style.STROKE);
+	cameraStopPaint.setStrokeWidth(6);
 
-        poiPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        poiPaint.setColor(Color.BLUE);
-        poiPaint.setStyle(Paint.Style.FILL);
-        poiPaint.setTextAlign(Align.CENTER);
+	invalidRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	invalidRegionPaint.setColor(r.getColor(R.color.invalid_region));
+	invalidRegionPaint.setStyle(Paint.Style.FILL);
 
-        BitmapDrawable bitmapDraw = (BitmapDrawable) r
-                .getDrawable(R.drawable.ic_setpoint_blue);
-        poiBitmap = bitmapDraw.getBitmap();
+	paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	paint.setColor(Color.BLUE);
+	paint.setAlpha(64);
+	paint.setStyle(Paint.Style.FILL);
 
-        this.tps = new TransformationParamBean(getDeviceHeight(),
-                horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
-                mMeasuredHeight, Optimizer.currentBestLoc());
+	textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	textPaint.setColor(Color.BLACK);
+	textPaint.setStyle(Paint.Style.FILL);
+	textPaint.setTextAlign(Align.CENTER);
+	// textPaint.setShadowLayer(5.0f, 10.0f, 10.0f, Color.WHITE);
 
-        util = new PointToCoordsTransformUtil();
-        horizonCalculationUtil = new HorizonCalculationUtil();
+	poiPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	poiPaint.setColor(Color.BLUE);
+	poiPaint.setStyle(Paint.Style.FILL);
+	poiPaint.setTextAlign(Align.CENTER);
+
+	BitmapDrawable bitmapDraw = (BitmapDrawable) r
+		.getDrawable(R.drawable.ic_setpoint_blue);
+	POIbitmap = bitmapDraw.getBitmap();
+
+	this.tps = new TransformationParamBean(getDeviceHeight(),
+		horizontalViewAngle, verticalViewAngle, mMeasuredWidth,
+		mMeasuredHeight, Optimizer.currentBestLoc());
+
+	util = new PointToCoordsTransformUtil();
     }
 
     /**
@@ -196,139 +197,138 @@ public class CaptureAssistView extends View {
      * drawings.
      * 
      * @param horizontalViewAngle
-     *          maxCameraAngle
-     * @param verticalViewAngle
-     *          maxCameraAngle
+     * @param maxRoll
      * @param deviceOrientation
-     *          the deviceOrientation
      */
     public void setInformations(float horizontalViewAngle,
-            float verticalViewAngle, DeviceOrientation deviceOrientation) {
-        Log.d(TAG, "setInformationsIsCalled");
-        this.horizontalViewAngle = horizontalViewAngle;
-        this.verticalViewAngle = verticalViewAngle;
-        this.deviceOrientation = deviceOrientation;
-        this.tps.setMaxHorizontalViewAngle(verticalViewAngle);
-        this.tps.setCameraMaxVerticalViewAngle(horizontalViewAngle);
-        this.tps.setLocation(Optimizer.currentBestLoc());
-        this.informationSet = true;
-        Log.d(TAG, "MP" + horizontalViewAngle + " MR " + verticalViewAngle
-                + " OR " + deviceOrientation.getPitch() + "  "
-                + deviceOrientation.getRoll() + " MW+H " + mMeasuredWidth + " "
-                + mMeasuredHeight);
+	    float verticalViewAngle, DeviceOrientation deviceOrientation) {
+	Log.d(TAG, "setInformationsIsCalled");
+	this.horizontalViewAngle = horizontalViewAngle;
+	this.verticalViewAngle = verticalViewAngle;
+	this.deviceOrientation = deviceOrientation;
+	this.tps.setMaxHorizontalViewAngle(verticalViewAngle);
+	this.tps.setCameraMaxVerticalViewAngle(horizontalViewAngle);
+	this.tps.setLocation(Optimizer.currentBestLoc());
+	this.informationSet = true;
+	this.dirty = true;
+	Log.d(TAG, "MP" + horizontalViewAngle + " MR " + verticalViewAngle
+		+ " OR " + deviceOrientation.getPitch() + "  "
+		+ deviceOrientation.getRoll() + " MW+H " + mMeasuredWidth + " "
+		+ mMeasuredHeight);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d(TAG, "onDrawCalled");
-        // save the Size of the View
-        this.mMeasuredWidth = getMeasuredWidth();
-        this.mMeasuredHeight = getMeasuredHeight();
-        // when the needed information have been set: calculate the horizon
-        if (informationSet) {
-            ReturnValues returnValues = horizonCalculationUtil
-                    .calcHorizontalPoints(horizontalViewAngle,
-                            verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
-                            (float) Math.toRadians(horizondegree),
-                            deviceOrientation);
-            this.rotateDegree = returnValues.getRotateDegree();
-            this.skylook = returnValues.isSkylook();
-            this.visible = returnValues.isVisible();
-            this.points = returnValues.getPoints();
-        }
-        // if the horizon is visible and there are points do draw the horizon
-        if (visible && !points.isEmpty()) {
-            // if less then 50% of the display is over the horizon: draw horizon
-            if (!skylook) {
-                Path path = getPath();
-                canvas.drawPath(path, invalidRegionPaint);
-            } else {
-                // draw a big X
-                canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
-                        mMeasuredWidth / 2 + mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
-                        cameraStopPaint);
+	Log.d(TAG, "onDrawCalled");
+	// save the Size of the View
+	this.mMeasuredWidth = getMeasuredWidth();
+	this.mMeasuredHeight = getMeasuredHeight();
+	// when the needed information have been set: calculate the horizon
+	if (informationSet && dirty) {
+	    ReturnValues returnValues = horizonCalculationUtil
+		    .calcHorizontalPoints(horizontalViewAngle,
+			    verticalViewAngle, mMeasuredWidth, mMeasuredHeight,
+			    (float) Math.toRadians(horizondegree),
+			    deviceOrientation);
+	    this.rotateDegree = returnValues.getRotateDegree();
+	    this.skylook = returnValues.isSkylook();
+	    this.visible = returnValues.isVisible();
+	    this.points = returnValues.getPoints();
+	    this.dirty = false;
+	}
+	// if the horizon is visible and there are points do draw the horizon
+	if (visible && !points.isEmpty()) {
+	    // if less then 50% of the display is over the horizon: draw horizon
+	    if (!skylook) {
+		Path path = getPath();
+		canvas.drawPath(path, invalidRegionPaint);
+	    } else {
+		// draw a big X
+		canvas.drawLine(mMeasuredWidth / 2 - mMeasuredWidth / 12,
+			mMeasuredHeight / 2 - mMeasuredHeight / 8,
+			mMeasuredWidth / 2 + mMeasuredWidth / 12,
+			mMeasuredHeight / 2 + mMeasuredHeight / 8,
+			cameraStopPaint);
 
-                canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 - mMeasuredHeight / 8,
-                        mMeasuredWidth / 2 - mMeasuredWidth / 12,
-                        mMeasuredHeight / 2 + mMeasuredHeight / 8,
-                        cameraStopPaint);
-            }
-        }
-        // Draws the augmented Reality including the Infotext
-        if (informationSet && getAugmented()) {
-            tps.setPhotoHeight(mMeasuredHeight);
-            tps.setPhotoWidth(mMeasuredWidth);
-            Point center = null;
-            float distance = maxDistance + 1;
-            Boolean isWay = false;
-            for (AbstractDataElement iter : dataElements) {
-                // Check if it's an instance of a PolyElement
-                if (iter instanceof PolyElement) {
-                    PolyElement poly = (PolyElement) iter;
-                    // Draw Mapped Object on Canvas
-                    if (poly.getType() == PolyElementType.AREA
-                            || poly.getType() == PolyElementType.BUILDING) {
-                        this.points = util.calculateNodesToPoint(
-                                poly.getNodes(), tps, deviceOrientation);
-                        center = getCenter(points);
-                        distance = (float) util.calculateDistance(tps,
-                                deviceOrientation, center);
-                        if (distance < maxDistance) {
-                            Path path = getPath();
-                            canvas.drawPath(path, paint);
-                        }
-                    } else {
-                        isWay = true;
-                    }
-                } else {
-                    // Draw PointOfInterest
-                    Node node = (Node) iter;
-                    center = util.calculateNodeToPoint(node, tps,
-                            deviceOrientation);
-                    distance = (float) util.calculateDistance(tps,
-                            deviceOrientation, center);
-                    if (distance < maxDistance) {
-                        canvas.rotate((float) Math.toDegrees(rotateDegree),
-                                center.getX(), center.getY());
-                        // Resize BitMap for different distances
-                        float scale = (float) (1.2 / (distance / 6 + 1) + 0.1);
-                        Bitmap scaledBitmap = Bitmap.createScaledBitmap(poiBitmap,
-                                (int) (scale * poiBitmap.getWidth()),
-                                (int) (scale * poiBitmap.getHeight()), true);
-                        canvas.drawBitmap(scaledBitmap, center.getX(), center.getY(),
-                                poiPaint);
-                        canvas.rotate((float) Math.toDegrees(-rotateDegree),
-                                center.getX(), center.getY());
-                    }
-                }
-                // Write InfoText
-                if (!isWay && distance < maxDistance) {
-                    String value = "";
-                    // get String for Infotext
-                    if (!iter.getTags().keySet().isEmpty()
-                            && !iter.getTags().values().isEmpty()) {
-                        final Tag tag = (Tag) iter.getTags().keySet().toArray()[0];
-                        value = tag.getNamedValue(Data4AllApplication.context,
-                                iter.getTags().get(tag));
-                    }
-                    // alter TextSize for different distances
-                    textPaint
-                            .setTextSize(((augMaxTextSize - augMinTextSize) / (distance / 4 + 1))
-                                    + augMinTextSize);
-                    canvas.rotate((float) Math.toDegrees(rotateDegree),
-                            center.getX(), center.getY());
-                    canvas.drawText(value, center.getX(), center.getY(),
-                            textPaint);
-                    canvas.rotate((float) -Math.toDegrees(rotateDegree),
-                            center.getX(), center.getY());
-                }
-                isWay = false;
-            }
-        }
-        canvas.restore();
+		canvas.drawLine(mMeasuredWidth / 2 + mMeasuredWidth / 12,
+			mMeasuredHeight / 2 - mMeasuredHeight / 8,
+			mMeasuredWidth / 2 - mMeasuredWidth / 12,
+			mMeasuredHeight / 2 + mMeasuredHeight / 8,
+			cameraStopPaint);
+	    }
+	}
+	// Draws the augmented Reality including the Infotext
+	if (informationSet && getAugmented()) {
+	    tps.setPhotoHeight(mMeasuredHeight);
+	    tps.setPhotoWidth(mMeasuredWidth);
+	    Point center = null;
+	    float distance = maxDistance + 1;
+	    Boolean isWay = false;
+	    for (AbstractDataElement iter : dataElements) {
+		// Check if it's an instance of a PolyElement
+		if (iter instanceof PolyElement) {
+		    PolyElement poly = (PolyElement) iter;
+		    // Draw Mapped Object on Canvas
+		    if (poly.getType() == PolyElementType.AREA
+			    || poly.getType() == PolyElementType.BUILDING) {
+			this.points = util.calculateNodesToPoint(
+				poly.getNodes(), tps, deviceOrientation);
+			center = getCenter(points);
+			distance = (float) util.calculateDistance(tps,
+				deviceOrientation, center);
+			if (distance < maxDistance) {
+			    Path path = getPath();
+			    canvas.drawPath(path, paint);
+			}
+		    } else {
+			isWay = true;
+		    }
+		} else {
+		    // Draw PointOfInterest
+		    Node node = (Node) iter;
+		    center = util.calculateNodeToPoint(node, tps,
+			    deviceOrientation);
+		    distance = (float) util.calculateDistance(tps,
+			    deviceOrientation, center);
+		    if (distance < maxDistance) {
+			canvas.rotate((float) Math.toDegrees(rotateDegree),
+				center.getX(), center.getY());
+			// Resize BitMap for different distances
+			float scale = (float) (1.2 / (distance / 6 + 1) + 0.1);
+			Bitmap bitmap = Bitmap.createScaledBitmap(POIbitmap,
+				(int) (scale * POIbitmap.getWidth()),
+				(int) (scale * POIbitmap.getHeight()), true);
+			canvas.drawBitmap(bitmap, center.getX(), center.getY(),
+				poiPaint);
+			canvas.rotate((float) Math.toDegrees(-rotateDegree),
+				center.getX(), center.getY());
+		    }
+		}
+		// Write InfoText
+		if (!isWay && distance < maxDistance) {
+		    String value = "";
+		    // get String for Infotext
+		    if (!iter.getTags().keySet().isEmpty()
+			    && !iter.getTags().values().isEmpty()) {
+			final Tag tag = (Tag) iter.getTags().keySet().toArray()[0];
+			value = tag.getNamedValue(Data4AllApplication.context,
+				iter.getTags().get(tag));
+		    }
+		    // alter TextSize for different distances
+		    textPaint
+			    .setTextSize(((augMaxTextSize - augMinTextSize) / (distance / 4 + 1))
+				    + augMinTextSize);
+		    canvas.rotate((float) Math.toDegrees(rotateDegree),
+			    center.getX(), center.getY());
+		    canvas.drawText(value, center.getX(), center.getY(),
+			    textPaint);
+		    canvas.rotate((float) -Math.toDegrees(rotateDegree),
+			    center.getX(), center.getY());
+		}
+		isWay = false;
+	    }
+	}
+	canvas.restore();
     }
 
     /**
@@ -339,52 +339,50 @@ public class CaptureAssistView extends View {
      * @return a Point
      */
     public static Point getCenter(List<Point> points) {
-        int i = 0;
-        float x = 0;
-        float y = 0;
-        for (Point iter : points) {
-            x += iter.getX();
-            y += iter.getY();
-            i += 1;
-        }
-        return new Point(x / i, y / i);
+	int i = 0;
+	float x = 0;
+	float y = 0;
+	for (Point iter : points) {
+	    x += iter.getX();
+	    y += iter.getY();
+	    i += 1;
+	}
+	return new Point(x / i, y / i);
     }
 
     protected boolean getAugmented() {
-        PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(getContext());
-        return prefs.getBoolean("augmented_reality", false);
+	PreferenceManager.setDefaultValues(getContext(), R.xml.settings, false);
+	final SharedPreferences prefs = PreferenceManager
+		.getDefaultSharedPreferences(getContext());
+	return (prefs.getBoolean("augmented_reality", false));
     }
 
     /**
      * Reads the height of the device in condition of the bodyheight from the
      * preferences.
      * 
-     * @author tbrose
-     * 
-     *         If the preference is empty or not set the default value is
-     *         stored.
+     * If the preference is empty or not set the default value is stored.
      * 
      * @return The height of the device or {@code 0} if the preference is not
      *         set or empty
+     * @author tbrose
      */
     private double getDeviceHeight() {
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(getContext());
-        final Resources res = getContext().getResources();
-        final String key = res.getString(R.string.pref_bodyheight_key);
-        final String height = prefs.getString(key, null);
-        if (TextUtils.isEmpty(height)) {
-            final int defaultValue = res
-                    .getInteger(R.integer.pref_bodyheight_default);
-            // Save the default value
-            prefs.edit().putString(key, "" + defaultValue).commit();
-            return (defaultValue - 30) / 100.0;
-        } else {
-            final double bodyHeight = Integer.parseInt(height);
-            return (bodyHeight - 30) / 100.0;
-        }
+	final SharedPreferences prefs = PreferenceManager
+		.getDefaultSharedPreferences(getContext());
+	final Resources res = getContext().getResources();
+	final String key = res.getString(R.string.pref_bodyheight_key);
+	final String height = prefs.getString(key, null);
+	if (TextUtils.isEmpty(height)) {
+	    final int defaultValue = res
+		    .getInteger(R.integer.pref_bodyheight_default);
+	    // Save the default value
+	    prefs.edit().putString(key, "" + defaultValue).commit();
+	    return (defaultValue - 30) / 100.0;
+	} else {
+	    final double bodyHeight = Integer.parseInt(height);
+	    return (bodyHeight - 30) / 100.0;
+	}
     }
 
     /**
@@ -395,50 +393,98 @@ public class CaptureAssistView extends View {
      * @return Path calculated horizon line.
      */
     private Path getPath() {
-        Path path = new Path();
-        boolean firstIter = true;
-        if (!points.isEmpty()) {
-            for (Point iter : points) {
-                if (firstIter) {
-                    path.moveTo(iter.getX(), iter.getY());
-                    firstIter = false;
-                } else {
-                    path.lineTo(iter.getX(), iter.getY());
-                }
-            }
-            path.lineTo(points.get(0).getX(), points.get(0).getY());
+	Path path = new Path();
+	boolean firstIter = true;
+	if (!points.isEmpty()) {
+	    for (Point iter : points) {
+		if (firstIter) {
+		    path.moveTo(iter.getX(), iter.getY());
+		    firstIter = false;
+		} else {
+		    path.lineTo(iter.getX(), iter.getY());
+		}
+	    }
+	    path.lineTo(points.get(0).getX(), points.get(0).getY());
+	}
+	return path;
+    } 
+
+    public void scaleMul(float scale) {
+	for (int i = 0; i < points.size(); ++i) {
+	    Point old = points.get(i);
+	    Log.v(TAG, "POINT OLD:" + old.getX() + " " + old.getY());
+
+	    Point temp = new Point(old.getX() * scale, old.getY() *scale );
+	    Log.v(TAG, "POINT SCALED:" + temp.getX() + " " + temp.getY());
+	    points.set(i, temp);
+	}
+    }
+
+    float oldscale;
+    public void scale(float scale) {
+    	for (int i = 0; i < points.size(); ++i) {
+    	    Point old = points.get(i);
+    	    Point temp = new Point(old.getX() / oldscale, old.getY() / oldscale);
+    	    
+    	    Point newest = new Point(temp.getX() * scale, temp.getY() *scale );
+    	    oldscale = scale;
+    	    points.set(i, newest);
+    	}
         }
-        return path;
+    
+    
+    public void scaleDiv(float scale) {
+	for (int i = 0; i < points.size(); ++i) {
+	    Point old = points.get(i);
+	   
+
+	    Point temp = new Point(old.getX() / scale, old.getY() / scale);
+
+	    points.set(i, temp);
+	}
     }
 
     /**
      * Testing if a point is over the horizont (red marked area)
      * 
-     * @author vkochno & burghardt
-     * 
      * @param point
      *            point to be testet
      * @return result true if the point is in the red marked area
+     * 
+     * @author vkochno & burghardt
      */
     public boolean overHorizont(Point point) {
-        if (bitmap == null) {
-            this.setDrawingCacheEnabled(true);
-            bitmap = Bitmap.createBitmap(this.getDrawingCache());
-            this.setDrawingCacheEnabled(false);
-        }
-        if (point.getX() < 0 || point.getX() > mMeasuredWidth
-                || point.getY() < 0 || point.getY() > mMeasuredHeight) {
-            return true;
-        }
-        int pixel = bitmap.getPixel((int) point.getX(), (int) point.getY());
-        if ( pixel == invalidRegionPaint.getColor() ) {
-            return true;
-        }
-        return false;
+	if (point.getX() < 0 || point.getX() > mMeasuredWidth
+		|| point.getY() < 0 || point.getY() > mMeasuredHeight) {
+	    return true;
+	}
+	if (bitmap == null) {
+	    this.setDrawingCacheEnabled(true);
+	    bitmap = Bitmap.createBitmap(this.getDrawingCache());
+	    this.setDrawingCacheEnabled(false);
+	}
+	
+
+	if (bitmap.getPixel((int) point.getX(), (int) point.getY()) != invalidRegionPaint.getColor()) {
+	    return false;
+	}
+	
+	
+	/*
+	if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == Color.TRANSPARENT) {
+	    return false;
+	}
+
+	if (bitmap.getPixel((int) point.getX(), (int) point.getY()) == paint
+		.getColor()) {
+	    return false;
+	}*/
+	
+	return true;
     }
 
     public boolean isSkylook() {
-        return skylook;
+	return skylook;
     }
 
 }
