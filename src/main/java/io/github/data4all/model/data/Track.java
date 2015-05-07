@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.osmdroid.util.GeoPoint;
+
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Parcel;
@@ -60,12 +62,12 @@ public class Track implements Parcelable {
     /**
      * The description of the tag which the user can add.
      */
-    private String description = "a";
+    private String description;
 
     /**
      * The tags of the track which the user can add, tags are comma seperated.
      */
-    private String tags = "b";
+    private String tags;
 
     /**
      * saves a list of TrackPoints.
@@ -132,7 +134,7 @@ public class Track implements Parcelable {
     public void setID(long id) {
         this.id = id;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -161,7 +163,7 @@ public class Track implements Parcelable {
      * Finish a track and set the flag to true
      */
     public void finishTrack() {
-        setStatus(true);
+        this.setStatus(true);
     }
 
     public boolean isFinished() {
@@ -175,23 +177,29 @@ public class Track implements Parcelable {
      *            The Location
      */
     public void addTrackPoint(final Location location) {
-        if (!isFinished()) {
-            if (location != null) {
-                tracklist.add(new TrackPoint(location));
-                Log.d(TAG, "Added TrackPoint: " + location.toString());
-            }
+        if (!this.isFinished() && location != null) {
+            tracklist.add(new TrackPoint(location));
+            Log.d(TAG, "Added TrackPoint: " + location.toString());
         }
     }
 
     public List<TrackPoint> getTrackPoints() {
         return new ArrayList<TrackPoint>(tracklist);
     }
+    
+    public List<GeoPoint> getTrackGeoPoints() {
+        List<GeoPoint> geoList = new ArrayList<GeoPoint>();
+        for (TrackPoint trackP : tracklist) {
+            GeoPoint gp = new GeoPoint(trackP.getLat(), trackP.getLon());
+            geoList.add(gp);
+        }
+        return geoList;
+    }
 
     /**
      * Clears the list of TrackPoints belonging to this track and appends
      * another list of TrackPoints to it.
      * 
-     * @param trackPoints
      * @param trackPoints
      *            the given list of TrackPoints
      */

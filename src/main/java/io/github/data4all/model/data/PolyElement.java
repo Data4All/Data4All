@@ -32,13 +32,32 @@ import android.os.Parcelable;
  * 
  * @author fkirchge
  */
-public class PolyElement extends AbstractDataElement {
+public class PolyElement extends DataElement {
 
     /**
      * type of the PolyElement.
      */
     public enum PolyElementType {
-        WAY, AREA, BUILDING
+        WAY(0), AREA(1), BUILDING(2);
+
+        private final int id;
+
+        private PolyElementType(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public static PolyElementType fromId(int id) {
+            for (PolyElementType type : values()) {
+                if (type.getId() == id) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
     /**
@@ -92,20 +111,7 @@ public class PolyElement extends AbstractDataElement {
         super(in);
         nodes = new LinkedList<Node>();
         in.readTypedList(nodes, Node.CREATOR);
-        final int typeInt = in.readInt();
-        switch (typeInt) {
-        case 1:
-            type = PolyElementType.WAY;
-            break;
-        case 2:
-            type = PolyElementType.AREA;
-            break;
-        case 3:
-            type = PolyElementType.BUILDING;
-            break;
-        default:
-            break;
-        }
+        type = PolyElementType.fromId(in.readInt());
     }
 
     /**
@@ -241,16 +247,6 @@ public class PolyElement extends AbstractDataElement {
                             + "equals newNode");
         }
         return false;
-    }
-
-    /**
-     * Describing Contents.
-     * 
-     * @return 0
-     */
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     /**
@@ -466,19 +462,7 @@ public class PolyElement extends AbstractDataElement {
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeTypedList(nodes);
-        switch (type) {
-        case WAY:
-            dest.writeInt(1);
-            break;
-        case AREA:
-            dest.writeInt(2);
-            break;
-        case BUILDING:
-            dest.writeInt(3);
-            break;
-        default:
-            break;
-        }
+        dest.writeInt(type.getId());
     }
 
     /*

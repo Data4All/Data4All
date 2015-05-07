@@ -15,7 +15,7 @@
  */
 package io.github.data4all.util;
 
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
 
@@ -46,8 +46,8 @@ public final class MapUtil {
      *            the OsmElement whose center should be calculated
      * @return the Center of the OsmElement
      */
-    public static GeoPoint getCenterFromOsmElement(AbstractDataElement element) {
-        BoundingBoxE6 bb = getBoundingBoxForOsmElement(element);
+    public static GeoPoint getCenterFromOsmElement(DataElement element) {
+        final BoundingBoxE6 bb = getBoundingBoxForOsmElement(element);
         if(bb == null){
             return null;
         }
@@ -62,8 +62,8 @@ public final class MapUtil {
      * @return the Center of the OsmElement
      */
     public static GeoPoint getCenterFromOsmElements(
-            List<AbstractDataElement> list) {
-        BoundingBoxE6 bb = getBoundingBoxForOsmElements(list);
+            List<DataElement> list) {
+        final BoundingBoxE6 bb = getBoundingBoxForOsmElements(list);
         if(bb == null){
             return null;
         }
@@ -78,7 +78,7 @@ public final class MapUtil {
      * @return the BoundingBox for the given OsmElement
      */
     public static BoundingBoxE6 getBoundingBoxForOsmElement(
-            AbstractDataElement element) {
+            DataElement element) {
         final ArrayList<GeoPoint> list = new ArrayList<GeoPoint>();
         list.addAll(getPointsForElement(element));
         if (list.isEmpty()) {
@@ -95,9 +95,9 @@ public final class MapUtil {
      * @return the BoundingBox for the given OsmElement
      */
     public static BoundingBoxE6 getBoundingBoxForOsmElements(
-            List<AbstractDataElement> list) {
+            List<DataElement> list) {
         final ArrayList<GeoPoint> array = new ArrayList<GeoPoint>();
-        for (AbstractDataElement elem : list) {
+        for (DataElement elem : list) {
             array.addAll(getPointsForElement(elem));
         }
         if (array.isEmpty()) {
@@ -113,7 +113,7 @@ public final class MapUtil {
      *            the OsmElement whose GeoPoints should be returned
      * @return List of GeoPoints from the OsmElement
      */
-    private static List<GeoPoint> getPointsForElement(AbstractDataElement elem) {
+    private static List<GeoPoint> getPointsForElement(DataElement elem) {
         List<GeoPoint> points = new ArrayList<GeoPoint>();
         if (elem instanceof Node) {
             final Node node = (Node) elem;
@@ -127,7 +127,7 @@ public final class MapUtil {
 
     public static GeoPoint getCenterFromPointList(
             List<GeoPoint> list) {
-        BoundingBoxE6 bb = getBoundingBoxForPointList(list);
+        final BoundingBoxE6 bb = getBoundingBoxForPointList(list);
         if(bb == null){
             return null;
         }

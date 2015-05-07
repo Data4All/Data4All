@@ -18,6 +18,7 @@
     <string name="ok">OK</string>
 	<string name="ignore">Ignore</string>
 	<string name="alwaysIgnore"> Always Ignore</string>
+	<string name="save">Save</string>
 
     <!-- Strings Content Description ImageButtons -->
     <string name="returnToActualPosition">My Position</string>
@@ -48,6 +49,13 @@
     <string name="stopRecordTrack">This will stop and save the current track. Proceed?</string>
     <string name="deleteImage">Delete image</string>
     <string name="deleteImageText">"Do you want to delete the taken image from the gallery?"</string>
+    
+    <string name="editTrackName">"Edit Name"</string>
+    <string name="editTrackTags">"Edit Tags"</string>
+    <string name="editTrackDescription">"Edit Description"</string>
+    <string name="hint_edit_track_tags">"Tags must be separated by a comma"</string>
+    
+    
 
     <!-- for network -->
     <string name="no_network_title">Network unavailable</string>
@@ -85,6 +93,8 @@
     
       <!-- lastchoice -->
     <string name="name_lastchoice">Last Choice</string>
+    <string name="selectAddress">select Address</string>
+    <string name="addressNoAvailable">Address no avalaible</string>
 
     <!-- for upload -->
     <string name="upload_success">Successfully uploaded</string>
@@ -116,7 +126,14 @@
     <string name="noLocationFound">No Location found. Turn on location service.</string>
     <string name="retry">Cannot find the right Tag. Try Again.</string>
     <string name="noSensorData">No sensor data available. Try to start again beginning from the map.</string>
-    <string name="badSensorCalibration">Please slowly rotate your phone around its axis 3 times. And/Or draw an eight shaped figure with your phone </string>
+    <string name="goodSensorCalibration">All sensors are ready to go. If one or more sensors are broken a yellow exclamation mark or a red cross will appear. Clicking on it will give information how to fix the sensors. Warnings can be ignored, but that can result in wrong data for the calculation and could give wrong results of the mapped objects. </string>
+    <string name="badSensorCalibration">Please slowly rotate your phone around all its axis 3 times. And/Or draw an eight shaped figure with your phone. If that does not help restart your phone. You can always take these measurements for recalibration of these sensors. Ignoring this warning can result in bad calculation and wrong data.</string>
+    <string name="badSensorCalibrationM0">Magnetometer has calibrationlevel 0 out of 3. Please slowly rotate your phone around all its axis 3 times. And/Or draw an eight shaped figure with your phone. Remove all magnets from phone. If that does not help restart your phone. You can always take these measurements for recalibration of these sensors. Ignoring this warning can result in bad calculation and wrong data.</string>
+    <string name="badSensorCalibrationM1">Magnetometer has calibrationlevel 1 out of 3. Please slowly rotate your phone around all its axis 3 times. And/Or draw an eight shaped figure with your phone. Remove all magnets from phone. If that does not help restart your phone. You can always take these measurements for recalibration of these sensors. Ignoring this warning can result in bad calculation and wrong data.</string>
+    <string name="badSensorCalibrationM2">Magnetometer has calibrationlevel 2 out of 3. Please slowly rotate your phone around all its axis 3 times. And/Or draw an eight shaped figure with your phone. Remove all magnets from phone. If that does not help restart your phone. You can always take these measurements for recalibration of these sensors. Ignoring this warning can result in bad calculation and wrong data.</string>
+    <string name="badSensorCalibrationA0">Accelerometer has calibrationlevel 0 out of 3. Please slowly rotate your phone around all its axis 3 times. And/Or draw an eight shaped figure with your phone. If that does not help restart your phone. You can always take these measurements for recalibration of these sensors. Ignoring this warning can result in bad calculation and wrong data.</string>
+    <string name="badSensorCalibrationA1">Accelerometer has calibrationlevel 1 out of 3. Please slowly rotate your phone around all its axis 3 times. And/Or draw an eight shaped figure with your phone. If that does not help restart your phone. You can always take these measurements for recalibration of these sensors. Ignoring this warning can result in bad calculation and wrong data.</string>
+    <string name="badSensorCalibrationA2">Accelerometer has calibrationlevel 2 out of 3. Please slowly rotate your phone around all its axis 3 times. And/Or draw an eight shaped figure with your phone. If that does not help restart your phone. You can always take these measurements for recalibration of these sensors. Ignoring this warning can result in bad calculation and wrong data.</string>
     <string name="badAcceleometerCalibrationTitle">Accelerometer needs recalibration.</string>
     <string name="badMagnetometerCalibrationTitle">Magnetometer needs recalibration.</string>
     <string name="goodSensorCalibrationTitle">Sensor are okay.</string>
@@ -135,6 +152,10 @@
     <string name="track_id">Track ID:</string>
     <string name="trackpoints">Trackpoints:</string>
     <string name="trackname">Name:</string>
+    <string name="track_description">Description:</string>
+    <string name="track_tags">Tags:</string>
+    <string name="track_no_description">No description available</string>
+    <string name="track_no_tags">No tags available</string>
     
     <!-- URLs -->
     <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Follow us on Facebook</a></string>
@@ -146,7 +167,9 @@
     <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Apache Licenses</a></string>
     <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
     <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
-
+    <string name="linkToBingMap"><a href="https://www.microsoft.com/maps/product/terms.html">BingMap</a></string>
+    
+    
     <!-- credits / about / licenses -->
     <string name="aboutText">We are a small team of Bachelor students from the University Of Bremen. 
         You can find out more about us and this project on the following pages: </string>

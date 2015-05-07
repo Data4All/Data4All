@@ -17,11 +17,12 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.CapturePictureHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonAnimationListener;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.DeviceOrientation;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.TransformationParamBean;
 import io.github.data4all.model.drawing.RedoUndo.UndoRedoListener;
 import io.github.data4all.util.Gallery;
@@ -46,10 +47,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -172,7 +169,7 @@ public class ShowPictureActivity extends AbstractActivity {
             }
         });
 
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
 
         if (extras != null
                 && getIntent().hasExtra(CapturePictureHandler.FILE_EXTRA)) {
@@ -190,6 +187,7 @@ public class ShowPictureActivity extends AbstractActivity {
                     getIntent().getExtras().getParcelable(
                             CapturePictureHandler.TRANSFORM_BEAN);
             intent.putExtra(LOCATION, transformBean.getLocation());
+            TagSuggestionHandler.setLocation(transformBean.getLocation());
         }
 
         if (extras != null
@@ -278,8 +276,9 @@ public class ShowPictureActivity extends AbstractActivity {
         } else {
             // create an abstract data element from the given data and pass it
             // to the next activity
-            final AbstractDataElement osmElement = touchView.create();
+            final DataElement osmElement = touchView.create();
             intent.putExtra(OSM_ELEMENT, osmElement);
+        
             startActivityForResult(intent);
         }
     }

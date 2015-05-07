@@ -32,6 +32,14 @@
         <item name="android:src">@drawable/ic_cam</item>
     </style>
     
+    <style name="imageButtonUpdate" parent="imageButtonStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:src">@drawable/ic_undo</item>
+    </style>
+    
     <style name="imageButtonSwitchMaps" parent="imageButtonStyle">
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:layout_alignParentRight">true</item>

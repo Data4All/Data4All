@@ -15,11 +15,6 @@
  */
 package io.github.data4all;
 
-import java.io.IOException;
-import java.util.Scanner;
-
-import io.github.data4all.model.data.Tags;
-
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
@@ -27,8 +22,6 @@ import org.acra.sender.HttpSender;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
-import android.util.Log;
 
 /**
  * This class represents the application itself. It initializes the acra report

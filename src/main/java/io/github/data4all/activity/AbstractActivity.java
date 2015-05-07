@@ -41,7 +41,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 /**
  * Global activity for all children activities.
@@ -367,7 +366,10 @@ public abstract class AbstractActivity extends Activity {
         final View view = factory.inflate(R.layout.edit_track_name, null);
 
         final EditText txtName = (EditText) view.findViewById(R.id.editTracknameText);//new EditText(this);
-        txtName.setHint(trackUtil.getLastTrack().getTrackName());
+        Track track = trackUtil.getLastTrack();
+        
+        String hint = track!=null ? track.getTrackName() : null;
+        txtName.setHint(hint);
         
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setView(view);
@@ -382,7 +384,6 @@ public abstract class AbstractActivity extends Activity {
                         recordActive = false;
 
                         String trackName = txtName.getText().toString();
-                        Log.e("AbstractActivity", trackName);
                         stopTrack(trackName);
                         Log.d("AbstractActivity", "stop a track with dialog");
                         return;

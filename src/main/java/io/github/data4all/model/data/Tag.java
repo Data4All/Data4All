@@ -67,6 +67,7 @@ public class Tag {
 
     /**
      * store the last Tag value e.g the last value for addr:street.
+     *  @author:Steeve
      */
     private String lastValue;
 
@@ -191,7 +192,7 @@ public class Tag {
         final boolean englishName =
         PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                 prefKey, false);
-        return getLocalisedString(context, getNameRessource(), englishName);
+        return this.getLocalisedString(context, getNameRessource(), englishName);
     }
 
     public static String getLocalisedString(Context context, int id,
@@ -223,6 +224,10 @@ public class Tag {
         return result;
     }
 
+    /**
+     *  @author Steeve
+     * @return the last value
+     */
     public String getLastValue() {
         return lastValue;
     }

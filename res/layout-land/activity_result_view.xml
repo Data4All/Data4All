@@ -14,17 +14,35 @@
         android:id="@+id/buttonResultToCamera"
         style="@style/imageButtonReturnToCamera"
         android:contentDescription="@string/returnToCamera" />
+    
+        <Button
+        android:id="@+id/buttonAddressSuggestions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/background_dark"
+        android:layout_toRightOf="@+id/buttonResultToCamera"
+        android:layout_toLeftOf="@+id/buttonResult"
+        android:layout_alignTop="@+id/buttonResult"
+        android:text="@string/selectAddress"
+        android:textColor="@android:color/white" />
+        
     <Button
         android:id="@+id/buttonClassifiedTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/buttonResult"
-        android:layout_toRightOf="@+id/buttonResultToCamera"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_alignTop="@+id/buttonResult"
+        android:layout_marginTop="50dp"
         android:background="@android:color/background_dark"
         android:textColor="@android:color/white" 
+        android:layout_below="@+id/buttonAddressSuggestions"
+          android:layout_toRightOf="@+id/buttonResultToCamera"
+        android:layout_toLeftOf="@+id/buttonResult"
+        android:layout_alignTop="@+id/buttonResult"
         android:text="@string/SelectTag"/>
 
     <ListView
@@ -34,6 +52,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignTop="@+id/mapviewResult"
         android:layout_alignRight="@+id/buttonClassifiedTag"
+        android:layout_marginLeft="5dp"
         android:layout_below="@+id/buttonResult"
         android:layout_marginBottom="10dp"
         
@@ -43,12 +62,11 @@
 
     <io.github.data4all.view.D4AMapView
         android:id="@+id/mapviewResult"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_alignLeft="@+id/buttonClassifiedTag"
-        android:layout_below="@+id/buttonResultToCamera"
-        android:layout_marginRight="10dp"        
-        android:layout_marginTop="17dp" >
+         android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true" >
     </io.github.data4all.view.D4AMapView>
 
 </RelativeLayout>

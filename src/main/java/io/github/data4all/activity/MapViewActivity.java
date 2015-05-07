@@ -18,23 +18,36 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.handler.LastChoiceHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.GalleryListAdapter;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
+import io.github.data4all.model.data.Track;
 import io.github.data4all.service.GPSservice;
+import io.github.data4all.service.MapTileService;
+import io.github.data4all.service.OrientationListener;
 import io.github.data4all.util.Optimizer;
+import io.github.data4all.util.TrackUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,6 +58,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
@@ -64,6 +79,57 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
 
     private GalleryListAdapter drawerAdapter;
 
+    private static long lastTime;
+
+    ImageButton updateButton;
+
+    public static boolean UPDATECLICKABLE = false;
+
+    // Broadcast receiver for receiving status updates from the IntentService
+    private class MapTileReceiver extends BroadcastReceiver {
+        // Prevents instantiation
+        private MapTileReceiver() {
+        }
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to
+        // receive
+
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.hasExtra(OrientationListener.INTENT_CAMERA_UPDATE)) {
+                showButton();
+            }
+        }
+    }
+
+    private TrackUtil trackUtil;
+
+    /**
+     * BroadcastReceiver to receive signal, if there was a change in the current
+     * track
+     */
+    private final BroadcastReceiver TrackChangeReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.d(TAG,
+                    "received broadcast with: " + intent.getLongExtra("id", -1)
+                            + "from: " + context.toString());
+            updateTrackInView(intent.getLongExtra("id", -1));
+        }
+    };
+
+    /**
+     * The preferences of the application for the shown-state.
+     */
+    private SharedPreferences prefs;
+
+    /**
+     * defines if its the first use of the app
+     */
+    private boolean firstUse = true;
+
     /**
      * Default constructor.
      */
@@ -79,6 +145,8 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        lastTime = new Date().getTime();
         setContentView(R.layout.activity_map_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (ListView) findViewById(R.id.left_drawer);
@@ -117,7 +185,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         }
         // Setup the rotation listener
         final List<View> buttons = new ArrayList<View>();
-        
+
         // Set Listener for Buttons
         int id = R.id.return_to_actual_Position;
         final ImageButton returnToPosition = (ImageButton) findViewById(id);
@@ -128,7 +196,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final ImageButton satelliteMap = (ImageButton) findViewById(id);
         satelliteMap.setOnClickListener(this);
         buttons.add(findViewById(id));
-        
+
         id = R.id.to_camera;
         final ImageButton camera = (ImageButton) findViewById(id);
         camera.setOnClickListener(this);
@@ -139,7 +207,29 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         newPoint.setOnClickListener(this);
         buttons.add(findViewById(id));
 
+        id = R.id.update;
+        updateButton = (ImageButton) findViewById(id);
+        updateButton.setOnClickListener(this);
+        updateButton.setVisibility(View.INVISIBLE);
+        buttons.add(findViewById(id));
+
         listener = new ButtonRotationListener(this, buttons);
+
+        trackUtil = new TrackUtil(this);
+
+        registerReceiver(TrackChangeReceiver, new IntentFilter(
+                "trackpoint_updated"));
+
+        // Dialog at first start to set the users height
+        bodyheightdialog();
+        // The filter's action is BROADCAST_CAMERA
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                MapTileService.BROADCAST_MAP);
+        // Instantiates a new DownloadStateReceiver
+        MapTileReceiver mMapTileReceiver = new MapTileReceiver();
+        // Registers the DownloadStateReceiver and its intent filters
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMapTileReceiver, mStatusIntentFilter);
 
     }
 
@@ -153,9 +243,9 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         final MenuInflater inflater = getMenuInflater();
         // Add record button only in this activity
         inflater.inflate(R.menu.track_menu, menu);
-        boolean result = super.onCreateOptionsMenu(menu);
+        final boolean result = super.onCreateOptionsMenu(menu);
         getActionBar().setDisplayHomeAsUpEnabled(false);
-        
+
         return result;
     }
 
@@ -201,6 +291,14 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         case R.id.new_point:
             this.createNewPOI();
             break;
+        case R.id.update:
+            mapView.getTileProvider().clearTileCache();
+            mapView.postInvalidate();
+            UPDATECLICKABLE = false;
+            lastTime = new Date().getTime();
+            final ImageButton update = (ImageButton) findViewById(R.id.update);
+            update.setVisibility(View.INVISIBLE);
+            break;
         default:
             break;
         }
@@ -235,12 +333,14 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Enable User Position display
         Log.i(TAG, "Enable User Position Display");
         myLocationOverlay.enableMyLocation();
-        
+
         myLocationOverlay.enableFollowLocation();
 
         // add osmElements from the database to the map
-        DataBaseHandler db = new DataBaseHandler(this);
-        List<AbstractDataElement> list = db.getAllDataElements();
+        final DataBaseHandler db = new DataBaseHandler(this);
+        List<DataElement> list = db.getAllDataElements();
+        List<Track> trackList = db.getAllGPSTracks();
+        mapView.addGPSTracksToMap(this, trackList);
         mapView.addOsmElementsToMap(this, list);
         // load lastChoice from database
         LastChoiceHandler.load(db);
@@ -250,7 +350,25 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Start GPSService");
         startService(new Intent(this, GPSservice.class));
 
+        Intent mapTilesS = new Intent(this, MapTileService.class);
+        mapTilesS.putExtra(MapTileService.TIME, lastTime);
+        mapTilesS.putExtra(MapTileService.WEST, (double) mapView
+                .getBoundingBox().getLonWestE6());
+        mapTilesS.putExtra(MapTileService.SOUTH, (double) mapView
+                .getBoundingBox().getLatSouthE6());
+        mapTilesS.putExtra(MapTileService.EAST, (double) mapView
+                .getBoundingBox().getLonEastE6());
+        mapTilesS.putExtra(MapTileService.NORTH, (double) mapView
+                .getBoundingBox().getLatNorthE6());
+
+        Log.i(TAG, "Start MapTileService");
+        startService(mapTilesS);
         drawerAdapter.invalidate();
+    }
+
+    private void showButton() {
+        updateButton.setVisibility(View.VISIBLE);
+
     }
 
     /*
@@ -266,6 +384,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         Log.i(TAG, "Disable Actual Location Overlay");
         myLocationOverlay.disableMyLocation();
         myLocationOverlay.disableFollowLocation();
+        stopService(new Intent(this, MapTileService.class));
     }
 
     /**
@@ -278,10 +397,14 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
                     .show();
         } else {
+            final Location location = new Location("overlay");
+            location.setLatitude(myPosition.getLatitude());
+            location.setLongitude(myPosition.getLongitude());
+            TagSuggestionHandler.setLocation(location);
+
             final Intent intent = new Intent(this, MapPreviewActivity.class);
-            final Node poi =
-                    new Node(-1, myPosition.getLatitude(),
-                            myPosition.getLongitude());
+            final Node poi = new Node(-1, myPosition.getLatitude(),
+                    myPosition.getLongitude());
 
             // Set Type Definition for Intent to Node
             Log.i(TAG, "Set intent extra " + TYPE + " to " + NODE_TYPE_DEF);
@@ -308,7 +431,7 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
     @Override
     protected void onWorkflowFinished(Intent data) {
         final DataBaseHandler db = new DataBaseHandler(this);
-        final List<AbstractDataElement> list = db.getAllDataElements();
+        final List<DataElement> list = db.getAllDataElements();
         mapView.addOsmElementsToMap(this, list);
         db.close();
         mapView.postInvalidate();
@@ -339,5 +462,74 @@ public class MapViewActivity extends MapActivity implements OnClickListener {
         // Stop the GPS tracking
         Log.i(TAG, "Stop GPSService");
         stopService(new Intent(this, GPSservice.class));
+        stopService(new Intent(this, MapTileService.class));
+        unregisterReceiver(TrackChangeReceiver);
+
+    }
+
+    /**
+     * Gets the track to corresponding id and calls {@link
+     * D4AMapView.addGPSTrackToMap()}
+     * 
+     * @param id
+     *            Id of a track
+     */
+    private void updateTrackInView(long id) {
+        Track track = trackUtil.loadTrack(id);
+        mapView.addGPSTrackToMap(this, track);
+    }
+
+    /*
+     * Dialog at first start to set the users height
+     * 
+     * @author konerman
+     */
+    private void bodyheightdialog() {
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences userPrefs = getSharedPreferences("UserPrefs", 0);
+        firstUse = userPrefs.getBoolean("firstUse", true);
+
+        if (firstUse) {
+            RelativeLayout linearLayout = new RelativeLayout(this);
+            final NumberPicker numberPicker = new NumberPicker(this);
+            numberPicker.setMaxValue(250);
+            numberPicker.setMinValue(80);
+            numberPicker.setValue(180);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    50, 50);
+            RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            linearLayout.setLayoutParams(params);
+            linearLayout.addView(numberPicker, numPicerParams);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    this);
+            alertDialogBuilder.setTitle(R.string.pref_bodyheight_dialog_title);
+            alertDialogBuilder
+                    .setMessage(R.string.pref_bodyheight_dialog_message);
+            alertDialogBuilder.setView(linearLayout);
+            alertDialogBuilder.setCancelable(false).setPositiveButton(
+                    R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Log.d(TAG,
+                                    "set bodyheight to: "
+                                            + numberPicker.getValue());
+                            prefs.edit()
+                                    .putString(
+                                            "PREF_BODY_HEIGHT",
+                                            String.valueOf(numberPicker
+                                                    .getValue())).commit();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+            // set firstUse to false so this dialog is not shown again. ever.
+            userPrefs.edit().putBoolean("firstUse", false).commit();
+            firstUse = false;
+        }
     }
 }

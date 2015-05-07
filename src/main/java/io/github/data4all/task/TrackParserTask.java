@@ -19,27 +19,17 @@ import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.model.data.TrackPoint;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.james.mime4j.field.ParsedField;
-
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.Resources.Theme;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 /**
- * AsyncTask to parse a {@link Track} into xml structure. 
- * Returns the {@link Track} as a string.
+ * AsyncTask to parse a {@link Track} into xml structure. Returns the
+ * {@link Track} as a string.
  * 
  * @author sbrede
  * @author fkirchge
@@ -57,7 +47,7 @@ public class TrackParserTask extends AsyncTask<Void, Void, String> {
      * The {@link Track} which should be parsed.
      */
     private Track track;
-    
+
     /**
      * For conversion from UNIX epoch time and back.
      */
@@ -142,12 +132,15 @@ public class TrackParserTask extends AsyncTask<Void, Void, String> {
         sb.append("</gpx>");
 
         Log.i(TAG, "GPS Track contains " + points.size() + " Trackpoints.");
-        Log.d(TAG, "Parsed GPS Track with ID " +track.getID() +" : " +sb.toString());
+        Log.d(TAG,
+                "Parsed GPS Track with ID " + track.getID() + " : "
+                        + sb.toString());
         return sb.toString();
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
      */
     @Override
@@ -157,6 +150,7 @@ public class TrackParserTask extends AsyncTask<Void, Void, String> {
 
     /*
      * (non-Javadoc)
+     * 
      * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
      */
     @Override

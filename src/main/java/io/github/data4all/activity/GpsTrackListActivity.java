@@ -16,7 +16,6 @@
 package io.github.data4all.activity;
 
 import io.github.data4all.R;
-import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.Track;
 import io.github.data4all.util.ListAdapter;
 import io.github.data4all.util.TrackUtil;
@@ -63,7 +62,7 @@ public class GpsTrackListActivity extends AbstractActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                     long arg3) {
-                Intent intent = prepareIntent(trackListView, arg2);
+                final Intent intent = prepareIntent(trackListView, arg2);
                 startActivity(intent);
             }
         });
@@ -81,7 +80,7 @@ public class GpsTrackListActivity extends AbstractActivity {
     protected void onResume() {
         super.onResume();
         // Get saved tracks
-        getTracks();
+        this.getTracks();
 
         // Get the ListAdapter
         trackItemArrayAdapter =
@@ -103,14 +102,16 @@ public class GpsTrackListActivity extends AbstractActivity {
      * @return Intent The resulting intent with extras
      */
     private Intent prepareIntent(ListView trackListView, int position) {
-        Intent intent =
+        final Intent intent =
                 new Intent(getApplicationContext(), TrackDetailsActivity.class);
-        Track track = (Track) trackListView.getAdapter().getItem(position);
+        final Track track = (Track) trackListView.getAdapter().getItem(position);
 
         // Add name, id and number of trackpoints to intent
         intent.putExtra("name", track.getTrackName());
         intent.putExtra("trackpoints", track.getTrackPoints().size());
         intent.putExtra("id", track.getID());
+        intent.putExtra("description", track.getDescription());
+        intent.putExtra("tags", track.getTags());
 
         return intent;
     }
@@ -120,6 +121,7 @@ public class GpsTrackListActivity extends AbstractActivity {
      */
     private void getTracks() {
         trackList = trackUtil.getTracks();
+        
     }
 
     /*

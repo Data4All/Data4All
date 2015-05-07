@@ -18,7 +18,7 @@ package io.github.data4all.activity;
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.network.MapBoxTileSourceV4;
 import io.github.data4all.service.UploadElementsService;
 import io.github.data4all.service.UploadTracksService;
@@ -33,7 +33,6 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapController;
 
-import android.R.menu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -259,7 +258,7 @@ public class UploadActivity extends AbstractActivity {
      */
     private void showAllElementsOnMap() {
         final DataBaseHandler db = new DataBaseHandler(this);
-        final List<AbstractDataElement> list = db.getAllDataElements();
+        final List<DataElement> list = db.getAllDataElements();
 
         if (list != null && !list.isEmpty()) {
             mapController.setCenter(MapUtil.getCenterFromOsmElements(list));

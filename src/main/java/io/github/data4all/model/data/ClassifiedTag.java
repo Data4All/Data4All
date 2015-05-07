@@ -17,6 +17,8 @@ package io.github.data4all.model.data;
 
 import java.util.List;
 
+import android.content.Context;
+
 /**
  * This class represents a classified tag. A classified tag is a subclass of
  * tag. classifiedTags are tags where the user can choose input/value from
@@ -25,7 +27,7 @@ import java.util.List;
  * @author fkirchge
  *
  */
-public class ClassifiedTag extends Tag {
+public class ClassifiedTag extends Tag implements Localizeable {
 
     /**
      * stores all classified values for the specific tag.
@@ -57,5 +59,10 @@ public class ClassifiedTag extends Tag {
     public void setClassifiedValues(List<ClassifiedValue> classifiedValues) {
         this.classifiedValues = classifiedValues;
     }
+
+	@Override
+	public String getLocalizedName(Context context) {
+		return getNamedKey(context);
+	}
 
 }

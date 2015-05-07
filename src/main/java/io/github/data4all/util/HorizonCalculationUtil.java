@@ -15,10 +15,11 @@
  */
 package io.github.data4all.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import io.github.data4all.model.DeviceOrientation;
 import io.github.data4all.model.drawing.Point;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class calculates the horizon for the display of the device.
@@ -45,8 +46,8 @@ public class HorizonCalculationUtil {
     /**
      * 2 Vectors for the x- and the y-axe
      */
-    private static final double[] xaxe = {1,0,0,};
-    private static final double[] yaxe = {0,1,0,};
+    private static final double[] xaxis = { 1, 0, 0, };
+    private static final double[] yaxis = { 0, 1, 0, };
 
     /**
      * calculates the horizon for the display of the device.
@@ -65,23 +66,24 @@ public class HorizonCalculationUtil {
      *            of DeviceOrientation
      * @return object of the inner class returnValues
      */
-    public ReturnValues calcHorizontalPoints(float horizontalViewAngle, float verticalViewAngle,
-            float maxWidth, float maxHeight, float maxhorizon,
-            DeviceOrientation deviceOrientation) {
+    public ReturnValues calcHorizontalPoints(float horizontalViewAngle,
+            float verticalViewAngle, float maxWidth, float maxHeight,
+            float maxhorizon, DeviceOrientation deviceOrientation) {
         final ReturnValues rV = new ReturnValues();
         // Set Cornerpoints
-        final Point[] corners2 = {new Point(0.0f, 0.0f), new Point(maxWidth, 0.0f),
-                new Point(maxWidth, maxHeight), new Point(0.0f, maxHeight), };
+        final Point[] corners2 = { new Point(0.0f, 0.0f),
+                new Point(maxWidth, 0.0f), new Point(maxWidth, maxHeight),
+                new Point(0.0f, maxHeight), };
         this.corners = corners2;
 
         // initial Vector
-        final double[] vector = {0,0,-1,};
+        final double[] vector = { 0, 0, -1, };
         // rotate around y-axe with roll
         final double roll = -deviceOrientation.getRoll();
-        double[] vector2 = MathUtil.rotate(vector, yaxe, roll);
+        double[] vector2 = MathUtil.rotate(vector, yaxis, roll);
         // rotate around x-axe with pitch
         final double pitch = deviceOrientation.getPitch();
-        double[] vector3 = MathUtil.rotate(vector2, xaxe, pitch);
+        double[] vector3 = MathUtil.rotate(vector2, xaxis, pitch);
         // calculate angle between vector and z-axis and subtract from
         // maxhorizon.
         final double angle = maxhorizon - Math.acos(-vector3[2]);
@@ -113,50 +115,57 @@ public class HorizonCalculationUtil {
         double horizonPitch = Math.atan(vector4[1] / (vector4[2]));
         double horizonRoll = Math.atan(vector4[0] / (vector4[2]));
         // calculate a point on the horizont vertical to the mid of the display.
-        final float x = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth, horizontalViewAngle);
-        final float y = MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight, verticalViewAngle);
+        final float x = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth,
+                horizontalViewAngle);
+        final float y = MathUtil.calculatePixelFromAngle(horizonPitch,
+                maxHeight, verticalViewAngle);
 
-        // set general direction / side of te horizon
+        // calculation of the gradiants
+        vector2 = MathUtil.rotate(xaxis, xaxis, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxis, -roll);
+        // calculate the pitch- and roll-angles.
+        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
+        horizonRoll = Math.atan(vector3[0] / (vector3[2]));
+        float xgradiant = MathUtil.calculatePixelFromAngle(horizonRoll,
+                maxWidth, horizontalViewAngle);
+        float ygradiant = MathUtil.calculatePixelFromAngle(horizonPitch,
+                maxHeight, verticalViewAngle);
+        vector2 = MathUtil.rotate(yaxis, xaxis, pitch);
+        vector3 = MathUtil.rotate(vector2, yaxis, -roll);
+        // calculate the pitch- and roll-angles.
+        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
+        horizonRoll = Math.atan(vector3[0] / (vector3[2]));
+        // calculate a point on the horizont vertical to the mid of the display.
+        xgradiant = xgradiant
+                - MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth,
+                        horizontalViewAngle);
+        ygradiant = ygradiant
+                - MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight,
+                        verticalViewAngle);
+
+        double rotateDegree = Math.acos(xgradiant
+                / Math.sqrt(ygradiant * ygradiant + xgradiant * xgradiant));
+        // set general direction / side of the horizon
         if (y <= 0 && x < 0) {
             direction = 0;
+            rotateDegree = Math.PI  + rotateDegree;
         }
         if (y < 0 && x >= 0) {
             direction = 1;
         }
         if (y >= 0 && x >= 0) {
             direction = 2;
+            rotateDegree = Math.PI - rotateDegree;
         }
         if (y > 0 && x <= 0) {
             direction = 3;
+            rotateDegree = Math.PI*2  - rotateDegree;
         }
-
-        // calculation of the gradiants
-        vector2 = MathUtil.rotate(xaxe, xaxe, pitch);
-        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
-        // calculate the pitch- and roll-angles.
-        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
-        horizonRoll = Math.atan(vector3[0] / (vector3[2]));   
-        float xgradiant = MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth,
-                horizontalViewAngle);
-        float ygradiant = MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight,
-                verticalViewAngle);
-        vector2 = MathUtil.rotate(yaxe, xaxe, pitch);
-        vector3 = MathUtil.rotate(vector2, yaxe, -roll);
-        // calculate the pitch- and roll-angles.
-        horizonPitch = Math.atan(vector3[1] / (vector3[2]));
-        horizonRoll = Math.atan(vector3[0] / (vector3[2]));
-        // calculate a point on the horizont vertical to the mid of the display.
-        xgradiant = xgradiant
-                - MathUtil.calculatePixelFromAngle(horizonRoll, maxWidth, horizontalViewAngle);
-        ygradiant = ygradiant
-                - MathUtil.calculatePixelFromAngle(horizonPitch, maxHeight, verticalViewAngle);
-
+        rV.setRotateDegree(rotateDegree);
         // calculate and return the returnValues.
         return calculatePoints(maxWidth, maxHeight, x, y, xgradiant, ygradiant,
                 rV);
     }
-
-
 
     /**
      * An inner Class for saving points, the visibility of the horizon and if
@@ -175,6 +184,19 @@ public class HorizonCalculationUtil {
          * false if the horzion is not visible on the display
          */
         private boolean visible = true;
+
+        /**
+         * rotate degree
+         */
+        private double rotateDegree;
+
+        public double getRotateDegree() {
+            return rotateDegree;
+        }
+
+        public void setRotateDegree(double rotateDegree) {
+            this.rotateDegree = rotateDegree;
+        }
 
         public List<Point> getPoints() {
             return points;
@@ -330,7 +352,5 @@ public class HorizonCalculationUtil {
     public Point getPoint2() {
         return point2;
     }
-
-
 
 }

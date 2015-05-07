@@ -47,7 +47,7 @@ public class SettingsActivity extends AbstractActivity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item= menu.findItem(R.id.action_settings);
+        final MenuItem item= menu.findItem(R.id.action_settings);
         item.setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }

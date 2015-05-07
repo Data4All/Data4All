@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.data4all"
-    android:versionCode="5"
-    android:versionName="1.2.1" >
+    android:versionCode="6"
+    android:versionName="1.3" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -31,7 +31,9 @@
         <meta-data
             android:name="MAPBOX_AUTHKEY"
             android:value="pk.eyJ1IjoiZGF0YTRhbGwiLCJhIjoiYlNHWlFSayJ9.vN6iDHPsVupbT9yXdlT9Xg" />
-
+        <meta-data
+            android:name="BING_KEY"
+            android:value="AqSiekJUO7cJuE4nWOtuDO1-hkcM1T9rNL-p2Qymqkn3uJd9smHb-pvwhdE5c3RZ" />
         <activity android:name=".activity.MapViewActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -74,6 +76,9 @@
             android:name=".service.OrientationListener"
             android:enabled="true" />
 
+        <service
+            android:name=".service.MapTileService"
+            android:enabled="true" />
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about" >

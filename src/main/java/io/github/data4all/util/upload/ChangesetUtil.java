@@ -16,30 +16,31 @@
 package io.github.data4all.util.upload;
 
 import io.github.data4all.handler.DataBaseHandler;
-import io.github.data4all.model.data.AbstractDataElement;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.User;
 import io.github.data4all.util.OsmChangeParser;
 import io.github.data4all.util.oauth.exception.OsmException;
 import io.github.data4all.util.oauth.parameters.OAuthParameters;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-
 import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.params.BasicHttpParams;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.ResultReceiver;
 
@@ -51,6 +52,7 @@ import android.os.ResultReceiver;
  * @author tbrose (sourcecode rearrangement)
  *
  */
+@SuppressLint("SimpleDateFormat")
 public final class ChangesetUtil {
 
     /**
@@ -85,13 +87,12 @@ public final class ChangesetUtil {
      */
     private static HttpPut getChangeSetPut(User user) throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer =
-                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
-                        params.getConsumerSecret());
+        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
+                params.getConsumerKey(), params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPut httpPut =
-                new HttpPut(params.getScopeUrl() + "api/0.6/changeset/create");
+        final HttpPut httpPut = new HttpPut(params.getScopeUrl()
+                + "api/0.6/changeset/create");
         try {
             consumer.sign(httpPut);
         } catch (OAuthMessageSignerException e) {
@@ -144,7 +145,7 @@ public final class ChangesetUtil {
     public static String getChangesetXml(Context context, int changesetId)
             throws OsmException {
         final DataBaseHandler db = new DataBaseHandler(context);
-        final List<AbstractDataElement> elems = db.getAllDataElements();
+        final List<DataElement> elems = db.getAllDataElements();
         db.close();
 
         final StringBuilder builder = new StringBuilder();
@@ -171,7 +172,7 @@ public final class ChangesetUtil {
      */
     public static boolean needToUpload(Context context) {
         final DataBaseHandler db = new DataBaseHandler(context);
-        final List<AbstractDataElement> elems = db.getAllDataElements();
+        final List<DataElement> elems = db.getAllDataElements();
         return !elems.isEmpty();
     }
 
@@ -190,14 +191,12 @@ public final class ChangesetUtil {
     private static HttpPost getUploadPost(User user, int id)
             throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer =
-                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
-                        params.getConsumerSecret());
+        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
+                params.getConsumerKey(), params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPost httpPost =
-                new HttpPost(params.getScopeUrl() + "api/0.6/changeset/" + id
-                        + "/upload");
+        final HttpPost httpPost = new HttpPost(params.getScopeUrl()
+                + "api/0.6/changeset/" + id + "/upload");
         try {
             consumer.sign(httpPost);
         } catch (OAuthMessageSignerException e) {
@@ -238,8 +237,8 @@ public final class ChangesetUtil {
             final HttpPost request = getUploadPost(user, changesetId);
 
             // Setting the Entity
-            final HttpEntity entity =
-                    new CallbackStringEntry(changesetXml, callback);
+            final HttpEntity entity = new CallbackStringEntry(changesetXml,
+                    callback);
             request.setEntity(entity);
 
             return new CloseableUpload(request);
@@ -262,14 +261,12 @@ public final class ChangesetUtil {
     private static HttpPut getChangeSetClose(User user, long changeSetId)
             throws OsmException {
         final OAuthParameters params = OAuthParameters.CURRENT;
-        final OAuthConsumer consumer =
-                new CommonsHttpOAuthConsumer(params.getConsumerKey(),
-                        params.getConsumerSecret());
+        final OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
+                params.getConsumerKey(), params.getConsumerSecret());
         consumer.setTokenWithSecret(user.getOAuthToken(),
                 user.getOauthTokenSecret());
-        final HttpPut httpPut =
-                new HttpPut(params.getScopeUrl() + "api/0.6/changeset/"
-                        + changeSetId + "/close");
+        final HttpPut httpPut = new HttpPut(params.getScopeUrl()
+                + "api/0.6/changeset/" + changeSetId + "/close");
         try {
             consumer.sign(httpPut);
         } catch (OAuthMessageSignerException e) {
@@ -301,4 +298,68 @@ public final class ChangesetUtil {
         final HttpPut request = getChangeSetClose(user, changesetId);
         return new CloseableCloseRequest(request);
     }
+
+    /**
+     * Returns a {@link HttpGet} containing the boundingbox and time.
+     * 
+     * @param time
+     *            the time from where we are looking for new changeSets
+     * @param min_lon
+     *            lowest Longitude of the BoundingBox
+     * @param min_lat
+     *            lowest Latitude of the BoundingBox
+     * @param max_lon
+     *            Highest Longitude of the BoundingBox
+     * @param max_lat
+     *            highest Latitude of the BoundingBox
+     * @return HttpGet with Params
+     */
+    private static HttpGet getChangesetGet(long time, double min_lon,
+            double min_lat, double max_lon, double max_lat) {
+        final OAuthParameters params = OAuthParameters.CURRENT;
+        final HttpGet httpGet = new HttpGet(params.getScopeUrl()
+                + "api/0.6/changesets");
+
+        final BasicHttpParams httpParams = new BasicHttpParams();
+        List<Double> bbox = new LinkedList<Double>();
+        bbox.add(min_lon);
+        bbox.add(min_lat);
+        bbox.add(max_lon);
+        bbox.add(max_lat);
+
+        String timeformat = "yyyy-MM-dd'T'HH:mm:ss.SZZZZZ";
+        final SimpleDateFormat dateformat = new SimpleDateFormat(timeformat);
+        httpParams.setParameter("bbox", bbox);
+        httpParams.setParameter("time", dateformat.format(new Date(time)));
+        httpParams.setParameter("closed", true);
+
+        httpGet.setParams(httpParams);
+        return httpGet;
+    }
+
+    /**
+     * Requests a list of closed changesets from the OSM-API.
+     * 
+     * @param time
+     *            the time from where we are looking for new changeSets
+     * @param min_lon
+     *            lowest Longitude of the BoundingBox
+     * @param min_lat
+     *            lowest Latitude of the BoundingBox
+     * @param max_lon
+     *            Highest Longitude of the BoundingBox
+     * @param max_lat
+     *            highest Latitude of the BoundingBox
+     * @return The ClosableCloseRequest which sends the Request
+     * @throws OsmException
+     *             If the changesetId cannot be grabbed
+     */
+    public static CloseableGetChangeSets getChangeSet(long time,
+            double min_lon, double min_lat, double max_lon, double max_lat)
+            throws OsmException {
+        final HttpGet request = getChangesetGet(time, min_lon, min_lat,
+                max_lon, max_lat);
+        return new CloseableGetChangeSets(request);
+    }
+
 }

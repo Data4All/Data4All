@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Data4All</string>
+
+    <!-- setting list -->
+    <string name="action_settings">Paramètres</string>
+    <string name="action_camera">Camera</string>
+    <string name="action_map">Carte</string>
+    <string name="action_help">Aide</string>
+    <string name="action_login">Se connecter</string>
+    <string name="action_about">À propos de D4A</string>
+    <string name="action_licenses">Indications juridiques</string>
+
+    <!-- generell strings -->
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="ok">OK</string>
+	<string name="ignore">Ignorer</string>
+	<string name="alwaysIgnore"> Toujours ignorer</string>
+
+    <!-- Strings Content Description ImageButtons -->
+    <string name="returnToActualPosition">Ma position </string>
+    <string name="returnToCamera">Camera</string>
+    <string name="pointOfInterest">Point particulier</string>
+    <string name="switchMaps">Changer les cartes</string>
+    <string name="upload_data">Télécharger</string>
+    <string name="startUpScreen">Écran d\'accueil</string>
+    <string name="noDescription"></string>
+    <string name="drawWay">Déssine une voie</string>
+    <string name="drawPoint">Déssine un point</string>
+    <string name="drawArea">Déssine une surface </string>
+    <string name="drawBuilding">Déssine un bâtiment </string>
+    <string name="redo">Restaurer</string>
+    <string name="undo">Revenir en arrière</string>
+    
+    <!-- infoBubble -->
+    <string name="delete">Supprimer</string>
+    <string name="edit">Modifier</string>   
+
+    <!-- dialogs -->
+    <string name="deleteDialog">Voulez vous vraiment supprimer cet objet?</string>
+    <string name="resultViewAlertDialogMessage">Télécharger maintenant?</string>
+    <string name="doNotShowAgain">Ne plus montrer</string>
+    <string name="startRecordTrack">Voulez vous enregister une nouvelle piste?</string>
+    <string name="stopRecordTrack">Voulez vous arrêter ou enregistrer la piste actuelle?</string>
+    <string name="deleteImage">Supprimer la photo</string>
+    <string name="deleteImageText">Voulez vous vraiment supprimer l\'actuelle photo de la Galerie?</string>
+
+    <!-- for network -->
+    <string name="no_network_title">Connexion internet insdiponible</string>
+    <string name="no_network_message">Connectez vous au réseau Wi-Fi ou activez les données mobiles</string>
+
+    <!-- for login -->
+    <string name="usernameHint">Nom d\'utilisateur</string>
+    <string name="passwordHint">Mot de passe</string>
+    <string name="loginDescription">Se connecter sur OpenStreetMap</string>
+    <string name="loginButton">Se connecter</string>
+    <string name="registerButton">S\'inscrire maintenant</string>
+    <string name="osmLogo">Open-Street-Map Logo</string>
+    <string name="login_alertdialog_nonetwork_title">Réseau indisponible</string>
+    <string name="login_alertdialog_nonetwork_message">Connectez vous au réseau Wi-Fi ou activez les données mobiles</string>
+    <string name="login_alertdialog_error">Erreur</string>
+    <string name="login_alertdialog_accessdenied_title">Accès refusé</string>
+    <string name="login_alertdialog_accessdenied_message">Le nom de l\'utilisateur où le mot de passe n\'est pas correct</string>
+    <string name="login_alertdialog_nousername">Ne pas spécifier le nom d\'utilisateur</string>
+    <string name="login_alertdialog_nopassword">Ne pas spécifier le mot de Passe</string>
+    <string name="login_username_empty">Nom d\'utilisateur manquait</string>
+    <string name="login_password_empty">Mot de passe manquait</string>
+    <string name="login_access_dialog_title">accès refusé</string>
+    <string name="login_access_dialog_mes">Le nom de l\'utilisateur où le mot de passe n\'est pas correct</string>
+
+
+    <!-- for tags --> 
+    <string name="SelectTag">Choisir la balise correspondante</string>
+    <string name="AddAddress">Ajouter une Addresse</string>
+    <string name="AddContact">Ajouter un Contact</string>
+    <string name="next">Continuer</string>
+    <string name="finish">Terminer</string>
+    <string name="phone">Téléphone</string>
+    <string name="fax">Fax</string>
+    <string name="website">Site web</string>
+    <string name="email">Adresse e-mail</string>
+    
+        
+    <!-- lastChoice -->
+    <string name="name_lastchoice">Dernier choix</string>
+     <string name="selectAddress">Choisir une addresse</string>
+     <string name="addressNoAvailable">Aucune addresse n\'a été trouvé à cause de votre connexion internet </string>
+
+    <!-- for upload -->
+    <string name="upload_success">téléchargement réussi</string>
+    <string name="upload_caption">Télécharger sur OpenStreetMap</string>
+    <string name="upload_comment">Commentaire</string>
+    <string name="upload_upload_text">"Liste des Objects qui ont été téléchargés: "</string>
+    <string name="upload_cancle">Annuler</string>
+    <string name="CancelButton">Annuler</string>
+    <string name="UploadButton">Télécharger</string>
+    <string name="upload_to_openstreetmap">Télécharger sur OpenStreetMap</string>
+    <string name="upload_to_openstreetmap_progress">Téléchargement en cours</string>
+    <string name="upload_to_openstreetmap_success">Les Changements ont été correctement téléchargés</string>
+    <string name="upload_to_openstreetmap_error">Echec de l\'envoi</string>
+    
+     <!-- track list and details -->
+    <string name="list_tracks">Pistes</string>
+    <string name="track_id">Piste ID:</string>
+    <string name="trackpoints">Point de pistes:</string>
+    <string name="trackname">Nom:</string>
+
+    <!-- for gallery -->
+    <string name="gallery_sec">"%s actuel"</string>
+    <string name="gallery_min">"%s 1 minute"</string>
+    <string name="gallery_mins">"%s minuten"</string>
+    <string name="gallery_hour">"%s 1 heure"</string>
+    <string name="gallery_hours">"%s heure"</string>
+    <string name="gallery_yesterday">"%1$s hier %2$s"</string>
+    <string name="gallery_delete_all">Supprimer tout</string>
+
+    <!-- other -->
+    <string name="sensor_warning">Afficher les avertisseurs des Capteurs</string>
+    <string name="empty"></string>
+    <string name="augmented_reality">Augmenter la réalité</string>
+    <string name="noCamSupported"> Désolé mais votre appareil n\'est pas prise en charge par la camera </string>
+    <string name="noLocationFound">"Aucun emplacement trouvé. Activer votre service de localisation </string>
+    <string name="retry">Aucune balise correspondante n\'a été trouvé. Recommencer à nouveau</string>
+    <string name="noSensorData">Les informations sur les capteurs sont actuellement insdisponible, Recommencer à nouveau depuis la carte.</string>
+
+    <string name="goodSensorCalibration">Tout les capteurs ont ok. S\'il arrive qu\'un des capteurs ne fonctionne pas correctement, alors vous verrez soit un point d\'exclamation soit une croix rouge s\'afficher. Cliquez dessus pour obtenir des méthodes sur la calibration de ces capteurs. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibration">S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone . Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.   </string>
+    <string name="badSensorCalibrationM0">Le niveau de calibrage du magnétomètre se situe entre 0 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationM1"> Le niveau de calibrage du magnétomètre se situe entre 1 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationM2">Le niveau de calibrage du magnétomètre se situe entre 2 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationA0"> Le niveau de calibrage de l\'accéléromètre se situe entre 0 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationA1"> Le niveau de calibrage de l\'accéléromètre se situe entre 1 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    <string name="badSensorCalibrationA2"> Le niveau de calibrage de l\'accéléromètre se situe entre 2 et 3. S\'il vous plait tourner votre téléphone lentement 3 fois dans chaque Axe. Et/ou déssiner
+        un huit avec votre téléphone. Si le problème n\'est toujours pas resolue alors redémarrez votre téléphone et retirez tous les aimants de votre smartphone. Vous pouvez effectuer cette action autant de fois que vous voulez. Ignorer cet avertissement peut conduire à des résultats incorrects dans le calcul des objets.</string>
+    
+    <string name="badSensorCalibrationTitle">Les capteurs doivent être recalibrer.</string>
+    <string name="badAcceleometerCalibrationTitle">Accéleromètre doit être recalibrer.</string>
+    <string name="badMagnetometerCalibrationTitle">Magnétomètre doit être recalibrer.</string>
+    <string name="goodSensorCalibrationTitle">Capteurs okay.</string>
+    
+    <string name="statusNotificationHeadline">Data4All est encore en cours</string>
+    <string name="statusNotification">Data4All est encore en cours dans le système.</string>
+    
+    <string name="show_pwd">afficher le mot de passe</string>
+    <string name="title_activity_about">À propos de cette Activitée</string>
+    <string name="hello_world">Salut à tous!</string>
+      
+    <!-- URLs -->
+    <string name="linkToFacebook"><a href="http://www.facebook.com/data4allHB">Suivez nous sur Facebook</a></string>
+    <string name="linkToTwitter"><a href="http://twitter.com/data4allHB">Suivez nous sur Twitter</a></string>
+    <string name="linkToHomepage"><a href="http://data4all.github.io/">Page officiele</a></string>
+    <string name="linkToGithub"><a href="http://github.com/Data4All/Data4All">Devient un membre de notre project sur Github!</a></string>
+    <string name="linkToOSMCopyright"><a href="http://www.openstreetmap.org/copyright">&#169; OpenStreetMap-collaborateurs</a></string>
+    <string name="linkToMapboxTOS"><a href="https://www.mapbox.com/tos/">Conditions d\'utilisation de Mapbox </a></string>
+    <string name="linkToApacheLicense"><a href="http://www.apache.org/licenses/">Licences Apache</a></string>
+    <string name="linkToOSMDroidWiki"><a href="http://wiki.openstreetmap.org/wiki/Osmdroid">osmdroid</a></string>
+    <string name="linkToOSMBonusPack"><a href="https://code.google.com/p/osmbonuspack/">OSMBonusPack</a></string>
+    <string name="linkToBingMap"><a href="https://www.microsoft.com/maps/product/terms.html">BingMap</a></string>
+    
+    
+    <!-- credits / about -->
+    <string name="aboutText">Nous sommes une pétite équipe d\'étudiants de premier cycle de l\'Université de Brême. 
+        Vous pouvez apprendre plus sur nous et sur ce project en suivant les liens suivant:
+  </string>
+    <string name="githubFollow">Data4All est un open source Project. 
+        Ceci signifie que vous pouvez aussi apporter votre apport personelle pour l\'améliorer: </string> 
+
+
+    <string name="deleteTagsResultview">Voulez vous supprimer cette balise ?</string>
+    <string name="maybe">Jeter</string>
+
+    <string name="underlyingLicenses">Sur les liens suivant vous trouverez les differentes Licences que nous avons utilisées</string>
+    <string name="librariesUsed">En plus de cela nous avons utilisé les Bibliotèques suivantes:</string>
+
+</resources>

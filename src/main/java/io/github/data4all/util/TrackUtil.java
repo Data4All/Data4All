@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014, 2015 Data4All
+ * 
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * <p>Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package io.github.data4all.util;
 
 import io.github.data4all.handler.DataBaseHandler;
@@ -16,7 +31,7 @@ public class TrackUtil {
 
     private Context context;
 
-    private static final String TAG = "TrackUtility";
+    private static final String TAG = "TrackUtil";
 
     public TrackUtil(Context ctx) {
         this.context = ctx;
@@ -28,7 +43,6 @@ public class TrackUtil {
      * @return the track
      */
     public Track startNewTrack() {
-
         // TODO check for active tracks and close them
         db = new DataBaseHandler(context.getApplicationContext());
         Track track = new Track();
@@ -113,7 +127,7 @@ public class TrackUtil {
         }
         db.close();
     }
-    
+
     /**
      * Gets the track for a corresponding id and deletes this track from
      * database.
@@ -121,15 +135,16 @@ public class TrackUtil {
      * @param id
      */
     public void deleteTrack(long id) {
-        DataBaseHandler db = new DataBaseHandler(context.getApplicationContext());
+        DataBaseHandler db = new DataBaseHandler(
+                context.getApplicationContext());
         Track track = db.getGPSTrack(id);
         db.deleteGPSTrack(track);
         db.close();
     }
 
-    
     /**
      * Returns a List of all Tracks from Database.
+     * 
      * @return trackList
      */
     public List<Track> getTracks() {
@@ -149,26 +164,24 @@ public class TrackUtil {
     public Track getLastTrack() {
         db = new DataBaseHandler(context.getApplicationContext());
         List<Track> allGPSTracks = db.getAllGPSTracks();
-        Log.d(TAG, "TrackList" + allGPSTracks.toString());
+        db.close();
         if (!allGPSTracks.isEmpty()) {
             for (Track tr : allGPSTracks) {
                 if (!tr.isFinished()) {
-                    Log.d("TrackUtility", "Continue on last track with id: "
-                            + tr.getID());
-                    db.close();
+                    Log.d(TAG, "Continue on last track with id: " + tr.getID());
                     return tr;
                 }
             }
         }
-        Log.d("TrackUtility", "There is no last opened track.");
-        db.close();
+        Log.d(TAG, "There is no last opened track.");
         return null;
     }
 
-    
     /**
      * Return the number of {@link TrackPoint} of a {@link Track}.
-     * @param track The {@link Track}
+     * 
+     * @param track
+     *            The {@link Track}
      * @return size The number of {@link TrackPoint}
      */
     public int getTrackSize(Track track) {
@@ -187,10 +200,13 @@ public class TrackUtil {
      */
     public boolean sameTrackPoints(TrackPoint point1, Location loc) {
         final TrackPoint point2 = new TrackPoint(loc);
-        if (point1.getLat() == point2.getLat()
-                && point1.getLon() == point2.getLon()) {
+        int i = Double.compare(point1.getLat(), point2.getLat());
+        int j = Double.compare(point1.getLon(), point2.getLon());
+
+        if (i == 0 && j == 0) {
             return true;
         }
+
         return false;
     }
 }

@@ -15,15 +15,12 @@
  */
 package io.github.data4all.model;
 
-import io.github.data4all.model.data.TransformationParamBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -50,15 +47,16 @@ public class DeviceOrientation implements Parcelable {
      * CREATOR that generates instances of {@link DeviceOrientation} from a
      * Parcel.
      */
-    public static final Parcelable.Creator<DeviceOrientation> CREATOR = new Parcelable.Creator<DeviceOrientation>() {
-        public DeviceOrientation createFromParcel(Parcel in) {
-            return new DeviceOrientation(in);
-        }
+    public static final Parcelable.Creator<DeviceOrientation> CREATOR =
+            new Parcelable.Creator<DeviceOrientation>() {
+                public DeviceOrientation createFromParcel(Parcel in) {
+                    return new DeviceOrientation(in);
+                }
 
-        public DeviceOrientation[] newArray(int size) {
-            return new DeviceOrientation[size];
-        }
-    };
+                public DeviceOrientation[] newArray(int size) {
+                    return new DeviceOrientation[size];
+                }
+            };
 
     /**
      * constructor.

@@ -15,30 +15,26 @@
  */
 package io.github.data4all.model.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.github.data4all.R;
 import io.github.data4all.activity.AbstractActivity;
 import io.github.data4all.activity.MapPreviewActivity;
 import io.github.data4all.activity.MapViewActivity;
 import io.github.data4all.logger.Log;
-import io.github.data4all.model.data.AbstractDataElement;
-import io.github.data4all.model.data.ClassifiedTag;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Node;
 import io.github.data4all.model.data.PolyElement;
-import io.github.data4all.model.data.Tag;
 import io.github.data4all.util.MapUtil;
 import io.github.data4all.util.MathUtil;
-import io.github.data4all.util.Tagging;
 import io.github.data4all.view.D4AMapView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -61,7 +57,7 @@ import android.widget.ZoomControls;
 public class MapLine extends Polyline {
 
     private static final String TAG = "MapLine";
-    private AbstractDataElement element;
+    private DataElement element;
     private D4AMapView mapView;
     private AbstractActivity activity;
     private boolean editable;
@@ -140,7 +136,7 @@ public class MapLine extends Polyline {
      * @param ele
      *            the associated OsmElement
      */
-    public MapLine(AbstractActivity ctx, D4AMapView mv, AbstractDataElement ele) {
+    public MapLine(AbstractActivity ctx, D4AMapView mv, DataElement ele) {
         super(ctx);
         this.element = ele;
         this.activity = ctx;
@@ -165,8 +161,9 @@ public class MapLine extends Polyline {
                 timeStart = System.currentTimeMillis();
                 if (active) {
                     mode = MOVE;
-                    saveGeoPoints();
-                    GeoPoint mapCenter = (GeoPoint) mapView.getMapCenter();
+                    this.saveGeoPoints();
+                    final GeoPoint mapCenter = (GeoPoint) mapView
+                            .getMapCenter();
                     this.oldMapcenter = MathUtil.calculateCoordFromGPS(
                             midLocation, new Node(0, mapCenter.getLatitude(),
                                     mapCenter.getLongitude()));
@@ -181,7 +178,7 @@ public class MapLine extends Polyline {
                 Log.d(TAG, "more than one pointer on screen");
                 if (active) {
                     mode = ROTATE;
-                    saveGeoPoints();
+                    this.saveGeoPoints();
                     startPos = new ArrayList<Point>();
                     startPos.add(new Point((int) event.getX(0), (int) event
                             .getY(0)));
@@ -204,8 +201,9 @@ public class MapLine extends Polyline {
                             .getPoints());
                 }
                 if (Math.abs(timeStart - System.currentTimeMillis()) < TIME_DIFF
-                        && this.isCloseTo(geoPoint, getTolerance(), mapView)) {
-                    changeMode();
+                        && this.isCloseTo(geoPoint, this.getTolerance(),
+                                mapView)) {
+                    this.changeMode();
                 }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -258,10 +256,13 @@ public class MapLine extends Polyline {
         }
         Log.d(TAG, "actual activity mode: " + active);
         if (activity instanceof MapPreviewActivity) {
-            ZoomControls zoomControls = (ZoomControls) activity
+            final ZoomControls zoomControls = (ZoomControls) activity
                     .findViewById(R.id.zoomcontrols);
-            int v = active ? View.VISIBLE : View.GONE;
-            zoomControls.setVisibility(v);
+            if (active) {
+                zoomControls.setVisibility(View.VISIBLE);
+            } else {
+                zoomControls.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -273,14 +274,16 @@ public class MapLine extends Polyline {
      */
     public void moveToNewPos(final MotionEvent event) {
         // set the end coordinates of the movement
-        Point endPoint = new Point((int) event.getX(0), (int) event.getY(0));
+        final Point endPoint = new Point((int) event.getX(0),
+                (int) event.getY(0));
         pj = mapView.getProjection();
-        GeoPoint startGeo = (GeoPoint) pj.fromPixels(startPos.get(0).x,
+        final GeoPoint startGeo = (GeoPoint) pj.fromPixels(startPos.get(0).x,
                 startPos.get(0).y);
-        double[] startCoord = MathUtil.calculateCoordFromGPS(midLocation,
+        final double[] startCoord = MathUtil.calculateCoordFromGPS(midLocation,
                 new Node(0, startGeo.getLatitude(), startGeo.getLongitude()));
-        GeoPoint endGeo = (GeoPoint) pj.fromPixels(endPoint.x, endPoint.y);
-        double[] endCoord = MathUtil.calculateCoordFromGPS(midLocation,
+        final GeoPoint endGeo = (GeoPoint) pj
+                .fromPixels(endPoint.x, endPoint.y);
+        final double[] endCoord = MathUtil.calculateCoordFromGPS(midLocation,
                 new Node(0, endGeo.getLatitude(), endGeo.getLongitude()));
         double x = endCoord[0] - startCoord[0];
         double y = endCoord[1] - startCoord[1];
@@ -288,14 +291,16 @@ public class MapLine extends Polyline {
             x = -x;
             y = -y;
         }
-        List<GeoPoint> returnList = new ArrayList<GeoPoint>();
+        final List<GeoPoint> returnList = new ArrayList<GeoPoint>();
         for (double[] preCoord : pointCoords) {
-            double[] returnCoord = { preCoord[0] + x, preCoord[1] + y, };
-            Node node = MathUtil.calculateGPSPoint(midLocation, returnCoord);
+            final double[] returnCoord = {preCoord[0] + x, preCoord[1] + y, };
+            final Node node = MathUtil.calculateGPSPoint(midLocation,
+                    returnCoord);
             returnList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
-        double[] returnCoord = { oldMapcenter[0] + x, oldMapcenter[1] + y, };
-        Node node = MathUtil.calculateGPSPoint(midLocation, returnCoord);
+        final double[] returnCoord = {oldMapcenter[0] + x,
+                oldMapcenter[1] + y, };
+        final Node node = MathUtil.calculateGPSPoint(midLocation, returnCoord);
         newMapcenter = new GeoPoint(node.getLat(), node.getLon());
 
         this.setPoints(returnList);
@@ -310,15 +315,16 @@ public class MapLine extends Polyline {
      */
     private void scalePolygon(MotionEvent event) {
         // set end values for the next rotation action
-        List<Point> endPos = new ArrayList<Point>();
+        final List<Point> endPos = new ArrayList<Point>();
         endPos.add(new Point((int) event.getX(0), (int) event.getY(0)));
         endPos.add(new Point((int) event.getX(1), (int) event.getY(1)));
         endPos.add(new Point((int) event.getX(2), (int) event.getY(2)));
-        float scaleFactor = MathUtil.perimeter(endPos) / startPosParameter;
+        final float scaleFactor = MathUtil.perimeter(endPos)
+                / startPosParameter;
         geoPointList = new ArrayList<GeoPoint>();
         // rotate all coordinates
         for (double[] preCoord : pointCoords) {
-            double[] coord = new double[2];
+            final double[] coord = new double[2];
             coord[0] = preCoord[0] * scaleFactor;
             coord[1] = preCoord[1] * scaleFactor;
             // transfer coordinates to gpsPoints
@@ -326,11 +332,13 @@ public class MapLine extends Polyline {
             geoPointList.add(new GeoPoint(node.getLat(), node.getLon()));
         }
         // set the list with the changed points
-        // if (MapUtil.getBoundingBoxForPointList(geoPointList)
-        // .getDiagonalLengthInMeters() < 250 || scaleFactor < 1) {
-        super.setPoints(geoPointList);
-        mapView.invalidate();
-        // }
+        if ((MapUtil.getBoundingBoxForPointList(geoPointList)
+                .getDiagonalLengthInMeters() > 1 && scaleFactor < 1)
+                || (MapUtil.getBoundingBoxForPointList(geoPointList)
+                        .getDiagonalLengthInMeters() < 10000 && scaleFactor > 1)) {
+            super.setPoints(geoPointList);
+            mapView.invalidate();
+        }
     }
 
     /**
@@ -348,13 +356,13 @@ public class MapLine extends Polyline {
         final int yEndPo2 = (int) event.getY(1);
 
         // get the rotation angle
-        final double delta_xEnd = (xEndPo1 - xEndPo2);
-        final double delta_yEnd = (yEndPo1 - yEndPo2);
-        final double radians1 = Math.atan2(delta_yEnd, delta_xEnd);
+        final double deltaXEnd = xEndPo1 - xEndPo2;
+        final double deltaYEnd = yEndPo1 - yEndPo2;
+        final double radians1 = Math.atan2(deltaYEnd, deltaXEnd);
 
-        final double delta_xStart = startPos.get(0).x - startPos.get(1).x;
-        final double delta_yStart = startPos.get(0).y - startPos.get(1).y;
-        final double radians2 = Math.atan2(delta_yStart, delta_xStart);
+        final double deltaXStart = startPos.get(0).x - startPos.get(1).x;
+        final double deltaYStart = startPos.get(0).y - startPos.get(1).y;
+        final double radians2 = Math.atan2(deltaYStart, deltaXStart);
         final double radians = radians1 - radians2;
 
         geoPointList = new ArrayList<GeoPoint>();
@@ -387,7 +395,8 @@ public class MapLine extends Polyline {
      * of this system.
      */
     public void saveGeoPoints() {
-        double lat = 0, lon = 0;
+        double lat = 0;
+        double lon = 0;
         int i = 0;
         for (GeoPoint geoPoint : this.getPoints()) {
             lat += geoPoint.getLatitude();
@@ -427,13 +436,15 @@ public class MapLine extends Polyline {
     public boolean onSingleTapConfirmed(final MotionEvent event,
             final MapView mapView) {
         if (!editable) {
-            if (mInfoWindow == null)
+            if (mInfoWindow == null) {
                 // no support for tap:
                 return false;
-            final Projection pj = mapView.getProjection();
-            GeoPoint eventPos = (GeoPoint) pj.fromPixels((int) event.getX(),
-                    (int) event.getY());
-            boolean tapped = isCloseTo(eventPos, getTolerance(), mapView);
+            }
+            final Projection proj = mapView.getProjection();
+            final GeoPoint eventPos = (GeoPoint) proj.fromPixels(
+                    (int) event.getX(), (int) event.getY());
+            final boolean tapped = isCloseTo(eventPos, this.getTolerance(),
+                    mapView);
             if (tapped) {
                 mInfoWindow.open(this,
                         MapUtil.getCenterFromOsmElement(element), 0, 0);
