@@ -30,5 +30,5 @@
     <string name="pref_augmented_reality">Augmented Reality</string>
     <string name="pref_augmented_reality_summary">Bereits gemappte Objekte werden im Kamerabild visualisiert</string>
     <string name="pref_view_tracks">Zeige Tracks in der Karte</string>
-  	<string name="pref_english_tags_title">Tags in Englisch</string>
+  	<string name="pref_tag_language_title">Sprache der Tags</string>
 </resources>

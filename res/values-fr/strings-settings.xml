@@ -32,5 +32,5 @@
     <string name="pref_augmented_reality">Afficher la réalité augmentée</string>
     <string name="pref_augmented_reality_summary">Les objets qui ont déjà été cartographiés seront visible dans l\'appareil photo</string>
     <string name="pref_view_tracks">Afficher la Trace GPS sur la carte</string>
-    <string name="pref_english_tags_title">Afficher les balises en anglais</string>
+    <string name="pref_tag_language_title">Étiquettes</string>
 </resources>
