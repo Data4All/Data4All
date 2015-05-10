@@ -37,7 +37,6 @@ import java.util.TreeSet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -52,7 +51,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -64,7 +62,9 @@ import android.widget.TextView;
 public class AddressSuggestionView implements OnClickListener,
         android.view.View.OnClickListener {
 
-    // Proposed List of addresses
+    private static final String TAG = "Adressview";
+
+	// Proposed List of addresses
     private Set<Address> addresses = new LinkedHashSet<Address>();
 
     // textView for road
@@ -414,26 +414,29 @@ public class AddressSuggestionView implements OnClickListener,
         return location;
     }
     
+    /**
+     * fill addresses based on location of OsmElement
+     */
     public void fillAddress () {
     	final List<Address> currentAdresses = TagSuggestionHandler
                 .getLastSuggestions();
-        Log.i("Adressview", "filldialog");
+        Log.i(TAG, "filldialog");
         if (currentAdresses != null && !currentAdresses.isEmpty()) {
             this.addresses = new LinkedHashSet<Address>(currentAdresses);
-            Log.i("Adressview", "fillcurrent");
+            Log.i(TAG, "fillcurrent");
         }
         else{
-             Log.i("Adressview", "showing progressbar");
+             Log.i(TAG, "showing progressbar");
              while( TagSuggestionHandler
                 .getLastSuggestions()==null ||  TagSuggestionHandler
                 .getLastSuggestions().isEmpty()){
             	 //Loading
             	 
-            	 Log.i("Adressview", "loading");
+            	 Log.i(TAG, "loading");
              }
              this.addresses=new LinkedHashSet<Address>(TagSuggestionHandler
                      .getLastSuggestions());
-             Log.i("Adressview", "dismiss progessbar");
+             Log.i(TAG, "dismiss progessbar");
         }
     }
    
