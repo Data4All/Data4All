@@ -18,9 +18,9 @@ package io.github.data4all.view;
 import io.github.data4all.R;
 import io.github.data4all.activity.ResultViewActivity;
 import io.github.data4all.handler.TagSuggestionHandler;
-import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Address;
 import io.github.data4all.model.data.ClassifiedValue;
+import io.github.data4all.model.data.DataElement;
 import io.github.data4all.model.data.Tag;
 import io.github.data4all.model.data.Tags;
 import io.github.data4all.util.Optimizer;
@@ -44,6 +44,8 @@ import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -60,7 +62,9 @@ import android.widget.TextView;
 public class AddressSuggestionView implements OnClickListener,
         android.view.View.OnClickListener {
 
-    // Proposed List of addresses
+    private static final String TAG = "Adressview";
+
+	// Proposed List of addresses
     private Set<Address> addresses = new LinkedHashSet<Address>();
 
     // textView for road
@@ -142,6 +146,7 @@ public class AddressSuggestionView implements OnClickListener,
         adapter = new ArrayAdapter<String>(context,
                 R.layout.view_adress_suggestions, array);
         alertDialog.setAdapter(adapter, this);
+        this.activity.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
     }
 
@@ -151,11 +156,7 @@ public class AddressSuggestionView implements OnClickListener,
      * @param activity
      */
     public void fillDialog() {
-        final List<Address> currentAdresses = TagSuggestionHandler
-                .getLastSuggestions();
-        if (currentAdresses != null) {
-            this.addresses = new LinkedHashSet<Address>(currentAdresses);
-        }
+
         if (this.addresses == null || this.addresses.isEmpty()) {
             array = new String[] {activity.getResources().getString(R.string.addressNoAvailable)};
             return;
@@ -207,9 +208,7 @@ public class AddressSuggestionView implements OnClickListener,
         final Button selectAddress = (Button) arg0;
         // get a list of addresses when user click on the button selectAddress
         if (selectAddress.getText().equals(btnSelectAddress.getText())) {
-            this.fillDialog();
-            this.show();
-
+            new AddressLoader().execute();
         }
 
     }
@@ -414,5 +413,56 @@ public class AddressSuggestionView implements OnClickListener,
     public Location getLocation() {
         return location;
     }
-
+    
+    /**
+     * fill addresses based on location of OsmElement
+     */
+    public void fillAddress () {
+    	final List<Address> currentAdresses = TagSuggestionHandler
+                .getLastSuggestions();
+        Log.i(TAG, "filldialog");
+        if (currentAdresses != null && !currentAdresses.isEmpty()) {
+            this.addresses = new LinkedHashSet<Address>(currentAdresses);
+            Log.i(TAG, "fillcurrent");
+        }
+        else{
+             Log.i(TAG, "showing progressbar");
+             while( TagSuggestionHandler
+                .getLastSuggestions()==null ||  TagSuggestionHandler
+                .getLastSuggestions().isEmpty()){
+            	 //Loading
+            	 
+            	 Log.i(TAG, "loading");
+             }
+             this.addresses=new LinkedHashSet<Address>(TagSuggestionHandler
+                     .getLastSuggestions());
+             Log.i(TAG, "dismiss progessbar");
+        }
+    }
+   
+    private class AddressLoader extends AsyncTask<Void, Void,Void> {
+      
+    	
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			fillAddress();
+			return null;
+		}
+		
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			activity.findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			activity.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+			fillDialog();
+			show();
+		}
+    }
 }
+
