@@ -26,7 +26,7 @@ package io.github.data4all.logger;
 public final class Log {
 
     private static String DEFAULT_TAG = "DATA4ALL";
-    private static final boolean LOG = false; // NOSONAR
+    private static final boolean LOG = true; // NOSONAR
     private static final boolean ERROR = true;
     private static final boolean WARNING = true;
     private static final boolean VERBOSE = true;
