@@ -18,5 +18,17 @@
         <item name="move">Move map</item>
         <item name="animate">Move object</item>
     </string-array>
+    <string-array name="pref_tag_language_keys" translatable="false">
+        <item name="sys">sys</item>
+        <item name="en">en</item>
+        <item name="de">de</item>
+        <item name="fr">fr</item>
+    </string-array>
+    <string-array name="pref_tag_language_option">
+        <item name="sys">Default (if available)</item>
+        <item name="en">English</item>
+        <item name="de">German</item>
+        <item name="fr">French</item>
+    </string-array>
 
 </resources>

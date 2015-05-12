@@ -160,18 +160,12 @@ public class ClassifiedValue implements Localizeable{
     }
 
     public String getLocalizedName(Context context) {
-        final String prefKey =
-                context.getString(R.string.pref_english_tags_key);
-        final boolean englishName =
-                PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(prefKey, false);
-
-        Resources resources = context.getResources();
+        final Resources resources = context.getResources();
         final int id =
                 resources.getIdentifier("name_" + getKey().replace(":", "_")
                         + "_" + value, "string", context.getPackageName());
 
-        return Tag.getLocalisedString(context, id, englishName);
+        return Tag.getLocalisedString(context, id, Tag.getTagLanguage(context));
     }
 
     public boolean canBeNode() {

@@ -17,6 +17,7 @@ package io.github.data4all.activity;
 
 import io.github.data4all.R;
 import io.github.data4all.handler.DataBaseHandler;
+import io.github.data4all.handler.TagSuggestionHandler;
 import io.github.data4all.listener.ButtonRotationListener;
 import io.github.data4all.logger.Log;
 import io.github.data4all.model.data.DataElement;
@@ -252,6 +253,7 @@ public class MapPreviewActivity extends MapActivity implements OnClickListener {
             location.setLongitude(elem.getLon());
         }
         if (location != null) {
+        	TagSuggestionHandler.setLocation(location);
             intent.putExtra(ShowPictureActivity.CURRENT_ORIENTATION_EXTRA,
                     location);
         }

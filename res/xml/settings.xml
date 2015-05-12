@@ -39,10 +39,18 @@
         android:key="view_tracks"
         android:title="@string/pref_view_tracks" />
 
-    <CheckBoxPreference
+    <!-- CheckBoxPreference
         android:defaultValue="false"
-        android:key="@string/pref_english_tags_key"
-        android:title="@string/pref_english_tags_title" />
+        android:key="@string/pref_tag_language_key"
+        android:title="@string/pref_tag_language_title" /-->
+
+    <ListPreference
+        android:defaultValue="@string/pref_tag_language_default"
+        android:dialogTitle="@string/pref_tag_language_title"
+        android:entries="@array/pref_tag_language_option"
+        android:entryValues="@array/pref_tag_language_keys"
+        android:key="@string/pref_tag_language_key"
+        android:title="@string/pref_tag_language_title" />
 
     <ListPreference
         android:defaultValue="@string/pref_gallery_deletemode_default"
@@ -52,6 +60,7 @@
         android:key="@string/pref_gallery_deletemode_key"
         android:summary="@string/pref_gallery_deletemode_summary"
         android:title="@string/pref_gallery_deletemode_title" />
+    
     <ListPreference
         android:dialogTitle="@string/pref_moving_animation_dialog_title"
         android:entries="@array/pref_moving_animation_option"

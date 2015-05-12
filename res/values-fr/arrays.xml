@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  
     <string-array name="pref_gallery_deletemode_option">
         <item name="yes">Toujours</item>
         <item name="no">Jamais</item>
@@ -11,4 +10,11 @@
         <item name="move">Déplacer la Carte</item>
         <item name="animate">Déplacer object</item>
     </string-array>
+    <string-array name="pref_tag_language_option">
+        <item name="sys">Standard (Français)</item>
+        <item name="en">Anglais</item>
+        <item name="de">Allemand</item>
+        <item name="fr">Français</item>
+    </string-array>
+
 </resources>

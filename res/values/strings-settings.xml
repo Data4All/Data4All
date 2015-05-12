@@ -39,7 +39,8 @@
 
     <string name="pref_view_tracks">Show tracks in map</string>
     
-    <string name="pref_english_tags_key" translatable="false">PREF_ENGLISH_TAGS</string>
-    <string name="pref_english_tags_title">Tags in english</string>
+    <string name="pref_tag_language_key" translatable="false">PREF_tag_language</string>
+    <string name="pref_tag_language_title">Language of the Tags</string>
+    <string name="pref_tag_language_default">sys</string>
 
 </resources>

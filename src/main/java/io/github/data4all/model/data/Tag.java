@@ -163,11 +163,6 @@ public class Tag {
      * @return the localized name
      */
     public String getNamedValue(Context context, String value) {
-        final String prefKey =
-                context.getString(R.string.pref_english_tags_key);
-        final boolean englishName =
-        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                prefKey, false);
         final Resources res = context.getResources();
 
         final String name = "name_" + key + "_" + value;
@@ -175,7 +170,7 @@ public class Tag {
         final int identifier =
                 res.getIdentifier(name, "string", context.getPackageName());
 
-        return getLocalisedString(context, identifier, englishName);
+        return getLocalisedString(context, identifier, getTagLanguage(context));
     }
 
     /**
@@ -187,16 +182,29 @@ public class Tag {
      * @return the localized name
      */
     public String getNamedKey(Context context) {
+        return getLocalisedString(context, getNameRessource(), getTagLanguage(context));
+    }
+
+    public static Locale getTagLanguage(Context context) {
         final String prefKey =
-                context.getString(R.string.pref_english_tags_key);
-        final boolean englishName =
-        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                prefKey, false);
-        return this.getLocalisedString(context, getNameRessource(), englishName);
+                context.getString(R.string.pref_tag_language_key);
+        final String prefDefaut =
+                context.getString(R.string.pref_tag_language_default);
+        final String locale =
+        PreferenceManager.getDefaultSharedPreferences(context).getString(
+                prefKey, prefDefaut);
+        
+        Log.i(LOG_TAG, "Tag language: " + locale);
+        
+        if(locale.equals("sys")) {
+            return null;
+        } else {
+            return new Locale(locale);
+        }
     }
 
     public static String getLocalisedString(Context context, int id,
-            boolean english) {
+            Locale locale) {
         String result = null;
 
         if (id != 0) {
@@ -204,17 +212,17 @@ public class Tag {
             Configuration conf = null;
             Locale currentLocale = null;
 
-            if (english) {
+            if (locale != null) {
                 conf = res.getConfiguration();
                 currentLocale = conf.locale;
-                conf.locale = Locale.ENGLISH;
+                conf.locale = locale;
                 res.updateConfiguration(res.getConfiguration(),
                         res.getDisplayMetrics());
             }
 
             result = res.getString(id);
 
-            if (english) {
+            if (locale != null) {
                 conf.locale = currentLocale;
                 res.updateConfiguration(res.getConfiguration(),
                         res.getDisplayMetrics());

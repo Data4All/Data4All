@@ -9,5 +9,11 @@
         <item name="move">Karte bewegen</item>
         <item name="animate">Objekt bewegen</item>
     </string-array>
+    <string-array name="pref_tag_language_option">
+        <item name="sys">Standard (Deutsch)</item>
+        <item name="en">Englisch</item>
+        <item name="de">Deutsch</item>
+        <item name="fr">Französisch</item>
+    </string-array>
 
 </resources>
