@@ -27,7 +27,7 @@ To build execute the following command from the project folder:
 $ mvn install
 ```
  
-###Eclipse Set-up
+### Eclipse Set-up
 
 To configure your development environment please follow these steps:
 
